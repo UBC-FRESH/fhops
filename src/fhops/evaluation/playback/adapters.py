@@ -4,13 +4,19 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterator
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import build_distance_lookup
 
+from ..sequencing import (
+    SequencingTracker,
+    build_role_order_lookup,
+    build_role_priority,
+    build_sequencing_tracker,
+)
 from .core import PlaybackRecord
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -64,13 +70,31 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
     if "assigned" in df.columns:
         df = df[df["assigned"] > 0]
 
-    df = df.sort_values(["day", "shift_id", "machine_id", "block_id"]).reset_index(drop=True)
+    tracker = build_sequencing_tracker(problem)
+    machine_roles = tracker.ctx.bundle.machine_roles
+    role_order_lookup = build_role_order_lookup(tracker.ctx)
+    role_priority = build_role_priority(tracker.ctx)
+
+    def _role_sort_value(row: pd.Series) -> int:
+        block_val = row.get("block_id")
+        machine_val = row.get("machine_id")
+        if pd.isna(block_val) or pd.isna(machine_val):
+            return 999
+        block_id = str(block_val)
+        role = machine_roles.get(str(machine_val))
+        role_key = role if role is not None else ""
+        return role_order_lookup.get((block_id, role_key), role_priority.get(role_key, 999))
+
+    df["_role_order"] = df.apply(_role_sort_value, axis=1)
+    df = df.sort_values(["day", "shift_id", "_role_order", "machine_id", "block_id"]).reset_index(
+        drop=True
+    )
+    df = df.drop(columns=["_role_order"])
 
     scenario = problem.scenario
     rate = {(r.machine_id, r.block_id): r.rate for r in scenario.production_rates}
-    remaining = {block.id: block.work_required for block in scenario.blocks}
+    remaining = tracker.remaining_work
     machine_hours = {machine.id: machine.daily_hours for machine in scenario.machines}
-    allowed_roles, prereq_roles, machine_roles = _system_metadata(problem)
 
     shift_hours_map: dict[str, float] = {}
     if scenario.timeline and scenario.timeline.shifts:
@@ -93,11 +117,6 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
     if scenario.timeline and scenario.timeline.blackouts:
         for blackout in scenario.timeline.blackouts:
             blackout_days.update(range(blackout.start_day, blackout.end_day + 1))
-
-    completed_blocks: set[str] = set()
-    seq_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
-    day_counts: defaultdict[tuple[str, str], int] = defaultdict(int)
-    current_day: int | None = None
 
     def hours_for(machine_id: str, shift_id: str) -> tuple[float | None, str | None]:
         if shift_id in shift_hours_map:
@@ -133,7 +152,6 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
         return cost
 
     def iter_records() -> Iterator[PlaybackRecord]:
-        nonlocal current_day, day_counts, seq_cumulative
         for _, row in df.iterrows():
             machine_id = str(row["machine_id"])
             block_id = row.get("block_id")
@@ -143,14 +161,6 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             day = int(row["day"])
             shift_id = str(row.get("shift_id", "S1"))
 
-            if current_day is None:
-                current_day = day
-            elif day != current_day:
-                for key, count in day_counts.items():
-                    seq_cumulative[key] += count
-                day_counts.clear()
-                current_day = day
-
             proposed_production = None
             if "production" in row and not pd.isna(row["production"]):
                 proposed_production = float(row["production"])
@@ -158,9 +168,6 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             production_units, production_source = production_for(
                 machine_id, block_id, proposed_production
             )
-            if block_id in remaining:
-                remaining[block_id] = max(0.0, remaining[block_id] - production_units)
-
             hours_worked, hours_source = hours_for(machine_id, shift_id)
             mobilisation_value = mobilisation_cost(machine_id, block_id)
 
@@ -172,36 +179,12 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             if landing_id is not None:
                 metadata["landing_id"] = landing_id
 
-            role = machine_roles.get(machine_id)
-            allowed = allowed_roles.get(block_id)
-            violation_reason: str | None = None
-            if allowed is not None and role is None:
-                violation_reason = "unknown_role"
-            elif allowed is not None and role not in allowed:
-                violation_reason = "forbidden_role"
-            elif role is not None:
-                prereqs = prereq_roles.get((block_id, role))
-                if prereqs:
-                    required = seq_cumulative[(block_id, role)] + day_counts[(block_id, role)] + 1
-                    available = min(
-                        seq_cumulative[(block_id, prereq)] + day_counts[(block_id, prereq)]
-                        for prereq in prereqs
-                    )
-                    if available < required:
-                        violation_reason = "missing_prereq"
-
-            if role is not None:
-                day_counts[(block_id, role)] += 1
-
-            if violation_reason is not None:
-                metadata["sequencing_violation"] = violation_reason
-
-            if (
-                block_id in remaining
-                and remaining[block_id] <= 1e-6
-                and block_id not in completed_blocks
-            ):
-                completed_blocks.add(block_id)
+            sequencing = tracker.process(day, machine_id, block_id, production_units)
+            production_units = sequencing.production_units
+            role = sequencing.machine_role
+            if sequencing.violation_reason:
+                metadata["sequencing_violation"] = sequencing.violation_reason
+            if sequencing.block_completed:
                 metadata["block_completed"] = True
 
             blackout_hit = day in blackout_days
@@ -227,46 +210,17 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
                 weather_severity=weather_severity,
                 metadata=metadata,
             )
+        tracker.finalize()
 
-    return iter_records()
+    class RecordIterator:
+        def __init__(self, iterator: Iterator[PlaybackRecord], tracker: SequencingTracker) -> None:
+            self._iterator = iterator
+            self.sequencing_tracker = tracker
 
+        def __iter__(self) -> RecordIterator:
+            return self
 
-def _system_metadata(pb: Problem):
-    """Return allowed roles/prereqs/machine roles for harvest-system sequencing checks."""
-    scenario = pb.scenario
-    systems = scenario.harvest_systems or {}
-    allowed: dict[str, set[str] | None] = {}
-    prereqs: dict[tuple[str, str], set[str]] = {}
-    for block in scenario.blocks:
-        system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
-        if system:
-            job_role = {job.name: job.machine_role for job in system.jobs}
-            allowed_roles_set = {job.machine_role for job in system.jobs if job.machine_role}
-            allowed[block.id] = allowed_roles_set
-            for job in system.jobs:
-                prereq_roles = {job_role[name] for name in job.prerequisites if name in job_role}
-                prereqs[(block.id, job.machine_role)] = prereq_roles
-        else:
-            allowed[block.id] = None
+        def __next__(self) -> PlaybackRecord:
+            return next(self._iterator)
 
-    machine_roles = {machine.id: getattr(machine, "role", None) for machine in scenario.machines}
-    available_roles = {role for role in machine_roles.values() if isinstance(role, str)}
-    if available_roles:
-        for block_id, allowed_roles in list(allowed.items()):
-            if allowed_roles is None:
-                continue
-            allowed_roles_set = cast(set[str], allowed_roles)
-            filtered = {role for role in allowed_roles_set if role in available_roles}
-            allowed[block_id] = filtered or None
-        filtered_prereqs: dict[tuple[str, str], set[str]] = {}
-        for key, prereq_set in prereqs.items():
-            role = key[1]
-            if role not in available_roles:
-                continue
-            filtered = {req for req in prereq_set if req in available_roles}
-            filtered_prereqs[key] = filtered
-        prereqs = filtered_prereqs
-    else:
-        allowed = {block_id: None for block_id in allowed}
-        prereqs = {}
-    return allowed, prereqs, machine_roles
+    return RecordIterator(iter_records(), tracker)

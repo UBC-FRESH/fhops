@@ -900,7 +900,7 @@ def _load_adv5n28_blocks() -> Mapping[str, ADV5N28Block]:
         label = entry.get("silviculture_system") or block_id.replace("_", " ").title()
         notes_payload = entry.get("notes") or []
         notes: tuple[str, ...] = tuple(
-            str(note) for note in notes_payload if isinstance(note, (str, int, float))
+            str(note) for note in notes_payload if isinstance(note, str | int | float)
         )
         blocks[block_id.lower()] = ADV5N28Block(
             block_id=block_id,

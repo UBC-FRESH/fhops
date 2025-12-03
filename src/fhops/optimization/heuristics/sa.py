@@ -5,573 +5,88 @@ from __future__ import annotations
 import math
 import random as _random
 import time
-from collections import defaultdict, deque
-from concurrent.futures import ThreadPoolExecutor
+from collections import deque
 from contextlib import nullcontext
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
 from fhops.evaluation import compute_kpis
-from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
+from fhops.optimization.heuristics.common import (
+    Schedule,
+    build_watch_metadata_from_debug,
+    evaluate_candidates,
+    evaluate_schedule,
+    evaluate_schedule_with_debug,
+    generate_neighbors,
+    init_greedy_schedule,
+    resolve_objective_weight_overrides,
+)
+from fhops.optimization.heuristics.registry import OperatorRegistry
+from fhops.optimization.operational_problem import (
+    build_operational_problem,
+    override_objective_weights,
+)
 from fhops.scenario.contract import Problem
-from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 from fhops.telemetry import RunTelemetryLogger
 from fhops.telemetry.watch import Snapshot, SnapshotSink
 
-BLOCK_COMPLETION_EPS = 1e-6
-PARTIAL_PRODUCTION_FRACTION = 0.1
-LEFTOVER_PENALTY_FACTOR = 5.0
-
-
-def _role_metadata(scenario):
-    """Return allowed roles, prerequisites, and machine-role mappings for a scenario."""
-    systems = scenario.harvest_systems or {}
-    allowed: dict[str, set[str] | None] = {}
-    prereqs: dict[tuple[str, str], set[str]] = {}
-    for block in scenario.blocks:
-        system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
-        if system:
-            job_role = {job.name: job.machine_role for job in system.jobs}
-            allowed_roles = {job.machine_role for job in system.jobs}
-            allowed[block.id] = allowed_roles
-            for job in system.jobs:
-                prereq_roles = {job_role[name] for name in job.prerequisites if name in job_role}
-                prereqs[(block.id, job.machine_role)] = prereq_roles
-        else:
-            allowed[block.id] = None
-
-    machine_roles = {machine.id: getattr(machine, "role", None) for machine in scenario.machines}
-    available_roles = {role for role in machine_roles.values() if role}
-    machines_by_role: dict[str, list[str]] = {}
-    for machine_id, role in machine_roles.items():
-        if role is None:
-            continue
-        machines_by_role.setdefault(role, []).append(machine_id)
-    if available_roles:
-        for block_id, allowed_roles in list(allowed.items()):
-            if allowed_roles is None:
-                continue
-            filtered = {role for role in allowed_roles if role in available_roles}
-            allowed[block_id] = filtered or None
-        filtered_prereqs: dict[tuple[str, str], set[str]] = {}
-        for key, prereq_set in prereqs.items():
-            role = key[1]
-            if role not in available_roles:
-                continue
-            filtered = {req for req in prereq_set if req in available_roles}
-            filtered_prereqs[key] = filtered
-        prereqs = filtered_prereqs
-    else:
-        allowed = {block_id: None for block_id in allowed}
-        prereqs = {}
-
-    return allowed, prereqs, machine_roles, machines_by_role
-
-
-def _blackout_map(scenario) -> set[tuple[str, int, str]]:
-    """Build a lookup of (machine, day, shift) tuples that are blacked out."""
-    blackout: set[tuple[str, int, str]] = set()
-    timeline = getattr(scenario, "timeline", None)
-    if timeline and timeline.blackouts:
-        for blackout_window in timeline.blackouts:
-            for day in range(blackout_window.start_day, blackout_window.end_day + 1):
-                for machine in scenario.machines:
-                    if scenario.shift_calendar:
-                        for entry in scenario.shift_calendar:
-                            if entry.machine_id == machine.id and entry.day == day:
-                                blackout.add((machine.id, day, entry.shift_id))
-                    elif timeline.shifts:
-                        for shift_def in timeline.shifts:
-                            blackout.add((machine.id, day, shift_def.name))
-                    else:
-                        blackout.add((machine.id, day, "S1"))
-    return blackout
-
-
-def _locked_map(scenario) -> dict[tuple[str, int], str]:
-    """Return locked assignments keyed by (machine, day)."""
-    locks = getattr(scenario, "locked_assignments", None)
-    if not locks:
-        return {}
-    return {(lock.machine_id, lock.day): lock.block_id for lock in locks}
-
-
 __all__ = ["Schedule", "solve_sa"]
 
+AUTO_MOBILISATION_BLOCK_THRESHOLD = 30
+AUTO_MOBILISATION_DAY_THRESHOLD = 30
+AUTO_MOBILISATION_WEIGHTS = {
+    "swap": 0.8,
+    "move": 0.8,
+    "block_insertion": 0.4,
+    "cross_exchange": 0.4,
+    "mobilisation_shake": 1.2,
+}
 
-@dataclass(slots=True)
-class Schedule:
-    """Machine assignment plan keyed by machine/(day, shift_id)."""
+AUTO_BATCH_CONFIG: dict[str, int] = {
+    "FHOPS Tiny7": 4,
+}
 
-    plan: dict[str, dict[tuple[int, str], str | None]]
+AUTO_SHAKE_CONFIG: dict[str, dict[str, float]] = {
+    "FHOPS Tiny7": {"threshold": 50.0, "boost_factor": 3.0},
+}
 
 
-def _init_greedy(pb: Problem) -> Schedule:
-    """Construct an initial Schedule by greedily filling shifts with best-rate blocks."""
-    sc = pb.scenario
-    remaining = {block.id: block.work_required for block in sc.blocks}
-    rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
-    shift_availability = (
-        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
-        if sc.shift_calendar
-        else {}
+def _clone_plan(
+    plan: dict[str, dict[tuple[int, str], str | None]],
+) -> dict[str, dict[tuple[int, str], str | None]]:
+    """Deep-copy a machine/shift assignment plan."""
+
+    return {machine_id: assignments.copy() for machine_id, assignments in plan.items()}
+
+
+def _assignment_delta(
+    baseline: dict[str, dict[tuple[int, str], str | None]],
+    candidate: dict[str, dict[tuple[int, str], str | None]],
+) -> int:
+    """Count slots whose block assignment changed between two plans."""
+
+    diff = 0
+    machines = set(baseline.keys()) | set(candidate.keys())
+    for machine_id in machines:
+        base_slots = baseline.get(machine_id, {})
+        cand_slots = candidate.get(machine_id, {})
+        slots = set(base_slots.keys()) | set(cand_slots.keys())
+        for slot in slots:
+            if base_slots.get(slot) != cand_slots.get(slot):
+                diff += 1
+    return diff
+
+
+def _should_enable_mobilisation_profile(pb: Problem) -> bool:
+    scenario = pb.scenario
+    num_blocks = len(getattr(scenario, "blocks", []) or [])
+    num_days = getattr(scenario, "num_days", 0) or 0
+    return (
+        num_blocks >= AUTO_MOBILISATION_BLOCK_THRESHOLD
+        or num_days >= AUTO_MOBILISATION_DAY_THRESHOLD
     )
-    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
-    windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
-    allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
-    blackout = _blackout_map(sc)
-    locked = _locked_map(sc)
-    shift_availability = (
-        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
-        if sc.shift_calendar
-        else {}
-    )
-    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
-
-    shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
-    shift_keys = [(shift.day, shift.shift_id) for shift in shifts]
-    plan: dict[str, dict[tuple[int, str], str | None]] = {
-        machine.id: {(day, shift_id): None for day, shift_id in shift_keys}
-        for machine in sc.machines
-    }
-
-    def assign(machine_id: str, day: int, shift_id: str, block_id: str | None) -> None:
-        plan[machine_id][(day, shift_id)] = block_id
-        if block_id is None:
-            return
-        production = min(rate.get((machine_id, block_id), 0.0), remaining[block_id])
-        remaining[block_id] = max(0.0, remaining[block_id] - production)
-
-    def best_slot_for(block_id: str) -> tuple[str, int, str] | None:
-        earliest, latest = windows[block_id]
-        best_slot: tuple[str, int, str] | None = None
-        best_rate = 0.0
-        for machine in sc.machines:
-            role = machine_roles.get(machine.id)
-            allowed = allowed_roles.get(block_id)
-            if allowed is not None and (role is None or role not in allowed):
-                continue
-            for shift in shifts:
-                day, shift_id = shift.day, shift.shift_id
-                if day < earliest or day > latest:
-                    continue
-                if plan[machine.id][(day, shift_id)] is not None:
-                    continue
-                if shift_availability:
-                    if shift_availability.get((machine.id, day, shift_id), 1) == 0:
-                        continue
-                if availability.get((machine.id, day), 1) == 0:
-                    continue
-                if (machine.id, day, shift_id) in blackout:
-                    continue
-                r = rate.get((machine.id, block_id), 0.0)
-                if r <= 0:
-                    continue
-                if r > best_rate:
-                    best_rate = r
-                    best_slot = (machine.id, day, shift_id)
-        return best_slot
-
-    # Respect locked assignments up front.
-    for shift in shifts:
-        day, shift_id = shift.day, shift.shift_id
-        for machine in sc.machines:
-            lock_block = locked.get((machine.id, day))
-            if lock_block is None:
-                continue
-            assign(machine.id, day, shift_id, lock_block)
-
-    # Coverage pass: ensure every block is started if feasible.
-    blocks_by_window = sorted(
-        sc.blocks,
-        key=lambda blk: (*sc.window_for(blk.id), blk.id),
-    )
-    while True:
-        progress = False
-        for block in blocks_by_window:
-            block_id = block.id
-            if remaining[block_id] <= 1e-9:
-                continue
-            slot = best_slot_for(block_id)
-            if slot is None:
-                continue
-            assign(*slot, block_id)
-            progress = True
-        if not progress:
-            break
-
-    # Fill remaining slots greedily with best-rate assignments.
-    for shift in shifts:
-        day, shift_id = shift.day, shift.shift_id
-        for machine in sc.machines:
-            if plan[machine.id][(day, shift_id)] is not None:
-                continue
-            if shift_availability:
-                if shift_availability.get((machine.id, day, shift_id), 1) == 0:
-                    continue
-            if availability.get((machine.id, day), 1) == 0:
-                continue
-            if (machine.id, day, shift_id) in blackout:
-                continue
-            candidates: list[tuple[float, str]] = []
-            for block in sc.blocks:
-                if remaining[block.id] <= 1e-9:
-                    continue
-                earliest, latest = windows[block.id]
-                if day < earliest or day > latest:
-                    continue
-                allowed = allowed_roles.get(block.id)
-                role = machine_roles.get(machine.id)
-                if allowed is not None and role not in allowed:
-                    continue
-                r = rate.get((machine.id, block.id), 0.0)
-                if r > 0:
-                    candidates.append((r, block.id))
-            if candidates:
-                candidates.sort(reverse=True)
-                _, best_block = candidates[0]
-                assign(machine.id, day, shift_id, best_block)
-    return Schedule(plan=plan)
-
-
-def _evaluate(pb: Problem, sched: Schedule) -> float:
-    """Score a schedule using production, mobilisation, transition, and slack penalties."""
-    sc = pb.scenario
-    remaining = {block.id: block.work_required for block in sc.blocks}
-    rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
-    windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
-    landing_of = {block.id: block.landing_id for block in sc.blocks}
-    landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
-    mobilisation = sc.mobilisation
-    mobil_params: dict[str, MachineMobilisation] = {}
-    distance_lookup = build_distance_lookup(mobilisation)
-    if mobilisation is not None:
-        mobil_params = {param.machine_id: param for param in mobilisation.machine_params}
-
-    allowed_roles, prereq_roles, machine_roles, _ = _role_metadata(sc)
-    blackout = _blackout_map(sc)
-    locked = _locked_map(sc)
-    shift_availability = (
-        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
-        if sc.shift_calendar
-        else {}
-    )
-    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
-
-    weights = getattr(sc, "objective_weights", None)
-    prod_weight = weights.production if weights else 1.0
-    mobil_weight = weights.mobilisation if weights else 1.0
-    transition_weight = weights.transitions if weights else 0.0
-    landing_slack_weight = weights.landing_slack if weights else 0.0
-
-    production_total = 0.0
-    initial_work_required = {block.id: block.work_required for block in sc.blocks}
-    mobilisation_total = 0.0
-    transition_count = 0.0
-    landing_slack_total = 0.0
-    penalty = 0.0
-
-    previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
-    unfinished_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
-    role_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
-    shifts = sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
-
-    def select_alternate_block(machine_id: str, day: int, shift_id: str) -> str | None:
-        role = machine_roles.get(machine_id)
-        best_block: str | None = None
-        best_rate = 0.0
-        for block in sc.blocks:
-            remaining_work = remaining[block.id]
-            if remaining_work <= BLOCK_COMPLETION_EPS:
-                continue
-            earliest, latest = windows[block.id]
-            if day < earliest or day > latest:
-                continue
-            allowed = allowed_roles.get(block.id)
-            if allowed is not None and (role is None or role not in allowed):
-                continue
-            r = rate.get((machine_id, block.id), 0.0)
-            if r <= 0.0:
-                continue
-            if r > best_rate:
-                best_rate = r
-                best_block = block.id
-        return best_block
-
-    for shift in shifts:
-        day = shift.day
-        shift_id = shift.shift_id
-        used = {landing.id: 0 for landing in sc.landings}
-        shift_role_counts: defaultdict[tuple[str, str], int] = defaultdict(int)
-        for machine in sc.machines:
-            planned_block = sched.plan[machine.id][(day, shift_id)]
-            block_id = planned_block
-            lock_key = (machine.id, day)
-
-            shift_available = shift_availability.get((machine.id, day, shift_id), 1)
-            day_available = availability.get((machine.id, day), 1)
-            if shift_available == 0 or day_available == 0:
-                penalty += 1000.0
-                previous_block[machine.id] = None
-                continue
-            if (machine.id, day, shift_id) in blackout:
-                penalty += 1000.0
-                previous_block[machine.id] = None
-                continue
-
-            locked_block = locked.get(lock_key)
-            if locked_block is not None:
-                if block_id is not None and block_id != locked_block:
-                    penalty += 1000.0
-                block_id = locked_block
-
-            active_block = unfinished_block[machine.id]
-            if active_block and remaining[active_block] <= BLOCK_COMPLETION_EPS:
-                active_block = None
-                unfinished_block[machine.id] = None
-
-            if active_block is not None:
-                if block_id is None or block_id != active_block:
-                    block_id = active_block
-
-            sched.plan[machine.id][(day, shift_id)] = block_id
-            if block_id is None:
-                continue
-
-            allowed = allowed_roles.get(block_id)
-            role: str | None = machine_roles.get(machine.id)
-            if allowed is not None and (role is None or role not in allowed):
-                penalty += 1000.0
-                previous_block[machine.id] = None
-                continue
-            if role is None:
-                prereq_set = None
-            else:
-                prereq_set = prereq_roles.get((block_id, role))
-            if prereq_set:
-                assert role is not None
-                role_key = (block_id, role)
-                available = min(role_cumulative[(block_id, prereq)] for prereq in prereq_set)
-                required = role_cumulative[role_key] + shift_role_counts[role_key] + 1
-                if required > available:
-                    penalty += 1000.0
-                    previous_block[machine.id] = block_id
-                    continue
-            earliest, latest = windows[block_id]
-            if day < earliest or day > latest:
-                block_id = select_alternate_block(machine.id, day, shift_id)
-                if block_id is None:
-                    continue
-                sched.plan[machine.id][(day, shift_id)] = block_id
-            if remaining[block_id] <= 1e-9:
-                alternate = select_alternate_block(machine.id, day, shift_id)
-                if alternate is None:
-                    continue
-                block_id = alternate
-                sched.plan[machine.id][(day, shift_id)] = block_id
-            landing_id = landing_of[block_id]
-            capacity = landing_cap[landing_id]
-            next_usage = used[landing_id] + 1
-            excess = max(0, next_usage - capacity)
-            if excess > 0:
-                if landing_slack_weight == 0.0:
-                    penalty += 1000.0
-                    continue
-                landing_slack_total += excess
-            used[landing_id] = next_usage
-            r = rate.get((machine.id, block_id), 0.0)
-            prod = min(r, remaining[block_id])
-            remaining[block_id] -= prod
-            production_total += prod
-            if remaining[block_id] > BLOCK_COMPLETION_EPS:
-                unfinished_block[machine.id] = block_id
-            else:
-                unfinished_block[machine.id] = None
-            params = mobil_params.get(machine.id)
-            prev_blk = previous_block[machine.id]
-            if params is not None and prev_blk is not None and block_id is not None:
-                if block_id != prev_blk:
-                    distance = distance_lookup.get((prev_blk, block_id), 0.0)
-                    cost = params.setup_cost
-                    if distance <= params.walk_threshold_m:
-                        cost += params.walk_cost_per_meter * distance
-                    else:
-                        cost += params.move_cost_flat
-                    mobilisation_total += cost
-                    transition_count += 1.0
-                else:
-                    # no mobilisation cost but still record no transition change
-                    pass
-            else:
-                if prev_blk is not None and block_id != prev_blk:
-                    transition_count += 1.0
-            previous_block[machine.id] = block_id
-            if role is not None:
-                shift_role_counts[(block_id, role)] += 1
-        for key, count in shift_role_counts.items():
-            role_cumulative[key] += count
-    completion_bonus = sum(
-        initial_work_required[block_id]
-        for block_id, remaining_work in remaining.items()
-        if remaining_work <= BLOCK_COMPLETION_EPS
-    )
-    leftover_total = sum(
-        remaining_work
-        for remaining_work in remaining.values()
-        if remaining_work > BLOCK_COMPLETION_EPS
-    )
-    partial_weight = prod_weight * PARTIAL_PRODUCTION_FRACTION
-    score = (prod_weight * (completion_bonus - LEFTOVER_PENALTY_FACTOR * leftover_total)) + (
-        partial_weight * production_total
-    )
-    score -= mobil_weight * mobilisation_total
-    score -= transition_weight * transition_count
-    score -= landing_slack_weight * landing_slack_total
-    score -= penalty
-    return score
-
-
-def _neighbors(
-    pb: Problem,
-    sched: Schedule,
-    registry: OperatorRegistry,
-    rng: _random.Random,
-    operator_stats: dict[str, dict[str, float]],
-    *,
-    batch_size: int | None = None,
-) -> list[Schedule]:
-    """Generate neighbour schedules via enabled operators with feasibility sanitization."""
-    sc = pb.scenario
-    if not sc.machines or not pb.shifts:
-        return []
-    allowed_roles, _, machine_roles, _ = _role_metadata(sc)
-    blackout = _blackout_map(sc)
-    locked = _locked_map(sc)
-    shift_availability = (
-        {(c.machine_id, c.day, c.shift_id): int(c.available) for c in sc.shift_calendar}
-        if sc.shift_calendar
-        else {}
-    )
-    availability = {(c.machine_id, c.day): int(c.available) for c in sc.calendar}
-    landing_of = {block.id: block.landing_id for block in sc.blocks}
-    landing_cap = {landing.id: landing.daily_capacity for landing in sc.landings}
-    block_windows = {block.id: sc.window_for(block.id) for block in sc.blocks}
-    distance_lookup = build_distance_lookup(sc.mobilisation)
-
-    schedule_cls = sched.__class__
-
-    def sanitizer(candidate: Schedule) -> Schedule:
-        plan: dict[str, dict[tuple[int, str], str | None]] = {}
-        landing_usage: dict[tuple[int, str, str], int] = {}
-        for mach, assignments in candidate.plan.items():
-            role = machine_roles.get(mach)
-            plan[mach] = {}
-            for shift_key_iter, blk in assignments.items():
-                day_key = shift_key_iter[0]
-                allowed = allowed_roles.get(blk) if blk is not None else None
-                if (mach, day_key) in locked:
-                    plan[mach][shift_key_iter] = locked[(mach, day_key)]
-                    continue
-                shift_available = shift_availability.get((mach, day_key, shift_key_iter[1]), 1)
-                day_available = availability.get((mach, day_key), 1)
-                if blk is not None and (
-                    shift_available == 0
-                    or day_available == 0
-                    or (mach, day_key, shift_key_iter[1]) in blackout
-                    or (allowed is not None and role not in allowed)
-                ):
-                    plan[mach][shift_key_iter] = None
-                else:
-                    landing_id = landing_of.get(blk) if blk is not None else None
-                    if landing_id is not None:
-                        key = (day_key, shift_key_iter[1], landing_id)
-                        cap = landing_cap.get(landing_id, 0)
-                        current = landing_usage.get(key, 0)
-                        if cap > 0 and current >= cap:
-                            plan[mach][shift_key_iter] = None
-                            continue
-                        landing_usage[key] = current + 1
-                    plan[mach][shift_key_iter] = blk
-        return schedule_cls(plan=plan)
-
-    context = OperatorContext(
-        problem=pb,
-        schedule=sched,
-        sanitizer=sanitizer,
-        rng=rng,
-        distance_lookup=distance_lookup,
-        block_windows=block_windows,
-        landing_capacity=landing_cap,
-        landing_of=landing_of,
-    )
-
-    enabled_ops = list(registry.enabled())
-    if not enabled_ops:
-        return []
-
-    ordered_ops = []
-    if len(enabled_ops) <= 1:
-        ordered_ops = list(enabled_ops)
-    else:
-        weight_values = [op.weight for op in enabled_ops]
-        if all(abs(w - weight_values[0]) < 1e-9 for w in weight_values):
-            ordered_ops = list(enabled_ops)
-        else:
-            candidates = enabled_ops.copy()
-            weights = [op.weight for op in candidates]
-            while candidates:
-                total = sum(weights)
-                if total <= 0:
-                    ordered_ops.extend(candidates)
-                    break
-                pick = rng.random() * total
-                cumulative = 0.0
-                for idx, (op, weight) in enumerate(zip(candidates, weights)):
-                    cumulative += weight
-                    if pick <= cumulative:
-                        ordered_ops.append(op)
-                        candidates.pop(idx)
-                        weights.pop(idx)
-                        break
-
-    limit = batch_size if batch_size is not None and batch_size > 0 else None
-    neighbours: list[Schedule] = []
-    for operator in ordered_ops:
-        stats = operator_stats.setdefault(
-            operator.name, {"proposals": 0.0, "accepted": 0.0, "weight": operator.weight}
-        )
-        stats["weight"] = operator.weight
-        stats["proposals"] += 1.0
-
-        candidate = operator.apply(context)
-        if candidate is not None:
-            neighbours.append(candidate)
-            stats["accepted"] += 1.0
-            if limit is not None and len(neighbours) >= limit:
-                break
-        else:
-            stats.setdefault("skipped", 0.0)
-            stats["skipped"] += 1.0
-    return neighbours
-
-
-def _evaluate_candidates(
-    pb: Problem,
-    candidates: list[Schedule],
-    max_workers: int | None = None,
-) -> list[tuple[Schedule, float]]:
-    """Evaluate candidate schedules, optionally in parallel, returning (schedule, score)."""
-    if not candidates:
-        return []
-    if max_workers is None or max_workers <= 1 or len(candidates) == 1:
-        return [(candidate, _evaluate(pb, candidate)) for candidate in candidates]
-
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        scores = list(executor.map(lambda sched: _evaluate(pb, sched), candidates))
-    return list(zip(candidates, scores))
 
 
 def solve_sa(
@@ -589,6 +104,10 @@ def solve_sa(
     watch_sink: SnapshotSink | None = None,
     watch_interval: int | None = None,
     watch_metadata: dict[str, str] | None = None,
+    watch_debug: bool = False,
+    use_local_repairs: bool = False,
+    objective_weight_overrides: dict[str, float] | None = None,
+    milp_objective: float | None = None,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -626,6 +145,18 @@ def solve_sa(
         sink is provided.
     watch_metadata : dict[str, str] | None
         Additional metadata (e.g., scenario/solver labels) attached to each snapshot.
+    watch_debug : bool, default=False
+        When ``True`` capture sequencing debug stats for watch snapshots (adds overhead).
+    use_local_repairs : bool, default=False
+        When ``True`` repairs only the slots touched by a candidate before scoring. The
+        final schedule is always re-scored with a full repair before reporting.
+    objective_weight_overrides : dict[str, float] | None, optional
+        Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
+        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 scenarios auto-apply
+        a reduced mobilisation weight to encourage exploration.
+    milp_objective : float | None, optional
+        Reference MILP objective used for gap reporting (best - MILP) in watch/telemetry output.
+        ``None`` skips gap metrics.
 
     Returns
     -------
@@ -643,6 +174,7 @@ def solve_sa(
     rng = _random.Random(seed)
     registry = OperatorRegistry.from_defaults()
     available_names = {name.lower(): name for name in registry.names()}
+    auto_profile_applied = False
     if operators:
         desired = {name.lower() for name in operators}
         unknown = desired - set(available_names.keys())
@@ -659,6 +191,11 @@ def solve_sa(
                 raise ValueError(f"Unknown operator '{name}' in weights configuration")
             normalized_weights[available_names[key]] = weight
         registry.configure(normalized_weights)
+    if not operators and not operator_weights and _should_enable_mobilisation_profile(pb):
+        registry.configure(
+            {name: AUTO_MOBILISATION_WEIGHTS[name] for name in AUTO_MOBILISATION_WEIGHTS}
+        )
+        auto_profile_applied = True
 
     if not 0 < cooling_rate < 1:
         raise ValueError("cooling_rate must be between 0 and 1 (exclusive).")
@@ -668,6 +205,23 @@ def solve_sa(
         else max(1000, iters // 5 or 200)
     )
 
+    resolved_weight_overrides = resolve_objective_weight_overrides(pb, objective_weight_overrides)
+    if resolved_weight_overrides is not None:
+        resolved_weight_overrides = dict(resolved_weight_overrides)
+
+    context_payload = dict(telemetry_context or {})
+    step_interval = context_payload.pop("step_interval", 100)
+    tuner_meta = context_payload.pop("tuner_meta", None)
+    scenario_name = getattr(pb.scenario, "name", None)
+    scenario_path = context_payload.pop("scenario_path", None)
+
+    auto_batch_applied = False
+    if scenario_name:
+        auto_batch = AUTO_BATCH_CONFIG.get(scenario_name)
+        if auto_batch and batch_size is None:
+            batch_size = auto_batch
+            auto_batch_applied = True
+
     config_snapshot: dict[str, Any] = {
         "iters": iters,
         "batch_size": batch_size,
@@ -676,11 +230,29 @@ def solve_sa(
         "restart_interval": restart_interval_value,
         "operators": registry.weights(),
     }
-    context_payload = dict(telemetry_context or {})
-    step_interval = context_payload.pop("step_interval", 100)
-    tuner_meta = context_payload.pop("tuner_meta", None)
-    scenario_name = getattr(pb.scenario, "name", None)
-    scenario_path = context_payload.pop("scenario_path", None)
+    if milp_objective is not None:
+        config_snapshot["milp_objective"] = float(milp_objective)
+    if resolved_weight_overrides:
+        config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
+    if auto_profile_applied:
+        config_snapshot["auto_profile"] = "mobilisation"
+    if auto_batch_applied:
+        config_snapshot["auto_batch_applied"] = True
+
+    shake_settings = AUTO_SHAKE_CONFIG.get(scenario_name) if scenario_name else None
+    mobilisation_shake_default = registry.weights().get("mobilisation_shake", 0.0)
+    shake_threshold = (
+        float(shake_settings["threshold"])
+        if shake_settings and mobilisation_shake_default > 0
+        else None
+    )
+    shake_boost_factor = float(shake_settings["boost_factor"]) if shake_settings else 1.0
+    shake_boosted = False
+    shake_trigger_count = 0
+
+    if shake_threshold is not None:
+        config_snapshot["auto_shake_threshold"] = shake_threshold
+        config_snapshot["auto_shake_boost_factor"] = shake_boost_factor
 
     telemetry_logger: RunTelemetryLogger | None = None
     if telemetry_log:
@@ -720,11 +292,45 @@ def solve_sa(
     workers_total = max_workers if max_workers and max_workers > 1 else None
     current_workers_busy: int | None = workers_total
 
+    ctx = build_operational_problem(pb)
+    if resolved_weight_overrides:
+        ctx = override_objective_weights(ctx, resolved_weight_overrides)
+    debug_capture = bool(watch_debug and watch_sink)
+    local_repairs = bool(use_local_repairs)
+    objective_weights_snapshot = ctx.bundle.objective_weights.model_dump()
+
+    def _score_schedule(
+        schedule: Schedule,
+        *,
+        capture: bool | None = None,
+    ) -> tuple[float, dict[str, Any] | None]:
+        """Evaluate a schedule and optionally capture sequencing debug stats."""
+
+        flag = debug_capture if capture is None else capture
+        if flag:
+            return evaluate_schedule_with_debug(
+                pb,
+                schedule,
+                ctx,
+                capture_debug=True,
+                limit_repairs_to_dirty=local_repairs,
+            )
+        return evaluate_schedule(
+            pb,
+            schedule,
+            ctx,
+            limit_repairs_to_dirty=local_repairs,
+        ), None
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
-        current = _init_greedy(pb)
-        current_score = _evaluate(pb, current)
+        current = init_greedy_schedule(pb, ctx)
+        current_score, current_debug_stats = _score_schedule(current)
         best = current
         best_score = current_score
+        best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
+        initial_plan = _clone_plan(current.plan)
+        assignment_slots_total = sum(len(assignments) for assignments in initial_plan.values())
+        best_assignment_delta = 0
 
         temperature0 = max(1.0, best_score / 10.0)
         temperature = temperature0
@@ -737,18 +343,21 @@ def solve_sa(
         run_start = time.perf_counter()
         for step in range(1, iters + 1):
             accepted = False
-            candidates = _neighbors(
+            candidates = generate_neighbors(
                 pb,
                 current,
                 registry,
                 rng,
                 operator_stats,
+                ctx,
                 batch_size=batch_size,
             )
-            evaluations = _evaluate_candidates(
+            evaluations = evaluate_candidates(
                 pb,
                 candidates,
+                ctx,
                 max_workers=max_workers if batch_size and batch_size > 1 else None,
+                limit_repairs_to_dirty=local_repairs,
             )
             if workers_total:
                 current_workers_busy = min(workers_total, len(evaluations)) if evaluations else 0
@@ -760,9 +369,15 @@ def solve_sa(
                     current_score = neighbor_score
                     accepted = True
                     accepted_moves += 1
+                    if debug_capture:
+                        current_score, current_debug_stats = _score_schedule(current, capture=True)
+                    else:
+                        current_debug_stats = None
                     break
             if current_score > best_score:
                 best, best_score = current, current_score
+                best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
+                best_assignment_delta = _assignment_delta(initial_plan, best.plan)
             temperature = max(temperature * cooling_rate, 1e-6)
             if run_logger and telemetry_logger and telemetry_logger.step_interval:
                 if step == 1 or step == iters or (step % telemetry_logger.step_interval == 0):
@@ -781,9 +396,19 @@ def solve_sa(
             else:
                 stalled_steps += 1
 
+            if shake_threshold is not None:
+                if stalled_steps >= shake_threshold and not shake_boosted:
+                    boost_value = mobilisation_shake_default * shake_boost_factor
+                    registry.configure({"mobilisation_shake": boost_value})
+                    shake_boosted = True
+                    shake_trigger_count += 1
+                elif shake_boosted and stalled_steps == 0:
+                    registry.configure({"mobilisation_shake": mobilisation_shake_default})
+                    shake_boosted = False
+
             if stalled_steps >= restart_interval_value:
-                current = _init_greedy(pb)
-                current_score = _evaluate(pb, current)
+                current = init_greedy_schedule(pb, ctx)
+                current_score, current_debug_stats = _score_schedule(current)
                 restarts += 1
                 stalled_steps = 0
                 temperature = temperature0
@@ -807,6 +432,17 @@ def solve_sa(
                     float(best_score - last_watch_best) if last_watch_best is not None else 0.0
                 )
                 last_watch_best = float(best_score)
+                metadata = dict(watch_meta)
+                if debug_capture:
+                    metadata.update(build_watch_metadata_from_debug(current_debug_stats))
+                elif getattr(current, "watch_stats", None):
+                    metadata.update(build_watch_metadata_from_debug(current.watch_stats))
+                metadata.setdefault("greedy_objective", f"{initial_score:.3f}")
+                metadata.setdefault("obj_delta_vs_initial", f"{best_score - initial_score:.3f}")
+                metadata.setdefault("assignment_delta_slots", str(best_assignment_delta))
+                if milp_objective is not None:
+                    metadata["milp_objective"] = f"{milp_objective:.3f}"
+                    metadata["milp_gap"] = f"{best_score - milp_objective:.3f}"
                 watch_sink(
                     Snapshot(
                         scenario=watch_scenario,
@@ -825,11 +461,25 @@ def solve_sa(
                         temperature=float(temperature),
                         acceptance_rate_window=window_acceptance,
                         delta_objective=delta_objective,
-                        metadata=watch_meta,
+                        metadata=metadata,
                     )
                 )
 
-        rows = []
+        # Re-score the best schedule with a full repair pass for final reporting.
+        if local_repairs:
+            if debug_capture:
+                best_score, best_debug_stats = evaluate_schedule_with_debug(
+                    pb,
+                    best,
+                    ctx,
+                    capture_debug=True,
+                    limit_repairs_to_dirty=False,
+                )
+            else:
+                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
+            current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
+
+        rows: list[dict[str, str | int]] = []
         for machine_id, plan in best.plan.items():
             for (day, shift_id), block_id in plan.items():
                 if block_id is not None:
@@ -842,7 +492,10 @@ def solve_sa(
                             "assigned": 1,
                         }
                     )
-        assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
+        assignment_columns = ["machine_id", "block_id", "day", "shift_id", "assigned"]
+        assignments = pd.DataFrame(rows, columns=assignment_columns)
+        if not assignments.empty:
+            assignments = assignments.sort_values(["day", "shift_id", "machine_id", "block_id"])
         if watch_sink:
             acceptance_rate_watch = (accepted_moves / proposals) if proposals else None
             rolling_mean = (
@@ -859,6 +512,17 @@ def solve_sa(
                 float(best_score - last_watch_best) if last_watch_best is not None else 0.0
             )
             last_watch_best = float(best_score)
+            metadata = dict(watch_meta)
+            if debug_capture:
+                metadata.update(build_watch_metadata_from_debug(best_debug_stats))
+            elif getattr(best, "watch_stats", None):
+                metadata.update(build_watch_metadata_from_debug(best.watch_stats))
+            metadata.setdefault("greedy_objective", f"{initial_score:.3f}")
+            metadata.setdefault("obj_delta_vs_initial", f"{best_score - initial_score:.3f}")
+            metadata.setdefault("assignment_delta_slots", str(best_assignment_delta))
+            if milp_objective is not None:
+                metadata["milp_objective"] = f"{milp_objective:.3f}"
+                metadata["milp_gap"] = f"{best_score - milp_objective:.3f}"
             watch_sink(
                 Snapshot(
                     scenario=watch_scenario,
@@ -877,9 +541,13 @@ def solve_sa(
                     temperature=float(temperature),
                     acceptance_rate_window=window_acceptance,
                     delta_objective=delta_objective,
-                    metadata=watch_meta,
+                    metadata=metadata,
                 )
             )
+        if shake_boosted and shake_threshold is not None:
+            registry.configure({"mobilisation_shake": mobilisation_shake_default})
+            shake_boosted = False
+
         meta = {
             "initial_score": float(initial_score),
             "best_score": float(best_score),
@@ -892,7 +560,25 @@ def solve_sa(
             "cooling_rate": float(cooling_rate),
             "restart_interval": int(restart_interval_value),
             "operators": registry.weights(),
+            "batch_size": batch_size,
+            "max_workers": max_workers,
+            "auto_batch_applied": auto_batch_applied,
+            "auto_shake_triggers": shake_trigger_count if shake_threshold is not None else 0,
         }
+        if milp_objective is not None:
+            meta["milp_objective"] = float(milp_objective)
+            meta["milp_gap"] = float(best_score - milp_objective)
+        if resolved_weight_overrides:
+            meta["objective_weight_overrides"] = resolved_weight_overrides
+        meta["objective_weights"] = objective_weights_snapshot
+        meta.update(
+            {
+                "greedy_objective": float(initial_score),
+                "best_delta_vs_greedy": float(best_score - initial_score),
+                "assignment_delta_slots": int(best_assignment_delta),
+                "assignment_total_slots": int(assignment_slots_total),
+            }
+        )
         if operator_stats:
             meta["operators_stats"] = {
                 name: {
@@ -927,7 +613,16 @@ def solve_sa(
                 metrics={
                     "objective": float(best_score),
                     "initial_score": float(initial_score),
+                    "objective_delta_vs_initial": float(best_score - initial_score),
                     "acceptance_rate": meta["acceptance_rate"],
+                    **(
+                        {
+                            "milp_objective": float(milp_objective),
+                            "milp_gap": float(best_score - milp_objective),
+                        }
+                        if milp_objective is not None
+                        else {}
+                    ),
                     **numeric_kpis,
                 },
                 extra={
@@ -937,6 +632,7 @@ def solve_sa(
                     "accepted_moves": accepted_moves,
                     "temperature0": float(temperature0),
                     "operators": registry.weights(),
+                    "assignment_delta_slots": int(best_assignment_delta),
                 },
                 kpis=kpi_totals,
                 tuner_meta=tuner_meta,

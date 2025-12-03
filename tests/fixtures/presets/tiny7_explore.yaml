@@ -1,0 +1,8 @@
+scenario: examples/tiny7/scenario.yaml
+presets:
+  - explore
+expected_objective_weights:
+  production: 1.0
+  mobilisation: 0.2
+  transitions: 0.1
+  landing_surplus: 0.05

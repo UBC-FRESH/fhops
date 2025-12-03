@@ -5,7 +5,7 @@ Simulated annealing runs can emit structured telemetry so that future tuning (ma
 or automated) can analyse performance. Use ``--telemetry-log PATH`` with either
 ``fhops solve-heur`` or ``fhops bench suite`` to append newline-delimited JSON records::
 
-    fhops solve-heur examples/minitoy/scenario.yaml --out tmp/result.csv \
+    fhops solve-heur examples/tiny7/scenario.yaml --out tmp/result.csv \
         --telemetry-log tmp/telemetry.jsonl --show-operator-stats
 
 Schema
@@ -54,8 +54,8 @@ Example
    {
     "timestamp": "2025-11-09T05:31:42.972801",
     "source": "solve-heur",
-    "scenario": "FHOPS MiniToy",
-    "scenario_path": "examples/minitoy/scenario.yaml",
+    "scenario": "FHOPS Tiny7",
+    "scenario_path": "examples/tiny7/scenario.yaml",
     "solver": "sa",
      "seed": 42,
      "iterations": 200,

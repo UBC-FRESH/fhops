@@ -17,7 +17,7 @@ Status: Draft — governs user-facing narrative and tooling upgrades.
 - [ ] Prepare RTD configuration and badges; test build locally before enabling remote builds.
 
 ## Documentation Deliverables
-- [x] Tutorials: quickstart, solver comparison, evaluation workflows. *(Quickstart expanded with minitoy + regression baseline; solver comparison/evaluation remain to-do but tracked in roadmap.)*
+- [x] Tutorials: quickstart, solver comparison, evaluation workflows. *(Quickstart expanded with tiny7 + regression baseline; solver comparison/evaluation remain to-do but tracked in roadmap.)*
 - [ ] API modules documented via autodoc/autosummary.
 - [ ] CLI reference with command usage and sample invocations.
 - [ ] Contribution guide updates referencing planning artefacts.

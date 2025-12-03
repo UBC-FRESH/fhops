@@ -5,7 +5,7 @@ pipeline so readers can replay each stage without bespoke tooling:
 
 1. **Validate or snapshot scenarios.** Run
    ``fhops dataset validate <scenario.yaml>`` for each bundle (e.g.,
-   ``examples/minitoy`` and ``examples/med42``) and, when needed,
+   ``examples/tiny7`` and ``examples/med42``) and, when needed,
    snapshot synthetic tiers via
    ``fhops synth generate out/synthetic_{small,medium,large}`` with
    fixed RNG seeds.

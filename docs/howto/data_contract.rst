@@ -2,8 +2,23 @@ Data Contract Guide
 ===================
 
 This guide summarises the structured inputs FHOPS expects when authoring scenarios. It
-builds on the ``examples/minitoy`` and ``tests/fixtures/regression`` assets and reflects
+builds on the ``examples/tiny7`` and ``tests/fixtures/regression`` assets and reflects
 recent extensions (mobilisation, geo metadata, crew assignments).
+
+Reference dataset generator
+---------------------------
+
+All bundled scenarios (``examples/{tiny7,small21,med42,large84}``) now originate from a single
+deterministic generator: ``scripts/rebuild_reference_datasets.py``. The script samples Lahrsen-style
+stand attributes, derives ADV6N7 skidding distances from block geometry, and emits the full CSV + YAML
+bundle (blocks, machines, calendar, production rates, landings, mobilisation distances, README). Run:
+
+.. code-block:: bash
+
+   python scripts/rebuild_reference_datasets.py tiny7        # or small21 / med42 / large84
+
+Use ``--seed`` to reproduce specific variants. Regenerate the dataset before updating docs/fixtures so
+the CSVs, README stats, and MILP bundles stay in sync across the ladder.
 
 Core Tables (CSV)
 -----------------
@@ -87,7 +102,7 @@ Recent helpers enable richer metadata:
      production: 1.0
      mobilisation: 0.5
      transitions: 2.0
-     landing_slack: 3.0
+     landing_surplus: 3.0
 
 This configuration maximises production while penalising moves between blocks and soft landing
 capacity violations. Setting a weight to ``0`` reverts to the default hard behaviour.
@@ -139,7 +154,7 @@ Run ``fhops validate`` to confirm the calendar files and shift labels line up be
 
 .. code-block:: bash
 
-   fhops validate examples/minitoy/scenario.yaml
+   fhops validate examples/tiny7/scenario.yaml
 
 The CLI surfaces precise validation errors (missing columns, bad shift IDs, horizon overruns)
 so you can correct the dataset without spelunking through Pydantic stack traces.

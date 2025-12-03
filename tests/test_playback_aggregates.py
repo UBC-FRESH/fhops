@@ -34,9 +34,9 @@ def _load_assignments(name: str) -> pd.DataFrame:
 
 
 def test_shift_dataframe_matches_fixture():
-    scenario = load_scenario("examples/minitoy/scenario.yaml")
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
     problem = Problem.from_scenario(scenario)
-    assignments = _load_assignments("minitoy")
+    assignments = _load_assignments("tiny7")
 
     playback = run_playback(problem, assignments)
     df = shift_dataframe(playback)
@@ -48,7 +48,7 @@ def test_shift_dataframe_matches_fixture():
     )
 
     fixture = (
-        pd.read_csv("tests/fixtures/playback/minitoy_shift.csv")
+        pd.read_csv("tests/fixtures/playback/tiny7_shift.csv")
         .sort_values(["day", "machine_id"])
         .reset_index(drop=True)
     )
@@ -77,9 +77,9 @@ def test_day_dataframe_matches_fixture():
 
 
 def test_machine_utilisation_summary():
-    scenario = load_scenario("examples/minitoy/scenario.yaml")
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
     problem = Problem.from_scenario(scenario)
-    assignments = _load_assignments("minitoy")
+    assignments = _load_assignments("tiny7")
 
     playback = run_playback(problem, assignments)
     shift_df = shift_dataframe(playback)
@@ -91,9 +91,9 @@ def test_machine_utilisation_summary():
 
 
 def test_shift_dataframe_from_ensemble_handles_samples():
-    scenario = load_scenario("examples/minitoy/scenario.yaml")
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
     problem = Problem.from_scenario(scenario)
-    assignments = _load_assignments("minitoy")
+    assignments = _load_assignments("tiny7")
 
     cfg = SamplingConfig(samples=2, base_seed=7)
     cfg.downtime.enabled = False
@@ -326,7 +326,7 @@ def test_blackout_conflicts_aggregate(records):
         assert summary.blackout_conflicts >= 0
 
 
-@pytest.mark.parametrize("scenario_name", ["minitoy", "med42"])
+@pytest.mark.parametrize("scenario_name", ["tiny7", "med42"])
 def test_kpi_alignment_with_aggregates(scenario_name: str):
     scenario = load_scenario(f"examples/{scenario_name}/scenario.yaml")
     problem = Problem.from_scenario(scenario)
@@ -337,7 +337,14 @@ def test_kpi_alignment_with_aggregates(scenario_name: str):
     day_df = day_dataframe(playback)
     kpis = compute_kpis(problem, assignments)
 
-    assert day_df["production_units"].sum() == pytest.approx(kpis["total_production"])
+    day_production = day_df["production_units"].sum()
+    # Shift/day summaries still tally role-level output, so they can exceed the delivered total.
+    assert day_production + 1e-6 >= kpis["total_production"]
+    staged_total = kpis.get("staged_production")
+    if staged_total is not None:
+        total_required = sum(block.work_required for block in problem.scenario.blocks)
+        assert staged_total == pytest.approx(total_required - kpis["total_production"])
+        assert staged_total == pytest.approx(kpis.get("remaining_work_total", staged_total))
     assert day_df["completed_blocks"].sum() == pytest.approx(kpis["completed_blocks"])
     assert "utilisation_ratio_mean_shift" in kpis
     active_days = day_df[day_df["production_units"] > 0]

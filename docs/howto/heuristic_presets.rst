@@ -44,7 +44,7 @@ merged in order; later presets overwrite weights from earlier ones.
 .. code-block:: bash
 
     # Balanced baseline
-    fhops solve-heur examples/minitoy/scenario.yaml --out tmp/minitoy_sa.csv \
+    fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa.csv \
         --operator-preset default
 
     # Diversification-heavy profile

@@ -53,7 +53,7 @@ def main() -> int:
     synthetic_scenario = ensure_path(datasets_dir / "synthetic_small" / "scenario.yaml")
 
     scenarios = [
-        ensure_path(repo_root / "examples" / "minitoy" / "scenario.yaml"),
+        ensure_path(repo_root / "examples" / "tiny7" / "scenario.yaml"),
         ensure_path(repo_root / "examples" / "med42" / "scenario.yaml"),
         synthetic_scenario,
     ]

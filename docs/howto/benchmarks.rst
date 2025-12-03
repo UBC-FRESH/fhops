@@ -1,7 +1,7 @@
 Benchmarking Harness
 ====================
 
-FHOPS ships sample scenarios in ``examples/`` (``minitoy``, ``med42``, ``large84``, and the synthetic
+FHOPS ships sample scenarios in ``examples/`` (``tiny7``, ``med42``, ``large84``, and the synthetic
 tiers under ``examples/synthetic/``) that cover
 increasing planning horizons. The Phase 2 benchmarking harness runs the MIP and heuristic
 solvers across these datasets, captures objectives/KPIs, and stores results for inspection.
@@ -12,14 +12,14 @@ Quick Start
 .. code-block:: bash
 
    fhops bench suite --out-dir tmp/benchmarks
-   fhops bench suite --scenario examples/minitoy/scenario.yaml --scenario examples/med42/scenario.yaml --out-dir tmp/benchmarks_med
+   fhops bench suite --scenario examples/tiny7/scenario.yaml --scenario examples/med42/scenario.yaml --out-dir tmp/benchmarks_med
    fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_large --time-limit 180 --include-sa False
    fhops bench suite --scenario examples/synthetic/small/scenario.yaml --out-dir tmp/benchmarks_synth --sa-iters 200 --include-mip False
    fhops bench suite --include-ils --include-tabu --out-dir tmp/benchmarks_compare
 
 This command:
 
-* loads each bundled scenario (minitoy → med42 → large84 → synthetic-small by default),
+* loads each bundled scenario (tiny7 → med42 → large84 → synthetic-small by default),
 * solves them with the MIP (HiGHS) and simulated annealing using default limits, and
 * writes a summary table to ``tmp/benchmarks/summary.{csv,json}`` alongside per-solver
   assignment exports (``mip_assignments.csv``, ``sa_assignments.csv``).
@@ -81,7 +81,7 @@ FAQ – Watch Mode
 
 * **How do I capture a screenshot/GIF?**
   Run a short watch-enabled command (e.g.,
-  ``fhops solve-heur examples/minitoy/scenario.yaml --watch --iters 500``) and use a terminal
+  ``fhops solve-heur examples/tiny7/scenario.yaml --watch --iters 500``) and use a terminal
   recorder such as ``asciinema`` or ``ttystudio``. The sparkline now renders below the main table so
   column widths stay stable while recording.
 
@@ -154,7 +154,7 @@ Example JSON snippet:
 .. code-block:: json
 
    {
-     "scenario": "minitoy",
+     "scenario": "tiny7",
      "solver": "sa",
     "objective": 9.5,
      "runtime_s": 0.02,
@@ -224,8 +224,8 @@ sub-daily benchmarking and evaluation workflows.
 Regression Fixture
 ------------------
 
-``tests/fixtures/benchmarks/minitoy_sa.json`` records the expected seed-42 SA output for the
-minitoy scenario (200 iterations) and is exercised by ``tests/test_benchmark_harness.py``.
+``tests/fixtures/benchmarks/tiny7_sa.json`` records the expected seed-42 SA output for the
+tiny7 scenario (200 iterations) and is exercised by ``tests/test_benchmark_harness.py``.
 Use it as a reference when extending the harness or adjusting solver defaults.
 
 Future Work

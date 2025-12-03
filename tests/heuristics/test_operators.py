@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import random
 
+from fhops.optimization.heuristics.common import Schedule, generate_neighbors
 from fhops.optimization.heuristics.registry import (
     BlockInsertionOperator,
     CrossExchangeOperator,
     MobilisationShakeOperator,
     OperatorRegistry,
 )
-from fhops.optimization.heuristics.sa import Schedule, _neighbors
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import (
     Block,
     CalendarEntry,
@@ -19,6 +20,7 @@ from fhops.scenario.contract import (
     Scenario,
 )
 from fhops.scenario.contract.models import ScheduleLock, ShiftCalendarEntry
+from fhops.scheduling.systems import HarvestSystem, SystemJob
 
 
 def _build_problem(
@@ -30,6 +32,7 @@ def _build_problem(
     shift_calendar: list[ShiftCalendarEntry],
     production_rates: list[ProductionRate],
     locked: list[ScheduleLock] | None = None,
+    harvest_systems: dict[str, HarvestSystem] | None = None,
 ) -> Problem:
     scenario = Scenario(
         name="unit-test",
@@ -41,6 +44,7 @@ def _build_problem(
         shift_calendar=shift_calendar,
         production_rates=production_rates,
         locked_assignments=locked or [],
+        harvest_systems=harvest_systems or {},
     )
     return Problem.from_scenario(scenario)
 
@@ -62,7 +66,28 @@ def _run_operator(
 ) -> list[Schedule]:
     registry = OperatorRegistry.from_defaults([operator])
     rng = random.Random(rng_seed)
-    return _neighbors(pb, schedule, registry, rng, {})
+    ctx = build_operational_problem(pb)
+    return generate_neighbors(pb, schedule, registry, rng, {}, ctx)
+
+
+class ForceLoaderOperator:
+    """Test operator that forces loader work on the earliest shift."""
+
+    name = "force_loader"
+    weight = 1.0
+
+    def apply(self, context):
+        plan = {
+            machine: assignments.copy() for machine, assignments in context.schedule.plan.items()
+        }
+        loader_plan = plan.get("L1")
+        if not loader_plan:
+            return None
+        earliest_key = sorted(loader_plan.keys())[0]
+        loader_plan[earliest_key] = "B1"
+        schedule_cls = context.schedule.__class__
+        candidate = schedule_cls(plan=plan)
+        return context.sanitizer(candidate)
 
 
 def test_block_insertion_respects_windows_and_availability():
@@ -298,3 +323,72 @@ def test_mobilisation_shake_moves_when_window_allows_distance():
     candidate = neighbors[0]
     assert candidate.plan["M1"][(1, "AM")] is None
     assert candidate.plan["M1"][(3, "AM")] == "B1"
+
+
+def test_generate_neighbors_defers_downstream_roles():
+    system = HarvestSystem(
+        system_id="ground_seq",
+        jobs=[
+            SystemJob("fell", "feller_buncher", []),
+            SystemJob("process", "roadside_processor", ["fell"]),
+            SystemJob("load", "loader", ["process"]),
+        ],
+        role_headstart_shifts={"roadside_processor": 1.0, "loader": 1.0},
+    )
+    blocks = [
+        Block(
+            id="B1",
+            landing_id="L1",
+            work_required=60.0,
+            earliest_start=1,
+            latest_finish=3,
+            harvest_system_id="ground_seq",
+        )
+    ]
+    machines = [
+        Machine(id="F1", role="feller_buncher"),
+        Machine(id="P1", role="roadside_processor"),
+        Machine(id="L1", role="loader"),
+    ]
+    landings = [Landing(id="L1", daily_capacity=3)]
+    calendar = [
+        CalendarEntry(machine_id=machine.id, day=day, available=True)
+        for machine in machines
+        for day in (1, 2, 3)
+    ]
+    shift_calendar = [
+        ShiftCalendarEntry(machine_id=machine.id, day=day, shift_id="AM", available=True)
+        for machine in machines
+        for day in (1, 2, 3)
+    ]
+    production_rates = [
+        ProductionRate(machine_id="F1", block_id="B1", rate=20.0),
+        ProductionRate(machine_id="P1", block_id="B1", rate=20.0),
+        ProductionRate(machine_id="L1", block_id="B1", rate=20.0),
+    ]
+    pb = _build_problem(
+        blocks=blocks,
+        machines=machines,
+        landings=landings,
+        calendar=calendar,
+        shift_calendar=shift_calendar,
+        production_rates=production_rates,
+        harvest_systems={"ground_seq": system},
+    )
+    schedule = _build_schedule(
+        pb,
+        {
+            ("F1", 1, "AM"): "B1",
+            ("P1", 2, "AM"): "B1",
+            ("L1", 3, "AM"): "B1",
+        },
+    )
+
+    neighbors = _run_operator(pb, schedule, ForceLoaderOperator())
+    assert neighbors
+    repaired = neighbors[0]
+    loader_assignments = [day for (day, _), block in repaired.plan["L1"].items() if block == "B1"]
+    if loader_assignments:
+        assert min(loader_assignments) >= 3
+    else:
+        assert repaired.plan["L1"][(1, "AM")] is None

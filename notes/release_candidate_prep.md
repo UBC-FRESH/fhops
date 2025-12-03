@@ -16,8 +16,8 @@ Status: Draft — drive the v0.x RC process.
 2. **Packaging QA**
    - [x] ``hatch build`` wheel/sdist locally and inspect contents (license, data files, examples).
      - Built `dist/fhops-0.0.2*` via `hatch build`; artifacts include CLI entry points and docs assets.
-   - [x] Smoke install from the built wheel (fresh venv) and run ``fhops --help`` plus a minitoy solve.
-     - Created `.venv-hatch-smoke`, installed the wheel, and ran `fhops --help` + `fhops validate examples/minitoy/scenario.yaml` successfully.
+   - [x] Smoke install from the built wheel (fresh venv) and run ``fhops --help`` plus a tiny7 solve.
+     - Created `.venv-hatch-smoke`, installed the wheel, and ran `fhops --help` + `fhops validate examples/tiny7/scenario.yaml` successfully.
    - [x] Draft ``HATCH_INDEX=testpypi hatch publish`` dry-run instructions (see Section 7).
 3. **Docs & README polish**
    - [x] Tighten README quickstart for pip install + hatch workflows (see README Installation).
@@ -40,7 +40,7 @@ Status: Draft — drive the v0.x RC process.
      - ``hatch clean && hatch build``
      - ``HATCH_INDEX=testpypi hatch publish`` (requires ``HATCH_INDEX_TESTPYPI_AUTH`` or ``~/.pypirc``) ✅ 2025-11-15
      - ``python -m venv .venv-testpypi && . .venv-testpypi/bin/activate``
-     - ``pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`` and run smoke commands (`fhops --help`, `fhops validate examples/minitoy/scenario.yaml`) ✅
+     - ``pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`` and run smoke commands (`fhops --help`, `fhops validate examples/tiny7/scenario.yaml`) ✅
    - [x] Document environment variables/secrets: PyPI tokens stored via ``~/.pypirc`` or passed directly to ``twine upload`` (see AGENTS.md Release workflow).
    - [ ] After TestPyPI validation, repeat for PyPI using Twine during the release tag: ``python -m twine upload -u __token__ -p 'pypi-…' dist/*``.
 

@@ -12,15 +12,23 @@ from typing import Any, cast
 import pandas as pd
 
 from fhops.evaluation import compute_kpis
-from fhops.optimization.heuristics.registry import OperatorRegistry
-from fhops.optimization.heuristics.sa import (
+from fhops.optimization.heuristics.common import (
     Schedule,
-    _evaluate,
-    _evaluate_candidates,
-    _init_greedy,
-    _neighbors,
+    build_watch_metadata_from_debug,
+    evaluate_candidates,
+    evaluate_schedule,
+    evaluate_schedule_with_debug,
+    generate_neighbors,
+    init_greedy_schedule,
+    resolve_objective_weight_overrides,
 )
+from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
+from fhops.optimization.operational_problem import (
+    OperationalProblem,
+    build_operational_problem,
+    override_objective_weights,
+)
 from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
 from fhops.telemetry.watch import Snapshot, SnapshotSink
@@ -28,7 +36,10 @@ from fhops.telemetry.watch import Snapshot, SnapshotSink
 
 def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule:
     """Convert an assignments DataFrame into the internal Schedule plan structure."""
-    shifts = [(shift.day, shift.shift_id) for shift in pb.shifts]
+    shifts = [
+        (shift.day, shift.shift_id)
+        for shift in sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
+    ]
     plan: dict[str, dict[tuple[int, str], str | None]] = {
         machine.id: {(day, shift_id): None for (day, shift_id) in shifts}
         for machine in pb.scenario.machines
@@ -55,7 +66,10 @@ def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule
         block_id = cast(str | None, block_raw if block_raw is not None else None)
         if machine_id in plan:
             plan[machine_id][(day_value, shift_id)] = block_id
-    return Schedule(plan=plan)
+    matrix = {
+        machine.id: [plan[machine.id][key] for key in shifts] for machine in pb.scenario.machines
+    }
+    return Schedule(plan=plan, matrix=matrix)
 
 
 def _perturb_schedule(
@@ -63,18 +77,20 @@ def _perturb_schedule(
     schedule: Schedule,
     registry: OperatorRegistry,
     rng: _random.Random,
+    ctx: OperationalProblem,
     strength: int,
     operator_stats: dict[str, dict[str, float]],
 ) -> Schedule:
     """Apply a series of random operator moves to escape local optima."""
     current = schedule
     for _ in range(max(1, strength)):
-        neighbours = _neighbors(
+        neighbours = generate_neighbors(
             pb,
             current,
             registry,
             rng,
             operator_stats,
+            ctx,
             batch_size=1,
         )
         if not neighbours:
@@ -88,25 +104,39 @@ def _local_search(
     schedule: Schedule,
     registry: OperatorRegistry,
     rng: _random.Random,
+    ctx: OperationalProblem,
     batch_size: int | None,
     max_workers: int | None,
     operator_stats: dict[str, dict[str, float]],
+    use_local_repairs: bool,
 ) -> tuple[Schedule, float, bool, int]:
     """Run local search until no improving neighbour is found."""
     current = schedule
-    current_score = _evaluate(pb, current)
+    current_score = evaluate_schedule(
+        pb,
+        current,
+        ctx,
+        limit_repairs_to_dirty=use_local_repairs,
+    )
     improved = False
     local_steps = 0
     while True:
-        candidates = _neighbors(
+        candidates = generate_neighbors(
             pb,
             current,
             registry,
             rng,
             operator_stats,
+            ctx,
             batch_size=batch_size,
         )
-        evaluations = _evaluate_candidates(pb, candidates, max_workers)
+        evaluations = evaluate_candidates(
+            pb,
+            candidates,
+            ctx,
+            max_workers,
+            limit_repairs_to_dirty=use_local_repairs,
+        )
         if not evaluations:
             break
 
@@ -139,6 +169,10 @@ def solve_ils(
     watch_sink: SnapshotSink | None = None,
     watch_interval: int | None = None,
     watch_metadata: dict[str, str] | None = None,
+    watch_debug: bool = False,
+    use_local_repairs: bool = False,
+    objective_weight_overrides: dict[str, float] | None = None,
+    milp_objective: float | None = None,
 ) -> dict[str, Any]:
     """Run Iterated Local Search (optionally with MIP warm starts).
 
@@ -177,6 +211,18 @@ def solve_ils(
         Emit snapshots every ``watch_interval`` outer iterations (defaults to ``iters / 20``).
     watch_metadata : dict[str, str] | None
         Extra metadata (scenario/solver labels) attached to snapshot payloads.
+    watch_debug : bool, default=False
+        When ``True`` capture sequencing debug stats for watch snapshots (minor overhead).
+    use_local_repairs : bool, default=False
+        Limit repairs to dirty slots while scoring candidates. Final schedules are always
+        re-scored with a full repair before returning results.
+    objective_weight_overrides : dict[str, float] | None, optional
+        Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
+        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
+        mobilisation weight while we debug heuristic acceptance.
+    milp_objective : float | None, optional
+        Reference MILP objective used to report the current gap (best - MILP) in watch/telemetry
+        output. ``None`` skips gap reporting.
 
     Returns
     -------
@@ -208,7 +254,11 @@ def solve_ils(
     batch_arg = batch_size if batch_size and batch_size > 1 else None
     worker_arg = max_workers if max_workers and max_workers > 1 else None
 
-    config_snapshot = {
+    resolved_weight_overrides = resolve_objective_weight_overrides(pb, objective_weight_overrides)
+    if resolved_weight_overrides is not None:
+        resolved_weight_overrides = dict(resolved_weight_overrides)
+
+    config_snapshot: dict[str, Any] = {
         "iters": iters,
         "batch_size": batch_size,
         "max_workers": max_workers,
@@ -218,6 +268,10 @@ def solve_ils(
         "hybrid_mip_time_limit": hybrid_mip_time_limit,
         "operators": registry.weights(),
     }
+    if milp_objective is not None:
+        config_snapshot["milp_objective"] = float(milp_objective)
+    if resolved_weight_overrides:
+        config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
     context_payload = dict(telemetry_context or {})
     scenario = pb.scenario
     timeline = getattr(scenario, "timeline", None)
@@ -262,11 +316,42 @@ def solve_ils(
     improvement_window: deque[int] = deque(maxlen=window_size)
     last_watch_best: float | None = None
 
+    ctx = build_operational_problem(pb)
+    if resolved_weight_overrides:
+        ctx = override_objective_weights(ctx, resolved_weight_overrides)
+    debug_capture = bool(watch_debug and watch_sink)
+    local_repairs = bool(use_local_repairs)
+    objective_weights_snapshot = ctx.bundle.objective_weights.model_dump()
+
+    def _score_schedule(
+        schedule: Schedule,
+        *,
+        capture: bool | None = None,
+    ) -> tuple[float, dict[str, Any] | None]:
+        """Evaluate a schedule and optionally capture sequencing debug statistics."""
+
+        flag = debug_capture if capture is None else capture
+        if flag:
+            return evaluate_schedule_with_debug(
+                pb,
+                schedule,
+                ctx,
+                capture_debug=True,
+                limit_repairs_to_dirty=local_repairs,
+            )
+        return evaluate_schedule(
+            pb,
+            schedule,
+            ctx,
+            limit_repairs_to_dirty=local_repairs,
+        ), None
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
-        current = _init_greedy(pb)
-        current_score = _evaluate(pb, current)
+        current = init_greedy_schedule(pb, ctx)
+        current_score, current_debug_stats = _score_schedule(current)
         best = current
         best_score = current_score
+        best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
         initial_score = current_score
         rolling_scores.append(float(current_score))
 
@@ -301,6 +386,13 @@ def solve_ils(
                 "perturbations": str(perturbations),
                 "restarts": str(restarts),
             }
+            if debug_capture:
+                metadata.update(build_watch_metadata_from_debug(current_debug_stats))
+            elif getattr(current, "watch_stats", None):
+                metadata.update(build_watch_metadata_from_debug(current.watch_stats))
+            if milp_objective is not None:
+                metadata["milp_objective"] = f"{milp_objective:.3f}"
+                metadata["milp_gap"] = f"{best_score - milp_objective:.3f}"
             watch_sink(
                 Snapshot(
                     scenario=watch_scenario,
@@ -324,13 +416,26 @@ def solve_ils(
         total_iterations = max(1, iters)
         for iteration in range(1, total_iterations + 1):
             current, current_score, improved, steps = _local_search(
-                pb, current, registry, rng, batch_arg, worker_arg, operator_stats
+                pb,
+                current,
+                registry,
+                rng,
+                ctx,
+                batch_arg,
+                worker_arg,
+                operator_stats,
+                local_repairs,
             )
+            if debug_capture:
+                current_score, current_debug_stats = _score_schedule(current, capture=True)
+            else:
+                current_debug_stats = None
             improvement_steps += steps
             rolling_scores.append(float(current_score))
             best_improved = False
             if current_score > best_score:
                 best, best_score = current, current_score
+                best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
                 stalls = 0
                 best_improved = True
             else:
@@ -368,11 +473,17 @@ def solve_ils(
                         )
                         assignments = cast(pd.DataFrame, mip_res["assignments"]).copy()
                         hybrid_schedule = _assignments_to_schedule(pb, assignments)
-                        hybrid_score = _evaluate(pb, hybrid_schedule)
+                        hybrid_score, hybrid_debug = _score_schedule(
+                            hybrid_schedule, capture=debug_capture
+                        )
                         if hybrid_score > best_score:
                             best, best_score = hybrid_schedule, hybrid_score
+                            best_debug_stats = dict(hybrid_debug) if hybrid_debug else None
                             current = best
                             current_score = best_score
+                            current_debug_stats = (
+                                dict(best_debug_stats) if best_debug_stats else None
+                            )
                             stalls = 0
                             restarts += 1
                             continue
@@ -380,19 +491,32 @@ def solve_ils(
                         pass
                 current = best
                 current = _perturb_schedule(
-                    pb, current, registry, rng, perturbation_strength, operator_stats
+                    pb, current, registry, rng, ctx, perturbation_strength, operator_stats
                 )
-                current_score = _evaluate(pb, current)
+                current_score, current_debug_stats = _score_schedule(current)
                 stalls = 0
                 perturbations += 1
             else:
                 current = _perturb_schedule(
-                    pb, current, registry, rng, perturbation_strength, operator_stats
+                    pb, current, registry, rng, ctx, perturbation_strength, operator_stats
                 )
-                current_score = _evaluate(pb, current)
+                current_score, current_debug_stats = _score_schedule(current)
                 perturbations += 1
                 rolling_scores.append(float(current_score))
                 improvement_window.append(0)
+
+        if local_repairs:
+            if debug_capture:
+                best_score, best_debug_stats = evaluate_schedule_with_debug(
+                    pb,
+                    best,
+                    ctx,
+                    capture_debug=True,
+                    limit_repairs_to_dirty=False,
+                )
+            else:
+                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
+            current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
         rows = []
         for machine_id, plan in best.plan.items():
@@ -421,6 +545,12 @@ def solve_ils(
             "operators": registry.weights(),
             "improvement_steps": improvement_steps,
         }
+        if milp_objective is not None:
+            meta["milp_objective"] = float(milp_objective)
+            meta["milp_gap"] = float(best_score - milp_objective)
+        if resolved_weight_overrides:
+            meta["objective_weight_overrides"] = resolved_weight_overrides
+        meta["objective_weights"] = objective_weights_snapshot
         if operator_stats:
             meta["operators_stats"] = {
                 name: {
@@ -458,6 +588,14 @@ def solve_ils(
                 metrics={
                     "objective": float(best_score),
                     "initial_score": float(initial_score),
+                    **(
+                        {
+                            "milp_objective": float(milp_objective),
+                            "milp_gap": float(best_score - milp_objective),
+                        }
+                        if milp_objective is not None
+                        else {}
+                    ),
                     **numeric_kpis,
                 },
                 extra={

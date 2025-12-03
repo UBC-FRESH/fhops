@@ -1,6 +1,6 @@
 [
   {
-    "scenario": "FHOPS MiniToy",
+    "scenario": "FHOPS Tiny7",
     "algorithm": "random",
     "objective": 35.5,
     "seed": 900336294,
@@ -40,7 +40,7 @@
         "iterations": 300
       },
       "bundle": "baseline",
-      "bundle_member": "minitoy"
+      "bundle_member": "tiny7"
     }
   },
   {
@@ -132,7 +132,7 @@
     }
   },
   {
-    "scenario": "FHOPS MiniToy",
+    "scenario": "FHOPS Tiny7",
     "algorithm": "grid",
     "objective": 15.5,
     "seed": 123,
@@ -173,7 +173,7 @@
         "iterations": 300
       },
       "bundle": "baseline",
-      "bundle_member": "minitoy"
+      "bundle_member": "tiny7"
     }
   },
   {
@@ -267,7 +267,7 @@
     }
   },
   {
-    "scenario": "FHOPS MiniToy",
+    "scenario": "FHOPS Tiny7",
     "algorithm": "bayes",
     "objective": 11.5,
     "seed": 124,
@@ -308,7 +308,7 @@
         "iterations": 300
       },
       "bundle": "baseline",
-      "bundle_member": "minitoy"
+      "bundle_member": "tiny7"
     }
   },
   {
@@ -402,7 +402,7 @@
     }
   },
   {
-    "scenario": "FHOPS MiniToy",
+    "scenario": "FHOPS Tiny7",
     "algorithm": "tabu",
     "objective": 32.5,
     "seed": 556,
@@ -437,11 +437,11 @@
         "stall_limit": 160
       },
       "bundle": "baseline",
-      "bundle_member": "minitoy"
+      "bundle_member": "tiny7"
     }
   },
   {
-    "scenario": "FHOPS MiniToy",
+    "scenario": "FHOPS Tiny7",
     "algorithm": "ils",
     "objective": 10.5,
     "seed": 321,
@@ -479,7 +479,7 @@
         "stall_limit": 10
       },
       "bundle": "baseline",
-      "bundle_member": "minitoy"
+      "bundle_member": "tiny7"
     }
   },
   {

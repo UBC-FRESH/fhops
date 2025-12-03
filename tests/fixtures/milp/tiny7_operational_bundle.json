@@ -1,0 +1,654 @@
+{
+  "machines": [
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "H5",
+    "H6",
+    "H7",
+    "H8",
+    "H9"
+  ],
+  "blocks": [
+    "B01",
+    "B02"
+  ],
+  "days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "shifts": [
+    {
+      "day": 1,
+      "shift_id": "S1"
+    },
+    {
+      "day": 2,
+      "shift_id": "S1"
+    },
+    {
+      "day": 3,
+      "shift_id": "S1"
+    },
+    {
+      "day": 4,
+      "shift_id": "S1"
+    },
+    {
+      "day": 5,
+      "shift_id": "S1"
+    },
+    {
+      "day": 6,
+      "shift_id": "S1"
+    },
+    {
+      "day": 7,
+      "shift_id": "S1"
+    }
+  ],
+  "machine_roles": {
+    "H1": "feller_buncher",
+    "H2": "feller_buncher",
+    "H3": "grapple_skidder",
+    "H4": "processor",
+    "H5": "processor",
+    "H6": "processor",
+    "H7": "loader",
+    "H8": "loader",
+    "H9": "loader"
+  },
+  "machine_daily_hours": {
+    "H1": 24.0,
+    "H2": 24.0,
+    "H3": 24.0,
+    "H4": 24.0,
+    "H5": 24.0,
+    "H6": 24.0,
+    "H7": 24.0,
+    "H8": 24.0,
+    "H9": 24.0
+  },
+  "production_rates": [
+    {
+      "machine_id": "H1",
+      "block_id": "B01",
+      "rate": 1194.708925
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B01",
+      "rate": 1194.708925
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B01",
+      "rate": 1480.641393
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B01",
+      "rate": 569.826226
+    },
+    {
+      "machine_id": "H5",
+      "block_id": "B01",
+      "rate": 569.826226
+    },
+    {
+      "machine_id": "H6",
+      "block_id": "B01",
+      "rate": 569.826226
+    },
+    {
+      "machine_id": "H7",
+      "block_id": "B01",
+      "rate": 937.184825
+    },
+    {
+      "machine_id": "H8",
+      "block_id": "B01",
+      "rate": 937.184825
+    },
+    {
+      "machine_id": "H9",
+      "block_id": "B01",
+      "rate": 937.184825
+    },
+    {
+      "machine_id": "H1",
+      "block_id": "B02",
+      "rate": 1220.906942
+    },
+    {
+      "machine_id": "H2",
+      "block_id": "B02",
+      "rate": 1220.906942
+    },
+    {
+      "machine_id": "H3",
+      "block_id": "B02",
+      "rate": 1332.369187
+    },
+    {
+      "machine_id": "H4",
+      "block_id": "B02",
+      "rate": 531.895933
+    },
+    {
+      "machine_id": "H5",
+      "block_id": "B02",
+      "rate": 531.895933
+    },
+    {
+      "machine_id": "H6",
+      "block_id": "B02",
+      "rate": 531.895933
+    },
+    {
+      "machine_id": "H7",
+      "block_id": "B02",
+      "rate": 802.411354
+    },
+    {
+      "machine_id": "H8",
+      "block_id": "B02",
+      "rate": 802.411354
+    },
+    {
+      "machine_id": "H9",
+      "block_id": "B02",
+      "rate": 802.411354
+    }
+  ],
+  "work_required": {
+    "B01": 2007.912755,
+    "B02": 2406.789997
+  },
+  "windows": {
+    "B01": [
+      1,
+      7
+    ],
+    "B02": [
+      1,
+      7
+    ]
+  },
+  "landing_for_block": {
+    "B01": "L1",
+    "B02": "L2"
+  },
+  "landing_capacity": {
+    "L1": 1,
+    "L2": 1
+  },
+  "availability_day": [
+    {
+      "machine_id": "H1",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H1",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H2",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H3",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H3",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H3",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H3",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H3",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H3",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H3",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H4",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H5",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H5",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H5",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H5",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H5",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H5",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H5",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H6",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H6",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H6",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H6",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H6",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H6",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H6",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H7",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H7",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H7",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H7",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H7",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H7",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H7",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H8",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H8",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H8",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H8",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H8",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H8",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H8",
+      "day": 7,
+      "available": 1
+    },
+    {
+      "machine_id": "H9",
+      "day": 1,
+      "available": 1
+    },
+    {
+      "machine_id": "H9",
+      "day": 2,
+      "available": 1
+    },
+    {
+      "machine_id": "H9",
+      "day": 3,
+      "available": 1
+    },
+    {
+      "machine_id": "H9",
+      "day": 4,
+      "available": 1
+    },
+    {
+      "machine_id": "H9",
+      "day": 5,
+      "available": 1
+    },
+    {
+      "machine_id": "H9",
+      "day": 6,
+      "available": 1
+    },
+    {
+      "machine_id": "H9",
+      "day": 7,
+      "available": 1
+    }
+  ],
+  "availability_shift": [],
+  "objective_weights": {
+    "production": 1.0,
+    "mobilisation": 0.5,
+    "transitions": 0.0,
+    "landing_surplus": 0.0
+  },
+  "block_system": {
+    "B01": "ground_fb_skid",
+    "B02": "ground_fb_skid"
+  },
+  "systems": {
+    "ground_fb_skid": {
+      "system_id": "ground_fb_skid",
+      "loader_batch_volume_m3": 30.0,
+      "roles": [
+        {
+          "job_name": "felling",
+          "role": "feller_buncher",
+          "prerequisites": [],
+          "upstream_roles": [],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 2
+        },
+        {
+          "job_name": "primary_transport",
+          "role": "grapple_skidder",
+          "prerequisites": [
+            "felling"
+          ],
+          "upstream_roles": [
+            "feller_buncher"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "processing",
+          "role": "processor",
+          "prerequisites": [
+            "primary_transport"
+          ],
+          "upstream_roles": [
+            "grapple_skidder"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": false,
+          "count": 1
+        },
+        {
+          "job_name": "loading",
+          "role": "loader",
+          "prerequisites": [
+            "processing"
+          ],
+          "upstream_roles": [
+            "processor"
+          ],
+          "buffer_shifts": 0.0,
+          "is_loader": true,
+          "count": 3
+        }
+      ]
+    }
+  },
+  "mobilisation_params": {
+    "H1": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H2": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H3": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H4": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H5": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H6": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H7": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H8": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    },
+    "H9": {
+      "walk_cost_per_meter": 0.02,
+      "move_cost_flat": 320.0,
+      "walk_threshold_m": 850.0,
+      "setup_cost": 50.0
+    }
+  },
+  "mobilisation_distances": [
+    {
+      "prev_block": "B01",
+      "next_block": "B02",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B02",
+      "next_block": "B01",
+      "distance": 162.0
+    },
+    {
+      "prev_block": "B01",
+      "next_block": "B01",
+      "distance": 0.0
+    },
+    {
+      "prev_block": "B02",
+      "next_block": "B02",
+      "distance": 0.0
+    }
+  ]
+}

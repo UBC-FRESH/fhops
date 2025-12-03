@@ -7,6 +7,7 @@ from collections import defaultdict
 import pyomo.environ as pyo
 
 from fhops.optimization.mip.constraints.system_sequencing import apply_system_sequencing_constraints
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
@@ -38,7 +39,7 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     * ``ObjectiveWeights.mobilisation`` – coefficient for mobilisation spend derived from transition
       binaries.
     * ``ObjectiveWeights.transitions`` – optional penalty for the number of transitions itself.
-    * ``ObjectiveWeights.landing_slack`` – enables soft landing-capacity violations using slack
+    * ``ObjectiveWeights.landing_surplus`` – enables soft landing-capacity overages using surplus
       variables.
 
     Any change to this function should be reflected in ``docs/howto/thesis_eval.rst`` and the MIP
@@ -46,6 +47,7 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     """
 
     sc = pb.scenario
+    system_ctx = build_operational_problem(pb)
 
     machines = [machine.id for machine in sc.machines]
     blocks = [block.id for block in sc.blocks]
@@ -93,7 +95,13 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         return 1 if earliest <= day <= latest else 0
 
     model.x = pyo.Var(model.M, model.B, model.S, domain=pyo.Binary)
-    model.prod = pyo.Var(model.M, model.B, model.S, domain=pyo.NonNegativeReals)
+    model.prod = pyo.Var(
+        model.M,
+        model.B,
+        model.S,
+        domain=pyo.NonNegativeReals,
+        initialize=0.0,
+    )
 
     production_expr = sum(
         model.prod[mach, blk, (day, shift_id)]
@@ -104,19 +112,19 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
 
     mobil_cost_expr = 0
     transition_expr = 0
-    landing_slack_expr = 0
+    landing_surplus_expr = 0
 
     transition_weight = 0.0
-    landing_slack_weight = 0.0
+    landing_surplus_weight = 0.0
     prod_weight = 1.0
     mobil_weight = 1.0
     if sc.objective_weights is not None:
         prod_weight = sc.objective_weights.production
         mobil_weight = sc.objective_weights.mobilisation
         transition_weight = sc.objective_weights.transitions
-        landing_slack_weight = sc.objective_weights.landing_slack
+        landing_surplus_weight = sc.objective_weights.landing_surplus
     needs_transitions = bool(mobil_params) or transition_weight > 0.0
-    enable_landing_slack = landing_slack_weight > 0.0
+    enable_landing_surplus = landing_surplus_weight > 0.0
 
     prev_shift_map: dict[tuple[int, str], tuple[int, str]] = {}
     for idx in range(1, len(shift_tuples)):
@@ -230,32 +238,35 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     for block in sc.blocks:
         blocks_by_landing[block.landing_id].append(block.id)
 
-    model.L = pyo.Set(initialize=list(landing_capacity.keys()))
+    landing_ids = sorted(blocks_by_landing.keys())
+    model.L = pyo.Set(initialize=landing_ids)
 
-    if enable_landing_slack:
-        model.landing_slack = pyo.Var(model.L, model.S, domain=pyo.NonNegativeReals)
+    if enable_landing_surplus:
+        model.landing_surplus = pyo.Var(model.L, model.S, domain=pyo.NonNegativeReals)
 
         def landing_cap_rule(mdl, landing_id, day, shift_id):
+            block_ids = blocks_by_landing.get(landing_id, [])
+            if not block_ids or len(mdl.M) == 0:
+                return pyo.Constraint.Skip
             assignments = sum(
-                mdl.x[mach, blk, (day, shift_id)]
-                for mach in model.M
-                for blk in blocks_by_landing.get(landing_id, [])
+                mdl.x[mach, blk, (day, shift_id)] for mach in model.M for blk in block_ids
             )
             capacity = landing_capacity.get(landing_id, 0)
-            return assignments <= capacity + mdl.landing_slack[landing_id, (day, shift_id)]
+            return assignments <= capacity + mdl.landing_surplus[landing_id, (day, shift_id)]
 
-        landing_slack_expr = sum(
-            model.landing_slack[landing_id, (day, shift_id)]
+        landing_surplus_expr = sum(
+            model.landing_surplus[landing_id, (day, shift_id)]
             for landing_id in model.L
             for day, shift_id in model.S
         )
     else:
 
         def landing_cap_rule(mdl, landing_id, day, shift_id):
+            block_ids = blocks_by_landing.get(landing_id, [])
+            if not block_ids or len(mdl.M) == 0:
+                return pyo.Constraint.Skip
             assignments = sum(
-                mdl.x[mach, blk, (day, shift_id)]
-                for mach in model.M
-                for blk in blocks_by_landing.get(landing_id, [])
+                mdl.x[mach, blk, (day, shift_id)] for mach in model.M for blk in block_ids
             )
             capacity = landing_capacity.get(landing_id, 0)
             return assignments <= capacity
@@ -267,11 +278,18 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
         obj_expr -= mobil_weight * mobil_cost_expr
     if needs_transitions and transition_weight > 0.0:
         obj_expr -= transition_weight * transition_expr
-    if enable_landing_slack and landing_slack_weight > 0.0:
-        obj_expr -= landing_slack_weight * landing_slack_expr
+    if enable_landing_surplus and landing_surplus_weight > 0.0:
+        obj_expr -= landing_surplus_weight * landing_surplus_expr
     model.obj = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
-    apply_system_sequencing_constraints(model, pb, shift_tuples)
+    sequencing_enabled = getattr(sc, "enforce_sequencing", True)
+    apply_system_sequencing_constraints(
+        model,
+        pb,
+        shift_tuples,
+        system_ctx=system_ctx,
+        sequencing_enabled=sequencing_enabled,
+    )
 
     for lock in locked_assignments:
         for day, shift_id in model.S:

@@ -1,0 +1,3 @@
+from_block,to_block,distance_m
+B01,B02,162
+B02,B01,162

@@ -10,7 +10,7 @@ block geometries.
 
    .. code-block:: bash
 
-      fhops geo distances examples/minitoy/minitoy_blocks.geojson --out examples/minitoy/minitoy_block_distances.csv
+      fhops geo distances examples/tiny7/tiny7_blocks.geojson --out examples/tiny7/tiny7_block_distances.csv
 
 3. Reference the generated CSV when populating `MobilisationConfig.distance_csv` **or** place it next
    to the scenario YAML and FHOPS will auto-load it (`<scenario_slug>_block_distances.csv`).
@@ -20,7 +20,7 @@ block geometries.
    data is present, making it easy to track spend alongside production.
 
 GeoJSON is optional—advanced users may provide precomputed matrices directly. Ensure all data uses
-consistent projections to avoid mis-scaled distances. The sample ``examples/minitoy`` and
+consistent projections to avoid mis-scaled distances. The sample ``examples/tiny7`` and
 ``examples/med42`` scenarios now ship with mobilisation configs and distance matrices so you can
 experiment immediately; run ``fhops bench suite`` to compare solver performance and inspect the
 ``kpi_mobilisation_cost`` and ``kpi_mobilisation_cost_by_machine`` columns in the generated summary.
@@ -35,12 +35,12 @@ Solve the medium benchmark with mobilisation enabled and inspect spend:
    fhops solve-mip examples/med42/scenario.yaml --out tmp/med42_mip.csv
    fhops evaluate examples/med42/scenario.yaml tmp/med42_mip.csv | grep mobilisation_cost
 
-For quick experimentation on the minitoy scenario:
+For quick experimentation on the tiny7 scenario:
 
 .. code-block:: bash
 
-   fhops solve-heur examples/minitoy/scenario.yaml --out tmp/minitoy_sa.csv --iters 500
-   fhops evaluate examples/minitoy/scenario.yaml tmp/minitoy_sa.csv | grep mobilisation_cost
+   fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa.csv --iters 500
+   fhops evaluate examples/tiny7/scenario.yaml tmp/tiny7_sa.csv | grep mobilisation_cost
 
 Tooling Notes
 -------------
@@ -67,7 +67,7 @@ Troubleshooting & Diagnostics
 
   .. code-block:: bash
 
-     ogr2ogr -t_srs EPSG:3005 minitoy_bc_albers.geojson minitoy_wgs84.geojson
+     ogr2ogr -t_srs EPSG:3005 tiny7_bc_albers.geojson tiny7_wgs84.geojson
 
   The CLI accepts ``--crs EPSG:XXXX`` to override the auto-detected CRS when a file lacks metadata.
   FHOPS warns when it encounters angular units; rerun the command after reprojecting.

@@ -16,6 +16,7 @@ from fhops.scenario.contract.models import (
     CalendarEntry,
     CrewAssignment,
     GeoMetadata,
+    HarvestSystem,
     Landing,
     Machine,
     ObjectiveWeights,
@@ -191,6 +192,14 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
             meta["shift_calendar"]
         )
 
+    harvest_systems_payload: dict[str, object] | None = None
+    if "harvest_systems" in data_section:
+        harvest_systems_path = require("harvest_systems")
+        with harvest_systems_path.open("r", encoding="utf-8") as handle:
+            harvest_systems_payload = yaml.safe_load(handle) or {}
+    elif "harvest_systems" in meta:
+        harvest_systems_payload = meta["harvest_systems"]
+
     scenario = Scenario(
         name=meta["name"],
         num_days=int(meta["num_days"]),
@@ -261,6 +270,12 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     if "objective_weights" in meta:
         weights = TypeAdapter(ObjectiveWeights).validate_python(meta["objective_weights"])
         scenario = scenario.model_copy(update={"objective_weights": weights})
+
+    if harvest_systems_payload is not None:
+        harvest_systems = TypeAdapter(dict[str, HarvestSystem]).validate_python(
+            harvest_systems_payload
+        )
+        scenario = scenario.model_copy(update={"harvest_systems": harvest_systems})
 
     _emit_block_range_warnings(cast(list[dict[str, object]], blocks_raw), scenario.name)
     return scenario

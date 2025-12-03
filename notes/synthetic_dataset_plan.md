@@ -18,7 +18,7 @@ Status: Draft — groundwork for thesis-aligned datasets.
 
 | Tier   | Blocks | Machines | Landings | Days | Shifts/Day | Landing Capacity | Work (m³) | Prod. Rate (m³/hr) | Notes |
 |--------|--------|----------|----------|------|------------|------------------|-----------|---------------------|-------|
-| Small  | 4–6    | 2–3      | 1        | 6–8  | 1          | 1–2              | 6–10      | 8–14                | Mirrors minitoy scale; no downtime. |
+| Small  | 4–6    | 2–3      | 1        | 6–8  | 1          | 1–2              | 6–10      | 8–14                | Mirrors tiny7 scale; no downtime. |
 | Medium | 8–12   | 4–6      | 2–3      | 10–14| 1          | 2–3              | 8–14      | 8–16                | Introduce short blackouts and role-mixed crews. |
 | Large  | 14–24  | 6–10     | 3–5      | 16–24| 2          | 2–4              | 10–18     | 10–18               | Two-shift calendars, extended downtime, optional system presets. |
 

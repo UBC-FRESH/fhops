@@ -10,9 +10,16 @@ from typing import Any, ClassVar
 
 import pandas as pd
 
-from fhops.evaluation.playback.aggregates import DAY_SUMMARY_COLUMNS, SHIFT_SUMMARY_COLUMNS
+from fhops.evaluation.playback import PlaybackConfig, run_playback
+from fhops.evaluation.playback.aggregates import (
+    DAY_SUMMARY_COLUMNS,
+    SHIFT_SUMMARY_COLUMNS,
+    day_dataframe,
+    shift_dataframe,
+)
+from fhops.evaluation.sequencing import build_role_priority
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
-from fhops.scheduling.mobilisation import build_distance_lookup
 
 from .aggregates import compute_makespan_metrics, compute_utilisation_metrics
 
@@ -26,6 +33,7 @@ class KPIResult(Mapping[str, float | int | str]):
     totals: dict[str, float | int | str] = field(default_factory=dict)
     shift_calendar: pd.DataFrame | None = None
     day_calendar: pd.DataFrame | None = None
+    sequencing_debug: dict[str, object] | None = None
 
     SHIFT_COLUMNS: ClassVar[tuple[str, ...]] = tuple(SHIFT_SUMMARY_COLUMNS)
     DAY_COLUMNS: ClassVar[tuple[str, ...]] = tuple(DAY_SUMMARY_COLUMNS)
@@ -76,206 +84,121 @@ class KPIResult(Mapping[str, float | int | str]):
         )
 
 
-def _system_metadata(pb: Problem):
-    """Return allowed machine roles, sequencing prereqs, and role lookup for each block."""
-    sc = pb.scenario
-    systems = sc.harvest_systems or {}
-    allowed: dict[str, set[str] | None] = {}
-    prereqs: dict[tuple[str, str], set[str]] = {}
-    for block in sc.blocks:
-        system = systems.get(block.harvest_system_id) if block.harvest_system_id else None
-        if not system:
-            allowed[block.id] = None
-            continue
-        job_roles = {job.name: job.machine_role for job in system.jobs}
-        allowed[block.id] = {job.machine_role for job in system.jobs}
-        for job in system.jobs:
-            prereq_roles = {job_roles[name] for name in job.prerequisites if name in job_roles}
-            if prereq_roles:
-                prereqs[(block.id, job.machine_role)] = prereq_roles
-    machine_roles = {machine.id: getattr(machine, "role", None) for machine in sc.machines}
-    available_roles = {role for role in machine_roles.values() if role}
-    if available_roles:
-        for block_id, allowed_roles in list(allowed.items()):
-            if allowed_roles is None:
-                continue
-            filtered = {role for role in allowed_roles if role in available_roles}
-            allowed[block_id] = filtered or None
-        filtered_prereqs: dict[tuple[str, str], set[str]] = {}
-        for key, prereq_set in prereqs.items():
-            role = key[1]
-            if role not in available_roles:
-                continue
-            filtered = {req for req in prereq_set if req in available_roles}
-            filtered_prereqs[key] = filtered
-        prereqs = filtered_prereqs
-    else:
-        allowed = {block_id: None for block_id in allowed}
-        prereqs = {}
-    return allowed, prereqs, machine_roles
-
-
 def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
-    """Compute production, mobilisation, utilisation, and sequencing KPIs from assignments.
+    """Compute production, mobilisation, utilisation, and sequencing KPIs from assignments."""
 
-    Parameters
-    ----------
-    pb:
-        Problem produced by ``Problem.from_scenario``; used to pull mobilisation configs,
-        production rates, and harvest-system sequencing metadata.
-    assignments:
-        DataFrame in the format emitted by solvers/playback adapters (must include ``machine_id``,
-        ``block_id``, ``day``; optional ``shift_id`` defaults to ``S1``).
+    playback_result = run_playback(pb, assignments, config=PlaybackConfig())
+    shift_df = shift_dataframe(playback_result)
+    day_df = day_dataframe(playback_result)
 
-    Returns
-    -------
-    KPIResult
-        ``totals`` contains scalar KPIs (production, mobilisation cost, utilisation summaries, etc.).
-        Calendars are omitted by default; use ``fhops.evaluate`` CLI or ``PlaybackResult`` helpers when
-        you need the full shift/day tables alongside the scalar metrics.
-    """
+    delivered_total = getattr(playback_result, "delivered_total", None)
+    remaining_work_total = getattr(playback_result, "remaining_work_total", None)
 
     sc = pb.scenario
-    rate = {(r.machine_id, r.block_id): r.rate for r in sc.production_rates}
-    remaining = {block.id: block.work_required for block in sc.blocks}
+    total_required = sum(block.work_required for block in sc.blocks)
 
     mobilisation_cost = 0.0
-    mobilisation = sc.mobilisation
-    mobilisation_lookup = build_distance_lookup(mobilisation)
-    mobil_params = (
-        {param.machine_id: param for param in mobilisation.machine_params}
-        if mobilisation is not None
-        else {}
-    )
-    previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
     mobilisation_by_machine: dict[str, float] = defaultdict(float)
-    landing_lookup = {block.id: block.landing_id for block in sc.blocks}
     mobilisation_by_landing: dict[str, float] = defaultdict(float)
-
-    allowed_roles, prereq_roles, machine_roles = _system_metadata(pb)
-    system_blocks = {block.id for block in sc.blocks if block.harvest_system_id}
-    seq_cumulative: defaultdict[tuple[str, str], int] = defaultdict(int)
-    seq_violations = 0
+    fallback_prod = 0.0
+    completed_blocks: set[str] = set()
+    seq_violation_events = 0
     seq_violation_blocks: set[str] = set()
     seq_violation_days: set[tuple[str, int]] = set()
     seq_reason_counts: Counter[str] = Counter()
 
-    total_prod = 0.0
-    days_with_work: set[int] = set()
-    shift_keys_with_work: set[tuple[int, str]] = set()
-    sorted_assignments = assignments.sort_values(["day", "machine_id", "block_id"])
-    for day in sorted_assignments["day"].drop_duplicates().sort_values():
-        day = int(day)
-        day_counts: defaultdict[tuple[str, str], int] = defaultdict(int)
-        day_rows = sorted_assignments[sorted_assignments["day"] == day]
-        for _, row in day_rows.iterrows():
-            machine_id = row["machine_id"]
-            block_id = row["block_id"]
-            shift_id = (
-                row["shift_id"] if "shift_id" in row and not pd.isna(row["shift_id"]) else "S1"
-            )
-            role = machine_roles.get(machine_id)
-            allowed = allowed_roles.get(block_id)
+    for record in playback_result.records:
+        production = float(record.production_units or 0.0)
+        fallback_prod += production
+        if record.mobilisation_cost:
+            cost = float(record.mobilisation_cost)
+            mobilisation_cost += cost
+            mobilisation_by_machine[record.machine_id] += cost
+            landing_id = record.metadata.get("landing_id") or record.landing_id
+            if landing_id is not None:
+                mobilisation_by_landing[str(landing_id)] += cost
+        if record.metadata.get("block_completed") and record.block_id:
+            completed_blocks.add(record.block_id)
+        violation = record.metadata.get("sequencing_violation")
+        if violation and record.block_id:
+            seq_violation_events += 1
+            seq_violation_blocks.add(record.block_id)
+            seq_violation_days.add((record.block_id, record.day))
+            seq_reason_counts[str(violation)] += 1
 
-            violation_reason: str | None = None
-            if allowed is not None and role is None:
-                violation_reason = "unknown_role"
-            elif allowed is not None and role not in allowed:
-                violation_reason = "forbidden_role"
-            elif role is not None:
-                prereqs = prereq_roles.get((block_id, role))
-                if prereqs:
-                    role_key = (block_id, role)
-                    required = seq_cumulative[role_key] + day_counts[role_key] + 1
-                    available = min(seq_cumulative[(block_id, prereq)] for prereq in prereqs)
-                    if available < required:
-                        violation_reason = "missing_prereq"
-
-            if violation_reason is not None:
-                seq_violations += 1
-                seq_violation_blocks.add(block_id)
-                seq_violation_days.add((block_id, day))
-                seq_reason_counts[violation_reason] += 1
-
-            if role is not None:
-                day_counts[(block_id, role)] += 1
-
-            production = min(rate.get((machine_id, block_id), 0.0), remaining[block_id])
-            remaining[block_id] = max(0.0, remaining[block_id] - production)
-            total_prod += production
-            if production > 0:
-                days_with_work.add(day)
-                shift_keys_with_work.add((day, str(shift_id)))
-
-            params = mobil_params.get(machine_id)
-            prev = previous_block.get(machine_id)
-            if params is not None and prev is not None and prev != block_id:
-                distance = mobilisation_lookup.get((prev, block_id), 0.0)
-                cost = params.setup_cost
-                if distance <= params.walk_threshold_m:
-                    cost += params.walk_cost_per_meter * distance
-                else:
-                    cost += params.move_cost_flat
-                mobilisation_cost += cost
-                mobilisation_by_machine[machine_id] += cost
-                landing_id = landing_lookup.get(block_id)
-                if landing_id:
-                    mobilisation_by_landing[landing_id] += cost
-            previous_block[machine_id] = block_id
-
-        for (blk, role), count in day_counts.items():
-            seq_cumulative[(blk, role)] += count
-
-    completed_blocks = sum(1 for rem in remaining.values() if rem <= 1e-6)
-
+    if delivered_total is None:
+        delivered_total = fallback_prod
     result: dict[str, float | int | str] = {
-        "total_production": total_prod,
-        "completed_blocks": float(completed_blocks),
+        "total_production": float(delivered_total),
+        "completed_blocks": float(len(completed_blocks)),
     }
-    if mobilisation is not None:
+    if remaining_work_total is not None:
+        staged_volume = float(remaining_work_total)
+        residual = float(total_required - float(delivered_total))
+        if residual >= 0 and abs(staged_volume - residual) <= 1e-6:
+            staged_volume = residual
+        if abs(staged_volume) <= 1e-6:
+            staged_volume = 0.0
+        result["staged_production"] = staged_volume
+        result["remaining_work_total"] = staged_volume
+        adjusted_total = float(total_required) - staged_volume
+        if adjusted_total >= 0:
+            result["total_production"] = adjusted_total
+    if mobilisation_cost > 0:
         result["mobilisation_cost"] = mobilisation_cost
-        if mobilisation_by_machine:
-            result["mobilisation_cost_by_machine"] = json.dumps(
-                {
-                    machine: round(cost, 3)
-                    for machine, cost in sorted(mobilisation_by_machine.items())
-                }
-            )
-        if mobilisation_by_landing:
-            result["mobilisation_cost_by_landing"] = json.dumps(
-                {
-                    landing: round(cost, 3)
-                    for landing, cost in sorted(mobilisation_by_landing.items())
-                }
-            )
+        result["mobilisation_cost_by_machine"] = json.dumps(
+            {machine: round(cost, 3) for machine, cost in sorted(mobilisation_by_machine.items())}
+        )
+        result["mobilisation_cost_by_landing"] = json.dumps(
+            {landing: round(cost, 3) for landing, cost in sorted(mobilisation_by_landing.items())}
+        )
 
+    system_blocks = {block.id for block in sc.blocks if block.harvest_system_id}
     if system_blocks:
-        result["sequencing_violation_count"] = seq_violations
+        result["sequencing_violation_count"] = seq_violation_events
         result["sequencing_violation_blocks"] = len(seq_violation_blocks)
         result["sequencing_violation_days"] = len(seq_violation_days)
-        clean_blocks = max(len(system_blocks) - len(seq_violation_blocks), 0)
+        clean_blocks = max(len(system_blocks - seq_violation_blocks), 0)
         result["sequencing_clean_blocks"] = clean_blocks
         result["sequencing_violation_breakdown"] = (
             ", ".join(f"{reason}={count}" for reason, count in sorted(seq_reason_counts.items()))
             if seq_reason_counts
             else "none"
         )
+
     non_default_repairs = [
         machine.id
-        for machine in pb.scenario.machines
+        for machine in sc.machines
         if getattr(machine, "repair_usage_hours", None) not in (None, 10000)
     ]
     if non_default_repairs:
         result["repair_usage_alert"] = ", ".join(sorted(non_default_repairs))
-    from fhops.evaluation.playback import PlaybackConfig, run_playback
-    from fhops.evaluation.playback.aggregates import day_dataframe, shift_dataframe
 
-    playback_result = run_playback(pb, assignments, config=PlaybackConfig())
-    shift_df = shift_dataframe(playback_result)
-    day_df = day_dataframe(playback_result)
-
+    ctx = build_operational_problem(pb)
     utilisation_metrics = compute_utilisation_metrics(shift_df, day_df)
+    role_metric = utilisation_metrics.get("utilisation_ratio_by_role")
+    if role_metric:
+        role_priority = build_role_priority(ctx)
+        ordered_payload = json.loads(role_metric)
+        ordered_items = sorted(
+            ordered_payload.items(),
+            key=lambda item: (role_priority.get(item[0], 999), item[0]),
+        )
+        utilisation_metrics["utilisation_ratio_by_role"] = json.dumps(
+            {role: value for role, value in ordered_items}
+        )
     result.update(utilisation_metrics)
+
+    if not shift_df.empty and "production_units" in shift_df.columns:
+        productive_rows = shift_df[shift_df["production_units"] > 0]
+        days_with_work = set(int(day) for day in productive_rows["day"].tolist())
+        shift_keys_with_work = {
+            (int(row["day"]), str(row["shift_id"]))
+            for _, row in productive_rows[["day", "shift_id"]].iterrows()
+        }
+    else:
+        days_with_work = set()
+        shift_keys_with_work = set()
 
     makespan_metrics = compute_makespan_metrics(
         pb,
@@ -286,7 +209,9 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
     result.update(makespan_metrics)
 
     total_hours_recorded = float(shift_df.get("total_hours", pd.Series(dtype=float)).sum())
-    avg_production_rate = (total_prod / total_hours_recorded) if total_hours_recorded > 0 else 0.0
+    avg_production_rate = (
+        delivered_total / total_hours_recorded if total_hours_recorded > 0 else 0.0
+    )
 
     if "downtime_hours" in shift_df.columns:
         total_downtime_hours = float(shift_df["downtime_hours"].sum())
@@ -313,7 +238,6 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
         total_weather_severity = float(shift_df["weather_severity_total"].sum())
         if total_weather_severity > 0:
             result["weather_severity_total"] = total_weather_severity
-            # Approximate weather impact by scaling total affected severity with average shift hours.
             average_shift_hours = (
                 (total_hours_recorded / len(shift_df)) if len(shift_df) > 0 else 0.0
             )
@@ -332,4 +256,9 @@ def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
                 }
             )
 
-    return KPIResult(totals=result, shift_calendar=shift_df, day_calendar=day_df)
+    return KPIResult(
+        totals=result,
+        shift_calendar=shift_df,
+        day_calendar=day_df,
+        sequencing_debug=playback_result.sequencing_debug,
+    )

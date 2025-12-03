@@ -30,4 +30,4 @@ API Reference
 Profiling Notes
 ---------------
 
-Benchmarks (``tmp/sa_batch_profile.csv`` and ``tmp/sa_batch_profile_long.csv``) show that threaded evaluation adds ~5–6× overhead on minitoy/med42/large84, so keep parallel options opt-in until future workloads justify them.
+Benchmarks (``tmp/sa_batch_profile.csv`` and ``tmp/sa_batch_profile_long.csv``) show that threaded evaluation adds ~5–6× overhead on tiny7/med42/large84, so keep parallel options opt-in until future workloads justify them.

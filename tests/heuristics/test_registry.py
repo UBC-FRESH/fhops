@@ -5,8 +5,9 @@ from __future__ import annotations
 import random
 
 from fhops.optimization.heuristics import OperatorContext, OperatorRegistry, Schedule
+from fhops.optimization.heuristics.common import generate_neighbors
 from fhops.optimization.heuristics.registry import MoveOperator, SwapOperator
-from fhops.optimization.heuristics.sa import _neighbors
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem, Scenario
 
 
@@ -25,6 +26,10 @@ def _dummy_problem() -> Problem:
 
 def _dummy_schedule() -> Schedule:
     return Schedule(plan={})
+
+
+def _context_kwargs() -> dict:
+    return {"shift_keys": tuple(), "shift_index": {}}
 
 
 def test_registry_defaults_expose_swap_and_move():
@@ -49,6 +54,7 @@ def test_enabled_iterator_uses_sanitizer_context():
         schedule=_dummy_schedule(),
         sanitizer=lambda schedule: schedule,
         rng=random,
+        **_context_kwargs(),
     )
     for operator in registry.enabled():
         result = operator.apply(context)
@@ -63,13 +69,16 @@ def test_neighbors_batch_limit():
         schedule=_dummy_schedule(),
         sanitizer=lambda schedule: schedule,
         rng=random,
+        **_context_kwargs(),
     )
-    neighbours = _neighbors(
+    ctx = build_operational_problem(context.problem)
+    neighbours = generate_neighbors(
         context.problem,
         context.schedule,
         registry,
         context.rng,
         {},
+        ctx,
         batch_size=2,
     )
     assert len(neighbours) <= 2

@@ -61,10 +61,10 @@ After the licence is active you can run FHOPS MIP commands with ``--driver gurob
 ## Validate & Evaluate
 
 ```bash
-fhops validate examples/minitoy/scenario.yaml
-fhops solve-mip examples/minitoy/scenario.yaml --out examples/minitoy/out/mip_solution.csv
-fhops solve-heur examples/minitoy/scenario.yaml --out examples/minitoy/out/sa_solution.csv
-fhops evaluate examples/minitoy/scenario.yaml examples/minitoy/out/mip_solution.csv
+fhops validate examples/tiny7/scenario.yaml
+fhops solve-mip examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
+fhops solve-heur examples/tiny7/scenario.yaml --out examples/tiny7/out/sa_solution.csv
+fhops evaluate examples/tiny7/scenario.yaml examples/tiny7/out/mip_solution.csv
 ```
 
 ```bash
@@ -184,6 +184,6 @@ for real multi-core use prefer `--parallel-multistart` or process-level orchestr
   The TTY sees the dashboard, while the log captures the standard CLI output after the run.
 
 - **How can I record a screenshot/GIF?**
-  Run a short command (e.g., `fhops solve-heur examples/minitoy/scenario.yaml --watch --iters 500`)
+  Run a short command (e.g., `fhops solve-heur examples/tiny7/scenario.yaml --watch --iters 500`)
   and use your preferred terminal recorder (`asciinema`, `ttystudio`, etc.). The sparkline now renders
   below the main table so column widths stay stable while recording.

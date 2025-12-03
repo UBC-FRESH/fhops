@@ -5,7 +5,9 @@ import sqlite3
 from pathlib import Path
 
 import pytest
+import yaml
 
+from fhops.cli._utils import resolve_operator_presets
 from fhops.optimization.heuristics import solve_sa
 from fhops.scenario.contract import (
     Block,
@@ -79,7 +81,7 @@ def test_evaluate_candidates_empty():
 
 
 def test_solve_sa_writes_telemetry(tmp_path: Path):
-    scenario_path = Path("examples/minitoy/scenario.yaml")
+    scenario_path = Path("examples/tiny7/scenario.yaml")
     scenario = load_scenario(scenario_path)
     pb = Problem.from_scenario(scenario)
     log_path = tmp_path / "runs.jsonl"
@@ -129,3 +131,49 @@ def test_solve_sa_restart_interval_meta():
     meta = res["meta"]
     assert meta["restart_interval"] == 250
     assert meta["cooling_rate"] == pytest.approx(0.999)
+
+
+def test_solve_sa_reports_milp_gap():
+    pb = _simple_problem()
+    res = solve_sa(pb, iters=5, seed=3, milp_objective=100.0)
+    meta = res["meta"]
+    assert meta["milp_objective"] == pytest.approx(100.0)
+    assert "milp_gap" in meta
+
+
+def test_sa_preset_applies_objective_weights():
+    fixture_path = Path("tests/fixtures/presets/tiny7_explore.yaml")
+    config = yaml.safe_load(fixture_path.read_text(encoding="utf-8"))
+    scenario_path = Path(config["scenario"])
+    scenario = load_scenario(scenario_path)
+    problem = Problem.from_scenario(scenario)
+    operators, operator_weights = resolve_operator_presets(config["presets"])
+    result = solve_sa(
+        problem,
+        iters=5,
+        seed=13,
+        operators=operators,
+        operator_weights=operator_weights,
+    )
+    meta_weights = result["meta"].get("objective_weights")
+    assert meta_weights, "solver meta should include objective weight snapshot"
+    for key, expected in config["expected_objective_weights"].items():
+        assert pytest.approx(meta_weights[key], rel=1e-9) == expected
+
+
+def test_sa_auto_batch_defaults_for_tiny7():
+    scenario = load_scenario(Path("examples/tiny7/scenario.yaml"))
+    pb = Problem.from_scenario(scenario)
+    res = solve_sa(pb, iters=5, seed=21)
+    meta = res["meta"]
+    assert meta["batch_size"] == 4
+    assert meta["auto_batch_applied"] is True
+
+
+def test_sa_respects_explicit_batch_size():
+    scenario = load_scenario(Path("examples/tiny7/scenario.yaml"))
+    pb = Problem.from_scenario(scenario)
+    res = solve_sa(pb, iters=5, seed=33, batch_size=2, max_workers=1)
+    meta = res["meta"]
+    assert meta["batch_size"] == 2
+    assert meta["max_workers"] == 1

@@ -100,10 +100,10 @@
     - [x] Add a PNG export workflow so the visual matches the manuscript and can be embedded directly in Sphinx (SVG optional when `pdf2svg` is installed).
   - [x] Document update instructions (package requirements, automation hooks) in `docs/softwarex/manuscript/sections/includes/README.md` and tag figure assets inside `notes/submission_readiness_dashboard.md`.
 - [ ] Asset-generation plan:
-  - [x] **Scenario ingest demo:** Script (`scripts/run_dataset_inspection.py`) that inspects `examples/minitoy` + `examples/med42`, generates a fresh `synth generate --tier small` bundle, and emits schema summaries in `docs/softwarex/assets/data/datasets/`.
-  - [x] **Benchmark sweep (SA baseline):** Extend `scripts/generate_assets.sh` (already running SA on `minitoy`) to include `med42` + `synthetic-small`. Use `fhops bench suite --telemetry-log --compare-preset ...` so we capture CSV/JSON telemetry for each scenario. Goal: PyDDRBG-style benchmark manifest.
-  - [x] **Solver comparison (SA vs. ILS vs. Tabu):** Add a script (or extend the benchmark script) that runs `fhops bench suite --include-ils --include-tabu` on `minitoy` + `med42`, producing tables comparing objective/runtime/KPIs per solver. Provide LaTeX table for manuscript.
-  - [x] **Hyperparameter tuning harness:** Script (`scripts/run_tuner.py`) that launches short Optuna-style studies (via `scripts/run_tuning_benchmarks.py`) for minitoy, med42, and the synthetic tier. Results live under `docs/softwarex/assets/data/tuning/` (telemetry + comparison/leaderboard CSV/MD).
+  - [x] **Scenario ingest demo:** Script (`scripts/run_dataset_inspection.py`) that inspects `examples/tiny7` + `examples/med42`, generates a fresh `synth generate --tier small` bundle, and emits schema summaries in `docs/softwarex/assets/data/datasets/`.
+  - [x] **Benchmark sweep (SA baseline):** Extend `scripts/generate_assets.sh` (already running SA on `tiny7`) to include `med42` + `synthetic-small`. Use `fhops bench suite --telemetry-log --compare-preset ...` so we capture CSV/JSON telemetry for each scenario. Goal: PyDDRBG-style benchmark manifest.
+  - [x] **Solver comparison (SA vs. ILS vs. Tabu):** Add a script (or extend the benchmark script) that runs `fhops bench suite --include-ils --include-tabu` on `tiny7` + `med42`, producing tables comparing objective/runtime/KPIs per solver. Provide LaTeX table for manuscript.
+  - [x] **Hyperparameter tuning harness:** Script (`scripts/run_tuner.py`) that launches short Optuna-style studies (via `scripts/run_tuning_benchmarks.py`) for tiny7, med42, and the synthetic tier. Results live under `docs/softwarex/assets/data/tuning/` (telemetry + comparison/leaderboard CSV/MD).
   - [x] **Playback + KPI reporting:** Script (`scripts/run_playback_analysis.py`) that takes the best SA/ILS assignments, runs deterministic + stochastic playback, computes day/shift KPIs, and exports CSV/Markdown summaries under `docs/softwarex/assets/data/playback/`.
   - [x] **Stochastic robustness tests:** As part of the playback script, run multi-sample playback (50 samples with downtime/weather/landing shocks) and capture metrics JSON + summaries per scenario/solver for manuscript figure/table hooks.
   - [x] **Costing demo:** Script (`scripts/run_costing_demo.py`) that runs `fhops dataset estimate-cost` on med42 machines, captures telemetry JSONL, and exports `cost_summary.csv/json` under `docs/softwarex/assets/data/costing/`.
@@ -169,7 +169,7 @@
   - [ ] Track lint results and resolve outstanding warnings/errors.
 - [ ] Metadata/licensing readiness
   - [ ] Confirm `docs/softwarex/reference/README.md` records the latest Guide-for-Authors snapshot and SoftwareX template provenance.
-  - [ ] Ensure dataset licences (e.g., `examples/minitoy`, `examples/med42`, synthetic tiers) are documented in the submission README and cross-referenced from `docs/softwarex/assets/data/datasets/index.json`.
+  - [ ] Ensure dataset licences (e.g., `examples/tiny7`, `examples/med42`, synthetic tiers) are documented in the submission README and cross-referenced from `docs/softwarex/assets/data/datasets/index.json`.
   - [ ] Verify the MIT licence + contributor guidelines cited in the manuscript match the `pyproject.toml`/`LICENSE` contents to avoid mismatches in the submission package.
 
 ## Phase 4 – Internal Review & Iteration

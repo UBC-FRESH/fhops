@@ -73,12 +73,12 @@ shareable summary:
    template_path = pathlib.Path("docs/templates/kpi_summary.md")
    template = Template(template_path.read_text(encoding="utf-8"))
 
-   pb = Problem.from_scenario(load_scenario("examples/minitoy/scenario.yaml"))
-   assignments = pd.read_csv("tests/fixtures/playback/minitoy_assignments.csv")
+   pb = Problem.from_scenario(load_scenario("examples/tiny7/scenario.yaml"))
+   assignments = pd.read_csv("tests/fixtures/playback/tiny7_assignments.csv")
    kpi_data = compute_kpis(pb, assignments).to_dict()
 
    report = template.safe_substitute({key: kpi_data.get(key, "-") for key in kpi_data})
-   pathlib.Path("tmp/minitoy_kpi_summary.md").write_text(report, encoding="utf-8")
+   pathlib.Path("tmp/tiny7_kpi_summary.md").write_text(report, encoding="utf-8")
 
 You can embed the generated Markdown as-is in docs/notebooks or adapt the template to match your
 reporting format (CSV, HTML, etc.). A CSV variant lives alongside the Markdown template, so you can
@@ -87,7 +87,7 @@ generate spreadsheet-friendly snapshots just as easily:
 .. code-block:: python
 
    csv_template = Template(pathlib.Path("docs/templates/kpi_summary.csv").read_text(encoding="utf-8"))
-   pathlib.Path("tmp/minitoy_kpi_summary.csv").write_text(
+   pathlib.Path("tmp/tiny7_kpi_summary.csv").write_text(
        csv_template.safe_substitute({key: kpi_data.get(key, "-") for key in kpi_data}),
        encoding="utf-8",
    )
@@ -107,18 +107,18 @@ Quickstart example
 
 .. code-block:: console
 
-   $ fhops eval playback examples/minitoy/scenario.yaml \
-       --assignments tests/fixtures/playback/minitoy_assignments.csv \
+   $ fhops eval playback examples/tiny7/scenario.yaml \
+       --assignments tests/fixtures/playback/tiny7_assignments.csv \
        --samples 5 \
        --downtime-prob 0.1 \
        --weather-prob 0.2 \
        --landing-prob 0.3 \
-       --shift-out tmp/minitoy_shift.csv \
-       --day-out tmp/minitoy_day.csv \
-       --shift-parquet tmp/minitoy_shift.parquet \
-       --day-parquet tmp/minitoy_day.parquet \
-       --summary-md tmp/minitoy_summary.md \
-       --telemetry-log tmp/minitoy_playback.jsonl
+       --shift-out tmp/tiny7_shift.csv \
+       --day-out tmp/tiny7_day.csv \
+       --shift-parquet tmp/tiny7_shift.parquet \
+       --day-parquet tmp/tiny7_day.parquet \
+       --summary-md tmp/tiny7_summary.md \
+       --telemetry-log tmp/tiny7_playback.jsonl
 
 The command prints rich tables to the terminal, writes CSV/Parquet/Markdown artefacts, and captures a
 JSONL telemetry record containing the same aggregate metrics written to disk.
@@ -130,8 +130,8 @@ Load the Parquet file, compute machine utilisation, and sanity-check totals:
    import pandas as pd
    from fhops.evaluation import machine_utilisation_summary, playback_summary_metrics
 
-   shift_df = pd.read_parquet("tmp/minitoy_shift.parquet")
-   day_df = pd.read_parquet("tmp/minitoy_day.parquet")
+   shift_df = pd.read_parquet("tmp/tiny7_shift.parquet")
+   day_df = pd.read_parquet("tmp/tiny7_day.parquet")
 
    utilisation = machine_utilisation_summary(shift_df)
    print(utilisation.filter(["machine_id", "total_hours", "utilisation_ratio"]).head())
@@ -140,7 +140,7 @@ Load the Parquet file, compute machine utilisation, and sanity-check totals:
    print(f"Samples captured: {metrics['samples']}")
    print(f"Total production units: {metrics['total_production']:.1f}")
 
-The Markdown summary (``tmp/minitoy_summary.md``) contains topline metrics and preview tables. Open it
+The Markdown summary (``tmp/tiny7_summary.md``) contains topline metrics and preview tables. Open it
 in any Markdown viewer or drop it directly into release notes.
 
 When you need a quick textual snapshot without leaving the CLI, pass ``--kpi-mode`` to the solver
@@ -148,7 +148,7 @@ commands:
 
 .. code-block:: console
 
-   $ fhops solve-heur examples/minitoy/scenario.yaml --out tmp/minitoy_sa.csv --kpi-mode basic
+   $ fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa.csv --kpi-mode basic
 
 The basic mode prints only production/mobilisation KPIs. Switch to ``--kpi-mode extended`` to include
 utilisation, downtime, and weather metrics in the CLI output.

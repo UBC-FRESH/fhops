@@ -32,6 +32,9 @@ class HarvestSystem:
     jobs: Sequence[SystemJob]
     environment: str | None = None
     notes: str | None = None
+    role_counts: Mapping[str, int] | None = None
+    role_headstart_shifts: Mapping[str, float] | None = None
+    loader_batch_volume_m3: float | None = None
 
 
 def default_system_registry() -> Mapping[str, HarvestSystem]:

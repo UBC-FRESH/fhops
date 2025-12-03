@@ -72,7 +72,7 @@ src/fhops/
 1. **Data Contract & Fixtures**
    - Extend `TimelineConfig`/`ShiftDefinition` with explicit `shift_id`, `start_offset_hours`, and `duration_hours`.
    - Add `shifts` metadata to `Scenario` (e.g., `scenario.shift_calendar`) plus validators guaranteeing shift coverage of each day, optional default shift templates, and horizon alignment.
-   - Update YAML/CSV fixtures (minitoy, med42, large84, regression set) to declare shifts; provide migration guidance for day-only scenarios.
+   - Update YAML/CSV fixtures (tiny7, med42, large84, regression set) to declare shifts; provide migration guidance for day-only scenarios.
 2. **Loader & Core Types**
    - Teach `fhops.scenario.io.loaders` to emit `(day, shift_id)` availability matrices, synthesising a default single-shift calendar when absent.
    - Introduce helper utilities to iterate `Problem.iter_shifts()` and to convert between day-major and shift-major tensors (will be consumed by solvers/playback).

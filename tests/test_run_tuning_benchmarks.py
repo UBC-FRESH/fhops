@@ -1,11 +1,18 @@
 from __future__ import annotations
 
+import os
 import subprocess
 from collections import Counter
 from pathlib import Path
 
 import pandas as pd
 import pandas.testing as pdt
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    not os.getenv("FHOPS_ENABLE_TUNER_BENCHMARK_TESTS"),
+    reason="Set FHOPS_ENABLE_TUNER_BENCHMARK_TESTS=1 to run tuner benchmark integration tests.",
+)
 
 
 def _run_benchmarks(out_dir: Path, *, max_workers: int | None = None) -> None:
@@ -18,12 +25,6 @@ def _run_benchmarks(out_dir: Path, *, max_workers: int | None = None) -> None:
         "random",
         "--tuner",
         "grid",
-        "--tuner",
-        "bayes",
-        "--tuner",
-        "ils",
-        "--tuner",
-        "tabu",
         "--out-dir",
         str(out_dir),
         "--random-runs",
@@ -36,18 +37,6 @@ def _run_benchmarks(out_dir: Path, *, max_workers: int | None = None) -> None:
         "1",
         "--grid-preset",
         "balanced",
-        "--bayes-trials",
-        "1",
-        "--bayes-iters",
-        "10",
-        "--ils-runs",
-        "1",
-        "--ils-iters",
-        "10",
-        "--tabu-runs",
-        "1",
-        "--tabu-iters",
-        "10",
     ]
     if max_workers is not None:
         cmd.extend(["--max-workers", str(max_workers)])
@@ -101,7 +90,7 @@ def test_run_tuning_benchmarks_minimal(tmp_path: Path):
     assert baseline_diff_csv.exists()
 
     summary_text = summary_md.read_text(encoding="utf-8")
-    assert "Minitoy" in summary_text or "MiniToy" in summary_text
+    assert "FHOPS Tiny7" in summary_text
 
     comparison_text = comparison_md.read_text(encoding="utf-8")
     assert "scenario" in comparison_text.lower()

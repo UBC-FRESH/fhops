@@ -13,12 +13,20 @@ from typing import Any
 import pandas as pd
 
 from fhops.evaluation import compute_kpis
+from fhops.optimization.heuristics.common import (
+    Schedule,
+    build_watch_metadata_from_debug,
+    evaluate_candidates,
+    evaluate_schedule,
+    evaluate_schedule_with_debug,
+    generate_neighbors,
+    init_greedy_schedule,
+    resolve_objective_weight_overrides,
+)
 from fhops.optimization.heuristics.registry import OperatorRegistry
-from fhops.optimization.heuristics.sa import (
-    _evaluate,
-    _evaluate_candidates,
-    _init_greedy,
-    _neighbors,
+from fhops.optimization.operational_problem import (
+    build_operational_problem,
+    override_objective_weights,
 )
 from fhops.scenario.contract import Problem
 from fhops.telemetry import RunTelemetryLogger
@@ -72,6 +80,10 @@ def solve_tabu(
     watch_sink: SnapshotSink | None = None,
     watch_interval: int | None = None,
     watch_metadata: dict[str, str] | None = None,
+    watch_debug: bool = False,
+    use_local_repairs: bool = False,
+    objective_weight_overrides: dict[str, float] | None = None,
+    milp_objective: float | None = None,
 ) -> dict[str, Any]:
     """Run Tabu Search using the shared operator registry.
 
@@ -105,6 +117,18 @@ def solve_tabu(
         Emit watch updates every ``watch_interval`` iterations (defaults to ``iters / 20``).
     watch_metadata : dict[str, str] | None
         Metadata merged into each snapshot (scenario/solver labels, run IDs, etc.).
+    watch_debug : bool, default=False
+        When ``True`` include sequencing debug metadata in watch output (adds evaluation overhead).
+    use_local_repairs : bool, default=False
+        Enable dirty-slot repairs while scoring neighbours. The final plan is always re-evaluated
+        with a full repair before reporting.
+    objective_weight_overrides : dict[str, float] | None, optional
+        Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
+        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
+        mobilisation weight to encourage exploration.
+    milp_objective : float | None, optional
+        Reference MILP objective for reporting the current gap (best - MILP) in watch telemetry and
+        result metadata. ``None`` skips gap reporting.
 
     Returns
     -------
@@ -141,7 +165,11 @@ def solve_tabu(
             normalized[available[key]] = weight
         registry.configure(normalized)
 
-    config_snapshot = {
+    resolved_weight_overrides = resolve_objective_weight_overrides(pb, objective_weight_overrides)
+    if resolved_weight_overrides is not None:
+        resolved_weight_overrides = dict(resolved_weight_overrides)
+
+    config_snapshot: dict[str, Any] = {
         "iters": iters,
         "batch_size": batch_size,
         "max_workers": max_workers,
@@ -149,6 +177,10 @@ def solve_tabu(
         "stall_limit": stall_limit,
         "operators": registry.weights(),
     }
+    if milp_objective is not None:
+        config_snapshot["milp_objective"] = float(milp_objective)
+    if resolved_weight_overrides:
+        config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
     context_payload = dict(telemetry_context or {})
     scenario = pb.scenario
     timeline = getattr(scenario, "timeline", None)
@@ -194,12 +226,36 @@ def solve_tabu(
     last_watch_best: float | None = None
     last_emitted_step: int | None = None
 
+    ctx = build_operational_problem(pb)
+    if resolved_weight_overrides:
+        ctx = override_objective_weights(ctx, resolved_weight_overrides)
+    debug_capture = bool(watch_debug and watch_sink)
+    local_repairs = bool(use_local_repairs)
+    objective_weights_snapshot = ctx.bundle.objective_weights.model_dump()
+
+    def _score_schedule(
+        schedule: Schedule,
+        *,
+        capture: bool | None = None,
+    ) -> tuple[float, dict[str, Any] | None]:
+        flag = debug_capture if capture is None else capture
+        if flag:
+            return evaluate_schedule_with_debug(
+                pb,
+                schedule,
+                ctx,
+                capture_debug=True,
+                limit_repairs_to_dirty=True,
+            )
+        return evaluate_schedule(pb, schedule, ctx, limit_repairs_to_dirty=True), None
+
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
-        current = _init_greedy(pb)
-        current_score = _evaluate(pb, current)
+        current = init_greedy_schedule(pb, ctx)
+        current_score, current_debug_stats = _score_schedule(current)
         initial_score = current_score
         best = current
         best_score = current_score
+        best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
         rolling_scores.append(float(current_score))
 
         tenure = tabu_tenure if tabu_tenure is not None else max(10, len(pb.scenario.machines))
@@ -246,6 +302,13 @@ def solve_tabu(
                 "tabu_tenure": str(tenure),
                 "restarts": str(restarts),
             }
+            if debug_capture:
+                metadata.update(build_watch_metadata_from_debug(current_debug_stats))
+            elif getattr(current, "watch_stats", None):
+                metadata.update(build_watch_metadata_from_debug(current.watch_stats))
+            if milp_objective is not None:
+                metadata["milp_objective"] = f"{milp_objective:.3f}"
+                metadata["milp_gap"] = f"{best_score - milp_objective:.3f}"
             watch_sink(
                 Snapshot(
                     scenario=watch_scenario,
@@ -270,15 +333,22 @@ def solve_tabu(
 
         last_iteration = 0
         for step in range(1, iters + 1):
-            candidates = _neighbors(
+            candidates = generate_neighbors(
                 pb,
                 current,
                 registry,
                 rng,
                 operator_stats,
+                ctx,
                 batch_size=batch_arg,
             )
-            evaluations = _evaluate_candidates(pb, candidates, worker_arg)
+            evaluations = evaluate_candidates(
+                pb,
+                candidates,
+                ctx,
+                worker_arg,
+                limit_repairs_to_dirty=local_repairs,
+            )
             if not evaluations:
                 break
             if workers_total:
@@ -309,6 +379,10 @@ def solve_tabu(
             candidate, score, move_sig = best_candidate_tuple
             current = candidate
             current_score = score
+            if debug_capture:
+                current_score, current_debug_stats = _score_schedule(current, capture=True)
+            else:
+                current_debug_stats = None
             rolling_scores.append(float(current_score))
 
             if move_sig in tabu_set:
@@ -327,6 +401,7 @@ def solve_tabu(
             if current_score > best_score:
                 best = current
                 best_score = current_score
+                best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
                 stalls = 0
                 improvements += 1
                 best_improved = True
@@ -356,12 +431,38 @@ def solve_tabu(
                 stalls = 0
                 current = best
                 current_score = best_score
+                current_debug_stats = dict(best_debug_stats) if best_debug_stats else None
                 tabu_queue.clear()
                 tabu_set.clear()
                 continue
 
         if watch_sink and last_iteration and last_emitted_step != last_iteration:
             emit_snapshot(last_iteration)
+
+        if debug_capture:
+            best_score, best_debug_stats = evaluate_schedule_with_debug(
+                pb,
+                best,
+                ctx,
+                capture_debug=True,
+                limit_repairs_to_dirty=False,
+            )
+        else:
+            best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
+        current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
+
+        if local_repairs:
+            if debug_capture:
+                best_score, best_debug_stats = evaluate_schedule_with_debug(
+                    pb,
+                    best,
+                    ctx,
+                    capture_debug=True,
+                    limit_repairs_to_dirty=False,
+                )
+            else:
+                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
+            current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
         rows = []
         for machine_id, plan in best.plan.items():
@@ -389,6 +490,12 @@ def solve_tabu(
             "operators": registry.weights(),
             "algorithm": "tabu",
         }
+        if milp_objective is not None:
+            meta["milp_objective"] = float(milp_objective)
+            meta["milp_gap"] = float(best_score - milp_objective)
+        if resolved_weight_overrides:
+            meta["objective_weight_overrides"] = resolved_weight_overrides
+        meta["objective_weights"] = objective_weights_snapshot
         if operator_stats:
             meta["operators_stats"] = operator_stats
 
@@ -414,6 +521,14 @@ def solve_tabu(
                 metrics={
                     "objective": float(best_score),
                     "initial_score": float(initial_score),
+                    **(
+                        {
+                            "milp_objective": float(milp_objective),
+                            "milp_gap": float(best_score - milp_objective),
+                        }
+                        if milp_objective is not None
+                        else {}
+                    ),
                     **numeric_kpis,
                 },
                 extra={

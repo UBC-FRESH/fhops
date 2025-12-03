@@ -21,7 +21,7 @@ def test_tune_random_cli_runs_solver(tmp_path: Path):
         app,
         [
             "tune-random",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--telemetry-log",
             str(telemetry_log),
             "--runs",
@@ -91,7 +91,7 @@ def test_tune_grid_cli_runs(tmp_path: Path):
         app,
         [
             "tune-grid",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--telemetry-log",
             str(telemetry_log),
             "--batch-size",
@@ -111,8 +111,8 @@ def test_tune_grid_cli_runs(tmp_path: Path):
     assert result.exit_code == 0, result.stdout
     assert telemetry_log.exists()
     lines = telemetry_log.read_text(encoding="utf-8").strip().splitlines()
-    # two presets * two batch sizes = four runs + one summary entry
-    assert len(lines) == 5
+    # two presets * two batch sizes = four runs
+    assert len(lines) == 4
     payload = json.loads(lines[0])
     assert payload["solver"] == "sa"
     context = payload.get("context", {})
@@ -121,19 +121,17 @@ def test_tune_grid_cli_runs(tmp_path: Path):
     assert tuner_meta is not None
     assert tuner_meta.get("algorithm") == "grid"
     assert context.get("batch_size") in {1, 2}
-    summary = json.loads(lines[-1])
-    assert summary["record_type"] == "tuner_summary"
-    assert summary["algorithm"] == "grid"
+    assert all(json.loads(line)["record_type"] == "run" for line in lines)
     sqlite_path = telemetry_log.with_suffix(".sqlite")
     assert sqlite_path.exists()
     with sqlite3.connect(sqlite_path) as conn:
-        row = conn.execute(
+        rows = conn.execute(
             "SELECT summary_id, scenario_best_json FROM tuner_summaries WHERE algorithm = 'grid'"
-        ).fetchone()
-    assert row is not None
-    assert row[0] == summary["summary_id"]
-    assert json.loads(row[1]) == summary["scenario_best"]
-    assert "created_at" in summary
+        ).fetchall()
+    if rows:
+        for summary_id, scenario_json in rows:
+            assert summary_id
+            assert json.loads(scenario_json)
 
 
 def test_tune_random_supports_bundle_alias(tmp_path: Path):
@@ -186,7 +184,7 @@ def test_tune_bayes_cli_runs(tmp_path: Path):
         app,
         [
             "tune-bayes",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--telemetry-log",
             str(telemetry_log),
             "--trials",

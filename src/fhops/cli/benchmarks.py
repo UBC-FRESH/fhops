@@ -15,14 +15,19 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 import pandas as pd
 import typer
 from rich.console import Console
 from rich.table import Table
 
-from fhops.cli._utils import format_operator_presets, operator_preset_help, parse_operator_weights
+from fhops.cli._utils import (
+    format_operator_presets,
+    operator_preset_help,
+    parse_objective_weight_overrides,
+    parse_operator_weights,
+)
 from fhops.cli.profiles import (
     Profile,
     combine_solver_configs,
@@ -32,8 +37,9 @@ from fhops.cli.profiles import (
 )
 from fhops.cli.watch_dashboard import LiveWatch
 from fhops.evaluation import compute_kpis
+from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
-from fhops.optimization.mip import build_model, solve_mip
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import append_jsonl
@@ -41,6 +47,7 @@ from fhops.telemetry.machine_costs import build_machine_cost_snapshots, summariz
 from fhops.telemetry.watch import WatchConfig
 
 console = Console()
+COLUMNS_AXIS: Literal["columns"] = "columns"
 
 
 @dataclass(frozen=True)
@@ -60,7 +67,7 @@ class BenchmarkScenario:
 
 
 DEFAULT_SCENARIOS: tuple[BenchmarkScenario, ...] = (
-    BenchmarkScenario("minitoy", Path("examples/minitoy/scenario.yaml")),
+    BenchmarkScenario("tiny7", Path("examples/tiny7/scenario.yaml")),
     BenchmarkScenario("med42", Path("examples/med42/scenario.yaml")),
     BenchmarkScenario("large84", Path("examples/large84/scenario.yaml")),
     BenchmarkScenario("synthetic-small", Path("examples/synthetic/small/scenario.yaml")),
@@ -77,6 +84,21 @@ def _resolve_scenarios(user_paths: Sequence[Path] | None) -> list[BenchmarkScena
     for idx, scenario_path in enumerate(user_paths, start=1):
         scenarios.append(BenchmarkScenario(f"user-{idx}", scenario_path))
     return scenarios
+
+
+def _operational_solver_candidates(driver: str | None) -> tuple[str, ...]:
+    """Return the ordered solver names to try for the operational MILP benchmark run."""
+
+    if not driver:
+        return ("highs",)
+    driver_clean = driver.strip().lower()
+    if driver_clean in {"auto", "default"}:
+        return ("gurobi", "highs")
+    if "gurobi" in driver_clean:
+        return ("gurobi",)
+    if "highs" in driver_clean or driver_clean in {"exec", "appsi"}:
+        return ("highs",)
+    return (driver_clean,)
 
 
 def _record_metrics(
@@ -141,13 +163,14 @@ def run_benchmark_suite(
     tabu_stall_limit: int = 200,
     tabu_batch_neighbours: int = 1,
     tabu_workers: int = 1,
-    driver: str = "auto",
+    driver: str = "highs",
     include_mip: bool = True,
     include_sa: bool = True,
     debug: bool = False,
     operators: Sequence[str] | None = None,
     operator_weights: Mapping[str, float] | None = None,
     operator_presets: Sequence[str] | None = None,
+    objective_weight_overrides: Mapping[str, float] | None = None,
     telemetry_log: Path | None = None,
     preset_comparisons: Sequence[str] | None = None,
     profile: Profile | None = None,
@@ -160,7 +183,7 @@ def run_benchmark_suite(
     ----------
     scenario_paths : Sequence[pathlib.Path] | None
         Optional list of scenario YAML paths to benchmark. ``None`` defaults to the bundled
-        scenarios (minitoy → med42 → large84 → synthetic-small).
+        scenarios (tiny7 → med42 → large84 → synthetic-small).
     out_dir : pathlib.Path
         Directory that will contain per-scenario outputs, summary CSV/JSON, telemetry logs, and
         solver-specific assignment CSVs.
@@ -206,9 +229,10 @@ def run_benchmark_suite(
         Number of neighbours evaluated per Tabu iteration.
     tabu_workers : int, default=1
         Thread pool size for evaluating batched Tabu neighbours.
-    driver : str, default="auto"
-        MIP driver (``auto | highs-appsi | highs-exec | gurobi*``) passed to
-        :func:`fhops.optimization.mip.solve_mip`.
+    driver : str, default="highs"
+        Operational MILP solver alias (``highs | gurobi | auto``) passed to
+        :func:`fhops.model.milp.driver.solve_operational_milp`. ``auto`` tries Gurobi first (when
+        available) before falling back to HiGHS.
     include_mip : bool, default=True
         Toggle the exact MIP run (when ``False`` only heuristics are executed).
     include_sa : bool, default=True
@@ -221,6 +245,8 @@ def run_benchmark_suite(
         Weight overrides for SA operators. Zero/negative values effectively disable the operator.
     operator_presets : Sequence[str] | None, default=None
         List of preset names to merge into the SA configuration (mirrors CLI ``--operator-preset``).
+    objective_weight_overrides : Mapping[str, float] | None, default=None
+        Optional objective weight overrides forwarded to SA/ILS/Tabu runs.
     telemetry_log : pathlib.Path | None, default=None
         Optional JSONL log file used to append run metadata per solver execution.
     preset_comparisons : Sequence[str] | None, default=None
@@ -291,27 +317,73 @@ def run_benchmark_suite(
             scenario_out = out_dir / bench.name
             scenario_out.mkdir(parents=True, exist_ok=True)
 
+            scenario_mip_objective: float | None = None
             if include_mip:
                 build_start = time.perf_counter()
-                # Use builder explicitly to measure build time; solve_mip will rebuild but cost is small.
-                build_model(pb)
+                ctx = build_operational_problem(pb)
+                bundle = ctx.bundle
                 build_time = time.perf_counter() - build_start
-
-                start = time.perf_counter()
-                mip_res = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
-                mip_runtime = time.perf_counter() - start
+                solver_candidates = _operational_solver_candidates(driver)
+                mip_res: Mapping[str, object] | None = None
+                chosen_solver: str | None = None
+                mip_runtime = 0.0
+                last_error: Exception | None = None
+                for solver_name in solver_candidates:
+                    start = time.perf_counter()
+                    try:
+                        mip_res = solve_operational_milp(
+                            bundle,
+                            solver=solver_name,
+                            time_limit=time_limit,
+                            tee=bool(debug),
+                            context=ctx,
+                        )
+                        mip_runtime = time.perf_counter() - start
+                        chosen_solver = solver_name
+                        break
+                    except Exception as exc:  # pragma: no cover - exercised via fallback
+                        mip_runtime = time.perf_counter() - start
+                        last_error = exc
+                        if debug:
+                            console.print(
+                                f"[yellow]Operational MILP solver '{solver_name}' failed: {exc}[/]"
+                            )
+                        continue
+                if mip_res is None:
+                    raise RuntimeError(
+                        f"Operational MILP solve failed for {bench.path} (driver={driver})."
+                    ) from last_error
                 mip_assign = cast(pd.DataFrame, mip_res["assignments"]).copy()
                 mip_assign.to_csv(scenario_out / "mip_assignments.csv", index=False)
+                objective_val = mip_res.get("objective")
+                scenario_mip_objective = (
+                    float(objective_val) if isinstance(objective_val, int | float) else None
+                )
                 mip_kpis = compute_kpis(pb, mip_assign)
+                extra_payload: dict[str, object] = {
+                    "build_time_s": build_time,
+                }
+                if chosen_solver:
+                    extra_payload["mip_solver"] = chosen_solver
+                solver_status = mip_res.get("solver_status")
+                if solver_status is not None:
+                    extra_payload["solver_status"] = solver_status
+                termination = mip_res.get("termination_condition")
+                if termination is not None:
+                    extra_payload["termination_condition"] = termination
                 rows.append(
                     _record_metrics(
                         scenario=bench,
                         solver="mip",
-                        objective=cast(float, mip_res.get("objective", 0.0)),
+                        objective=(
+                            scenario_mip_objective
+                            if scenario_mip_objective is not None
+                            else float("nan")
+                        ),
                         assignments=mip_assign,
                         kpis=mip_kpis,
                         runtime_s=mip_runtime,
-                        extra={"build_time_s": build_time},
+                        extra=extra_payload,
                         machine_costs_summary=machine_costs_summary,
                     )
                 )
@@ -366,6 +438,8 @@ def run_benchmark_suite(
                         "max_workers": resolved_sa.parallel_workers,
                         "cooling_rate": sa_cooling_rate,
                         "restart_interval": sa_restart_interval,
+                        "objective_weight_overrides": objective_weight_overrides,
+                        "milp_objective": scenario_mip_objective,
                     }
                     if resolved_sa.extra_kwargs:
                         sa_kwargs.update(resolved_sa.extra_kwargs)
@@ -441,6 +515,8 @@ def run_benchmark_suite(
                             "preset_label": preset_label,
                             "machine_costs": machine_cost_dicts,
                         }
+                        if scenario_mip_objective is not None:
+                            log_record["milp_objective"] = float(scenario_mip_objective)
                         if profile:
                             log_record["profile"] = profile.name
                             log_record["profile_version"] = profile.version
@@ -497,6 +573,8 @@ def run_benchmark_suite(
                     "stall_limit": stall_limit_val,
                     "hybrid_use_mip": hybrid_use_mip_val,
                     "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
+                    "objective_weight_overrides": objective_weight_overrides,
+                    "milp_objective": scenario_mip_objective,
                 }
                 ils_kwargs.update(ils_extra_kwargs)
                 if watch_sink:
@@ -564,6 +642,8 @@ def run_benchmark_suite(
                         "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
                         "machine_costs": machine_cost_dicts,
                     }
+                    if scenario_mip_objective is not None:
+                        record["milp_objective"] = float(scenario_mip_objective)
                     if profile:
                         record["profile"] = profile.name
                         record["profile_version"] = profile.version
@@ -609,6 +689,8 @@ def run_benchmark_suite(
                     "max_workers": tabu_worker_arg,
                     "tabu_tenure": tabu_tenure_val,
                     "stall_limit": tabu_stall_limit_val,
+                    "objective_weight_overrides": objective_weight_overrides,
+                    "milp_objective": scenario_mip_objective,
                 }
                 tabu_kwargs.update(tabu_extra_kwargs)
                 if watch_sink:
@@ -671,6 +753,8 @@ def run_benchmark_suite(
                         "tabu_stall_limit": tabu_stall_limit_val,
                         "machine_costs": machine_cost_dicts,
                     }
+                    if scenario_mip_objective is not None:
+                        record["milp_objective"] = float(scenario_mip_objective)
                     if profile:
                         record["profile"] = profile.name
                         record["profile_version"] = profile.version
@@ -730,8 +814,14 @@ def run_benchmark_suite(
             mip_value_float = mip_value
             return objective_val / mip_value_float
 
-        summary["objective_vs_mip_gap"] = summary.apply(_objective_gap, axis=1)
-        summary["objective_vs_mip_ratio"] = summary.apply(_objective_ratio, axis=1)
+        summary["objective_vs_mip_gap"] = pd.Series(
+            (_objective_gap(row) for _, row in summary.iterrows()),
+            index=summary.index,
+        )
+        summary["objective_vs_mip_ratio"] = pd.Series(
+            (_objective_ratio(row) for _, row in summary.iterrows()),
+            index=summary.index,
+        )
 
         heuristic_mask = summary["solver"] != "mip"
         summary["solver_category"] = summary["solver"].map(
@@ -742,7 +832,7 @@ def run_benchmark_suite(
         best_runtime_by_scenario: dict[str, float] = {}
         if heuristic_mask.any():
             heuristics = summary[heuristic_mask]
-            idx = heuristics.groupby("scenario_key")["objective"].idxmin()
+            idx = heuristics.groupby("scenario_key")["objective"].idxmax()
             for scenario_key, index in idx.items():
                 row = summary.loc[index]
                 key_str = str(scenario_key)
@@ -760,12 +850,13 @@ def run_benchmark_suite(
             summary["best_heuristic_runtime_s"] = summary["scenario_key"].map(
                 best_runtime_by_scenario
             )
-            gap_vs_best = summary["objective"] - summary["best_heuristic_objective"]
+            gap_vs_best = summary["best_heuristic_objective"] - summary["objective"]
             summary["objective_gap_vs_best_heuristic"] = gap_vs_best
             exact_mask = summary["solver_category"] == "exact"
-            summary.loc[exact_mask, "objective_gap_vs_best_heuristic"] = -summary.loc[
-                exact_mask, "objective_gap_vs_best_heuristic"
-            ]
+            summary.loc[exact_mask, "objective_gap_vs_best_heuristic"] = (
+                summary.loc[exact_mask, "objective"]
+                - summary.loc[exact_mask, "best_heuristic_objective"]
+            )
 
             def _runtime_ratio(row: pd.Series) -> object:
                 best_runtime_val = _coerce_float(row.get("best_heuristic_runtime_s"))
@@ -776,7 +867,10 @@ def run_benchmark_suite(
                     return pd.NA
                 return runtime_val / best_runtime_val
 
-            summary["runtime_ratio_vs_best_heuristic"] = summary.apply(_runtime_ratio, axis=1)
+            summary["runtime_ratio_vs_best_heuristic"] = pd.Series(
+                (_runtime_ratio(row) for _, row in summary.iterrows()),
+                index=summary.index,
+            )
         else:
             summary["best_heuristic_solver"] = pd.NA
             summary["best_heuristic_objective"] = pd.NA
@@ -872,7 +966,7 @@ def bench_suite(
     tabu_stall_limit: int = typer.Option(200, help="Tabu stall limit"),
     tabu_batch_neighbours: int = typer.Option(1, help="Neighbours sampled per Tabu iteration"),
     tabu_workers: int = typer.Option(1, help="Worker threads for Tabu batched evaluation"),
-    driver: str = typer.Option("auto", help="HiGHS driver: auto|appsi|exec"),
+    driver: str = typer.Option("highs", help="Operational MILP solver alias (auto|highs|gurobi)"),
     include_mip: bool = typer.Option(True, help="Include MIP solver in benchmarks"),
     include_sa: bool = typer.Option(True, help="Include simulated annealing in benchmarks"),
     debug: bool = typer.Option(False, help="Forward debug flag to solvers"),
@@ -887,6 +981,14 @@ def bench_suite(
         "--operator-weight",
         "-w",
         help="Set SA operator weight as name=value (repeatable).",
+    ),
+    objective_weight: list[str] | None = typer.Option(
+        None,
+        "--objective-weight",
+        help=(
+            "Override objective weights via name=value (production|mobilisation|transitions|"
+            "landing_surplus). Repeatable."
+        ),
     ),
     operator_preset: list[str] | None = typer.Option(
         None,
@@ -948,6 +1050,11 @@ def bench_suite(
         weight_config = parse_operator_weights(operator_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
+
+    try:
+        objective_weight_override = parse_objective_weight_overrides(objective_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
     if list_profiles:
         console.print("Solver profiles:")
         console.print(format_profiles())
@@ -994,4 +1101,7 @@ def bench_suite(
         profile=profile_obj,
         watch=watch,
         watch_refresh=watch_refresh,
+        objective_weight_overrides=(
+            objective_weight_override if objective_weight_override else None
+        ),
     )

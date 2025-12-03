@@ -60,7 +60,7 @@ echo "[assets] Regenerating FHOPS benchmark summaries into ${bench_dir}" >&2
 rm -rf "${bench_dir}" && mkdir -p "${bench_dir}"
 
 scenario_specs=(
-  "${repo_root}/examples/minitoy/scenario.yaml|minitoy|MiniToy reference scenario"
+  "${repo_root}/examples/tiny7/scenario.yaml|tiny7|Tiny7 reference scenario"
   "${repo_root}/examples/med42/scenario.yaml|med42|Med42 reference scenario"
   "${synthetic_scenario}|synthetic_small|Synthetic tier (small)"
 )
@@ -84,7 +84,7 @@ for spec in "${scenario_specs[@]}"; do
     printf "%s\n" "${scenario_path}" > "${out_dir}/scenario_path.txt"
 
     case "${slug}" in
-      minitoy)
+      tiny7)
         time_limit="${default_time_limit}"
         sa_local="${default_sa_iters}"
         ils_local="${default_ils_iters}"
@@ -158,7 +158,7 @@ for spec in "${scenario_specs[@]}"; do
 
     if [[ "${fast_mode}" == "1" ]]; then
       case "${slug}" in
-        minitoy)
+        tiny7)
           time_limit="450"
           sa_local="3000"
           ils_local="600"

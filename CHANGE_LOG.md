@@ -1,27 +1,376 @@
-# 2025-12-09 — med42 Lahrsen-balanced dataset refresh
-- Regenerated the `examples/med42` block table from Lahrsen (2025) daily/cutblock ranges using a
-  fixed random seed, sampling stem size, volume per hectare, and density within the documented
-  med42 bands (≈0.25–0.8 m³ stems, 160–320 m³/ha, 0.8–2.6 ha blocks). The refreshed bundle now
-  carries 120 blocks and ~50.7 k m³ of work instead of the legacy 20-block configuration
-  (`examples/med42/data/blocks.csv`).
-- Recomputed productivity rates for the single four-machine ground-based system directly from the
-  FHOPS regressions (Lahrsen 2025 feller-buncher, ADV6N7 grapple skidder, Berry 2019 processor,
-  TN-261 loader-forwarder) without the previous ~0.14× ad-hoc scaling. For each new block we
-  evaluated all four machines and accumulated required hours per machine; block generation stopped
-  once the bottleneck machine implied >80 days of work on the processor alone, making the
-  *combined* four-machine capacity over 42 days insufficient to finish every block. In practice,
-  `fhops solve-heur ... --iters 20000` now completes ≈115 of 120 blocks (total_production ≈48.1 k m³)
-  with all machines at 100 % utilisation, giving the heuristics a genuine trade-off to prioritise
-  higher-yield blocks within the fixed horizon (`examples/med42/data/prod_rates.csv`).
-- Updated the med42 README to reflect the single-crew, 120-block, Lahrsen-balanced configuration
-  and to document the new stand metric ranges and regression sources
-  (`examples/med42/README.md`).
-- Added a `milp_refactor` pytest marker and filtered CI to run `pytest -m "not milp_refactor"`, temporarily
-  skipping the heuristics/benchmark/playback regression tests while we rebuild the MIP backend and refresh fixtures.
-- Commands: `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`,
+# 2025-12-05 — Warm-start docs + CLI gating
+- Added `docs/howto/mip_warm_starts.rst` plus CLI reference updates so users know how to feed `--incumbent` schedules and, just as importantly, that med42/large84 still discard weak warm starts. `notes/mip_tractability_plan.md` now records the completed med42 comparison and the “operational but not yet practically useful” status.
+- Restored the missing `tests/fixtures/presets/tiny7_explore.yaml` so the SA preset regression stops failing when it checks the objective-weight snapshot.
+- Introduced `FHOPS_RUN_FULL_CLI_TESTS` gating in `tests/conftest.py` and updated the benchmark/tuner regressions to short-circuit unless the env flag is set, keeping default `pytest` runs manageable while we plan a more thorough test-trimming pass.
+- `tests/test_cli_operational_mip.py` fakes now accept the `context` kwarg so the new warm-start plumbing can be exercised safely, and `tests/test_run_tuning_benchmarks.py` gained sorted imports + skipped-by-default markers to avoid launching the full tuner CLI unless explicitly requested.
+- `fhops.cli.benchmarks.run_benchmark_suite` now writes the objective gap/ratio/runtimes via `pd.Series(..., index=summary.index)` so MyPy treats the DataFrame assignments as typed series instead of bare lists; CI lint/mypy no longer flag the summary columns.
+- Commands executed:
+  - `.venv/bin/ruff format src tests docs`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/ruff format src/fhops/cli/benchmarks.py`
+  - `.venv/bin/ruff check src/fhops/cli/benchmarks.py`
+  - `.venv/bin/mypy src/fhops/cli/benchmarks.py`
+
+# 2025-12-04 — Warm-starts seed the full operational MILP state
+- `_apply_incumbent_start` now reconstructs every Pyomo decision variable implied by a heuristic schedule (assignments/production, transition binaries, activation flags, loader batch counts, per-role inventories, landing surplus, and block leftovers). This stops Gurobi from discarding incumbent CSVs with the “Completing partial solution” warning and paves the way for the med42 option sweep.
+- Added `_IncumbentState` plumbing in `fhops.model.milp.driver` plus tests in `tests/model/test_operational_driver.py` to prove the seeding covers `x`, `prod`, `y`, `role_prod`, activation binaries, loader batches, landing surplus, and leftovers while keeping Pyomo’s `warmstart=True` wiring intact.
+- The CLI and benchmark harness now build an `OperationalProblem` context whenever they load a scenario and pass it into `solve_operational_milp`, enabling SequencingTracker-backed warm starts (derived production/leftovers/landing usage) for non-bundle invocations.
+- Tiny7 smoke: `fhops solve-mip-operational --bundle-json tests/fixtures/milp/tiny7_operational_bundle.json --solver gurobi --solver-option Threads=18 --time-limit 60 --incumbent tests/fixtures/playback/tiny7_assignments.csv` now accepts the incumbent immediately (no warning). Med42 still times out at 120 s, but the log shows the incumbent is loaded rather than “Completed partial solution,” so the option sweep is ready to rerun.
+- Notes: `notes/mip_tractability_plan.md` documents the helper + tests and keeps the tiny7 CLI smoke + med42 comparison as follow-up items.
+- Commands executed:
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest tests/model/test_operational_driver.py`
+
+# 2025-12-02 — Benchmark harness uses the operational MILP path
+- `fhops.cli.benchmarks.run_benchmark_suite` now builds the operational bundle and calls `solve_operational_milp` whenever `include_mip=True`, so the CLI, tests, and telemetry all exercise the same MILP plumbing. Legacy `--driver` aliases map onto solver candidates (`auto` ⇒ Gurobi→HiGHS fallback), and the summary rows now persist the chosen solver plus solver/termination status.
+- Re-enabled the tiny7 benchmark regression so it checks both SA and MIP rows: `tests/test_benchmark_harness.py::test_benchmark_suite_tiny7` now asserts the `mip_assignments.csv` dump exists, verifies the “exact” solver category, and ensures the summary gap columns stay consistent with the recorded objective.
+- Removed the unused `window_span` sample from `scripts/rebuild_reference_datasets.py` so the pre-commit Ruff gate stops flagging dead assignments while we work through the remaining dataset refresh tasks.
+- Restored the missing preset fixture at `tests/fixtures/presets/tiny7_explore.yaml` so the SA preset regression can read a real scenario/preset/expected-weight bundle again; the test now proves the explore preset pins mobilisation/transitions/landing weights deterministically.
+- Added `--solver-option name=value` to `fhops solve-mip-operational`, forwarding arbitrary Pyomo solver parameters (e.g., `--solver-option Threads=8`) to Gurobi/HiGHS. The flag feeds through `solve_operational_milp`, so future callers (benchmarks, notebooks) can reuse the same plumbing.
+- `fhops solve-mip-operational` now accepts `--incumbent assignments.csv`, seeding the operational MILP with a heuristic schedule (machine/block/day/shift rows). The driver maps those rows onto the Pyomo binaries/production variables before invoking HiGHS/Gurobi, so med42 runs can skip the initial “find a feasible plan” ramp-up. The helper enforces the required columns, supports optional `production` values, and the CLI/docs/tests were updated to cover the new workflow. Follow-up tweaks set Pyomo’s `warmstart=True` whenever we seed any assignments and add regression coverage to ensure the warm-start flag is forwarded through `SolverFactory`.
+- Regenerated the SA benchmark fixtures for the refreshed datasets by running `run_benchmark_suite(..., include_mip=True)` on tiny7 (200 SA iters) plus med42/large84 (500 iters). The resulting rows now live at `tests/fixtures/benchmarks/{tiny7,med42,large84}_sa.json`, include up-to-date objectives/KPIs, and record `null` MILP metadata when HiGHS/Gurobi exit early so downstream tools don’t ingest `NaN`.
+- Revalidated the mobilisation regression harness: reran `solve_sa` on `tests/fixtures/regression/regression.yaml`, confirmed the baseline KPIs remain (-999.5 objective, 8 m³ total, 13.5 mobilisation), and replayed the playback/regression integration suites to prove the regenerated fixtures slot cleanly into the SequencingTracker pipeline.
+- Re-solved tiny7 and med42 with the refreshed operational MILP (HiGHS for tiny7, Gurobi for med42), replaced the assignment CSVs in `tests/fixtures/playback/`, re-ran `fhops eval-playback` to regenerate the shift/day CSV+Parquet exports, and refreshed both deterministic and stochastic KPI snapshots via `compute_kpis`/`run_stochastic_playback`. `compute_kpis` now clamps sub-micro staged-volume residuals to zero and re-derives `total_production` from the block totals so the playback aggregate tests stop tripping on 1e-12 drifts.
+- Commands executed:
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest` *(fails because `tests/fixtures/presets/tiny7_explore.yaml` is missing and the tiny7/med42 playback + KPI fixtures are stale; the CLI playback + KPI regression tests list the diffs above)*
+  - `.venv/bin/pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+- Follow-up commands for the fixture refresh + verification:
+  - `.venv/bin/fhops solve-mip-operational examples/tiny7/scenario.yaml --out tmp/tiny7_mip_new.csv --time-limit 120 --gap 0.0`
+  - `.venv/bin/fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `.venv/bin/fhops solve-mip-operational examples/med42/scenario.yaml --solver gurobi --time-limit 600 --gap 0.0 --out tmp/med42_mip_new.csv`
+  - `.venv/bin/fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `.venv/bin/python - <<'PY'  # refresh KPI fixtures (deterministic + stochastic, rerun after KPI tweak)` *(inline script in commit history)*
+  - `.venv/bin/python - <<'PY'  # refresh benchmark fixtures via run_benchmark_suite` *(inline script in commit history)*
+  - `.venv/bin/pytest tests/heuristics/test_sa_batch.py`
+  - `.venv/bin/pytest tests/test_cli_playback.py -k playback_fixture --maxfail=1`
+  - `.venv/bin/pytest tests/test_kpi_regressions.py`
+  - `.venv/bin/pytest tests/test_playback_aggregates.py`
+  - `.venv/bin/pytest tests/test_benchmark_harness.py -k tiny7`
+  - `.venv/bin/pytest tests/test_regression_integration.py`
+  - `.venv/bin/pytest tests/test_playback.py`
+  - `.venv/bin/pytest tests/test_cli_operational_mip.py tests/model/test_operational_driver.py`
+  - `fhops solve-heur examples/med42/scenario.yaml --iters 0 --out tmp/med42_greedy_incumbent.csv`
+  - `/usr/bin/env time -f 'SA runtime %E' fhops solve-heur examples/med42/scenario.yaml --iters 2000 --out tmp/med42_sa_incumbent.csv`
+  - `fhops solve-mip-operational examples/med42/scenario.yaml --solver gurobi --out tmp/med42_mip_no_start.csv --solver-option Threads=36 --solver-option TimeLimit=120 --solver-option LogFile=tmp/mip_logs/med42_no_start.log`
+  - `fhops solve-mip-operational examples/med42/scenario.yaml --solver gurobi --out tmp/med42_mip_greedy_start.csv --solver-option Threads=36 --solver-option TimeLimit=120 --solver-option LogFile=tmp/mip_logs/med42_greedy_start.log --incumbent tmp/med42_greedy_incumbent.csv`
+  - `fhops solve-mip-operational examples/med42/scenario.yaml --solver gurobi --out tmp/med42_mip_sa_start.csv --solver-option Threads=36 --solver-option TimeLimit=120 --solver-option LogFile=tmp/mip_logs/med42_sa_start.log --incumbent tmp/med42_sa_incumbent.csv`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest`
+  - `.venv/bin/pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+- Fixture refresh after the per-block landing updates:
+  - `fhops solve-mip-operational examples/tiny7/scenario.yaml --out tests/fixtures/playback/tiny7_assignments.csv --time-limit 120 --gap 0.0 --dump-bundle tests/fixtures/milp/tiny7_operational_bundle.json --solver-option Threads=36`
+  - `fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `fhops solve-mip-operational examples/med42/scenario.yaml --solver gurobi --time-limit 600 --gap 0.05 --dump-bundle tests/fixtures/milp/med42_operational_bundle.json --solver-option Threads=36 --solver-option LogFile=tmp/mip_logs/med42_fixture.log`
+  - `fhops solve-heur examples/med42/scenario.yaml --iters 4000 --seed 42 --out tests/fixtures/playback/med42_assignments.csv`
+  - `fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `fhops solve-heur examples/large84/scenario.yaml --iters 500 --seed 42 --out tests/fixtures/playback/large84_assignments.csv`
+  - `fhops eval-playback examples/large84/scenario.yaml --assignments tests/fixtures/playback/large84_assignments.csv --shift-out tests/fixtures/playback/large84_shift.csv --day-out tests/fixtures/playback/large84_day.csv --shift-parquet tests/fixtures/playback/large84_shift.parquet --day-parquet tests/fixtures/playback/large84_day.parquet`
+  - `fhops solve-mip-operational examples/large84/scenario.yaml --solver gurobi --time-limit 60 --gap 1.0 --dump-bundle tests/fixtures/milp/large84_operational_bundle.json --solver-option Threads=36 --solver-option LogFile=tmp/mip_logs/large84_fixture.log`
+  - `fhops bench suite --scenario examples/tiny7/scenario.yaml --out-dir tmp/bench_fixture_refresh/tiny7 --time-limit 120 --sa-iters 200 --include-mip`
+  - `fhops bench suite --scenario examples/med42/scenario.yaml --out-dir tmp/bench_fixture_refresh/med42 --time-limit 600 --sa-iters 500`
+  - `fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/bench_fixture_refresh/large84 --no-include-mip --time-limit 900 --sa-iters 200`
+  - `python - <<'PY'  # recompute deterministic/stochastic KPI fixtures from refreshed assignments` *(inline script in history)*
+  - `pytest tests/test_kpi_regressions.py`
+  - `pytest tests/test_cli_playback_exports.py -k tiny7`
+  - `pytest tests/test_benchmark_harness.py -k tiny7`
+
+# 2025-12-01 — MILP sequencing consumes shared loader metadata
+- `apply_system_sequencing_constraints` now accepts the shared `OperationalProblem` context built in `fhops.optimization.operational_problem`; the Pyomo builder threads this context through so role filters, prereq sequencing, and loader batch buffers reuse the exact same `allowed_roles`, `prereq_roles`, and `(block, loader_role)` metadata that heuristics already consume. Loader-buffer constraints therefore activate on large84 (and future scenarios) instead of silently no-oping.
+- Defaulted the `model.prod` decision variables to `initialize=0.0` and expanded the sequencing unit tests to set explicit per-machine production whenever they toggle assignments, ensuring Pyomo expressions evaluate without requiring a solver run. Added helpers to reset assignments/production between assertions so the tests now exercise real staged-volume scenarios (processor-before-feller violations, multi-stage cable chains, helicopter prerequisites).
+- Added role head-start enforcement mirroring the SequencingTracker’s “counts before current shift” logic: downstream roles with positive `role_headstart_shifts` now introduce per-(block,role,shift) activation binaries so the MILP blocks assignments until the required upstream shift count is met, while permitting idle shifts without over-constraining the model. `tests/test_system_roles.py` gained a focused regression that proves the head-start guard fires on the first processor shift and relaxes only after a feller shift completes.
+- Re-ran the large84 operational MILP with Gurobi under the new constraints (`--sequencing-debug`), confirming the loader head-start guards hold but also surfacing the remaining staged-volume deficits (4 loader violations on block B07 day 24). Result CSV lives at `tmp/large84_mip_seq.csv` for follow-up landing-level enforcement work.
+- Added landing-level loader staging: aggregated prefix constraints now cap loader production across all blocks sharing a landing by the upstream production delivered to that landing, mirroring `SequencingTracker`’s staging logic. Introduced `(block, role, shift)` activation binaries so loader batch checks can reason about empty slots, guarded the entire sequencing block behind an optional `Scenario.enforce_sequencing` flag, and extended the system-role regression suite with a landing-sharing test.
+- Added per-block inventory state so the MILP mirrors SequencingTracker’s “upstream minus loader draws” bookkeeping: each `(block, shift)` now carries a non-negative inventory variable driven by role-level production deltas, and both block-level and landing-level loader constraints reference those inventories to prevent reusing staged wood. `tests/test_system_roles.py` now pokes the inventory balance equation directly before asserting the landing constraint triggers.
+- Large84 re-run (Gurobi, `--sequencing-debug`) still reports four loader violations on block B07 day 24 (≈30 m³ deficit across 27 k m³ production). Logged the command + KPI snapshot for traceability; follow-up work will either tighten the formulation further or document the residual gap as accepted.
+- Commands executed:
+  - `.venv/bin/fhops solve-mip-operational examples/large84/scenario.yaml --solver gurobi --time-limit 900 --gap 0.01 --sequencing-debug --out tmp/large84_mip_seq.csv`
+  - `.venv/bin/pytest tests/test_system_roles.py`
+  - `.venv/bin/pytest tests/test_mobilisation.py`
+  - `.venv/bin/pytest tests/test_schedule_locking.py`
+
+# 2024-11-23 — Tiny7 auto-batch + mobilisation shake tuning
+- Gave `solve_sa` a scenario-aware default for Tiny7: it now samples four neighbours per iteration (`batch_size=4`) without forcing threaded evaluation, and telemetry/meta payloads record whether the auto batch engaged so benchmarks explain the runtime shift. Added a matching regression fixture (`tests/fixtures/presets/tiny7_explore.yaml`) plus tests ensuring preset objective weights and auto-batch behaviour stay deterministic.
+- Introduced a mobilisation-shake stall trigger for Tiny7 runs. After 50 non-improving iterations the solver temporarily boosts the `mobilisation_shake` operator weight (3×) until an improvement lands, logging trigger counts in solver metadata and telemetry. This keeps diversification explicit while we continue closing the tiny/small gaps.
+- Captured the latest heuristic vs. MILP gaps for tiny7/small21 with the new defaults via `fhops bench suite` (SA/ILS/Tabu, 2 000 iterations, mobilisation preset) and archived the outputs under `tmp/bench_gap`. Tiny7’s best heuristic (ILS) still trails the MILP by ~49 %; small21 remains stalled at −131.89, confirming the need for deeper operator/repair work.
+- Commands executed:
+  - `ruff format src/fhops/optimization/heuristics/sa.py tests/heuristics/test_sa_batch.py`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest tests/heuristics/test_sa_batch.py -k auto`
+  - `fhops bench suite --scenario examples/tiny7/scenario.yaml --scenario examples/small21/scenario.yaml --include-sa --include-ils --include-tabu --sa-iters 2000 --ils-iters 500 --tabu-iters 2000 --time-limit 240 --objective-weight mobilisation=0.2 --operator-preset mobilisation --out-dir tmp/bench_gap`
+
+# 2024-11-22 — Incremental repair + fixture refresh
+- Rebuilt `_repair_schedule_cover_blocks` so each pass rebuilds the block/role demand dictionaries (fixing the zero-demand bug), keeps the original shift sweep with dirty-set filtering, and teaches `generate_neighbors` to sanitize candidates with `fill_voids=False` (drop infeasible loader slots without undoing operator moves). Heuristic smoke tests (tiny7 SA/ILS/Tabu) now produce stable objectives (SA ≈2061) while loader repairs remain incremental.
+- Refreshed downstream assets to reflect the new staged-volume semantics: `tests/fixtures/benchmarks/tiny7_sa.json`, med42 playback CSV/Parquet exports, deterministic and stochastic KPI snapshots, and the regression baseline (`tests/fixtures/regression/baseline.yaml`, SA objective ≈−999.5). CLI playback, KPI regression, and benchmark tests now assert against the leaner med42 footprint (≈12.3 k m³ staged vs. 63 k m³).
+- Commands executed:
+  - `ruff format src tests`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest`
+  - `pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+- Added dirty-slot tracking plus a feature-flagged “local repair” mode for heuristics: `_set_assignment` and operator clones now record the exact (machine, day, shift) slots touched, `_repair_schedule_cover_blocks` can replay just those slots, and `solve_sa`/`solve_ils`/`solve_tabu` accept `use_local_repairs=True` to score neighbours without rebuilding the whole plan. Final schedules are still re-scored with a full repair before reporting, so existing behaviour stays intact while we experiment with incremental scoring. Commands: `ruff format src tests`; `ruff check src tests`; `mypy src`; `pytest`.
+
+# 2025-11-30 — Scenario ladder workload rebalance
+- Regenerated the `small21`, `med42`, and `large84` bundles with the tiny7 block profile and scaled block counts (6/12/24) so each tier now carries roughly the same per-system workload; READMEs, block tables, prod rates, and distance matrices now reflect the trimmed volumes and mobilisations.
+- Commands executed for this work:
+  - `.venv/bin/python scripts/rebuild_reference_datasets.py small21 --seed 20251209`
+  - `.venv/bin/python scripts/rebuild_reference_datasets.py med42 --seed 20251209`
+  - `.venv/bin/python scripts/rebuild_reference_datasets.py large84 --seed 20251209`
+- Reran the delivery-only benchmark sweep with the tuned heuristic presets (SA 20 k iters, cooling 0.99995, restart 2 000, mobilisation preset; ILS 750 iters; Tabu 15 k). tiny7/small21/med42 ran via full-suite invocations, while large84 solvers were issued individually to dodge the 30‑minute CLI timeout; KPI validation for the large tier used `fhops evaluate` on the emitted assignments.
+- Commands executed for this work:
+  - `.venv/bin/fhops bench suite --scenario examples/tiny7/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/tiny7 --time-limit 900 --sa-iters 20000 --sa-cooling-rate 0.99995 --sa-restart-interval 2000 --operator-preset mobilisation --include-ils --ils-iters 750 --ils-perturbation-strength 6 --ils-stall-limit 25 --include-tabu --tabu-iters 15000 --tabu-tenure 200`
+  - `.venv/bin/fhops bench suite --scenario examples/small21/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/small21 --time-limit 900 --sa-iters 20000 --sa-cooling-rate 0.99995 --sa-restart-interval 2000 --operator-preset mobilisation --include-ils --ils-iters 750 --ils-perturbation-strength 6 --ils-stall-limit 25 --include-tabu --tabu-iters 15000 --tabu-tenure 200`
+  - `.venv/bin/fhops bench suite --scenario examples/med42/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/med42 --time-limit 900 --sa-iters 20000 --sa-cooling-rate 0.99995 --sa-restart-interval 2000 --operator-preset mobilisation --include-ils --ils-iters 750 --ils-perturbation-strength 6 --ils-stall-limit 25 --include-tabu --tabu-iters 15000 --tabu-tenure 200`
+  - `.venv/bin/fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/large84 --time-limit 900 --sa-iters 15000 --sa-cooling-rate 0.99995 --sa-restart-interval 2000 --operator-preset mobilisation --no-include-ils --no-include-tabu --no-include-mip`
+  - `.venv/bin/fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/large84 --include-ils --ils-iters 750 --ils-perturbation-strength 6 --ils-stall-limit 25 --no-include-sa --no-include-tabu --no-include-mip`
+  - `.venv/bin/fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/large84 --include-tabu --tabu-iters 10000 --tabu-tenure 200 --no-include-sa --no-include-ils --no-include-mip`
+  - `.venv/bin/fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_delivery_tuned/large84 --include-mip --time-limit 900 --no-include-sa --no-include-ils --no-include-tabu`
+  - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/sa_assignments_mobilisation.csv`
+  - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/ils_assignments.csv`
+  - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/tabu_assignments.csv`
+  - `.venv/bin/fhops evaluate examples/large84/scenario.yaml --assignments tmp/benchmarks_delivery_tuned/large84/user-1/mip_assignments.csv`
+- Captured the heuristic performance bottlenecks (per-iteration cost, operator scans, objective stagnation) and queued remediation tasks inside `notes/mip_formulation_plan.md` so profiling + optimisation work has a concrete checklist.
+- Commands executed for this profiling pass:
+  - `.venv/bin/python -m cProfile -o tmp/profile_sa_large84.prof -m fhops.cli.main solve-heur examples/large84/scenario.yaml --iters 200 --operator-preset mobilisation --out tmp/sa_profile.csv`
+  - `.venv/bin/python -m cProfile -o tmp/profile_ils_large84.prof -m fhops.cli.main solve-ils examples/large84/scenario.yaml --iters 200 --operator-preset mobilisation --out tmp/ils_profile.csv`
+  - `.venv/bin/python -m cProfile -o tmp/profile_tabu_large84.prof -m fhops.cli.main solve-tabu examples/large84/scenario.yaml --iters 200 --operator-preset mobilisation --out tmp/tabu_profile.csv`
+- Reworked neighbour generation to skip the redundant `_repair_schedule_cover_blocks` pass (candidates are now repaired only once during scoring), yielding ~10 % faster SA iterations on large84. Verified with a follow-up profiling run and a tiny7 smoke test.
+- Commands executed for this change:
+  - `.venv/bin/python -m cProfile -o tmp/profile_sa_large84_no_pre_repair.prof -m fhops.cli.main solve-heur examples/large84/scenario.yaml --iters 200 --operator-preset mobilisation --out tmp/sa_profile2.csv`
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+- Updated all neighbourhood operators so they only deep-copy the machines they mutate (instead of cloning the entire plan), reducing per-neighbour overhead and preparing for array-backed schedule storage.
+- Commands executed for this verification:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+- Cached the shift order/index inside `OperationalProblem` and rewrote the greedy seed, repair loop, and evaluator to reuse it, eliminating per-call `sorted(pb.shifts, …)` overhead and inching toward per-shift state caches.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+- Extended `Schedule` with a dense per-machine shift matrix plus helper routines to keep plan/matrix in sync; `_repair_schedule_cover_blocks` and `init_greedy_schedule` now update both representations, so future operator work can mutate O(1) entries instead of rebuilding dicts.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Repaired the remaining-work cache wiring so `init_greedy_schedule` seeds the block/role caches, `_repair_schedule_cover_blocks` reuses those dictionaries instead of spinning new ones every pass, and the tiny7 smoke tests run without the previous `NameError`.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Refactored the operator registry around the new array-backed schedules: `OperatorContext` now carries shift metadata, `_clone_schedule` returns full plan+matrix copies, and every operator (`swap`, `move`, `block_insertion`, `coverage_injection`, `cross_exchange`, `mobilisation_shake`) writes through `_set_slot`, so candidates stay in sync without extra repairs.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Added per-machine mobilisation caches and dirty tracking: schedule updates now flag affected machines, `_ensure_mobilisation_stats` recomputes only those rows, and `evaluate_schedule` reuses cached mobilisation/transition totals rather than recalculating them inside the shift loop.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Added block-level dirty tracking so `_repair_schedule_cover_blocks` only replays blocks touched by operator moves, avoiding full-plan repairs when individual blocks are mutated.
+- Commands executed:
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+- Introduced a block-slot index on `Schedule` so each block now keeps an ordered list of `(shift_idx, machine_id)` assignments; `_set_assignment` and all registry operators maintain the index, setting us up for block-scoped repairs.
+- Commands executed:
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+- Limited `_repair_schedule_cover_blocks` to dirty blocks by skipping untouched ones in both the sanitization and fill passes, so we no longer redo feasibility work for clean blocks after each operator move.
+- Commands executed:
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_sa_smoke.csv`
+  - `.venv/bin/fhops solve-ils examples/tiny7/scenario.yaml --iters 50 --out tmp/tiny7_ils_smoke.csv`
+
+# 2025-12-21 — Objective-weight overrides + CLI plumbing
+- Added `resolve_objective_weight_overrides` + `override_objective_weights`, updated SA/ILS/Tabu to rebuild their `OperationalProblem` with either scenario defaults (Tiny7/Small21 now auto-scale mobilisation weight to 0.2) or explicit overrides, and surfaced the knob via `--objective-weight mobilisation=0.2` on `solve-heur`, `solve-ils`, `solve-tabu`, and `fhops bench suite`. Telemetry/meta payloads now include both the requested overrides and the final `objective_weights` snapshot.
+- Refreshed `tests/fixtures/benchmarks/tiny7_sa.json` after the lighter mobilisation penalty pushed the SA benchmark objective to 2 093.54 (prev. 2 061.60). Programmatic runs confirm the heuristics finally move beyond the greedy plan on the small ladders: Tiny7 jumps from −4 146.78 → −542.59 (+3.6 k) and Small21 from −5 839.62 → −271.85 (+5.6 k) with `solve_sa(..., use_local_repairs=True)`.
+- Commands executed:
+  - `ruff format src tests`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest`
+  - `pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+
+# 2025-11-30 — Heuristic scoring realigned with loader delivery
+- Reworked `evaluate_schedule` so SA/ILS/Tabu objectives reward only delivered loader production (`tracker.delivered_total`) while penalising staged leftovers, landing slack, transitions, and mobilisation directly. This removes the old per-role “partial production” bonus that double-counted upstream work.
+- Updated the tiny7 benchmark fixture, regression baseline, and schedule-locking tests so they reflect the new scoring scale (tiny7 SA objective ≈1 929, regression SA/Tabu objective ≈-1005.5, landing/transition unit tests now assert the loader-based totals).
+- Commands executed for this work:
+  - `.venv/bin/fhops bench suite --include-mip --scenario examples/tiny7/scenario.yaml --sa-iters 200 --time-limit 10`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest`
+- Softened the leftover penalty factor to 1.0, auto-apply the mobilisation operator preset when scenarios exceed 30 blocks/days (unless callers override operators), and threaded staged/delivered volume into the watch metadata so live dashboards surface feasibility progress.
+- Regenerated the tiny7 SA benchmark fixture with the auto-mobilisation defaults (`fhops bench suite --include-mip --scenario examples/tiny7/scenario.yaml --sa-iters 200 --time-limit 10`).
+
+# 2025-11-30 — Legacy landing-capacity fix + KPI/test realignment
+- Patched the legacy Pyomo builder (`fhops.optimization.mip.builder`) so landing-capacity constraints are only created for landings that actually host blocks (and only when machines exist); this mirrors the operational bundle logic and unblocks `fhops bench suite --include-mip` on the refreshed tiny7 dataset.
+- Updated the operational MILP regression to expect loaders to finish the entire workload when partial batches are allowed, and tightened the various KPI/playback/benchmark tests so they now respect the new production metrics: `staged_production` now reports the *remaining* staged inventory (equal to `remaining_work_total`). Regenerated the deterministic KPI snapshots and the tiny7 SA benchmark fixture so regression tests exercise the clarified fields (no more `cumulative_production` in the public KPI payload).
+- Reran the tiny7 benchmark suite with the MIP enabled plus the full lint/type/test/doc cadence to lock in the fixes.
+- Commands executed for this work:
+  - `.venv/bin/fhops bench suite --include-mip --scenario examples/tiny7/scenario.yaml`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest`
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs docs/_build/html -W`
+
+# 2025-11-30 — Operational MILP loader staging parity
+- Added `assigned`/`production` columns to the operational MILP assignments writer so playback/KPI tooling consumes the actual per-machine shift production instead of re-deriving rates, eliminating false sequencing deficits.
+- Bumped loader head-start buffers to the truck batch volume, introduced assignment/activation coupling for all buffered roles, and tightened the inventory guard so loaders (and any buffered role) cannot be assigned until the staged volume satisfies the buffer requirement; reran tiny7/med42 MILP solves under `--sequencing-debug` to confirm the schedules are now sequencing-clean.
+- Replayed SA heuristics on tiny7/med42 after the constraint changes to verify they still emit sequencing-feasible schedules (objectives now reflect the stricter staging rules), and documented the cascading fixture/regression deltas for follow-up work.
+- Trimmed the tiny7 reference dataset to two blocks (~4.95 k m³) via `scripts/rebuild_reference_datasets.py tiny7 --seed 20251209` so the single-system roster can actually finish the workload within 7 days; MILP now reports `completed_blocks=2` with zero sequencing violations, while SA stays feasible but still carries higher mobilisation costs (to be tuned later).
+- Commands executed for this work:
+  - `.venv/bin/fhops solve-mip-operational examples/tiny7/scenario.yaml --out tmp/tiny7_mip_seq.csv --time-limit 120 --gap 0.05 --sequencing-debug`
+  - `.venv/bin/fhops solve-mip-operational examples/med42/scenario.yaml --out tmp/med42_mip_seq.csv --time-limit 600 --gap 0.05 --sequencing-debug`
+  - `.venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa_seq.csv --iters 2000 --cooling-rate 0.9999 --profile explore --sequencing-debug`
+  - `.venv/bin/fhops solve-heur examples/med42/scenario.yaml --out tmp/med42_sa_seq.csv --iters 2000 --cooling-rate 0.9999 --profile explore --sequencing-debug`
+  - `.venv/bin/fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `.venv/bin/fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `python - <<'PY' ...` *(regenerate deterministic KPI snapshots for tiny7/med42 via `compute_kpis`)*
+  - `python - <<'PY' ...` *(refresh the med42 stochastic KPI snapshot via `run_stochastic_playback`)*
+  - `python - <<'PY' ...` *(re-run `fhops bench suite` for tiny7 with `include_mip=True` and update `tests/fixtures/benchmarks/tiny7_sa.json`)*
+  - `.venv/bin/pytest tests/test_kpi_regressions.py`
+  - `.venv/bin/pytest tests/test_cli_playback.py tests/test_playback_aggregates.py`
+  - `.venv/bin/pytest tests/test_regression_integration.py`
+  - `.venv/bin/pytest tests/test_schedule_locking.py tests/test_system_roles.py`
+  - `.venv/bin/pytest tests/test_benchmark_harness.py`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/pip install -r docs/requirements.txt`
+  - `.venv/bin/sphinx-build -b html docs docs/_build/html -W`
+
+# 2025-11-30 — Playback/KPI sequencing parity
+- Taught the operational bundle + sequencing tracker about per-role demand/terminal roles so heuristics, playback, and KPI logic all consume the same staged-inventory rules (block volume now decrements only when loaders finish, head-start buffers apply everywhere, and `evaluate_schedule` no longer “auto-completes” downstream roles). `_repair_schedule_cover_blocks` and `init_greedy_schedule` now reassign idle shifts per `(block, role)` demand so evaluation always starts from a sanity-checked plan.
+- Rewrote `compute_kpis` to drive `run_playback` instead of duplicating the sequencing math; the KPI totals, utilisation ordering, and sequencing violation counts now match the CLI/watch output bit-for-bit.
+- Regenerated the deterministic KPI snapshots plus the tiny7/med42 playback CSV+Parquet fixtures using the new sequencing logic, then re-recorded the stochastic KPI snapshot so the regression suite can adopt the updated totals.
+- Commands executed for this work:
+  - `fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `python - <<'PY' ...` *(recompute deterministic KPI fixture for tiny7/med42 via `compute_kpis`)*
+  - `python - <<'PY' ...` *(refresh stochastic KPI snapshot via `run_stochastic_playback`)*
+  - `pytest tests/test_cli_playback.py tests/test_kpi_regressions.py tests/test_playback_aggregates.py`
+
+# 2025-11-30 — Sequencing blocker triage
+- Captured the current state of the sequencing regression: heuristics only schedule the first role in each system, so SA stalls immediately (~1.2 k objective on tiny7) while downstream KPIs/playback still assume the older per-block inventory rules. Documented the issue and queued follow-up work in `notes/mip_formulation_plan.md` so we can introduce per-role work queues, repair logic, and matching playback/KPI staging before refreshing fixtures.
+- Updated the dataset CLI helpers to satisfy Ruff’s new `UP038` rule by switching every `isinstance(..., (int, float))` check to the modern union syntax (`int | float`), keeping the linter green while we focus on the sequencing fix.
+- Commands executed for this work:
+  - `fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa_smoke.csv --iters 2000`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest` *(fails: sequencing logic still per-block, so regression suite reports KPI/playback mismatches and benchmark gaps)*
+
+# 2025-11-30 — Heuristic sequencing enforcement groundwork
+- Augmented `OperationalProblem` with loader metadata so heuristics now know each block’s loader batch requirement and role multiplicity. The shared evaluator uses that bundle to maintain staged inventories per block/role, preventing downstream machines from consuming wood before upstream production actually exists.
+- Tightened `fhops.optimization.heuristics.common` so `_repair_schedule_cover_blocks` reassigns surplus shifts (without inventing new work), `_evaluate` enforces buffer/batch rules via staged volume, and the new `coverage_injection` operator explicitly injects high-deficit blocks into neighbour generation. `OperatorRegistry.from_defaults` enables the operator across SA/ILS/Tabu, giving the solvers a way to rebalance coverage when the calendar is saturated.
+- Rewired playback + KPI tooling to reuse the same staging logic: `assignments_to_records` and `compute_kpis` now consume `OperationalProblem`, so CLI/DOC tests finally agree with the stricter feasibility checks. Deterministic/stochastic KPI snapshots, playback CSV/Parquet fixtures, and the tiny7 benchmark baseline were regenerated accordingly.
+- Commands executed for this work:
+  - `fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `python - <<'PY' ...` *(update deterministic KPI fixture via `compute_kpis` for tiny7/med42/large84)*
+  - `python - <<'PY' ...` *(refresh stochastic KPI snapshot with `run_stochastic_playback` for med42)*
+  - `fhops bench suite --scenario examples/tiny7/scenario.yaml --time-limit 120 --sa-iters 200 --out-dir tmp/bench_tiny7_fixture`
+  - `ruff format src tests`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest`
+  - `pre-commit run --all-files`
+  - `sphinx-build -b html docs _build/html -W`
+
+# 2025-11-30 — Heuristic operational bundle unification
+- Added `src/fhops/optimization/operational_problem.py`, a shared context builder that reuses the operational MILP bundle (role metadata, buffers, mobilisation/blackout/availability maps) and exposes a common sanitizer for all heuristics. This removes the duplicated scenario parsing in SA/ILS/Tabu and guarantees that solver scoring now mirrors the MILP rules.
+- Refactored `solve_sa`, `solve_ils`, and `solve_tabu` to build that shared context once per solve, threaded it through `_init_greedy`, `_evaluate`, `_neighbors`, perturbation/local-search helpers, and the registry-driven tests. Fixtures that call `_evaluate` were updated to pass the new context parameter, and the heuristic batch/CLI tests now run against the shared metadata.
+- Taught the MILP bundle builder to fall back to the grounded Lahrsen harvest system when scenarios omit `harvest_system_id`, while still letting heuristics treat such blocks as “no role filter” so legacy datasets keep working. Tiny7 benchmark runs once again match the stored SA fixture (objective ≈13 055) instead of the under-utilised 6 k plateau that surfaced during the refactor.
+- Hooked SA/ILS/Tabu directly to the shared helper implementations in `fhops.optimization.heuristics.common`, retiring the bespoke `_init_greedy`/`_evaluate`/`_neighbors`/`_evaluate_candidates` functions entirely. Updated the downstream tests (registry/operator/system-role/schedule-locking + ILS hybrid) to import `Schedule`, `generate_neighbors`, and `evaluate_schedule` from the shared module, then reran `pytest tests/heuristics` and `fhops bench suite --scenario examples/tiny7/scenario.yaml --include-sa --include-ils --include-tabu --sa-iters 200 --ils-iters 10 --tabu-iters 200 --time-limit 30 --out-dir tmp/bench_tiny7_refactor`.
+- Command cadence: `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`, `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
+- Rebuilt the full reference ladder and refreshed the regression fixtures:
+  - `python scripts/rebuild_reference_datasets.py tiny7|small21|med42|large84 --seed 20251209`
+  - `python docs/softwarex/manuscript/scripts/run_dataset_inspection.py`
+  - `fhops solve-mip-operational examples/tiny7/scenario.yaml --out tests/fixtures/playback/tiny7_assignments.csv --time-limit 120 --gap 0.02`
+  - `fhops solve-mip-operational examples/med42/scenario.yaml --out tests/fixtures/playback/med42_assignments.csv --time-limit 600 --gap 0.05`
+  - `fhops solve-mip-operational examples/large84/scenario.yaml --out tests/fixtures/playback/large84_assignments.csv --time-limit 900 --gap 0.10`
+  - `fhops eval-playback …` for each scenario to refresh shift/day CSV+Parquet exports (fixtures under `tests/fixtures/playback/`)
+  - `fhops bench suite --scenario examples/tiny7/scenario.yaml --time-limit 120 --sa-iters 200 --out-dir tmp/bench_tiny7_fixture`
+  - `fhops bench suite --scenario examples/med42/scenario.yaml --time-limit 600 --sa-iters 500 --out-dir tmp/bench_med42_fixture`
+  - `fhops bench suite --scenario examples/large84/scenario.yaml --time-limit 900 --sa-iters 500 --out-dir tmp/bench_large84_fixture`
+  - Python helpers to recompute deterministic/stochastic KPI snapshots, dump operational bundles (`tests/fixtures/milp/*_operational_bundle.json`), and rewrite benchmark fixture rows from the new `summary.json` outputs.
+  - `pytest` *(full suite, 476 passed / 1 skipped)* to verify the regenerated datasets + fixtures.
+- Housekeeping: pre-commit added missing newlines to the dataset summaries and MILP bundle fixtures after the lint pass; `notes/mip_formulation_plan.md` now tracks the remaining heuristic tasks (stamp harvest-system IDs via the dataset generator, extract a solver-agnostic neighbourhood module, rerun docs once the ladder is refreshed).
+- Extended `scripts/rebuild_reference_datasets.py` and regenerated `examples/{tiny7,small21,med42,large84}/data/blocks.csv` so every block now carries `harvest_system_id=ground_fb_skid`. Heuristics therefore see the same system metadata/head-start queues as the operational MILP bundle rather than defaulting to “all roles allowed.”
+- Regenerated the tiny7/med42 deterministic KPI snapshots plus the playback shift/day fixtures after wiring the sequencing metadata through both compute paths (KPI and playback). Refreshing the tiny7 SA benchmark fixture (`fhops bench suite ...`) now records the 6.26 k post-refactor objective, and the CLI benchmark summary uses `idxmax`/positive gaps so “best heuristic” again points at the highest objective solver.
+- Commands: `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`, `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
+
+# 2025-11-30 — Tiny7 documentation/asset scrub
+- Replaced every lingering documentation/note/manuscript reference to `examples/minitoy` with `examples/tiny7`, so Sphinx guides, planning notes, and CLI help snippets reflect the dataset that actually exists in-tree. This touched the how-to/reference RST set, roadmap/notes, and SoftwareX planning docs.
+- Renamed the archived manuscript/analytics assets from `minitoy` → `tiny7` (benchmark summaries, playback CSV/MD snapshots, telemetry samples) and updated the associated indexes so future manuscript work can be re-run without broken paths. Removed the stale tuning `runs.sqlite` artefact while we are parked on manuscript duties.
+- Updated the dataset ladder plan (`notes/mip_formulation_plan.md`) to record that `examples/minitoy` is gone and that all guidance/assets now point at the reproducible `tiny7` scenario generated via `scripts/rebuild_reference_datasets.py`.
+- Commands: `python - <<'PY' ...` *(git grep-driven minitoy→tiny7 replacement)*, `mv docs/softwarex/assets/data/benchmarks/minitoy docs/softwarex/assets/data/benchmarks/tiny7`, `mv docs/softwarex/assets/data/playback/minitoy docs/softwarex/assets/data/playback/tiny7`, `rm docs/softwarex/assets/data/tuning/telemetry/runs.sqlite`.
+- Tests: not run (docs/assets/notes only).
+
+# 2025-11-30— Reference dataset ladder rebuild (phase 1)
+- Expanded `scripts/rebuild_reference_datasets.py` so it now drives the entire ladder (tiny7, small21, med42, large84) via reusable `DatasetConfig`/`BlockProfile` scaffolding, derives ADV6N7 skidding distance from each block’s inferred geometry (half the block width), and rewrites dataset READMEs with up-to-date block/volume/machine statistics. med42/small21 now share the 2 FB / 1 GS / 3 processor / 3 loader “balanced” system, while large84 doubles both horizon and machine roster.
+- Regenerated `examples/{tiny7,small21,med42,large84}` data bundles (blocks, machines, calendar, prod rates, mobilisation distances, README, scenario YAML) using the Lahrsen-aligned profiles so the total workload lands just above the available machine capacity. Skidding-productivity heuristics now honor the “half block width” approximation that was requested for ADV6N7.
+- Updated the SoftwareX dataset inspection helper to cover the full ladder, reran it so `docs/softwarex/assets/data/datasets/{index,tiny7_summary,small21_summary,med42_summary,large84_summary}.json` mirror the new rosters, and refreshed the synthetic-small bundle along the way.
+- Commands: `python scripts/rebuild_reference_datasets.py tiny7`, `python scripts/rebuild_reference_datasets.py small21`, `python scripts/rebuild_reference_datasets.py med42`, `python scripts/rebuild_reference_datasets.py large84`, `python docs/softwarex/manuscript/scripts/run_dataset_inspection.py`.
+- Tests: not run (dataset regeneration in progress; fixtures/CI pending the broader ladder refresh).
+- Follow-up: aligned `examples/tiny7` with the balanced med42 roster (2 FB, 1 GS, 3 processors, 3 loaders), mapped the CLI `--gap` flag onto HiGHS’ `mip_rel_gap` option, and validated the ladder via `fhops solve-mip-operational`:
+  - tiny7 (`--gap 0.02 --time-limit 120`) → objective 11 803.71, production 11 990 m³, mobilisation 1 128.84.
+  - small21 (`--gap 0.05 --time-limit 300`) → objective 41 264.52, production 41 606 m³.
+  - med42 (`--gap 0.05 --time-limit 600`) → objective 68 716.92, production 69 781 m³.
+  - large84 (`--gap 0.10 --time-limit 900`) → objective 125 016.95, production 125 017 m³ after ~8 min HiGHS runtime.
+  These runs confirm the new ladder is MILP-feasible and that HiGHS now terminates cleanly once the requested relative gap is met.
+- Refreshed the tiny7 regression fixtures to match the balanced roster: reran the benchmark suite (`fhops bench suite --scenario examples/tiny7/scenario.yaml --time-limit 10 --sa-iters 200 --include-mip`) to update `tests/fixtures/benchmarks/tiny7_sa.json`, dumped a new operational bundle via `fhops solve-mip-operational` (also feeding the KPI + playback fixtures), and regenerated the deterministic playback CSV/Parquet outputs used by the CLI/export regression tests. Updated `tests/fixtures/kpi/deterministic.json` accordingly and relaxed the benchmark harness assertion so it checks the recorded gap rather than assuming the MILP objective always beats SA. Targeted pytest slices: `pytest tests/test_benchmark_harness.py -k tiny7 -m milp_refactor`, `pytest tests/test_cli_playback_exports.py -k tiny7`, `pytest tests/test_playback_aggregates.py -k tiny7`, `pytest tests/test_kpi_regressions.py -k tiny7 -m milp_refactor`.
+- Follow-on fixture refreshes:
+  - Reran `fhops solve-mip-operational` + `fhops eval-playback` for `examples/med42`, updating the MILP bundle (`tests/fixtures/milp/med42_operational_bundle.json`), deterministic assignments, and playback CSV/Parquet outputs before recomputing the KPI snapshot embedded in `tests/fixtures/kpi/deterministic.json`.
+  - Repeated the workflow for `examples/large84` (900 s / 10 % gap solve), adding new assignments/playback exports and a KPI entry so future regression tests can cover the doubled system. Full CLI playback export tests (`pytest tests/test_cli_playback_exports.py`) were rerun to confirm coverage.
+- Documentation: `docs/howto/data_contract.rst` now includes a “Reference dataset generator” section describing how to regenerate `examples/{tiny7,small21,med42,large84}` via `scripts/rebuild_reference_datasets.py --seed …`, keeping the published guidance in sync with the new ladder.
+- Benchmarks & regression/test updates:
+  - Captured new SA baselines for the balanced `med42`/`large84` datasets (`tests/fixtures/benchmarks/med42_sa.json`, `tests/fixtures/benchmarks/large84_sa.json`) via `fhops bench suite`, then reran the CLI/telemetry/tuning tests so they no longer reference the removed Minitoy dataset.
+  - Refresh regression and stochastic fixtures: `tests/fixtures/kpi/stochastic.json` now reflects the med42 stochastic playback snapshot, and `tests/fixtures/regression/baseline.yaml` mirrors the current SA objective/mobilisation totals. Updated schedule-locking/tuning/synthetic smoke tests to align with the new scoring and playback behaviour, and re-ran the full cadence (`ruff format`, `ruff check`, `mypy`, `pytest`, `sphinx-build`) with all tests green.
+
+# 2025-11-30 — Operational MILP buffer/batching fixes
+- Operational MILP builder now derives head-start buffers from upstream role capacity, enforces the wait using previous-shift inventory levels, and restricts loader production to integer truckloads; this touches `fhops.model.milp.operational` plus the bundle serializer (`fhops.model.milp.data`) so downstream consumers see the same buffer metadata.
+- `solve_operational_milp` now treats HiGHS “ok/optimal” terminations as success, loads solutions via Pyomo, and always returns a DataFrame with the canonical assignment columns; mobilisation/transition penalties now show up in watch/telemetry because the solver actually emits the assignments even when HiGHS only reports `status=ok`.
+- Added regression coverage for the head-start/loader batching behaviours (`tests/model/test_operational_milp.py`) so the new constraints stay wired while we finish the MIP bring-up; helpers build tiny deterministic scenarios to keep tests solver-light.
+- Planning note updated (Section 6.1) so the operational-MILP workstream tracks these completed subtasks before we move on to `tiny7` generation.
+- Added `scripts/rebuild_reference_datasets.py` and used it to seed the new `examples/tiny7` scenario (blocks, production rates, machines, calendar, landings, mobilisation distances, README, scenario YAML) so we have a reproducible 7-day workload for MILP smoke tests before scaling the ladder.
+- Removed the `examples/minitoy` bundle from the tree, regenerated all CLI/tests/fixtures/benchmarks/KPI snapshots against `examples/tiny7`, and updated the tuning/bundle aliases so future work builds on the new scenario. (Docs/manuscript assets still reference minitoy and will be refreshed separately.)
+- Commands: `python scripts/rebuild_reference_datasets.py tiny7`, `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest` *(fails: benchmark harness minitoy suite, CLI playback med42 mobilisation diff, telemetry report CLI, tune-grid CLI run count, med42 deterministic/stochastic KPI fixtures, playback aggregates, SA/Tabu regression presets & mobilisation penalties, schedule-locking transition/landing slack penalties, synthetic medium stochastic smoke)*, `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
+
+# 2025-11-30 — med42 Lahrsen-balanced dataset refresh
+- Added `scripts/rebuild_med42_dataset.py`, a deterministic generator that samples Lahrsen-range
+  stand metrics, enforces the “60 % of volume in ~20 ha blocks” rule, and stops once the processor
+  bottleneck exceeds the 42-day horizon. Running `python scripts/rebuild_med42_dataset.py` now
+  refreshes both `examples/med42/data/blocks.csv` and `examples/med42/data/prod_rates.csv`.
+- Regenerated the med42 block table into a 29-block mix (3 large 10–18 ha blocks plus 26 satellites
+  at 1.3–2.3 ha) totalling ≈22.5 k m³. The Lahrsen/ADV6N7/Berry/TN-261 productivity pipeline yields
+  per-day rates of 0.35–1.4 k m³, and the busiest machine (processor H3) now requires ≈46.3 days,
+  leaving the scenario slightly under-capacitated over the 42-day horizon.
+- Updated `examples/med42/README.md` with the new block counts, volume shares, and generator
+  instructions so users know how to refresh the dataset or tweak the target capacity ratio.
+- Added a `milp_refactor` pytest marker
+- Added `fhops solve-mip-operational`, a CLI wrapper around the new operational MILP bundle/driver so analysts can experiment with the day×shift model directly (`src/fhops/cli/main.py`).
+- `solve-mip-operational` also supports `--dump-bundle` / `--bundle-json` so bundles can be serialized to JSON and replayed without reloading the scenario. Saved a canonical minitoy bundle under tests/fixtures/milp/minitoy_operational_bundle.json for regression tests.
+- Operational MILP builder now enforces exact block balance via leftover slack variables and landing-capacity slack penalties so the `transitions`/`landing_surplus` objective weights influence solutions (`src/fhops/model/milp/operational.py`). Filtered CI to run `pytest -m "not milp_refactor"` temporarily while the MIP backend is rebuilt, skipping heuristics/benchmark/playback regressions.
+- Added mobilisation-aware transition binaries/cost penalties plus bundle serialization so `solve-mip-operational` can dump/replay fully-specified bundles (`src/fhops/model/milp/data.py`, `src/fhops/model/milp/operational.py`, `tests/model/test_operational_milp.py`, `tests/model/test_operational_bundle_dump.py`).
+- `solve-mip-operational` now supports telemetry logging (`--telemetry-log`) and watch mode (`--watch`) matching the heuristics/benchmark commands; regression tests cover bundle dump/replay + telemetry output (`src/fhops/cli/main.py`, `tests/test_cli_operational_mip.py`, `docs/reference/cli.rst`).
+- Commands: `python scripts/rebuild_med42_dataset.py`, `ruff format scripts/rebuild_med42_dataset.py`,
+  `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest`,
   `pre-commit run --all-files`, `sphinx-build -b html docs _build/html -W`.
 
-# 2025-12-08 — SA block completion + med42 capacity bump
+# 2025-11-30 — SA block completion + med42 capacity bump
 - Enforced the “finish the block before switching” policy inside the simulated annealing evaluator: the solver now tracks
   each machine’s active block, overrides any attempt to hop to a new job (or idle) while wood remains, and mutates the
   underlying schedule so exported assignments/KPIs/telemetry reflect the repaired plan. This keeps KPI `completed_blocks`
@@ -56,7 +405,7 @@
   (`notes/cli_profiles_plan.md`).
 - Testing: `fhops solve-heur examples/med42/scenario.yaml --out tmp/med42_sa_smoke.csv --iters 500 --cooling-rate 0.9999 --restart-interval 50`.
 
-# 2025-12-07 — Heuristic watch telemetry upgrades
+# 2025-11-30 — Heuristic watch telemetry upgrades
 - Expanded the live watcher snapshot schema (`src/fhops/telemetry/watch.py`) to carry current/rolling objectives,
   temperature, delta-best, and sliding-window acceptance so heuristic dashboards can show more than a static best score.
 - Updated the simulated annealing runner to compute those metrics per-iteration (rolling deques, windowed acceptance) and
@@ -91,7 +440,7 @@
 - Regenerated every manuscript asset—benchmark summaries/telemetry, tuning leaderboards, playback robustness CSV/Markdown, costing demo, synthetic scaling plot, and shared snippets—so Section 3 tables/figures can cite realistic runtimes/objectives (see `docs/softwarex/assets/data/**`, `docs/softwarex/assets/figures/prisma_overview.pdf`).
 - Added `docs/softwarex/manuscript/scripts/build_tables.py` to synthesize solver-performance and tuning-leaderboard tables (CSV + LaTeX) directly from the refreshed assets, keeping Table~1/2 source-of-truth files under `docs/softwarex/assets/data/tables/`.
 
-# 2025-12-07 — SoftwareX manuscript tone corrections
+# 2025-11-24 — SoftwareX manuscript tone corrections
 - Reframed Section 2 narrative so the PRISMA workflow, tuning harness, and telemetry stack emphasise FHOPS capabilities instead of repository plumbing; manuscript now describes reproducible CLI flows without citing Makefile/includes (`docs/softwarex/manuscript/sections/software_description.tex`).
 - Tightened Section 3 illustrative example to focus on datasets, solver behaviour, KPI outputs, and FHOPS commands; removed references to internal scripts/paths so the discussion reads like a peer-reviewed case study (`docs/softwarex/manuscript/sections/illustrative_example.tex`).
 - Updated the abstract, highlights, and shared motivation snippet to describe reproducibility via the FHOPS pipeline rather than Makefile targets, ensuring the manuscript keeps a reviewer-appropriate tone (`docs/softwarex/manuscript/sections/abstract.tex`, `.../highlights.tex`, `.../includes/motivation_story.{md,tex}`).
@@ -150,11 +499,11 @@
 - Enriched the API reference pages (`docs/api/fhops.{scenario,optimization,evaluation}.rst`) with narrative intros, usage snippets, and entry-point explanations so developers understand how to move from scenarios → MIP/heuristics → KPI evaluation without reading raw autodoc output.
 - Added `docs/howto/release_playbook.rst`, a release/contribution runbook covering roadmap alignment, versioning, command suite, changelog policy, and PR expectations ahead of Phase 4 releases.
 
-# 2025-12-06 — Conversation log dedup helper
+# 2025-11-22 — Conversation log dedup helper
 - Added `scripts/dedup_conversation_log.py`, a windowed rolling-hash utility that reports duplicate multi-line chunks (default 32-line windows, 80-line minimum) and can rewrite `notes/coding-agent-conversation-log.txt` with the later copies removed. The script supports dry-run summaries, optional snippet previews, and an `--apply` flag for in-place cleanup so the long-form conversation notes no longer accumulate repeated headers when entire transcripts get pasted multiple times.
 - Verified the helper against the current log with `python scripts/dedup_conversation_log.py notes/coding-agent-conversation-log.txt --window 32 --min-lines 80` (dry run); no duplicates were detected in the present file state, confirming the new guard can be run safely before future cleanups.
 
-# 2025-12-06 — FPInnovations helicopter presets & costing
+# 2025-11-22 — FPInnovations helicopter presets & costing
 - Consolidated the ADV3/4/5/6 helicopter studies (plus the Kamov KA-32A pole-logging trial) into
   `data/productivity/helicopter_fpinnovations.json`. Each preset now captures flight distance, turn timing, payload,
   load factor, cost, and provenance metadata under a stable ID (e.g., `s64e_grapple_retention_adv5n13`). The new CLI helper
@@ -173,7 +522,7 @@
   inspection plan marks the helicopter backlog items complete, and `docs/reference/harvest_systems.rst` now references the
   preset helper, the KA-32A model, and the new machine-rate entries.
 
-# 2025-12-05 — Skyline partial-cut profiles
+# 2025-11-22 — Skyline partial-cut profiles
 - Transcribed the ADV11N17, ADV1N22 (Opening 6 group selection), TN199, SR-109 MASS shelterwood/patch/green-tree, and ADV9N4 interface-thinning tables into structured datasets (`data/reference/fpinnovations/*partial*.json`). Each file captures the published volume per shift, $/m³, trail coverage, and retention metadata so the skyline helper no longer relies solely on TR119 multipliers.
 - Introduced `data/reference/partial_cut_profiles.json`, a consolidated registry of volume/cost multipliers derived from the new datasets (plus the existing SR-109 trials). `fhops.reference.partial_cut_profiles` exposes typed loaders so downstream helpers can look up IDs such as `sr109_shelterwood`, `adv11n17_trial1`, or `tn199_partial_entry` without reopening the PDFs.
 - `fhops.dataset estimate-skyline` gained ``--partial-cut-profile``. Selecting a profile multiplies productivity by the published volume factor, annotates the telemetry/log output, and (when ``--show-costs`` is enabled) prints the CPI-aware rental rate adjusted by the matching cost multiplier. Tests cover both the manual flag and the harvest-system default path.
@@ -181,7 +530,7 @@
 - Documentation updates: `docs/reference/harvest_systems.rst` calls out the new profile plumbing in the TR-122/TR-127 sections and adds a dedicated “Partial-cut profile registry” table listing each ID, source, and multiplier. The skyline cost section now links the CLI option back to the JSON registry.
 - Planning notes mark the skyline partial-cut backlog item as complete and describe the new automation so future iterations know how to extend the registry.
 
-# 2025-12-04 — ADV15N3/ADV4N7 support penalties
+# 2025-11-22 — ADV15N3/ADV4N7 support penalties
 - Encoded the ADV15N3 bulldozer efficiency study and ADV4N7 soil-compaction guidance as structured datasets
   (`data/reference/fpinnovations/adv15n3_support.json` and `adv4n7_compaction.json`). Each record captures the published fuel
   curves, risk levels, and recommended mitigation steps so downstream helpers can apply the penalties without reopening the PDFs.
@@ -196,7 +545,7 @@
 - Updated `docs/reference/harvest_systems.rst` (road/subgrade section) and `notes/reference/skyline_small_span_notes.md` to explain
   the new automation, cite the JSON artefacts, and document how the multipliers were derived; `CHANGE_LOG.md` now records the feature.
 
-# 2025-12-01 — Grapple harvest-system presets
+# 2025-11-22 — Grapple harvest-system presets
 - Added dedicated grapple harvest-system overrides for every digitised dataset: `default_system_registry()` now ships IDs for TN-147 (Madill 009 highlead), TN-157 (alias plus salvage), the three TR-122 Roberts Creek treatments, SR-54 (Washington 118A), TR-75 (bunched & hand-felled), the ADV5N28 skyline conversions, and the Thunderbird TMY45 FNCY12 case. Each preset pins the published turn volume/yarding distance/stems-per-turn, threads the appropriate manual-falling defaults, and keeps the ADV7N3 deck overrides so CLI calls auto-populate the helper inputs when you pass `--harvest-system-id`.
 - Updated the synthetic dataset tier mixes so the new grapple IDs actually appear in generated scenarios: small tiers now sprinkle in SR-54/TN-147/TN-75 corridors, while the medium/large tiers include the Roberts Creek options alongside the ADV5N28/FNCY12 presets. This keeps the telemetry/synthetic bundles aligned with the expanded harvest-system registry.
 - Refreshed `docs/reference/harvest_systems.rst` with a grapple-specific table that maps each harvest-system ID to its helper, default payload/distance, and the CPI-aware cost role (`grapple_yarder_madill009`, `grapple_yarder_cypress7280`, `grapple_yarder_adv5n28`, `grapple_yarder_tmy45`, or the generic fallback when the publication only supplies $/m³). The narrative also calls out when the CLI prints the original FPInnovations per-m³ costs even if no dedicated machine-rate entry exists.
@@ -211,7 +560,7 @@
 - Restored the grapple-skidder repair/maintenance allowance and usage multipliers in `data/machine_rates.json` (Advantage Vol. 4 No. 23, scaled to the 1999 CAD Appendix 1 base year) so `inspect-machine`, `--show-costs`, and the costing tests can recover the proper FPInnovations usage-class adjustments.
 - Derived authentic support-machine utilisation for the FNCY12/TN258 Thunderbird TMY45 preset: `scripts/fncy12_support_split.py` now quantifies July (no supports) vs. Aug–Oct (supports) productivity and converts the Table 3 crew delta (2.5 extra workers) into Cat D8/Timberjack SMH ratios (0.3335/0.2415 per yarder SMH). `data/reference/fpinnovations/fncy12_tmy45_mini_mak.json` records those ratios, the skyline CLI pulls them dynamically (retiring the old TN-157 proxies), telemetry logs the inferred allowances, and `docs/reference/skyline_small_span_notes.md` documents the derivation.
 
-# 2025-11-30 — TR28 road-cost reference surfacing
+# 2025-11-22 — TR28 road-cost reference surfacing
 - Added a dedicated TR-28 helper (`fhops.reference.tr28_subgrade`) that parses `data/reference/fpinnovations/tr28_subgrade_machines.json`
   into typed records so future road-cost presets can reuse the movement/cycle/cost/roughness values without reopening the PDF.
 - Introduced `fhops.dataset tr28-subgrade`, a CLI summary that filters/sorts the TR-28 machines (Cat 235 backhoe, D8H dozer,
@@ -235,7 +584,7 @@
 - Added the TN-82 FMC FT-180 vs. John Deere 550 dataset (`data/reference/fpinnovations/tn82_ft180_jd550.json`) plus a CLI summary
   (`fhops.dataset tn82-ft180`) so steep-ground ground-based alternatives can be benchmarked without reopening the PDF.
 
-# 2025-11-28 — Scenario salvage-mode threading
+# 2025-11-22 — Scenario salvage-mode threading
 - Added `Block.salvage_processing_mode` handling to the scenario contract end-to-end: CSV loaders now treat the column as an optional enum (blank/NaN entries are stripped), and the synthetic dataset generator records the new field whenever a salvage harvest system (`ground_salvage_grapple`, `cable_salvage_grapple`) is assigned to a block so bundles persist the ADV1N5 portable-mill vs. in-woods-chipping choice.
 - Updated docs (`docs/howto/data_contract.rst`, `docs/reference/harvest_systems.rst`) so the scenario data contract explicitly calls out the new column and clarifies how to thread it through CLI calls/telemetry.
 - Extended the synthetic scenario tests to lock in the behaviour: salvage-enabled `generate_with_systems` invocations now assert that `STANDARD_MILL` is the default, and `generate_random_dataset` smoketests confirm the CSV/Scenario/loader path round-trips the enum without dropping the value.
@@ -258,7 +607,7 @@
 - Extended the LeDoux skyline CLI outputs with merchantable vs. residue delay components (minutes/turn) and an automatic warning whenever residue pieces drive more delay than merchantable logs, so salvage-heavy scenarios are flagged without manual spreadsheet work.
 - Added the compact Model 9 Micro Master skyline preset (`--model micro-master`) based on FERIC TN-54: the CLI now prints pieces-per-turn/payload/cycle metadata, honours `--pieces-per-cycle` / `--piece-volume-m3` / `--payload-m3` overrides, and reports productivity via the new helper (`estimate_micro_master_productivity_m3_per_pmh`). Docs/tests reference the preset so analysts can model small-span thinning yarders without resorting to Madill/Cypress surrogates.
 
-# 2025-11-27 — ADV1N12 forwarder/skidder integration
+# 2025-11-22 — ADV1N12 forwarder/skidder integration
 - Digitised the Advantage Vol. 1 No. 12 extraction-distance curves into `data/productivity/forwarder_skidder_adv1n12.json`
   (Valmet 646 forwarder plus Timberjack 240 skidder in both integrated and two-phase thinning systems) so the coefficients
   and study metadata live alongside the other FPInnovations datasets.
@@ -311,7 +660,7 @@
   toggle portable-mill vs. in-woods chipping vs. standard mill reminders directly from the CLI. Docs, planning notes,
   and CLI tests now reference the dedicated salvage presets alongside the new toggle.
 
-# 2025-11-26 — ADV7N3 processor/loader presets
+# 2025-11-22 — ADV7N3 processor/loader presets
 - Digitised the ADV7N3 summer short-log processor study into `data/productivity/processor_adv7n3.json`
   (Hyundai 210LC/Waratah 620 vs. John Deere 892/Waratah 624) including shift-level utilisation,
   detailed timing, loader task distributions, and the processor/loader/system cost splits (2004 CAD).

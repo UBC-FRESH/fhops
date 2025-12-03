@@ -1,0 +1,27 @@
+ground_fb_skid:
+  system_id: ground_fb_skid
+  loader_batch_volume_m3: 30.0
+  role_headstart_shifts:
+    roadside_processor: 0.0
+    loader: 0.0
+  role_counts:
+    feller_buncher: 4
+    grapple_skidder: 2
+    roadside_processor: 6
+    loader: 6
+  jobs:
+  - name: felling
+    machine_role: feller_buncher
+    prerequisites: []
+  - name: primary_transport
+    machine_role: grapple_skidder
+    prerequisites:
+    - felling
+  - name: processing
+    machine_role: roadside_processor
+    prerequisites:
+    - primary_transport
+  - name: loading
+    machine_role: loader
+    prerequisites:
+    - processing

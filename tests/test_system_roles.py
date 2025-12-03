@@ -1,7 +1,8 @@
 import pyomo.environ as pyo
 
-from fhops.optimization.heuristics.sa import Schedule, _evaluate
+from fhops.optimization.heuristics.common import Schedule, evaluate_schedule
 from fhops.optimization.mip.builder import build_model
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
@@ -32,6 +33,30 @@ def _plan_from_days(pb: Problem, mapping: dict[str, dict[int, str | None]]) -> d
         machine: {_shift_key(pb, day): block for day, block in day_map.items()}
         for machine, day_map in mapping.items()
     }
+
+
+def _reset_assignments(model):
+    for var in model.x.values():
+        var.value = 0
+    for var in model.prod.values():
+        var.value = 0
+
+
+def _set_prod(model, machine_id: str, block_id: str, shift_key: tuple[int, str], value: float):
+    model.prod[machine_id, block_id, shift_key].value = value
+
+
+def _set_headstart_flag(
+    model,
+    block_id: str,
+    role: str,
+    shift_key: tuple[int, str],
+    value: int,
+) -> None:
+    if hasattr(model, "role_active"):
+        key = (block_id, role, shift_key[0], shift_key[1])
+        if key in model.role_active:
+            model.role_active[key].value = value
 
 
 def test_role_constraints_restrict_assignments():
@@ -149,9 +174,9 @@ def test_sequencing_blocks_without_prior_work():
     pb = Problem.from_scenario(scenario)
     model = build_model(pb)
     shift_key = _shift_key(pb, 1)
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     model.x["M2", "B1", shift_key].value = 1
+    _set_prod(model, "M2", "B1", shift_key, 5.0)
     con = model.system_sequencing["B1", "processor", "feller", *shift_key]
     lhs = pyo.value(con.body)
     rhs = pyo.value(con.upper)
@@ -198,10 +223,11 @@ def test_sequencing_allows_roles_after_prereqs_complete():
     model = build_model(pb)
     fel_shift = _shift_key(pb, 1)
     proc_shift = _shift_key(pb, 2)
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     model.x["M1", "B1", fel_shift].value = 1
+    _set_prod(model, "M1", "B1", fel_shift, 5.0)
     model.x["M2", "B1", proc_shift].value = 1
+    _set_prod(model, "M2", "B1", proc_shift, 5.0)
     con = model.system_sequencing["B1", "processor", "feller", *proc_shift]
     lhs = pyo.value(con.body)
     rhs = pyo.value(con.upper)
@@ -247,6 +273,7 @@ def test_sa_evaluator_penalises_out_of_order_assignments():
         harvest_systems={"ground_sequence": system},
     )
     pb = Problem.from_scenario(scenario)
+    ctx = build_operational_problem(pb)
 
     bad_plan = Schedule(
         plan=_plan_from_days(
@@ -266,9 +293,14 @@ def test_sa_evaluator_penalises_out_of_order_assignments():
             },
         )
     )
-    bad_score = _evaluate(pb, bad_plan)
-    good_score = _evaluate(pb, good_plan)
-    assert bad_score < good_score
+    evaluate_schedule(pb, bad_plan, ctx)
+    evaluate_schedule(pb, good_plan, ctx)
+    # The evaluator now repairs schedules before scoring. Verify that the bad plan
+    # was rewritten to respect role order (processor waits until the feller
+    # produces volume).
+    assert bad_plan.plan["P1"][(1, "S1")] is None
+    assert bad_plan.plan["P1"][(2, "S1")] == "B1"
+    assert bad_plan.plan["F1"][(1, "S1")] == "B1"
 
 
 def test_cable_system_enforces_multi_stage_sequence():
@@ -319,22 +351,24 @@ def test_cable_system_enforces_multi_stage_sequence():
     )
     pb = Problem.from_scenario(scenario)
     model = build_model(pb)
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     shift1 = _shift_key(pb, 1)
     shift2 = _shift_key(pb, 2)
     shift3 = _shift_key(pb, 3)
     model.x["Y1", "B1", shift1].value = 1
+    _set_prod(model, "Y1", "B1", shift1, 5.0)
     con = model.system_sequencing["B1", "yarder", "faller", *shift1]
     assert pyo.value(con.body) > pyo.value(con.upper)
 
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     model.x["F1", "B1", shift1].value = 1
+    _set_prod(model, "F1", "B1", shift1, 5.0)
     model.x["Y1", "B1", shift2].value = 1
+    _set_prod(model, "Y1", "B1", shift2, 5.0)
     con = model.system_sequencing["B1", "yarder", "faller", *shift2]
     assert pyo.value(con.body) <= pyo.value(con.upper)
     model.x["P1", "B1", shift3].value = 1
+    _set_prod(model, "P1", "B1", shift3, 5.0)
     con = model.system_sequencing["B1", "processor", "yarder", *shift3]
     assert pyo.value(con.body) <= pyo.value(con.upper)
 
@@ -389,26 +423,153 @@ def test_helicopter_system_requires_all_prerequisites():
     pb = Problem.from_scenario(scenario)
     model = build_model(pb)
 
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     shift1 = _shift_key(pb, 1)
     shift2 = _shift_key(pb, 2)
     model.x["F1", "B1", shift1].value = 1
+    _set_prod(model, "F1", "B1", shift1, 5.0)
     model.x["C1", "B1", shift2].value = 1
+    _set_prod(model, "C1", "B1", shift2, 5.0)
     con_faller = model.system_sequencing["B1", "helicopter", "faller", *shift2]
     con_hook = model.system_sequencing["B1", "helicopter", "hook_tender", *shift2]
     assert pyo.value(con_faller.body) <= pyo.value(con_faller.upper)
     assert pyo.value(con_hook.body) > pyo.value(con_hook.upper)
 
-    for var in model.x.values():
-        var.value = 0
+    _reset_assignments(model)
     model.x["F1", "B1", shift1].value = 1
+    _set_prod(model, "F1", "B1", shift1, 5.0)
     model.x["H1", "B1", shift1].value = 1
+    _set_prod(model, "H1", "B1", shift1, 5.0)
     model.x["C1", "B1", shift2].value = 1
+    _set_prod(model, "C1", "B1", shift2, 5.0)
     con_faller = model.system_sequencing["B1", "helicopter", "faller", *shift2]
     con_hook = model.system_sequencing["B1", "helicopter", "hook_tender", *shift2]
     assert pyo.value(con_faller.body) <= pyo.value(con_faller.upper)
     assert pyo.value(con_hook.body) <= pyo.value(con_hook.upper)
+
+
+def test_headstart_constraints_block_downstream_roles_until_buffer_met():
+    system = HarvestSystem(
+        system_id="buffered_sequence",
+        jobs=[
+            SystemJob(name="felling", machine_role="feller", prerequisites=[]),
+            SystemJob(name="processing", machine_role="processor", prerequisites=["felling"]),
+        ],
+        role_headstart_shifts={"processor": 1.0},
+    )
+    scenario = Scenario(
+        name="headstart-seq",
+        num_days=2,
+        blocks=[
+            Block(
+                id="B1",
+                landing_id="L1",
+                work_required=10.0,
+                earliest_start=1,
+                latest_finish=2,
+                harvest_system_id="buffered_sequence",
+            )
+        ],
+        machines=[
+            Machine(id="M1", role="feller"),
+            Machine(id="M2", role="processor"),
+        ],
+        landings=[Landing(id="L1", daily_capacity=1)],
+        calendar=[
+            CalendarEntry(machine_id="M1", day=1, available=1),
+            CalendarEntry(machine_id="M2", day=1, available=1),
+            CalendarEntry(machine_id="M1", day=2, available=1),
+            CalendarEntry(machine_id="M2", day=2, available=1),
+        ],
+        production_rates=[
+            ProductionRate(machine_id="M1", block_id="B1", rate=5.0),
+            ProductionRate(machine_id="M2", block_id="B1", rate=5.0),
+        ],
+        harvest_systems={"buffered_sequence": system},
+    )
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
+    shift_day1 = _shift_key(pb, 1)
+    shift_day2 = _shift_key(pb, 2)
+
+    _reset_assignments(model)
+    model.x["M2", "B1", shift_day1].value = 1
+    _set_headstart_flag(model, "B1", "processor", shift_day1, 1)
+    con = model.system_headstart["B1", "processor", "feller", *shift_day1]
+    assert pyo.value(con.body) > 0
+
+    _reset_assignments(model)
+    model.x["M1", "B1", shift_day1].value = 1
+    model.x["M2", "B1", shift_day2].value = 1
+    _set_headstart_flag(model, "B1", "processor", shift_day2, 1)
+    con = model.system_headstart["B1", "processor", "feller", *shift_day2]
+    assert pyo.value(con.body) <= 0
+
+
+def test_landing_loader_constraint_enforces_shared_staging():
+    system = HarvestSystem(
+        system_id="ground_sequence",
+        jobs=[
+            SystemJob(name="felling", machine_role="feller", prerequisites=[]),
+            SystemJob(name="processing", machine_role="processor", prerequisites=["felling"]),
+            SystemJob(name="loading", machine_role="loader", prerequisites=["processing"]),
+        ],
+    )
+    scenario = Scenario(
+        name="landing-shared",
+        num_days=1,
+        blocks=[
+            Block(
+                id="B1",
+                landing_id="L1",
+                work_required=10.0,
+                earliest_start=1,
+                latest_finish=1,
+                harvest_system_id="ground_sequence",
+            ),
+            Block(
+                id="B2",
+                landing_id="L1",
+                work_required=10.0,
+                earliest_start=1,
+                latest_finish=1,
+                harvest_system_id="ground_sequence",
+            ),
+        ],
+        machines=[
+            Machine(id="F1", role="feller"),
+            Machine(id="P1", role="processor"),
+            Machine(id="L1M", role="loader"),
+        ],
+        landings=[Landing(id="L1", daily_capacity=2)],
+        calendar=[
+            CalendarEntry(machine_id="F1", day=1, available=1),
+            CalendarEntry(machine_id="P1", day=1, available=1),
+            CalendarEntry(machine_id="L1M", day=1, available=1),
+        ],
+        production_rates=[
+            ProductionRate(machine_id="F1", block_id="B1", rate=5.0),
+            ProductionRate(machine_id="F1", block_id="B2", rate=5.0),
+            ProductionRate(machine_id="P1", block_id="B1", rate=5.0),
+            ProductionRate(machine_id="P1", block_id="B2", rate=5.0),
+            ProductionRate(machine_id="L1M", block_id="B1", rate=5.0),
+            ProductionRate(machine_id="L1M", block_id="B2", rate=5.0),
+        ],
+        harvest_systems={"ground_sequence": system},
+    )
+    pb = Problem.from_scenario(scenario)
+    model = build_model(pb)
+    shift = _shift_key(pb, 1)
+
+    _reset_assignments(model)
+    model.x["L1M", "B1", shift].value = 1
+    _set_prod(model, "L1M", "B1", shift, 5.0)
+
+    model.block_inventory["B1", shift].value = 0
+    con = model.block_inventory_balance["B1", *shift]
+    assert pyo.value(con.body) > 0
+    landing_con = model.landing_loader_sequencing["L1", *shift]
+    assert pyo.value(landing_con.body) > 0
 
 
 def test_sa_evaluator_requires_all_prereqs_before_helicopter():
@@ -459,6 +620,7 @@ def test_sa_evaluator_requires_all_prereqs_before_helicopter():
         harvest_systems={"heli_sequence": system},
     )
     pb = Problem.from_scenario(scenario)
+    ctx = build_operational_problem(pb)
 
     incomplete_prereq_plan = Schedule(
         plan=_plan_from_days(
@@ -480,6 +642,10 @@ def test_sa_evaluator_requires_all_prereqs_before_helicopter():
             },
         )
     )
-    bad_score = _evaluate(pb, incomplete_prereq_plan)
-    good_score = _evaluate(pb, complete_prereq_plan)
-    assert bad_score < good_score
+    evaluate_schedule(pb, incomplete_prereq_plan, ctx)
+    evaluate_schedule(pb, complete_prereq_plan, ctx)
+    # Repair logic should reschedule the helicopter until both upstream roles
+    # (fallers + hook tenders) have produced staged wood.
+    assert incomplete_prereq_plan.plan["C1"][(1, "S1")] is None
+    assert incomplete_prereq_plan.plan["C1"][(2, "S1")] == "B1"
+    assert incomplete_prereq_plan.plan["H1"][(1, "S1")] == "B1"

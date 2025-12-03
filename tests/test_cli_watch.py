@@ -16,7 +16,7 @@ def test_solve_heur_watch_smoke(tmp_path: Path):
         [
             "fhops",
             "solve-heur",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--iters",
             "200",
             "--cooling-rate",
@@ -44,7 +44,7 @@ def test_tune_random_watch_smoke(tmp_path: Path):
         [
             "fhops",
             "tune-random",
-            str(Path("examples/minitoy/scenario.yaml")),
+            str(Path("examples/tiny7/scenario.yaml")),
             "--runs",
             "1",
             "--iters",

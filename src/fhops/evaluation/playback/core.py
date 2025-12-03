@@ -103,7 +103,10 @@ class PlaybackResult:
     shift_summaries: Sequence[ShiftSummary]
     day_summaries: Sequence[DaySummary]
     config: PlaybackConfig
+    sequencing_debug: dict[str, object] | None = None
     sample_id: int = 0
+    delivered_total: float = 0.0
+    remaining_work_total: float = 0.0
 
 
 def run_playback(
@@ -124,6 +127,14 @@ def run_playback(
 
     # Materialise records since downstream summaries iterate multiple times.
     records: tuple[PlaybackRecord, ...] = tuple(record_iter)
+    sequencing_debug: dict[str, object] | None = None
+    tracker = getattr(record_iter, "sequencing_tracker", None)
+    delivered_total = 0.0
+    remaining_work_total = 0.0
+    if tracker is not None:
+        sequencing_debug = tracker.debug_snapshot()
+        delivered_total = float(getattr(tracker, "delivered_total", 0.0) or 0.0)
+        remaining_work_total = float(sum(tracker.remaining_work.values()))
 
     shift_summaries = tuple(
         summarise_shifts(
@@ -156,7 +167,10 @@ def run_playback(
         shift_summaries=shift_summaries,
         day_summaries=day_summaries,
         config=cfg,
+        sequencing_debug=sequencing_debug,
         sample_id=sample_id,
+        delivered_total=delivered_total,
+        remaining_work_total=remaining_work_total,
     )
 
 

@@ -16,7 +16,7 @@ runner = CliRunner()
 @pytest.mark.parametrize(
     "scenario_name",
     [
-        "examples/minitoy/scenario.yaml",
+        "examples/tiny7/scenario.yaml",
         "examples/med42/scenario.yaml",
         "tests/fixtures/regression/regression.yaml",
     ],
@@ -105,8 +105,8 @@ def _resolve_assignments_fixture(scenario_path: str, tmp_path: Path) -> Path:
 
 
 def test_eval_playback_telemetry_log(tmp_path: Path):
-    scenario_path = Path("examples/minitoy/scenario.yaml")
-    assignments = Path("tests/fixtures/playback/minitoy_assignments.csv")
+    scenario_path = Path("examples/tiny7/scenario.yaml")
+    assignments = Path("tests/fixtures/playback/tiny7_assignments.csv")
     telemetry_log = tmp_path / "telemetry.jsonl"
     shift_out = tmp_path / "shift.csv"
     day_out = tmp_path / "day.csv"

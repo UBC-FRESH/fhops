@@ -20,6 +20,7 @@ ensembles.
    howto/data_contract
    howto/benchmarks
    howto/heuristic_presets
+   howto/mip_warm_starts
    howto/parallel_heuristics
    howto/evaluation
    howto/thesis_eval

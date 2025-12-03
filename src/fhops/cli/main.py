@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import random
+import time
 from collections.abc import Sequence
 from contextlib import nullcontext
 from datetime import UTC, datetime
@@ -30,6 +31,7 @@ from fhops.cli._utils import (
     OPERATOR_PRESETS,
     format_operator_presets,
     operator_preset_help,
+    parse_objective_weight_overrides,
     parse_operator_weights,
 )
 from fhops.cli.benchmarks import benchmark_app
@@ -54,6 +56,8 @@ from fhops.evaluation import (
     shift_dataframe,
     shift_dataframe_from_ensemble,
 )
+from fhops.model.milp.data import bundle_from_dict, bundle_to_dict
+from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import (
     build_exploration_plan,
     run_multi_start,
@@ -63,12 +67,13 @@ from fhops.optimization.heuristics import (
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import RunTelemetryLogger, append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
 from fhops.telemetry.sqlite_store import persist_tuner_summary
-from fhops.telemetry.watch import WatchConfig
+from fhops.telemetry.watch import Snapshot, WatchConfig
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
@@ -81,11 +86,11 @@ KPI_MODE = click.Choice(["basic", "extended"], case_sensitive=False)
 
 TUNING_BUNDLE_ALIASES: dict[str, list[tuple[str, Path]]] = {
     "baseline": [
-        ("minitoy", Path("examples/minitoy/scenario.yaml")),
+        ("tiny7", Path("examples/tiny7/scenario.yaml")),
         ("small21", Path("examples/small21/scenario.yaml")),
         ("med42", Path("examples/med42/scenario.yaml")),
     ],
-    "minitoy": [("minitoy", Path("examples/minitoy/scenario.yaml"))],
+    "tiny7": [("tiny7", Path("examples/tiny7/scenario.yaml"))],
     "small21": [("small21", Path("examples/small21/scenario.yaml"))],
     "med42": [("med42", Path("examples/med42/scenario.yaml"))],
     "large84": [("large84", Path("examples/large84/scenario.yaml"))],
@@ -114,7 +119,43 @@ def _ensure_kpi_dict(kpis: Any) -> dict[str, Any]:
     """Normalize KPI payloads (dataclasses, pandas objects, dicts) into a plain dict."""
     if hasattr(kpis, "to_dict") and callable(kpis.to_dict):
         return dict(kpis.to_dict())
-    return dict(kpis)
+    return dict(kpis or {})
+
+
+def _coerce_solver_option_value(raw_value: str) -> object:
+    """Attempt to coerce solver option values into bool/int/float; fallback to string."""
+
+    value = raw_value.strip()
+    if not value:
+        return ""
+    lowered = value.lower()
+    if lowered in {"true", "false"}:
+        return lowered == "true"
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        return value
+
+
+def _parse_solver_options(option_args: Sequence[str] | None) -> dict[str, object]:
+    """Parse ``name=value`` solver options supplied via the CLI."""
+
+    parsed: dict[str, object] = {}
+    if not option_args:
+        return parsed
+    for entry in option_args:
+        if "=" not in entry:
+            raise typer.BadParameter(f"Solver options must be key=value (got '{entry}')")
+        key, raw_value = entry.split("=", 1)
+        key = key.strip()
+        if not key:
+            raise typer.BadParameter(f"Solver option missing name in '{entry}'")
+        parsed[key] = _coerce_solver_option_value(raw_value)
+    return parsed
 
 
 def _format_metric_value(value: Any) -> Any:
@@ -149,7 +190,14 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
     sections: list[tuple[str, list[str]]] = [
         (
             "Production",
-            ["total_production", "completed_blocks", "makespan_day", "makespan_shift"],
+            [
+                "total_production",
+                "staged_production",
+                "remaining_work_total",
+                "completed_blocks",
+                "makespan_day",
+                "makespan_shift",
+            ],
         ),
         (
             "Mobilisation",
@@ -214,6 +262,42 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
         console.print(
             f"[red]Repair Usage Alert:[/red] non-default FPInnovations usage bucket for {alert}"
         )
+
+
+def _print_sequencing_debug(stats: dict[str, Any] | None) -> None:
+    """Render sequencing diagnostics (first violation, backlog stats) if available."""
+
+    if not stats:
+        console.print("[dim]Sequencing diagnostics unavailable.[/]")
+        return
+    violation_count = int(stats.get("sequencing_violation_count", 0) or 0)
+    if violation_count == 0:
+        console.print("[green]Sequencing clean: no violations detected.[/]")
+        return
+    first_role = stats.get("sequencing_first_violation_role") or "unknown"
+    first_block = stats.get("sequencing_first_violation_block") or "?"
+    first_day = stats.get("sequencing_first_violation_day")
+    first_reason = stats.get("sequencing_first_violation_reason") or "missing_prereq"
+    deficit = (
+        stats.get("sequencing_first_violation_headstart_deficit")
+        or stats.get("sequencing_first_violation_deficit")
+        or stats.get("sequencing_first_violation_required_volume")
+    )
+    parts = [
+        f"violations={violation_count}",
+        f"first_role={first_role}",
+        f"block={first_block}",
+        f"day={first_day if first_day is not None else '?'}",
+        f"reason={first_reason}",
+    ]
+    if deficit is not None:
+        parts.append(f"deficit={deficit}")
+    breakdown = stats.get("sequencing_violation_breakdown")
+    if isinstance(breakdown, dict) and breakdown:
+        parts.append(
+            "breakdown=" + ", ".join(f"{key}={value}" for key, value in sorted(breakdown.items()))
+        )
+    console.print("[yellow]Sequencing diagnostics:[/]", " | ".join(str(p) for p in parts))
 
 
 def _machine_cost_snapshot(sc) -> list[dict[str, Any]]:
@@ -414,6 +498,11 @@ def solve_mip_cmd(
         help="MIP driver: auto|highs-appsi|highs-exec|gurobi|gurobi-appsi|gurobi-direct",
     ),
     debug: bool = typer.Option(False, "--debug", help="Verbose tracebacks & solver logs"),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation, backlog deficits).",
+    ),
 ):
     """Solve the scenario with the exact MIP and write assignments/KPIs.
 
@@ -454,6 +543,221 @@ def solve_mip_cmd(
     console.print(f"Objective: {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics)
+    if sequencing_debug:
+        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
+
+
+@app.command("solve-mip-operational")
+def solve_mip_operational_cmd(
+    scenario: Path | None = typer.Argument(
+        None, help="Scenario YAML path (optional when --bundle-json is supplied)."
+    ),
+    out: Path = typer.Option(..., "--out", help="Output CSV path"),
+    solver: str = typer.Option("highs", help="MILP solver backend (default: highs)."),
+    time_limit: int | None = typer.Option(
+        None, "--time-limit", help="Optional wall-clock time limit (seconds)."
+    ),
+    gap: float | None = typer.Option(None, "--gap", help="Optional relative MIP gap target (0-1)."),
+    solver_option: list[str] | None = typer.Option(
+        None,
+        "--solver-option",
+        help="Repeatable name=value pairs forwarded to the MILP solver (e.g., --solver-option Threads=4).",
+    ),
+    bundle_json: Path | None = typer.Option(
+        None,
+        "--bundle-json",
+        help="Load a serialized operational bundle (JSON) instead of building from the scenario.",
+    ),
+    dump_bundle: Path | None = typer.Option(
+        None,
+        "--dump-bundle",
+        help="Write the generated bundle to JSON before solving.",
+    ),
+    telemetry_log: Path | None = typer.Option(
+        None,
+        "--telemetry-log",
+        help="Append run telemetry to a JSONL file (written alongside a .sqlite mirror).",
+        writable=True,
+        dir_okay=False,
+    ),
+    watch: bool = typer.Option(
+        False,
+        "--watch/--no-watch",
+        help="Stream solver progress to the console.",
+    ),
+    watch_refresh: float = typer.Option(
+        0.5, "--watch-refresh", help="Watch refresh interval in seconds."
+    ),
+    incumbent: Path | None = typer.Option(
+        None,
+        "--incumbent",
+        help=(
+            "Assignments CSV (e.g., from solve-heur) used to seed the MILP as a warm start. "
+            "Columns must include machine_id, block_id, day, shift_id."
+        ),
+    ),
+    debug: bool = typer.Option(False, "--debug", help="Verbose solver output/tracebacks."),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation, backlog deficits).",
+    ),
+):
+    """Solve the operational (day×shift) MILP prototype and emit assignments."""
+
+    if debug:
+        _enable_rich_tracebacks()
+        console.print(
+            f"[dim]scenario={scenario} bundle_json={bundle_json} out={type(out).__name__}[/]"
+        )
+
+    if scenario is None and bundle_json is None:
+        raise typer.BadParameter("Provide either a scenario path or --bundle-json.")
+
+    parsed_solver_options = _parse_solver_options(solver_option)
+
+    pb: Problem | None = None
+    bundle = None
+    ctx = None
+    scenario_label: str | None = None
+    scenario_path_str: str | None = None
+    if scenario is not None:
+        sc = load_scenario(str(scenario))
+        pb = Problem.from_scenario(sc)
+        ctx = build_operational_problem(pb)
+        bundle = ctx.bundle
+        scenario_label = sc.name
+        scenario_path_str = str(scenario)
+    elif bundle_json is not None:
+        with bundle_json.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+        bundle = bundle_from_dict(payload)
+        scenario_label = bundle_json.stem
+
+    if bundle is None:
+        raise typer.BadParameter("Failed to prepare operational bundle.")
+
+    if dump_bundle is not None:
+        dump_bundle.parent.mkdir(parents=True, exist_ok=True)
+        dump_bundle.write_text(json.dumps(bundle_to_dict(bundle), indent=2), encoding="utf-8")
+
+    incumbent_assignments: pd.DataFrame | None = None
+    if incumbent is not None:
+        try:
+            incumbent_assignments = pd.read_csv(incumbent)
+            if incumbent_assignments.empty:
+                incumbent_assignments = None
+        except Exception as exc:  # pragma: no cover - I/O guardrail
+            raise typer.BadParameter(f"Failed to read incumbent CSV: {exc}") from exc
+
+    telemetry_logger: RunTelemetryLogger | None = None
+    if telemetry_log:
+        context_snapshot = {
+            "command": "solve-mip-operational",
+            "bundle_json": str(bundle_json) if bundle_json else None,
+            "incumbent_csv": str(incumbent) if incumbent else None,
+        }
+        telemetry_logger = RunTelemetryLogger(
+            log_path=telemetry_log,
+            solver="milp-operational",
+            scenario=scenario_label,
+            scenario_path=scenario_path_str,
+            config={
+                "solver": solver,
+                "time_limit": time_limit,
+                "gap": gap,
+                "solver_options": parsed_solver_options or None,
+            },
+            context=context_snapshot,
+            step_interval=None,
+        )
+
+    watch_runner: LiveWatch | None = None
+    if watch:
+        if console.is_terminal:
+            watch_runner = LiveWatch(WatchConfig(refresh_interval=watch_refresh), console=console)
+            watch_runner.start()
+        else:
+            console.print(
+                "[yellow]Watch mode requires an interactive terminal; disabling watch.[/]"
+            )
+
+    def emit_snapshot(iteration: int, objective_value: float, runtime_seconds: float) -> None:
+        if not watch_runner:
+            return
+        watch_runner.sink(
+            Snapshot(
+                scenario=scenario_label or (bundle_json.stem if bundle_json else "bundle"),
+                solver="milp-operational",
+                iteration=iteration,
+                max_iterations=1,
+                objective=objective_value,
+                best_gap=None,
+                runtime_seconds=runtime_seconds,
+            )
+        )
+
+    start_time = time.perf_counter()
+    assignments = pd.DataFrame()
+    objective_value = 0.0
+    metrics_obj = None
+    try:
+        with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
+            emit_snapshot(0, 0.0, 0.0)
+            try:
+                result = solve_operational_milp(
+                    bundle,
+                    solver=solver,
+                    time_limit=time_limit,
+                    gap=gap,
+                    tee=debug,
+                    solver_options=parsed_solver_options or None,
+                    incumbent_assignments=incumbent_assignments,
+                    context=ctx,
+                )
+            except ValueError as exc:
+                raise typer.BadParameter(str(exc)) from exc
+            runtime_seconds = time.perf_counter() - start_time
+            objective_value = float(result.get("objective") or 0.0)
+            emit_snapshot(1, objective_value, runtime_seconds)
+            assignments = cast(pd.DataFrame, result.get("assignments", pd.DataFrame()))
+            out.parent.mkdir(parents=True, exist_ok=True)
+            assignments.to_csv(str(out), index=False)
+            console.print(
+                f"Operational MILP solver_status={result.get('solver_status')} "
+                f"termination={result.get('termination_condition')} "
+                f"objective={result.get('objective')}"
+            )
+            console.print(f"Assignments written to {out}")
+            if not assignments.empty and pb is not None:
+                metrics_obj = compute_kpis(pb, assignments)
+                _print_kpi_summary(metrics_obj)
+                if sequencing_debug:
+                    _print_sequencing_debug(getattr(metrics_obj, "sequencing_debug", None))
+            else:
+                console.print(
+                    "[yellow]No feasible assignment returned or scenario missing; skipping KPI summary.[/]"
+                )
+            if telemetry_logger and run_logger:
+                metrics_payload = {
+                    "objective": objective_value,
+                    "production": float(result.get("production") or 0.0),
+                    "runtime_seconds": runtime_seconds,
+                }
+                extra_payload = {
+                    "solver_status": result.get("solver_status"),
+                    "termination_condition": result.get("termination_condition"),
+                }
+                kpi_payload = _ensure_kpi_dict(metrics_obj) if metrics_obj is not None else {}
+                run_logger.finalize(
+                    metrics=metrics_payload,
+                    extra=extra_payload,
+                    artifacts=[str(out)],
+                    kpis=kpi_payload,
+                )
+    finally:
+        if watch_runner:
+            watch_runner.stop()
 
 
 @app.command("solve-heur")
@@ -474,6 +778,14 @@ def solve_heur_cmd(
         "--operator-weight",
         "-w",
         help="Set operator weight as name=value (e.g., --operator-weight swap=2). Repeatable.",
+    ),
+    objective_weight: list[str] | None = typer.Option(
+        None,
+        "--objective-weight",
+        help=(
+            "Override objective weights via name=value (production|mobilisation|transitions|"
+            "landing_surplus). Repeatable."
+        ),
     ),
     operator_preset: list[str] | None = typer.Option(
         None,
@@ -517,6 +829,11 @@ def solve_heur_cmd(
         "--restart-interval",
         help="Non-accepting iterations before SA restarts (0=auto).",
     ),
+    milp_objective: float | None = typer.Option(
+        None,
+        "--milp-objective",
+        help="Reference MILP objective for gap reporting in watch/telemetry output.",
+    ),
     watch: bool = typer.Option(
         False,
         "--watch/--no-watch",
@@ -527,6 +844,16 @@ def solve_heur_cmd(
         "--watch-refresh",
         min=0.1,
         help="Refresh interval for the live dashboard (seconds).",
+    ),
+    watch_debug: bool = typer.Option(
+        False,
+        "--watch-debug/--no-watch-debug",
+        help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
+    ),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation details) after KPIs.",
     ),
     kpi_mode: str = typer.Option(
         "extended",
@@ -568,9 +895,9 @@ def solve_heur_cmd(
         RNG seed controlling reproducibility.
     debug : bool, default=False
         Emit verbose debug logs and enable rich tracebacks.
-    operator / operator_weight / operator_preset / profile :
+    operator / operator_weight / objective_weight / operator_preset / profile :
         CLI mirrors of :func:`fhops.optimization.heuristics.solve_sa` arguments. Use them to
-        restrict operators, override weights, or load saved solver profiles.
+        restrict operators, override heuristic or objective weights, or load saved solver profiles.
     list_operator_presets / list_profiles : bool
         Utility flags that print the registry/profile catalogues and exit.
     show_operator_stats : bool
@@ -625,7 +952,12 @@ def solve_heur_cmd(
             console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
     pb = Problem.from_scenario(sc)
     try:
-        weight_override = parse_operator_weights(operator_weight)
+        operator_weight_override = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
+
+    try:
+        objective_weight_override = parse_objective_weight_overrides(objective_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
@@ -641,7 +973,7 @@ def solve_heur_cmd(
     resolved = merge_profile_with_cli(
         selected_profile.sa if selected_profile else None,
         operator_preset,
-        weight_override,
+        operator_weight_override,
         explicit_ops,
         batch_neighbours,
         parallel_workers,
@@ -668,6 +1000,11 @@ def solve_heur_cmd(
         "max_workers": worker_arg,
         "cooling_rate": cooling_rate,
         "restart_interval": restart_value,
+        "watch_debug": watch_debug,
+        "objective_weight_overrides": (
+            objective_weight_override if objective_weight_override else None
+        ),
+        "milp_objective": milp_objective,
     }
     if resolved.extra_kwargs:
         sa_kwargs.update(resolved.extra_kwargs)
@@ -771,6 +1108,8 @@ def solve_heur_cmd(
     console.print(f"Objective (heuristic): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
+    if sequencing_debug:
+        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
     operators_meta = cast(dict[str, float], meta.get("operators", {}))
     if operators_meta:
         console.print(f"Operators: {operators_meta}")
@@ -852,6 +1191,14 @@ def solve_ils_cmd(
         "-w",
         help="Set operator weight via name=value (repeatable).",
     ),
+    objective_weight: list[str] | None = typer.Option(
+        None,
+        "--objective-weight",
+        help=(
+            "Override objective weights via name=value (production|mobilisation|transitions|"
+            "landing_surplus). Repeatable."
+        ),
+    ),
     operator_preset: list[str] | None = typer.Option(
         None,
         "--operator-preset",
@@ -881,6 +1228,11 @@ def solve_ils_cmd(
         help="Worker threads for batched neighbour evaluation (1 keeps sequential scoring).",
         min=1,
     ),
+    milp_objective: float | None = typer.Option(
+        None,
+        "--milp-objective",
+        help="Reference MILP objective for gap reporting in watch/telemetry output.",
+    ),
     telemetry_log: Path | None = typer.Option(
         None,
         "--telemetry-log",
@@ -904,6 +1256,11 @@ def solve_ils_cmd(
         min=0.1,
         help="Refresh interval for the live dashboard (seconds).",
     ),
+    watch_debug: bool = typer.Option(
+        False,
+        "--watch-debug/--no-watch-debug",
+        help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -913,6 +1270,11 @@ def solve_ils_cmd(
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
+    ),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation details) after KPIs.",
     ),
 ):
     """Solve with the Iterated Local Search heuristic and emit KPI summaries.
@@ -930,8 +1292,9 @@ def solve_ils_cmd(
     perturbation_strength / stall_limit / hybrid_use_mip / hybrid_mip_time_limit :
         Direct mirrors of :func:`fhops.optimization.heuristics.solve_ils` arguments controlling
         diversification and optional MIP warm starts.
-    operator / operator_weight / operator_preset / profile :
-        Controls which operators are active and allows profile presets to be merged.
+    operator / operator_weight / objective_weight / operator_preset / profile :
+        Controls which operators are active, overrides heuristic/objective weights, and allows
+        profile presets to be merged.
     list_operator_presets / list_profiles :
         Convenience flags that print the catalogues then exit.
     batch_neighbours / parallel_workers :
@@ -972,7 +1335,12 @@ def solve_ils_cmd(
             console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
     pb = Problem.from_scenario(sc)
     try:
-        weight_override = parse_operator_weights(operator_weight)
+        operator_weight_override = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
+
+    try:
+        objective_weight_override = parse_objective_weight_overrides(objective_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
@@ -988,7 +1356,7 @@ def solve_ils_cmd(
     resolved = merge_profile_with_cli(
         selected_profile.ils if selected_profile else None,
         operator_preset,
-        weight_override,
+        operator_weight_override,
         explicit_ops,
         batch_neighbours,
         parallel_workers,
@@ -1066,6 +1434,11 @@ def solve_ils_cmd(
         "stall_limit": stall_limit,
         "hybrid_use_mip": hybrid_use_mip,
         "hybrid_mip_time_limit": hybrid_mip_time_limit,
+        "watch_debug": watch_debug,
+        "objective_weight_overrides": (
+            objective_weight_override if objective_weight_override else None
+        ),
+        "milp_objective": milp_objective,
     }
     solver_kwargs.update(extra_ils_kwargs)
     solver_kwargs.update(telemetry_kwargs)
@@ -1090,6 +1463,8 @@ def solve_ils_cmd(
     console.print(f"Objective (ils): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
+    if sequencing_debug:
+        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
     meta = cast(dict[str, Any], res.get("meta", {}))
     if selected_profile:
         meta["profile"] = selected_profile.name
@@ -1150,11 +1525,24 @@ def solve_tabu_cmd(
     parallel_workers: int = typer.Option(
         1, "--parallel-workers", help="Threads for scoring batched neighbours."
     ),
+    milp_objective: float | None = typer.Option(
+        None,
+        "--milp-objective",
+        help="Reference MILP objective for gap reporting in watch/telemetry output.",
+    ),
     operator: list[str] | None = typer.Option(
         None, "--operator", "-o", help="Enable specific operators (repeatable)."
     ),
     operator_weight: list[str] | None = typer.Option(
         None, "--operator-weight", "-w", help="Set operator weight as name=value (repeatable)."
+    ),
+    objective_weight: list[str] | None = typer.Option(
+        None,
+        "--objective-weight",
+        help=(
+            "Override objective weights via name=value (production|mobilisation|transitions|"
+            "landing_surplus). Repeatable."
+        ),
     ),
     operator_preset: list[str] | None = typer.Option(
         None,
@@ -1196,6 +1584,11 @@ def solve_tabu_cmd(
         min=0.1,
         help="Refresh interval for the live dashboard (seconds).",
     ),
+    watch_debug: bool = typer.Option(
+        False,
+        "--watch-debug/--no-watch-debug",
+        help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
+    ),
     kpi_mode: str = typer.Option(
         "extended",
         "--kpi-mode",
@@ -1205,6 +1598,11 @@ def solve_tabu_cmd(
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats."
+    ),
+    sequencing_debug: bool = typer.Option(
+        False,
+        "--sequencing-debug/--no-sequencing-debug",
+        help="Print sequencing diagnostics (first violation details) after KPIs.",
     ),
 ):
     """Solve with the Tabu Search heuristic and emit KPI summaries.
@@ -1225,8 +1623,9 @@ def solve_tabu_cmd(
         Max non-improving iterations before halting.
     batch_neighbours / parallel_workers :
         Control neighbourhood sampling volume and scoring concurrency.
-    operator / operator_weight / operator_preset / profile :
-        Operator registry controls mirroring :func:`fhops.optimization.heuristics.solve_tabu`.
+    operator / operator_weight / objective_weight / operator_preset / profile :
+        Operator registry controls mirroring :func:`fhops.optimization.heuristics.solve_tabu` and
+        optional objective-weight overrides.
     list_operator_presets / list_profiles :
         Print available presets/profiles before exiting.
     telemetry_log / tier_label :
@@ -1267,7 +1666,12 @@ def solve_tabu_cmd(
             console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
     pb = Problem.from_scenario(sc)
     try:
-        weight_override = parse_operator_weights(operator_weight)
+        operator_weight_override = parse_operator_weights(operator_weight)
+    except ValueError as exc:  # pragma: no cover - CLI validation
+        raise typer.BadParameter(str(exc)) from exc
+
+    try:
+        objective_weight_override = parse_objective_weight_overrides(objective_weight)
     except ValueError as exc:  # pragma: no cover - CLI validation
         raise typer.BadParameter(str(exc)) from exc
 
@@ -1283,7 +1687,7 @@ def solve_tabu_cmd(
     resolved = merge_profile_with_cli(
         selected_profile.tabu if selected_profile else None,
         operator_preset,
-        weight_override,
+        operator_weight_override,
         explicit_ops,
         batch_neighbours,
         parallel_workers,
@@ -1350,6 +1754,11 @@ def solve_tabu_cmd(
         "max_workers": worker_arg,
         "tabu_tenure": tenure,
         "stall_limit": stall_limit,
+        "watch_debug": watch_debug,
+        "objective_weight_overrides": (
+            objective_weight_override if objective_weight_override else None
+        ),
+        "milp_objective": milp_objective,
     }
     solver_kwargs.update(profile_extra_kwargs)
     solver_kwargs.update(telemetry_kwargs)
@@ -1374,6 +1783,8 @@ def solve_tabu_cmd(
     console.print(f"Objective (tabu): {objective:.3f}. Saved to {out}")
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
+    if sequencing_debug:
+        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
     meta = cast(dict[str, Any], res.get("meta", {}))
     if selected_profile:
         meta["profile"] = selected_profile.name

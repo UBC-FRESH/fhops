@@ -51,7 +51,7 @@ def test_list_profiles_command(tmp_path: Path):
         app,
         [
             "solve-heur",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--out",
             str(out),
             "--iters",
@@ -70,7 +70,7 @@ def test_solve_heur_profile(tmp_path: Path):
         app,
         [
             "solve-heur",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--out",
             str(tmp_path / "out.csv"),
             "--iters",
@@ -95,7 +95,7 @@ def test_bench_suite_profile(tmp_path: Path):
             "bench",
             "suite",
             "--scenario",
-            "examples/minitoy/scenario.yaml",
+            "examples/tiny7/scenario.yaml",
             "--out-dir",
             str(tmp_path / "bench"),
             "--time-limit",

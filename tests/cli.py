@@ -60,7 +60,11 @@ def _coalesce_output(result: Any, *, strip_ansi: bool) -> str:
             text += stderr_text
 
     if not text:
-        text = _decode(result.stdout) or _decode(getattr(result, "stderr", ""))
+        try:
+            stderr_value = getattr(result, "stderr", "")
+        except ValueError:
+            stderr_value = ""
+        text = _decode(result.stdout) or _decode(stderr_value)
 
     if strip_ansi:
         text = _strip_ansi(text)

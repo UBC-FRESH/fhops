@@ -3,7 +3,7 @@
   "label": "Synthetic tier: small",
   "scenario_path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml",
   "name": "synthetic-small",
-  "num_days": 6,
+  "num_days": 112,
   "start_date": null,
   "schema_version": "1.0.0",
   "objective_weights": {},
@@ -49,7 +49,7 @@
     },
     "calendar": {
       "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/calendar.csv",
-      "row_count": 12,
+      "row_count": 224,
       "columns": [
         "machine_id",
         "day",

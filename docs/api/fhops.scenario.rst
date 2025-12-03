@@ -30,7 +30,7 @@ Quickstart
    from fhops.scenario.io import load_scenario
    from fhops.scenario.contract import Problem
 
-   scenario = load_scenario("examples/minitoy/scenario.yaml")
+   scenario = load_scenario("examples/tiny7/scenario.yaml")
    problem = Problem.from_scenario(scenario)
    print(problem.days, len(problem.shifts))
 

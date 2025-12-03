@@ -101,7 +101,7 @@ Status: Draft — bootstrapping telemetry-backed tuning loops for SA/ILS/Tabu.
 - [x] Introduce a tractable `small21` baseline dataset (≈½ the scale of `med42`) so MIP solves finish quickly and provide a second reference optimum; wire it into the convergence sweeps and telemetry fixtures.
 - [x] Schedule an extended MIP benchmarking window (overnight/off-peak) to finish the outstanding `med42` optimum and capture long-run solver telemetry once resource constraints ease.
 - [x] Wire in Gurobi as an optional MIP backend (CLI flag + docs); keep HiGHS as default but document licensing/install steps so we can solve larger baselines reliably.
-- [x] Run long-leash convergence experiments for each heuristic (SA/ILS/Tabu) on representative scenarios (minitoy, small21, med42, synthetic tiers) with budgets in the 2 000–10 000+ iteration range; capture wall-clock vs. improvement curves and record when 5 % / 1 % gaps are actually met.
+- [x] Run long-leash convergence experiments for each heuristic (SA/ILS/Tabu) on representative scenarios (tiny7, small21, med42, synthetic tiers) with budgets in the 2 000–10 000+ iteration range; capture wall-clock vs. improvement curves and record when 5 % / 1 % gaps are actually met.
   - Telemetry + step logs live in `tmp/convergence-long/` (see `long_run_summary.csv` for wallclock-per-1000 iteration stats and gap checkpoints).
   - SA/ILS hit ≤5 % gap only on `synthetic-medium` within 10 000 iterations (SA ≈100 iters, ILS ≈225); other scenarios remain >10 % off, suggesting we need larger horizons or richer neighbourhoods.
 - Tabu completes 10 000 iterations in milliseconds but stalls >20 % gap even on synthetic sets — revisit operator mix/tabu tenure before counting it as converged.
@@ -127,7 +127,7 @@ Smaller smoke runs override the tier defaults via plan-specific budgets (see tab
 
 | Plan name       | Bundles / Scenarios                                        | Default tiers | Notes |
 |-----------------|------------------------------------------------------------|---------------|-------|
-| baseline-smoke  | `baseline` (examples/minitoy, examples/med42)              | `short`       | Overrides short tier to 3 runs × 250 iters and 30 SMBO trials to mirror legacy smoke timings. |
+| baseline-smoke  | `baseline` (examples/tiny7, examples/med42)              | `short`       | Overrides short tier to 3 runs × 250 iters and 30 SMBO trials to mirror legacy smoke timings. |
 | synthetic-smoke | `synthetic` (small, medium, large tiers)                   | `short`       | Short tier lifted to 300 iters / 30 trials to exercise the synthetic instances. |
 | full-spectrum   | baseline + synthetic bundles (combined run)               | `short`,`medium` | Short tier matches smokes; medium tier extends to 4 runs × 450 iters / 45 SMBO trials for convergence comparisons. |
 
@@ -185,7 +185,7 @@ Status: paused until the conventional tuning toolkit, benchmarking automation, a
 - [ ] Update roadmap + docs as milestones complete.
 - [x] Add Sphinx how-to covering telemetry schema, tuner commands, and agent workflow once stable.
 - [x] Provide comparison tooling (`scripts/analyze_tuner_reports.py`) to diff multiple reports and surface deltas.
-- [x] Publish telemetry history artefacts (minitoy + med42) to GitHub Pages for quick trend review.
+- [x] Publish telemetry history artefacts (tiny7 + med42) to GitHub Pages for quick trend review.
 - [ ] Ensure CI smoke targets exist for lightweight tuning sweeps (e.g., single random search iteration).
 - [x] Schedule `fhops telemetry report` in CI/nightly to publish comparison artifacts for baseline scenarios.
 - [ ] Automate a dashboard or README badge that surfaces the published delta summary so regressions are visible without opening the full report.
@@ -231,7 +231,7 @@ Status: paused until the conventional tuning toolkit, benchmarking automation, a
 - [x] Provide a simple JSONL → DataFrame loader in `fhops.telemetry` to make analyses/tests easier ahead of the SQLite backend.
 - [x] Add scenario descriptor exporter (machines/blocks/shifts) to telemetry runs so ML tuners can generalise across instances.
 - [ ] Stage benchmarking sweeps comparing grid/random/bayes on the canonical bundle and capture comparative telemetry summaries.
-- [ ] Wire `scripts/run_tuning_benchmarks.py` into CI (smoke mode) so minitoy/med42 sweeps publish the summary tables automatically.
+- [ ] Wire `scripts/run_tuning_benchmarks.py` into CI (smoke mode) so tiny7/med42 sweeps publish the summary tables automatically.
 - [ ] Use the per-scenario summary CSV/Markdown to drive README badges or dashboards that flag regressions without opening full reports.
 
 ## Not Now / Maybe Later

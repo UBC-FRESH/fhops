@@ -137,7 +137,7 @@ def test_analyze_tuner_reports_history(tmp_path: Path):
             "schema_version": "1.1",
             "solver": "sa",
             "scenario": "MiniToy",
-            "scenario_path": "examples/minitoy/scenario.yaml",
+            "scenario_path": "examples/tiny7/scenario.yaml",
             "seed": 42,
             "status": "ok",
             "started_at": f"{stem}T00:00:00+00:00",

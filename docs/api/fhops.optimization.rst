@@ -16,7 +16,7 @@ Typical usage:
    from fhops.scenario.contract import Problem
    from fhops.optimization.mip import solve_mip
 
-   pb = Problem.from_scenario(load_scenario("examples/minitoy/scenario.yaml"))
+   pb = Problem.from_scenario(load_scenario("examples/tiny7/scenario.yaml"))
    result = solve_mip(pb, time_limit=300)
    assignments = result["assignments"]
    print(result["objective"], len(assignments))

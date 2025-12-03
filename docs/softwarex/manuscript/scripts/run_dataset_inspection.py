@@ -143,14 +143,24 @@ def main() -> int:
 
     targets = [
         DatasetTarget(
-            slug="minitoy",
-            scenario_path=repo_root / "examples" / "minitoy" / "scenario.yaml",
-            label="FHOPS MiniToy (examples/minitoy)",
+            slug="tiny7",
+            scenario_path=repo_root / "examples" / "tiny7" / "scenario.yaml",
+            label="FHOPS Tiny7 (examples/tiny7)",
+        ),
+        DatasetTarget(
+            slug="small21",
+            scenario_path=repo_root / "examples" / "small21" / "scenario.yaml",
+            label="FHOPS Small21 (examples/small21)",
         ),
         DatasetTarget(
             slug="med42",
             scenario_path=repo_root / "examples" / "med42" / "scenario.yaml",
             label="FHOPS Med42 (examples/med42)",
+        ),
+        DatasetTarget(
+            slug="large84",
+            scenario_path=repo_root / "examples" / "large84" / "scenario.yaml",
+            label="FHOPS Large84 (examples/large84)",
         ),
     ]
 

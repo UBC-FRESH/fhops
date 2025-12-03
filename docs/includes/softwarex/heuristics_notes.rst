@@ -8,7 +8,7 @@ FHOPS exposes the same metaheuristics benchmarked in the manuscript:
    landing-cap traps). Operator weights ship in ``profiles.py``, so the
    exporter can surface them in the shared table.
 -  **Iterated local search** is included to show deterministic
-   improvement over SA in short horizons (e.g., minitoy). The solver
+   improvement over SA in short horizons (e.g., tiny7). The solver
    piggybacks on SA assignments when ``--include-ils`` is passed,
    reinforcing that end-users can reuse telemetry outputs.
 -  **Tabu search** demonstrates diversification on synthetic bundles:

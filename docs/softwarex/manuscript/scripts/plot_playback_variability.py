@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 SCENARIOS = [
-    ("minitoy", "MiniToy"),
+    ("tiny7", "Tiny7"),
     ("med42", "Med42"),
     ("synthetic_small", "Synthetic-small"),
 ]

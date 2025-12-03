@@ -1,0 +1,76 @@
+{
+  "slug": "small21",
+  "label": "FHOPS Small21 (examples/small21)",
+  "scenario_path": "/home/gep/projects/fhops/examples/small21/scenario.yaml",
+  "name": "FHOPS Small21",
+  "num_days": 21,
+  "start_date": "2025-01-01",
+  "schema_version": "1.0.0",
+  "objective_weights": {
+    "production": 1.0,
+    "mobilisation": 0.5
+  },
+  "tables": {
+    "blocks": {
+      "path": "/home/gep/projects/fhops/examples/small21/data/blocks.csv",
+      "row_count": 12,
+      "columns": [
+        "id",
+        "landing_id",
+        "harvest_system_id",
+        "work_required",
+        "earliest_start",
+        "latest_finish",
+        "avg_stem_size_m3",
+        "volume_per_ha_m3",
+        "stem_density_per_ha",
+        "ground_slope_percent",
+        "volume_per_ha_m3_sigma",
+        "stem_density_per_ha_sigma"
+      ]
+    },
+    "machines": {
+      "path": "/home/gep/projects/fhops/examples/small21/data/machines.csv",
+      "row_count": 9,
+      "columns": [
+        "id",
+        "crew",
+        "daily_hours",
+        "operating_cost",
+        "role"
+      ]
+    },
+    "landings": {
+      "path": "/home/gep/projects/fhops/examples/small21/data/landings.csv",
+      "row_count": 4,
+      "columns": [
+        "id",
+        "daily_capacity"
+      ]
+    },
+    "calendar": {
+      "path": "/home/gep/projects/fhops/examples/small21/data/calendar.csv",
+      "row_count": 189,
+      "columns": [
+        "machine_id",
+        "day",
+        "available"
+      ]
+    },
+    "prod_rates": {
+      "path": "/home/gep/projects/fhops/examples/small21/data/prod_rates.csv",
+      "row_count": 108,
+      "columns": [
+        "machine_id",
+        "block_id",
+        "rate"
+      ]
+    }
+  },
+  "machine_roles": {
+    "feller_buncher": 2,
+    "grapple_skidder": 1,
+    "roadside_processor": 3,
+    "loader": 3
+  }
+}
