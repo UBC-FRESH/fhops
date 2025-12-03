@@ -36,8 +36,9 @@ def solve_operational_milp(
     """Solve the operational MILP given a prepared bundle."""
 
     model = build_operational_model(bundle)
+    seeded = 0
     if incumbent_assignments is not None:
-        _apply_incumbent_start(model, incumbent_assignments)
+        seeded = _apply_incumbent_start(model, incumbent_assignments)
 
     opt = SolverFactory(solver)
     if time_limit is not None:
@@ -50,7 +51,10 @@ def solve_operational_milp(
     if solver_options:
         for key, value in solver_options.items():
             opt.options[str(key)] = value
-    result = opt.solve(model, tee=tee, load_solutions=True)
+    solve_kwargs: dict[str, object] = {"tee": tee, "load_solutions": True}
+    if seeded > 0:
+        solve_kwargs["warmstart"] = True
+    result = opt.solve(model, **solve_kwargs)
     status = str(result.solver.status).lower()
     termination = str(result.solver.termination_condition).lower()
     solved = termination in {"optimal", "feasible"} or status in {"optimal", "feasible"}
@@ -121,8 +125,10 @@ def _apply_incumbent_start(
         except (TypeError, ValueError):
             continue
         shift_id = str(shift_value)
-        index = (machine_id, block_id, day, shift_id)
-        if index not in model.x:
+        shift_tuple = (day, shift_id)
+        try:
+            x_var = model.x[machine_id, block_id, shift_tuple]
+        except KeyError:
             continue
 
         assigned_val = 1.0
@@ -136,8 +142,8 @@ def _apply_incumbent_start(
         if assigned_val <= 0:
             continue
 
-        model.x[index].set_value(1.0)
-        model.x[index].stale = False
+        x_var.set_value(1.0)
+        x_var.stale = False
         seeded += 1
 
         if has_production:
@@ -147,9 +153,11 @@ def _apply_incumbent_start(
                     prod_val = float(prod_raw)
                 except (TypeError, ValueError):
                     continue
-                prod_index = (machine_id, block_id, day, shift_id)
-                if prod_index in model.prod:
-                    model.prod[prod_index].set_value(prod_val)
-                    model.prod[prod_index].stale = False
+                try:
+                    prod_var = model.prod[machine_id, block_id, shift_tuple]
+                except KeyError:
+                    continue
+                prod_var.set_value(prod_val)
+                prod_var.stale = False
 
     return seeded

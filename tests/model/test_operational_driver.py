@@ -1,6 +1,9 @@
+from types import SimpleNamespace
+
 import pandas as pd
 
 from fhops.model.milp.data import build_operational_bundle
+
 from fhops.model.milp.driver import solve_operational_milp, _apply_incumbent_start
 from fhops.model.milp.operational import build_operational_model
 from fhops.scenario.contract import Problem
@@ -48,3 +51,35 @@ def test_apply_incumbent_start_sets_initial_values():
     assert seeded == 1
     assert model.x[mach, blk, (day, shift_id)].value == 1
     assert model.prod[mach, blk, (day, shift_id)].value == 5.5
+
+
+def test_solve_operational_milp_uses_warmstart(monkeypatch):
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
+    problem = Problem.from_scenario(scenario)
+    bundle = build_operational_bundle(problem)
+
+    incumbent = pd.DataFrame(
+        [
+            {"machine_id": "H1", "block_id": "B01", "day": 1, "shift_id": "S1", "assigned": 1},
+        ]
+    )
+
+    captured: dict[str, object] = {}
+
+    class FakeSolver:
+        def __init__(self):
+            self.options: dict[str, object] = {}
+
+        def solve(self, model, **kwargs):
+            captured["kwargs"] = kwargs
+            return SimpleNamespace(
+                solver=SimpleNamespace(status="warning", termination_condition="maxTimeLimit")
+            )
+
+    def fake_factory(_solver_name: str):
+        return FakeSolver()
+
+    monkeypatch.setattr("fhops.model.milp.driver.SolverFactory", fake_factory)
+    result = solve_operational_milp(bundle, solver="highs", incumbent_assignments=incumbent)
+    assert result["solver_status"] == "warning"
+    assert captured["kwargs"].get("warmstart") is True

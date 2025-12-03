@@ -31,6 +31,16 @@ Key observations:
 - [ ] 2.2 Run back-to-back med42 solves (no start vs greedy start vs 60 s SA start) with identical solver budgets to quantify incumbent quality, gap trajectory, and runtime impact.
 - [ ] 2.3 Document the warm-start behaviour (limitations, required CSV schema) in the notes/CLI docs so sweeps can assume access to a seeded incumbent.
 
+Med42 warm-start experiment (2025-12-03):
+
+| Start source | Prep command | Gurobi behaviour (`TimeLimit=120`, `Threads=36`) | Best objective | Gap | Notes |
+| --- | --- | --- | --- | --- | --- |
+| none | – | Matches baseline log: heuristics find incumbent 36 247 at ~97 s, best bound 38 193 → gap 5.37 %. No assignment written because Pyomo marks solve as `aborted` | 36 247 | 5.37 % | Reference log `tmp/mip_logs/med42_no_start.log` |
+| greedy seed (`iters=0`) | `fhops solve-heur examples/med42/scenario.yaml --iters 0 --out tmp/med42_greedy_incumbent.csv` (~2 s) | Gurobi emits `Warning: Completing partial solution with 54144 unfixed non-continuous variables out of 58680` followed by `User MIP start did not produce a new incumbent solution`; progress identical to baseline | 36 247 | 5.37 % | We only seed `x`/`prod`, so the start is incomplete (transition binaries, activation flags, landing inventories stay free) |
+| SA seed (`iters=2000`, runtime ≈106 s) | `/usr/bin/env time -f 'SA runtime %E' fhops solve-heur ... --iters 2000 --out tmp/med42_sa_incumbent.csv` | Same warning as the greedy run; Gurobi discards the start and reproduces the baseline curve (best 36 247, gap 5.37 %) | 36 247 | 5.37 % | Seeding higher-quality assignments has no effect until we populate the auxiliary binaries and inventory vars |
+
+Takeaway: simply loading the heuristic assignment matrix (machine/block/day/shift + optional production) is not enough—Gurobi insists on values for the remaining 54 k integer vars, so the warm start never becomes an incumbent. Next step for §2.2/2.3 is to extend `_apply_incumbent_start` (or a follow-up helper) to derive the missing variables (transition `y`, activation binaries, landing inventories, mobilisation states) from the incumbent schedule before re-running the comparison.
+
 ### [ ] 3. Budgeted option sweep
 - [ ] 3.1 Run med42 with staged options (`TimeLimit`, `MIPGap`, `Threads`, `Presolve`, `Heuristics`, with/without warm starts) and log objective/gap/runtime for each combination to map the time-vs-gap curve.
 - [ ] 3.2 Repeat for small21 and large84 (short time limits) to understand scaling and choose sensible defaults per tier.
