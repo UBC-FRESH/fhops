@@ -56,7 +56,7 @@ from fhops.evaluation import (
     shift_dataframe,
     shift_dataframe_from_ensemble,
 )
-from fhops.model.milp.data import build_operational_bundle, bundle_from_dict, bundle_to_dict
+from fhops.model.milp.data import bundle_from_dict, bundle_to_dict
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import (
     build_exploration_plan,
@@ -67,6 +67,7 @@ from fhops.optimization.heuristics import (
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import RunTelemetryLogger, append_jsonl
@@ -617,12 +618,14 @@ def solve_mip_operational_cmd(
 
     pb: Problem | None = None
     bundle = None
+    ctx = None
     scenario_label: str | None = None
     scenario_path_str: str | None = None
     if scenario is not None:
         sc = load_scenario(str(scenario))
         pb = Problem.from_scenario(sc)
-        bundle = build_operational_bundle(pb)
+        ctx = build_operational_problem(pb)
+        bundle = ctx.bundle
         scenario_label = sc.name
         scenario_path_str = str(scenario)
     elif bundle_json is not None:
@@ -710,6 +713,7 @@ def solve_mip_operational_cmd(
                     tee=debug,
                     solver_options=parsed_solver_options or None,
                     incumbent_assignments=incumbent_assignments,
+                    context=ctx,
                 )
             except ValueError as exc:
                 raise typer.BadParameter(str(exc)) from exc

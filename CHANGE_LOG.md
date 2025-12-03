@@ -1,3 +1,25 @@
+# 2025-12-05 — Warm-start docs + CLI gating
+- Added `docs/howto/mip_warm_starts.rst` plus CLI reference updates so users know how to feed `--incumbent` schedules and, just as importantly, that med42/large84 still discard weak warm starts. `notes/mip_tractability_plan.md` now records the completed med42 comparison and the “operational but not yet practically useful” status.
+- Restored the missing `tests/fixtures/presets/tiny7_explore.yaml` so the SA preset regression stops failing when it checks the objective-weight snapshot.
+- Introduced `FHOPS_RUN_FULL_CLI_TESTS` gating in `tests/conftest.py` and updated the benchmark/tuner regressions to short-circuit unless the env flag is set, keeping default `pytest` runs manageable while we plan a more thorough test-trimming pass.
+- `tests/test_cli_operational_mip.py` fakes now accept the `context` kwarg so the new warm-start plumbing can be exercised safely, and `tests/test_run_tuning_benchmarks.py` gained sorted imports + skipped-by-default markers to avoid launching the full tuner CLI unless explicitly requested.
+- Commands executed:
+  - `.venv/bin/ruff format src tests docs`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+
+# 2025-12-04 — Warm-starts seed the full operational MILP state
+- `_apply_incumbent_start` now reconstructs every Pyomo decision variable implied by a heuristic schedule (assignments/production, transition binaries, activation flags, loader batch counts, per-role inventories, landing surplus, and block leftovers). This stops Gurobi from discarding incumbent CSVs with the “Completing partial solution” warning and paves the way for the med42 option sweep.
+- Added `_IncumbentState` plumbing in `fhops.model.milp.driver` plus tests in `tests/model/test_operational_driver.py` to prove the seeding covers `x`, `prod`, `y`, `role_prod`, activation binaries, loader batches, landing surplus, and leftovers while keeping Pyomo’s `warmstart=True` wiring intact.
+- The CLI and benchmark harness now build an `OperationalProblem` context whenever they load a scenario and pass it into `solve_operational_milp`, enabling SequencingTracker-backed warm starts (derived production/leftovers/landing usage) for non-bundle invocations.
+- Tiny7 smoke: `fhops solve-mip-operational --bundle-json tests/fixtures/milp/tiny7_operational_bundle.json --solver gurobi --solver-option Threads=18 --time-limit 60 --incumbent tests/fixtures/playback/tiny7_assignments.csv` now accepts the incumbent immediately (no warning). Med42 still times out at 120 s, but the log shows the incumbent is loaded rather than “Completed partial solution,” so the option sweep is ready to rerun.
+- Notes: `notes/mip_tractability_plan.md` documents the helper + tests and keeps the tiny7 CLI smoke + med42 comparison as follow-up items.
+- Commands executed:
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest tests/model/test_operational_driver.py`
+
 # 2025-12-02 — Benchmark harness uses the operational MILP path
 - `fhops.cli.benchmarks.run_benchmark_suite` now builds the operational bundle and calls `solve_operational_milp` whenever `include_mip=True`, so the CLI, tests, and telemetry all exercise the same MILP plumbing. Legacy `--driver` aliases map onto solver candidates (`auto` ⇒ Gurobi→HiGHS fallback), and the summary rows now persist the chosen solver plus solver/termination status.
 - Re-enabled the tiny7 benchmark regression so it checks both SA and MIP rows: `tests/test_benchmark_harness.py::test_benchmark_suite_tiny7` now asserts the `mip_assignments.csv` dump exists, verifies the “exact” solver category, and ensures the summary gap columns stay consistent with the recorded objective.

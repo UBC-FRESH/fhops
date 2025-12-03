@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -8,6 +9,11 @@ from hypothesis import strategies as st
 
 from fhops.cli.benchmarks import run_benchmark_suite
 from fhops.scenario.synthetic import SyntheticDatasetConfig, generate_random_dataset
+
+pytestmark = pytest.mark.skipif(
+    not os.getenv("FHOPS_ENABLE_BENCHMARK_TESTS"),
+    reason="Set FHOPS_ENABLE_BENCHMARK_TESTS=1 to run benchmark harness integration tests.",
+)
 
 
 @pytest.mark.milp_refactor

@@ -63,6 +63,7 @@ def test_solve_mip_operational_solver_options(monkeypatch, tmp_path):
         tee=False,
         solver_options=None,
         incumbent_assignments=None,
+        context=None,
     ):
         captured["solver_options"] = solver_options
         return {
@@ -115,6 +116,7 @@ def test_solve_mip_operational_incumbent(monkeypatch, tmp_path):
         tee=False,
         solver_options=None,
         incumbent_assignments=None,
+        context=None,
     ):
         captured["incumbent"] = incumbent_assignments
         return {

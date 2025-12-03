@@ -445,4 +445,20 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
     model.objective = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
+    # Attach warm-start metadata so the driver can rebuild incumbent states.
+    model._warm_start_meta = {
+        "bundle": bundle,
+        "shift_list": tuple(shift_list),
+        "prev_shift_map": prev_shift_map,
+        "role_upstream": role_upstream,
+        "role_to_machines": {role: tuple(machines) for role, machines in role_to_machines.items()},
+        "block_terminal_roles": block_terminal_roles,
+        "loader_batch_volume": loader_batch_volume,
+        "inventory_pairs": tuple(inventory_pairs),
+        "activation_pairs": tuple(activation_pairs),
+        "loader_pairs": tuple(loader_pairs),
+        "terminal_pairs": tuple(terminal_pairs),
+        "needs_transitions": needs_transitions,
+    }
+
     return model

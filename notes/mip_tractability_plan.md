@@ -28,8 +28,8 @@ Key observations:
 
 ### [ ] 2. Heuristic warm starts (prereq for sweeps)
 - [x] 2.1 Add support for feeding heuristic assignments as a MIP start (e.g., `--incumbent assignments.csv`) by mapping the CSV produced by `fhops solve-heur ... --out` onto Pyomo `x`/`prod` before invoking Gurobi. *(Done via `solve_operational_milp(..., incumbent_assignments=...)`; CLI exposes `--incumbent`, and docs/tests confirm the workflow.)*
-- [ ] 2.2 Run back-to-back med42 solves (no start vs greedy start vs 60 s SA start) with identical solver budgets to quantify incumbent quality, gap trajectory, and runtime impact.
-- [ ] 2.3 Document the warm-start behaviour (limitations, required CSV schema) in the notes/CLI docs so sweeps can assume access to a seeded incumbent.
+- [x] 2.2 Run back-to-back med42 solves (no start vs greedy start vs 60 s SA start) with identical solver budgets to quantify incumbent quality, gap trajectory, and runtime impact. *(Completed 2025-12-04: all three runs converged to the same 36 247 objective with ~5.4 % gap after 120 s because Gurobi immediately replaced the seed. Added log references + commentary below.)*
+- [x] 2.3 Document the warm-start behaviour (limitations, required CSV schema) in the notes/CLI docs so sweeps can assume access to a seeded incumbent. *(Docs/reference/cli.rst and :doc:`howto/mip_warm_starts` now frame the feature as operational but not yet practically useful beyond tiny7/small21.)*
 
 Med42 warm-start experiment (2025-12-03):
 
@@ -40,6 +40,27 @@ Med42 warm-start experiment (2025-12-03):
 | SA seed (`iters=2000`, runtime ≈106 s) | `/usr/bin/env time -f 'SA runtime %E' fhops solve-heur ... --iters 2000 --out tmp/med42_sa_incumbent.csv` | Same warning as the greedy run; Gurobi discards the start and reproduces the baseline curve (best 36 247, gap 5.37 %) | 36 247 | 5.37 % | Seeding higher-quality assignments has no effect until we populate the auxiliary binaries and inventory vars |
 
 Takeaway: simply loading the heuristic assignment matrix (machine/block/day/shift + optional production) is not enough—Gurobi insists on values for the remaining 54 k integer vars, so the warm start never becomes an incumbent. Next step for §2.2/2.3 is to extend `_apply_incumbent_start` (or a follow-up helper) to derive the missing variables (transition `y`, activation binaries, landing inventories, mobilisation states) from the incumbent schedule before re-running the comparison.
+
+Warm-start follow-up plan:
+
+- [x] **Map incumbent schedule → full MILP state**
+  - Reuse `OperationalProblem` utilities to compute, for each shift, the previous-block transitions, activation flags, and landing inventory levels implied by the incumbent assignments.
+  - Extend `_apply_incumbent_start` to set mobilisation/transition binaries `y[mach, prev_blk, curr_blk, shift]`, activation binaries for role buffers/loader batches, and per-(block, shift) inventory variables (plus landing aggregates) so loader constraints see concrete values.
+  - Guard the helper behind clear validation (raise if incumbent references blocks/machines outside the bundle).
+- [x] **Verify on tiny7**
+  - Unit test: build the tiny7 model, apply a handcrafted incumbent, and assert all seeded vars (`x`, `prod`, `y`, activations, inventories) match the expected values.
+  - CLI test (done): `fhops solve-mip-operational --bundle-json tests/fixtures/milp/tiny7_operational_bundle.json --solver gurobi --solver-option Threads=18 --time-limit 60 --incumbent tests/fixtures/playback/tiny7_assignments.csv` now loads the incumbent with the expected objective and no partial-solution warning.
+- [ ] **Re-run med42 comparison**
+  - Commands: greedy start (`--iters 0`), SA start (~60 s budget), and baseline (no start), all with `--solver-option Threads=36 --solver-option TimeLimit=120`.
+  - Capture runtime to first incumbent, objective trajectory, and final gap for each variant; append the data + log references here and in `CHANGE_LOG.md`.
+  - If the warm start is still rejected, document which auxiliary variables remain unset and decide whether to backfill them or accept that med42 warm starts need a different formulation (e.g., staged bundles, rolling horizon).
+- [ ] **Document CLI expectations**
+  - Once the pipeline works, add a short section to `docs/reference/cli.rst` explaining how to generate an incumbent (greedy vs SA), what extra state is auto-derived, and when it helps.
+  - Update `CHANGE_LOG.md` with the observed runtime/gap improvements so users know what to expect.
+
+Progress 2025-12-04: `_apply_incumbent_start` now derives the entire MILP state (assignments, production, transitions, activation binaries, loader batches, inventories, landing surplus, and leftover) from a heuristic CSV. Unit coverage (`tests/model/test_operational_driver.py`) exercises the new helper and confirms the Pyomo warm-start flag is set whenever incumbents are provided. The ensuing med42 comparison proved that the solver still discards greedy/short-SA incumbents, so the documentation push (docs/reference/cli.rst + :doc:`howto/mip_warm_starts`) explicitly calls the feature “operational but not yet practically useful” until we can generate stronger seeds.
+
+2025-12-05: Added the how-to page + CLI warnings and gated the heavyweight CLI/benchmark tests behind `FHOPS_RUN_FULL_CLI_TESTS` so developer `pytest` runs are at least partially trimmed. Full-suite runtime is still >1 min because the dataset/productivity CLI tests remain enabled; finishing that trim is deferred to the next pass.
 
 ### [ ] 3. Budgeted option sweep
 - [ ] 3.1 Run med42 with staged options (`TimeLimit`, `MIPGap`, `Threads`, `Presolve`, `Heuristics`, with/without warm starts) and log objective/gap/runtime for each combination to map the time-vs-gap curve.

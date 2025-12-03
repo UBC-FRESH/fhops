@@ -37,9 +37,9 @@ from fhops.cli.profiles import (
 )
 from fhops.cli.watch_dashboard import LiveWatch
 from fhops.evaluation import compute_kpis
-from fhops.model.milp.data import build_operational_bundle
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import append_jsonl
@@ -319,7 +319,8 @@ def run_benchmark_suite(
             scenario_mip_objective: float | None = None
             if include_mip:
                 build_start = time.perf_counter()
-                bundle = build_operational_bundle(pb)
+                ctx = build_operational_problem(pb)
+                bundle = ctx.bundle
                 build_time = time.perf_counter() - build_start
                 solver_candidates = _operational_solver_candidates(driver)
                 mip_res: Mapping[str, object] | None = None
@@ -334,6 +335,7 @@ def run_benchmark_suite(
                             solver=solver_name,
                             time_limit=time_limit,
                             tee=bool(debug),
+                            context=ctx,
                         )
                         mip_runtime = time.perf_counter() - start
                         chosen_solver = solver_name
