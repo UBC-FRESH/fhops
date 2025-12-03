@@ -41,6 +41,22 @@
   - `.venv/bin/pytest`
   - `.venv/bin/pre-commit run --all-files`
   - `sphinx-build -b html docs _build/html -W`
+- Fixture refresh after the per-block landing updates:
+  - `fhops solve-mip-operational examples/tiny7/scenario.yaml --out tests/fixtures/playback/tiny7_assignments.csv --time-limit 120 --gap 0.0 --dump-bundle tests/fixtures/milp/tiny7_operational_bundle.json --solver-option Threads=36`
+  - `fhops eval-playback examples/tiny7/scenario.yaml --assignments tests/fixtures/playback/tiny7_assignments.csv --shift-out tests/fixtures/playback/tiny7_shift.csv --day-out tests/fixtures/playback/tiny7_day.csv --shift-parquet tests/fixtures/playback/tiny7_shift.parquet --day-parquet tests/fixtures/playback/tiny7_day.parquet`
+  - `fhops solve-mip-operational examples/med42/scenario.yaml --solver gurobi --time-limit 600 --gap 0.05 --dump-bundle tests/fixtures/milp/med42_operational_bundle.json --solver-option Threads=36 --solver-option LogFile=tmp/mip_logs/med42_fixture.log`
+  - `fhops solve-heur examples/med42/scenario.yaml --iters 4000 --seed 42 --out tests/fixtures/playback/med42_assignments.csv`
+  - `fhops eval-playback examples/med42/scenario.yaml --assignments tests/fixtures/playback/med42_assignments.csv --shift-out tests/fixtures/playback/med42_shift.csv --day-out tests/fixtures/playback/med42_day.csv --shift-parquet tests/fixtures/playback/med42_shift.parquet --day-parquet tests/fixtures/playback/med42_day.parquet`
+  - `fhops solve-heur examples/large84/scenario.yaml --iters 500 --seed 42 --out tests/fixtures/playback/large84_assignments.csv`
+  - `fhops eval-playback examples/large84/scenario.yaml --assignments tests/fixtures/playback/large84_assignments.csv --shift-out tests/fixtures/playback/large84_shift.csv --day-out tests/fixtures/playback/large84_day.csv --shift-parquet tests/fixtures/playback/large84_shift.parquet --day-parquet tests/fixtures/playback/large84_day.parquet`
+  - `fhops solve-mip-operational examples/large84/scenario.yaml --solver gurobi --time-limit 60 --gap 1.0 --dump-bundle tests/fixtures/milp/large84_operational_bundle.json --solver-option Threads=36 --solver-option LogFile=tmp/mip_logs/large84_fixture.log`
+  - `fhops bench suite --scenario examples/tiny7/scenario.yaml --out-dir tmp/bench_fixture_refresh/tiny7 --time-limit 120 --sa-iters 200 --include-mip`
+  - `fhops bench suite --scenario examples/med42/scenario.yaml --out-dir tmp/bench_fixture_refresh/med42 --time-limit 600 --sa-iters 500`
+  - `fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/bench_fixture_refresh/large84 --no-include-mip --time-limit 900 --sa-iters 200`
+  - `python - <<'PY'  # recompute deterministic/stochastic KPI fixtures from refreshed assignments` *(inline script in history)*
+  - `pytest tests/test_kpi_regressions.py`
+  - `pytest tests/test_cli_playback_exports.py -k tiny7`
+  - `pytest tests/test_benchmark_harness.py -k tiny7`
 
 # 2025-12-01 — MILP sequencing consumes shared loader metadata
 - `apply_system_sequencing_constraints` now accepts the shared `OperationalProblem` context built in `fhops.optimization.operational_problem`; the Pyomo builder threads this context through so role filters, prereq sequencing, and loader batch buffers reuse the exact same `allowed_roles`, `prereq_roles`, and `(block, loader_role)` metadata that heuristics already consume. Loader-buffer constraints therefore activate on large84 (and future scenarios) instead of silently no-oping.
