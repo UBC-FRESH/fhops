@@ -518,6 +518,18 @@ def _med42_machine_roster() -> dict[str, list[str]]:
     }
 
 
+def unique_landing_ids(count: int) -> tuple[str, ...]:
+    """Return deterministic landing IDs L1..Ln."""
+
+    return tuple(f"L{i}" for i in range(1, count + 1))
+
+
+TINY7_LANDING_IDS = unique_landing_ids(2)
+SMALL21_LANDING_IDS = unique_landing_ids(6)
+MED42_LANDING_IDS = unique_landing_ids(12)
+LARGE84_LANDING_IDS = unique_landing_ids(48)
+
+
 def _large84_machine_roster() -> dict[str, list[str]]:
     return {
         "feller_buncher": ["H1", "H2", "H3", "H4"],
@@ -535,6 +547,8 @@ DATASET_CONFIGS = {
         num_blocks=2,
         machines_by_role=_med42_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
+        landing_ids=TINY7_LANDING_IDS,
+        landing_capacities={landing: 1 for landing in TINY7_LANDING_IDS},
     ),
     "small21": DatasetConfig(
         name="small21",
@@ -544,6 +558,8 @@ DATASET_CONFIGS = {
         machines_by_role=_med42_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
         work_scale=2.1,
+        landing_ids=SMALL21_LANDING_IDS,
+        landing_capacities={landing: 1 for landing in SMALL21_LANDING_IDS},
     ),
     "med42": DatasetConfig(
         name="med42",
@@ -553,6 +569,8 @@ DATASET_CONFIGS = {
         machines_by_role=_med42_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
         work_scale=2.45,
+        landing_ids=MED42_LANDING_IDS,
+        landing_capacities={landing: 1 for landing in MED42_LANDING_IDS},
     ),
     "large84": DatasetConfig(
         name="large84",
@@ -562,6 +580,8 @@ DATASET_CONFIGS = {
         machines_by_role=_large84_machine_roster(),
         block_profiles=SMALL_TIER_PROFILES,
         work_scale=5.8,
+        landing_ids=LARGE84_LANDING_IDS,
+        landing_capacities={landing: 1 for landing in LARGE84_LANDING_IDS},
     ),
 }
 
