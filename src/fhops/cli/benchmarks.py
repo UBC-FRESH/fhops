@@ -15,7 +15,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 import pandas as pd
 import typer
@@ -47,6 +47,7 @@ from fhops.telemetry.machine_costs import build_machine_cost_snapshots, summariz
 from fhops.telemetry.watch import WatchConfig
 
 console = Console()
+COLUMNS_AXIS: Literal["columns"] = "columns"
 
 
 @dataclass(frozen=True)
@@ -813,8 +814,14 @@ def run_benchmark_suite(
             mip_value_float = mip_value
             return objective_val / mip_value_float
 
-        summary["objective_vs_mip_gap"] = summary.apply(_objective_gap, axis=1)
-        summary["objective_vs_mip_ratio"] = summary.apply(_objective_ratio, axis=1)
+        summary["objective_vs_mip_gap"] = pd.Series(
+            (_objective_gap(row) for _, row in summary.iterrows()),
+            index=summary.index,
+        )
+        summary["objective_vs_mip_ratio"] = pd.Series(
+            (_objective_ratio(row) for _, row in summary.iterrows()),
+            index=summary.index,
+        )
 
         heuristic_mask = summary["solver"] != "mip"
         summary["solver_category"] = summary["solver"].map(
@@ -860,7 +867,10 @@ def run_benchmark_suite(
                     return pd.NA
                 return runtime_val / best_runtime_val
 
-            summary["runtime_ratio_vs_best_heuristic"] = summary.apply(_runtime_ratio, axis=1)
+            summary["runtime_ratio_vs_best_heuristic"] = pd.Series(
+                (_runtime_ratio(row) for _, row in summary.iterrows()),
+                index=summary.index,
+            )
         else:
             summary["best_heuristic_solver"] = pd.NA
             summary["best_heuristic_objective"] = pd.NA

@@ -85,7 +85,7 @@ Progress 2025-12-04: `_apply_incumbent_start` now derives the entire MILP state 
 This ran in "a few minutes" (did not time it, but it was not very long):
 
 ```bash
-(.venv) gep@jupyterhub01:~/projects/fhops$ fhops solve-mip-operational examples/med42/scenario.yaml --out tmp/med42_mip.csv --solver gurobi --solver-option Threads=18 --solver-option MIPGap=0.05 
+(.venv) gep@jupyterhub01:~/projects/fhops$ fhops solve-mip-operational examples/med42/scenario.yaml --out tmp/med42_mip.csv --solver gurobi --solver-option Threads=18 --solver-option MIPGap=0.05
 Operational MILP solver_status=ok termination=optimal objective=36380.70123400002
 Assignments written to tmp/med42_mip.csv
 KPI Summary
@@ -114,4 +114,4 @@ Sequencing
   sequencing_violation_breakdown: none
 ```
 
-So that is promising in terms of getting "good" solutions pretty quickly from the MILP. 
+So that is promising in terms of getting "good" solutions pretty quickly from the MILP.

@@ -3,10 +3,14 @@
 - Restored the missing `tests/fixtures/presets/tiny7_explore.yaml` so the SA preset regression stops failing when it checks the objective-weight snapshot.
 - Introduced `FHOPS_RUN_FULL_CLI_TESTS` gating in `tests/conftest.py` and updated the benchmark/tuner regressions to short-circuit unless the env flag is set, keeping default `pytest` runs manageable while we plan a more thorough test-trimming pass.
 - `tests/test_cli_operational_mip.py` fakes now accept the `context` kwarg so the new warm-start plumbing can be exercised safely, and `tests/test_run_tuning_benchmarks.py` gained sorted imports + skipped-by-default markers to avoid launching the full tuner CLI unless explicitly requested.
+- `fhops.cli.benchmarks.run_benchmark_suite` now writes the objective gap/ratio/runtimes via `pd.Series(..., index=summary.index)` so MyPy treats the DataFrame assignments as typed series instead of bare lists; CI lint/mypy no longer flag the summary columns.
 - Commands executed:
   - `.venv/bin/ruff format src tests docs`
   - `.venv/bin/ruff check src tests`
   - `.venv/bin/mypy src`
+  - `.venv/bin/ruff format src/fhops/cli/benchmarks.py`
+  - `.venv/bin/ruff check src/fhops/cli/benchmarks.py`
+  - `.venv/bin/mypy src/fhops/cli/benchmarks.py`
 
 # 2025-12-04 — Warm-starts seed the full operational MILP state
 - `_apply_incumbent_start` now reconstructs every Pyomo decision variable implied by a heuristic schedule (assignments/production, transition binaries, activation flags, loader batch counts, per-role inventories, landing surplus, and block leftovers). This stops Gurobi from discarding incumbent CSVs with the “Completing partial solution” warning and paves the way for the med42 option sweep.
