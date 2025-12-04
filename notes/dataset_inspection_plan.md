@@ -4,10 +4,11 @@
 - Goal: ensure shipped datasets and synthetic-data generator parameters look realistic (no >10x deviations from domain expectations) prior to broad release.
 - Driver: post-v0.1.0-a1 push to let developers/users inspect datasets via CLI before ingestion, preventing GIGO and aligning with FHOPS roadmap data-quality milestones.
 
-## Conversation Snapshot (2025-02-??)
-- We agreed to focus on dataset + synthetic generator parameter realism now that the release candidate is out.
-- First concrete step is a CLI that compiles and dumps parameter summaries for any provided dataset; Python API can follow later.
-- This inspection CLI is intended both for developers and “regular” users to validate newly created datasets.
+## Conversation Snapshot (2025-12-03)
+- With v0.1.0-a1 out the door, we need to retrofit all shipped datasets (tiny7, small21, med42; large84 later) plus synthetic generator presets with realistic parameters so experts don’t see order-of-magnitude discrepancies.
+- First deliverable is a dataset-inspection CLI that loads any FHOPS dataset (sample bundle or user-provided path) and emits parameter value summaries so non-developers can validate their inputs before running solvers.
+- Python API / notebook helpers are deferred; the CLI is the authoritative workflow for now.
+- We captured open design questions (see below) to unblock UX + implementation details in subsequent iterations.
 
 ## Working Assumptions / Decisions
 - Inspect exactly one dataset per CLI invocation; batching will be layered on later via scripting.
@@ -21,9 +22,12 @@
 - Sample datasets should assume 24-hour machine availability per day (consistent with year-round operations except brief spring shutdowns).
 
 ## Open Questions (awaiting product/UX decisions)
-1. What future extensions do we need beyond raw parameters (e.g., derived statistics, anomaly detection)?
-2. When we add machine-friendly output, should it be JSON, CSV, or something tied to internal tooling?
-3. Which CLI UX patterns should we support besides interactive prompts (flags for non-interactive CI usage)?
+1. Which datasets should the first iteration validate (all shipped bundles + synthetic samples or just tiny7/small21/med42)? How do we gate large84 given it is unsolved today?
+2. Should the CLI only echo raw parameters, or also compute summary statistics (ranges, means, histograms)? If stats are included, what constitutes “realistic” warnings?
+3. What output formats are required in v1 (terminal tables only vs. optional JSON/CSV for CI/automation)?
+4. How should users select datasets? Paths, canonical names, scenario YAML, or detection via `fhops dataset validate` outputs?
+5. Do we inspect synthetic generator presets directly, or reuse the CLI by pointing it at freshly generated scenarios?
+6. Should the CLI support non-interactive CI usage from day one (flags to skip prompts)?
 
 ## Next Steps
 - Capture product answers to the open questions above.

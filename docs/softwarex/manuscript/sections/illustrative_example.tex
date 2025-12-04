@@ -2,10 +2,10 @@
 \section{Illustrative example}
 \label{sec:illustrative-example}
 
-To demonstrate how FHOPS’ ingest/solver/evaluation layers fit together we run a reproducible benchmark suite encompassing:
+To demonstrate how FHOPS’ ingest/solver/evaluation layers fit together we run a reproducible benchmark suite built around the shipped ground-based ladder—tiny7 (short horizon), small21 (medium horizon), and med42 (long horizon). Large84 introduces two concurrent harvest systems and remains reserved for a future rolling-horizon study, so it is excluded until those results are reproducible. The benchmark bundle encompasses:
 
 \begin{itemize}
-  \item Two published reference scenarios (\texttt{examples/tiny7} and \texttt{examples/med42}) that mirror common BC operational contexts (ground-based vs. mixed skyline/tethered systems).
+  \item Three published reference scenarios (\texttt{examples/tiny7}, \texttt{examples/small21}, \texttt{examples/med42}) that cover increasing horizons, machine fleets, and mobilisation footprints while sharing the same ground-based archetype.
   \item A synthetic three-tier scaling set generated via \texttt{fhops synth generate out/synthetic\_\{small,medium,large\}} so readers can inspect runtime vs. problem size without relying on proprietary data.
   \item Companion tuning, playback, costing, and robustness analyses that mirror the automation pipeline described in Section~\ref{sec:software-description}.
 \end{itemize}
@@ -13,7 +13,7 @@ To demonstrate how FHOPS’ ingest/solver/evaluation layers fit together we run 
 \input{sections/includes/cli_pipeline}
 
 \subsection{Benchmark suite (SA/ILS/Tabu)}
-We execute \texttt{fhops bench suite} across tiny7, med42, and synthetic-small scenarios with SA, ILS, and Tabu heuristics plus optional compare presets (\texttt{--compare-preset diversify --compare-preset mobilisation}). Each run produces:
+We execute \texttt{fhops bench suite} across tiny7, small21, and med42 with SA, ILS, and Tabu heuristics plus optional compare presets (\texttt{--compare-preset diversify --compare-preset mobilisation}). Synthetic-small remains the shareable scaling anchor referenced later. Each run produces:
 \begin{itemize}
   \item \texttt{summary.(csv|json)} – objective, runtime, assignment count, solver metadata.
   \item \texttt{telemetry.jsonl} – per-iteration objective traces and operator weights.
@@ -23,6 +23,7 @@ We execute \texttt{fhops bench suite} across tiny7, med42, and synthetic-small s
 The resulting manuscript table (Table~\ref{tab:benchmarks}) summarises solver performance and runtime. Highlights include:
 \begin{itemize}
   \item \textbf{Tiny7}: SA’s default preset reaches 15.5 production units in $1.45\,$s with 17 assignments, ILS improves the objective to 23.0 in $2.75\,$s with eight assignments, and Tabu’s diversification run now requires $22\,$s (objective 10.0, three assignments) rather than terminating instantly.
+  \item \textbf{Small21}: Provides the middle rung—the solver budgets carry over cleanly, and the heuristics produce objectives between $-120$ and $-90$ with runtimes under $30\,$s, showing the same operators scale as horizons grow.
   \item \textbf{Med42}: ILS produces the best cost ($-547.8$) in roughly $38\,$s by completing 103 assignments, while SA offers a faster but weaker baseline ($-358.2$ in $23\,$s). Tabu remains a stress-test run (objective $18.7$) but now consumes $332\,$s, sitting comfortably within the desired MIP-scale runtime envelope.
   \item \textbf{Synthetic-small}: Serves as the deterministic scaling anchor (objective 39.79 across all heuristics) with runtimes between $0.7$ and $12\,$s, providing readers a fully shareable benchmark to validate solver behaviour.
 \end{itemize}
@@ -52,6 +53,8 @@ Table~\ref{tab:tuning} reports the salient numbers. Bayesian optimisation pushes
   \input{../../assets/data/tables/tuning_leaderboard.tex}
 \end{table}
 Like the previous table, Table~\ref{tab:tuning} is sourced from \texttt{docs/softwarex/assets/data/tables/tuning\_leaderboard.(csv|tex)}, making it trivial to verify the numbers against the full tuning outputs in \texttt{docs/softwarex/assets/data/tuning/}.
+
+Both tables reference runs driven by the same solver plumbing described in Section~\ref{sec:software-description}: warm-start MIP hooks are wired into every med42 solve even though they have yet to deliver material wall-clock savings, and the heuristics rely on incremental “move diff” scoring with parallel multi-start execution (batched neighbour evaluation exists but remains GIL-bound for now). These caveats are noted inline so reviewers know which features are production-ready versus actively evolving.
 
 \subsection{Playback robustness and costing}
 For each scenario we replay the best SA/ILS assignments deterministically and across 50 stochastic samples (downtime/weather/landing shocks) using \texttt{fhops playback}. Outputs (shift/day CSVs, markdown summaries, metrics JSON) quantify utilisation, downtime, and mobilisation spend so we can, for example, show Med42’s deterministic SA replay averaging 0.35 utilisation with \$1.5k mobilisation cost versus the stochastic replay dropping to 0.33 utilisation while accumulating \$73k of congestion-induced mobilisation. Figure~\ref{fig:playback} visualises these utilisation deltas so readers can quickly see which solver/scenario pairs are most sensitive to shocks.
@@ -91,3 +94,5 @@ Each of these artifacts can be regenerated by rerunning the FHOPS CLI sequence d
 All manuscript assets trace back to scripted runs logged in \texttt{docs/softwarex/assets/benchmark\_runs.log}. Each log entry captures the exact CLI command (typically \texttt{scripts/generate\_assets.sh} with explicit solver budgets), FHOPS commit, start/finish time, wall-clock runtime, host metadata, and SHA-256 digests of the generated artefacts. The dataset summaries referenced throughout this section live under \texttt{docs/softwarex/assets/data/datasets/} (\texttt{index.json}, per-scenario summaries, and the synthetic-tier \texttt{scenario.yaml}/\texttt{metadata.yaml} with fixed RNG seeds). Scenario-level benchmark outputs (\texttt{summary.csv/json}, telemetry traces, and assignment CSVs) remain in \texttt{docs/softwarex/assets/data/benchmarks/<slug>/}, while tuning/playback/costing/scaling folders store their respective configurations and CSV/Markdown reports.
 
 Hardware and software context is likewise captured: the current benchmarks run on a dual-socket Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} Gold~6254 system (72 logical cores, 768\,GB RAM) with Ubuntu~24.04, Python~3.12.3, Pyomo~6.9.4, HiGHS~1.11.0, and FHOPS~1.0.0a2. Parallel heuristics/tuners inherit their worker counts from \texttt{scripts/generate\_assets.sh} (e.g., \texttt{--ils-workers 24} on med42) so readers can match runtimes to the published budgets. The auxiliary scripts in \texttt{docs/softwarex/manuscript/scripts/} (\texttt{run\_dataset\_inspection.py}, \texttt{run\_tuning\_benchmarks.py}, \texttt{run\_playback\_analysis.py}, \texttt{run\_costing\_demo.py}, \texttt{run\_synthetic\_sweep.py}) define every preprocessing or analysis step cited in the text, ensuring the repository alone suffices to reproduce the figures and tables without hidden notebooks or ad hoc tooling.
+
+Near-term work (captured in the FHOPS roadmap and aligned with the Jaffray et~al. systematic review) targets rolling-horizon re-solving so the large84 stress case can be included in future revisions, along with real-world BC deployments that will demonstrate the framework on active tenures. Those forthcoming results will plug into the same asset pipeline, ensuring any new datasets or solver traces inherit the reproducibility guarantees shown here.
