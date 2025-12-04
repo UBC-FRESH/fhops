@@ -1,6 +1,6 @@
 scenario,bundle,algorithm,best_objective,mean_objective,mean_runtime,delta_vs_best
-synthetic-small,standalone,bayes,39.791000000000004,39.791000000000004,0.049933333333333337,0.0
-synthetic-small,standalone,grid,39.791000000000004,39.791000000000004,0.0465,0.0
-synthetic-small,standalone,ils,39.791000000000004,39.791000000000004,0.079,0.0
-synthetic-small,standalone,random,39.791000000000004,39.791000000000004,0.053000000000000005,0.0
-synthetic-small,standalone,tabu,39.791000000000004,39.791000000000004,0.036,0.0
+synthetic-small,standalone,bayes,-75039.791,-75039.791,1.3865,0.0
+synthetic-small,standalone,grid,-75039.791,-75039.791,1.3475,0.0
+synthetic-small,standalone,ils,-75039.791,-75039.791,4.873,0.0
+synthetic-small,standalone,random,-75039.791,-75039.791,1.3965,0.0
+synthetic-small,standalone,tabu,-75039.791,-75039.791,14.368,0.0

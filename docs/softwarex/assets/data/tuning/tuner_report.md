@@ -1,14 +1,14 @@
 | Algorithm | Scenario | Best Objective | Mean Objective | Runs | Summary Best | Configurations | Machine Costs | Repair Usage Alert |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| bayes | FHOPS Medium42 | -472.173 | -733.426 | 15 |  |  |  |  |
-| bayes | FHOPS MiniToy | 38.000 | 11.667 | 15 |  |  |  |  |
-| bayes | FHOPS Small21 | 9.075 | -35.833 | 15 |  |  |  |  |
-| bayes | synthetic-small | 39.791 | 39.791 | 15 | 39.791 | 15 |  |  |
-| grid | FHOPS Medium42 | -740.801 | -808.212 | 4 |  |  |  |  |
-| grid | FHOPS MiniToy | 15.500 | 9.750 | 4 |  |  |  |  |
-| grid | FHOPS Small21 | -11.228 | -25.395 | 4 |  |  |  |  |
-| grid | synthetic-small | 39.791 | 39.791 | 4 | 39.791 | 16 |  |  |
-| random | FHOPS Medium42 | -668.589 | -812.171 | 2 |  |  |  |  |
-| random | FHOPS MiniToy | 35.500 | 17.125 | 2 |  |  |  |  |
-| random | FHOPS Small21 | -46.284 | -70.442 | 2 |  |  |  |  |
-| random | synthetic-small | 39.791 | 39.791 | 2 | 39.791 | 8 |  |  |
+| bayes | FHOPS Medium42 | -35485.301 | -40830.471 | 8 |  |  |  |  |
+| bayes | FHOPS Small21 | 15627.571 | 15607.532 | 8 |  |  |  |  |
+| bayes | FHOPS Tiny7 | 4338.517 | 4310.522 | 8 |  |  |  |  |
+| bayes | synthetic-small | -75039.791 | -75039.791 | 8 | -75039.791 | 8 |  |  |
+| grid | FHOPS Medium42 | -38097.274 | -41251.381 | 4 |  |  |  |  |
+| grid | FHOPS Small21 | 15616.783 | 15595.416 | 4 |  |  |  |  |
+| grid | FHOPS Tiny7 | 4338.517 | 4314.521 | 4 |  |  |  |  |
+| grid | synthetic-small | -75039.791 | -75039.791 | 4 |  |  |  |  |
+| random | FHOPS Medium42 | -39725.879 | -42522.433 | 2 |  |  |  |  |
+| random | FHOPS Small21 | 15637.607 | 15632.546 | 2 |  |  |  |  |
+| random | FHOPS Tiny7 | 4306.523 | 4306.523 | 2 |  |  |  |  |
+| random | synthetic-small | -75039.791 | -75039.791 | 2 | -75039.791 | 8 |  |  |
