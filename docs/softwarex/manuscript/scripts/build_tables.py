@@ -18,8 +18,15 @@ SCENARIOS = [
         "report_key": "FHOPS Tiny7",
     },
     {
+        "slug": "small21",
+        "label": "Small21 (ground-based)",
+        "sense": "maximize",
+        "comparison_key": "baseline:small21",
+        "report_key": "FHOPS Small21",
+    },
+    {
         "slug": "med42",
-        "label": "Med42 (mixed skyline/tethered)",
+        "label": "Med42 (ground-based)",
         "sense": "minimize",
         "comparison_key": "baseline:med42",
         "report_key": "FHOPS Medium42",
@@ -47,6 +54,30 @@ def _format_float(value: float, decimals: int = 2) -> str:
 
 def _ensure_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
+
+
+def _escape_latex(text: str) -> str:
+    """Return a LaTeX-safe representation of ``text``."""
+
+    if not text:
+        return text
+
+    replacements = {
+        "\\": r"\textbackslash{}",
+        "&": r"\&",
+        "%": r"\%",
+        "$": r"\$",
+        "#": r"\#",
+        "_": r"\_",
+        "{": r"\{",
+        "}": r"\}",
+        "~": r"\textasciitilde{}",
+        "^": r"\textasciicircum{}",
+    }
+
+    for char, replacement in replacements.items():
+        text = text.replace(char, replacement)
+    return text
 
 
 def _select_solver_row(
@@ -163,7 +194,7 @@ def build_tuning_leaderboard_table(
                 "Scenario": meta["label"],
                 "Tuner": best_row["algorithm"].capitalize(),
                 "Best Objective": best_row["best_objective"],
-                "Δ vs SA default": delta,
+                r"$\Delta$ vs SA default": delta,
                 "Mean Runtime (s)": best_row["mean_runtime"],
                 "Key Settings": best_config,
             }
@@ -174,8 +205,10 @@ def build_tuning_leaderboard_table(
 
     df = pd.DataFrame.from_records(records)
     formatted = df.copy()
-    for col in ["Best Objective", "Δ vs SA default", "Mean Runtime (s)"]:
+    delta_col = r"$\Delta$ vs SA default"
+    for col in ["Best Objective", delta_col, "Mean Runtime (s)"]:
         formatted[col] = formatted[col].apply(_format_float)
+    formatted["Key Settings"] = formatted["Key Settings"].apply(_escape_latex)
 
     _ensure_dir(out_dir)
     formatted.to_csv(out_dir / "tuning_leaderboard.csv", index=False)

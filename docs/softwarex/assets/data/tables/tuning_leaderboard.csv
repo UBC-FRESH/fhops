@@ -1,4 +1,5 @@
-Scenario,Tuner,Best Objective,Δ vs SA default,Mean Runtime (s),Key Settings
-MiniToy (ground-based),Bayes,38.00,22.50,0.09,"iters=200; operators=(block_insertion:0.9873701953006124, cross_exchange:0.851660580591656, mobilisation_shake:0.6245224459449306)"
-Med42 (mixed skyline/tethered),Ils,-988.61,630.37,0.71,
-Synthetic-small,Bayes,39.79,0.00,0.05,"batch_size=3; iters=200; operators=(block_insertion:1.1026295381657825, cross_exchange:1.4389379395711261, mobilisation_shake:0.8462129202489219)"
+Scenario,Tuner,Best Objective,$\Delta$ vs SA default,Mean Runtime (s),Key Settings
+Tiny7 (ground-based),Ils,4349.26,42.74,1.68,
+Small21 (ground-based),Tabu,15637.80,10.23,18.15,
+Med42 (ground-based),Random,-39725.88,11454.66,6.00,"batch\_size=3; iters=120; operators=(block\_insertion:1.226, coverage\_injection:1.347, cross\_exchange:1.01)"
+Synthetic-small,Bayes,-75039.79,0.00,1.39,"batch\_size=3; iters=120; operators=(block\_insertion:1.1026295381657825, coverage\_injection:1.4389379395711261, cross\_exchange:0.8462129202489219)"
