@@ -1,3 +1,11 @@
+# 2025-12-10 — Rolling-horizon core scaffolding
+- Added the `fhops.planning` package with rolling-horizon primitives: config/iteration planning helpers, scenario slicing with day rebasing, mobilisation filtering, and lock rebasing to underpin the upcoming `fhops plan rolling` CLI/API surfaces.
+- Enforced the phased checklist in `notes/rolling_horizon_plan.md` and kept the Detailed Next Step in `ROADMAP.md` unchanged for now (planning remains the guiding doc).
+- Commands executed:
+  - `.venv/bin/ruff format src/fhops/planning`
+  - `.venv/bin/ruff check src/fhops/planning --fix`
+  - `.venv/bin/mypy src/fhops/planning`
+
 # 2025-12-10 — Rolling-horizon replanning planning kickoff
 - Started the `feature/rolling-horizon-replanning` branch and drafted `notes/rolling_horizon_plan.md` to capture goals, architecture, and phased implementation steps for the new rolling-horizon workflow (planning-only scope for now; evaluation/reporting to follow).
 - Added a Detailed Next Step entry to `ROADMAP.md` so the rolling-horizon work is tracked alongside existing initiatives, emphasizing the future CLI/API surfaces and telemetry requirements.
