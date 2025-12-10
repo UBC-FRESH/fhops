@@ -34,7 +34,7 @@
   - [x] Scenario slicer that trims calendars, demand, and mobilisation state given a day offset + sub-horizon.
   - [x] Lock-in tracker dataclasses for assignments, mobilisation decisions, and inventories; apply as boundary conditions in subsequent solves.
   - [x] Rolling loop that solves → locks N days → advances the window until the master horizon is covered; start with SA baseline and MILP hook stub.
-  - [ ] Feasibility guardrails (detect infeasible subproblems, surface diagnostics, and optionally relax lock size as a fallback).
+  - [x] Feasibility guardrails (detect infeasible subproblems, surface diagnostics, and optionally relax lock size as a fallback).
 - [ ] CLI + API exposure
   - [ ] Typer command `fhops plan rolling` with flags for master/sub/lock horizons, solver choice, seeds, and output paths.
   - [ ] Python API helper (`fhops.planning.rolling.solve`) with config/response dataclasses shared with the CLI.

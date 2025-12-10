@@ -27,6 +27,7 @@ __all__ = [
     "RollingIterationPlan",
     "RollingIterationSummary",
     "RollingPlanResult",
+    "RollingInfeasibleError",
     "run_rolling_horizon",
     "build_iteration_plan",
     "slice_scenario_for_window",
@@ -309,6 +310,10 @@ class IterableSolver(Protocol):
     ) -> SolverOutput: ...
 
 
+class RollingInfeasibleError(RuntimeError):
+    """Raised when a sub-horizon is infeasible or empty before solving."""
+
+
 def run_rolling_horizon(
     config: RollingHorizonConfig,
     solver: IterableSolver,
@@ -352,6 +357,8 @@ def run_rolling_horizon(
             plan,
             locked_assignments=locked_base,
         )
+
+        _assert_subproblem_feasible(sliced, plan)
 
         solver_output = solver(
             sliced,
@@ -397,3 +404,31 @@ def _lift_locks_to_base(
         if 1 <= lock.day <= lock_days:
             lifted.append(lock.model_copy(update={"day": start_day + lock.day - 1}, deep=True))
     return lifted
+
+
+def _assert_subproblem_feasible(scenario: Scenario, plan: RollingIterationPlan) -> None:
+    """Best-effort guard against empty or invalid subproblems before solving."""
+
+    if not scenario.blocks:
+        raise RollingInfeasibleError(
+            f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) has no blocks"
+        )
+    if not scenario.production_rates:
+        raise RollingInfeasibleError(
+            f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) "
+            "has no production rates"
+        )
+    machine_ids = {machine.id for machine in scenario.machines}
+    if not machine_ids:
+        raise RollingInfeasibleError(
+            f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) has no machines"
+        )
+
+    # Ensure at least one calendar entry overlaps the sub-horizon.
+    if scenario.calendar:
+        window_has_supply = any(entry.machine_id in machine_ids for entry in scenario.calendar)
+        if not window_has_supply:
+            raise RollingInfeasibleError(
+                f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) "
+                "has no machine availability in calendar"
+            )
