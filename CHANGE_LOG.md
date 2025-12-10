@@ -1,3 +1,13 @@
+# 2025-12-10 — Rolling-horizon replanning planning kickoff
+- Started the `feature/rolling-horizon-replanning` branch and drafted `notes/rolling_horizon_plan.md` to capture goals, architecture, and phased implementation steps for the new rolling-horizon workflow (planning-only scope for now; evaluation/reporting to follow).
+- Added a Detailed Next Step entry to `ROADMAP.md` so the rolling-horizon work is tracked alongside existing initiatives, emphasizing the future CLI/API surfaces and telemetry requirements.
+- Broke the plan into checkbox-tracked phases and subtasks to guard against scope creep and keep progress visible inside `notes/rolling_horizon_plan.md`.
+- Commands executed:
+  - `git checkout -b feature/rolling-horizon-replanning`
+  - `cat <<'EOF' > notes/rolling_horizon_plan.md`
+  - `apply_patch ROADMAP.md`
+  - `apply_patch notes/rolling_horizon_plan.md`
+
 # 2025-12-10 — SoftwareX Phase 3 PR prep
 - Ran the required command cadence ahead of opening the PR (Ruff format/check, MyPy, Pytest, pre-commit, Sphinx). `pytest` currently fails on `tests/test_large84_sequencing.py::test_large84_sequencing_deficit_snapshot` because the refreshed large84 MILP run now reports `sequencing_violation_count == 0` while the regression still expects four residual loader deficits; captured the log to unblock the forthcoming test update.
 - `pre-commit run --all-files` surfaced missing trailing newlines across the refreshed SoftwareX assets; accepted the auto-fixes so the hook passes cleanly going forward.

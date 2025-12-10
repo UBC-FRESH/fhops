@@ -1,0 +1,60 @@
+# Rolling-Horizon Replanning Plan
+
+> **Purpose:** introduce a rolling-horizon replanning workflow so FHOPS can emit multi-month "locked" schedules by solving a sequence of tractable subproblems. This note captures scope, assumptions, architecture, and implementation phases before we start cutting code.
+
+## Goals
+- Produce an initial implementation that focuses on planning machinery (scenario slicing, lock-in enforcement, horizon advancement).
+- Keep evaluation/reporting hooks in mind for follow-up work so MASc-led studies can measure suboptimality patterns vs. full-horizon baselines.
+- Deliver both CLI and Python API surfaces that orchestrate the rolling-horizon loop with configurable master horizon, subproblem horizon, and lock-in window lengths.
+
+## Key Concepts
+- **Master horizon (M days):** total planning length the contractor expects (e.g., 12–16 weeks). Med42 serves as the immediate benchmark; seasonal ladders follow once assets exist.
+- **Subproblem horizon (H days):** window solved at each iteration (e.g., 14 or 28 days). Must be ≥ lock window.
+- **Lock window (N days):** number of leading days to freeze after each subproblem solve (e.g., 7 days). Locked assignments/mobilisation decisions become immutable context for subsequent solves.
+- **State roll-forward:** after locking N days, advance scenario clocks by N days, shift remaining demand, and rebuild the subproblem with updated calendars/inventories.
+
+## Assumptions & Constraints
+1. Locked segments are immutable to keep the rolling horizon tractable. We will monitor feasibility; if evidence arises that limited flexibility is required, document and extend the design.
+2. Overall feasibility takes priority. On infeasible subproblems we will start with the simplest robust behavior (e.g., abort with diagnostics or relax lock size) and iterate once gaps surface.
+3. Planning machinery first; evaluation/reporting layers (gap analysis, telemetry summarizers) land in later milestones but should be anticipated in the data we log.
+4. CLI entry (e.g., `fhops plan rolling ...`) and user-facing Python API (`fhops.planning.rolling.solve(...)`) must share the same engine.
+
+## Proposed Architecture
+1. **Scenario slicer:** utility that, given a base scenario + current day offset, produces a truncated subscenario with adjusted calendars, remaining block demand, and carry-forward mobilisation states.
+2. **Lock-in tracker:** persists assignments, mobilisation moves, and derived inventories for locked days; feeds them back as boundary conditions/constraints in subsequent solves.
+3. **Rolling orchestrator:** drives iteration: solve subproblem → validate → append locked slice to master plan → roll window → repeat until total locked span ≥ master horizon or scenario exhaustion.
+4. **Persistence & telemetry:** store per-iteration summaries (objectives, runtime, lock span, infeasibility reasons) so later evaluation layers can compute suboptimality envelopes without re-running solves.
+5. **CLI/API surfaces:**
+   - CLI: `fhops plan rolling --scenario ... --master-days 112 --sub-days 28 --lock-days 14 --solver sa|mip|auto ...`
+   - API: `from fhops.planning import rolling; rolling.solve(config)` returning a structured result (locked assignments, per-iteration stats, warnings).
+
+## Implementation Phases
+- [x] Planning groundwork (this note).
+- [ ] Core orchestration engine
+  - [ ] Scenario slicer that trims calendars, demand, and mobilisation state given a day offset + sub-horizon.
+  - [ ] Lock-in tracker dataclasses for assignments, mobilisation decisions, and inventories; apply as boundary conditions in subsequent solves.
+  - [ ] Rolling loop that solves → locks N days → advances the window until the master horizon is covered; start with SA baseline and MILP hook stub.
+  - [ ] Feasibility guardrails (detect infeasible subproblems, surface diagnostics, and optionally relax lock size as a fallback).
+- [ ] CLI + API exposure
+  - [ ] Typer command `fhops plan rolling` with flags for master/sub/lock horizons, solver choice, seeds, and output paths.
+  - [ ] Python API helper (`fhops.planning.rolling.solve`) with config/response dataclasses shared with the CLI.
+  - [ ] Basic docs/usage strings to unblock early adopters (full docs later).
+- [ ] Telemetry/logging
+  - [ ] Per-iteration summaries (objective, runtime, lock span, infeasibility flags) persisted to JSON/CSV.
+  - [ ] Hook telemetry into CLI/API surfaces with consistent schema for future evaluation/reporting layers.
+- [ ] Evaluation/reporting extensions (future)
+  - [ ] Playback/KPI comparison helpers to quantify suboptimality vs. single-horizon baselines.
+  - [ ] Plots/tables for MASc experiments (suboptimality vs. master horizon, sub-horizon, and lock size).
+
+## Edge Cases & Open Questions
+- Handling mobilisation/landing buffers that span lock boundaries—verify whether loaders staged in the locked window constrain future days automatically or require explicit inventory carry-over.
+- Infeasible subproblems after locking: initial plan is to fail fast with actionable diagnostics; subsequently consider auto-adjusting lock window or invoking repair heuristics.
+- Interaction with warm-start MILP runs: locked assignments should become incumbent seeds to reduce solve time for overlapping machines/blocks.
+- Scaling to season-length horizons will require synthetic dataset refreshes; document those prerequisites alongside med42 validations.
+
+## Next Steps
+- [ ] Define data structures for lock-in state (assignments, mobilisation, inventories).
+- [ ] Implement scenario slicing utilities under `fhops.planning.rolling`.
+- [ ] Build the orchestration loop and wire it into CLI/API surfaces.
+- [ ] Add telemetry schema so evaluation features can consume per-iteration stats.
+- [ ] Once planning machinery stabilizes, extend notes/docs with evaluation/reporting guidance and run comparative experiments (MASc deliverable).

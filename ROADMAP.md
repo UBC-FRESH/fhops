@@ -151,6 +151,10 @@ before proposing new work.
     - Capture UX/requirements for the post-v0.1.0-a1 dataset-inspection tooling so shipped bundles (tiny7/small21/med42) and synthetic presets no longer ship with unrealistic parameters.
     - Design the first CLI pass that loads any dataset (by path or canonical name) and emits parameter summaries for GIGO prevention; Python API can follow later.
     - Resolve open questions around dataset scope, stats vs. raw outputs, and non-interactive flags before implementation starts.
+11. **Rolling-Horizon Replanning (`notes/rolling_horizon_plan.md`)**
+    - Build a rolling-horizon orchestration layer (scenario slicing, lock-in state, iterative solve loop) so FHOPS can emit multi-month “locked” plans from tractable subproblems.
+    - Expose both CLI (`fhops plan rolling`) and Python API helpers, starting with planning machinery (SA baseline) and deferring evaluation/reporting to a later phase.
+    - Log per-iteration telemetry so MASc-led studies can quantify suboptimality vs. full-horizon baselines once the planning engine stabilizes.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
