@@ -8,9 +8,10 @@ these primitives so both CLI and Python callers share the same orchestration lay
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import timedelta
+from typing import Protocol
 
 from fhops.scenario.contract.models import (
     Block,
@@ -24,6 +25,9 @@ from fhops.scheduling.mobilisation.models import BlockDistance, MobilisationConf
 __all__ = [
     "RollingHorizonConfig",
     "RollingIterationPlan",
+    "RollingIterationSummary",
+    "RollingPlanResult",
+    "run_rolling_horizon",
     "build_iteration_plan",
     "slice_scenario_for_window",
 ]
@@ -258,3 +262,138 @@ def _rebase_locks(locks: Sequence[ScheduleLock], start: int, end: int) -> list[S
         if start <= lock.day <= end:
             rebased.append(lock.model_copy(update={"day": lock.day - start + 1}))
     return rebased
+
+
+@dataclass
+class RollingIterationSummary:
+    """Outcome summary for a single rolling-horizon iteration."""
+
+    iteration_index: int
+    start_day: int
+    horizon_days: int
+    lock_days: int
+    locked_assignments: int
+    objective: float | None = None
+    runtime_s: float | None = None
+    warnings: list[str] | None = None
+
+
+@dataclass
+class RollingPlanResult:
+    """Aggregated result for a rolling-horizon run."""
+
+    locked_assignments: list[ScheduleLock]
+    iteration_summaries: list[RollingIterationSummary]
+    warnings: list[str] | None = None
+
+
+@dataclass
+class SolverOutput:
+    """Return type for rolling-horizon solver hooks."""
+
+    assignments: Sequence[ScheduleLock]
+    objective: float | None = None
+    runtime_s: float | None = None
+    warnings: list[str] | None = None
+
+
+class IterableSolver(Protocol):
+    """Protocol-like callable wrapper for solver hooks."""
+
+    def __call__(
+        self,
+        scenario: Scenario,
+        plan: RollingIterationPlan,
+        *,
+        locked_assignments: Sequence[ScheduleLock],
+    ) -> SolverOutput: ...
+
+
+def run_rolling_horizon(
+    config: RollingHorizonConfig,
+    solver: IterableSolver,
+    *,
+    max_iterations: int | None = None,
+) -> RollingPlanResult:
+    """Execute the rolling-horizon loop with a user-supplied solver hook.
+
+    The solver hook is responsible for producing assignments for each subproblem. This orchestrator
+    handles window planning, scenario slicing, lock rebasing, and aggregation of locked decisions.
+    Only the first ``lock_days`` of each iteration are frozen; the remainder of the sub-horizon is
+    discarded when rolling forward.
+
+    Parameters
+    ----------
+    config:
+        Rolling-horizon configuration describing master/sub/lock horizons.
+    solver:
+        Callable that accepts a sliced scenario, the iteration plan, and the current locked
+        assignments (rebased to the sub-horizon) and returns an iterable of ScheduleLock entries for
+        that subproblem, plus optional metadata.
+    max_iterations:
+        Optional guard to cap the number of iterations (useful for smoke tests).
+
+    Returns
+    -------
+    RollingPlanResult
+        Locked assignments in base-scenario coordinates plus per-iteration summaries.
+    """
+
+    iteration_plans = build_iteration_plan(config)
+    if max_iterations is not None:
+        iteration_plans = iteration_plans[:max_iterations]
+
+    locked_base: list[ScheduleLock] = []
+    summaries: list[RollingIterationSummary] = []
+
+    for plan in iteration_plans:
+        sliced = slice_scenario_for_window(
+            config.scenario,
+            plan,
+            locked_assignments=locked_base,
+        )
+
+        solver_output = solver(
+            sliced,
+            plan,
+            locked_assignments=_rebase_locks(
+                locked_base,
+                plan.start_day,
+                plan.end_day,
+            )
+            or [],
+        )
+
+        locked_portion = _lift_locks_to_base(
+            solver_output.assignments, plan.start_day, plan.lock_days
+        )
+        locked_base.extend(locked_portion)
+
+        summaries.append(
+            RollingIterationSummary(
+                iteration_index=plan.iteration_index,
+                start_day=plan.start_day,
+                horizon_days=plan.horizon_days,
+                lock_days=plan.lock_days,
+                locked_assignments=len(locked_portion),
+                objective=solver_output.objective,
+                runtime_s=solver_output.runtime_s,
+                warnings=solver_output.warnings or None,
+            )
+        )
+
+    return RollingPlanResult(
+        locked_assignments=locked_base,
+        iteration_summaries=summaries,
+        warnings=[],
+    )
+
+
+def _lift_locks_to_base(
+    locks: Iterable[ScheduleLock], start_day: int, lock_days: int
+) -> list[ScheduleLock]:
+    lifted: list[ScheduleLock] = []
+    for lock in locks:
+        if 1 <= lock.day <= lock_days:
+            lifted.append(lock.model_copy(update={"day": start_day + lock.day - 1}, deep=True))
+    return lifted

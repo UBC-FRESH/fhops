@@ -1,5 +1,5 @@
 # 2025-12-10 — Rolling-horizon core scaffolding
-- Added the `fhops.planning` package with rolling-horizon primitives: config/iteration planning helpers, scenario slicing with day rebasing, mobilisation filtering, and lock rebasing to underpin the upcoming `fhops plan rolling` CLI/API surfaces.
+- Added the `fhops.planning` package with rolling-horizon primitives: config/iteration planning helpers, scenario slicing with day rebasing, mobilisation filtering, lock rebasing, and the first orchestration loop (`run_rolling_horizon`) with solver hook + iteration summaries to underpin the upcoming `fhops plan rolling` CLI/API surfaces.
 - Enforced the phased checklist in `notes/rolling_horizon_plan.md` and kept the Detailed Next Step in `ROADMAP.md` unchanged for now (planning remains the guiding doc).
 - Commands executed:
   - `.venv/bin/ruff format src/fhops/planning`

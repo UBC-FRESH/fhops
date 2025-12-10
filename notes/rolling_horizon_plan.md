@@ -31,9 +31,9 @@
 ## Implementation Phases
 - [x] Planning groundwork (this note).
 - [ ] Core orchestration engine
-  - [ ] Scenario slicer that trims calendars, demand, and mobilisation state given a day offset + sub-horizon.
-  - [ ] Lock-in tracker dataclasses for assignments, mobilisation decisions, and inventories; apply as boundary conditions in subsequent solves.
-  - [ ] Rolling loop that solves → locks N days → advances the window until the master horizon is covered; start with SA baseline and MILP hook stub.
+  - [x] Scenario slicer that trims calendars, demand, and mobilisation state given a day offset + sub-horizon.
+  - [x] Lock-in tracker dataclasses for assignments, mobilisation decisions, and inventories; apply as boundary conditions in subsequent solves.
+  - [x] Rolling loop that solves → locks N days → advances the window until the master horizon is covered; start with SA baseline and MILP hook stub.
   - [ ] Feasibility guardrails (detect infeasible subproblems, surface diagnostics, and optionally relax lock size as a fallback).
 - [ ] CLI + API exposure
   - [ ] Typer command `fhops plan rolling` with flags for master/sub/lock horizons, solver choice, seeds, and output paths.
@@ -53,8 +53,7 @@
 - Scaling to season-length horizons will require synthetic dataset refreshes; document those prerequisites alongside med42 validations.
 
 ## Next Steps
-- [ ] Define data structures for lock-in state (assignments, mobilisation, inventories).
-- [ ] Implement scenario slicing utilities under `fhops.planning.rolling`.
-- [ ] Build the orchestration loop and wire it into CLI/API surfaces.
+- [ ] Add feasibility guardrails (detect infeasible subproblems; consider relaxing lock span).
+- [ ] Wire the rolling loop into CLI/API surfaces with a solver hook (SA baseline + MILP stub).
 - [ ] Add telemetry schema so evaluation features can consume per-iteration stats.
 - [ ] Once planning machinery stabilizes, extend notes/docs with evaluation/reporting guidance and run comparative experiments (MASc deliverable).

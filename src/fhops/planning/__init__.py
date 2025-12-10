@@ -8,11 +8,17 @@ same orchestration logic can be reused by automation scripts and user-facing com
 from fhops.planning.rolling import (
     RollingHorizonConfig,
     RollingIterationPlan,
+    RollingIterationSummary,
+    RollingPlanResult,
+    run_rolling_horizon,
     slice_scenario_for_window,
 )
 
 __all__ = [
     "RollingHorizonConfig",
     "RollingIterationPlan",
+    "RollingIterationSummary",
+    "RollingPlanResult",
+    "run_rolling_horizon",
     "slice_scenario_for_window",
 ]
