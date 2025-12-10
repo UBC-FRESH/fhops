@@ -1,3 +1,14 @@
+# 2025-12-10 — SoftwareX Phase 3 PR prep
+- Ran the required command cadence ahead of opening the PR (Ruff format/check, MyPy, Pytest, pre-commit, Sphinx). `pytest` currently fails on `tests/test_large84_sequencing.py::test_large84_sequencing_deficit_snapshot` because the refreshed large84 MILP run now reports `sequencing_violation_count == 0` while the regression still expects four residual loader deficits; captured the log to unblock the forthcoming test update.
+- `pre-commit run --all-files` surfaced missing trailing newlines across the refreshed SoftwareX assets; accepted the auto-fixes so the hook passes cleanly going forward.
+- Commands executed:
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest`
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs _build/html -W`
+
 # 2025-12-03 — Med42 dataset label corrected
 - Updated `docs/softwarex/manuscript/scripts/build_tables.py` so Med42 is consistently described as a ground-based scenario (all current reference datasets share the same ground-based CTL system). Regenerated solver/tuning tables and rebuilt the manuscript PDF so Tables 3–4 now reflect the corrected label.
 - Deleted the stale `docs/softwarex/manuscript/fhops-softx.pdf` so the only manuscript artifact now lives under `docs/softwarex/manuscript/build/`.
