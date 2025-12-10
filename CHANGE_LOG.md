@@ -2,6 +2,7 @@
 - Added the `fhops.planning` package with rolling-horizon primitives: config/iteration planning helpers, scenario slicing with day rebasing, mobilisation filtering, lock rebasing, and the first orchestration loop (`run_rolling_horizon`) with solver hook + iteration summaries to underpin the upcoming `fhops plan rolling` CLI/API surfaces.
 - Enforced the phased checklist in `notes/rolling_horizon_plan.md` and kept the Detailed Next Step in `ROADMAP.md` unchanged for now (planning remains the guiding doc).
 - Added feasibility guardrails to fail fast on empty/infeasible subproblems so the rolling loop surfaces diagnostics before calling any solver hook.
+- Added telemetry-friendly summariser (`summarize_plan`) for rolling-horizon runs so CLI/API layers can emit JSON/CSV without re-implementing the schema.
 - Commands executed:
   - `.venv/bin/ruff format src/fhops/planning`
   - `.venv/bin/ruff check src/fhops/planning --fix`

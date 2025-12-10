@@ -40,7 +40,7 @@
   - [ ] Python API helper (`fhops.planning.rolling.solve`) with config/response dataclasses shared with the CLI.
   - [ ] Basic docs/usage strings to unblock early adopters (full docs later).
 - [ ] Telemetry/logging
-  - [ ] Per-iteration summaries (objective, runtime, lock span, infeasibility flags) persisted to JSON/CSV.
+  - [x] Per-iteration summaries (objective, runtime, lock span, infeasibility flags) persisted to JSON-ready dicts.
   - [ ] Hook telemetry into CLI/API surfaces with consistent schema for future evaluation/reporting layers.
 - [ ] Evaluation/reporting extensions (future)
   - [ ] Playback/KPI comparison helpers to quantify suboptimality vs. single-horizon baselines.
@@ -53,7 +53,7 @@
 - Scaling to season-length horizons will require synthetic dataset refreshes; document those prerequisites alongside med42 validations.
 
 ## Next Steps
-- [ ] Add feasibility guardrails (detect infeasible subproblems; consider relaxing lock span).
+- [x] Add feasibility guardrails (detect infeasible subproblems; consider relaxing lock span).
 - [ ] Wire the rolling loop into CLI/API surfaces with a solver hook (SA baseline + MILP stub).
-- [ ] Add telemetry schema so evaluation features can consume per-iteration stats.
+- [x] Add telemetry schema so evaluation features can consume per-iteration stats.
 - [ ] Once planning machinery stabilizes, extend notes/docs with evaluation/reporting guidance and run comparative experiments (MASc deliverable).

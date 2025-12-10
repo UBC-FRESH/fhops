@@ -29,6 +29,7 @@ __all__ = [
     "RollingPlanResult",
     "RollingInfeasibleError",
     "run_rolling_horizon",
+    "summarize_plan",
     "build_iteration_plan",
     "slice_scenario_for_window",
 ]
@@ -432,3 +433,39 @@ def _assert_subproblem_feasible(scenario: Scenario, plan: RollingIterationPlan) 
                 f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) "
                 "has no machine availability in calendar"
             )
+
+
+def summarize_plan(result: RollingPlanResult) -> dict[str, object]:
+    """Return a JSON-serialisable summary of a rolling-horizon run.
+
+    Parameters
+    ----------
+    result:
+        Rolling plan result with locked assignments and per-iteration summaries.
+
+    Returns
+    -------
+    dict
+        Dictionary containing iteration records, total locked assignments, and warnings. Suitable for
+        emitting as JSON/CSV telemetry in CLI helpers.
+    """
+
+    iteration_records = [
+        {
+            "iteration_index": summary.iteration_index,
+            "start_day": summary.start_day,
+            "horizon_days": summary.horizon_days,
+            "lock_days": summary.lock_days,
+            "locked_assignments": summary.locked_assignments,
+            "objective": summary.objective,
+            "runtime_s": summary.runtime_s,
+            "warnings": summary.warnings or [],
+        }
+        for summary in result.iteration_summaries
+    ]
+
+    return {
+        "iterations": iteration_records,
+        "total_locked_assignments": len(result.locked_assignments),
+        "warnings": result.warnings or [],
+    }
