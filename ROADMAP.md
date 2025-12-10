@@ -143,6 +143,14 @@ before proposing new work.
    - [x] Integrate the new helpers into dataset inspection CLI defaults and synthetic generator presets; refresh fixtures/tests that assume legacy productivity values (landing processor/loader coverage now fully wired, docs/tests refreshed).
    - [x] Keep `ROADMAP.md` and `notes/dataset_inspection_plan.md` in sync as additional FPInnovations regressions are ported.
    - **Next focus:** with the TN258 monthly support split, Hi-Skid costing, and ADV4N7/ADV15N3 penalties now wired directly into the cost helper, pivot to the November 2025 FPInnovations drop scan (TN122+/ADV salvage set) so the outstanding “new PDF” backlog can close without waiting for fresh references.
+9. **SoftwareX Manuscript Phase 2 (`notes/softwarex_manuscript_plan.md`)**
+   - Resume drafting + reproducibility prep on the new `feature/softwarex-phase3` branch now that the MIP formulation work merged back into `main`.
+   - Close the remaining Phase 2 checkboxes (Section 1–3 polish, reproducibility callouts) and queue Phase 3 validation reruns (`generate_assets.sh`, `run_synthetic_sweep.py`, `make pdf`) for the next manuscript sync.
+   - Sync the manuscript plan + change log after each writing/automation block so roadmap status always reflects the in-flight work.
+10. **Dataset Inspection CLI (`notes/dataset_inspection_plan.md`)**
+    - Capture UX/requirements for the post-v0.1.0-a1 dataset-inspection tooling so shipped bundles (tiny7/small21/med42) and synthetic presets no longer ship with unrealistic parameters.
+    - Design the first CLI pass that loads any dataset (by path or canonical name) and emits parameter summaries for GIGO prevention; Python API can follow later.
+    - Resolve open questions around dataset scope, stats vs. raw outputs, and non-interactive flags before implementation starts.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.

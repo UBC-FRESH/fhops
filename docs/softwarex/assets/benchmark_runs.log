@@ -16,3 +16,9 @@ fast_mode: 0
 duration_s: 605
 assets_hash: 92ceea7bed2f015bc0ae8230693dd5dd9ff41cadb3b8cd31fbc808f1fcc8d4e7
 ----
+run_started: 2025-12-03T13:05:00Z
+commit: e52c605
+fast_mode: 1 (manual regeneration)
+duration_s: 3600
+assets_hash: 18dc0ad8fc447a1fbd1f73af443e233adadad33e378ea625b629237ff380f304
+----

@@ -3,27 +3,27 @@
     "tier": "small",
     "blocks": 4,
     "machines": 2,
-    "num_days": 6,
-    "assignments": 5.0,
-    "runtime_s": 0.251388322096318,
-    "objective": 39.791
+    "num_days": 112,
+    "assignments": 122.0,
+    "runtime_s": 31.67842185823247,
+    "objective": -75039.791
   },
   {
     "tier": "medium",
     "blocks": 8,
     "machines": 4,
-    "num_days": 12,
-    "assignments": 9.0,
-    "runtime_s": 0.504431685898453,
-    "objective": 91.368
+    "num_days": 112,
+    "assignments": 272.0,
+    "runtime_s": 83.58066941611469,
+    "objective": -261097.033
   },
   {
     "tier": "large",
     "blocks": 16,
     "machines": 6,
-    "num_days": 18,
-    "assignments": 16.0,
-    "runtime_s": 1.02872322127223,
-    "objective": 169.77700000000004
+    "num_days": 112,
+    "assignments": 317.0,
+    "runtime_s": 105.42369785439224,
+    "objective": -359224.711
   }
 ]

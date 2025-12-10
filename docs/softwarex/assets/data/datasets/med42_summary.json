@@ -13,7 +13,7 @@
   "tables": {
     "blocks": {
       "path": "/home/gep/projects/fhops/examples/med42/data/blocks.csv",
-      "row_count": 20,
+      "row_count": 12,
       "columns": [
         "id",
         "landing_id",
@@ -42,7 +42,7 @@
     },
     "landings": {
       "path": "/home/gep/projects/fhops/examples/med42/data/landings.csv",
-      "row_count": 4,
+      "row_count": 12,
       "columns": [
         "id",
         "daily_capacity"
@@ -59,7 +59,7 @@
     },
     "prod_rates": {
       "path": "/home/gep/projects/fhops/examples/med42/data/prod_rates.csv",
-      "row_count": 180,
+      "row_count": 108,
       "columns": [
         "machine_id",
         "block_id",

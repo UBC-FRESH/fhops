@@ -1,3 +1,66 @@
+# 2025-12-10 — SoftwareX Phase 3 PR prep
+- Ran the required command cadence ahead of opening the PR (Ruff format/check, MyPy, Pytest, pre-commit, Sphinx). `pytest` currently fails on `tests/test_large84_sequencing.py::test_large84_sequencing_deficit_snapshot` because the refreshed large84 MILP run now reports `sequencing_violation_count == 0` while the regression still expects four residual loader deficits; captured the log to unblock the forthcoming test update.
+- `pre-commit run --all-files` surfaced missing trailing newlines across the refreshed SoftwareX assets; accepted the auto-fixes so the hook passes cleanly going forward.
+- Commands executed:
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest`
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs _build/html -W`
+
+# 2025-12-03 — Med42 dataset label corrected
+- Updated `docs/softwarex/manuscript/scripts/build_tables.py` so Med42 is consistently described as a ground-based scenario (all current reference datasets share the same ground-based CTL system). Regenerated solver/tuning tables and rebuilt the manuscript PDF so Tables 3–4 now reflect the corrected label.
+- Deleted the stale `docs/softwarex/manuscript/fhops-softx.pdf` so the only manuscript artifact now lives under `docs/softwarex/manuscript/build/`.
+- Commands executed:
+  - `python docs/softwarex/manuscript/scripts/build_tables.py`
+  - `latexmk -pdf -interaction=nonstopmode -output-directory=build -auxdir=build fhops-softx.tex`
+
+# 2025-12-03 — Manuscript tuning table escape + PDF rebuild
+- `docs/softwarex/manuscript/scripts/build_tables.py` now escapes LaTeX special characters in the tuning leaderboard “Key Settings” column so underscores from Optuna configs no longer trigger `Missing $` errors when we `\input` the table.
+- Regenerated `docs/softwarex/assets/data/tables/{solver_performance,tuning_leaderboard}.(csv|tex)` and reran the latexmk→bibtex→latexmk loop; `docs/softwarex/manuscript/build/fhops-softx.pdf` now compiles cleanly with resolved citations.
+- Logged the status in `notes/softwarex_manuscript_plan.md` (Phase 3 sync task) and `notes/softwarex_manuscript_change_log.md` so the remaining paired action is a fresh Sphinx build once the next prose edits land.
+- Commands executed:
+  - `make clean`
+  - `make pdf`
+  - `python docs/softwarex/manuscript/scripts/build_tables.py`
+  - `latexmk -pdf -interaction=nonstopmode -output-directory=build -auxdir=build fhops-softx.tex`
+
+# 2025-12-03 — Manuscript assets regenerated (fast mode)
+- Manually reran the SoftwareX asset pipeline in fast mode after the dataset/MILP/heuristic rebuilds so Tables~1–2 and Figures~2–3 reflect the tiny7→small21→med42 ladder. Fresh outputs now live under `docs/softwarex/assets/data/{benchmarks,tuning,playback,costing,scaling}` and the tables were rebuilt via `scripts/build_tables.py`.
+- Bench suite runs executed for tiny7, small21, med42, and synthetic-small (SA/ILS/Tabu) with reduced iteration/time budgets to keep runtimes tractable while we prep the full rerun. Playback, tuning, costing, dataset summaries, and the scaling sweep were likewise regenerated; playback robustness PNG was redrawn from the new datasets.
+- Logged the asset hash update in `docs/softwarex/assets/benchmark_runs.log` (fast_mode=1 manual regeneration). A full non-fast rerun remains queued once the manuscript text stabilises.
+- Commands executed:
+  - `FHOPS_ASSETS_FAST=1 .venv/bin/python docs/softwarex/manuscript/scripts/export_docs_assets.py`
+  - `.venv/bin/python docs/softwarex/manuscript/scripts/render_prisma_diagram.py`
+  - `FHOPS_ASSETS_FAST=1 python -m fhops.cli.main bench suite ...` for `examples/tiny7`, `examples/small21`, `examples/med42`, and `docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml` (see playback log for exact options)
+  - `FHOPS_ASSETS_FAST=1 .venv/bin/python docs/softwarex/manuscript/scripts/run_tuner.py --repo-root . --out-dir docs/softwarex/assets/data/tuning --tier short`
+  - `FHOPS_ASSETS_FAST=1 .venv/bin/python docs/softwarex/manuscript/scripts/run_playback_analysis.py --repo-root . --out-dir docs/softwarex/assets/data/playback`
+  - `.venv/bin/python docs/softwarex/manuscript/scripts/plot_playback_variability.py --repo-root . --playback-dir docs/softwarex/assets/data/playback --out-path docs/softwarex/assets/data/playback/utilisation_robustness.png`
+  - `.venv/bin/python docs/softwarex/manuscript/scripts/run_costing_demo.py --repo-root . --out-dir docs/softwarex/assets/data/costing`
+  - `.venv/bin/python docs/softwarex/manuscript/scripts/run_synthetic_sweep.py --repo-root . --out-dir docs/softwarex/assets/data/scaling`
+  - `.venv/bin/python docs/softwarex/manuscript/scripts/build_tables.py --repo-root .`
+
+# 2025-12-03 — Manuscript ladder narrative refresh
+- `docs/softwarex/manuscript/sections/software_description.tex` and `sections/illustrative_example.tex` now describe the three-step dataset ladder (tiny7 → small21 → med42), explicitly defer large84 until rolling-horizon runs are reproducible, and document the current solver caveats (warm-start plumbing in place but limited gains, parallel multistart OK, batched neighbours still GIL-bound, formulation flexibility, rolling-horizon/BC roadmap).
+- Updated `notes/softwarex_manuscript_plan.md` and `notes/softwarex_manuscript_change_log.md` to mark the sprint checklist items complete.
+- Planning/documentation edits only; no commands executed.
+
+# 2025-12-03 — Dataset inspection planning kickoff
+- Updated `notes/dataset_inspection_plan.md` with the 2025-12-03 conversation snapshot, clarified assumptions, and captured the open questions (dataset scope, stats vs. raw output, UX/format decisions) for the forthcoming inspection CLI.
+- Added a Detailed Next Step in `ROADMAP.md` (“Dataset Inspection CLI”) so the new tooling is tracked alongside the SoftwareX sprint.
+- Planning-only change; no commands executed.
+
+# 2025-12-03 — SoftwareX focus reset on feature/softwarex-phase3
+- Created the `feature/softwarex-phase3` branch from `main` after landing the MIP formulation work, refreshed `ROADMAP.md` Detailed Next Steps with a SoftwareX item, and added a “focus reset” block + new change-log entry so the manuscript plan tracks the resumed Phase 2 effort.
+- Synced `notes/softwarex_manuscript_plan.md` and `notes/softwarex_manuscript_change_log.md` with the renewed scope, including the action to define the first sprint (Phase 2 polish + Phase 3 validation dry run) before drafting resumes.
+- Commands executed:
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - *Attempted `.venv/bin/pytest` but aborted after ≈60 s at the user’s request because the suite currently runs too long; will revisit once we tackle the runtime issue noted in `notes/coding-agent-conversation-log.txt`.*
+- Planned Sprint 1 work inside `notes/softwarex_manuscript_plan.md`, spelling out the next edits (ladder rewrite, artifact refresh, warm-start/heuristic caveats, rolling-horizon + BC deployment narrative) and the validation scripts to run ahead of the full asset rebuild. Logged the update in `notes/coding-agent-conversation-log.txt`. (Planning-only change; no commands run.)
+
 # 2025-12-05 — Warm-start docs + CLI gating
 - Added `docs/howto/mip_warm_starts.rst` plus CLI reference updates so users know how to feed `--incumbent` schedules and, just as importantly, that med42/large84 still discard weak warm starts. `notes/mip_tractability_plan.md` now records the completed med42 comparison and the “operational but not yet practically useful” status.
 - Restored the missing `tests/fixtures/presets/tiny7_explore.yaml` so the SA preset regression stops failing when it checks the objective-weight snapshot.

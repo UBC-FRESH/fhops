@@ -1,5 +1,5 @@
 dataset,scenario_name,machine_id,machine_role,usage_hours,include_repair,utilisation,productivity_m3_per_pmh,productivity_method,rental_rate_smh,cost_per_m3,owning_cost_smh,operating_cost_smh,repair_cost_smh,road_machine,road_length_m,road_total_cad
-scenario.yaml,FHOPS Medium42,H1,feller_buncher,,True,0.9,64.56487750000001,deterministic,246.94,4.24964451884506,90.0,108.0,48.94,,,
-scenario.yaml,FHOPS Medium42,H2,grapple_skidder,,True,0.9,64.56487750000001,deterministic,173.69925726587726,2.989228543643773,21.355188374596338,109.59905274488696,42.745016146393965,,,
-scenario.yaml,FHOPS Medium42,H3,processor,,True,0.9,64.56487750000001,deterministic,230.06,3.959152903561572,85.0,115.0,30.06,,,
-scenario.yaml,FHOPS Medium42,H4,loader,,True,0.9,64.56487750000001,deterministic,202.34,3.4821133552405827,60.0,80.0,62.34,,,
+scenario.yaml,FHOPS Medium42,H1,feller_buncher,,True,0.9,41.28914546941583,deterministic,246.94,6.64527625017132,90.0,108.0,48.94,,,
+scenario.yaml,FHOPS Medium42,H2,feller_buncher,,True,0.9,41.28914546941583,deterministic,246.94,6.64527625017132,90.0,108.0,48.94,,,
+scenario.yaml,FHOPS Medium42,H3,grapple_skidder,,True,0.9,41.28914546941583,deterministic,173.69925726587726,4.674332019848272,21.355188374596338,109.59905274488696,42.745016146393965,,,
+scenario.yaml,FHOPS Medium42,H4,processor,,True,0.9,41.28914546941583,deterministic,230.06,6.191027189254126,85.0,115.0,30.06,,,

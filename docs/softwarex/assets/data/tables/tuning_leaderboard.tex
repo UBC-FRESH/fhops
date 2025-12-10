@@ -2,8 +2,9 @@
 \toprule
 Scenario & Tuner & Best Objective & $\Delta$ vs SA default & Mean Runtime (s) & Key Settings \\
 \midrule
-MiniToy (ground-based) & Bayes & 38.00 & 22.50 & 0.09 & 200 iterations; operator weights (block insertion 0.99, cross exchange 0.85, mobilisation shake 0.62) \\
-Med42 (mixed skyline/tethered) & ILS & -988.61 & 630.37 & 0.71 & Baseline ILS preset (4-neighbour batches, 4000 iterations) \\
-Synthetic-small & Bayes & 39.79 & 0.00 & 0.05 & Batch size 3; 200 iterations; operator weights (block insertion 1.10, cross exchange 1.44, mobilisation shake 0.85) \\
+Tiny7 (ground-based) & Ils & 4349.26 & 42.74 & 1.68 &  \\
+Small21 (ground-based) & Tabu & 15637.80 & 10.23 & 18.15 &  \\
+Med42 (ground-based) & Random & -39725.88 & 11454.66 & 6.00 & batch\_size=3; iters=120; operators=(block\_insertion:1.226, coverage\_injection:1.347, cross\_exchange:1.01) \\
+Synthetic-small & Bayes & -75039.79 & 0.00 & 1.39 & batch\_size=3; iters=120; operators=(block\_insertion:1.1026295381657825, coverage\_injection:1.4389379395711261, cross\_exchange:0.8462129202489219) \\
 \bottomrule
 \end{tabular}

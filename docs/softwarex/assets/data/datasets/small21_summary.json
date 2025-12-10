@@ -13,7 +13,7 @@
   "tables": {
     "blocks": {
       "path": "/home/gep/projects/fhops/examples/small21/data/blocks.csv",
-      "row_count": 12,
+      "row_count": 6,
       "columns": [
         "id",
         "landing_id",
@@ -42,7 +42,7 @@
     },
     "landings": {
       "path": "/home/gep/projects/fhops/examples/small21/data/landings.csv",
-      "row_count": 4,
+      "row_count": 6,
       "columns": [
         "id",
         "daily_capacity"
@@ -59,7 +59,7 @@
     },
     "prod_rates": {
       "path": "/home/gep/projects/fhops/examples/small21/data/prod_rates.csv",
-      "row_count": 108,
+      "row_count": 54,
       "columns": [
         "machine_id",
         "block_id",

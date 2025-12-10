@@ -2,6 +2,20 @@
 
 Track local manuscript edits/text debt without polluting the main project CHANGE_LOG. Update this before each writing push.
 
+## 2025-12-03 – Table escaping + latexmk verification
+- Added `_escape_latex` handling to `docs/softwarex/manuscript/scripts/build_tables.py` so the tuning leaderboard’s “Key Settings” column escapes underscores/percent signs/etc. before emitting LaTeX, preventing the `Missing $` errors we saw during the latest PDF build.
+- Regenerated the solver/tuning tables and reran the latexmk→bibtex→latexmk cycle; `docs/softwarex/manuscript/build/fhops-softx.pdf` now compiles cleanly with all citations resolved.
+- Logged the outcome in the planning note (Phase 3 sync task) so the remaining action is to run the paired Sphinx build once the next prose pass lands.
+- Corrected the Med42 label in the table builder to “ground-based” (all four reference datasets share the same system) and rebuilt the tables/PDF so the manuscript no longer claims it is a skyline/tethered case.
+
+## 2025-12-03 – Focus reset + branch kickoff
+- Spun up `feature/softwarex-phase3` from `main` now that the MIP formulation branch is merged, keeping manuscript edits on a clean baseline aligned with the reproducibility assets.
+- Added a Detailed Next Steps entry in `ROADMAP.md` calling out the renewed SoftwareX push and the requirement to sync note/changelog updates as work proceeds on the new branch.
+- Inserted a “SoftwareX focus reset” block in `notes/softwarex_manuscript_plan.md` that documents the branch reset and tracks the open action to define the first sprint scope (Phase 2 polish + Phase 3 validation dry run).
+- Recorded the need to reframe Section~2/3 narratives around the updated dataset ladder (tiny7/small21/med42 as reproducible ground-based cases, large84 deferred), call out the current status of warm-start MIP plumbing, incremental heuristics (parallel multistart OK, batched neighbours GIL-locked), the WIP nature of both formulations, and the rolling-horizon + BC deployment roadmap (cite the Jaffray literature review rather than in-progress thesis chapters).
+- Updated Sections~\ref{sec:software-description} and \ref{sec:illustrative-example} to reflect the tiny7→small21→med42 ladder, defer large84 until rolling-horizon runs land, document the warm-start/heurstic caveats, and mention the rolling-horizon + BC deployment roadmap. Section~3 now references small21 in the benchmark/tuning narrative and explains why large84 is omitted.
+- Regenerated the SoftwareX assets (fast mode) so Tables~1–2 and Figures~2–3 now consume the updated benchmark/tuning/playback/costing/scaling data for tiny7/small21/med42 + synthetic tiers. Logged the run in `docs/softwarex/assets/benchmark_runs.log` (fast=1 manual regeneration).
+
 ## 2025-11-24 – Pending text work
 - **Section 5 – Conclusions.** Need a proper summary paragraph (recap FHOPS contributions, automation pipeline) plus future work sentence (BC deployments, forwarder/helper backlog). Currently a placeholder.
 - **Metadata narrative.** Introduce the metadata tables in Section 1 or 2 (one paragraph explaining release/version, reproducibility log) so reviewers see context before Table refs.

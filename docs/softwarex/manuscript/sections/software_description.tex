@@ -19,6 +19,7 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
 \subsection{Data ingest and scenario contract}
 \textbf{Components.}
 \begin{itemize}
+  \item Reference dataset ladder – FHOPS ships three ground-based bundles (`examples/tiny7`, `examples/small21`, `examples/med42`) that share the same harvest-system archetype but scale horizon length, machine counts, and mobilisation footprints. Large84 introduces two concurrent systems and remains a stress-case reserved for future rolling-horizon demonstrations, so it stays out of the reproducibility tables until we can solve it deterministically.
   \item \texttt{fhops.scenario.contract} – Pydantic-based models encode blocks, machines, corridors, mobilisation jobs, and shift calendars. Each schema element enforces unit-checked payloads, terrain classes, prescription types, and per-shift KPI fields, following the BC-focused constraints described by \cite{lahrsen2022productivity} and \cite{becker2018lidar}.
   \item Dataset loaders (\texttt{fhops.cli.dataset}) – convert CSV/YAML bundles (e.g., TN-147 skyline corridors, TR-122 Roberts Creek blocks, med42 reference dataset) into typed \texttt{Scenario} objects. The loader emits validation reports (e.g., `fhops dataset validate examples/tiny7/scenario.yaml`) and canonicalises IDs so solvers and playback routines can consume them deterministically.
   \item Synthetic generator (\texttt{fhops.scenario.synthetic}) – produces stratified scenarios (e.g., \texttt{fhops synth generate out/synthetic\_small --tier small --seed 101 --overwrite}) with configurable harvest-system mixes, blackout biases, and sample counts. These synthetic tiers underpin the scaling experiments and provide shareable exemplars when real datasets remain private.
@@ -32,9 +33,9 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
 \subsection{Optimisation services}
 \textbf{Components.}
 \begin{itemize}
-  \item Heuristics under \texttt{fhops.optimization.heuristics} – Simulated Annealing (SA), Iterated Local Search (ILS), and Tabu search implemented with pluggable operator weights and temperature schedules. Each solver exposes Typer entry points (\texttt{fhops bench suite --include-sa --include-ils --include-tabu}) and shares productivity lookup tables parameterised by empirical studies \cite{lahrsen2022productivity,becker2018lidar}.
+  \item Heuristics under \texttt{fhops.optimization.heuristics} – Simulated Annealing (SA), Iterated Local Search (ILS), and Tabu search implemented with pluggable operator weights and temperature schedules. Each solver exposes Typer entry points (\texttt{fhops bench suite --include-sa --include-ils --include-tabu}) and shares productivity lookup tables parameterised by empirical studies \cite{lahrsen2022productivity,becker2018lidar}. Parallel multi-start runs are production-ready, while within-run batched neighbour evaluation exists but remains GIL-bound today; incremental “move diff” scoring keeps proposals cheap while we experiment with faster executors.
   \item Tuning harness – FHOPS ships a companion tuning runner that executes random, grid, Bayesian, ILS, and Tabu parameter sweeps across multiple scenarios. It emits leaderboard summaries and telemetry logs so users can compare heuristics with the same instrumentation used for the manuscript benchmarks. Fast-mode budgets are available via \texttt{FHOPS\_ASSETS\_FAST=1}.
-  \item MIP builder (\texttt{fhops.optimization.mip}) – single-level, shift-based Pyomo formulation solved with HiGHS, borrowing structural ideas (capacity coupling, mobilisation sequencing) from classical bilevel/multi-period harvest models \cite{paradis2018bilevel,nelson2003forestmodels}. Provides an exact baseline when heuristics are insufficient.
+  \item MIP builder (\texttt{fhops.optimization.mip}) – single-level, shift-based Pyomo formulation solved with HiGHS, borrowing structural ideas (capacity coupling, mobilisation sequencing) from classical bilevel/multi-period harvest models \cite{paradis2018bilevel,nelson2003forestmodels}. Provides an exact baseline when heuristics are insufficient. Warm-start plumbing is fully wired (CLI \texttt{--incumbent} + bundle dumps) even though practical wins on med42 are still limited; the infrastructure is ready for forthcoming rolling-horizon experiments and solver tuning.
   \item Playback + KPI generation (\texttt{fhops.evaluation.playback} / \texttt{fhops.evaluation.metrics}) – replays solver output deterministically or with stochastic shocks (downtime, weather, landing congestion) to compute shift/day KPIs, utilisation, and cost metrics.
 \end{itemize}
 
@@ -87,6 +88,8 @@ which balances harvested volume against mobilisation costs (negative coefficient
 \end{align}
 
 Optional constraint families (road congestion, landing throughput, multi-day sequencing) are toggled via scenario flags and map to additional rows in the data contract. When FHOPS invokes the MIP builder, the CLI logs the extracted tensors ($t_{bms}$, $h_{ms}$, etc.) alongside the model statistics so auditors can verify that \eqref{eq:block-once}–\eqref{eq:integrality} correspond to the published scenario bundle.
+
+FHOPS’ optimisation layers remain intentionally flexible. Both the MILP and heuristic objective functions evolve as new mobilisation penalties, shift rules, or KPI weights emerge; the architecture keeps these changes local so practitioners can fork a formulation, tweak a constraint, and rebuild a working CLI prototype within minutes. Active roadmap items include rolling-horizon re-solving (to scale the large84 stress case) and richer diagnostic hooks that expose solver deltas through the telemetry stack.
 
 \subsection{Telemetry, assets, and automation}
 \textbf{Components.}

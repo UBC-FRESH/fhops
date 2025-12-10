@@ -13,7 +13,7 @@
   "tables": {
     "blocks": {
       "path": "/home/gep/projects/fhops/examples/large84/data/blocks.csv",
-      "row_count": 40,
+      "row_count": 48,
       "columns": [
         "id",
         "landing_id",
@@ -42,7 +42,7 @@
     },
     "landings": {
       "path": "/home/gep/projects/fhops/examples/large84/data/landings.csv",
-      "row_count": 4,
+      "row_count": 48,
       "columns": [
         "id",
         "daily_capacity"
@@ -59,7 +59,7 @@
     },
     "prod_rates": {
       "path": "/home/gep/projects/fhops/examples/large84/data/prod_rates.csv",
-      "row_count": 720,
+      "row_count": 864,
       "columns": [
         "machine_id",
         "block_id",

@@ -15,7 +15,7 @@
       "tables": {
         "blocks": {
           "path": "/home/gep/projects/fhops/examples/tiny7/data/blocks.csv",
-          "row_count": 9,
+          "row_count": 2,
           "columns": [
             "id",
             "landing_id",
@@ -44,7 +44,7 @@
         },
         "landings": {
           "path": "/home/gep/projects/fhops/examples/tiny7/data/landings.csv",
-          "row_count": 4,
+          "row_count": 2,
           "columns": [
             "id",
             "daily_capacity"
@@ -61,7 +61,7 @@
         },
         "prod_rates": {
           "path": "/home/gep/projects/fhops/examples/tiny7/data/prod_rates.csv",
-          "row_count": 81,
+          "row_count": 18,
           "columns": [
             "machine_id",
             "block_id",
@@ -91,7 +91,7 @@
       "tables": {
         "blocks": {
           "path": "/home/gep/projects/fhops/examples/small21/data/blocks.csv",
-          "row_count": 12,
+          "row_count": 6,
           "columns": [
             "id",
             "landing_id",
@@ -120,7 +120,7 @@
         },
         "landings": {
           "path": "/home/gep/projects/fhops/examples/small21/data/landings.csv",
-          "row_count": 4,
+          "row_count": 6,
           "columns": [
             "id",
             "daily_capacity"
@@ -137,7 +137,7 @@
         },
         "prod_rates": {
           "path": "/home/gep/projects/fhops/examples/small21/data/prod_rates.csv",
-          "row_count": 108,
+          "row_count": 54,
           "columns": [
             "machine_id",
             "block_id",
@@ -167,7 +167,7 @@
       "tables": {
         "blocks": {
           "path": "/home/gep/projects/fhops/examples/med42/data/blocks.csv",
-          "row_count": 20,
+          "row_count": 12,
           "columns": [
             "id",
             "landing_id",
@@ -196,7 +196,7 @@
         },
         "landings": {
           "path": "/home/gep/projects/fhops/examples/med42/data/landings.csv",
-          "row_count": 4,
+          "row_count": 12,
           "columns": [
             "id",
             "daily_capacity"
@@ -213,7 +213,7 @@
         },
         "prod_rates": {
           "path": "/home/gep/projects/fhops/examples/med42/data/prod_rates.csv",
-          "row_count": 180,
+          "row_count": 108,
           "columns": [
             "machine_id",
             "block_id",
@@ -243,7 +243,7 @@
       "tables": {
         "blocks": {
           "path": "/home/gep/projects/fhops/examples/large84/data/blocks.csv",
-          "row_count": 40,
+          "row_count": 48,
           "columns": [
             "id",
             "landing_id",
@@ -272,7 +272,7 @@
         },
         "landings": {
           "path": "/home/gep/projects/fhops/examples/large84/data/landings.csv",
-          "row_count": 4,
+          "row_count": 48,
           "columns": [
             "id",
             "daily_capacity"
@@ -289,7 +289,7 @@
         },
         "prod_rates": {
           "path": "/home/gep/projects/fhops/examples/large84/data/prod_rates.csv",
-          "row_count": 720,
+          "row_count": 864,
           "columns": [
             "machine_id",
             "block_id",

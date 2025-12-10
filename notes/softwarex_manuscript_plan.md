@@ -160,7 +160,7 @@
   - [ ] Capture checksums and storage locations for future reference.
   - [ ] **Submission bundle layout (staged):** \texttt{docs/softwarex/submissions/} should include (a) manuscript PDF + TeX sources, (b) metadata tables, (c) benchmark/tuning/playback CSV/JSON snapshots, (d) PRISMA figure exports, (e) README describing build commands + environment, (f) hash manifest referencing \texttt{docs/softwarex/assets/benchmark\_runs.log}.
 - [ ] Sync documentation assets: confirm figures/tables render correctly both in manuscript and Sphinx.
-  - [ ] Test rendering pipeline for manuscript (PDF) and Sphinx (HTML/PDF).
+  - [ ] Test rendering pipeline for manuscript (PDF) and Sphinx (HTML/PDF). *(2025-12-03: `latexmk` clean after tuning table escape fix; still need fresh Sphinx build once prose edits settle.)*
   - [ ] Fix styling/resolution issues detected in either output.
   - [ ] Document any format-specific modifications needed.
 - [ ] Run linting/formatting on manuscript sources (e.g., `latexmk`, `pandoc`, or Vale) and set up automated checks if possible.
@@ -227,6 +227,24 @@
   - [ ] Set reminders for periodic manuscript/doc alignment reviews.
 
 ## Immediate Next Actions
+- [ ] SoftwareX focus reset *(2025-12-03)*
+  - [x] Close out the MIP reformulation side-quest and branch from `main` (`feature/softwarex-phase3`) so manuscript work resumes on a clean tip.
+  - [x] Refresh roadmap + planning artefacts so they point at the renewed Phase 2 focus (see `ROADMAP.md` Detailed Next Steps item #9).
+  - [x] Define the first `feature/softwarex-phase3` sprint scope (Phase 2 polish + Phase 3 validation dry run): Section 2/3 ladder rewrite, asset regeneration (fast-mode), warm-start/heuristic caveats, rolling-horizon + BC roadmap text, and the validation script trio (export_docs_assets, render_prisma, generate_assets fast).
+- [ ] Sprint 1 scope *(feature/softwarex-phase3 kickoff)*
+  - [x] Update Section~\ref{sec:software-description} + Section~\ref{sec:illustrative-example} prose for the tiny7 → small21 → med42 ladder, explicitly noting that large84 exists but is deferred until rolling-horizon runs land.
+  - [x] Refresh Tables~1–2 and Figures~2–3 via `docs/softwarex/manuscript/scripts/generate_assets.sh` + `build_tables.py`, ensuring artifacts remove minitoy references and cite the new ladder datasets.
+  - [x] Add warm-start + heuristic caveat paragraphs (functional plumbing vs. practical gains, parallel multistart OK, batched neighbours GIL-locked) and reiterate FHOPS’ formulation flexibility.
+  - [x] Introduce the rolling-horizon roadmap + BC deployment paragraph (cite the Jaffray systematic review) in Sections~4–5.
+  - [x] Run the validation scripts in “Phase 3 – Technical Validation” (export_docs_assets, render_prisma, generate_assets fast mode) to confirm nothing regressed before we attempt the full asset rerun later in the sprint.
+- [ ] Manuscript refresh scope *(2025-12-03)*
+  - [x] Reframe the dataset ladder narrative around the three tractable ground-based references (tiny7 → small21 → med42). Large84 is now explicitly labelled as a deferred stress case pending rolling-horizon solves (Sections~\ref{sec:software-description}, \ref{sec:illustrative-example}).
+  - [x] Update Section~\ref{sec:software-description} and Section~\ref{sec:illustrative-example} to explain that all four datasets share the same ground-based archetype (large84 instantiates two concurrent systems) so the ladder represents horizon/scale rather than different machines.
+  - [x] Describe the warm-start MILP plumbing as implemented-and-tested yet not materially improving wall-clock outcomes on med42/large84 today; Section~\ref{sec:software-description} and the tuning paragraph now call out the limitation and rolling-horizon plan.
+  - [x] Clarify heuristic advances: multistart parallelism works, but within-run batched neighbour evaluation remains GIL-bound; incremental “move diff” scoring + dirty-slot tracking are documented in Section~\ref{sec:software-description}.
+  - [x] Note that both the MILP formulation and heuristic objective still evolve rapidly. Section~\ref{sec:software-description} highlights FHOPS’ design goal of enabling quick swaps/tests.
+  - [x] Add a subsection on near-term scaling work: rolling-horizon re-solving for long planning windows (targeting large84 demonstrations) plus diagnostic hooks—now captured at the end of Section~\ref{sec:software-description} and in Section~\ref{sec:impact}.
+  - [x] Tie the manuscript narrative back to the BC deployment roadmap by referencing the Jaffray systematic review: Sections~\ref{sec:introduction}, \ref{sec:impact}, and \ref{sec:conclusions} now describe the BC ladder today and the skyline/helicopter deployments queued for future work.
 - [ ] Phase 2 close-out
   - [x] Proof the highlights, abstract, and metadata tables for lingering typos/consistency issues before Phase 3 begins. *(2025-11-27 read-through complete; no edits required.)*
   - [x] Tag `GH-SWX-Phase2` complete (and snapshot the repo state) so Phase 3 reproducibility tasks start from a known baseline. *(Issue updated + git state noted locally.)*
