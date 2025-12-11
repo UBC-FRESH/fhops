@@ -25,9 +25,9 @@ Run the rolling planner with either the heuristic or MILP backend:
 .. code-block:: bash
 
    fhops plan rolling examples/med42/scenario.yaml \
-     --master-days 84 \
-     --sub-days 28 \
-     --lock-days 14 \
+     --master-days 42 \
+     --sub-days 21 \
+     --lock-days 7 \
      --solver sa \
      --sa-iters 500 \
      --sa-seed 42 \
@@ -79,3 +79,5 @@ Notes
   availability, the CLI will fail fast with a clear error.
 - SA and MILP hooks accept the current locks as incumbents; MILP warm starts are best-effort.
 - Telemetry/reporting layers will evolve; current exports are meant to unblock experimentation.
+- ``master_days`` must not exceed the base scenario horizon. Use a scenario with enough days or lower
+  the master/sub/lock settings to fit within ``Scenario.num_days``.
