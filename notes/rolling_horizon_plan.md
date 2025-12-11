@@ -36,7 +36,7 @@
   - [x] Rolling loop that solves → locks N days → advances the window until the master horizon is covered; start with SA baseline and MILP hook stub.
   - [x] Feasibility guardrails (detect infeasible subproblems, surface diagnostics, and optionally relax lock size as a fallback).
 - [ ] CLI + API exposure
-  - [ ] Typer command `fhops plan rolling` with flags for master/sub/lock horizons, solver choice, seeds, and output paths.
+  - [x] Typer command `fhops plan rolling` with flags for master/sub/lock horizons, solver choice, seeds, and output paths (stub + SA hook; MILP to follow).
   - [ ] Python API helper (`fhops.planning.rolling.solve`) with config/response dataclasses shared with the CLI.
   - [ ] Basic docs/usage strings to unblock early adopters (full docs later).
 - [ ] Telemetry/logging
@@ -54,6 +54,6 @@
 
 ## Next Steps
 - [x] Add feasibility guardrails (detect infeasible subproblems; consider relaxing lock span).
-- [ ] Wire the rolling loop into CLI/API surfaces with a solver hook (SA baseline + MILP stub).
+- [ ] Wire the rolling loop into CLI/API surfaces with a solver hook (SA baseline done, MILP stub next) and add a Python API helper.
 - [x] Add telemetry schema so evaluation features can consume per-iteration stats.
 - [ ] Once planning machinery stabilizes, extend notes/docs with evaluation/reporting guidance and run comparative experiments (MASc deliverable).

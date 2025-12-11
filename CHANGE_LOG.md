@@ -3,7 +3,7 @@
 - Enforced the phased checklist in `notes/rolling_horizon_plan.md` and kept the Detailed Next Step in `ROADMAP.md` unchanged for now (planning remains the guiding doc).
 - Added feasibility guardrails to fail fast on empty/infeasible subproblems so the rolling loop surfaces diagnostics before calling any solver hook.
 - Added telemetry-friendly summariser (`summarize_plan`) for rolling-horizon runs so CLI/API layers can emit JSON/CSV without re-implementing the schema.
-- Introduced a stub `fhops plan rolling` CLI entry that exercises the orchestrator and emits JSON-ready summaries; solver hooks remain to be wired (SA/MILP to follow).
+- Introduced a stub `fhops plan rolling` CLI entry that exercises the orchestrator and emits JSON-ready summaries; wired an initial SA solver hook (`--solver sa --sa-iters --sa-seed`) with locks passed through to the heuristic. MILP hook to follow.
 - Commands executed:
   - `.venv/bin/ruff format src/fhops/planning`
   - `.venv/bin/ruff check src/fhops/planning src/fhops/cli --fix`

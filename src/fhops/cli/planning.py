@@ -9,6 +9,7 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
+from fhops.optimization.heuristics.sa import solve_sa
 from fhops.planning import (
     RollingHorizonConfig,
     RollingInfeasibleError,
@@ -17,6 +18,8 @@ from fhops.planning import (
     run_rolling_horizon,
     summarize_plan,
 )
+from fhops.scenario.contract import Problem
+from fhops.scenario.contract.models import ScheduleLock
 from fhops.scenario.io import load_scenario
 
 console = Console()
@@ -45,6 +48,51 @@ class StubSolver:
         return SolverOutput(assignments=[], objective=None, runtime_s=None, warnings=[warning])
 
 
+class SASolver:
+    """Rolling-horizon solver hook using the SA baseline."""
+
+    name = "sa"
+
+    def __init__(self, iters: int = 500, seed: int = 42) -> None:
+        self.iters = iters
+        self.seed = seed
+
+    def __call__(
+        self,
+        scenario,
+        plan: RollingIterationPlan,
+        *,
+        locked_assignments,
+    ) -> SolverOutput:
+        # Ensure locks survive in the heuristic context.
+        scenario.locked_assignments = list(locked_assignments or [])
+        pb = Problem.from_scenario(scenario)
+
+        result = solve_sa(pb, iters=self.iters, seed=self.seed)
+        assignments = result.get("assignments")
+        if assignments is None:
+            return SolverOutput(assignments=[], objective=result.get("objective"), runtime_s=None)
+
+        locks: list[ScheduleLock] = []
+        for row in assignments.itertuples(index=False):
+            assigned_value = getattr(row, "assigned", 1)
+            if assigned_value:
+                locks.append(
+                    ScheduleLock(
+                        machine_id=str(getattr(row, "machine_id")),
+                        block_id=str(getattr(row, "block_id")),
+                        day=int(getattr(row, "day")),
+                    )
+                )
+
+        return SolverOutput(
+            assignments=locks,
+            objective=result.get("objective"),
+            runtime_s=result.get("runtime_s"),
+            warnings=result.get("warnings"),
+        )
+
+
 @plan_app.command("rolling")
 def rolling_plan(
     scenario_path: Path = typer.Argument(..., help="Path to scenario YAML file."),
@@ -61,6 +109,20 @@ def rolling_plan(
             help="Solver backend (currently only 'stub' is wired; SA/MILP hooks to follow).",
         ),
     ] = "stub",
+    sa_iters: Annotated[
+        int,
+        typer.Option(
+            "--sa-iters",
+            help="SA iterations per subproblem (only used when --solver sa)",
+        ),
+    ] = 500,
+    sa_seed: Annotated[
+        int,
+        typer.Option(
+            "--sa-seed",
+            help="RNG seed for SA solver (only used when --solver sa)",
+        ),
+    ] = 42,
     out_json: Annotated[
         Path | None,
         typer.Option("--out-json", help="Optional path to write rolling plan summary JSON."),
@@ -76,7 +138,7 @@ def rolling_plan(
         lock_days=lock_days,
     )
 
-    solver_hook = _resolve_solver(solver)
+    solver_hook = _resolve_solver(solver, sa_iters=sa_iters, sa_seed=sa_seed)
 
     try:
         result = run_rolling_horizon(config, solver_hook)
@@ -109,9 +171,11 @@ def rolling_plan(
         console.print(f"Wrote summary to {out_json}")
 
 
-def _resolve_solver(name: str):
+def _resolve_solver(name: str, *, sa_iters: int, sa_seed: int):
     if name.lower() == "stub":
         return StubSolver()
+    if name.lower() == "sa":
+        return SASolver(iters=sa_iters, seed=sa_seed)
     raise typer.BadParameter(
         f"Solver '{name}' not supported yet. Use 'stub' until SA/MILP hooks are wired."
     )
