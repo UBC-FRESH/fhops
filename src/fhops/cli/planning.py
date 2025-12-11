@@ -35,7 +35,7 @@ def rolling_plan(
         typer.Option(
             "--solver",
             "-s",
-            help="Solver backend (currently only 'stub' is wired; SA/MILP hooks to follow).",
+            help="Solver backend: stub (no-op), sa (heuristic), or mip (operational MILP).",
         ),
     ] = "stub",
     sa_iters: Annotated[
@@ -52,6 +52,20 @@ def rolling_plan(
             help="RNG seed for SA solver (only used when --solver sa)",
         ),
     ] = 42,
+    mip_solver: Annotated[
+        str,
+        typer.Option(
+            "--mip-solver",
+            help="MILP solver name (e.g., highs, gurobi) when --solver mip",
+        ),
+    ] = "auto",
+    mip_time_limit: Annotated[
+        int,
+        typer.Option(
+            "--mip-time-limit",
+            help="MILP time limit in seconds when --solver mip",
+        ),
+    ] = 300,
     out_json: Annotated[
         Path | None,
         typer.Option("--out-json", help="Optional path to write rolling plan summary JSON."),
@@ -67,7 +81,13 @@ def rolling_plan(
         lock_days=lock_days,
     )
 
-    solver_hook = get_solver_hook(solver, sa_iters=sa_iters, sa_seed=sa_seed)
+    solver_hook = get_solver_hook(
+        solver,
+        sa_iters=sa_iters,
+        sa_seed=sa_seed,
+        mip_solver=mip_solver,
+        mip_time_limit=mip_time_limit,
+    )
 
     try:
         result = run_rolling_horizon(config, solver_hook)
