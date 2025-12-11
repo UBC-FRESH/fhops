@@ -39,7 +39,7 @@ Switch to the operational MILP for each subproblem:
 .. code-block:: bash
 
    fhops plan rolling examples/med42/scenario.yaml \
-     --master-days 56 \
+     --master-days 42 \
      --sub-days 21 \
      --lock-days 7 \
      --solver mip \

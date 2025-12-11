@@ -1,7 +1,7 @@
 # 2025-12-10 — Rolling-horizon how-to correction
-- Updated the rolling-horizon how-to example to use a master horizon that fits the med42 scenario (42-day plan with 21/7 sub/lock) and noted the `master_days <= Scenario.num_days` requirement to prevent user-facing errors.
+- Updated the rolling-horizon how-to examples to fit the med42 horizon (42-day master with 21/7 sub/lock for SA and MIP) and reiterated the `master_days <= Scenario.num_days` requirement to prevent user-facing errors.
 - Commands executed:
-  - *(docs-only change; no commands run)* 
+  - *(docs-only change; no commands run)*
 
 # 2025-12-10 — Rolling-horizon core scaffolding
 - Added the `fhops.planning` package with rolling-horizon primitives: config/iteration planning helpers, scenario slicing with day rebasing, mobilisation filtering, lock rebasing, and the first orchestration loop (`run_rolling_horizon`) with solver hook + iteration summaries to underpin the upcoming `fhops plan rolling` CLI/API surfaces.

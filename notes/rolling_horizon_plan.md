@@ -11,6 +11,7 @@
 - **Master horizon (M days):** total planning length the contractor expects (e.g., 12–16 weeks). Med42 serves as the immediate benchmark; seasonal ladders follow once assets exist.
 - **Subproblem horizon (H days):** window solved at each iteration (e.g., 14 or 28 days). Must be ≥ lock window.
 - **Lock window (N days):** number of leading days to freeze after each subproblem solve (e.g., 7 days). Locked assignments/mobilisation decisions become immutable context for subsequent solves.
+- All horizons must fit inside ``Scenario.num_days`` (``master_days`` + ``start_day`` − 1 ≤ num_days); adjust values or pick a longer scenario.
 - **State roll-forward:** after locking N days, advance scenario clocks by N days, shift remaining demand, and rebuild the subproblem with updated calendars/inventories.
 
 ## Assumptions & Constraints
