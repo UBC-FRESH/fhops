@@ -38,7 +38,7 @@
 - [ ] CLI + API exposure
   - [x] Typer command `fhops plan rolling` with flags for master/sub/lock horizons, solver choice, seeds, and output paths (stub + SA hook; MILP to follow).
   - [x] Python API helper (`fhops.planning.solve_rolling_plan` + `get_solver_hook`) with shared config/response dataclasses. MILP hook now wired (solver=`mip`, `--mip-solver`, `--mip-time-limit`).
-  - [ ] Basic docs/usage strings to unblock early adopters (full docs later).
+  - [x] Basic docs/usage strings to unblock early adopters (full docs later).
 - [ ] Telemetry/logging
   - [x] Per-iteration summaries (objective, runtime, lock span, infeasibility flags) persisted to JSON-ready dicts.
   - [x] Hook telemetry into CLI/API surfaces with consistent schema for future evaluation/reporting layers (`--out-json`, `--out-assignments` exports; fuller reporting still pending).

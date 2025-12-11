@@ -5,10 +5,17 @@
 - Added telemetry-friendly summariser (`summarize_plan`) for rolling-horizon runs so CLI/API layers can emit JSON/CSV without re-implementing the schema.
 - Introduced a stub `fhops plan rolling` CLI entry that exercises the orchestrator and emits JSON-ready summaries; wired SA (`--solver sa --sa-iters --sa-seed`) and MILP (`--solver mip --mip-solver --mip-time-limit`) hooks with locks passed through, plus a shared API helper (`solve_rolling_plan` / `get_solver_hook`).
 - CLI now accepts `--out-assignments` to dump locked plan CSVs alongside the JSON summary, covering a basic telemetry/export need while fuller reporting lands.
+- Added `docs/howto/rolling_horizon.rst` with usage examples for SA/MIP rolling solves and wired it into the Sphinx toctree.
 - Commands executed:
   - `.venv/bin/ruff format src/fhops/planning`
   - `.venv/bin/ruff check src/fhops/planning src/fhops/cli --fix`
   - `.venv/bin/mypy src/fhops/planning src/fhops/cli`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest` *(fails at `tests/test_large84_sequencing.py::test_large84_sequencing_deficit_snapshot`, expected 4 violations vs. observed 0)*
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs _build/html -W`
 
 # 2025-12-10 — Rolling-horizon replanning planning kickoff
 - Started the `feature/rolling-horizon-replanning` branch and drafted `notes/rolling_horizon_plan.md` to capture goals, architecture, and phased implementation steps for the new rolling-horizon workflow (planning-only scope for now; evaluation/reporting to follow).

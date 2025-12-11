@@ -121,7 +121,9 @@ def rolling_plan(
             )
 
     warnings = summary.get("warnings") or []
-    warning_lines: list[str] = [str(item) for item in warnings] if isinstance(warnings, list) else []
+    warning_lines: list[str] = (
+        [str(item) for item in warnings] if isinstance(warnings, list) else []
+    )
     if warning_lines:
         console.print("[yellow]Warnings:[/]\n- " + "\n- ".join(warning_lines))
 

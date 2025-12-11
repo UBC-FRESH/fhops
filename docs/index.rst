@@ -31,6 +31,7 @@ ensembles.
    howto/system_sequencing
    howto/ils
    howto/tabu
+   howto/rolling_horizon
 
 .. toctree::
    :maxdepth: 2
