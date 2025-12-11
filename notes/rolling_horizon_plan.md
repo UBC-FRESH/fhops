@@ -55,6 +55,6 @@
 
 ## Next Steps
 - [x] Add feasibility guardrails (detect infeasible subproblems; consider relaxing lock span).
-- [ ] Wire the rolling loop into CLI/API surfaces with a solver hook (SA baseline done, MILP stub next) and add a Python API helper.
+- [ ] Wire the rolling loop into CLI/API surfaces with a solver hook (SA/MILP done) and add a Python API helper.
 - [x] Add telemetry schema so evaluation features can consume per-iteration stats.
 - [ ] Once planning machinery stabilizes, extend notes/docs with evaluation/reporting guidance and run comparative experiments (MASc deliverable).

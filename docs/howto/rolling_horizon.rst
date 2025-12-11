@@ -17,6 +17,8 @@ Key parameters
 - ``master_days``: total length of the plan you want to lock (e.g., 84 or 112).
 - ``sub_days``: length of each optimisation window (must be >= ``lock_days``).
 - ``lock_days``: number of leading days to freeze after each solve before advancing.
+- Horizons must fit the scenario: ``start_day + master_days - 1 <= Scenario.num_days``. Adjust the
+  values or pick a longer scenario if you hit this guardrail.
 
 CLI usage
 ---------
@@ -81,3 +83,5 @@ Notes
 - Telemetry/reporting layers will evolve; current exports are meant to unblock experimentation.
 - ``master_days`` must not exceed the base scenario horizon. Use a scenario with enough days or lower
   the master/sub/lock settings to fit within ``Scenario.num_days``.
+- ``--mip-solver`` passes through to Pyomo (use ``highs`` or ``gurobi``); ``--max-iterations`` can
+  cap the rolling loop for smoke tests or partial plans.
