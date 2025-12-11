@@ -12,8 +12,10 @@ from fhops.planning.rolling import (
     RollingIterationSummary,
     RollingPlanResult,
     SolverOutput,
+    get_solver_hook,
     run_rolling_horizon,
     slice_scenario_for_window,
+    solve_rolling_plan,
     summarize_plan,
 )
 
@@ -24,6 +26,8 @@ __all__ = [
     "RollingPlanResult",
     "RollingInfeasibleError",
     "SolverOutput",
+    "solve_rolling_plan",
+    "get_solver_hook",
     "run_rolling_horizon",
     "slice_scenario_for_window",
     "summarize_plan",

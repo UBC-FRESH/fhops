@@ -9,88 +9,17 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
-from fhops.optimization.heuristics.sa import solve_sa
 from fhops.planning import (
     RollingHorizonConfig,
     RollingInfeasibleError,
-    RollingIterationPlan,
-    SolverOutput,
+    get_solver_hook,
     run_rolling_horizon,
     summarize_plan,
 )
-from fhops.scenario.contract import Problem
-from fhops.scenario.contract.models import ScheduleLock
 from fhops.scenario.io import load_scenario
 
 console = Console()
 plan_app = typer.Typer(add_completion=False, no_args_is_help=True)
-
-
-class StubSolver:
-    """Placeholder solver that returns no assignments.
-
-    This keeps the CLI usable while we wire a real heuristic/MILP hook.
-    """
-
-    name = "stub"
-
-    def __call__(
-        self,
-        scenario,
-        plan: RollingIterationPlan,
-        *,
-        locked_assignments,
-    ) -> SolverOutput:
-        warning = (
-            f"[stub solver] iteration {plan.iteration_index} "
-            f"({plan.start_day}-{plan.end_day}): no assignments produced"
-        )
-        return SolverOutput(assignments=[], objective=None, runtime_s=None, warnings=[warning])
-
-
-class SASolver:
-    """Rolling-horizon solver hook using the SA baseline."""
-
-    name = "sa"
-
-    def __init__(self, iters: int = 500, seed: int = 42) -> None:
-        self.iters = iters
-        self.seed = seed
-
-    def __call__(
-        self,
-        scenario,
-        plan: RollingIterationPlan,
-        *,
-        locked_assignments,
-    ) -> SolverOutput:
-        # Ensure locks survive in the heuristic context.
-        scenario.locked_assignments = list(locked_assignments or [])
-        pb = Problem.from_scenario(scenario)
-
-        result = solve_sa(pb, iters=self.iters, seed=self.seed)
-        assignments = result.get("assignments")
-        if assignments is None:
-            return SolverOutput(assignments=[], objective=result.get("objective"), runtime_s=None)
-
-        locks: list[ScheduleLock] = []
-        for row in assignments.itertuples(index=False):
-            assigned_value = getattr(row, "assigned", 1)
-            if assigned_value:
-                locks.append(
-                    ScheduleLock(
-                        machine_id=str(getattr(row, "machine_id")),
-                        block_id=str(getattr(row, "block_id")),
-                        day=int(getattr(row, "day")),
-                    )
-                )
-
-        return SolverOutput(
-            assignments=locks,
-            objective=result.get("objective"),
-            runtime_s=result.get("runtime_s"),
-            warnings=result.get("warnings"),
-        )
 
 
 @plan_app.command("rolling")
@@ -138,7 +67,7 @@ def rolling_plan(
         lock_days=lock_days,
     )
 
-    solver_hook = _resolve_solver(solver, sa_iters=sa_iters, sa_seed=sa_seed)
+    solver_hook = get_solver_hook(solver, sa_iters=sa_iters, sa_seed=sa_seed)
 
     try:
         result = run_rolling_horizon(config, solver_hook)
@@ -149,6 +78,9 @@ def rolling_plan(
     console.print(f"[bold green]Rolling plan completed[/]: {len(result.locked_assignments)} locks")
 
     iterations = summary.get("iterations") or []
+    if not isinstance(iterations, list):
+        iterations = []
+    iterations = [dict(iteration) for iteration in iterations]
     if isinstance(iterations, list):
         for iteration in iterations:
             start_day = iteration.get("start_day", 0)
@@ -161,7 +93,7 @@ def rolling_plan(
             )
 
     warnings = summary.get("warnings") or []
-    warning_lines = [str(item) for item in warnings] if isinstance(warnings, list) else []
+    warning_lines: list[str] = [str(item) for item in warnings] if isinstance(warnings, list) else []
     if warning_lines:
         console.print("[yellow]Warnings:[/]\n- " + "\n- ".join(warning_lines))
 
@@ -169,13 +101,3 @@ def rolling_plan(
         out_json.parent.mkdir(parents=True, exist_ok=True)
         out_json.write_text(json.dumps(summary, indent=2))
         console.print(f"Wrote summary to {out_json}")
-
-
-def _resolve_solver(name: str, *, sa_iters: int, sa_seed: int):
-    if name.lower() == "stub":
-        return StubSolver()
-    if name.lower() == "sa":
-        return SASolver(iters=sa_iters, seed=sa_seed)
-    raise typer.BadParameter(
-        f"Solver '{name}' not supported yet. Use 'stub' until SA/MILP hooks are wired."
-    )

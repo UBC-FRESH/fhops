@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from datetime import timedelta
 from typing import Protocol
 
+from fhops.optimization.heuristics.sa import solve_sa
+from fhops.scenario.contract import Problem
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
@@ -28,11 +30,15 @@ __all__ = [
     "RollingIterationSummary",
     "RollingPlanResult",
     "RollingInfeasibleError",
+    "StubSolver",
+    "SASolver",
+    "solve_rolling_plan",
+    "get_solver_hook",
+    "SolverOutput",
     "run_rolling_horizon",
     "summarize_plan",
     "build_iteration_plan",
     "slice_scenario_for_window",
-    "SolverOutput",
 ]
 
 
@@ -434,6 +440,103 @@ def _assert_subproblem_feasible(scenario: Scenario, plan: RollingIterationPlan) 
                 f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) "
                 "has no machine availability in calendar"
             )
+
+
+class StubSolver:
+    """Placeholder solver that returns no assignments."""
+
+    name = "stub"
+
+    def __call__(
+        self,
+        scenario: Scenario,
+        plan: RollingIterationPlan,
+        *,
+        locked_assignments: Sequence[ScheduleLock],
+    ) -> SolverOutput:
+        warning = (
+            f"[stub solver] iteration {plan.iteration_index} "
+            f"({plan.start_day}-{plan.end_day}): no assignments produced"
+        )
+        return SolverOutput(assignments=[], objective=None, runtime_s=None, warnings=[warning])
+
+
+class SASolver:
+    """Rolling-horizon solver hook using the SA baseline."""
+
+    name = "sa"
+
+    def __init__(self, iters: int = 500, seed: int = 42) -> None:
+        self.iters = iters
+        self.seed = seed
+
+    def __call__(
+        self,
+        scenario: Scenario,
+        plan: RollingIterationPlan,
+        *,
+        locked_assignments: Sequence[ScheduleLock],
+    ) -> SolverOutput:
+        scenario.locked_assignments = list(locked_assignments or [])
+        pb = Problem.from_scenario(scenario)
+
+        result = solve_sa(pb, iters=self.iters, seed=self.seed)
+        assignments = result.get("assignments")
+        if assignments is None:
+            return SolverOutput(assignments=[], objective=result.get("objective"), runtime_s=None)
+
+        locks: list[ScheduleLock] = []
+        for row in assignments.itertuples(index=False):
+            assigned_value = getattr(row, "assigned", 1)
+            if assigned_value:
+                locks.append(
+                    ScheduleLock(
+                        machine_id=str(getattr(row, "machine_id")),
+                        block_id=str(getattr(row, "block_id")),
+                        day=int(getattr(row, "day")),
+                    )
+                )
+
+        return SolverOutput(
+            assignments=locks,
+            objective=result.get("objective"),
+            runtime_s=result.get("runtime_s"),
+            warnings=result.get("warnings"),
+        )
+
+
+def get_solver_hook(name: str, *, sa_iters: int = 500, sa_seed: int = 42) -> IterableSolver:
+    """Resolve a solver hook by name."""
+
+    if name.lower() == "stub":
+        return StubSolver()
+    if name.lower() == "sa":
+        return SASolver(iters=sa_iters, seed=sa_seed)
+    raise RollingInfeasibleError(
+        f"Unsupported solver '{name}'. Use 'sa' or 'stub' until additional hooks land."
+    )
+
+
+def solve_rolling_plan(
+    scenario: Scenario,
+    *,
+    master_days: int,
+    subproblem_days: int,
+    lock_days: int,
+    solver: str = "sa",
+    sa_iters: int = 500,
+    sa_seed: int = 42,
+) -> RollingPlanResult:
+    """Library-facing helper to execute a rolling-horizon plan."""
+
+    config = RollingHorizonConfig(
+        scenario=scenario,
+        master_days=master_days,
+        subproblem_days=subproblem_days,
+        lock_days=lock_days,
+    )
+    solver_hook = get_solver_hook(solver, sa_iters=sa_iters, sa_seed=sa_seed)
+    return run_rolling_horizon(config, solver_hook)
 
 
 def summarize_plan(result: RollingPlanResult) -> dict[str, object]:

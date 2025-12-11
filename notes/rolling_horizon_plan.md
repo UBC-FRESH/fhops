@@ -37,7 +37,7 @@
   - [x] Feasibility guardrails (detect infeasible subproblems, surface diagnostics, and optionally relax lock size as a fallback).
 - [ ] CLI + API exposure
   - [x] Typer command `fhops plan rolling` with flags for master/sub/lock horizons, solver choice, seeds, and output paths (stub + SA hook; MILP to follow).
-  - [ ] Python API helper (`fhops.planning.rolling.solve`) with config/response dataclasses shared with the CLI.
+  - [x] Python API helper (`fhops.planning.solve_rolling_plan` + `get_solver_hook`) with shared config/response dataclasses. MILP hook still pending.
   - [ ] Basic docs/usage strings to unblock early adopters (full docs later).
 - [ ] Telemetry/logging
   - [x] Per-iteration summaries (objective, runtime, lock span, infeasibility flags) persisted to JSON-ready dicts.
