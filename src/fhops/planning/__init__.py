@@ -7,11 +7,14 @@ same orchestration logic can be reused by automation scripts and user-facing com
 
 from fhops.planning.rolling import (
     RollingHorizonConfig,
+    RollingInfeasibleError,
     RollingIterationPlan,
     RollingIterationSummary,
     RollingPlanResult,
+    SolverOutput,
     run_rolling_horizon,
     slice_scenario_for_window,
+    summarize_plan,
 )
 
 __all__ = [
@@ -19,6 +22,9 @@ __all__ = [
     "RollingIterationPlan",
     "RollingIterationSummary",
     "RollingPlanResult",
+    "RollingInfeasibleError",
+    "SolverOutput",
     "run_rolling_horizon",
     "slice_scenario_for_window",
+    "summarize_plan",
 ]

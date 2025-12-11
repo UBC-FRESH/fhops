@@ -32,6 +32,7 @@ __all__ = [
     "summarize_plan",
     "build_iteration_plan",
     "slice_scenario_for_window",
+    "SolverOutput",
 ]
 
 
