@@ -37,6 +37,7 @@ from fhops.cli._utils import (
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.dataset import dataset_app
 from fhops.cli.geospatial import geospatial_app
+from fhops.cli.planning import plan_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
 from fhops.cli.synthetic import synth_app
 from fhops.cli.telemetry import telemetry_app
@@ -81,6 +82,7 @@ app.add_typer(benchmark_app, name="bench")
 app.add_typer(synth_app, name="synth")
 app.add_typer(telemetry_app, name="telemetry")
 app.add_typer(dataset_app, name="dataset")
+app.add_typer(plan_app, name="plan")
 console = Console()
 KPI_MODE = click.Choice(["basic", "extended"], case_sensitive=False)
 
