@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from typing import Annotated
 
+import pandas as pd
 import typer
 from rich.console import Console
 
@@ -70,6 +71,13 @@ def rolling_plan(
         Path | None,
         typer.Option("--out-json", help="Optional path to write rolling plan summary JSON."),
     ] = None,
+    out_assignments: Annotated[
+        Path | None,
+        typer.Option(
+            "--out-assignments",
+            help="Optional path to write locked assignments CSV aggregated across iterations.",
+        ),
+    ] = None,
 ) -> None:
     """Execute a rolling-horizon plan using a solver hook."""
 
@@ -121,3 +129,14 @@ def rolling_plan(
         out_json.parent.mkdir(parents=True, exist_ok=True)
         out_json.write_text(json.dumps(summary, indent=2))
         console.print(f"Wrote summary to {out_json}")
+
+    if out_assignments:
+        out_assignments.parent.mkdir(parents=True, exist_ok=True)
+        df = pd.DataFrame(
+            [
+                {"machine_id": lock.machine_id, "block_id": lock.block_id, "day": lock.day}
+                for lock in result.locked_assignments
+            ]
+        )
+        df.to_csv(out_assignments, index=False)
+        console.print(f"Wrote locked assignments to {out_assignments}")

@@ -4,6 +4,7 @@
 - Added feasibility guardrails to fail fast on empty/infeasible subproblems so the rolling loop surfaces diagnostics before calling any solver hook.
 - Added telemetry-friendly summariser (`summarize_plan`) for rolling-horizon runs so CLI/API layers can emit JSON/CSV without re-implementing the schema.
 - Introduced a stub `fhops plan rolling` CLI entry that exercises the orchestrator and emits JSON-ready summaries; wired SA (`--solver sa --sa-iters --sa-seed`) and MILP (`--solver mip --mip-solver --mip-time-limit`) hooks with locks passed through, plus a shared API helper (`solve_rolling_plan` / `get_solver_hook`).
+- CLI now accepts `--out-assignments` to dump locked plan CSVs alongside the JSON summary, covering a basic telemetry/export need while fuller reporting lands.
 - Commands executed:
   - `.venv/bin/ruff format src/fhops/planning`
   - `.venv/bin/ruff check src/fhops/planning src/fhops/cli --fix`

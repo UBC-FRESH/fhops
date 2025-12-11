@@ -41,7 +41,7 @@
   - [ ] Basic docs/usage strings to unblock early adopters (full docs later).
 - [ ] Telemetry/logging
   - [x] Per-iteration summaries (objective, runtime, lock span, infeasibility flags) persisted to JSON-ready dicts.
-  - [ ] Hook telemetry into CLI/API surfaces with consistent schema for future evaluation/reporting layers.
+  - [x] Hook telemetry into CLI/API surfaces with consistent schema for future evaluation/reporting layers (`--out-json`, `--out-assignments` exports; fuller reporting still pending).
 - [ ] Evaluation/reporting extensions (future)
   - [ ] Playback/KPI comparison helpers to quantify suboptimality vs. single-horizon baselines.
   - [ ] Plots/tables for MASc experiments (suboptimality vs. master horizon, sub-horizon, and lock size).
