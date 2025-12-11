@@ -13,7 +13,9 @@ from dataclasses import dataclass
 from datetime import timedelta
 from typing import Protocol
 
+from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics.sa import solve_sa
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scenario.contract.models import (
     Block,
@@ -32,6 +34,7 @@ __all__ = [
     "RollingInfeasibleError",
     "StubSolver",
     "SASolver",
+    "MILPSolver",
     "solve_rolling_plan",
     "get_solver_hook",
     "SolverOutput",
@@ -505,15 +508,79 @@ class SASolver:
         )
 
 
-def get_solver_hook(name: str, *, sa_iters: int = 500, sa_seed: int = 42) -> IterableSolver:
+class MILPSolver:
+    """Rolling-horizon solver hook using the operational MILP."""
+
+    name = "mip"
+
+    def __init__(self, solver: str = "auto", time_limit: int = 300) -> None:
+        self.solver = solver
+        self.time_limit = time_limit
+
+    def __call__(
+        self,
+        scenario: Scenario,
+        plan: RollingIterationPlan,
+        *,
+        locked_assignments: Sequence[ScheduleLock],
+    ) -> SolverOutput:
+        scenario.locked_assignments = list(locked_assignments or [])
+        pb = Problem.from_scenario(scenario)
+        ctx = build_operational_problem(pb)
+
+        result = solve_operational_milp(
+            ctx.bundle,
+            solver=self.solver,
+            time_limit=self.time_limit,
+            context=ctx,
+        )
+
+        assignments_df = result.get("assignments")
+        locks: list[ScheduleLock] = []
+        if assignments_df is not None:
+            for row in assignments_df.itertuples(index=False):
+                locks.append(
+                    ScheduleLock(
+                        machine_id=str(getattr(row, "machine_id")),
+                        block_id=str(getattr(row, "block_id")),
+                        day=int(getattr(row, "day")),
+                    )
+                )
+
+        warnings: list[str] = []
+        solver_status = result.get("solver_status")
+        if solver_status:
+            warnings.append(f"solver_status={solver_status}")
+        termination_condition = result.get("termination_condition")
+        if termination_condition:
+            warnings.append(f"termination_condition={termination_condition}")
+
+        return SolverOutput(
+            assignments=locks,
+            objective=result.get("objective"),
+            runtime_s=result.get("runtime_s"),
+            warnings=warnings or None,
+        )
+
+
+def get_solver_hook(
+    name: str,
+    *,
+    sa_iters: int = 500,
+    sa_seed: int = 42,
+    mip_solver: str = "auto",
+    mip_time_limit: int = 300,
+) -> IterableSolver:
     """Resolve a solver hook by name."""
 
     if name.lower() == "stub":
         return StubSolver()
     if name.lower() == "sa":
         return SASolver(iters=sa_iters, seed=sa_seed)
+    if name.lower() in {"mip", "milp"}:
+        return MILPSolver(solver=mip_solver, time_limit=mip_time_limit)
     raise RollingInfeasibleError(
-        f"Unsupported solver '{name}'. Use 'sa' or 'stub' until additional hooks land."
+        f"Unsupported solver '{name}'. Use 'sa', 'mip', or 'stub' until additional hooks land."
     )
 
 
@@ -526,6 +593,8 @@ def solve_rolling_plan(
     solver: str = "sa",
     sa_iters: int = 500,
     sa_seed: int = 42,
+    mip_solver: str = "auto",
+    mip_time_limit: int = 300,
 ) -> RollingPlanResult:
     """Library-facing helper to execute a rolling-horizon plan."""
 
@@ -535,7 +604,13 @@ def solve_rolling_plan(
         subproblem_days=subproblem_days,
         lock_days=lock_days,
     )
-    solver_hook = get_solver_hook(solver, sa_iters=sa_iters, sa_seed=sa_seed)
+    solver_hook = get_solver_hook(
+        solver,
+        sa_iters=sa_iters,
+        sa_seed=sa_seed,
+        mip_solver=mip_solver,
+        mip_time_limit=mip_time_limit,
+    )
     return run_rolling_horizon(config, solver_hook)
 
 
