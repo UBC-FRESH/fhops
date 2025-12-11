@@ -47,12 +47,31 @@ Switch to the operational MILP for each subproblem:
      --mip-time-limit 300 \
      --out-json tmp/med42_mip_rolling.json
 
+Worked example (tiny7)
+----------------------
+The tiny7 scenario is short enough to demonstrate the wiring quickly:
+
+.. code-block:: bash
+
+   fhops plan rolling examples/tiny7/scenario.yaml \
+     --master-days 7 --sub-days 7 --lock-days 7 \
+     --solver sa --sa-iters 200 --sa-seed 99 \
+     --out-json tmp/tiny7_rolling.json \
+     --out-assignments tmp/tiny7_rolling_assignments.csv \
+     --out-iterations-jsonl tmp/tiny7_iterations.jsonl \
+     --out-iterations-csv tmp/tiny7_iterations.csv
+
+Check the JSON/CSV outputs to see iteration windows and the locked assignments; swap ``--solver
+mip`` and set ``--mip-solver highs`` for a small MILP-backed run.
+
 Outputs
 -------
-- JSON summary (``--out-json``) including iteration windows, locked counts, objectives, runtimes, and
-  warnings.
+- JSON summary (``--out-json``) with iteration windows, locked counts, objectives, runtimes,
+  warnings, and metadata (scenario, horizons, solver).
 - CSV of locked assignments (``--out-assignments``) aggregated across all iterations with columns
-  ``machine_id, block_id, day``.
+  ``machine_id, block_id, day, scenario, solver, master_days, subproblem_days, lock_days``.
+- Optional per-iteration exports: JSONL (``--out-iterations-jsonl``) and CSV
+  (``--out-iterations-csv``) containing objective/runtime/lock span and warnings per iteration.
 
 Notes
 -----

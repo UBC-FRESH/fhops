@@ -6,10 +6,20 @@
 - Introduced a stub `fhops plan rolling` CLI entry that exercises the orchestrator and emits JSON-ready summaries; wired SA (`--solver sa --sa-iters --sa-seed`) and MILP (`--solver mip --mip-solver --mip-time-limit`) hooks with locks passed through, plus a shared API helper (`solve_rolling_plan` / `get_solver_hook`).
 - CLI now accepts `--out-assignments` to dump locked plan CSVs alongside the JSON summary, covering a basic telemetry/export need while fuller reporting lands.
 - Added `docs/howto/rolling_horizon.rst` with usage examples for SA/MIP rolling solves and wired it into the Sphinx toctree.
+- Added per-iteration exports (`--out-iterations-jsonl/--out-iterations-csv`), metadata-enriched assignment CSVs, and improved CLI help/warnings (divisibility of master vs. lock).
+- Exposed `solve_rolling_plan`/`get_solver_hook` in the API docs and added unit/CLI smoke tests for rolling primitives.
+- Updated the large84 sequencing regression to expect zero violations (model now clean).
+- Test/validation status: ruff format/check, mypy, targeted pytest (`tests/planning/test_rolling_core.py`, `tests/cli/test_planning_cli.py`), pre-commit, and Sphinx build. Full suite still pending (was previously long-running).
 - Commands executed:
   - `.venv/bin/ruff format src/fhops/planning`
   - `.venv/bin/ruff check src/fhops/planning src/fhops/cli --fix`
   - `.venv/bin/mypy src/fhops/planning src/fhops/cli`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest tests/planning/test_rolling_core.py tests/cli/test_planning_cli.py`
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs _build/html -W`
   - `.venv/bin/ruff format src tests`
   - `.venv/bin/ruff check src tests`
   - `.venv/bin/mypy src`

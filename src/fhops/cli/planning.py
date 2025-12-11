@@ -78,6 +78,27 @@ def rolling_plan(
             help="Optional path to write locked assignments CSV aggregated across iterations.",
         ),
     ] = None,
+    out_iterations_jsonl: Annotated[
+        Path | None,
+        typer.Option(
+            "--out-iterations-jsonl",
+            help="Optional path to write per-iteration summaries as JSONL (one record per iteration).",
+        ),
+    ] = None,
+    out_iterations_csv: Annotated[
+        Path | None,
+        typer.Option(
+            "--out-iterations-csv",
+            help="Optional path to write per-iteration summaries as CSV.",
+        ),
+    ] = None,
+    max_iterations: Annotated[
+        int | None,
+        typer.Option(
+            "--max-iterations",
+            help="Cap the number of rolling iterations (defaults to full master horizon).",
+        ),
+    ] = None,
 ) -> None:
     """Execute a rolling-horizon plan using a solver hook."""
 
@@ -98,27 +119,40 @@ def rolling_plan(
     )
 
     try:
-        result = run_rolling_horizon(config, solver_hook)
+        result = run_rolling_horizon(
+            config,
+            solver_hook,
+            max_iterations=max_iterations,
+            solver_name=solver,
+        )
     except RollingInfeasibleError as exc:
         raise typer.BadParameter(str(exc))
 
     summary = summarize_plan(result)
     console.print(f"[bold green]Rolling plan completed[/]: {len(result.locked_assignments)} locks")
 
+    metadata_obj = summary.get("metadata") or {}
+    metadata = metadata_obj if isinstance(metadata_obj, dict) else {}
+    if metadata:
+        console.print(
+            f"[cyan]Metadata:[/] solver={metadata.get('solver')} "
+            f"master_days={metadata.get('master_days')} "
+            f"sub_days={metadata.get('subproblem_days')} lock_days={metadata.get('lock_days')}"
+        )
+
     iterations = summary.get("iterations") or []
     if not isinstance(iterations, list):
         iterations = []
     iterations = [dict(iteration) for iteration in iterations]
-    if isinstance(iterations, list):
-        for iteration in iterations:
-            start_day = iteration.get("start_day", 0)
-            horizon_days = iteration.get("horizon_days", 0)
-            locked_assignments = iteration.get("locked_assignments", 0)
-            console.print(
-                f" - Iter {iteration.get('iteration_index', '?')}: "
-                f"days {start_day}-{start_day + horizon_days - 1}, "
-                f"locked {locked_assignments} assignments"
-            )
+    for iteration in iterations:
+        start_day = iteration.get("start_day", 0)
+        horizon_days = iteration.get("horizon_days", 0)
+        locked_assignments = iteration.get("locked_assignments", 0)
+        console.print(
+            f" - Iter {iteration.get('iteration_index', '?')}: "
+            f"days {start_day}-{start_day + horizon_days - 1}, "
+            f"locked {locked_assignments} assignments"
+        )
 
     warnings = summary.get("warnings") or []
     warning_lines: list[str] = (
@@ -132,13 +166,50 @@ def rolling_plan(
         out_json.write_text(json.dumps(summary, indent=2))
         console.print(f"Wrote summary to {out_json}")
 
+    iteration_records = summary.get("iterations") or []
+    if not isinstance(iteration_records, list):
+        iteration_records = []
+
     if out_assignments:
         out_assignments.parent.mkdir(parents=True, exist_ok=True)
+        rows = [
+            {
+                "machine_id": lock.machine_id,
+                "block_id": lock.block_id,
+                "day": lock.day,
+                "scenario": metadata.get("scenario"),
+                "solver": metadata.get("solver"),
+                "master_days": metadata.get("master_days"),
+                "subproblem_days": metadata.get("subproblem_days"),
+                "lock_days": metadata.get("lock_days"),
+            }
+            for lock in result.locked_assignments
+        ]
         df = pd.DataFrame(
-            [
-                {"machine_id": lock.machine_id, "block_id": lock.block_id, "day": lock.day}
-                for lock in result.locked_assignments
-            ]
+            rows,
+            columns=[
+                "machine_id",
+                "block_id",
+                "day",
+                "scenario",
+                "solver",
+                "master_days",
+                "subproblem_days",
+                "lock_days",
+            ],
         )
         df.to_csv(out_assignments, index=False)
         console.print(f"Wrote locked assignments to {out_assignments}")
+
+    if out_iterations_jsonl:
+        out_iterations_jsonl.parent.mkdir(parents=True, exist_ok=True)
+        with out_iterations_jsonl.open("w", encoding="utf-8") as fp:
+            for record in iteration_records:
+                fp.write(json.dumps(record))
+                fp.write("\n")
+        console.print(f"Wrote iteration summaries to {out_iterations_jsonl}")
+
+    if out_iterations_csv:
+        out_iterations_csv.parent.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(iteration_records).to_csv(out_iterations_csv, index=False)
+        console.print(f"Wrote iteration summaries to {out_iterations_csv}")

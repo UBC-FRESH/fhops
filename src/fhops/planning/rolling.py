@@ -2,8 +2,24 @@
 
 This module provides the core planning primitives for building multi-iteration schedules: slicing a
 scenario into sub-horizons, tracking locked-in assignments, and constructing iteration plans that
-advance the window by a configurable lock span. Solver integration (heuristics/MILP) will attach to
+advance the window by a configurable lock span. Solver integration (heuristics/MILP) attaches to
 these primitives so both CLI and Python callers share the same orchestration layer.
+
+Example
+-------
+>>> from fhops.planning.rolling import solve_rolling_plan
+>>> from fhops.scenario.io import load_scenario
+>>> scenario = load_scenario("examples/tiny7/scenario.yaml")
+>>> result = solve_rolling_plan(
+...     scenario,
+...     master_days=14,
+...     subproblem_days=7,
+...     lock_days=7,
+...     solver="sa",
+...     sa_iters=200,
+... )
+>>> len(result.locked_assignments)  # locked plan length across iterations
+14
 """
 
 from __future__ import annotations
@@ -296,6 +312,7 @@ class RollingPlanResult:
 
     locked_assignments: list[ScheduleLock]
     iteration_summaries: list[RollingIterationSummary]
+    metadata: dict[str, object]
     warnings: list[str] | None = None
 
 
@@ -330,6 +347,7 @@ def run_rolling_horizon(
     solver: IterableSolver,
     *,
     max_iterations: int | None = None,
+    solver_name: str | None = None,
 ) -> RollingPlanResult:
     """Execute the rolling-horizon loop with a user-supplied solver hook.
 
@@ -400,9 +418,19 @@ def run_rolling_horizon(
             )
         )
 
+    metadata = {
+        "scenario": config.scenario.name,
+        "master_days": config.master_days,
+        "subproblem_days": config.subproblem_days,
+        "lock_days": config.lock_days,
+        "start_day": config.start_day,
+        "solver": solver_name or getattr(solver, "name", None),
+    }
+
     return RollingPlanResult(
         locked_assignments=locked_base,
         iteration_summaries=summaries,
+        metadata=metadata,
         warnings=[],
     )
 
@@ -595,6 +623,7 @@ def solve_rolling_plan(
     sa_seed: int = 42,
     mip_solver: str = "auto",
     mip_time_limit: int = 300,
+    max_iterations: int | None = None,
 ) -> RollingPlanResult:
     """Library-facing helper to execute a rolling-horizon plan."""
 
@@ -611,7 +640,12 @@ def solve_rolling_plan(
         mip_solver=mip_solver,
         mip_time_limit=mip_time_limit,
     )
-    return run_rolling_horizon(config, solver_hook)
+    return run_rolling_horizon(
+        config,
+        solver_hook,
+        max_iterations=max_iterations,
+        solver_name=solver,
+    )
 
 
 def summarize_plan(result: RollingPlanResult) -> dict[str, object]:
@@ -646,5 +680,6 @@ def summarize_plan(result: RollingPlanResult) -> dict[str, object]:
     return {
         "iterations": iteration_records,
         "total_locked_assignments": len(result.locked_assignments),
+        "metadata": result.metadata,
         "warnings": result.warnings or [],
     }

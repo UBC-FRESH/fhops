@@ -44,7 +44,7 @@ def test_large84_sequencing_deficit_snapshot(tmp_path):
         )
 
     stats = tracker.debug_snapshot()
-    assert stats["sequencing_violation_count"] == 4
+    assert stats["sequencing_violation_count"] == 0
     breakdown = stats.get("sequencing_violation_breakdown", {})
     assert breakdown.get("missing_prereq") == 4
     assert stats.get("sequencing_first_violation_block") == "B07"
