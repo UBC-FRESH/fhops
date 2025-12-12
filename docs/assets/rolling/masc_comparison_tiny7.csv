@@ -1,0 +1,7 @@
+metric,rolling,baseline,delta,pct_delta,baseline_label,config
+total_production,0.0,4414.702752,-4414.702752,-1.0,sa_7_7_baseline,sa_7_5_3
+mobilisation_cost,532.4,585.64,-53.24000000000001,-0.09090909090909093,sa_7_7_baseline,sa_7_5_3
+utilisation_ratio_mean_day,0.2857142857142857,0.36507936507936506,-0.07936507936507936,-0.21739130434782608,sa_7_7_baseline,sa_7_5_3
+total_production,0.0,4414.702752,-4414.702752,-1.0,sa_7_7_baseline,sa_7_4_2
+mobilisation_cost,479.16,585.64,-106.47999999999996,-0.18181818181818177,sa_7_7_baseline,sa_7_4_2
+utilisation_ratio_mean_day,0.253968253968254,0.36507936507936506,-0.11111111111111105,-0.3043478260869564,sa_7_7_baseline,sa_7_4_2

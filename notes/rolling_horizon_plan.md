@@ -31,21 +31,21 @@
 
 ## Implementation Phases
 - [x] Planning groundwork (this note).
-- [ ] Core orchestration engine
+- [x] Core orchestration engine
   - [x] Scenario slicer that trims calendars, demand, and mobilisation state given a day offset + sub-horizon.
   - [x] Lock-in tracker dataclasses for assignments, mobilisation decisions, and inventories; apply as boundary conditions in subsequent solves.
   - [x] Rolling loop that solves → locks N days → advances the window until the master horizon is covered; start with SA baseline and MILP hook stub.
   - [x] Feasibility guardrails (detect infeasible subproblems, surface diagnostics, and optionally relax lock size as a fallback).
-- [ ] CLI + API exposure
+- [x] CLI + API exposure
 - [x] Typer command `fhops plan rolling` with flags for master/sub/lock horizons, solver choice, seeds, and output paths (stub + SA hook; MILP to follow).
 - [x] Python API helper (`fhops.planning.solve_rolling_plan` + `get_solver_hook`) with shared config/response dataclasses. MILP hook now wired (solver=`mip`, `--mip-solver`, `--mip-time-limit`).
 - [x] Basic docs/usage strings to unblock early adopters (full docs later).
-- [ ] Telemetry/logging
+- [x] Telemetry/logging
   - [x] Per-iteration summaries (objective, runtime, lock span, infeasibility flags) persisted to JSON-ready dicts.
   - [x] Hook telemetry into CLI/API surfaces with consistent schema for future evaluation/reporting layers (`--out-json`, `--out-assignments` exports; fuller reporting still pending).
-- [ ] Evaluation/reporting extensions (future)
-  - [ ] Playback/KPI comparison helpers to quantify suboptimality vs. single-horizon baselines.
-  - [ ] Plots/tables for MASc experiments (suboptimality vs. master horizon, sub-horizon, and lock size).
+- [x] Evaluation/reporting extensions
+  - [x] Playback/KPI comparison helpers to quantify suboptimality vs. single-horizon baselines (`rolling_assignments_dataframe`, `compute_rolling_kpis`, `comparison_dataframe`, CLI export wiring, and the refreshed how-to doc).
+  - [x] Plots/tables for MASc experiments (suboptimality vs. master horizon, sub-horizon, and lock size); tiny7 comparison artifacts generated at `docs/assets/rolling/masc_comparison_tiny7.{csv,png}` (SA baseline 7/7/7 vs. 7/5/3 and 7/4/2, 300 iters, seed=99). Med42 comparison (Gurobi, 64 threads, 10 s caps) generated at `docs/assets/rolling/masc_comparison_med42.{csv,png}` — runs return aborted-with-solution statuses due to the aggressive cap; rerun with larger budgets for publication-ready gaps.
 
 ## Edge Cases & Open Questions
 - Handling mobilisation/landing buffers that span lock boundaries—verify whether loaders staged in the locked window constrain future days automatically or require explicit inventory carry-over.
@@ -55,6 +55,10 @@
 
 ## Next Steps
 - [x] Add feasibility guardrails (detect infeasible subproblems; consider relaxing lock span).
-- [ ] Wire the rolling loop into CLI/API surfaces with a solver hook (SA/MILP done) and add a Python API helper.
+- [x] Wire the rolling loop into CLI/API surfaces with a solver hook (SA/MILP done) and add a Python API helper.
 - [x] Add telemetry schema so evaluation features can consume per-iteration stats.
-- [ ] Once planning machinery stabilizes, extend notes/docs with evaluation/reporting guidance and run comparative experiments (MASc deliverable).
+- [x] Extend docs with evaluation/reporting guidance and run comparative experiments (MASc deliverable).
+  - [x] Add evaluation/reporting guidance to ``docs/howto/rolling_horizon.rst`` (compute_rolling_kpis / evaluate_rolling_plan snippets).
+  - [x] Run comparative experiments and capture plots/tables for MASc write-up (tiny7 SA bundle + med42 Gurobi bundle with short caps, both published under ``docs/assets/rolling``; rerun med42 with larger budgets for cleaner gaps).
+- [x] Add playback/KPI helpers to consume rolling exports and quantify suboptimality vs. single-horizon baselines.
+- [ ] Run full-suite regression on rolling horizon scenarios once post-merge validation slots open (long-running).

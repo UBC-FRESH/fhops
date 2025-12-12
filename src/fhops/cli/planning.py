@@ -10,10 +10,12 @@ import pandas as pd
 import typer
 from rich.console import Console
 
+from fhops.cli._utils import parse_solver_options
 from fhops.planning import (
     RollingHorizonConfig,
     RollingInfeasibleError,
     get_solver_hook,
+    rolling_assignments_dataframe,
     run_rolling_horizon,
     summarize_plan,
 )
@@ -67,6 +69,16 @@ def rolling_plan(
             help="MILP time limit in seconds when --solver mip",
         ),
     ] = 300,
+    mip_solver_option: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--mip-solver-option",
+            help=(
+                "Repeatable name=value pairs forwarded to the MILP solver "
+                "(e.g., --mip-solver-option Threads=64)."
+            ),
+        ),
+    ] = None,
     out_json: Annotated[
         Path | None,
         typer.Option("--out-json", help="Optional path to write rolling plan summary JSON."),
@@ -103,6 +115,7 @@ def rolling_plan(
     """Execute a rolling-horizon plan using a solver hook."""
 
     scenario = load_scenario(scenario_path)
+    solver_options = parse_solver_options(mip_solver_option)
     config = RollingHorizonConfig(
         scenario=scenario,
         master_days=master_days,
@@ -116,6 +129,7 @@ def rolling_plan(
         sa_seed=sa_seed,
         mip_solver=mip_solver,
         mip_time_limit=mip_time_limit,
+        mip_solver_options=solver_options,
     )
 
     try:
@@ -139,6 +153,12 @@ def rolling_plan(
             f"master_days={metadata.get('master_days')} "
             f"sub_days={metadata.get('subproblem_days')} lock_days={metadata.get('lock_days')}"
         )
+        if metadata.get("mip_solver"):
+            console.print(
+                f"[cyan]MILP backend:[/] solver={metadata.get('mip_solver')} "
+                f"time_limit={metadata.get('mip_time_limit')} "
+                f"options={metadata.get('mip_solver_options') or {}}"
+            )
 
     iterations = summary.get("iterations") or []
     if not isinstance(iterations, list):
@@ -172,32 +192,7 @@ def rolling_plan(
 
     if out_assignments:
         out_assignments.parent.mkdir(parents=True, exist_ok=True)
-        rows = [
-            {
-                "machine_id": lock.machine_id,
-                "block_id": lock.block_id,
-                "day": lock.day,
-                "scenario": metadata.get("scenario"),
-                "solver": metadata.get("solver"),
-                "master_days": metadata.get("master_days"),
-                "subproblem_days": metadata.get("subproblem_days"),
-                "lock_days": metadata.get("lock_days"),
-            }
-            for lock in result.locked_assignments
-        ]
-        df = pd.DataFrame(
-            rows,
-            columns=[
-                "machine_id",
-                "block_id",
-                "day",
-                "scenario",
-                "solver",
-                "master_days",
-                "subproblem_days",
-                "lock_days",
-            ],
-        )
+        df = rolling_assignments_dataframe(result, include_metadata=True)
         df.to_csv(out_assignments, index=False)
         console.print(f"Wrote locked assignments to {out_assignments}")
 

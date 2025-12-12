@@ -24,11 +24,15 @@ Example
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import timedelta
+from numbers import Number
 from typing import Protocol
 
+import pandas as pd
+
+from fhops.evaluation import KPIResult, compute_kpis
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics.sa import solve_sa
 from fhops.optimization.operational_problem import build_operational_problem
@@ -47,6 +51,7 @@ __all__ = [
     "RollingIterationPlan",
     "RollingIterationSummary",
     "RollingPlanResult",
+    "RollingKPIComparison",
     "RollingInfeasibleError",
     "StubSolver",
     "SASolver",
@@ -58,6 +63,8 @@ __all__ = [
     "summarize_plan",
     "build_iteration_plan",
     "slice_scenario_for_window",
+    "rolling_assignments_dataframe",
+    "compute_rolling_kpis",
 ]
 
 
@@ -294,7 +301,28 @@ def _rebase_locks(locks: Sequence[ScheduleLock], start: int, end: int) -> list[S
 
 @dataclass
 class RollingIterationSummary:
-    """Outcome summary for a single rolling-horizon iteration."""
+    """Outcome summary for a single rolling-horizon iteration.
+
+    Attributes
+    ----------
+    iteration_index :
+        Zero-based iteration counter.
+    start_day :
+        One-indexed day in the base scenario where the sub-horizon begins.
+    horizon_days :
+        Number of days solved in this iteration (sub-horizon length).
+    lock_days :
+        Number of leading days frozen into the master plan after this solve.
+    locked_assignments :
+        Count of :class:`fhops.scenario.contract.models.ScheduleLock` entries injected into the
+        master plan from this iteration (base-scenario coordinates).
+    objective :
+        Solver objective value (units match the chosen solver) or ``None`` when not reported.
+    runtime_s :
+        Wall-clock runtime in seconds, if the solver provides it.
+    warnings :
+        Optional warnings surfaced by the solver hook (e.g., termination condition).
+    """
 
     iteration_index: int
     start_day: int
@@ -308,7 +336,21 @@ class RollingIterationSummary:
 
 @dataclass
 class RollingPlanResult:
-    """Aggregated result for a rolling-horizon run."""
+    """Aggregated result for a rolling-horizon run.
+
+    Attributes
+    ----------
+    locked_assignments :
+        Locked :class:`fhops.scenario.contract.models.ScheduleLock` entries rebased to the base
+        scenario (one-indexed days).
+    iteration_summaries :
+        Per-iteration summaries (objective, runtime, warnings, lock span, horizon span).
+    metadata :
+        Descriptive metadata such as scenario name, master/sub/lock horizon lengths, start day, and
+        solver identifier. Keys are JSON-serialisable so telemetry exporters can persist them.
+    warnings :
+        Optional warnings accumulated across the rolling run; empty list when none are present.
+    """
 
     locked_assignments: list[ScheduleLock]
     iteration_summaries: list[RollingIterationSummary]
@@ -317,8 +359,47 @@ class RollingPlanResult:
 
 
 @dataclass
+class RollingKPIComparison:
+    """Comparison payload capturing rolling vs. baseline KPI metrics.
+
+    Attributes
+    ----------
+    rolling_assignments :
+        DataFrame version of ``RollingPlanResult.locked_assignments`` suitable for playback/KPI runs.
+    rolling_kpis :
+        KPI totals computed from the rolling plan assignments.
+    baseline_assignments :
+        Optional baseline schedule (full-horizon heuristic/MIP output) for comparison.
+    baseline_kpis :
+        KPI totals computed from ``baseline_assignments`` when provided.
+    delta_totals :
+        Numeric difference ``rolling - baseline`` for KPI keys present in both payloads.
+    """
+
+    rolling_assignments: pd.DataFrame
+    rolling_kpis: KPIResult
+    baseline_assignments: pd.DataFrame | None = None
+    baseline_kpis: KPIResult | None = None
+    delta_totals: dict[str, float] | None = None
+
+
+@dataclass
 class SolverOutput:
-    """Return type for rolling-horizon solver hooks."""
+    """Return type for rolling-horizon solver hooks.
+
+    Attributes
+    ----------
+    assignments :
+        Sequence of :class:`fhops.scenario.contract.models.ScheduleLock` entries in
+        sub-horizon coordinates (day 1 maps to the iteration start). Only the first
+        ``RollingIterationPlan.lock_days`` will be frozen by the orchestrator.
+    objective :
+        Objective value reported by the solver or ``None`` when unavailable.
+    runtime_s :
+        Wall-clock runtime in seconds, when provided by the solver.
+    warnings :
+        Optional warnings emitted by the solver (solver status, termination condition, etc.).
+    """
 
     assignments: Sequence[ScheduleLock]
     objective: float | None = None
@@ -339,7 +420,7 @@ class IterableSolver(Protocol):
 
 
 class RollingInfeasibleError(RuntimeError):
-    """Raised when a sub-horizon is infeasible or empty before solving."""
+    """Raised when a sub-horizon is infeasible or when solver configuration is invalid."""
 
 
 def run_rolling_horizon(
@@ -366,11 +447,18 @@ def run_rolling_horizon(
         that subproblem, plus optional metadata.
     max_iterations:
         Optional guard to cap the number of iterations (useful for smoke tests).
+    solver_name:
+        Optional solver label to persist into :class:`RollingPlanResult.metadata`.
 
     Returns
     -------
     RollingPlanResult
         Locked assignments in base-scenario coordinates plus per-iteration summaries.
+
+    Raises
+    ------
+    RollingInfeasibleError
+        If a sub-horizon is empty or violates basic feasibility checks before solving.
     """
 
     iteration_plans = build_iteration_plan(config)
@@ -426,6 +514,15 @@ def run_rolling_horizon(
         "start_day": config.start_day,
         "solver": solver_name or getattr(solver, "name", None),
     }
+    solver_backend = getattr(solver, "solver", None)
+    if solver_backend is not None:
+        metadata["mip_solver"] = solver_backend
+    solver_time_limit = getattr(solver, "time_limit", None)
+    if solver_time_limit is not None:
+        metadata["mip_time_limit"] = solver_time_limit
+    solver_options = getattr(solver, "solver_options", None)
+    if solver_options:
+        metadata["mip_solver_options"] = dict(solver_options)
 
     return RollingPlanResult(
         locked_assignments=locked_base,
@@ -474,7 +571,13 @@ def _assert_subproblem_feasible(scenario: Scenario, plan: RollingIterationPlan) 
 
 
 class StubSolver:
-    """Placeholder solver that returns no assignments."""
+    """Placeholder solver that returns no assignments.
+
+    Notes
+    -----
+    This hook is useful for smoke tests of the rolling orchestrator/CLI. It always returns an empty
+    assignment list and a warning noting that no work was performed.
+    """
 
     name = "stub"
 
@@ -493,7 +596,15 @@ class StubSolver:
 
 
 class SASolver:
-    """Rolling-horizon solver hook using the SA baseline."""
+    """Rolling-horizon solver hook using the SA baseline.
+
+    Parameters
+    ----------
+    iters :
+        Number of simulated annealing iterations to execute per subproblem.
+    seed :
+        Random seed for deterministic neighbour selection and acceptance decisions.
+    """
 
     name = "sa"
 
@@ -537,13 +648,29 @@ class SASolver:
 
 
 class MILPSolver:
-    """Rolling-horizon solver hook using the operational MILP."""
+    """Rolling-horizon solver hook using the operational MILP.
+
+    Parameters
+    ----------
+    solver :
+        Pyomo backend to invoke (e.g., ``\"highs\"``, ``\"gurobi\"``, or ``\"auto\"``).
+    time_limit :
+        Solve time limit in seconds for each subproblem.
+    solver_options :
+        Optional solver-specific options forwarded to Pyomo (e.g., ``{\"Threads\": 64}`` for Gurobi).
+    """
 
     name = "mip"
 
-    def __init__(self, solver: str = "auto", time_limit: int = 300) -> None:
+    def __init__(
+        self,
+        solver: str = "auto",
+        time_limit: int = 300,
+        solver_options: Mapping[str, object] | None = None,
+    ) -> None:
         self.solver = solver
         self.time_limit = time_limit
+        self.solver_options = solver_options
 
     def __call__(
         self,
@@ -560,6 +687,7 @@ class MILPSolver:
             ctx.bundle,
             solver=self.solver,
             time_limit=self.time_limit,
+            solver_options=self.solver_options,
             context=ctx,
         )
 
@@ -598,15 +726,44 @@ def get_solver_hook(
     sa_seed: int = 42,
     mip_solver: str = "auto",
     mip_time_limit: int = 300,
+    mip_solver_options: Mapping[str, object] | None = None,
 ) -> IterableSolver:
-    """Resolve a solver hook by name."""
+    """Resolve a solver hook by name.
+
+    Parameters
+    ----------
+    name :
+        Solver identifier (``\"sa\"``, ``\"mip\"``/``\"milp\"``, or ``\"stub\"``).
+    sa_iters :
+        Number of iterations to run when ``name == "sa"``.
+    sa_seed :
+        Random seed passed to the SA hook for deterministic runs.
+    mip_solver :
+        Pyomo MILP driver to invoke when ``name`` is ``"mip"`` or ``"milp"``.
+    mip_time_limit :
+        Solve time limit in seconds for the MILP hook.
+    mip_solver_options :
+        Optional solver-specific parameters forwarded to the MILP backend (e.g., ``{\"Threads\": 64}``).
+
+    Returns
+    -------
+    IterableSolver
+        Callable that consumes a sliced scenario and iteration plan.
+
+    Raises
+    ------
+    RollingInfeasibleError
+        If an unsupported solver name is supplied.
+    """
 
     if name.lower() == "stub":
         return StubSolver()
     if name.lower() == "sa":
         return SASolver(iters=sa_iters, seed=sa_seed)
     if name.lower() in {"mip", "milp"}:
-        return MILPSolver(solver=mip_solver, time_limit=mip_time_limit)
+        return MILPSolver(
+            solver=mip_solver, time_limit=mip_time_limit, solver_options=mip_solver_options
+        )
     raise RollingInfeasibleError(
         f"Unsupported solver '{name}'. Use 'sa', 'mip', or 'stub' until additional hooks land."
     )
@@ -623,9 +780,49 @@ def solve_rolling_plan(
     sa_seed: int = 42,
     mip_solver: str = "auto",
     mip_time_limit: int = 300,
+    mip_solver_options: Mapping[str, object] | None = None,
     max_iterations: int | None = None,
 ) -> RollingPlanResult:
-    """Library-facing helper to execute a rolling-horizon plan."""
+    """Library-facing helper to execute a rolling-horizon plan.
+
+    Parameters
+    ----------
+    scenario :
+        Validated scenario to slice into rolling subproblems.
+    master_days :
+        Total number of days to lock in across the rolling run. Must satisfy
+        ``master_days + start_day - 1 <= scenario.num_days``.
+    subproblem_days :
+        Number of days solved per iteration (≥ ``lock_days``).
+    lock_days :
+        Number of leading days to freeze after each iteration (≤ ``subproblem_days``).
+    solver :
+        Solver hook to use (``"sa"``, ``"mip"``, ``"milp"``, or ``"stub"``).
+    sa_iters :
+        Simulated annealing iteration budget when ``solver == "sa"``.
+    sa_seed :
+        Random seed for SA runs to keep results deterministic across iterations.
+    mip_solver :
+        Pyomo MILP driver name when ``solver`` is MILP-backed.
+    mip_time_limit :
+        Time limit in seconds for each MILP subproblem solve.
+    mip_solver_options :
+        Optional solver-specific parameters forwarded to the MILP backend (e.g., ``{\"Threads\": 64}``).
+    max_iterations :
+        Optional guard to cap the number of iterations (useful for smoke tests).
+
+    Returns
+    -------
+    RollingPlanResult
+        Locked assignments, per-iteration summaries, and metadata describing the run.
+
+    Raises
+    ------
+    ValueError
+        If horizon parameters violate basic bounds (e.g., master horizon exceeds scenario length).
+    RollingInfeasibleError
+        If the solver name is unsupported or a subproblem fails basic feasibility checks.
+    """
 
     config = RollingHorizonConfig(
         scenario=scenario,
@@ -639,6 +836,7 @@ def solve_rolling_plan(
         sa_seed=sa_seed,
         mip_solver=mip_solver,
         mip_time_limit=mip_time_limit,
+        mip_solver_options=mip_solver_options,
     )
     return run_rolling_horizon(
         config,
@@ -683,3 +881,203 @@ def summarize_plan(result: RollingPlanResult) -> dict[str, object]:
         "metadata": result.metadata,
         "warnings": result.warnings or [],
     }
+
+
+def rolling_assignments_dataframe(
+    result: RollingPlanResult,
+    *,
+    include_metadata: bool = False,
+) -> pd.DataFrame:
+    """Return locked assignments as a DataFrame for playback/KPI workflows.
+
+    Parameters
+    ----------
+    result :
+        Rolling plan output produced by :func:`run_rolling_horizon` or :func:`solve_rolling_plan`.
+    include_metadata :
+        When ``True`` append run metadata (scenario, horizons, solver label) to each row so exports
+        remain self-describing.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Columns include ``machine_id``, ``block_id``, ``day``, and optionally the metadata keys.
+
+    Notes
+    -----
+    The resulting frame can be passed directly to :func:`fhops.evaluation.compute_kpis` or
+    :func:`fhops.evaluation.playback.run_playback` to evaluate the rolling plan in the same way as a
+    monolithic solve. Shift identifiers default to ``\"S1\"`` downstream when omitted.
+    """
+
+    metadata = result.metadata or {}
+    meta_keys = [
+        "scenario",
+        "solver",
+        "master_days",
+        "subproblem_days",
+        "lock_days",
+        "start_day",
+    ]
+    rows: list[dict[str, object]] = []
+    for lock in result.locked_assignments:
+        row: dict[str, object] = {
+            "machine_id": lock.machine_id,
+            "block_id": lock.block_id,
+            "day": lock.day,
+        }
+        if include_metadata:
+            for key in meta_keys:
+                if key in metadata:
+                    row[key] = metadata[key]
+        rows.append(row)
+
+    columns = ["machine_id", "block_id", "day", "assigned"] + (
+        meta_keys if include_metadata else []
+    )
+    if not rows:
+        return pd.DataFrame(columns=columns)
+
+    frame = pd.DataFrame(rows)
+    frame["assigned"] = 1
+    return (
+        frame.reindex(columns=columns, fill_value=None)
+        .sort_values(["day", "machine_id", "block_id"])
+        .reset_index(drop=True)
+    )
+
+
+def compute_rolling_kpis(
+    scenario: Scenario | Problem,
+    result: RollingPlanResult | pd.DataFrame | Sequence[ScheduleLock],
+    *,
+    baseline_assignments: pd.DataFrame | Sequence[ScheduleLock] | None = None,
+) -> RollingKPIComparison:
+    """Compute KPI totals for a rolling plan and compare them to an optional baseline.
+
+    Parameters
+    ----------
+    scenario :
+        Scenario or :class:`fhops.scenario.contract.Problem` describing the planning horizon. The
+        helper converts it to a :class:`Problem` for KPI evaluation when necessary.
+    result :
+        Rolling plan output returned by :func:`solve_rolling_plan`, or a DataFrame/``ScheduleLock``
+        sequence of locked assignments exported by the CLI (columns: ``machine_id``, ``block_id``,
+        ``day`` and optional ``shift_id``).
+    baseline_assignments :
+        Optional baseline schedule (full-horizon MILP/SA run) supplied as a Pandas DataFrame or
+        sequence of :class:`fhops.scenario.contract.models.ScheduleLock` rows. Required columns
+        mirror the rolling assignments (``machine_id``, ``block_id``, ``day`` and optional
+        ``shift_id``). When omitted, delta fields remain ``None``.
+
+    Returns
+    -------
+    RollingKPIComparison
+        Bundle containing ``rolling_assignments`` (DataFrame), ``rolling_kpis`` and
+        ``baseline_kpis`` (when provided), and ``delta_totals`` containing ``<metric>_delta`` and
+        ``<metric>_pct_delta`` entries for numeric KPIs.
+
+    Raises
+    ------
+    ValueError
+        If the rolling plan does not contain any locked assignments.
+    TypeError
+        If ``baseline_assignments`` is not a DataFrame or sequence of ``ScheduleLock`` entries.
+
+    Examples
+    --------
+    >>> from fhops.planning import solve_rolling_plan, compute_rolling_kpis
+    >>> scenario = load_scenario(\"examples/tiny7/scenario.yaml\")
+    >>> rolling = solve_rolling_plan(scenario, master_days=7, subproblem_days=7, lock_days=7)
+    >>> comparison = compute_rolling_kpis(scenario, rolling)
+    >>> comparison.rolling_kpis[\"total_production\"]
+    5000.0  # example value
+    """
+
+    baseline_df = _normalize_assignments_input(baseline_assignments)
+    if isinstance(result, RollingPlanResult):
+        if not result.locked_assignments:
+            raise ValueError("Rolling plan contains no locked assignments; cannot compute KPIs.")
+        rolling_assignments = rolling_assignments_dataframe(result, include_metadata=False)
+    else:
+        rolling_assignments = _normalize_assignments_input(result)
+        if rolling_assignments is None:
+            raise ValueError("Rolling plan contains no locked assignments; cannot compute KPIs.")
+
+    problem = scenario if isinstance(scenario, Problem) else Problem.from_scenario(scenario)
+    rolling_kpis = compute_kpis(problem, rolling_assignments)
+    baseline_kpis: KPIResult | None = None
+    if baseline_df is not None:
+        baseline_kpis = compute_kpis(problem, baseline_df)
+
+    delta_totals = None
+    if baseline_kpis is not None:
+        delta_totals = _compute_kpi_deltas(rolling_kpis, baseline_kpis)
+
+    return RollingKPIComparison(
+        rolling_assignments=rolling_assignments,
+        rolling_kpis=rolling_kpis,
+        baseline_assignments=baseline_df,
+        baseline_kpis=baseline_kpis,
+        delta_totals=delta_totals,
+    )
+
+
+def _compute_kpi_deltas(current: KPIResult, baseline: KPIResult) -> dict[str, float]:
+    current_numeric = _numeric_totals(current)
+    baseline_numeric = _numeric_totals(baseline)
+    shared_keys = current_numeric.keys() & baseline_numeric.keys()
+    deltas: dict[str, float] = {}
+    for key in sorted(shared_keys):
+        current_value = current_numeric[key]
+        baseline_value = baseline_numeric[key]
+        delta = current_value - baseline_value
+        deltas[f"{key}_delta"] = delta
+        if baseline_value != 0:
+            deltas[f"{key}_pct_delta"] = delta / baseline_value
+    return deltas
+
+
+def _numeric_totals(kpi: KPIResult) -> dict[str, float]:
+    totals: dict[str, float] = {}
+    for key, value in kpi.to_dict().items():
+        if isinstance(value, Number):
+            totals[key] = float(value)
+    return totals
+
+
+def _normalize_assignments_input(
+    assignments: pd.DataFrame | Sequence[ScheduleLock] | None,
+) -> pd.DataFrame | None:
+    """Return a DataFrame representation of assignments or ``None`` when empty."""
+
+    if assignments is None:
+        return None
+    if isinstance(assignments, pd.DataFrame):
+        if assignments.empty:
+            return None
+        missing = {"machine_id", "block_id", "day"} - set(assignments.columns)
+        if missing:
+            raise ValueError(
+                "assignments dataframe missing required columns: " + ", ".join(sorted(missing))
+            )
+        return assignments.copy()
+    if isinstance(assignments, Sequence):
+        locks = list(assignments)
+        if not locks:
+            return None
+        if not all(isinstance(lock, ScheduleLock) for lock in locks):
+            raise TypeError(
+                "Sequence baseline input must contain fhops.scenario.contract.ScheduleLock entries"
+            )
+        return rolling_assignments_dataframe(
+            RollingPlanResult(
+                locked_assignments=list(locks),
+                iteration_summaries=[],
+                metadata={},
+            ),
+            include_metadata=False,
+        )
+    raise TypeError(
+        "assignments input must be a pandas.DataFrame or a sequence of ScheduleLock entries"
+    )

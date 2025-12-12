@@ -1,0 +1,7 @@
+metric,rolling,baseline,delta,pct_delta,baseline_label,config
+total_production,5774.293365999998,,,,,gurobi_42_21_7
+mobilisation_cost,319.44,,,,,gurobi_42_21_7
+utilisation_ratio_mean_day,0.082010582010582,,,,,gurobi_42_21_7
+total_production,5774.293365999998,,,,,gurobi_42_14_7
+mobilisation_cost,319.44,,,,,gurobi_42_14_7
+utilisation_ratio_mean_day,0.082010582010582,,,,,gurobi_42_14_7

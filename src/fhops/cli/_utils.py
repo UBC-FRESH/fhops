@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+import typer
+
 OPERATOR_PRESETS: dict[str, dict[str, float]] = {
     "balanced": {
         "swap": 1.0,
@@ -137,6 +139,42 @@ def parse_objective_weight_overrides(weight_args: Sequence[str] | None) -> dict[
     return overrides
 
 
+def coerce_solver_option_value(raw_value: str) -> object:
+    """Attempt to coerce solver option values into bool/int/float; fallback to string."""
+
+    value = raw_value.strip()
+    if not value:
+        return ""
+    lowered = value.lower()
+    if lowered in {"true", "false"}:
+        return lowered == "true"
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        return value
+
+
+def parse_solver_options(option_args: Sequence[str] | None) -> dict[str, object]:
+    """Parse ``name=value`` solver options supplied via the CLI."""
+
+    parsed: dict[str, object] = {}
+    if not option_args:
+        return parsed
+    for entry in option_args:
+        if "=" not in entry:
+            raise typer.BadParameter(f"Solver options must be key=value (got '{entry}')")
+        key, raw_value = entry.split("=", 1)
+        key = key.strip()
+        if not key:
+            raise typer.BadParameter(f"Solver option missing name in '{entry}'")
+        parsed[key] = coerce_solver_option_value(raw_value)
+    return parsed
+
+
 def resolve_operator_presets(presets: Sequence[str] | None):
     """Resolve preset names into a list of operators and weight mapping."""
     if not presets:
@@ -182,4 +220,6 @@ __all__ = [
     "operator_preset_help",
     "format_operator_presets",
     "OPERATOR_PRESETS",
+    "parse_solver_options",
+    "coerce_solver_option_value",
 ]

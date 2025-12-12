@@ -1,3 +1,47 @@
+# 2025-12-12 — Rolling docs polish and CLI solver options
+- Added solver-option parsing to `fhops plan rolling`, persisted MILP solver metadata in rolling summaries, exported `comparison_dataframe` from `fhops.planning`, and allowed `compute_rolling_kpis` to consume CLI assignment DataFrames. Added CLI coverage for `--mip-solver-option`.
+- Expanded rolling how-to (Gurobi threads example, artefact regeneration steps), quickstart rolling loop, API reference notes on `mip_solver_options`, shift-aware quickstart/CLI guidance, and developer onboarding/debugging guidance in `docs/contributing.rst`. Documented rolling artefact provenance and updated `notes/docs-plan.md` / `notes/rolling_horizon_plan.md` to reflect completed tasks, including the docstring/API sweep.
+- Commands executed:
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/ruff check src/fhops/planning/rolling.py`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/mypy src` *(rerun after docstring updates)*
+  - `.venv/bin/pytest tests/planning/test_rolling_evaluation.py tests/planning/test_rolling_reporting.py tests/planning/test_rolling_core.py tests/cli/test_planning_cli.py`
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs _build/html -W`
+  - *Full suite not rerun this pass; prior runs time out. Targeted rolling/CLI tests executed above.*
+
+# 2025-12-10 — Rolling KPI helpers and doc updates
+- Added rolling evaluation helpers (`rolling_assignments_dataframe`, `compute_rolling_kpis`, and refreshed `planning.reporting`) plus CLI wiring so `fhops plan rolling --out-assignments` emits playback-ready CSVs with metadata.
+- Documented the new evaluation workflow in `docs/howto/rolling_horizon.rst` (including MASc plotting skeletons), updated the planning package exports/docs, and added regression tests covering KPI comparisons and assignment exports.
+- Generated tiny7 and med42 MASc comparison tables/plots: `docs/assets/rolling/masc_comparison_tiny7.{csv,png}` (SA baseline 7/7/7 vs. 7/5/3 and 7/4/2, 300 iters, seed=99) and `docs/assets/rolling/masc_comparison_med42.{csv,png}` (Gurobi, 64 threads, 10 s caps on baseline/rolling). Med42 runs report aborted-with-solution due to the aggressive cap; rerun with longer budgets for publication-ready gaps.
+- Updated `notes/rolling_horizon_plan.md` to mark evaluation doc guidance done and leave MASc comparative experiments/plots as the remaining follow-up.
+- Commands executed:
+  - `python - <<'PY' ...` (generate tiny7 rolling vs. baseline comparison CSV/PNG)
+  - `python - <<'PY' ...` (generate med42 rolling vs. baseline comparison with Gurobi Threads=64, 10 s caps)
+  - `.venv/bin/pytest tests/planning/test_rolling_evaluation.py tests/planning/test_rolling_reporting.py tests/planning/test_rolling_core.py tests/cli/test_planning_cli.py`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src/fhops/planning/rolling.py src/fhops/planning/reporting.py src/fhops/planning/__init__.py --fix`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest` *(times out locally after ~10 minutes; exits 124 while progressing through suite)*
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs _build/html -W`
+
+# 2025-12-10 — Planning API docs and docstring sweep
+- Added a planning API reference page (`docs/api/fhops.planning.rst`), linked it into the API toctree, and expanded rolling-horizon docstrings so Python callers see horizon/lock metadata and solver hook semantics in the rendered docs.
+- Updated `notes/rolling_horizon_plan.md` to mark the core/CLI/telemetry phases complete and capture the remaining evaluation/reporting follow-ups.
+- Full `pytest` still times out locally after ~15 minutes; targeted rolling CLI/core tests pass and Sphinx now builds cleanly with the new API page.
+- Commands executed:
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest` *(times out locally after ~15 minutes; exits 124 while progressing through suite)*
+  - `.venv/bin/pytest tests/planning/test_rolling_core.py tests/cli/test_planning_cli.py`
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs _build/html -W`
+
 # 2025-12-10 — Rolling-horizon how-to correction
 - Updated the rolling-horizon how-to examples to fit the med42 horizon (42-day master with 21/7 sub/lock for SA and MIP) and reiterated the `master_days <= Scenario.num_days` requirement to prevent user-facing errors.
 - Commands executed:

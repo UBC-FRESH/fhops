@@ -33,6 +33,7 @@ from fhops.cli._utils import (
     operator_preset_help,
     parse_objective_weight_overrides,
     parse_operator_weights,
+    parse_solver_options,
 )
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.dataset import dataset_app
@@ -122,42 +123,6 @@ def _ensure_kpi_dict(kpis: Any) -> dict[str, Any]:
     if hasattr(kpis, "to_dict") and callable(kpis.to_dict):
         return dict(kpis.to_dict())
     return dict(kpis or {})
-
-
-def _coerce_solver_option_value(raw_value: str) -> object:
-    """Attempt to coerce solver option values into bool/int/float; fallback to string."""
-
-    value = raw_value.strip()
-    if not value:
-        return ""
-    lowered = value.lower()
-    if lowered in {"true", "false"}:
-        return lowered == "true"
-    try:
-        return int(value)
-    except ValueError:
-        pass
-    try:
-        return float(value)
-    except ValueError:
-        return value
-
-
-def _parse_solver_options(option_args: Sequence[str] | None) -> dict[str, object]:
-    """Parse ``name=value`` solver options supplied via the CLI."""
-
-    parsed: dict[str, object] = {}
-    if not option_args:
-        return parsed
-    for entry in option_args:
-        if "=" not in entry:
-            raise typer.BadParameter(f"Solver options must be key=value (got '{entry}')")
-        key, raw_value = entry.split("=", 1)
-        key = key.strip()
-        if not key:
-            raise typer.BadParameter(f"Solver option missing name in '{entry}'")
-        parsed[key] = _coerce_solver_option_value(raw_value)
-    return parsed
 
 
 def _format_metric_value(value: Any) -> Any:
@@ -616,7 +581,7 @@ def solve_mip_operational_cmd(
     if scenario is None and bundle_json is None:
         raise typer.BadParameter("Provide either a scenario path or --bundle-json.")
 
-    parsed_solver_options = _parse_solver_options(solver_option)
+    parsed_solver_options = parse_solver_options(solver_option)
 
     pb: Problem | None = None
     bundle = None
