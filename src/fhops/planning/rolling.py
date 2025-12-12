@@ -995,14 +995,16 @@ def compute_rolling_kpis(
     """
 
     baseline_df = _normalize_assignments_input(baseline_assignments)
+    rolling_assignments: pd.DataFrame | None
     if isinstance(result, RollingPlanResult):
         if not result.locked_assignments:
             raise ValueError("Rolling plan contains no locked assignments; cannot compute KPIs.")
         rolling_assignments = rolling_assignments_dataframe(result, include_metadata=False)
     else:
         rolling_assignments = _normalize_assignments_input(result)
-        if rolling_assignments is None:
-            raise ValueError("Rolling plan contains no locked assignments; cannot compute KPIs.")
+
+    if rolling_assignments is None:
+        raise ValueError("Rolling plan contains no locked assignments; cannot compute KPIs.")
 
     problem = scenario if isinstance(scenario, Problem) else Problem.from_scenario(scenario)
     rolling_kpis = compute_kpis(problem, rolling_assignments)
