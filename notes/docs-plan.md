@@ -1,6 +1,6 @@
 # Documentation Plan (FHOPS)
 
-Date: 2025-12-12  
+Date: 2025-12-12
 Status: Working draft — replaces `cli_docs_plan.md` and `pr_note_mip_warm_start_docs.md` as the consolidated docs roadmap.
 
 ## Objectives
