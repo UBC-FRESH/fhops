@@ -44,50 +44,7 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
 \textbf{Outputs.} Each solver/tuning run produces a summary (objective, runtime, assignments), per-iteration telemetry, and optional playback/cost reports through the standard FHOPS CLI. Users control the destination via \texttt{--out-dir} and related flags—e.g., `fhops bench suite --scenario examples/med42/scenario.yaml --out-dir docs/softwarex/assets/data/benchmarks/med42 --telemetry-log ...`—so assets can be archived, compared, or re-ingested by downstream tools. These same artifacts underpin the illustrative example in Section~\ref{sec:illustrative-example}.
 
 \subsubsection*{Mixed-integer programming baseline}
-FHOPS’ deterministic core is a shift-based assignment model that captures production rewards, mobilisation penalties, landing capacity, and machine/shift calendars. The formulation is intentionally compact—reviewers can map each symbol to the data-contract fields in \texttt{Scenario.blocks}, \texttt{Scenario.machines}, \texttt{Scenario.landings}, and \texttt{Scenario.shifts}.
-
-\textbf{Sets and data.}
-\begin{itemize}
-  \item $B$ blocks, $M$ machines, $S$ shifts, $L$ landings.
-  \item $p_b$ – production reward (m$^3$ or value) for harvesting block $b$.
-  \item $c_{ml}$ – mobilisation cost for moving machine $m$ to landing $l$ (derived from the machine registry).
-  \item $t_{bms}$ – productive machine-hours required to harvest block $b$ with machine $m$ during shift $s$ (scenario productivity tables).
-  \item $h_{ms}$ – available machine-hours for $(m,s)$ after accounting for calendars and blackouts.
-  \item $a_{bl}$ – binary indicator that block $b$ is serviced from landing $l$.
-\end{itemize}
-
-\textbf{Decision variables.}
-\begin{align*}
-  x_{bms} &=
-    \begin{cases}
-      1 & \text{if block $b$ is harvested by machine $m$ in shift $s$,}\\
-      0 & \text{otherwise,}
-    \end{cases} \\
-  y_{mls} &=
-    \begin{cases}
-      1 & \text{if machine $m$ is staged at landing $l$ in shift $s$,}\\
-      0 & \text{otherwise.}
-    \end{cases}
-\end{align*}
-
-\textbf{Objective.}
-\begin{equation}
-  \max \sum_{b \in B} \sum_{m \in M} \sum_{s \in S} p_b \, x_{bms}
-       - \sum_{m \in M} \sum_{l \in L} \sum_{s \in S} c_{ml} \, y_{mls},
-  \label{eq:fhops-objective}
-\end{equation}
-which balances harvested volume against mobilisation costs (negative coefficients encode penalties when FHOPS is run in minimisation mode).
-
-\textbf{Constraints.}
-\begin{align}
-  \sum_{m \in M} \sum_{s \in S} x_{bms} &\le 1 && \forall b \in B, && \text{(each block harvested at most once)}, \label{eq:block-once}\\
-  \sum_{b \in B} t_{bms}\,x_{bms} &\le h_{ms} && \forall m \in M, \forall s \in S, && \text{(machine/shift capacity)}, \label{eq:machine-capacity}\\
-  \sum_{b \in B} a_{bl}\,x_{bms} &\le y_{mls} && \forall m \in M, \forall l \in L, \forall s \in S, && \text{(landing assignment activates mobilisation)}, \label{eq:landing-link}\\
-  \sum_{l \in L} y_{mls} &\le 1 && \forall m \in M, \forall s \in S, && \text{(one landing per machine per shift)}, \label{eq:landing-per-shift}\\
-  x_{bms}, y_{mls} &\in \{0,1\} && \forall b \in B, \forall m \in M, \forall l \in L, \forall s \in S. && \label{eq:integrality}
-\end{align}
-
-Optional constraint families (road congestion, landing throughput, multi-day sequencing) are toggled via scenario flags and map to additional rows in the data contract. When FHOPS invokes the MIP builder, the CLI logs the extracted tensors ($t_{bms}$, $h_{ms}$, etc.) alongside the model statistics so auditors can verify that \eqref{eq:block-once}–\eqref{eq:integrality} correspond to the published scenario bundle.
+\input{sections/includes/fhops_operational_formulation}
 
 FHOPS’ optimisation layers remain intentionally flexible. Both the MILP and heuristic objective functions evolve as new mobilisation penalties, shift rules, or KPI weights emerge; the architecture keeps these changes local so practitioners can fork a formulation, tweak a constraint, and rebuild a working CLI prototype within minutes. Active roadmap items include rolling-horizon re-solving (to scale the large84 stress case) and richer diagnostic hooks that expose solver deltas through the telemetry stack.
 

@@ -1,3 +1,29 @@
+# 2026-03-22 — Canonical operational MILP formulation sync (FHOPS + thesis chapter module)
+- Created the `feature/fhops-operational-formulation-sync` firewall branch and added a canonical formulation source module at `docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.md`, then generated synchronized outputs:
+  - `docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.tex`
+  - `docs/includes/softwarex/fhops_operational_formulation.rst`
+- Replaced the inline compact MIP block in `docs/softwarex/manuscript/sections/software_description.tex` with `\\input{sections/includes/fhops_operational_formulation}` so manuscript math is source-driven.
+- Added Sphinx how-to page `docs/howto/optimization_formulation.rst` and wired it into `docs/index.rst`.
+- Updated roadmap governance for this workstream:
+  - Added **Phase 5 — Formal Model Documentation Synchronization** in `ROADMAP.md`.
+  - Added a matching “Detailed Next Steps” item for canonical formulation synchronization.
+- Updated `docs/softwarex/manuscript/sections/includes/README.md` mapping table to register the new shared math module.
+- Added manuscript compatibility packages in `docs/softwarex/manuscript/fhops-softx.tex` (`longtable`, `array`, `calc`) for Pandoc-generated equation mapping tables.
+- Commands executed:
+  - `cd /home/gep/projects/fhops && git checkout -b feature/fhops-operational-formulation-sync`
+  - `python docs/softwarex/manuscript/scripts/export_docs_assets.py`
+  - `/home/gep/.venv/bin/ruff format src tests` *(reformatted two unrelated files; restored to avoid scope drift)*
+  - `/home/gep/.venv/bin/ruff check src tests` *(fails on pre-existing UP042 StrEnum modernization findings in non-touched files)*
+  - `/home/gep/.venv/bin/mypy src`
+  - `/home/gep/.venv/bin/pytest` *(initially failed for missing `optuna`/`pyomo`/`hypothesis`/HiGHS runtime; installed dependencies and reran to green)*
+  - `python -m pip install nbsphinx pyomo optuna hypothesis highspy`
+  - `/home/gep/.venv/bin/sphinx-build -b html docs _build/html -W`
+  - `/home/gep/.venv/bin/pre-commit run --all-files` *(initial run failed only because this changelog entry was missing)*
+  - `cd /home/gep/projects/fhops/docs/softwarex/manuscript && make pdf` *(failed: `latexmk` missing in environment)*
+- Notes:
+  - Full pytest now passes after dependency installation: `299 passed, 210 skipped`.
+  - Manuscript PDF compile remains unverified locally because `latexmk` is unavailable in this environment.
+
 # 2025-12-12 — Rolling docs polish and CLI solver options
 - Added solver-option parsing to `fhops plan rolling`, persisted MILP solver metadata in rolling summaries, exported `comparison_dataframe` from `fhops.planning`, and allowed `compute_rolling_kpis` to consume CLI assignment DataFrames. Added CLI coverage for `--mip-solver-option`.
 - Expanded rolling how-to (Gurobi threads example, artefact regeneration steps), quickstart rolling loop, API reference notes on `mip_solver_options`, shift-aware quickstart/CLI guidance, and developer onboarding/debugging guidance in `docs/contributing.rst`. Documented rolling artefact provenance and updated `notes/docs-plan.md` / `notes/rolling_horizon_plan.md` to reflect completed tasks, including the docstring/API sweep.
