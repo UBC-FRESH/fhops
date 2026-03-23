@@ -21,6 +21,7 @@ ensembles.
    howto/benchmarks
    howto/heuristic_presets
    howto/mip_warm_starts
+   howto/optimization_formulation
    howto/parallel_heuristics
    howto/evaluation
    howto/thesis_eval

@@ -119,6 +119,12 @@ before proposing new work.
 - [x] Versioned release notes and public roadmap updates (`docs/releases/v1.0.0-alpha1.md`, `docs/releases/v0.1.0.md`, `ROADMAP.md` current).
 - [ ] Outreach plan (blog, seminars, partner briefings).
 
+## Phase 5 — Formal Model Documentation Synchronization
+- [ ] Publish the operational MILP formulation as a canonical source module shared across manuscript and docs.
+- [ ] Keep SoftwareX manuscript, Sphinx how-to docs, and thesis chapter text synchronized from one formulation source.
+- [ ] Maintain an equation-to-code traceability table (`operational.py` and `data.py` mapping).
+- [ ] Add a regression check ensuring formulation assets regenerate cleanly (`export_docs_assets.py` + docs build).
+
 ## Detailed Next Steps
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
    - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
@@ -155,6 +161,10 @@ before proposing new work.
     - Build a rolling-horizon orchestration layer (scenario slicing, lock-in state, iterative solve loop) so FHOPS can emit multi-month “locked” plans from tractable subproblems.
     - Expose both CLI (`fhops plan rolling`) and Python API helpers, starting with planning machinery (SA baseline) and deferring evaluation/reporting to a later phase.
     - Log per-iteration telemetry so MASc-led studies can quantify suboptimality vs. full-horizon baselines once the planning engine stabilizes.
+12. **Operational MILP Formulation Sync (`docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.md`)**
+    - Keep the canonical operational MILP formulation synchronized across SoftwareX manuscript, Sphinx docs (`docs/howto/optimization_formulation.rst`), and thesis chapter integration assets.
+    - Preserve code-to-equation traceability against `src/fhops/model/milp/operational.py` and `src/fhops/model/milp/data.py`.
+    - Add lightweight regeneration/build checks to catch drift between Markdown source and generated `.tex`/`.rst` includes.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
