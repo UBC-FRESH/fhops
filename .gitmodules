@@ -1,0 +1,4 @@
+[submodule "docs/softwarex"]
+	path = docs/softwarex
+	url = https://github.com/UBC-FRESH/fhops-manuscript.git
+	branch = main
