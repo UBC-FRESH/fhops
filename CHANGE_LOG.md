@@ -1,3 +1,46 @@
+# 2026-06-14 — v1.0.0 release surface audit
+- Started the `issue-19-release-surface-audit` branch for #19 under the v1.0.0 GA release issue tree.
+- Audited GitHub releases, tags, release-build runs, Pages configuration, current CI state, and repeated full analytics notebook failures before final publication.
+- Recorded the public release-surface findings and release-day checklist in `notes/release_surface_audit.md`.
+- Chose to annotate the confusing `v0.0.1-alpha3` prerelease instead of deleting historical GitHub release/tag artifacts before GA publication.
+- Triggered the manual `Release Build Verification` workflow against `main` to validate the current tag-build path without creating a throwaway tag; the run exposed the same `hatch run release:build` failure as `v0.0.1-alpha3`.
+- Fixed `.github/workflows/release-build.yml` to run `hatch clean && hatch build` directly, matching the release playbook and successful local artifact-smoke commands; the corrected branch workflow-dispatch run succeeded and uploaded `dist/` artifacts.
+- Hardened the weekly full analytics artifact collection step so missing notebook metadata fails with an explicit diagnostic and retained history pruning no longer depends on shell pipeline edge cases.
+- Updated `AGENTS.md`, `ROADMAP.md`, `notes/release_candidate_prep.md`, `notes/release_notes_draft.md`, and `notes/metaheuristic_hyperparam_tuning.md` with the issue #19 audit status.
+- Commands executed:
+  - `git checkout main && git pull --ff-only && git checkout -b issue-19-release-surface-audit`
+  - `gh release list --limit 20`
+  - `gh api repos/UBC-FRESH/fhops/pages --jq '{status: .status, html_url: .html_url, source: .source, build_type: .build_type, public: .public}'`
+  - `gh run list --limit 30 --json databaseId,workflowName,displayTitle,status,conclusion,createdAt,headBranch,event,url`
+  - `git tag --sort=-creatordate | sed -n '1,30p' && git show-ref --tags | sed -n '1,80p'`
+  - `gh run view 24542056488 --json name,displayTitle,event,headBranch,conclusion,createdAt,url,jobs`
+  - `gh run view 22052621554 --json name,displayTitle,event,headBranch,conclusion,createdAt,url,jobs`
+  - `gh issue view 19 --json number,title,state,body,url,labels`
+  - `gh release view v0.0.1-alpha3 --json tagName,name,isDraft,isPrerelease,publishedAt,targetCommitish,body,url && gh release view v0.0.2 --json tagName,name,isDraft,isPrerelease,publishedAt,targetCommitish,body,url`
+  - `gh api repos/UBC-FRESH/fhops/releases/latest --jq '{tag_name: .tag_name, name: .name, prerelease: .prerelease, draft: .draft, published_at: .published_at, html_url: .html_url}'`
+  - `git show --no-patch --format='v0.0.1-alpha3 %H %ad %s' --date=iso-strict v0.0.1-alpha3 && git show --no-patch --format='v0.0.2 %H %ad %s' --date=iso-strict v0.0.2 && git show v0.0.1-alpha3:src/fhops/__init__.py | sed -n '1,40p'`
+  - `gh run list --workflow 'Release Build Verification' --limit 10 --json databaseId,displayTitle,status,conclusion,createdAt,headBranch,event,url`
+  - `gh run view 22052621554 --job 63713682709 --log | sed -n '/Collect notebook artefacts/,/Upload full notebook artefacts/p'` (failed because GitHub returned HTTP 410 for expired logs)
+  - `gh workflow run release-build.yml --ref main && sleep 3 && gh run list --workflow 'Release Build Verification' --limit 3 --json databaseId,displayTitle,status,conclusion,createdAt,headBranch,event,url`
+  - `gh run view 27511910006 --job 81313421305 --log | sed -n '/Build package/,/Upload dist artifacts/p'`
+  - `tmpfile=$(mktemp); printf '%s\n\n' '> **Release-surface note (2026-06-14):** This prerelease is retained for provenance only. It is superseded by the v1.0.0 GA release-preparation path; the tagged source still reports the alpha package line (\`fhops.__version__ = "1.0.0a2"\`) and should not be treated as the current stable FHOPS release.' > "$tmpfile"; gh release view v0.0.1-alpha3 --json body --jq .body >> "$tmpfile"; gh release edit v0.0.1-alpha3 --notes-file "$tmpfile"; rm "$tmpfile"; gh release view v0.0.1-alpha3 --json body --jq .body | sed -n '1,12p'`
+  - `.venv/bin/hatch clean && .venv/bin/hatch build`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest` (301 passed, 210 skipped, 61 warnings)
+  - `.venv/bin/pre-commit run --all-files`
+  - `PANDOC_DIR=$(.venv/bin/python - <<'PY'
+from pathlib import Path
+import pypandoc
+print(Path(pypandoc.get_pandoc_path()).parent)
+PY
+); PATH="$PANDOC_DIR:$PATH" .venv/bin/sphinx-build -b html docs _build/html -W`
+  - `.venv/bin/pre-commit run --all-files` (rerun after changelog update)
+  - `git push -u origin issue-19-release-surface-audit`
+  - `gh workflow run release-build.yml --ref issue-19-release-surface-audit && sleep 5 && gh run list --workflow 'Release Build Verification' --branch issue-19-release-surface-audit --limit 3 --json databaseId,displayTitle,status,conclusion,createdAt,headBranch,event,url`
+  - `sleep 20 && gh run view 27512093324 --json status,conclusion,url,jobs`
+
 # 2026-06-14 — v1.0.0 artifact smoke install and package data audit
 - Started the `issue-18-v100-artifact-smoke` branch for #18 under the v1.0.0 GA release issue tree.
 - Rebuilt final `fhops-1.0.0` sdist/wheel artifacts and audited archive contents before publication.

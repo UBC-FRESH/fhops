@@ -73,19 +73,36 @@ jobs:
 
       - name: Collect notebook artefacts
         run: |
+          set -euo pipefail
           timestamp="$(date -u +"%Y-%m-%dT%H%M%SZ")"
           out_dir="tmp/analytics-notebooks"
           history_root="$out_dir/history"
           run_dir="$history_root/$timestamp"
+          metadata_file="docs/examples/analytics/data/notebook_metadata.json"
+
+          if [ ! -s "$metadata_file" ]; then
+            echo "::error file=$metadata_file::Notebook metadata was not produced by scripts/run_analytics_notebooks.py"
+            find docs/examples/analytics/data -maxdepth 2 -type f | sort || true
+            exit 1
+          fi
+
           mkdir -p "$run_dir"
-          cp docs/examples/analytics/data/notebook_metadata.json "$out_dir/notebook_metadata_latest.json"
-          cp docs/examples/analytics/data/notebook_metadata.json "$run_dir/notebook_metadata.json"
+          cp "$metadata_file" "$out_dir/notebook_metadata_latest.json"
+          cp "$metadata_file" "$run_dir/notebook_metadata.json"
           tar -czf "$run_dir/notebooks.tar.gz" docs/examples/analytics/*.ipynb
           if [ -d "$history_root" ]; then
-            cd "$history_root"
-            ls -1 | sort | head -n -4 | xargs -r -d '\n' rm -rf
+            python - "$history_root" <<'PY'
+          import shutil
+          import sys
+          from pathlib import Path
+
+          history_root = Path(sys.argv[1])
+          runs = sorted(path for path in history_root.iterdir() if path.is_dir())
+          for stale_run in runs[:-4]:
+              shutil.rmtree(stale_run)
+          PY
           fi
-          ls -R "$out_dir"
+          find "$out_dir" -maxdepth 4 -type f | sort
 
       - name: Upload full notebook artefacts
         uses: actions/upload-artifact@v4

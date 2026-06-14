@@ -132,6 +132,7 @@ before proposing new work.
    - 2026-06-14: second child branch (`issue-16-v100-version-docs`) bumps package metadata/docs to the final `1.0.0` release line before artifact and publication work.
    - 2026-06-14: third child branch (`issue-17-softwarex-v100-metadata`) aligns in-repo SoftwareX manuscript metadata/prose with the final `v1.0.0` release links and install path.
    - 2026-06-14: fourth child branch (`issue-18-v100-artifact-smoke`) validates final `1.0.0` artifacts, fixes clean wheel runtime dependencies/package data, moves the full-text reference-document vault to a private `reference-documents` submodule for copyright-risk control, and records the public-bibliography vs. private-source-document content policy.
+   - 2026-06-14: fifth child branch (`issue-19-release-surface-audit`) audits public release surfaces, annotates the confusing `v0.0.1-alpha3` prerelease, fixes the manual release-build path, and hardens the full analytics notebook artifact workflow before the final publication issue.
 2. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
    - Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness (including shift-aware neighbourhoods).
 3. **Shift-Based Scheduling Refactor (`notes/modular_reorg_plan.md`, `notes/mip_model_plan.md`, `notes/simulation_eval_plan.md`)**

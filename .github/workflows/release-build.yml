@@ -28,7 +28,7 @@ jobs:
           pip install hatch
 
       - name: Build package
-        run: hatch run release:build
+        run: hatch clean && hatch build
 
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
