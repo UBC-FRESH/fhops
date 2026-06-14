@@ -6,7 +6,7 @@ import json
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from functools import cache
 from pathlib import Path
 from typing import Any, Literal, TypeVar, cast
@@ -752,7 +752,7 @@ KNOWN_DATASETS: dict[str, DatasetRef] = {
 }
 
 
-class ProductivityMachineRole(str, Enum):
+class ProductivityMachineRole(StrEnum):
     """Machine roles supported by the productivity command."""
 
     FELLER_BUNCHER = "feller_buncher"
@@ -766,7 +766,7 @@ class ProductivityMachineRole(str, Enum):
     HELICOPTER_LONGLINE = "helicopter_longline"
 
 
-class ShovelSlopeClass(str, Enum):
+class ShovelSlopeClass(StrEnum):
     """Slope direction buckets used by shovel logging presets."""
 
     DOWNHILL = "downhill"
@@ -774,14 +774,14 @@ class ShovelSlopeClass(str, Enum):
     UPHILL = "uphill"
 
 
-class ShovelBunching(str, Enum):
+class ShovelBunching(StrEnum):
     """Bunching assumptions for shovel logging datasets."""
 
     FELLER_BUNCHED = "feller_bunched"
     HAND_SCATTERED = "hand_scattered"
 
 
-class CTLHarvesterModel(str, Enum):
+class CTLHarvesterModel(StrEnum):
     """CTL harvester regressions."""
 
     ADV6N10 = "adv6n10"
@@ -790,14 +790,14 @@ class CTLHarvesterModel(str, Enum):
     KELLOGG1994 = "kellogg1994"
 
 
-class CableSkiddingModel(str, Enum):
+class CableSkiddingModel(StrEnum):
     """Ünver-Okan cable skidding regressions."""
 
     UNVER_SPSS = "unver-spss"
     UNVER_ROBUST = "unver-robust"
 
 
-class GrappleYarderModel(str, Enum):
+class GrappleYarderModel(StrEnum):
     """Supported grapple yarder regressions."""
 
     SR54 = "sr54"
@@ -1105,7 +1105,7 @@ def _estimate_tn98_manual_falling(species: str, dbh_cm: float) -> dict[str, Any]
     }
 
 
-class SkylineProductivityModel(str, Enum):
+class SkylineProductivityModel(StrEnum):
     """Supported skyline productivity regressions."""
 
     LEE_UPHILL = "lee-uphill"
@@ -1184,7 +1184,7 @@ def _skyline_cost_role(model: SkylineProductivityModel) -> str | None:
     return _SKYLINE_COST_ROLES.get(model)
 
 
-class RoadsideProcessorModel(str, Enum):
+class RoadsideProcessorModel(StrEnum):
     """Supported roadside processor regressions exposed through the CLI dataset helpers."""
 
     BERRY2019 = "berry2019"
@@ -1217,14 +1217,14 @@ _AUTOMATIC_BUCKING_SUPPORTED_MODELS = {
 }
 
 
-class ADV5N6StemSource(str, Enum):
+class ADV5N6StemSource(StrEnum):
     """Stem origin used by the ADV5N6 processor presets."""
 
     LOADER_FORWARDED = "loader_forwarded"
     GRAPPLE_YARDED = "grapple_yarded"
 
 
-class ADV5N6ProcessingMode(str, Enum):
+class ADV5N6ProcessingMode(StrEnum):
     """Processing deck modes for ADV5N6 coastal scenarios."""
 
     COLD = "cold"
@@ -1232,14 +1232,14 @@ class ADV5N6ProcessingMode(str, Enum):
     LOW_VOLUME = "low_volume"
 
 
-class ADV7N3Machine(str, Enum):
+class ADV7N3Machine(StrEnum):
     """ADV7N3 processor machines modelled in the dataset."""
 
     HYUNDAI_210 = "hyundai_210"
     JOHN_DEERE_892 = "john_deere_892"
 
 
-class TN103Scenario(str, Enum):
+class TN103Scenario(StrEnum):
     """TN-103 Caterpillar DL221 case-study scenarios."""
 
     AREA_A = "area_a_feller_bunched"
@@ -1248,7 +1248,7 @@ class TN103Scenario(str, Enum):
     COMBINED_HIGH_UTIL = "combined_high_util"
 
 
-class TR106Scenario(str, Enum):
+class TR106Scenario(StrEnum):
     """TR-106 lodgepole pine processor scenarios."""
 
     CASE1187_OCTNOV = "case1187_octnov"
@@ -1258,7 +1258,7 @@ class TR106Scenario(str, Enum):
     KP40_CAT_EL180 = "kp40_caterpillar_el180"
 
 
-class TR87Scenario(str, Enum):
+class TR87Scenario(StrEnum):
     """TR-87 Timberjack TJ90 observe/test scenarios."""
 
     DAY_SHIFT = "tj90_day_shift"
@@ -1268,7 +1268,7 @@ class TR87Scenario(str, Enum):
     BOTH_PROCESSORS_WAIT_ADJUSTED = "tj90_both_processors_wait_adjusted"
 
 
-class TN166Scenario(str, Enum):
+class TN166Scenario(StrEnum):
     """TN-166 telescopic-boom processor scenarios."""
 
     GRAPPLE_YARDED = "grapple_yarded"
@@ -1276,28 +1276,28 @@ class TN166Scenario(str, Enum):
     MIXED_SHIFT = "mixed_shift"
 
 
-class LabelleProcessorSpecies(str, Enum):
+class LabelleProcessorSpecies(StrEnum):
     """Species covered by the Labelle hardwood processor regressions."""
 
     SPRUCE = "spruce"
     BEECH = "beech"
 
 
-class LabelleProcessorTreatment(str, Enum):
+class LabelleProcessorTreatment(StrEnum):
     """Silviculture treatments used in Labelle et al. studies."""
 
     CLEAR_CUT = "clear_cut"
     SELECTIVE_CUT = "selective_cut"
 
 
-class Labelle2016TreeForm(str, Enum):
+class Labelle2016TreeForm(StrEnum):
     """Tree-form classes from Labelle et al. (2016)."""
 
     ACCEPTABLE = "acceptable"
     UNACCEPTABLE = "unacceptable"
 
 
-class Labelle2017Variant(str, Enum):
+class Labelle2017Variant(StrEnum):
     """Polynomial/power variants published in Labelle et al. (2017)."""
 
     POLY1 = "poly1"
@@ -1306,7 +1306,7 @@ class Labelle2017Variant(str, Enum):
     POWER2 = "power2"
 
 
-class Labelle2018Variant(str, Enum):
+class Labelle2018Variant(StrEnum):
     """Labelle et al. (2018) beech/spruce regression variants."""
 
     RW_POLY1 = "rw_poly1"
@@ -1315,21 +1315,21 @@ class Labelle2018Variant(str, Enum):
     CT_POLY2 = "ct_poly2"
 
 
-class ProcessorCarrier(str, Enum):
+class ProcessorCarrier(StrEnum):
     """Carrier classes for processor regressions (purpose-built vs excavator)."""
 
     PURPOSE_BUILT = "purpose_built"
     EXCAVATOR = "excavator"
 
 
-class SpinelliOperation(str, Enum):
+class SpinelliOperation(StrEnum):
     """Operation type for Spinelli et al. (2010) processors."""
 
     HARVEST = "harvest"
     PROCESS = "process"
 
 
-class SpinelliStandType(str, Enum):
+class SpinelliStandType(StrEnum):
     """Stand types captured in the Spinelli et al. dataset."""
 
     FOREST = "forest"
@@ -1337,7 +1337,7 @@ class SpinelliStandType(str, Enum):
     COPPICE = "coppice"
 
 
-class SpinelliCarrier(str, Enum):
+class SpinelliCarrier(StrEnum):
     """Carrier types used in Spinelli et al. (2010)."""
 
     PURPOSE_BUILT = "purpose_built"
@@ -1346,14 +1346,14 @@ class SpinelliCarrier(str, Enum):
     TRACTOR = "tractor"
 
 
-class SpinelliHead(str, Enum):
+class SpinelliHead(StrEnum):
     """Processor head types from Spinelli et al. (2010)."""
 
     ROLLER = "roller"
     STROKE = "stroke"
 
 
-class SpinelliSpecies(str, Enum):
+class SpinelliSpecies(StrEnum):
     """Species groups from Spinelli et al. (2010)."""
 
     CONIFER = "conifer"
@@ -1361,7 +1361,7 @@ class SpinelliSpecies(str, Enum):
     OTHER_HARDWOOD = "other_hardwood"
 
 
-class LoaderProductivityModel(str, Enum):
+class LoaderProductivityModel(StrEnum):
     """Loader productivity presets available via the CLI dataset helper."""
 
     TN261 = "tn261"
@@ -1371,28 +1371,28 @@ class LoaderProductivityModel(str, Enum):
     KIZHA2020 = "kizha2020"
 
 
-class LoaderAdv5N1SlopeClass(str, Enum):
+class LoaderAdv5N1SlopeClass(StrEnum):
     """Slope classes for the ADV5N1 loader-forwarder regression."""
 
     ZERO_TO_TEN = "0_10"
     ELEVEN_TO_THIRTY = "11_30"
 
 
-class LoaderBarkoScenario(str, Enum):
+class LoaderBarkoScenario(StrEnum):
     """Barko 450 loader scenarios bundled in the dataset."""
 
     GROUND_SKID_BLOCK = "ground_skid_block"
     CABLE_YARD_BLOCK = "cable_yard_block"
 
 
-class LoaderHotColdMode(str, Enum):
+class LoaderHotColdMode(StrEnum):
     """Kizha et al. (2020) loader modes (hot vs cold yarding)."""
 
     HOT = "hot"
     COLD = "cold"
 
 
-class SkidderSpeedProfileOption(str, Enum):
+class SkidderSpeedProfileOption(StrEnum):
     """Speed profile presets for grapple skidder travel-time overrides."""
 
     LEGACY = "legacy"
@@ -1415,14 +1415,14 @@ _TR127_MODEL_TO_BLOCK = {
 }
 
 
-class RunningSkylineVariant(str, Enum):
+class RunningSkylineVariant(StrEnum):
     """Longline yarder variants from McNeel (2000)."""
 
     YARDER_A = "yarder_a"
     YARDER_B = "yarder_b"
 
 
-class GrappleSkidderModel(str, Enum):
+class GrappleSkidderModel(StrEnum):
     """Supported grapple-skidder regressions."""
 
     HAN_LOP_AND_SCATTER = "lop_and_scatter"
@@ -2651,7 +2651,7 @@ def _apply_skidder_system_defaults(
     value = overrides.get("grapple_skidder_model")
     if value and not user_supplied.get("grapple_skidder_model", False):
         try:
-            model = GrappleSkidderModel(value)
+            model = GrappleSkidderModel(str(value))
             used = True
         except ValueError as exc:  # pragma: no cover - validated by CI
             raise ValueError(f"Unknown grapple skidder model override: {value}") from exc
@@ -2777,7 +2777,7 @@ def _apply_forwarder_system_defaults(
     value = overrides.get("forwarder_model")
     if value and not user_supplied.get("forwarder_model", False):
         try:
-            model = ForwarderBCModel(value)
+            model = ForwarderBCModel(str(value))
             used = True
         except ValueError as exc:
             raise ValueError(f"Unknown forwarder model override: {value}") from exc
@@ -2808,14 +2808,14 @@ def _apply_processor_system_defaults(
     value = overrides.get("processor_model")
     if value and not user_supplied.get("processor_model", False):
         try:
-            processor_model = RoadsideProcessorModel(value)
+            processor_model = RoadsideProcessorModel(str(value))
             used = True
         except ValueError as exc:
             raise ValueError(f"Unknown processor model override: {value}") from exc
     value = overrides.get("processor_adv7n3_machine")
     if value and not user_supplied.get("processor_adv7n3_machine", False):
         try:
-            processor_adv7n3_machine = ADV7N3Machine(value)
+            processor_adv7n3_machine = ADV7N3Machine(str(value))
             used = True
         except ValueError as exc:
             raise ValueError(f"Unknown ADV7N3 processor override: {value}") from exc
@@ -3164,7 +3164,7 @@ def _apply_skyline_system_defaults(
     value = overrides.get("skyline_model")
     if value and not user_supplied.get("model", False):
         try:
-            model = SkylineProductivityModel(value)
+            model = SkylineProductivityModel(str(value))
             used = True
         except ValueError as exc:
             raise ValueError(f"Unknown skyline model override '{value}'.") from exc
@@ -3237,7 +3237,7 @@ def _apply_skyline_system_defaults(
     value = overrides.get("skyline_running_variant")
     if value and not user_supplied.get("running_yarder_variant", False):
         try:
-            running_variant = RunningSkylineVariant(value)
+            running_variant = RunningSkylineVariant(str(value))
             used = True
         except ValueError as exc:
             raise ValueError(f"Unknown running-skyline variant override '{value}'.") from exc
@@ -3329,7 +3329,7 @@ def _apply_helicopter_system_defaults(
     value = overrides.get("helicopter_model")
     if value and not user_supplied.get("helicopter_model", False):
         try:
-            model = HelicopterLonglineModel(value)
+            model = HelicopterLonglineModel(str(value))
             used = True
         except ValueError as exc:
             raise ValueError(f"Unknown helicopter model override '{value}'.") from exc
@@ -3546,7 +3546,7 @@ def _apply_grapple_yarder_system_defaults(
     value = overrides.get("grapple_yarder_model")
     if value and not user_supplied.get("grapple_yarder_model", False):
         try:
-            model = GrappleYarderModel(value)
+            model = GrappleYarderModel(str(value))
             used = True
         except ValueError as exc:
             raise ValueError(f"Unknown grapple yarder model override '{value}'.") from exc

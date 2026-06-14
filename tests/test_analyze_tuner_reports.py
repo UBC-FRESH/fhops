@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -54,7 +55,7 @@ def test_analyze_tuner_reports_cli(tmp_path: Path):
     summary_md = tmp_path / "summary.md"
 
     cmd = [
-        "python",
+        sys.executable,
         "scripts/analyze_tuner_reports.py",
         "--report",
         f"baseline={report_a}",
@@ -188,7 +189,7 @@ def test_analyze_tuner_reports_history(tmp_path: Path):
     delta_md = tmp_path / "history_delta.md"
 
     cmd = [
-        "python",
+        sys.executable,
         "scripts/analyze_tuner_reports.py",
         "--report",
         f"baseline={history_dir / '2024-11-02.csv'}",

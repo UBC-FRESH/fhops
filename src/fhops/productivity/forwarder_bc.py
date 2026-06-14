@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 from fhops.productivity.eriksson2014 import (
     estimate_forwarder_productivity_final_felling,
@@ -32,7 +32,7 @@ from fhops.productivity.kellogg_bettinger1994 import (
 from fhops.productivity.laitila2020 import estimate_brushwood_harwarder_productivity
 
 
-class ForwarderBCModel(str, Enum):
+class ForwarderBCModel(StrEnum):
     """Forwarder regressions wired into FHOPS' dataset helpers.
 
     Each enum value corresponds to a published study or FPInnovations bulletin:

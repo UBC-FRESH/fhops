@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import math
-from enum import Enum
+from enum import StrEnum
 
 
-class ALPACASlopeClass(str, Enum):
+class ALPACASlopeClass(StrEnum):
     """Slope buckets described by Ghaffariyan et al. (2019)."""
 
     FLAT = "flat"  # <10%

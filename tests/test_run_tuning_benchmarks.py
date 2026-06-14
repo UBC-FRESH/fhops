@@ -47,9 +47,9 @@ def _normalise(df: pd.DataFrame, *, drop_bundle: bool = True) -> pd.DataFrame:
     result = df.copy()
     if "scenario" in result.columns:
         result["scenario"] = result["scenario"].apply(
-            lambda value: value.split(":", 1)[1]
-            if isinstance(value, str) and ":" in value
-            else value
+            lambda value: (
+                value.split(":", 1)[1] if isinstance(value, str) and ":" in value else value
+            )
         )
     if drop_bundle and "bundle" in result.columns:
         result = result.drop(columns=["bundle"])

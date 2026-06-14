@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
 
@@ -61,7 +61,7 @@ class ObjectiveWeights(BaseModel):
 Day = int  # 1..D
 
 
-class SalvageProcessingMode(str, Enum):
+class SalvageProcessingMode(StrEnum):
     STANDARD_MILL = "standard_mill"
     PORTABLE_MILL = "portable_mill"
     IN_WOODS_CHIPPING = "in_woods_chipping"

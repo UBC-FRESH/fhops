@@ -85,7 +85,7 @@ app.add_typer(telemetry_app, name="telemetry")
 app.add_typer(dataset_app, name="dataset")
 app.add_typer(plan_app, name="plan")
 console = Console()
-KPI_MODE = click.Choice(["basic", "extended"], case_sensitive=False)
+KPI_MODE: click.ParamType = click.Choice(["basic", "extended"], case_sensitive=False)
 
 TUNING_BUNDLE_ALIASES: dict[str, list[tuple[str, Path]]] = {
     "baseline": [
@@ -827,7 +827,7 @@ def solve_heur_cmd(
         "--kpi-mode",
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=KPI_MODE,
+        click_type=cast(Any, KPI_MODE),
     ),
     batch_neighbours: int = typer.Option(
         1,
@@ -1233,7 +1233,7 @@ def solve_ils_cmd(
         "--kpi-mode",
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=KPI_MODE,
+        click_type=cast(Any, KPI_MODE),
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
@@ -1561,7 +1561,7 @@ def solve_tabu_cmd(
         "--kpi-mode",
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=KPI_MODE,
+        click_type=cast(Any, KPI_MODE),
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats."
@@ -1804,7 +1804,7 @@ def evaluate(
         "--kpi-mode",
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=KPI_MODE,
+        click_type=cast(Any, KPI_MODE),
     ),
 ):
     """Compute KPI summaries for a schedule CSV and print them to the console.

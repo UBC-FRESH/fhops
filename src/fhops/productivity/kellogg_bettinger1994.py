@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 
-class LoadType(str, Enum):
+class LoadType(StrEnum):
     """Forwarded product mix in the Kellogg & Bettinger thinning study."""
 
     SAWLOG = "sawlog"

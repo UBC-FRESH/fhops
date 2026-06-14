@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 import numpy as np
 
@@ -17,7 +17,7 @@ except Exception:  # pragma: no cover - fallback path
     pacal = None
 
 
-class LahrsenModel(str, Enum):
+class LahrsenModel(StrEnum):
     """Available coefficient sets from Lahrsen (2025)."""
 
     DAILY = "daily"

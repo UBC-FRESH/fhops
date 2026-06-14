@@ -5,20 +5,20 @@ from __future__ import annotations
 import json
 import math
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, cast
 
 
-class Han2018SkidderMethod(str, Enum):
+class Han2018SkidderMethod(StrEnum):
     """Harvesting method definitions from Han et al. (2018)."""
 
     LOP_AND_SCATTER = "lop_and_scatter"
     WHOLE_TREE = "whole_tree"
 
 
-class TrailSpacingPattern(str, Enum):
+class TrailSpacingPattern(StrEnum):
     """Trail-network layouts from FPInnovations TN285 (ghost-trail study)."""
 
     NARROW_13_15M = "narrow_13_15m"
@@ -26,14 +26,14 @@ class TrailSpacingPattern(str, Enum):
     DOUBLE_GHOST_27M = "double_ghost_27m"
 
 
-class DeckingCondition(str, Enum):
+class DeckingCondition(StrEnum):
     """Decking/landing preparation states from ADV4N21 (loader-forward vs. skidder)."""
 
     CONSTRAINED = "constrained_decking"
     PREPARED = "prepared_decking"
 
 
-class ADV6N7DeckingMode(str, Enum):
+class ADV6N7DeckingMode(StrEnum):
     """Decking variants from FPInnovations Advantage Vol. 6 No. 7."""
 
     SKIDDER = "skidder"

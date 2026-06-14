@@ -1,3 +1,30 @@
+# 2026-06-14 — v1.0.0 GA preflight CI gate
+- Started the `issue-15-v100-green-ci` branch for #15 under the v1.0.0 GA release issue tree and restored the local lint/type/test gate that current `main` would hit after the existing Ruff-format failure.
+- Let Ruff normalize the pending formatting drift, including the release-blocking playback aggregate/test formatting and the processor-loader signature formatting found during the GA audit.
+- Migrated CLI/productivity/scenario string enums from `str, Enum` to `StrEnum` so the current Ruff `UP042` gate passes without suppressions.
+- Tightened MyPy compatibility after the enum migration by string-coercing harvest-system override values before enum construction and casting the Typer `click_type` option through `Any` to isolate the current Typer stub mismatch.
+- Hardened `tests/test_analyze_tuner_reports.py` subprocess calls to use `sys.executable`, preventing local/CI false failures when bare `python` points outside the pytest environment.
+- Fixed the `docs/howto/optimization_formulation.rst` heading underline so the Sphinx warning-as-error build succeeds once Pandoc is available.
+- Commands executed:
+  - `git checkout -b issue-15-v100-green-ci origin/main`
+  - `PYTHONPATH=/tmp/fhops-release-audit-tools python -m ruff format src/fhops/productivity/processor_loader.py`
+  - `python -m venv .venv`
+  - `.venv/bin/python -m pip install --upgrade pip`
+  - `.venv/bin/python -m pip install -e '.[dev]' -r docs/requirements.txt pre-commit`
+  - `.venv/bin/ruff format src tests` *(initial run reformatted 3 files)*
+  - `.venv/bin/ruff check src tests` *(initial run failed on 44 pre-existing `UP042` findings; fixed by `StrEnum` migration)*
+  - `.venv/bin/mypy src` *(initial reruns exposed enum override narrowing and Typer stub issues; fixed in this changeset)*
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest tests/test_analyze_tuner_reports.py` *(failed before `sys.executable` fix, then passed)*
+  - `.venv/bin/pytest` *(initial full run failed only on the tuner-report subprocess environment mismatch; rerun passed: 299 passed, 210 skipped, 61 warnings)*
+  - `.venv/bin/pre-commit run --all-files`
+  - `.venv/bin/sphinx-build -b html docs _build/html -W` *(failed locally because Pandoc was not installed in the environment)*
+  - `.venv/bin/python -m pip install pypandoc_binary`
+  - `PYPANDOC_PANDOC=$(...) .venv/bin/sphinx-build -b html docs _build/html -W` *(still failed because nbsphinx requires `pandoc` on `PATH`)*
+  - `PANDOC_DIR=$(...) PATH="$PANDOC_DIR:$PATH" .venv/bin/sphinx-build -b html docs _build/html -W` *(first run exposed the heading underline warning; rerun passed)*
+
 # 2026-03-22 — Canonical operational MILP formulation sync (FHOPS + thesis chapter module)
 - Created the `feature/fhops-operational-formulation-sync` firewall branch and added a canonical formulation source module at `docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.md`, then generated synchronized outputs:
   - `docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.tex`
