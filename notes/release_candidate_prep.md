@@ -33,6 +33,10 @@ Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
    - [x] Document breaking changes and migration guidance (schema version, mobilisation config).
    - [x] Add "Known Issues / Next" section pointing to backlog items (agentic tuner, DSS hooks).
    - [x] Publish final GA notes at ``docs/releases/v1.0.0.md``.
+   - [x] Align in-repo SoftwareX release metadata/prose with the final ``v1.0.0`` tag and
+     PyPI install path.
+     - 2026-06-14: issue #17 updates metadata tables, narrative release references, and
+       the SoftwareX workspace README synchronization guidance.
 5. **Hyperparameter tuning sign-off**
    - [x] Re-run the tuning harness (baseline bundles) with the latest code; see `notes/release_tuning_results.md` and `tmp/release-tuning/` artifacts.
    - [x] Document the improvements (objective delta, runtime, win rate) in release notes and telemetry dashboards.

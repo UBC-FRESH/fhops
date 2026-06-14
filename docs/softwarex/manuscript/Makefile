@@ -2,6 +2,8 @@ PDF=build/fhops-softx.pdf
 TEX=fhops-softx.tex
 BUILD_DIR=build
 ASSETS_SCRIPT=scripts/generate_assets.sh
+ELSARTICLE_CLS=elsarticle/elsarticle.cls
+LATEX_ENV=TEXINPUTS=.:elsarticle//: BSTINPUTS=.:elsarticle//:
 
 .PHONY: all assets pdf clean default manuscript-benchmarks manuscript-benchmarks-fast
 
@@ -18,9 +20,12 @@ manuscript-benchmarks-fast:
 
 pdf: $(PDF)
 
-$(PDF): $(TEX)
+$(ELSARTICLE_CLS): elsarticle/elsarticle.ins elsarticle/elsarticle.dtx
+	cd elsarticle && latex elsarticle.ins
+
+$(PDF): $(TEX) $(ELSARTICLE_CLS)
 	mkdir -p $(BUILD_DIR)
-	latexmk -pdf -interaction=nonstopmode -output-directory=$(BUILD_DIR) -auxdir=$(BUILD_DIR) $(TEX)
+	$(LATEX_ENV) latexmk -pdf -interaction=nonstopmode -output-directory=$(BUILD_DIR) -auxdir=$(BUILD_DIR) $(TEX)
 
 default: pdf
 

@@ -1,3 +1,39 @@
+# 2026-06-14 — SoftwareX manuscript metadata aligned to v1.0.0
+- Started the `issue-17-softwarex-v100-metadata` branch for #17 under the v1.0.0 GA release issue tree.
+- Replaced in-repo SoftwareX manuscript placeholders (`v1.0.0-beta1`, `softwarex-manuscript`, and future-tense tag wording) with the final `v1.0.0` release/tag/PyPI install path.
+- Updated the manuscript environment metadata to match the package requirement (`Python 3.11--3.12`) and the final FHOPS `1.0.0` software context.
+- Updated SoftwareX prose in the introduction, impact, illustrative example, and automation sections so the manuscript describes a stable public release rather than a beta/submission branch.
+- Clarified `docs/softwarex/README.md` so the in-repo manuscript remains synchronized with release metadata even when final journal packaging happens in the standalone `fhops-manuscript` repository.
+- Fixed the in-repo manuscript PDF target by generating `elsarticle.cls` from the bundled Elsevier docstrip sources, adding the vendored `elsarticle/` directory to LaTeX/BibTeX search paths, and loading `amssymb` for the operational formulation's integer-domain notation.
+- Commands executed:
+  - `git checkout -b issue-17-softwarex-v100-metadata`
+  - `rg -n "v1\.0\.0-beta1|softwarex-manuscript|will be tagged|minted alongside" docs/softwarex/manuscript` (no matches)
+  - `rg -n "1\.0\.0a2|1\.0\.0-alpha2|release candidate|beta" docs/softwarex/manuscript docs/softwarex/README.md` (no matches)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest` (299 passed, 210 skipped, 61 warnings)
+  - `.venv/bin/pre-commit run --all-files`
+  - `PANDOC_DIR=$(.venv/bin/python - <<'PY'
+from pathlib import Path
+import pypandoc
+print(Path(pypandoc.get_pandoc_path()).parent)
+PY
+); PATH="$PANDOC_DIR:$PATH" .venv/bin/sphinx-build -b html docs _build/html -W`
+  - `make pdf` from `docs/softwarex/manuscript/` (initially failed on missing `elsarticle.cls`)
+  - `make clean && make pdf` from `docs/softwarex/manuscript/` (passed after Makefile/package fixes; LaTeX reports existing overfull/underfull box warnings)
+  - `.venv/bin/ruff format src tests` (rerun after Makefile/LaTeX wrapper updates)
+  - `.venv/bin/ruff check src tests` (rerun after Makefile/LaTeX wrapper updates)
+  - `.venv/bin/mypy src` (rerun after Makefile/LaTeX wrapper updates)
+  - `.venv/bin/pytest` (rerun after Makefile/LaTeX wrapper updates; 299 passed, 210 skipped, 61 warnings)
+  - `.venv/bin/pre-commit run --all-files` (rerun after Makefile/LaTeX wrapper updates)
+  - `PANDOC_DIR=$(.venv/bin/python - <<'PY'
+from pathlib import Path
+import pypandoc
+print(Path(pypandoc.get_pandoc_path()).parent)
+PY
+); PATH="$PANDOC_DIR:$PATH" .venv/bin/sphinx-build -b html docs _build/html -W` (rerun after Makefile/LaTeX wrapper updates)
+
 # 2026-06-14 — v1.0.0 GA version and release docs
 - Started the `issue-16-v100-version-docs` branch for #16 under the v1.0.0 GA release issue tree.
 - Bumped the package metadata source from `1.0.0a2` to `1.0.0` in `src/fhops/__init__.py` and updated the import regression test accordingly.

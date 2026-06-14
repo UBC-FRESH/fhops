@@ -12,3 +12,7 @@ fhops-softx.out
 fhops-softx.pdf
 fhops-softx.synctex.gz
 fhops-softx.spl
+
+# generated from bundled Elsevier docstrip sources
+elsarticle/elsarticle.cls
+elsarticle/elsarticle.log
