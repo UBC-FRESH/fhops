@@ -1,12 +1,14 @@
 # Release Candidate Prep Plan
 
 Date: 2025-11-16
-Status: Draft — drive the v0.x RC process.
+Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
 
 ## Objectives
 - Freeze scope and polish docs/install instructions for the first FHOPS release candidate.
 - Adopt Hatch for packaging/publishing (mirroring ws3 workflows) and ensure PyPI metadata is accurate.
 - Produce changelog/release notes, version bumps, and verification checklists before tagging.
+- Promote the public package from the current `1.0.0a2` prerelease line to a clean `1.0.0`
+  GA release that SoftwareX reviewers can install and cite.
 
 ## Tasks
 1. **Versioning & Hatch wiring**
@@ -34,6 +36,10 @@ Status: Draft — drive the v0.x RC process.
 6. **Automation**
    - [x] Add GitHub Actions job template for ``hatch build`` verification (triggered on tags) — see `.github/workflows/release-build.yml`.
    - [x] Prepare release checklist in ``AGENTS.md`` (Hatch build/publish cadence documented under Release workflow).
+   - [ ] Restore green `main` CI before the v1.0.0 version bump/tag.
+     - 2026-06-14: issue #15 branch fixes current Ruff formatting drift, modernises `StrEnum`
+       lint blockers, and hardens tuner-report subprocess tests so the local lint/type/test gate
+       can pass under the release verification environment.
 
 7. **Publishing (TestPyPI → PyPI)**
    - [x] Dry run using TestPyPI:

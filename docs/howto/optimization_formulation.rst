@@ -1,5 +1,5 @@
 Operational Optimization Formulation
-===================================
+====================================
 
 This page documents the canonical FHOPS operational MILP formulation used by the
 Pyomo implementation in ``fhops.model.milp.operational``.

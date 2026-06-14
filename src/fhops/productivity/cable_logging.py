@@ -7,7 +7,7 @@ import json
 import warnings
 from collections.abc import Mapping
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
 
@@ -29,7 +29,7 @@ _TR125_MULTI_SLOPE_RANGE = (10.0, 420.0)
 _TR125_LATERAL_RANGE = (0.0, 50.0)
 
 
-class Fncy12ProductivityVariant(str, Enum):
+class Fncy12ProductivityVariant(StrEnum):
     """Variants of the FNCY12 Thunderbird TMY45 productivity study."""
 
     OVERALL = "overall"
@@ -437,7 +437,7 @@ def estimate_running_skyline_productivity_mcneel2000(
     return _m3_per_pmh_from_minutes(payload_m3, cycle_minutes)
 
 
-class HelicopterLonglineModel(str, Enum):
+class HelicopterLonglineModel(StrEnum):
     """Supported helicopter models used in FPInnovations longline studies."""
 
     LAMA = "lama"

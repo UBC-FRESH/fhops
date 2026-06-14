@@ -180,9 +180,9 @@ def machine_utilisation_summary(shift_df: pd.DataFrame) -> pd.DataFrame:
         .reset_index(drop=True)
     )
     aggregated["utilisation_ratio"] = aggregated.apply(
-        lambda row: row["total_hours"] / row["available_hours"]
-        if row["available_hours"] > 0
-        else None,
+        lambda row: (
+            row["total_hours"] / row["available_hours"] if row["available_hours"] > 0 else None
+        ),
         axis=1,
     )
     return aggregated
