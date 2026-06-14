@@ -66,7 +66,7 @@ instead of suppressing them; escalate only if consensus is reached with maintain
   applicable). Version source lives at `src/fhops/__init__.__version__` (pyproject uses Hatch's
   dynamic version hook). Document the exact commands in the changelog.
 - GitHub Actions workflow `.github/workflows/release-build.yml` mirrors this process on tags by
-  running `hatch run release:build` and uploading `dist/` artifacts; verify the job succeeds before
+  running `hatch clean && hatch build` and uploading `dist/` artifacts; verify the job succeeds before
   publishing to TestPyPI/PyPI.
 - TestPyPI/PyPI publishing cadence:
   1. `hatch clean && hatch build`

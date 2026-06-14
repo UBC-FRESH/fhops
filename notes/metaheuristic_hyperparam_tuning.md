@@ -216,6 +216,12 @@ Status: paused until the conventional tuning toolkit, benchmarking automation, a
   3. Executes `scripts/run_analytics_notebooks.py --timeout 900 --keep-going` (no `--light`).
   4. Archives notebook metadata + rendered notebooks under `tmp/analytics-notebooks/history/<timestamp>/` (GH artifact `analytics-notebooks-full`, retention 28 days).
   5. Rebuilds Sphinx docs + telemetry bundle and deploys GitHub Pages (telemetry dashboards + `telemetry/notebooks/` history).
+- 2026-06-14 release-surface audit: repeated scheduled failures reached notebook execution
+  and then failed while collecting artifacts; old detailed logs have expired. The artifact
+  collection step now validates that notebook metadata exists, prints explicit diagnostics
+  when it is missing, and prunes retained run history via Python instead of shell pipeline
+  edge cases. Run the workflow manually after this lands before claiming a fresh full
+  dashboard refresh for v1.0.0.
 - **Ownership & escalation**
   - Rotation: assign quarterly owners (track here + `notes/team_ops.md`). Owner checks workflow Tuesday morning and responds to failures within 12 h.
   - Notification: TODO — add Slack/Email webhook for workflow failures (placeholder: manual checks).

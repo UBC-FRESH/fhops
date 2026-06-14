@@ -10,7 +10,7 @@
 
 ## Installation
 - `pip install fhops` (PyPI)
-- Development/release verification via Hatch: `hatch run dev:suite`, `hatch run release:build`.
+- Development/release verification via Hatch: `hatch run dev:suite`, `hatch clean && hatch build`.
 
 ## Breaking Changes / Migration
 - Scenario files must declare `schema_version` and can optionally include GeoJSON references (`scenario.geo` / mobilisation config) for auto-loaded distances.

@@ -57,11 +57,17 @@ Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
 6. **Automation**
    - [x] Add GitHub Actions job template for ``hatch build`` verification (triggered on tags) — see `.github/workflows/release-build.yml`.
    - [x] Prepare release checklist in ``AGENTS.md`` (Hatch build/publish cadence documented under Release workflow).
-   - [ ] Restore green `main` CI before the v1.0.0 version bump/tag.
+   - [x] Restore green `main` CI before the v1.0.0 version bump/tag.
      - 2026-06-14: issue #15 branch fixes current Ruff formatting drift, modernises `StrEnum`
        lint blockers, and hardens tuner-report subprocess tests so the local lint/type/test gate
        can pass under the release verification environment.
      - 2026-06-14: issue #15 merged via PR #21 after full CI success.
+   - [ ] Clean up release automation and public surfaces before the final tag.
+     - 2026-06-14: issue #19 records the release-surface audit in
+       `notes/release_surface_audit.md`, annotates the confusing `v0.0.1-alpha3` prerelease
+       instead of deleting history, fixes the release-build workflow command exposed by
+       `workflow_dispatch`, and hardens full analytics artifact collection before a fresh
+       manual dashboard run.
 
 7. **Publishing (TestPyPI → PyPI)**
    - [x] Dry run using TestPyPI:
