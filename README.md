@@ -10,10 +10,10 @@ forest harvesting operations plans. It provides:
 ## Installation
 
 ```bash
-pip install fhops  # once the release candidate lands on PyPI
+pip install fhops==1.0.0
 ```
 
-For local development or when cutting a release candidate, use Hatch to mirror the CI suite:
+For local development or release verification, use Hatch to mirror the CI suite:
 
 ```bash
 pip install hatch

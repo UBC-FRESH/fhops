@@ -1,4 +1,4 @@
 def test_import():
     import fhops
 
-    assert fhops.__version__ == "1.0.0a2"
+    assert fhops.__version__ == "1.0.0"

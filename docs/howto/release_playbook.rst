@@ -16,8 +16,12 @@ Release Preparation
 
 2. **Version & Changelog**
 
-   - Bump the version string in ``pyproject.toml`` (``[project].version``) and ensure the same value
-     appears in ``src/fhops/__init__.py`` if applicable.
+   - Bump the version string in ``src/fhops/__init__.py``. FHOPS uses Hatch dynamic
+     versioning (``[tool.hatch.version]`` in ``pyproject.toml``), so the package
+     version is read from ``fhops.__version__`` rather than a static
+     ``[project].version`` field.
+   - Update ``tests/test_import.py`` and the current release note under
+     ``docs/releases/`` to match the version string.
    - Append a new section to ``CHANGE_LOG.md`` summarising the release (date, highlights, command
      suite used for verification). Remember: the pre-commit hook enforces that the changelog is
      touched in every PR.
@@ -28,7 +32,7 @@ Release Preparation
 
      .. code-block:: bash
 
-        sphinx-build -b html docs docs/_build/html
+        sphinx-build -b html docs _build/html -W
 
    - Execute the weekly telemetry workflow (from :doc:`telemetry_ops`) so the latest notebook and
      tuning history are published before tagging.
@@ -36,22 +40,23 @@ Release Preparation
 
 4. **Testing**
 
-- Run the required command suite (per ``AGENTS.md``):
+   - Run the required command suite (per ``AGENTS.md``):
 
      .. code-block:: bash
 
         pip install -e .[dev]
-        ruff format src tests docs
-        ruff check src tests docs
+        ruff format src tests
+        ruff check src tests
         mypy src
         pytest
         pre-commit run --all-files
+        sphinx-build -b html docs _build/html -W
 
    - Optional: execute ``scripts/run_analytics_notebooks.py --light`` as a final smoke test.
 
 5. **Tag & Publish**
 
-   - Once tests/docs pass, create a tag (e.g., ``git tag v0.1.0``) and push both branch + tag.
+   - Once tests/docs pass, create a tag (e.g., ``git tag -s v1.0.0``) and push both branch + tag.
    - Build artifacts with ``hatch build`` and upload using Twine (keeps PyPI auth simple):
 
      .. code-block:: bash

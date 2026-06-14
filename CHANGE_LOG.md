@@ -1,3 +1,20 @@
+# 2026-06-14 — v1.0.0 GA version and release docs
+- Started the `issue-16-v100-version-docs` branch for #16 under the v1.0.0 GA release issue tree.
+- Bumped the package metadata source from `1.0.0a2` to `1.0.0` in `src/fhops/__init__.py` and updated the import regression test accordingly.
+- Added final GA release notes at `docs/releases/v1.0.0.md`, carrying forward alpha highlights while separating remaining publication tasks (#17-#20).
+- Updated README and Sphinx overview install instructions to cite the stable `pip install fhops==1.0.0` path instead of release-candidate wording.
+- Corrected the release playbook so it documents Hatch dynamic versioning from `fhops.__version__`, the current command cadence, and signed `v1.0.0` tags.
+- Updated `ROADMAP.md` and `notes/release_candidate_prep.md` so the GA release docs match the active issue tree.
+- Commands executed:
+  - `git checkout -b issue-16-v100-version-docs`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest tests/test_import.py`
+  - `.venv/bin/pytest` *(299 passed, 210 skipped, 61 warnings)*
+  - `.venv/bin/pre-commit run --all-files`
+  - `PANDOC_DIR=$(...) PATH="$PANDOC_DIR:$PATH" .venv/bin/sphinx-build -b html docs _build/html -W`
+
 # 2026-06-14 — v1.0.0 GA preflight CI gate
 - Started the `issue-15-v100-green-ci` branch for #15 under the v1.0.0 GA release issue tree and restored the local lint/type/test gate that current `main` would hit after the existing Ruff-format failure.
 - Let Ruff normalize the pending formatting drift, including the release-blocking playback aggregate/test formatting and the processor-loader signature formatting found during the GA audit.
