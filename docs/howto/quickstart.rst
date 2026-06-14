@@ -2,6 +2,9 @@ Quickstart
 ==========
 
 The quickest way to explore FHOPS is with the bundled ``examples/tiny7`` scenario.
+The example paths in this guide assume a source checkout. A PyPI install gives you
+the ``fhops`` CLI and package data, while the repository checkout gives you the
+``examples/`` and ``tests/fixtures/`` scenarios used below.
 
 Bootstrap Environment
 ---------------------
@@ -20,7 +23,7 @@ Workbench: ``examples/tiny7``
    fhops validate examples/tiny7/scenario.yaml
    fhops solve-mip examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
    fhops solve-heur examples/tiny7/scenario.yaml --out examples/tiny7/out/sa_solution.csv
-   fhops evaluate examples/tiny7/scenario.yaml examples/tiny7/out/mip_solution.csv
+   fhops evaluate examples/tiny7/scenario.yaml --assignments examples/tiny7/out/mip_solution.csv
 
 What those commands do:
 
@@ -47,7 +50,7 @@ expected KPI/objective values the automated tests assert against.
 
    fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv
    fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
-   fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv
+   fhops evaluate tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv
 
 The regression baseline encodes these expected values:
 
@@ -109,7 +112,7 @@ runs quickly with either SA or HiGHS; swap in med42 when you want a realistic la
    print(plot_df[["metric", "delta", "pct_delta"]])
    PY
 
-Use ``fhops eval playback ... --assignments tmp/tiny7_rolling.csv`` when you want KPI totals without
+Use ``fhops eval-playback ... --assignments tmp/tiny7_rolling.csv`` when you want KPI totals without
 running Python. For richer plots and FAQ, see :doc:`rolling_horizon`.
 
 Shift-enabled scenarios
@@ -136,7 +139,7 @@ schedule CSVs and use the playback CLI to validate both shift-level and day-leve
    fhops solve-mip-operational my_shift_scenario.yaml \
      --out tmp/shift_assignments.csv --time-limit 120
 
-   fhops eval playback --scenario my_shift_scenario.yaml \
+   fhops eval-playback my_shift_scenario.yaml \
      --assignments tmp/shift_assignments.csv \
      --shift-out tmp/shift_summary.csv \
      --day-out tmp/day_summary.csv \

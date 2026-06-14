@@ -95,7 +95,7 @@ Use the bundles anywhere a normal scenario is accepted. Typical entry points:
 
   .. code-block:: bash
 
-     fhops eval playback --scenario examples/synthetic/medium/scenario.yaml \\
+     fhops eval-playback examples/synthetic/medium/scenario.yaml \\
                          --assignments /tmp/medium_sa.csv \\
                          --shift-out /tmp/medium_shift.csv \\
                          --day-out /tmp/medium_day.csv \\

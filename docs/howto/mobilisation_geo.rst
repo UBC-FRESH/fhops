@@ -33,14 +33,14 @@ Solve the medium benchmark with mobilisation enabled and inspect spend:
 .. code-block:: bash
 
    fhops solve-mip examples/med42/scenario.yaml --out tmp/med42_mip.csv
-   fhops evaluate examples/med42/scenario.yaml tmp/med42_mip.csv | grep mobilisation_cost
+   fhops evaluate examples/med42/scenario.yaml --assignments tmp/med42_mip.csv | grep mobilisation_cost
 
 For quick experimentation on the tiny7 scenario:
 
 .. code-block:: bash
 
    fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa.csv --iters 500
-   fhops evaluate examples/tiny7/scenario.yaml tmp/tiny7_sa.csv | grep mobilisation_cost
+   fhops evaluate examples/tiny7/scenario.yaml --assignments tmp/tiny7_sa.csv | grep mobilisation_cost
 
 Tooling Notes
 -------------
@@ -86,7 +86,7 @@ Troubleshooting & Diagnostics
 
      fhops geo distances examples/med42/med42_blocks.geojson --out tmp/med42_distances.csv
      fhops solve-mip examples/med42/scenario.yaml --out tmp/med42_mip.csv
-     fhops evaluate examples/med42/scenario.yaml tmp/med42_mip.csv | grep mobilisation_cost
+     fhops evaluate examples/med42/scenario.yaml --assignments tmp/med42_mip.csv | grep mobilisation_cost
 
   Expect mobilisation spend to rise sharply when block pairs exceed the 1 km walk threshold; the KPI
   output lists per-machine costs (``kpi_mobilisation_cost_by_machine``) so you can pinpoint which

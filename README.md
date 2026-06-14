@@ -22,14 +22,18 @@ hatch run dev:suite
 
 ## Quick start (development install)
 
+The PyPI wheel installs the `fhops` package and CLI. The sample scenario paths below live in the
+source repository, so clone this repository first when following the quickstart exactly.
+
 ```bash
-# inside a fresh virtual environment (Python 3.12+ recommended)
+# inside a fresh virtual environment (Python 3.11 or 3.12 recommended)
 pip install -e .[dev]
 # optional extras for spatial IO
 pip install .[geo]
 # optional extras for commercial MIP backends
 # (requires a Gurobi install + license)
 pip install .[gurobi]
+```
 
 ### Optional: Gurobi setup (Linux)
 
@@ -64,18 +68,19 @@ After the licence is active you can run FHOPS MIP commands with ``--driver gurob
 fhops validate examples/tiny7/scenario.yaml
 fhops solve-mip examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
 fhops solve-heur examples/tiny7/scenario.yaml --out examples/tiny7/out/sa_solution.csv
-fhops evaluate examples/tiny7/scenario.yaml examples/tiny7/out/mip_solution.csv
+fhops evaluate examples/tiny7/scenario.yaml --assignments examples/tiny7/out/mip_solution.csv
 ```
 
 ```bash
 fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv
 fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
-fhops evaluate tests/fixtures/regression/regression.yaml /tmp/regression_sa.csv
+fhops evaluate tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv
 ```
 
 Expected evaluation output includes `sequencing_violation_count=0`. Mobilisation costs are
 exercised in `tests/test_regression_integration.py`, which injects machine parameters before
 running the CLI.
+
 ## Analytics notebooks & dashboards
 
 Executed analytics notebooks live under `docs/examples/analytics/` and are published to the
@@ -101,7 +106,7 @@ Each dashboard entry includes regeneration commands so you can reproduce the art
 
 ### Tuned heuristic presets
 
-Release candidate tuning runs are recorded in `notes/release_tuning_results.md`; the best operator
+Release tuning runs are recorded in `notes/release_tuning_results.md`; the best operator
 weights and configurations per scenario/algorithm are serialized in `notes/release_tuned_presets.json`.
 Use these records when reproducing benchmarks or seeding custom presets, e.g.
 

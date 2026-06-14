@@ -46,7 +46,7 @@ Debugging and profiling
 -----------------------
 - Capture solver context with ``--telemetry-log`` (JSONL) or ``--watch`` for heuristics; the operational MILP supports ``--solver-option LogFile=...`` and ``--solver-option Threads=...``.
 - Use ``--dump-bundle`` / ``--bundle-json`` on ``solve-mip-operational`` to isolate bundle issues. The same bundle can be replayed in notebooks or tests.
-- For rolling-horizon runs, persist ``--out-json`` and per-iteration CSV/JSONL exports, then feed the assignments into ``fhops eval playback`` or :func:`fhops.planning.compute_rolling_kpis` to inspect deltas without rerunning solvers.
+- For rolling-horizon runs, persist ``--out-json`` and per-iteration CSV/JSONL exports, then feed the assignments into ``fhops eval-playback`` or :func:`fhops.planning.compute_rolling_kpis` to inspect deltas without rerunning solvers.
 - When measuring runtimes, prefer small scenarios (``examples/tiny7``) and short caps (``--mip-time-limit``) before scaling to med42/large84.
 
 Re-running published artefacts

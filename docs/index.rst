@@ -14,7 +14,6 @@ ensembles.
    :maxdepth: 2
    :caption: Getting Started
 
-   reference/dashboards
    overview
    howto/quickstart
    howto/data_contract
@@ -43,6 +42,7 @@ ensembles.
    reference/playback_aggregates
    reference/harvest_systems
    reference/telemetry
+   reference/dashboards
    reference/source_bibliography
 
 .. toctree::

@@ -3,7 +3,7 @@ Evaluation Workflows
 
 FHOPS exposes deterministic playback tooling so you can inspect shift/day activity, idle
 capacity, mobilisation costs, and sequencing signals without leaving the CLI. This guide shows
-how to run the new ``fhops eval playback`` command and interpret its outputs.
+how to run the ``fhops eval-playback`` command and interpret its outputs.
 
 Running deterministic playback
 ------------------------------
@@ -20,7 +20,7 @@ Example (building on the regression fixtures):
 .. code-block:: console
 
    $ fhops solve-heur tests/fixtures/regression/regression.yaml --out tmp/regression_sa.csv
-   $ fhops eval playback --scenario tests/fixtures/regression/regression.yaml \
+   $ fhops eval-playback tests/fixtures/regression/regression.yaml \
        --assignments tmp/regression_sa.csv \
        --shift-out tmp/regression_shift.csv \
        --day-out tmp/regression_day.csv
@@ -107,7 +107,7 @@ Quickstart example
 
 .. code-block:: console
 
-   $ fhops eval playback examples/tiny7/scenario.yaml \
+   $ fhops eval-playback examples/tiny7/scenario.yaml \
        --assignments tests/fixtures/playback/tiny7_assignments.csv \
        --samples 5 \
        --downtime-prob 0.1 \
@@ -249,6 +249,6 @@ Relationship to KPI evaluation
 ------------------------------
 
 ``fhops evaluate`` (existing command) still computes aggregate KPIs such as mobilisation cost and
-sequencing violations. ``fhops eval playback`` complements it by surfacing the raw shift/day data
+sequencing violations. ``fhops eval-playback`` complements it by surfacing the raw shift/day data
 used to compute those metrics. In future iterations the playback output will feed notebooks,
 stochastic sampling, and new KPI calculators documented here.

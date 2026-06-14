@@ -75,7 +75,7 @@ Sequencing violations surface in CLI output and KPI dumps. After running a solve
 
 .. code-block:: bash
 
-   fhops evaluate examples/med42/scenario.yaml tmp/med42_sa.csv
+   fhops evaluate examples/med42/scenario.yaml --assignments tmp/med42_sa.csv
 
 Key metrics:
 

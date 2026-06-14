@@ -143,7 +143,7 @@ The ``comparison`` payload includes:
 - ``delta_totals`` — numeric differences keyed by ``<metric>_delta`` and percentage deltas when the
   baseline metric is non-zero.
 
-For quick CLI-to-evaluation loops, feed ``--out-assignments`` directly into ``fhops eval playback``
+For quick CLI-to-evaluation loops, feed ``--out-assignments`` directly into ``fhops eval-playback``
 or stash the JSON summary and KPI deltas alongside telemetry artefacts for later reporting.
 
 Rolling comparison helper
@@ -311,7 +311,7 @@ The comparison bundle exposes:
 
 To feed the locked assignments into playback manually, use
 :func:`fhops.planning.rolling_assignments_dataframe` to obtain a Pandas DataFrame compatible with
-``fhops eval playback`` or :func:`fhops.evaluation.run_playback`.
+``fhops eval-playback`` or :func:`fhops.evaluation.run_playback`.
 
 Notes
 -----
