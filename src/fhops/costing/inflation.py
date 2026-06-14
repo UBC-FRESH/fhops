@@ -4,12 +4,11 @@ from __future__ import annotations
 
 import json
 from functools import lru_cache
-from pathlib import Path
+
+from fhops.resources import data_path
 
 TARGET_YEAR = 2024
-_CPI_PATH = (
-    Path(__file__).resolve().parents[3] / "data" / "costing" / "cpi_canada_all_items_2002_100.json"
-)
+_CPI_PATH = data_path("costing", "cpi_canada_all_items_2002_100.json")
 
 
 @lru_cache(maxsize=1)

@@ -1,3 +1,60 @@
+# 2026-06-14 — v1.0.0 artifact smoke install and package data audit
+- Started the `issue-18-v100-artifact-smoke` branch for #18 under the v1.0.0 GA release issue tree.
+- Rebuilt final `fhops-1.0.0` sdist/wheel artifacts and audited archive contents before publication.
+- Fixed clean wheel installs by declaring direct runtime dependencies on `click` and `PyYAML`.
+- Added a shared `fhops.resources.data_path()` resolver and bundled repository `data/**` into the wheel under `fhops/data/**` so installed CLI imports can load productivity, costing, and FPInnovations reference JSON without relying on a source checkout.
+- Promoted the TR119 yarding productivity JSON from notes-only storage into `data/reference/fpinnovations/` so it ships with runtime artifacts.
+- Moved the full-text reference-document working library out of the public FHOPS repository into the private `UBC-FRESH/fhops-reference-docs` repository and linked it back as the `reference-documents` submodule. The public repo now keeps the bibliographic/provenance notes (`notes/reference_log.md`, `notes/reference/*.md`) while avoiding public redistribution of PDFs, downloaded HTML snapshots, spreadsheets, text extracts, and intermediate extraction tables whose copyright terms may not permit republication.
+- Added the Sphinx page `docs/reference/source_bibliography.rst` explaining the copyright rationale, public bibliography locations, and private-submodule access flow.
+- Confirmed package-content policy for v1.0.0: the wheel remains package-focused and excludes `docs/`, `docs/softwarex/`, `examples/`, `notes/`, and `reference-documents/`; the sdist excludes the private/full-text reference vault paths (`docs/references/`, `docs/softwarex/reference/`, `notes/`, and `reference-documents/`) while still bundling runtime JSON under `data/**`.
+- Commands executed:
+  - `git checkout main && git pull --ff-only && git checkout -b issue-18-v100-artifact-smoke`
+  - `.venv/bin/hatch clean && .venv/bin/hatch build` (failed because Hatch was not installed in `.venv`)
+  - `.venv/bin/python -m pip install 'hatch>=1.14' 'twine>=6.0'`
+  - `.venv/bin/hatch clean && .venv/bin/hatch build`
+  - `.venv/bin/python -m twine check dist/*`
+  - `python - <<'PY' ... PY` archive audit for wheel/sdist contents and metadata
+  - `rm -rf tmp/v100-wheel-smoke && python -m venv tmp/v100-wheel-smoke && tmp/v100-wheel-smoke/bin/python -m pip install --upgrade pip && tmp/v100-wheel-smoke/bin/python -m pip install dist/fhops-1.0.0-py3-none-any.whl`
+  - `tmp/v100-wheel-smoke/bin/fhops --help` (failed before adding `click` and bundled package data)
+  - `tmp/v100-wheel-smoke/bin/fhops validate examples/tiny7/scenario.yaml` (failed before adding `click` and bundled package data)
+  - `tmp/v100-wheel-smoke/bin/fhops solve-heur examples/tiny7/scenario.yaml --out tmp/v100-wheel-smoke/tiny7_sa.csv --iters 25 --seed 7` (failed before adding `click` and bundled package data)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests --fix`
+  - `.venv/bin/ruff format src tests`
+  - `rm -rf tmp/v100-wheel-smoke && .venv/bin/hatch clean && .venv/bin/hatch build`
+  - `python - <<'PY' ... PY` wheel package-data audit (`fhops/data/**` present)
+  - `.venv/bin/python -m twine check dist/*`
+  - `python -m venv tmp/v100-wheel-smoke && tmp/v100-wheel-smoke/bin/python -m pip install --upgrade pip && tmp/v100-wheel-smoke/bin/python -m pip install dist/fhops-1.0.0-py3-none-any.whl`
+  - `tmp/v100-wheel-smoke/bin/fhops --help`
+  - `tmp/v100-wheel-smoke/bin/fhops validate examples/tiny7/scenario.yaml`
+  - `tmp/v100-wheel-smoke/bin/fhops solve-heur examples/tiny7/scenario.yaml --out tmp/v100-wheel-smoke/tiny7_sa.csv --iters 25 --seed 7`
+  - `tmp/v100-wheel-smoke/bin/fhops evaluate examples/tiny7/scenario.yaml tmp/v100-wheel-smoke/tiny7_sa.csv` (failed; current CLI requires `--assignments`)
+  - `tmp/v100-wheel-smoke/bin/fhops evaluate examples/tiny7/scenario.yaml --assignments tmp/v100-wheel-smoke/tiny7_sa.csv`
+  - `.venv/bin/pytest` (interrupted after the reference-vault scope change; partial progress before `KeyboardInterrupt`: 210 passed, 208 skipped, 50 warnings)
+  - `find docs data notes -type f \( -iname '*.pdf' -o -iname '*.doc' -o -iname '*.docx' -o -iname '*.zip' -o -iname '*.xls' -o -iname '*.xlsx' \) | sort`
+  - `du -sh docs/references docs/softwarex/reference notes/reference data/reference data/productivity`
+  - `rsync -a docs/references /home/gep/projects/fhops-reference-docs/docs/`
+  - `rsync -a docs/softwarex/reference /home/gep/projects/fhops-reference-docs/docs/softwarex/`
+  - `rsync -a notes/reference /home/gep/projects/fhops-reference-docs/notes/`
+  - `git init && git add . && git commit -m "Add FHOPS private reference document vault" && gh repo create UBC-FRESH/fhops-reference-docs --private --description "Private full-text reference document vault for FHOPS" --source . --remote origin --push` from `/home/gep/projects/fhops-reference-docs` (failed before commit because the new repo had no local Git identity)
+  - `git config user.name "Gregory Paradis" && git config user.email "0@01101.io" && git branch -m main && git add . && git commit -m "Add FHOPS private reference document vault" && gh repo create UBC-FRESH/fhops-reference-docs --private --description "Private full-text reference document vault for FHOPS" --source . --remote origin --push`
+  - `git ls-files -z docs/references docs/softwarex/reference ... > /tmp/fhops_public_reference_doc_paths.zlist`
+  - `xargs -0 git rm -r -- < /tmp/fhops_public_reference_doc_paths.zlist`
+  - `git submodule add https://github.com/UBC-FRESH/fhops-reference-docs.git reference-documents`
+  - Bulk path rewrite:
+    ```bash
+    perl -0pi -e 's#`notes/reference/fpinnovations/#`reference-documents/notes/reference/fpinnovations/#g; s#`notes/reference/([^`]*\.(?:pdf|PDF|txt|html|xml|csv|xls|xlsx|json))`#`reference-documents/notes/reference/$1`#g' notes/reference/*.md notes/*.md docs/**/*.rst docs/softwarex/manuscript/**/*.md
+    ```
+  - `gh issue edit 18 --body-file "$tmpfile"`
+  - `.venv/bin/hatch clean && .venv/bin/hatch build && .venv/bin/python -m twine check dist/*`
+  - `python - <<'PY' ... PY` archive audit for forbidden reference-vault paths and packaged `fhops/data/**` content (wheel: 59 `fhops/data` files; no forbidden wheel/sdist hits)
+  - `rm -rf tmp/v100-wheel-smoke && python -m venv tmp/v100-wheel-smoke && tmp/v100-wheel-smoke/bin/python -m pip install --upgrade pip && tmp/v100-wheel-smoke/bin/python -m pip install dist/fhops-1.0.0-py3-none-any.whl && tmp/v100-wheel-smoke/bin/fhops --help >/tmp/fhops_help.txt && tmp/v100-wheel-smoke/bin/fhops validate examples/tiny7/scenario.yaml && tmp/v100-wheel-smoke/bin/fhops solve-heur examples/tiny7/scenario.yaml --out tmp/v100-wheel-smoke/tiny7_sa.csv --iters 25 --seed 7 && tmp/v100-wheel-smoke/bin/fhops evaluate examples/tiny7/scenario.yaml --assignments tmp/v100-wheel-smoke/tiny7_sa.csv`
+  - `.venv/bin/ruff format src tests && .venv/bin/ruff check src tests && .venv/bin/mypy src`
+  - `.venv/bin/pytest` (301 passed, 210 skipped, 61 warnings)
+  - `.venv/bin/pre-commit run --all-files` (failed before staging because the changelog hook checks staged commit contents)
+  - `git add -A && .venv/bin/pre-commit run --all-files`
+  - `PANDOC_DIR=$(.venv/bin/python - <<'PY' ... PY); PATH="$PANDOC_DIR:$PATH" .venv/bin/sphinx-build -b html docs _build/html -W`
+
 # 2026-06-14 — SoftwareX manuscript metadata aligned to v1.0.0
 - Started the `issue-17-softwarex-v100-metadata` branch for #17 under the v1.0.0 GA release issue tree.
 - Replaced in-repo SoftwareX manuscript placeholders (`v1.0.0-beta1`, `softwarex-manuscript`, and future-tense tag wording) with the final `v1.0.0` release/tag/PyPI install path.

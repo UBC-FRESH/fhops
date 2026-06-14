@@ -9,9 +9,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from functools import lru_cache
-from pathlib import Path
 
 from fhops.reference import get_appendix5_profile, load_fncy12_dataset
+from fhops.resources import data_path
 
 _FEET_PER_METER = 3.28084
 _CUBIC_FEET_PER_CUBIC_METER = 35.3146667
@@ -922,9 +922,7 @@ class _TR127Regression:
     predictors: tuple[_TR127Predictor, ...]
 
 
-_TR127_REGRESSIONS_PATH = (
-    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tr127_regressions.json"
-)
+_TR127_REGRESSIONS_PATH = data_path("reference", "fpinnovations", "tr127_regressions.json")
 
 
 @lru_cache(maxsize=1)
@@ -1167,9 +1165,7 @@ class TN173System:
     notes: str | None
 
 
-_TN173_PATH = (
-    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tn173_compact_yarders.json"
-)
+_TN173_PATH = data_path("reference", "fpinnovations", "tn173_compact_yarders.json")
 
 
 @lru_cache(maxsize=1)

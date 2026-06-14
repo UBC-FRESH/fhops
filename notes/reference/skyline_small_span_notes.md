@@ -5,11 +5,11 @@ Purpose: collect regression-ready parameters from small-span skyline / short-yar
 
 ## TN-54 – Model 9 Micro Master yarder (Vancouver Island clearcut, 1981)
 
-Source: `notes/reference/fpinnovations/TN54.PDF`
+Source: `reference-documents/notes/reference/fpinnovations/TN54.PDF`
 
 - System: 9 m pipe tower on Timberjack 404 skidder, four drums (skyline/mainline/haulback/slackpuller), two-person crew (engineer/chaser + rigging slinger). Modified skidder skyline configuration (skyline through top block, mainline through slider block, chokers knotted directly). Typical clearcut span ~140 m due to layout, contractor reports 260 m optimal for smallwood thinning; manufacturer plans 600 m with intermediate supports.
 - Shift-level stats (16 shifts, 1800.6 m³ total):
-  - Availability 94 %, Utilisation 89 % (`notes/reference/fpinnovations/TN54.PDF`, Table 2).
+  - Availability 94 %, Utilisation 89 % (`reference-documents/notes/reference/fpinnovations/TN54.PDF`, Table 2).
   - Average per shift: 112.5 m³ (39.7 cunits), 246 pieces with average net piece volume 0.46 m³ (16.2 ft³) from weigh-scale reconciliation (Table 4). Per man-day = 56.3 m³.
   - Road-change time averaged 29 min; line-only change ≈24 min, full move ≈51 min (45 total changes).
 - Detailed time study (201 turns, piece scale sample of 231 stems, avg fresh volume 0.62 m³, SD 0.45 m³):
@@ -24,7 +24,7 @@ Source: `notes/reference/fpinnovations/TN54.PDF`
 
 ## TN-39 – Coastal BC dryland sortyards vs water-sorting grounds (1980 snapshot)
 
-Source: `notes/reference/fpinnovations/TN39.PDF`
+Source: `reference-documents/notes/reference/fpinnovations/TN39.PDF`
 
 - Scope: 26 coastal log-sorting sites (18 dryland sortyards, 8 water-sorting grounds) split into four throughput bands (0–60 kccf, 61–160 kccf, 161–260 kccf, 261–500 kccf; 1 kccf ≈ 2 831.7 m³). Data includes land/water footprint, labour, equipment, bundling %, and 1980 CAD costs.
 
@@ -57,7 +57,7 @@ Source: `notes/reference/fpinnovations/TN39.PDF`
 
 ## FNG73 – Hi-Skid short-yarding, self-loading truck (Maple Ridge demo, 1998)
 
-Source: `notes/reference/fpinnovations/FNG73.pdf`
+Source: `reference-documents/notes/reference/fpinnovations/FNG73.pdf`
 
 - System overview: truck-bed track with travelling fairlead, 100 m of 13 mm mainline, and chain-based self-dump mechanism so the same vehicle can yard, load, haul, and unload without extra equipment. Breakaway block strapped to residual trees auto-releases and trails the rigging back, letting the operator “snake” turns around obstacles.
 - Specs: winch speed 69 m/min; base line pull 18.8 kN (upgradeable to 26.7 kN). Payload 12 m³, log length designed for ≤6.5 m but deck can be extended. Truck GVW 15 250 kg; prototype price CAD 50–60 k (1999). Remote control allows a single operator to hook chokers, yard, and load; truck strapped to roadside tree until payload counterweights skyline forces.
@@ -78,7 +78,7 @@ Source: `notes/reference/fpinnovations/FNG73.pdf`
 
 ## TN258 / FNCY12 – Thunderbird TMY45 + Mini-Mak II (intermediate supports, Salmon Arm BC, 1992)
 
-Sources: `notes/reference/fpinnovations/FNCY12.pdf`, `notes/reference/fpinnovations/TN258.PDF`
+Sources: `reference-documents/notes/reference/fpinnovations/FNCY12.pdf`, `reference-documents/notes/reference/fpinnovations/TN258.PDF`
 
 - System overview: Thunderbird TMY45 swing yarder (13.7 m tower, Cummins 220 kW) running a standing skyline with gravity outhaul, paired with a Maki Mini-Mak II slack-pulling carriage (7.5 kW, 6.8 t payload, 568 kg, passes intermediate supports). Support hardware (two skyline support jacks) cost ≈CAD 33.5 k. Loader (Drott hydraulic), Timberjack 450 grapple skidder, and Cat D8 provided landing support.
 - Setting: Stukemapten Lake, north of Salmon Arm. Slopes 30–70 % (avg 55 %), gross volume 372 m³/ha dominated by Douglas-fir (81 %). About 23 % of the area needed intermediate supports to achieve lift across convex slopes and wet benches.
@@ -109,7 +109,7 @@ Sources: `notes/reference/fpinnovations/FNCY12.pdf`, `notes/reference/fpinnovati
 
 ## TN82 – FMC FT-180 + JD 550 steep ground alternative (Canal Flats, 1983–84)
 
-Source: `notes/reference/fpinnovations/TN82.PDF`
+Source: `reference-documents/notes/reference/fpinnovations/TN82.PDF`
 
 - Study covers Crestbrook’s contractor-operated FMC FT-180 tracked skidder working with a John Deere 550 crawler on 35–60 % sidehills (summer clearcut) and a winter right-of-way (≤9 % running slope). Trees averaged 0.39 m³ in the clearcut and 1.7 m³ in the ROW.
 - Production split (Table S‑1): in the clearcut the FT-180 averaged **8.0 m³/PMH** (20.5 trees, 2.4 turns) or **55.6 m³/8 h shift** vs. the JD 550 at 5.2 m³/PMH (16.3 m³/shift). On the winter ROW the FT-180 reached **17.1 m³/PMH** (108 m³/shift) while the JD handled shorter pulls at 11.4 m³/PMH (43 m³/shift). System-level output was 72 m³/shift (clearcut) and 151 m³/shift (ROW).
@@ -118,7 +118,7 @@ Source: `notes/reference/fpinnovations/TN82.PDF`
 
 ## TN98 – Handfalling economics (Vancouver Island, 1985)
 
-Source: `notes/reference/fpinnovations/TN98.PDF`
+Source: `reference-documents/notes/reference/fpinnovations/TN98.PDF`
 
 - 10.3 ha, 110‑year second-growth (60 % Douglas-fir, 21 % hemlock, 16 % cedar). Three skilled fallers were time-studied across **1 746 measured trees** (plus 5 328 supplemental observations). Selective bucking: only trees ≥60 cm butt diameter were bucked; smaller stems felled and left for roadside processing.
 - Productive time once in-stand ≈70 %; cutting consumed ~40 % of total, moving ≈20 %, limbing/bucking only 4–5 % because roadside processors handled most logs. Average **220 trees/shift** (203 m³) at $319.62/shift labour → **$1.45/tree ($1.57/m³)** overall.
@@ -128,7 +128,7 @@ Source: `notes/reference/fpinnovations/TN98.PDF`
 
 ## TN-173 – Eastern Canada compact skyline fleet (Ecologger, Gabriel, Christie, Télétransporteur, Timbermaster)
 
-Source: `notes/reference/fpinnovations/TN173.pdf`
+Source: `reference-documents/notes/reference/fpinnovations/TN173.pdf`
 
 - Study scope: 1991 time-and-motion review of five light cable systems working short spans (mostly 90–240 m) in eastern Canada partial cuts. Each case logs yarding distances, payload, crew mix, availability, and a full cost build (1991 CAD) split into owning vs. operating.
 - RMS Ecologger: radio-controlled tractor carriage with skyline + mainline drums, two-person rigging crew. Average payload 0.34 m³, cycles dominated by hookup (38 %) at short distances. Delivered ≈24 m³/PMH₀ with direct costs ~$22.40/m³. Excels in tight corridors where guyline anchoring options are limited.

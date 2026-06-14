@@ -1,11 +1,11 @@
 BC IWA Wage/Benefit References
 ==============================
 
-Use these sources when translating historic BC skyline cost studies into the generic machine-rate catalog or when back-calculating labour/benefit assumptions for new presets. Each entry cites the document already in `notes/reference/` together with the effective date, positions, and fringe allowances.
+Use these sources when translating historic BC skyline cost studies into the generic machine-rate catalog or when back-calculating labour/benefit assumptions for new presets. Each entry cites the public bibliographic note and, where useful, the full-text/extract path now stored in the private `reference-documents/` submodule for authorized collaborators.
 
 ## 1994 – IWA-Canada rates (TN-261 loader-forwarder study)
 
-Source: `notes/reference/tn261.txt` (FERIC TN-261, Appendix 2, June 1994 wage table).
+Source: `reference-documents/notes/reference/tn261.txt` (FERIC TN-261, Appendix 2, June 1994 wage table; see also `notes/reference_log.md`).
 
 - Hand faller: **$270.76/day** (regular rate for first 8 h, overtime 1.5× after 8 h).
 - Bucker: **$23.50/h**.
@@ -17,8 +17,8 @@ Notes: Table explicitly states the overtime treatment (prorated at 1.5× beyond 
 ## 1996–1997 – Coastal BC skyline crews (TR-119/TR-125)
 
 Sources:
-- `notes/reference/fpinnovations/TR119.txt` (June 15 1996 IWA wages +35 % benefits used for strip/shelterwood skyline costing).
-- `notes/reference/fpinnovations/TR125.txt` (June 15 1997 IWA wages +38 % benefits for Skylead C40 crews).
+- `reference-documents/notes/reference/fpinnovations/TR119.txt` (June 15 1996 IWA wages +35 % benefits used for strip/shelterwood skyline costing).
+- `reference-documents/notes/reference/fpinnovations/TR125.txt` (June 15 1997 IWA wages +38 % benefits for Skylead C40 crews).
 
 Both reports reiterate the standard FERIC costing convention:
 - Use current IWA hourly rates per position.
@@ -27,7 +27,7 @@ Both reports reiterate the standard FERIC costing convention:
 
 ## 2002 – Advantage skyline conversion (ADV5N28)
 
-Source: `notes/reference/fpinnovations/ADV5N28.txt` (Appendix II, Table 4, 2002 IWA wage base).
+Source: `reference-documents/notes/reference/fpinnovations/ADV5N28.txt` (Appendix II, Table 4, 2002 IWA wage base).
 
 - Falling labour derived from **2002 IWA coastal wage scale** (+40 % fringe, overtime after 8 h).
 - Yarder crew wages embedded in Appendix II cost table; machine operators include $178.40/h labour + 40 % benefits.
@@ -35,8 +35,8 @@ Source: `notes/reference/fpinnovations/ADV5N28.txt` (Appendix II, Table 4, 2002 
 ## 2004 – Southern Interior Master Agreement (ADV5N45 / ADV7N3)
 
 Sources:
-- `notes/reference/fpinnovations/ADV5N45.txt` (Dec 2004, Appendix II).
-- `notes/reference/fpinnovations/ADV7N3.txt` (Aug 2004, Appendix A/B).
+- `reference-documents/notes/reference/fpinnovations/ADV5N45.txt` (Dec 2004, Appendix II).
+- `reference-documents/notes/reference/fpinnovations/ADV7N3.txt` (Aug 2004, Appendix A/B).
 
 Key points:
 - Wage rates taken from the **2004 IWA Southern Interior Master Agreement**.
@@ -45,13 +45,13 @@ Key points:
 
 ## Additional references
 
-- `notes/reference/fpinnovations/TN147_highlead.json` / `tn157_cypress7280b.json`: both embed late-1980s IWA wages (+35–38 % fringe).
-- `notes/reference/fpinnovations/ADV2N62.txt`: June 15 1999 IWA rates (southern interior) for loader-forwarder studies.
-- `notes/reference/fpinnovations/ADV1N40_madill071.json`: 1998 interior IWA wages for Madill 071 running skyline.
+- `data/reference/fpinnovations/tn147_highlead.json` / `tn157_cypress7280b.json`: both embed late-1980s IWA wages (+35–38 % fringe).
+- `reference-documents/notes/reference/fpinnovations/ADV2N62.txt`: June 15 1999 IWA rates (southern interior) for loader-forwarder studies.
+- `data/reference/fpinnovations/adv1n40_madill071.json`: 1998 interior IWA wages for Madill 071 running skyline.
 
 ### 1999 – Log-truck / Hi-Skid operator wage (ADV2N62, FNG73 Hi-Skid)
 
-Source: `notes/reference/fpinnovations/ADV2N62.txt` (June 15 1999 IWA wage bulletin referenced across Advantage Vol. 2 No. 62 and the FNG73 Field Note).
+Source: `reference-documents/notes/reference/fpinnovations/ADV2N62.txt` (June 15 1999 IWA wage bulletin referenced across Advantage Vol. 2 No. 62 and the FNG73 Field Note).
 
 - Log-truck or yarder-driver classification: **$24.01/h** base wage (southern interior, 1999).
 - Standard fringe: **+38 %** (pension, health, vacation, union dues) ⇒ **$33.13/SMH** fully burdened labour.

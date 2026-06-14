@@ -14,11 +14,11 @@ import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 
 from fhops.costing.inflation import TARGET_YEAR, inflate_value
+from fhops.resources import data_path
 
-DATA_PATH = Path(__file__).resolve().parents[3] / "data/machine_rates.json"
+DATA_PATH = data_path("machine_rates.json")
 
 
 @dataclass(frozen=True)

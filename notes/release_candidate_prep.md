@@ -21,8 +21,21 @@ Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
 2. **Packaging QA**
    - [x] ``hatch build`` wheel/sdist locally and inspect contents (license, data files, examples).
      - Built `dist/fhops-0.0.2*` via `hatch build`; artifacts include CLI entry points and docs assets.
+     - 2026-06-14: issue #18 rebuilt final `fhops-1.0.0` artifacts. `twine check`
+       passes; the wheel contains package code plus bundled runtime `fhops/data/**` and excludes
+       `docs/`, `docs/softwarex/`, `examples/`, `notes/`, and `reference-documents/`. After the
+       copyright review, full-text reference PDFs/snapshots/extracts moved to the private
+       `UBC-FRESH/fhops-reference-docs` submodule; the public repo keeps the Markdown
+       bibliography/provenance notes and the Sphinx `reference/source_bibliography` page points
+       readers to them. The sdist excludes `docs/references/`, `docs/softwarex/reference/`,
+       `notes/`, and `reference-documents/` while preserving runtime JSON under `data/**`.
    - [x] Smoke install from the built wheel (fresh venv) and run ``fhops --help`` plus a tiny7 solve.
      - Created `.venv-hatch-smoke`, installed the wheel, and ran `fhops --help` + `fhops validate examples/tiny7/scenario.yaml` successfully.
+     - 2026-06-14: issue #18 installed `dist/fhops-1.0.0-py3-none-any.whl` into
+       `tmp/v100-wheel-smoke` and ran `fhops --help`, `fhops validate
+       examples/tiny7/scenario.yaml`, a 25-iteration tiny7 `solve-heur`, and `fhops evaluate
+       --assignments` successfully. The first smoke pass exposed missing `click`/`PyYAML`
+       metadata and unbundled runtime JSON; both are fixed in the branch.
    - [x] Draft ``HATCH_INDEX=testpypi hatch publish`` dry-run instructions (see Section 7).
 3. **Docs & README polish**
    - [x] Tighten README quickstart for pip install + hatch workflows (see README Installation).

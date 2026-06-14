@@ -6,8 +6,9 @@ import json
 from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 from typing import Any, cast
+
+from fhops.resources import data_path
 
 
 def _validate_inputs(turn_volume_m3: float, yarding_distance_m: float) -> None:
@@ -223,25 +224,12 @@ class TN157Case:
         return self.yarding_minutes / self.total_turns
 
 
-_TN157_PATH = (
-    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tn157_cypress7280b.json"
-)
-_TN147_PATH = (
-    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tn147_highlead.json"
-)
-_TR122_PATH = (
-    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/tr122_swingyarder.json"
-)
-_ADV5N28_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "data/reference/fpinnovations/adv5n28_skyline_conversion.json"
-)
-_ADV1N35_PATH = (
-    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv1n35_owren400.json"
-)
-_ADV1N40_PATH = (
-    Path(__file__).resolve().parents[3] / "data/reference/fpinnovations/adv1n40_madill071.json"
-)
+_TN157_PATH = data_path("reference", "fpinnovations", "tn157_cypress7280b.json")
+_TN147_PATH = data_path("reference", "fpinnovations", "tn147_highlead.json")
+_TR122_PATH = data_path("reference", "fpinnovations", "tr122_swingyarder.json")
+_ADV5N28_PATH = data_path("reference", "fpinnovations", "adv5n28_skyline_conversion.json")
+_ADV1N35_PATH = data_path("reference", "fpinnovations", "adv1n35_owren400.json")
+_ADV1N40_PATH = data_path("reference", "fpinnovations", "adv1n40_madill071.json")
 
 
 def _weighted_average(

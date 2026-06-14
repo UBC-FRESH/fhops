@@ -5,9 +5,9 @@ Purpose: keep a single place that documents how existing FHOPS sources handle sl
 
 ## Sources Reviewed
 
-- `notes/reference/ledoux-manual-extraction.txt` – Table 3 residue terms and Table 4 hourly costs for Skagit BU‑94 (shotgun + highlead), Washington 208E, and Thunderbird TMY‑45 (lines 1‑53).
-- `notes/reference/fpinnovations/TR119.txt` – Chamiss Bay partial-cut skyline trial (lines 240‑294).
-- `notes/reference/fpinnovations/TR125.txt` – Kitwanga multi-span strip selection study (lines 1491‑1699).
+- `reference-documents/notes/reference/ledoux-manual-extraction.txt` – Table 3 residue terms and Table 4 hourly costs for Skagit BU‑94 (shotgun + highlead), Washington 208E, and Thunderbird TMY‑45 (lines 1‑53).
+- `reference-documents/notes/reference/fpinnovations/TR119.txt` – Chamiss Bay partial-cut skyline trial (lines 240‑294).
+- `reference-documents/notes/reference/fpinnovations/TR125.txt` – Kitwanga multi-span strip selection study (lines 1491‑1699).
 
 ## Quantitative residue penalties (LeDoux 1984)
 
@@ -23,13 +23,13 @@ All four regressions model delay-free cycle time `Y` (minutes) as a linear funct
 Practical takeaways:
 
 - A single residue log can burn 7–29 seconds, so a “slash-heavy” turn (e.g., 3 residue logs) adds 0.4–1.5 minutes to the cycle even if merchantable payload stays constant.
-- Because Table 4 shows total hourly cost between USD 268–357 (`notes/reference/ledoux-manual-extraction.txt:41-49`), those extra seconds translate to ≈USD 1.8–5.6 per residue log at 1984 wages (USD 0.089–0.188 per machine-minute). CPI + FX adjustments should therefore surface an explicit warning whenever `residue_pieces_per_turn` exceeds the merchantable count.
+- Because Table 4 shows total hourly cost between USD 268–357 (`reference-documents/notes/reference/ledoux-manual-extraction.txt:41-49`), those extra seconds translate to ≈USD 1.8–5.6 per residue log at 1984 wages (USD 0.089–0.188 per machine-minute). CPI + FX adjustments should therefore surface an explicit warning whenever `residue_pieces_per_turn` exceeds the merchantable count.
 
 ## BC partial-cut evidence (TR119/TR125)
 
-- TR119 shows that keeping 65–70 % of basal area standing dropped skyline productivity 30–34 % and raised costs 32–46 % relative to a nearby clearcut because hooktenders spent longer spotting safe corridors and dealing with hangups (`notes/reference/fpinnovations/TR119.txt:240-256`). No dedicated residue cycle table exists, but it confirms that “non-merchantable” content (retained stems, extra rigging) materially slows PMH outputs.
-- TR125’s Kitwanga study documents only 38 % volume removal, yet still achieved 99 m³/shift falling and 102 m³/shift yarding by combining narrow 10 m corridors with intermediate supports. The report publishes the single- and multi-span regressions (`notes/reference/fpinnovations/TR125.txt:1491-1550`) but provides no per-turn slash/residue treatment—another reminder that BC publications focus on layout impacts (deflection, corridor spacing) instead of slash utilisation ratios.
-- Both reports emphasise residual stand damage tracking (`TR119.txt:257-259`, `TR125.txt:1621-1699`) rather than residue clean-up metrics, so there is no BC analogue to the LeDoux residue coefficients yet.
+- TR119 shows that keeping 65–70 % of basal area standing dropped skyline productivity 30–34 % and raised costs 32–46 % relative to a nearby clearcut because hooktenders spent longer spotting safe corridors and dealing with hangups (`reference-documents/notes/reference/fpinnovations/TR119.txt:240-256`). No dedicated residue cycle table exists, but it confirms that “non-merchantable” content (retained stems, extra rigging) materially slows PMH outputs.
+- TR125’s Kitwanga study documents only 38 % volume removal, yet still achieved 99 m³/shift falling and 102 m³/shift yarding by combining narrow 10 m corridors with intermediate supports. The report publishes the single- and multi-span regressions (`reference-documents/notes/reference/fpinnovations/TR125.txt:1491-1550`) but provides no per-turn slash/residue treatment—another reminder that BC publications focus on layout impacts (deflection, corridor spacing) instead of slash utilisation ratios.
+- Both reports emphasise residual stand damage tracking (`TR119.txt:257-259`, `TR125.txt:1621-1699` in the private submodule extracts) rather than residue clean-up metrics, so there is no BC analogue to the LeDoux residue coefficients yet.
 
 ## Gaps / Next actions
 

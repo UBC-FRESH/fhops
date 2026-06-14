@@ -43,6 +43,7 @@ ensembles.
    reference/playback_aggregates
    reference/harvest_systems
    reference/telemetry
+   reference/source_bibliography
 
 .. toctree::
    :maxdepth: 1

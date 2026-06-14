@@ -316,7 +316,7 @@ Skyline Stand Profiles
 ----------------------
 
 Arnvik (2024) Appendix 5 stand metadata is bundled under
-``notes/reference/arnvik_tables/appendix5_stands_normalized.json`` and exposed via the CLI:
+``data/reference/arnvik/appendix5_stands.json`` and exposed via the CLI:
 
 - ``fhops dataset appendix5-stands`` lists authors/species and the parsed slope/ground descriptors
   (filter with ``--author``). The parser converts ranges (e.g., ``23 (5-55)%``) and qualitative labels

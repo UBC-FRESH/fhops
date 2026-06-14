@@ -17,7 +17,7 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
 | 2. Software description – Heuristics/tuners | `docs/howto/heuristic_presets.rst`, `docs/howto/parallel_heuristics.rst`, `docs/howto/tabu.rst`, `docs/howto/ils.rst`, `docs/howto/telemetry_tuning.rst` | `heuristic_matrix.csv` + `heuristic_text.md` | CSV drives both manuscript table and Sphinx reference page; describe SA/ILS/Tabu + tuner automation. |
 | 3. Illustrative example | `docs/howto/quickstart.rst`, `docs/howto/benchmarks.rst`, `docs/howto/synthetic_datasets.rst` | `illustrative_walkthrough.md`, `benchmark_table.csv` | Align CLI steps + dataset notes; reuse same telemetry screenshots. |
 | 4. Impact | `docs/roadmap.rst`, `docs/references/adoption.rst`, release notes | `impact_story.md` | Summarize adoption + roadmap commitments once metrics ready. |
-| Metadata tables | `docs/softwarex/reference/README.md`, `README.md`, `pyproject.toml` | `metadata_basics.yaml` | Single YAML feeds both LaTeX metadata tables and Sphinx “About FHOPS” page. |
+| Metadata tables | `docs/reference/source_bibliography.rst`, `README.md`, `pyproject.toml` | `metadata_basics.yaml` | Single YAML feeds both LaTeX metadata tables and Sphinx “About FHOPS” page. |
 
 ## Action items
 
