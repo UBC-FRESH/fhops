@@ -15,6 +15,9 @@ Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
    - [x] Add ``hatch.toml``/pyproject updates (build-system, project metadata, scripts, dependencies).
    - [x] Define version source (pyproject now uses ``[tool.hatch.version]`` pointing at ``src/fhops/__init__.__version__``; bump workflow = edit that constant + changelog).
    - [x] Configure Hatch environments/custom commands for lint/test/release parity with ws3.
+   - [x] Bump final GA version metadata to ``1.0.0`` for SoftwareX submission.
+     - 2026-06-14: issue #16 updates ``src/fhops/__init__.py``, ``tests/test_import.py``,
+       final release notes, README/overview install wording, and the release playbook.
 2. **Packaging QA**
    - [x] ``hatch build`` wheel/sdist locally and inspect contents (license, data files, examples).
      - Built `dist/fhops-0.0.2*` via `hatch build`; artifacts include CLI entry points and docs assets.
@@ -29,6 +32,7 @@ Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
    - [x] Summarise Phase 1-3 achievements, telemetry tooling, and new CLI surfaces (see `notes/release_notes_draft.md`).
    - [x] Document breaking changes and migration guidance (schema version, mobilisation config).
    - [x] Add "Known Issues / Next" section pointing to backlog items (agentic tuner, DSS hooks).
+   - [x] Publish final GA notes at ``docs/releases/v1.0.0.md``.
 5. **Hyperparameter tuning sign-off**
    - [x] Re-run the tuning harness (baseline bundles) with the latest code; see `notes/release_tuning_results.md` and `tmp/release-tuning/` artifacts.
    - [x] Document the improvements (objective delta, runtime, win rate) in release notes and telemetry dashboards.
@@ -40,6 +44,7 @@ Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
      - 2026-06-14: issue #15 branch fixes current Ruff formatting drift, modernises `StrEnum`
        lint blockers, and hardens tuner-report subprocess tests so the local lint/type/test gate
        can pass under the release verification environment.
+     - 2026-06-14: issue #15 merged via PR #21 after full CI success.
 
 7. **Publishing (TestPyPI → PyPI)**
    - [x] Dry run using TestPyPI:

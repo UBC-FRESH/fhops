@@ -34,9 +34,9 @@ Automation pipeline
 Installation
 ------------
 
-FHOPS publishes wheels/sdists via Hatch. Once the release candidate is on PyPI, install with::
+FHOPS publishes wheels/sdists via Hatch. Install the stable v1.0.0 release with::
 
-   pip install fhops
+   pip install fhops==1.0.0
 
 For development or release verification, install Hatch and run the full suite locally::
 

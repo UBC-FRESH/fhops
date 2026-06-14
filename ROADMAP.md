@@ -116,7 +116,7 @@ before proposing new work.
 - [x] Complete Sphinx documentation set (API, CLI, how-tos, examples) published to Read the Docs (`notes/sphinx-documentation.md`, `docs/howto/release_playbook.rst`, `docs/howto/telemetry_ops.rst`, `docs/howto/thesis_eval.rst`, API narrative guides).
   - 2025-11-24: Closed the Sphinx/docstring audit (feature/api-docstring-enhancements) — all CLI, evaluation, heuristics, and productivity modules now ship NumPy-style docstrings and Sphinx builds are warning-free.
 - [x] Finalise contribution guide, code of conduct alignment, and PR templates (see `docs/howto/release_playbook.rst`, `CONTRIBUTING.md`, `AGENTS.md`).
-- [x] Versioned release notes and public roadmap updates (`docs/releases/v1.0.0-alpha1.md`, `docs/releases/v0.1.0.md`, `ROADMAP.md` current).
+- [x] Versioned release notes and public roadmap updates (`docs/releases/v1.0.0.md`, `docs/releases/v1.0.0-alpha2.md`, `docs/releases/v1.0.0-alpha1.md`, `docs/releases/v0.1.0.md`, `ROADMAP.md` current).
 - [ ] Outreach plan (blog, seminars, partner briefings).
 
 ## Phase 5 — Formal Model Documentation Synchronization
@@ -129,6 +129,7 @@ before proposing new work.
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
    - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
    - 2026-06-14: v1.0.0 GA issue tree opened; first child branch (`issue-15-v100-green-ci`) is restoring the green CI/local verification gate before release metadata changes.
+   - 2026-06-14: second child branch (`issue-16-v100-version-docs`) bumps package metadata/docs to the final `1.0.0` release line before artifact and publication work.
 2. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
    - Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness (including shift-aware neighbourhoods).
 3. **Shift-Based Scheduling Refactor (`notes/modular_reorg_plan.md`, `notes/mip_model_plan.md`, `notes/simulation_eval_plan.md`)**
