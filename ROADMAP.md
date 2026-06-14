@@ -131,6 +131,7 @@ before proposing new work.
    - 2026-06-14: v1.0.0 GA issue tree opened; first child branch (`issue-15-v100-green-ci`) is restoring the green CI/local verification gate before release metadata changes.
    - 2026-06-14: second child branch (`issue-16-v100-version-docs`) bumps package metadata/docs to the final `1.0.0` release line before artifact and publication work.
    - 2026-06-14: third child branch (`issue-17-softwarex-v100-metadata`) aligns in-repo SoftwareX manuscript metadata/prose with the final `v1.0.0` release links and install path.
+   - 2026-06-14: fourth child branch (`issue-18-v100-artifact-smoke`) validates final `1.0.0` artifacts, fixes clean wheel runtime dependencies/package data, moves the full-text reference-document vault to a private `reference-documents` submodule for copyright-risk control, and records the public-bibliography vs. private-source-document content policy.
 2. **Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**
    - Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness (including shift-aware neighbourhoods).
 3. **Shift-Based Scheduling Refactor (`notes/modular_reorg_plan.md`, `notes/mip_model_plan.md`, `notes/simulation_eval_plan.md`)**

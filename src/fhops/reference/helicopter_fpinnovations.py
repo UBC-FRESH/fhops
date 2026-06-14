@@ -6,13 +6,14 @@ import json
 from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
+
+from fhops.resources import data_path
 
 if TYPE_CHECKING:  # pragma: no cover - import-time typing helper
     from fhops.productivity.cable_logging import HelicopterLonglineModel
 
-_DATA_PATH = Path(__file__).resolve().parents[3] / "data/productivity/helicopter_fpinnovations.json"
+_DATA_PATH = data_path("productivity", "helicopter_fpinnovations.json")
 
 
 @dataclass(frozen=True)

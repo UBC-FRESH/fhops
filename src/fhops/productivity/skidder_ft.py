@@ -7,8 +7,9 @@ import math
 from dataclasses import dataclass, field
 from enum import StrEnum
 from functools import lru_cache
-from pathlib import Path
 from typing import Any, cast
+
+from fhops.resources import data_path
 
 
 class Han2018SkidderMethod(StrEnum):
@@ -121,13 +122,7 @@ class ADV6N7SkidderResult:
     note: str
 
 
-_ADV6N7_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "data"
-    / "reference"
-    / "fpinnovations"
-    / "adv6n7_caterpillar535b.json"
-)
+_ADV6N7_PATH = data_path("reference", "fpinnovations", "adv6n7_caterpillar535b.json")
 
 
 @lru_cache(maxsize=1)
@@ -604,6 +599,4 @@ __all__ = [
     "estimate_cable_skidder_productivity_adv1n12_full_tree",
     "estimate_cable_skidder_productivity_adv1n12_two_phase",
 ]
-_SKIDDER_SPEED_PROFILE_PATH = (
-    Path(__file__).resolve().parents[3] / "data" / "reference" / "skidder_speed_zurita2025.json"
-)
+_SKIDDER_SPEED_PROFILE_PATH = data_path("reference", "skidder_speed_zurita2025.json")

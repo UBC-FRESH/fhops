@@ -5,16 +5,11 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 from typing import Any, cast
 
-_ADV2N21_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "data"
-    / "reference"
-    / "fpinnovations"
-    / "adv2n21_partial_cut.json"
-)
+from fhops.resources import data_path
+
+_ADV2N21_PATH = data_path("reference", "fpinnovations", "adv2n21_partial_cut.json")
 
 
 @dataclass(frozen=True)

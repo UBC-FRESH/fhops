@@ -1,6 +1,6 @@
 # FHOPS SoftwareX Manuscript Workspace
 
-This directory houses the working sources for the SoftwareX submission. It is intentionally separate from `reference/` (snapshots) and `assets/` (shared figures/data) so we can script builds without touching upstream artifacts.
+This directory houses the working sources for the SoftwareX submission. It is intentionally separate from the private `reference-documents/` submodule (full-text snapshots) and `assets/` (shared figures/data) so we can script builds without touching upstream artifacts.
 
 ```
 manuscript/
@@ -17,7 +17,7 @@ manuscript/
 
 ## Template snapshot
 - Source: https://mirrors.ctan.org/macros/latex/contrib/elsarticle.zip (mirrors the official Elsevier `elsarticle` bundle).
-- Retrieved: 2025-11-23 via `curl -L -o docs/softwarex/reference/templates/elsarticle-template.zip …`.
+- Retrieved: 2025-11-23 via `curl -L -o reference-documents/docs/softwarex/reference/templates/elsarticle-template.zip …`.
 - Contents live under `elsarticle/`. Keep upstream files pristine; place FHOPS-specific adjustments (title page, macros, includes) in `sections/` or sibling files so we can diff against the CTAN baseline.
 
 ## Build workflow (`latexmk` + TeX Live)

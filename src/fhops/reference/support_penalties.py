@@ -6,9 +6,10 @@ import json
 from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 
-_DATA_ROOT = Path(__file__).resolve().parents[3] / "data/reference/fpinnovations"
+from fhops.resources import data_path
+
+_DATA_ROOT = data_path("reference", "fpinnovations")
 _ADV15N3_PATH = _DATA_ROOT / "adv15n3_support.json"
 _ADV4N7_PATH = _DATA_ROOT / "adv4n7_compaction.json"
 

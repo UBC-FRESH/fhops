@@ -8,8 +8,10 @@ The Appendix 8 tables that power ``data/productivity/arnvik_forwarder.json`` onl
 single-grip harvesters, feller-bunchers, and harwarders (per the thesis framing). Forwarder
 and grapple-skidder regressions are absent, so the parsed JSON should be treated strictly as a
 harvester/harwarder validation set. For primary-transport roles we must fall back to the
-external references already logged in ``notes/reference`` (Ghaffariyan et al. 2019, Kellogg &
-Bettinger 1994, Allman et al. 2021, etc.).
+external references already logged in ``notes/reference_log.md`` and the public notes under
+``notes/reference`` (Ghaffariyan et al. 2019, Kellogg & Bettinger 1994, Allman et al. 2021,
+etc.). Full-text working copies live in the private ``reference-documents`` submodule for
+authorized collaborators.
 
 Implications
 ------------
@@ -28,14 +30,18 @@ Forwarder equation stack (BC roll-out)
 Sources in hand
 ^^^^^^^^^^^^^^^
 
-* **Ghaffariyan et al. 2019 (AFORA/ALPACA)** – ``notes/reference/sb_202_2019_2.txt`` captures
-  Equations 2 (14 t) and 3 (20 t) that predict m³/PMH₀ from extraction distance. We already added
-  the slope multipliers (flat = 1.0, 10–20 % = 0.75, >20 % = 0.15) to the CLI.
+* **Ghaffariyan et al. 2019 (AFORA/ALPACA)** – logged in ``notes/reference_log.md`` with the
+  source extract retained in ``reference-documents/notes/reference/sb_202_2019_2.txt`` for
+  authorized collaborators. Equations 2 (14 t) and 3 (20 t) predict m³/PMH₀ from extraction
+  distance. We already added the slope multipliers (flat = 1.0, 10–20 % = 0.75,
+  >20 % = 0.15) to the CLI.
 * **Kellogg & Bettinger 1994** – ``fhops.productivity.kellogg_bettinger1994`` exposes the western
   Oregon FMG 910 regression (sawlog/pulpwood/mixed offsets) covering multi-product CTL thinning.
-* **Allman et al. 2021** – ``notes/reference/forests-13-00305-v2.txt`` includes the tethered
-  harvester-forwarder Monte Carlo payload-vs-slope/distance regressions we plan to translate into
-  slope penalty/payload-cap helpers once FPInnovations validates the coastal BC analogues.
+* **Allman et al. 2021** – logged in ``notes/reference_log.md`` with the source extract retained
+  in ``reference-documents/notes/reference/forests-13-00305-v2.txt`` for authorized
+  collaborators. It includes the tethered harvester-forwarder Monte Carlo
+  payload-vs-slope/distance regressions we plan to translate into slope penalty/payload-cap
+  helpers once FPInnovations validates the coastal BC analogues.
 
 Caveats and pending confirmations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

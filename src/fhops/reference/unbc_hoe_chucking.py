@@ -5,15 +5,11 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 
-_HOE_DATA_PATH = (
-    Path(__file__).resolve().parents[3] / "data" / "reference" / "unbc_hoe_chucking.json"
-)
+from fhops.resources import data_path
 
-_PROC_DATA_PATH = (
-    Path(__file__).resolve().parents[3] / "data" / "reference" / "unbc_processing_costs.json"
-)
+_HOE_DATA_PATH = data_path("reference", "unbc_hoe_chucking.json")
+_PROC_DATA_PATH = data_path("reference", "unbc_processing_costs.json")
 
 
 @dataclass(frozen=True)

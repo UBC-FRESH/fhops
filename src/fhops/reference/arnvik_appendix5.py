@@ -8,9 +8,10 @@ import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 
-DATA_PATH = Path(__file__).resolve().parents[3] / "data/reference/arnvik/appendix5_stands.json"
+from fhops.resources import data_path
+
+DATA_PATH = data_path("reference", "arnvik", "appendix5_stands.json")
 
 SLOPE_KEYWORDS = {
     "level": 0.0,

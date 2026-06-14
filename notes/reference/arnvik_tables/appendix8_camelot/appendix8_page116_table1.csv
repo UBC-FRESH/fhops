@@ -1,7 +1,0 @@
-page,table,author,model,harvest_method,machine_type,base_machine,propulsion,dv_type,units,formula
-116,1,Zimelis et al. (2017b),1,CTL,H,PB,RW,PV,(m³ h⁻¹),-aD₁+bD₁c-dD₁e
-116,1,Zimelis et al. (2017b),2,CTL,H,PB,RW,PV,(m³ h⁻¹),a-bD₁+cD₁d-eD₁f
-116,1,Zimelis et al. (2017b),3,CTL,H,PB,RW,PV,(m³ h⁻¹),-a+bD₁
-116,1,Zimelis & Spalva (2022),1,CTL,H,PB,RW,PV,(m³ h⁻¹),-a+bD₁-cD₁d
-116,1,Zimelis & Spalva (2022),2,CTL,H,PB,RW,PU,(trees h⁻¹),a-bD₁
-116,1,Zimelis et al. (2016),1,CTL,H,EB,CT,PV,(m³ h⁻¹),aD₁b

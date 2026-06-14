@@ -1,6 +1,6 @@
 # FPInnovations / FERIC Reference Log
 
-Purpose: track each FPInnovations/FERIC PDF dropped under `notes/reference/fpinnovations/`, summarize its contents when unpacked, and flag any productivity/cost models worth extracting into the FHOPS registry.
+Purpose: track each FPInnovations/FERIC PDF dropped under `reference-documents/notes/reference/fpinnovations/`, summarize its contents when unpacked, and flag any productivity/cost models worth extracting into the FHOPS registry.
 
 ## Legend
 - **Status**: `pending` = not yet reviewed, `scanned` = skimmed/notes captured, `extracted` = productivity data already ported.
@@ -205,7 +205,7 @@ Purpose: track each FPInnovations/FERIC PDF dropped under `notes/reference/fpinn
 | 9334.pdf | scanned | Report | Survey of existing FPInnovations decision-support tools for forest operations/wildfire vegetation management (project 301012718). | Process/tooling context only. |
 | Fuel-economy.pdf | scanned | Guide | "In Forestry Operations: Fuel Economy Counts!" (2nd ed.) outlining fuel-saving tactics for logging equipment fleets. | Cost/fuel benchmark guidance. |
 | IR20050204.pdf | scanned | Internal Report | Nova Scotia CTL case study on how ground roughness affects harvester/forwarder productivity (Jean-François Gingras, 2005). | Candidate source for roughness multipliers on CTL productivity. |
-_(Continue adding rows as additional files appear in `notes/reference/fpinnovations/`.)_
+_(Continue adding rows as additional files appear in `reference-documents/notes/reference/fpinnovations/`.)_
 
 ## Non-FPInnovations References
 

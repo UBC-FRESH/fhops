@@ -7,16 +7,16 @@ import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 from typing import Any, Literal, cast
 
 from fhops.costing.inflation import inflate_value
+from fhops.resources import data_path
 
 JSONDict = dict[str, Any]
 JSONDictMap = dict[str, JSONDict]
 
-_DATA_ROOT = Path(__file__).resolve().parents[3] / "data" / "productivity"
-_REFERENCE_ROOT = Path(__file__).resolve().parents[3] / "data" / "reference"
+_DATA_ROOT = data_path("productivity")
+_REFERENCE_ROOT = data_path("reference")
 _BERRY_DATA_PATH = _DATA_ROOT / "processor_berry2019.json"
 _BERRY_LOG_GRADES_PATH = _REFERENCE_ROOT / "berry2019_log_grade_emmeans.json"
 _ADV5N6_DATA_PATH = _DATA_ROOT / "processor_adv5n6.json"

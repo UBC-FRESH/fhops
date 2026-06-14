@@ -211,6 +211,7 @@ from fhops.reference import (
     load_unbc_hoe_chucking_data,
     load_unbc_processing_costs,
 )
+from fhops.resources import data_path
 from fhops.scenario.contract import Machine, RoadConstruction, SalvageProcessingMode, Scenario
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import (
@@ -294,9 +295,7 @@ _KELLOGG_RANGE_TEXT = (
 console = Console()
 dataset_app = typer.Typer(help="Inspect FHOPS datasets and bundled examples.")
 
-_LOADER_METADATA_PATH = (
-    Path(__file__).resolve().parents[2] / "data" / "productivity" / "loader_models.json"
-)
+_LOADER_METADATA_PATH = data_path("productivity", "loader_models.json")
 
 
 @cache

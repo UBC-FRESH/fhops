@@ -1,0 +1,3 @@
+[submodule "reference-documents"]
+	path = reference-documents
+	url = https://github.com/UBC-FRESH/fhops-reference-docs.git

@@ -200,7 +200,8 @@ Status: paused until the conventional tuning toolkit, benchmarking automation, a
 - Feurer, M., & Hutter, F. (2019). *Hyperparameter Optimization*. In F. Hutter, L. Kotthoff, & J. Vanschoren (Eds.), *Automated Machine Learning: Methods, Systems, Challenges* (pp. 3–33). Springer. Chapter DOI: https://doi.org/10.1007/978-3-030-05318-5_1 — Surveys meta-learning approaches that leverage historical runs for warm starts and optimiser selection, highlighting the importance of consistent scenario descriptors and schema versioning.
 - Bischl, B., Binder, M., Lang, M., Pielok, T., Richter, J., Coors, S., Thomas, J., Ullmann, T., Becker, M., Boulesteix, A.-L., Deng, D., & Lindauer, M. (2023). *Hyperparameter Optimization: Foundations, Algorithms, Best Practices and Open Challenges*. *WIREs Data Mining and Knowledge Discovery*, 13(2), e1484. https://doi.org/10.1002/widm.1484 — Provides a contemporary overview of optimiser portfolios and meta-level selection, showing that combining multiple tuners improves robustness across problem classes.
 - Therefore, collecting tuner-level meta-telemetry (algorithm name, budget, convergence metrics, scenario descriptors, schema version) is not overkill; it is a prerequisite for AutoML-style tuner selection, optimiser portfolios, and stacked optimisation loops.
-- Local copies stashed under `docs/references/`:
+- Private working copies are now stashed under `reference-documents/docs/references/` for
+  authorized collaborators:
   - `thornton2013-auto-weka.pdf`
   - `golovin2017-vizier.pdf`
   - `feurer2019-hpo-chapter.pdf`

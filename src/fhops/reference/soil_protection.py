@@ -6,9 +6,10 @@ import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
-from pathlib import Path
 
-_DATA_PATH = Path(__file__).resolve().parents[3] / "data/reference/soil_protection_profiles.json"
+from fhops.resources import data_path
+
+_DATA_PATH = data_path("reference", "soil_protection_profiles.json")
 
 
 @dataclass(frozen=True)
