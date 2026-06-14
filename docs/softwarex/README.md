@@ -11,7 +11,7 @@ Everything related to the FHOPS SoftwareX manuscript lives under this folder. Ea
 
 ## Contribution Guidelines
 
-1. **Stay on `feature/softwarex-manuscript`** – all manuscript work happens here until we have a merge-ready drop. Avoid rebasing without coordinating.
+1. **Keep release metadata synchronized** – the in-repo manuscript copy tracks the FHOPS release state used by Sphinx/assets. The standalone `fhops-manuscript` submission repository may own final journal packaging, but release links, version strings, and benchmark provenance should be ported back here before tagging.
 2. **Use the automation**:
    - `make assets` (from repo root) runs every script in `manuscript/scripts/` to regenerate datasets, benchmarks, tuners, playback summaries, costing tables, and scaling plots. Regenerated files live under `docs/softwarex/assets/`.
    - `make pdf` (or `make` inside `manuscript/`) builds the LaTeX manuscript via `latexmk`. The PDF lands in `docs/softwarex/manuscript/build/`.
