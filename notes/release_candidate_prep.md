@@ -1,13 +1,13 @@
 # Release Candidate Prep Plan
 
 Date: 2025-11-16
-Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
+Status: Complete — v1.0.0 GA was published on 2026-06-15 for SoftwareX submission.
 
 ## Objectives
 - Freeze scope and polish docs/install instructions for the first FHOPS release candidate.
 - Adopt Hatch for packaging/publishing (mirroring ws3 workflows) and ensure PyPI metadata is accurate.
 - Produce changelog/release notes, version bumps, and verification checklists before tagging.
-- Promote the public package from the current `1.0.0a2` prerelease line to a clean `1.0.0`
+- Promote the public package from the `1.0.0a2` prerelease line to a clean `1.0.0`
   GA release that SoftwareX reviewers can install and cite.
 
 ## Tasks
@@ -62,17 +62,22 @@ Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
        lint blockers, and hardens tuner-report subprocess tests so the local lint/type/test gate
        can pass under the release verification environment.
      - 2026-06-14: issue #15 merged via PR #21 after full CI success.
-   - [ ] Clean up release automation and public surfaces before the final tag.
+   - [x] Clean up release automation and public surfaces before the final tag.
      - 2026-06-14: issue #19 records the release-surface audit in
        `notes/release_surface_audit.md`, annotates the confusing `v0.0.1-alpha3` prerelease
        instead of deleting history, fixes the release-build workflow command exposed by
        `workflow_dispatch`, and hardens full analytics artifact collection before a fresh
        manual dashboard run.
-   - [ ] Sweep user-facing documentation before final publication.
+   - [x] Sweep user-facing documentation before final publication.
      - 2026-06-14: issue #27 records the public-docs readiness sweep in
        `notes/docs_readiness_sweep.md`, fixes README rendering, corrects stale
        `fhops evaluate` / `fhops eval-playback` examples, clarifies source-checkout vs.
        PyPI-installed content, and updates v1.0.0 release-note status.
+   - [x] Publish the final `v1.0.0` tag and GitHub release.
+     - 2026-06-15: issue #20 publishes `fhops==1.0.0` to TestPyPI and PyPI, verifies
+       clean installs from both indexes, pushes the annotated `v1.0.0` tag, verifies
+       tag-triggered release-build run `27517181902`, and creates the public
+       non-prerelease GitHub release.
 
 7. **Publishing (TestPyPI → PyPI)**
    - [x] Dry run using TestPyPI:
@@ -81,7 +86,9 @@ Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
      - ``python -m venv .venv-testpypi && . .venv-testpypi/bin/activate``
      - ``pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple fhops`` and run smoke commands (`fhops --help`, `fhops validate examples/tiny7/scenario.yaml`) ✅
    - [x] Document environment variables/secrets: PyPI tokens stored via ``~/.pypirc`` or passed directly to ``twine upload`` (see AGENTS.md Release workflow).
-   - [ ] After TestPyPI validation, repeat for PyPI using Twine during the release tag: ``python -m twine upload -u __token__ -p 'pypi-…' dist/*``.
+   - [x] After TestPyPI validation, repeat for PyPI using Twine during the release tag.
+     - 2026-06-15: TestPyPI and PyPI both report `fhops` latest as `1.0.0`; clean
+       install smoke tests from both indexes printed `fhops.__version__ == "1.0.0"`.
 
 ## References
 - ws3 Hatch workflow: https://github.com/ubc-fresh/ws3

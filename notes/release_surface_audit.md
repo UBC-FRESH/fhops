@@ -1,16 +1,20 @@
 # v1.0.0 Release Surface Audit
 
 Date: 2026-06-14
-Status: Active - issue #19, under the v1.0.0 GA release issue tree.
+Status: Complete - issue #19 closed, with final release-surface verification completed
+under issue #20 on 2026-06-15.
 
 ## Scope
 
-This note tracks the public surfaces that could make the FHOPS v1.0.0 release look stale,
-accidental, or still prerelease-only to SoftwareX reviewers and users.
+This note tracked the public surfaces that could make the FHOPS v1.0.0 release look stale,
+accidental, or still prerelease-only to SoftwareX reviewers and users. The final release
+surface is now stable: PyPI/TestPyPI serve `fhops==1.0.0`, the public GitHub release is
+non-prerelease, and the tag-triggered release-build workflow passed.
 
 ## Findings
 
-- GitHub's latest stable release currently resolves to `v0.0.2`, published 2025-11-10.
+- Before GA publication, GitHub's latest stable release resolved to `v0.0.2`, published
+  2025-11-10.
 - `v0.0.1-alpha3` is a newer GitHub prerelease, published 2026-04-17 from `main`, but the
   tagged source still reports `fhops.__version__ = "1.0.0a2"`. Its release notes compare
   `v1.0.0-alpha2...v0.0.1-alpha3`, which makes it look like a confused prerelease rather
@@ -31,6 +35,17 @@ accidental, or still prerelease-only to SoftwareX reviewers and users.
   failed at `Collect notebook artefacts`. GitHub's detailed logs for that February 2026 run
   have expired, so the exact shell line cannot be recovered.
 
+## Final Outcome
+
+- `v1.0.0` was published on 2026-06-15 from `main` commit
+  `d98fd104e69686ba4498d6628b646f210d7b9af1`.
+- PyPI and TestPyPI both report `fhops` latest as `1.0.0`, and clean install smoke tests
+  from both indexes printed `fhops.__version__ == "1.0.0"`.
+- The GitHub release `FHOPS v1.0.0` is public, non-draft, and non-prerelease.
+- The tag-triggered `Release Build Verification` workflow passed in run `27517181902`.
+- The `v1.0.0` tag is annotated rather than GPG-signed because the release environment
+  had no GPG secret key or signing configuration available.
+
 ## Decisions
 
 - Keep `v0.0.1-alpha3` in place instead of deleting the tag or release before GA. It is a
@@ -49,13 +64,13 @@ accidental, or still prerelease-only to SoftwareX reviewers and users.
 
 - [x] Confirm a manual `Release Build Verification` workflow run succeeds after the workflow
   command is corrected.
-- [ ] Re-run or confirm `Release Build Verification` on `main` after this branch merges and
-  before the signed `v1.0.0` tag is created.
-- [ ] Confirm the current `main` CI run succeeds and deploys the Pages artifact.
+- [x] Re-run or confirm `Release Build Verification` on `main` after this branch merges and
+  before the annotated `v1.0.0` tag is created.
+- [x] Confirm the current `main` CI run succeeds and deploys the Pages artifact.
 - [ ] Trigger `Analytics Notebooks (Full)` manually after this workflow hardening lands; if it
   fails again, open a follow-up with the fresh run URL and exclude "fresh full dashboard
   refresh" from the v1.0.0 claims.
-- [ ] Confirm the GitHub release created for `v1.0.0` is non-prerelease and becomes the latest
+- [x] Confirm the GitHub release created for `v1.0.0` is non-prerelease and becomes the latest
   stable GitHub release.
-- [ ] Confirm PyPI serves `fhops==1.0.0` and that the install snippet in README/docs matches
+- [x] Confirm PyPI serves `fhops==1.0.0` and that the install snippet in README/docs matches
   the published package.

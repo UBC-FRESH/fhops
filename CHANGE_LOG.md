@@ -1,3 +1,30 @@
+# 2026-06-15 — v1.0.0 post-release housekeeping
+- Started the `issue-post-v100-release-housekeeping` branch for #29 after completing the v1.0.0 publication issue tree.
+- Updated `docs/releases/v1.0.0.md` so the published release notes no longer describe #20 or #27 as pending follow-ups.
+- Marked `notes/release_candidate_prep.md` complete for GA publication and recorded the TestPyPI/PyPI/tag/GitHub release outcome.
+- Converted `notes/release_surface_audit.md` from active pre-release audit wording to a final release-surface outcome note, while leaving the full analytics notebook refresh as a separate non-blocking follow-up.
+- Added a `ROADMAP.md` closure entry for issue #20 and the completed v1.0.0 GA issue tree.
+- Commands executed:
+  - `git status --short --branch --untracked-files=no`
+  - `sed -n '1,220p' AGENTS.md`
+  - `sed -n '1,130p' notes/release_candidate_prep.md`
+  - `sed -n '1,140p' notes/release_surface_audit.md`
+  - `git checkout main && git pull --ff-only && git checkout -b issue-post-v100-release-housekeeping && gh issue create --title "Post-release: sync docs and planning state after v1.0.0 publication" --body-file -`
+  - `sed -n '1,90p' CHANGE_LOG.md`
+  - `sed -n '124,142p' ROADMAP.md`
+  - `tail -40 notes/coding-agent-conversation-log.txt 2>/dev/null || true`
+  - `sed -n '1,80p' docs/releases/v1.0.0.md`
+  - `rg -n "currently resolves|signed \`v1\\.0\\.0\`|#20 or #27 as pending|TestPyPI/PyPI upload, final tag|Final user-facing documentation readiness|Status: Active|After TestPyPI validation" docs/releases/v1.0.0.md notes/release_candidate_prep.md notes/release_surface_audit.md ROADMAP.md CHANGE_LOG.md || true`
+  - `git diff --check`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest` (301 passed, 210 skipped, 61 warnings)
+  - `.venv/bin/pre-commit run --all-files`
+  - `PATH="/home/gep/projects/fhops/tmp/pandoc-bin:$PATH" .venv/bin/sphinx-build -b html docs _build/html -W`
+  - `gh release edit v1.0.0 --notes-file docs/releases/v1.0.0.md`
+  - `rm -rf _build && .venv/bin/pre-commit run --all-files && git diff --check && git status --short`
+
 # 2026-06-14 — v1.0.0 user-facing documentation readiness sweep
 - Started the `issue-27-docs-readiness` branch for #27 under the v1.0.0 GA release issue tree.
 - Fixed README rendering by closing the development-install code block before the optional Gurobi setup.
