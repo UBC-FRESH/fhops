@@ -38,6 +38,10 @@ FHOPS publishes wheels/sdists via Hatch. Install the stable v1.0.0 release with:
 
    pip install fhops==1.0.0
 
+The wheel contains the FHOPS package, CLI, solver dependencies, and runtime reference data. The
+worked examples under ``examples/`` and developer notes under ``notes/`` live in the source
+repository, so clone the repository when following documentation that references those paths.
+
 For development or release verification, install Hatch and run the full suite locally::
 
    pip install hatch
@@ -62,7 +66,7 @@ See :doc:`howto/telemetry_tuning` for more recipes (including tuned presets used
 Baseline Workflows
 ------------------
 
-Two canonical scenarios ship with FHOPS:
+Two canonical scenarios ship with the source repository:
 
 - ``examples/tiny7`` — minimal CSV/YAML inputs illustrating the scenario contract.
 - ``tests/fixtures/regression`` — deterministic fixture covering mobilisation, machine

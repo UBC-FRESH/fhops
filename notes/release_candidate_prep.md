@@ -68,6 +68,11 @@ Status: Active — v1.0.0 GA preflight in progress for SoftwareX submission.
        instead of deleting history, fixes the release-build workflow command exposed by
        `workflow_dispatch`, and hardens full analytics artifact collection before a fresh
        manual dashboard run.
+   - [ ] Sweep user-facing documentation before final publication.
+     - 2026-06-14: issue #27 records the public-docs readiness sweep in
+       `notes/docs_readiness_sweep.md`, fixes README rendering, corrects stale
+       `fhops evaluate` / `fhops eval-playback` examples, clarifies source-checkout vs.
+       PyPI-installed content, and updates v1.0.0 release-note status.
 
 7. **Publishing (TestPyPI → PyPI)**
    - [x] Dry run using TestPyPI:

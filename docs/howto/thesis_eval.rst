@@ -78,7 +78,8 @@ Pipeline Overview
 
    .. code-block:: bash
 
-      fhops evaluate case_study/scenario.yaml case_study/out/mip_solution.csv \
+      fhops eval-playback case_study/scenario.yaml \
+        --assignments case_study/out/mip_solution.csv \
         --shift-out case_study/out/mip_shift.csv \
         --day-out case_study/out/mip_day.csv \
         --summary-md case_study/out/mip_summary.md

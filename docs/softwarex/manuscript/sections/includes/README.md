@@ -12,11 +12,11 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
 | Manuscript Section | Primary Sphinx Source(s) | Planned include(s) | Notes / Tasks |
 |--------------------|--------------------------|--------------------|---------------|
 | 1. Motivation & significance | `docs/overview.rst`, `docs/roadmap.rst`, `notes/thesis_alignment.md` | `motivation_story.md` → `motivation_story.tex/.rst` | Explain real modelling gaps (open tooling, integrated workflows) and cite Jaffray review. Keep BC case-study carve-out for Rosalia. |
-| 2. Software description – Architecture | `docs/reference/architecture.rst`, `docs/howto/system_sequencing.rst`, `docs/api/*` | `architecture_summary.md`, `pipeline_diagram.*` | Text + figure describing scenario→solver→playback pipeline. Manuscript figure reused in docs `overview`. |
+| 2. Software description – Architecture | `docs/overview.rst`, `docs/howto/system_sequencing.rst`, `docs/api/*` | `architecture_summary.md`, `pipeline_diagram.*` | Text + figure describing scenario→solver→playback pipeline. Manuscript figure reused in docs `overview`. |
 | 2. Software description – Mathematical formulation | `src/fhops/model/milp/operational.py`, `src/fhops/model/milp/data.py`, `docs/howto/optimization_formulation.rst` | `fhops_operational_formulation.md` → `fhops_operational_formulation.tex/.rst` | Canonical operational MILP equations + equation-to-code traceability table shared across manuscript/docs and reused for thesis chapter insertion. |
 | 2. Software description – Heuristics/tuners | `docs/howto/heuristic_presets.rst`, `docs/howto/parallel_heuristics.rst`, `docs/howto/tabu.rst`, `docs/howto/ils.rst`, `docs/howto/telemetry_tuning.rst` | `heuristic_matrix.csv` + `heuristic_text.md` | CSV drives both manuscript table and Sphinx reference page; describe SA/ILS/Tabu + tuner automation. |
 | 3. Illustrative example | `docs/howto/quickstart.rst`, `docs/howto/benchmarks.rst`, `docs/howto/synthetic_datasets.rst` | `illustrative_walkthrough.md`, `benchmark_table.csv` | Align CLI steps + dataset notes; reuse same telemetry screenshots. |
-| 4. Impact | `docs/roadmap.rst`, `docs/references/adoption.rst`, release notes | `impact_story.md` | Summarize adoption + roadmap commitments once metrics ready. |
+| 4. Impact | `docs/roadmap.rst`, `docs/releases/v1.0.0.md`, `notes/softwarex_manuscript_plan.md` | `impact_story.md` | Summarize adoption + roadmap commitments once metrics ready. |
 | Metadata tables | `docs/reference/source_bibliography.rst`, `README.md`, `pyproject.toml` | `metadata_basics.yaml` | Single YAML feeds both LaTeX metadata tables and Sphinx “About FHOPS” page. |
 
 ## Action items

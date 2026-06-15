@@ -1,3 +1,43 @@
+# 2026-06-14 — v1.0.0 user-facing documentation readiness sweep
+- Started the `issue-27-docs-readiness` branch for #27 under the v1.0.0 GA release issue tree.
+- Fixed README rendering by closing the development-install code block before the optional Gurobi setup.
+- Clarified that PyPI installs the FHOPS package/CLI/runtime data, while the documented `examples/` and `tests/fixtures/` scenarios require a source checkout.
+- Updated README, quickstart, mobilisation, sequencing, thesis-evaluation, synthetic-dataset, rolling-horizon, evaluation, and CLI-reference examples to match current `fhops evaluate --assignments` and `fhops eval-playback SCENARIO --assignments ...` syntax.
+- Moved live dashboards out of the Sphinx "Getting Started" toctree and into the reference section so the docs open with overview/install/quickstart material.
+- Updated v1.0.0 release notes so only #27 and #20 remain as pre-publication follow-ups, and marked old alpha release-note pages as historical for new users.
+- Updated SoftwareX workspace/include docs to point to the private `reference-documents` submodule and existing Sphinx/release-note sources rather than removed public reference/adoption paths.
+- Recorded findings and deferred follow-ups in `notes/docs_readiness_sweep.md`, and updated `ROADMAP.md` plus `notes/release_candidate_prep.md`.
+- Commands executed:
+  - `git checkout -b issue-27-docs-readiness`
+  - `gh issue view 27 --json number,title,state,body,url`
+  - `find docs -maxdepth 3 -type f \\( -name '*.rst' -o -name '*.md' \\) | sort`
+  - `rg -n --pcre2 "release candidate|RC|alpha|beta|1\\.0\\.0a|1\\.0\\.0-alpha|v1\\.0\\.0-alpha|v1\\.0\\.0-beta|softwarex-manuscript|once the release|will be|pending tag|HATCH_INDEX|hatch run release:build|pip install fhops(?!==1\\.0\\.0|\\[)|fhops evaluate [^\\n]*\\.csv(?:\\s|$)" README.md docs notes/release_candidate_prep.md notes/release_notes_draft.md`
+  - `rg -n "fhops evaluate .*\\.csv|fhops eval playback .*\\.csv|--assignments" README.md docs/howto docs/reference docs/releases`
+  - `.venv/bin/fhops evaluate --help | sed -n '1,180p' && .venv/bin/fhops eval playback --help | sed -n '1,220p'` (second command intentionally confirmed `fhops eval playback` is invalid)
+  - `.venv/bin/fhops --help | sed -n '1,260p'`
+  - `.venv/bin/fhops eval-playback --help | sed -n '1,220p'`
+  - `rm -rf tmp/docs-readiness && mkdir -p tmp/docs-readiness && .venv/bin/fhops validate examples/tiny7/scenario.yaml && .venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --out tmp/docs-readiness/tiny7_sa.csv --iters 25 --seed 7 && .venv/bin/fhops evaluate examples/tiny7/scenario.yaml --assignments tmp/docs-readiness/tiny7_sa.csv`
+  - `rm -rf /tmp/fhops-readme-out-test && .venv/bin/fhops solve-heur examples/tiny7/scenario.yaml --out /tmp/fhops-readme-out-test/nested/sa_solution.csv --iters 1 --seed 1`
+  - `rg -n "fhops eval playback|eval-playback --scenario|fhops evaluate [^\\n]*\\.csv(?:\\s|$)|hatch run release:build|v1\\.0\\.0-beta|softwarex-manuscript|once the release" README.md docs notes/release_candidate_prep.md notes/release_notes_draft.md`
+  - `git diff --check`
+  - `git status --short`
+  - `git diff --stat`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src`
+  - `.venv/bin/pytest` (301 passed, 210 skipped, 61 warnings)
+  - `.venv/bin/pre-commit run --all-files`
+  - `PANDOC_DIR=$(.venv/bin/python - <<'PY'
+from pathlib import Path
+import pypandoc
+print(Path(pypandoc.get_pandoc_path()).parent)
+PY
+); PATH="$PANDOC_DIR:$PATH" .venv/bin/sphinx-build -b html docs _build/html -W`
+  - `rm -rf _build && .venv/bin/pre-commit run --all-files && git status --short`
+  - `.venv/bin/pre-commit run --all-files && git diff --check && git status --short`
+  - `.venv/bin/pre-commit run --all-files && git add CHANGE_LOG.md README.md ROADMAP.md docs/contributing.rst docs/howto/evaluation.rst docs/howto/mobilisation_geo.rst docs/howto/quickstart.rst docs/howto/rolling_horizon.rst docs/howto/synthetic_datasets.rst docs/howto/system_sequencing.rst docs/howto/thesis_eval.rst docs/index.rst docs/overview.rst docs/reference/cli.rst docs/releases/v0.1.0.md docs/releases/v1.0.0-alpha1.md docs/releases/v1.0.0-alpha2.md docs/releases/v1.0.0.md docs/softwarex/README.md docs/softwarex/manuscript/sections/includes/README.md notes/release_candidate_prep.md notes/docs_readiness_sweep.md && git commit -m "Sweep v1.0.0 user docs readiness"`
+  - `.venv/bin/pre-commit run --all-files && git add CHANGE_LOG.md && git commit --amend --no-edit && git push -u origin issue-27-docs-readiness` (failed because `end-of-file-fixer` normalized `notes/docs_readiness_sweep.md`)
+
 # 2026-06-14 — v1.0.0 release surface audit
 - Started the `issue-19-release-surface-audit` branch for #19 under the v1.0.0 GA release issue tree.
 - Audited GitHub releases, tags, release-build runs, Pages configuration, current CI state, and repeated full analytics notebook failures before final publication.

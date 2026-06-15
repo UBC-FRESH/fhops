@@ -4,7 +4,7 @@ Everything related to the FHOPS SoftwareX manuscript lives under this folder. Ea
 
 | Path | Purpose | Current Status |
 |------|---------|----------------|
-| `reference/` | Locked snapshots of author instructions, official templates, exemplar PDFs, and provenance notes. | ✅ Snapshots captured 2025‑11‑23 (`reference/README.md` lists sources). |
+| `reference-documents/` submodule | Private full-text snapshots of author instructions, official templates, exemplar PDFs, and provenance notes. | 🔒 Private convenience vault; see `docs/reference/source_bibliography.rst` for the public bibliography and copyright rationale. |
 | `manuscript/` | Working tree for the article itself: outline, section drafts, build scripts, and template adaptations. | 🚧 Outline + scaffolding seeded; `latexmk` build + shared include pipeline ready (`manuscript/README.md`). |
 | `assets/` | Shared figures/data referenced by the manuscript and Sphinx docs (benchmarks, tuning, playback, costing, scaling). | ✅ `make assets` regenerates everything via scripts under `manuscript/scripts/` (`assets/data/*`, `assets/figures`). |
 | `submissions/` | Final submission bundles, cover-letter templates, and portal checklists once we reach Phase 5. | 💤 Not started. |
