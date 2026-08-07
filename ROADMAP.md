@@ -69,6 +69,7 @@ before proposing new work.
     - [x] Provide metadata manifests describing each scenario for docs/examples.
     - [x] Outline scaling experiments and capture results in changelog/notes.
 - [x] Reference analytics notebooks integrated into docs/examples.
+  - [x] Progressive onboarding series under `examples/` complete: `00_fhops_orientation.ipynb`, `01_fhops_operations_simulation.ipynb`, `02_fhops_solve_compare.ipynb`, `03_fhops_playback_kpis.ipynb`, and `04_fhops_stochastic_what_if.ipynb` cover API/CLI execution, operations simulation, and notebook-local AAM-style helpers.
   - [x] Notebook scaffolding
     - [x] Select representative deterministic + stochastic scenarios (baseline + synthetic).
     - [x] Define notebook storyboards (playback walkthrough, KPI deep-dive, what-if analysis).
