@@ -7,7 +7,7 @@ We are setting up a runnable FHOPS demo for Linux user `gep` in this development
 
 First, verify the environment:
 
-1. Run `id -un`, `python --version`, `pwd`, and `git status` where applicable.
+1. Run `id -un`, `pwd`, and `git status` where applicable. Check Python with `python --version` if `python` exists, otherwise use `python3 --version`.
 2. Confirm the current user is `gep`. Do not use `sudo`, and do not create files owned by another user.
 3. Locate the FHOPS checkout by finding the directory containing `pyproject.toml` with project name `fhops`. Do not assume the path is `/home/gep/projects/fhops`; use the path that exists in this container.
 4. If no FHOPS checkout exists, clone only this repository into a new directory:
@@ -27,35 +27,45 @@ Set up the demo without modifying tracked source files:
 1. Change into the FHOPS repository.
 2. Create or reuse the repository-local virtual environment at `.venv`:
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate
-   python -m pip install --upgrade pip
-   python -m pip install -e '.[dev]'
+    if command -v python >/dev/null 2>&1; then
+       bootstrap_python=python
+    elif command -v python3 >/dev/null 2>&1; then
+       bootstrap_python=python3
+    else
+       echo 'Python 3.11+ is required but neither python nor python3 is available.' >&2
+       exit 1
+    fi
+
+    "$bootstrap_python" -m venv .venv
+    .venv/bin/python -m pip install --upgrade pip
+    .venv/bin/python -m pip install -e '.[dev]'
+    .venv/bin/python -m pip install -r docs/requirements.txt
    ```
    FHOPS requires Python 3.11 or newer. If the container has an incompatible Python version, report that clearly and stop before making broader changes.
-   The editable install pulls the required Python packages from FHOPS's project metadata, including Pyomo, pandas, NumPy, PyYAML, PyArrow, Optuna, and the HiGHS Python solver. Do not install Gurobi for this smoke demo; HiGHS is the default open-source MIP backend and does not require a commercial licence. Do not install the optional `geo` or `gurobi` extras unless the user specifically requests them.
+    The editable install pulls FHOPS's runtime and development packages from its project metadata, including Pyomo, pandas, NumPy, PyYAML, PyArrow, Optuna, and the HiGHS Python solver. The documentation requirements add the notebook stack used by the onboarding examples, including Jupyter, `ipykernel`, `papermill`, `matplotlib`, `seaborn`, and `altair`. Do not install Gurobi for this smoke demo; HiGHS is the default open-source MIP backend and does not require a commercial licence. Do not install the optional `geo` or `gurobi` extras unless the user specifically requests them.
 3. Verify the package and CLI:
    ```bash
-   python -c "import fhops; print(fhops.__version__)"
-   fhops --help
+    .venv/bin/python -c "import fhops; print(fhops.__version__)"
+    .venv/bin/python -c "import altair, ipykernel, jupyter, matplotlib, nbformat, papermill, seaborn; print('notebook dependencies: ok')"
+    .venv/bin/fhops --help
    ```
 4. Run a complete small deterministic demo using the bundled `examples/tiny7/scenario.yaml`. Put generated outputs under `tmp/demo-gep/`, not under tracked example directories:
    ```bash
    mkdir -p tmp/demo-gep
 
-   fhops validate examples/tiny7/scenario.yaml
+    .venv/bin/fhops validate examples/tiny7/scenario.yaml
 
-   fhops solve-mip examples/tiny7/scenario.yaml \
-     --driver highs \
-     --out tmp/demo-gep/mip_solution.csv
+    .venv/bin/fhops solve-mip-operational examples/tiny7/scenario.yaml \
+       --time-limit 60 \
+       --out tmp/demo-gep/mip_solution.csv
 
-   fhops solve-heur examples/tiny7/scenario.yaml \
+    .venv/bin/fhops solve-heur examples/tiny7/scenario.yaml \
      --out tmp/demo-gep/sa_solution.csv
 
-   fhops evaluate examples/tiny7/scenario.yaml \
+    .venv/bin/fhops evaluate examples/tiny7/scenario.yaml \
      --assignments tmp/demo-gep/mip_solution.csv
 
-   fhops evaluate examples/tiny7/scenario.yaml \
+    .venv/bin/fhops evaluate examples/tiny7/scenario.yaml \
      --assignments tmp/demo-gep/sa_solution.csv
    ```
 5. Confirm that both solution CSVs exist and contain rows, and summarize the evaluation metrics. Check especially for sequencing violations if that metric is reported.
