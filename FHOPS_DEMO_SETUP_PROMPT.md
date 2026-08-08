@@ -10,11 +10,17 @@ First, verify the environment:
 1. Run `id -un`, `python --version`, `pwd`, and `git status` where applicable.
 2. Confirm the current user is `gep`. Do not use `sudo`, and do not create files owned by another user.
 3. Locate the FHOPS checkout by finding the directory containing `pyproject.toml` with project name `fhops`. Do not assume the path is `/home/gep/projects/fhops`; use the path that exists in this container.
-4. Before changing anything, read:
+4. If no FHOPS checkout exists, clone only this repository into a new directory:
+   ```bash
+   mkdir -p "$HOME/projects"
+   git clone https://github.com/UBC-FRESH/fhops.git "$HOME/projects/fhops"
+   ```
+   Do not clone `ws3`, `fresh-agent-core`, or any other repository for this demo. FHOPS's Python dependencies are installed from its `pyproject.toml` in the next step. If a candidate target directory already exists but is not an FHOPS checkout, stop and report it rather than overwriting it. If cloning is impossible because network access or GitHub authentication is unavailable, report that clearly.
+5. Before changing anything in the checkout, read:
    - `AGENTS.md`
    - `README.md`
    - `docs/howto/quickstart.rst`
-5. Do not run destructive Git or filesystem commands such as `git reset --hard`, `git clean`, or recursive deletion. Preserve any existing worktree changes.
+6. Do not run destructive Git or filesystem commands such as `git reset --hard`, `git clean`, or recursive deletion. Preserve any existing worktree changes.
 
 Set up the demo without modifying tracked source files:
 
@@ -27,6 +33,7 @@ Set up the demo without modifying tracked source files:
    python -m pip install -e '.[dev]'
    ```
    FHOPS requires Python 3.11 or newer. If the container has an incompatible Python version, report that clearly and stop before making broader changes.
+   The editable install pulls the required Python packages from FHOPS's project metadata, including Pyomo, pandas, NumPy, PyYAML, PyArrow, Optuna, and the HiGHS Python solver. Do not install Gurobi for this smoke demo; HiGHS is the default open-source MIP backend and does not require a commercial licence. Do not install the optional `geo` or `gurobi` extras unless the user specifically requests them.
 3. Verify the package and CLI:
    ```bash
    python -c "import fhops; print(fhops.__version__)"
