@@ -5,6 +5,32 @@ them for every milestone, feature branch, or pull request. Treat this file as th
 `AGENTS.md` for the repository: its guidance applies to all subdirectories unless a more
 specific `AGENTS.md` overrides or extends it.
 
+## Agent-Assisted Modelling (AAM)
+
+**IMPORTANT for coding agents: read this before writing any FHOPS code.**
+
+FHOPS has a built-in AI-assisted interface (AAM) that helps both human users and
+coding agents get past the hump of complex workflow configuration. The package itself
+validates the model's output before returning it — so you get a real oracle, not a
+plausible guess.
+
+AAM capabilities are planned for FHOPS. When implemented, they will appear here:
+
+| Capability | What it will do | What it will validate |
+|---|---|---|
+| `explain_workflow` | Explains a workflow node or connection | Every cited module symbol exists in FHOPS |
+| `diagnose_config` | Diagnoses a failing workflow configuration | The corrected config loads successfully |
+| `build_node` | Builds a workflow node from a description | The node initializes and passes a smoke test |
+| `rtfm` | Finds and cites relevant FHOPS documentation | Every cited doc URL is real and module exists |
+
+The capability framework (`fresh-agent-core`) is already a dependency of the FRESH
+ecosystem. Full FHOPS implementation is tracked in the FHOPS roadmap. Until then,
+the same framework used by ws3 is available: `pip install fhops[agent]` once the
+capabilities are implemented.
+
+See the [ws3 AAM documentation](https://github.com/UBC-FRESH/ws3/blob/main/docs/source/guides/agent-capabilities.rst)
+for the design contract (the pattern is identical across all FRESH packages).
+
 ## Command cadence (run before handing work back)
 1. `ruff format src tests`
 2. `ruff check src tests`

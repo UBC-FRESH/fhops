@@ -1,3 +1,34 @@
+
+# 2026-08-07 — Operations simulation onboarding notebook
+- Added `examples/01_fhops_operations_simulation.ipynb`, an executable operations-first Tiny7 walkthrough covering block and machine abstractions, harvest-system sequencing, default registry contexts, productivity helpers, deterministic playback, and a deliberate loader-before-processing sequencing violation.
+- Updated the notebook runner, structural notebook tests, examples sequence, and Phase 3 roadmap entry for the five-notebook onboarding series.
+- Validation commands executed:
+  - `python -m pytest -q tests/test_example_notebook_support.py`
+  - `ruff check examples/notebook_support.py scripts/run_example_notebooks.py tests/test_example_notebook_support.py`
+  - `ruff format --check examples/notebook_support.py scripts/run_example_notebooks.py tests/test_example_notebook_support.py`
+  - `python scripts/run_example_notebooks.py --notebook 04 --timeout 600`
+  - `python scripts/run_example_notebooks.py --keep-going --timeout 600`
+  - `git diff --check`
+
+# 2026-08-06 — Onboarding notebook series added
+- Added a progressive Jupyter onboarding series for senior forest harvesting operations/planning users:
+  - `examples/00_fhops_orientation.ipynb` — locate repo, load/inspect scenarios via `fhops.scenario.load_scenario` and `Problem.from_scenario`, call CLI `validate`, exercise AAM helpers.
+  - `examples/02_fhops_solve_compare.ipynb` — solve `tiny7`/`small21` via API (`solve_sa`) and CLI (`solve-heur`), compare objectives/KPIs.
+  - `examples/03_fhops_playback_kpis.ipynb` — run playback (`run_playback`), produce shift/day DataFrames, compute KPIs.
+  - `examples/04_fhops_stochastic_what_if.ipynb` — solve `med42` with SA, run stochastic playback with `SamplingConfig` (downtime/weather/landing shocks).
+- Added `examples/notebook_support.py` — repo/scenario discovery, structured CLI invocation, schedule validation, scenario summaries, AAM helpers (`explain_workflow`, `diagnose_config`, `build_node`, `rtfm`, `inspect_scenario`, `preview_schedule`).
+- Added `scripts/run_example_notebooks.py` — runner script with `--light`, `--keep-going`, `--timeout`, `--notebook` options; executes into untracked tmp output directory; sets PYTHONPATH for source checkout.
+- The runner accepts shorthand selectors such as `--notebook 00 --notebook 01` as well as full notebook names.
+- Added `tests/test_example_notebook_support.py` — JSON validation, cell metadata.language checks, AAM contract tests, schedule validation tests, CLI invocation tests. No licensed solver dependencies.
+- Updated `examples/README.md` — setup, Jupyter launch, runner command, notebook sequence, dataset notes.
+- Updated `ROADMAP.md` — Phase 3 notebook area records onboarding notebooks added.
+- Validation commands executed:
+  - `python -m pytest -q tests/test_example_notebook_support.py` (37 passed)
+  - `ruff check examples/notebook_support.py scripts/run_example_notebooks.py tests/test_example_notebook_support.py` (passed)
+  - `ruff format --check examples/notebook_support.py scripts/run_example_notebooks.py tests/test_example_notebook_support.py` (passed)
+  - `python scripts/run_example_notebooks.py --notebook 01 --light --timeout 300` (passed)
+  - `python scripts/run_example_notebooks.py --keep-going --timeout 600` (all four passed)
+
 # 2026-06-15 — v1.0.0 post-release housekeeping
 - Started the `issue-post-v100-release-housekeeping` branch for #29 after completing the v1.0.0 publication issue tree.
 - Updated `docs/releases/v1.0.0.md` so the published release notes no longer describe #20 or #27 as pending follow-ups.
