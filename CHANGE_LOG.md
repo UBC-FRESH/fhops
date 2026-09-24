@@ -1,3 +1,24 @@
+# 2026-09-24 — Phase 6.2 TOPM core harvest/system/period MILP (#39)
+- Merged #38 into the Phase 6 integration branch via PR #46 (squash commit `6811d38`), closed the child issue, and started #39 on `issue-39-phase-6.2-core-harvest-milp`.
+- Added `fhops.model.milp.tactical_operational` with a Pyomo aggregate harvest-allocation MILP for eligible block × system × period options, product-specific yield conversion, fleet capacity, facility-demand targets, discounted fixed/variable costs, and objective decomposition.
+- Implemented all three Phase 6 harvest modes: continuous partial cuts, semi-continuous minimum active areas using tight physical bounds, and whole-block all-or-nothing harvests.
+- Added tactical bundle serialization/replay helpers and solver metadata/dimension reporting for telemetry-friendly runs.
+- Added `fhops plan tactical-operational` with solver, harvest-mode, demand-basis, time-limit/gap, JSON summary, harvest CSV, and production CSV options.
+- Updated `topm-mini` so the hand-calculated 780 m³ sawlog dispatch is the true economic optimum; the MILP now reproduces B2 = 4.00 ha, B1 = 5.25 ha, fixed cost 180, variable cost 19,140, and objective 19,320 with HiGHS.
+- Added regression tests for semi-continuous minimum enforcement, continuous relaxation, whole-block area, bundle replay, CLI exports, and `topm-mini` balances.
+- Updated the tactical–operational Sphinx how-to with the core equations and equation-to-code mapping.
+- Commands executed:
+  - GitHub REST: marked PR #46 ready, squash-merged it into `feature/phase6-tactical-operational-expansion` (`6811d38`), closed #38, and updated the #36 parent checklist.
+  - `git switch feature/phase6-tactical-operational-expansion && git pull --ff-only`
+  - `git switch -c issue-39-phase-6.2-core-harvest-milp`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/model/test_tactical_operational_milp.py tests/cli/test_planning_cli.py::test_tactical_operational_plan_cli tests/planning/test_tactical_operational_contract.py tests/test_topm_mini_specification.py` (15 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (119 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (359 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Phase 6.1 tactical–operational contract and period hierarchy (#38)
 - Merged #37 into the Phase 6 integration branch via PR #45 (squash commit `4e87476`), closed the child issue, and started #38 on `issue-38-phase-6.1-contract-time`.
 - Added `fhops.planning.tactical_operational` with Pydantic contract models for periods, products, planning units, harvest-system options, fleet capacity, facilities, demand, initial inventory, transport arcs, external supply, and economics.

@@ -511,12 +511,12 @@ building a solver model.
 
 ### Phase 2 — TOPM core harvest allocation
 
-- [ ] Implement area-based harvest decisions by block/system/period.
-- [ ] Add continuous, semi-continuous, and whole-block modes.
-- [ ] Add seasonal eligibility, product yields, fleet capacity, fixed/variable harvest costs, and
+- [x] Implement area-based harvest decisions by block/system/period.
+- [x] Add continuous, semi-continuous, and whole-block modes.
+- [x] Add seasonal eligibility, product yields, fleet capacity, fixed/variable harvest costs, and
   discounting.
-- [ ] Implement cost-minimization and objective decomposition.
-- [ ] Compare variable modes on synthetic fixtures.
+- [x] Implement discounted harvest-cost minimization and objective decomposition.
+- [x] Compare variable modes on the `topm-mini` synthetic fixture.
 
 Exit criterion: exact tiny fixtures reproduce hand-calculated harvest/system/period choices and no
 positive harvest lies below its configured minimum.

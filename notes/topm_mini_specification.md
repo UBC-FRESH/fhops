@@ -65,8 +65,8 @@ Future implementations must reconcile every product/facility/period balance inde
 
 - **#38** turns this YAML into validated contract objects and fails clearly on missing IDs,
   duplicate keys, invalid units, impossible windows, and inconsistent yields.
-- **#39** should reproduce the harvest-mode and economic-dispatch expectations with the aggregate
-  MILP.
+- **#39** reproduces the harvest-mode and economic-dispatch expectations with the aggregate MILP
+  (`fhops.model.milp.tactical_operational`).
 - **#40** should reproduce the product-flow and facility-inventory expectations.
 - **#41–#44** may extend the fixture with roads, silviculture, fleet investment, overlays, and
   rolling-state handoffs, but must keep these original checks passing.
