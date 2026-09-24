@@ -52,6 +52,26 @@ instead of suppressing them; escalate only if consensus is reached with maintain
 - Before proposing new work, re-read the latest roadmap/notes/changelog entries to avoid jumping
   the queue or rehashing solved problems.
 
+## Roadmap phase and issue-tree workflow
+- Every roadmap phase or major functional expansion gets exactly one parent GitHub issue and one
+  long-lived feature branch named `feature/phase<N>-<slug>`.
+- Before implementation starts, decompose the phase into child GitHub issues matching the roadmap
+  checklist or note tasks. Child branches are named `issue-<number>-<short-slug>` after issue
+  creation; temporary planning branches may use `feature/phase<N>-<slug>`.
+- The parent issue body must state the roadmap phase, feature branch, authoritative note(s), scope,
+  out-of-scope items, child checklist, acceptance criteria, verification commands, and closeout
+  requirements. Link every child issue to the parent with GitHub sub-issues.
+- Child issues must state the parent issue, branch name, implementation scope, tests/docs to update,
+  and evidence required for closure. Open a PR per child issue; use `Part of #<parent>` rather than
+  closing the parent until the whole phase is approved.
+- Keep each chat/PR scoped to one child issue or a tightly related cluster. Do not mix unrelated
+  manuscript, release, or refactoring work into a phase branch.
+- Update `ROADMAP.md`, the relevant `notes/*.md`, and `CHANGE_LOG.md` whenever an issue starts,
+  pauses, or completes. Changelog entries must cite the parent/child issue numbers once known.
+- If GitHub CLI/auth is unavailable, create a checked-in issue-tree manifest plus exact `gh`/API
+  commands before coding; sync real issue numbers back into the manifest and roadmap immediately
+  after creation.
+
 ## Code & documentation expectations
 - Prefer small, reviewable commits aligned with roadmap tasks.
 - When behaviour changes, update Sphinx docs, README, or CLI help in the same change set.

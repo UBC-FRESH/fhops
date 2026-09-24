@@ -1,3 +1,30 @@
+# 2026-09-24 — TOPM-inspired tactical–operational expansion planning
+- Added `notes/tactical_operational_expansion_plan.md`, a staged architecture and implementation plan for expanding FHOPS beyond its current 1–16 week shift-level focus into integrated 1–5 year tactical–operational planning.
+- Mapped Oborn's TOPM formulation to current FHOPS capabilities and gaps, including semi-continuous harvest quantities, alternative harvest systems, products/mills, transport and inventory, outside purchases, roads, silviculture, fleet investment, discounting, scenario management, and tactical-to-operational handoff.
+- Incorporated the post-thesis FORCE/Robak OperMAX lineage (including Lehoux et al. 2012, CIRRELT-2012-33) as evidence that the TOPM scope became a reusable multi-year planning shell covering harvest, transport, silviculture, roads, purchases, mill-yard inventories, roadside sales, and inter-mill deliveries.
+- Recommended separate aggregate and detailed models behind shared domain/time/economic contracts, preserving all current schema `1.0.0` operational workflows instead of extending the day/shift tensor to five years.
+- Codified the roadmap phase / parent issue / child issue / child branch workflow in `AGENTS.md` and added `notes/tactical_operational_issue_tree.md` as the Phase 6 issue manifest.
+- Added Roadmap Phase 6 and synced it to live GitHub issues: parent #36 and child issues #37–#44, all linked through GitHub sub-issues.
+- Parked the pre-existing SoftwareX round-1 work on `revision/softx-r1` as commit `2a32f87` (`Revise SoftwareX manuscript for round 1`) and pushed it to `origin/revision/softx-r1` before starting Phase 6.
+- Created and switched to the Phase 6 branch `feature/phase6-tactical-operational-expansion`.
+- Commands executed:
+  - `git status --short --branch`
+  - `git restore -- ROADMAP.md` *(temporary split step only; Phase 6 roadmap changes were restored from backup on the new branch)*
+  - `git add CHANGE_LOG.md docs notes/softwarex_manuscript_change_log.md`
+  - `git commit -m "Revise SoftwareX manuscript for round 1"` (`2a32f87` on `revision/softx-r1`)
+  - `git push -u origin revision/softx-r1`
+  - `curl -L https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.tar.gz ...` *(installed `gh` under `/tmp/opencode/gh-cli`)*
+  - `git switch main`
+  - `git switch -c feature/phase6-tactical-operational-expansion`
+  - `python /tmp/opencode/create_phase6_issues_rest.py` *(created parent #36 and children #37–#44 via GitHub REST API; token read from git credential helper and not printed)*
+  - GitHub REST `PATCH /repos/UBC-FRESH/fhops/issues/{36..44}` *(assigned the repository `Feature` issue type to the full tree)*
+  - `git diff --check`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
+  - `.venv/bin/pytest` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
+  - `.venv/bin/pre-commit run --all-files` *(not run: entry point targets unavailable `python3.12`)*
+  - `.venv/bin/sphinx-build -b html docs _build/html -W` *(not run: `sphinx-build` absent from the current environment)*
 
 # 2026-08-07 — Operations simulation onboarding notebook
 - Added `examples/01_fhops_operations_simulation.ipynb`, an executable operations-first Tiny7 walkthrough covering block and machine abstractions, harvest-system sequencing, default registry contexts, productivity helpers, deterministic playback, and a deliberate loader-before-processing sequencing violation.

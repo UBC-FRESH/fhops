@@ -126,6 +126,16 @@ before proposing new work.
 - [ ] Maintain an equation-to-code traceability table (`operational.py` and `data.py` mapping).
 - [ ] Add a regression check ensuring formulation assets regenerate cleanly (`export_docs_assets.py` + docs build).
 
+## Phase 6 — Tactical–Operational Expansion (TOPM-Inspired)
+- [ ] #37 Approve the architecture, scope boundaries, workflow contract, and TOPM/OperMAX provenance baseline in `notes/tactical_operational_expansion_plan.md`.
+- [ ] #38 Add a period-hierarchical, unit-explicit tactical–operational data contract while preserving schema `1.0.0` operational workflows.
+- [ ] #39 Implement the core multi-year harvest/system/period model with semi-continuous minimum cut sizes and discounted economics.
+- [ ] #40 Integrate products, transport, facilities, inventory, consumption, and outside purchases.
+- [ ] #41 Add optional roads, silviculture transitions, and fleet investment/economic-life modules.
+- [ ] #42 Add scenario overlays/diffs, auditable accounting reports, and TOPM-shaped synthetic acceptance fixtures.
+- [ ] #43 Couple aggregate tactical decisions to the existing shift-indexed operational and rolling-horizon engines.
+- [ ] #44 Benchmark scale/decomposition options only after the integrated core is validated and profiled.
+
 ## Detailed Next Steps
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
    - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
@@ -173,6 +183,11 @@ before proposing new work.
     - Keep the canonical operational MILP formulation synchronized across SoftwareX manuscript, Sphinx docs (`docs/howto/optimization_formulation.rst`), and thesis chapter integration assets.
     - Preserve code-to-equation traceability against `src/fhops/model/milp/operational.py` and `src/fhops/model/milp/data.py`.
     - Add lightweight regeneration/build checks to catch drift between Markdown source and generated `.tex`/`.rst` includes.
+13. **Tactical–Operational Expansion (#36; `notes/tactical_operational_expansion_plan.md`, `notes/tactical_operational_issue_tree.md`)**
+    - Parent issue #36 and child issues #37–#44 are linked via GitHub sub-issues; phase branch is `feature/phase6-tactical-operational-expansion`.
+    - Review and approve the proposed two-level architecture: preserve detailed 1–16 week machine scheduling, add a separate 1–5 year aggregate model, and connect them through business/anticipation horizons and rolling state.
+    - Start with child #37 (workflow/architecture/provenance baseline) and a copyright-safe `topm-mini` executable specification; do not stretch the existing shift tensor to a five-year horizon or add supply-chain fields directly to the legacy `Scenario` contract.
+    - Treat Oborn (1996) and the public FORCE/Robak OperMAX lineage as historical scope references, and Jaffray et al. (2026) as the modern usability, reproducibility, validation, and adoption framework.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
