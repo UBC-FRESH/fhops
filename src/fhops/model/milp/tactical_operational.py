@@ -1,10 +1,13 @@
 """TOPM-inspired tactical–operational MILP builder and driver.
 
-This module implements the Phase 6 aggregate harvest-allocation core. It operates on
+This module implements the Phase 6 aggregate planning model. It operates on
 :class:`~fhops.planning.tactical_operational.TacticalOperationalScenario` objects and chooses
-block × system × period harvest areas subject to semi-continuous minimum cut sizes, product yields,
-fleet capacity, and facility demand targets. Product transport and facility inventory dynamics are
-introduced by the follow-on flow module; this core model is deliberately small and auditable.
+block × system × period harvest areas subject to continuous, semi-continuous, or whole-block
+quantity modes; product yields; fleet capacity; and facility demand targets. The same model carries
+product transport flows, outside purchases, facility consumption/inventory, optional road
+activation, silviculture follow-up, and fleet investment modules. The objective supports discounted
+cost, profit, and NPV-style profiles, with objective decomposition and model-size/timing telemetry
+returned to callers.
 """
 
 from __future__ import annotations

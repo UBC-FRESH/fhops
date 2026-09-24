@@ -1,3 +1,21 @@
+# 2026-09-24 — Post-Phase 6 documentation and validation housekeeping (#54)
+- Created issue #54 from the independent reviewer audit and started branch `issue-54-post-phase6-housekeeping` from `main`.
+- Fixed the stale `fhops.model.milp.tactical_operational` module docstring so it describes the implemented product-flow, inventory, purchase, road, silviculture, fleet, objective-profile, and telemetry scope instead of calling those features follow-on work.
+- Updated `ROADMAP.md`, `notes/tactical_operational_issue_tree.md`, `notes/tactical_operational_expansion_plan.md`, and GitHub issue #36 to past-tense post-merge status: PR #53 merged into `main` at `4a5de7f`, closing parent #36.
+- Added API reference pages for `fhops.planning.tactical_operational` and `fhops.model.milp.tactical_operational`, linked from `docs/api/index.rst`.
+- Recorded the pre-existing full-suite notebook pre-commit debt and deferred Phase 6 scale/practitioner validation scope explicitly in the roadmap backlog.
+- Commands executed:
+  - `gh issue create --repo UBC-FRESH/fhops --title "Post-Phase 6 documentation and validation housekeeping" --type Feature` (created #54)
+  - `git switch -c issue-54-post-phase6-housekeeping`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/model/test_tactical_operational_milp.py tests/planning/test_tactical_operational_scale.py tests/planning/test_tactical_operational_integration.py` (19 passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (378 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #54 changed-file set (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Phase 6 integration branch housekeeping and review handoff
 - Marked all Phase 6 child issues #37–#44 complete in `ROADMAP.md` after PRs #45–#52 merged into `feature/phase6-tactical-operational-expansion`.
 - Updated `notes/tactical_operational_issue_tree.md` and `notes/tactical_operational_expansion_plan.md` to show parent issue #36 remains open only for maintainer-level integration review into `main`.
