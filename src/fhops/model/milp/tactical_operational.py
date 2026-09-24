@@ -700,11 +700,12 @@ def solve_tactical_operational_milp(
     """Build and solve the tactical–operational harvest-allocation MILP.
 
     Returns a dictionary containing solver status, objective decomposition, harvest decisions,
-    product production, and model dimensions. The objective is discounted delivered harvest cost;
-    transport, purchases, and facility inventory costs are handled by the follow-on flow module.
+    product production, transport flows, purchases, inventories, optional module decisions, model
+    dimensions, and build/solve timing statistics.
     """
     started = time.perf_counter()
     model = build_tactical_operational_model(bundle)
+    build_time_s = time.perf_counter() - started
     opt = SolverFactory(solver)
     if time_limit is not None:
         opt.options["time_limit"] = time_limit
@@ -715,8 +716,11 @@ def solve_tactical_operational_milp(
     if solver_options:
         for key, value in solver_options.items():
             opt.options[str(key)] = value
+    solve_started = time.perf_counter()
     result = opt.solve(model, tee=tee, load_solutions=True)
+    solve_time_s = time.perf_counter() - solve_started
     runtime_s = time.perf_counter() - started
+    model_statistics = _model_statistics(model)
 
     status = str(result.solver.status).lower()
     termination = str(result.solver.termination_condition).lower()
@@ -832,6 +836,9 @@ def solve_tactical_operational_milp(
         "solver_status": str(result.solver.status),
         "termination_condition": str(result.solver.termination_condition),
         "runtime_s": runtime_s,
+        "build_time_s": build_time_s,
+        "solve_time_s": solve_time_s,
+        "model_statistics": model_statistics,
         "config": {
             "harvest_mode": bundle.config.harvest_mode.value,
             "demand_basis": bundle.config.demand_basis.value,
@@ -839,6 +846,32 @@ def solve_tactical_operational_milp(
             "enable_silviculture": bundle.config.enable_silviculture,
             "enable_fleet_investment": bundle.config.enable_fleet_investment,
         },
+    }
+
+
+def _model_statistics(model: pyo.ConcreteModel) -> dict[str, int | float]:
+    """Return compact Pyomo model-size statistics for benchmark telemetry."""
+    variables = [
+        variable
+        for component in model.component_objects(pyo.Var, descend_into=True)
+        for variable in component.values()
+    ]
+    constraints = [
+        constraint
+        for component in model.component_objects(pyo.Constraint, descend_into=True)
+        for constraint in component.values()
+    ]
+    objectives = list(model.component_objects(pyo.Objective, descend_into=True))
+    binary = sum(1 for variable in variables if variable.is_binary())
+    integer = sum(1 for variable in variables if variable.is_integer() and not variable.is_binary())
+    continuous = len(variables) - binary - integer
+    return {
+        "number_of_variables": len(variables),
+        "number_of_constraints": len(constraints),
+        "number_of_objectives": len(objectives),
+        "number_of_binary_variables": binary,
+        "number_of_integer_variables": integer,
+        "number_of_continuous_variables": continuous,
     }
 
 

@@ -1,3 +1,22 @@
+# 2026-09-24 — Phase 6.7 tactical scale benchmarks and uncertainty scaffolding (#44)
+- Merged #43 via PR #51 and started #44 on `issue-44-phase-6.7-scale-uncertainty` after the server restart; existing branch/auth state was recovered before continuing.
+- Added build/solve timing split and compact Pyomo model statistics (`number_of_variables`, `number_of_constraints`, binary/integer/continuous counts) to tactical MILP results.
+- Added `TacticalScaleConfig` and `generate_tactical_scale_scenario` for deterministic TOPM-shaped synthetic scale scenarios with configurable blocks, years, periods, products, facilities, systems, seed, and demand fraction.
+- Added `run_tactical_scale_benchmark` / `write_tactical_scale_benchmark` plus CLI commands `fhops synth tactical` and `fhops scenario benchmark`.
+- Captured initial HiGHS smoke envelopes in `docs/assets/tactical/tactical_scale_benchmark.{csv,json,md}`: 25 blocks (1,018 variables, 1,261 constraints, 0.461 s) and 100 blocks (4,018 variables, 4,936 constraints, 0.584 s), both optimal.
+- Documented scale benchmarking and overlay/batch scenario-ensemble guidance; decomposition remains deferred until profiling shows a bottleneck.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `git switch -c issue-44-phase-6.7-scale-uncertainty`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_scale.py tests/model/test_tactical_operational_milp.py tests/planning/test_tactical_operational_integration.py tests/planning/test_tactical_operational_scenario.py` (22 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops scenario benchmark --blocks 25 --blocks 100 --periods-per-year 4 --demand-fraction 0.1 --time-limit 60 --out-dir docs/assets/tactical` (2 optimal cases)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (378 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Phase 6.6 tactical–operational handoff and rolling state (#43)
 - Merged #42 via PR #50 and started #43 on `issue-43-phase-6.6-integrated-rolling`.
 - Added `fhops.planning.tactical_operational.integration` with `TacticalCommitment` and `TacticalRollingState` handoff contracts.

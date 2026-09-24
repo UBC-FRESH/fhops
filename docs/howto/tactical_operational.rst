@@ -238,6 +238,49 @@ CLI example using `topm-mini` commitments against the operational tiny7 bundle:
 The output directory contains a normal operational ``scenario.yaml`` + CSV bundle that can be
 validated and solved with the existing FHOPS commands.
 
+Scale benchmarks and uncertainty envelopes
+------------------------------------------
+
+Use ``fhops synth tactical`` to generate deterministic TOPM-shaped scale scenarios without copying
+restricted TOPM/OperMAX data. The generator creates a rectangular block × system × period
+eligibility grid with product yields, fleet capacity, facility demand, transport arcs, and optional
+external supply:
+
+.. code-block:: bash
+
+   fhops synth tactical \
+     --out tmp/topm-scale.yaml \
+     --blocks 100 \
+     --years 1 \
+     --periods-per-year 4 \
+     --products 2 \
+     --facilities 2 \
+     --systems 2 \
+     --seed 44
+
+Benchmark one or more generated sizes with:
+
+.. code-block:: bash
+
+   fhops scenario benchmark \
+     --blocks 25 \
+     --blocks 100 \
+     --periods-per-year 4 \
+     --time-limit 60 \
+     --out-dir tmp/topm-scale-benchmark
+
+The benchmark exports CSV, JSON, and Markdown summaries containing scenario dimensions, Pyomo
+variable/constraint counts, build time, solve time, objective, solver status, and termination
+condition. Decomposition methods (Benders, Dantzig–Wolfe, fix-and-optimize) should only be adopted
+after these measurements identify a real bottleneck. The committed smoke benchmark in
+``docs/assets/tactical/tactical_scale_benchmark.md`` currently shows HiGHS solving generated
+25-block and 100-block cases in under one second each (1,018/1,261 and 4,018/4,936
+variables/constraints, respectively).
+
+For uncertainty screening, use scenario overlays plus ``fhops scenario batch`` to compare demand,
+productivity, road-cost, or purchase-price cases before attempting robust or stochastic MILP
+variants.
+
 `topm-mini` acceptance fixture
 ------------------------------
 
