@@ -205,6 +205,39 @@ A batch manifest can solve base and overlaid cases in one command:
 Each batch case writes normalized decision tables and a Markdown objective summary; the batch root
 contains ``comparison.csv`` and ``comparison.md``.
 
+Tactical-to-operational handoff
+-------------------------------
+
+Use :mod:`fhops.planning.tactical_operational.integration` to convert a tactical solve into an
+operational business window. The handoff contract is explicit:
+
+- selected harvest decisions become :class:`TacticalCommitment` records;
+- a rolling state tracks remaining block area/product volume, facility inventory, active roads,
+  fleet units, and cumulative objective components;
+- ``compile_business_window_scenario`` filters an operational scenario to committed blocks, maps
+  tactical block IDs to operational IDs, assigns the selected harvest system, and clamps the window;
+- ``write_operational_scenario_bundle`` emits a loadable YAML/CSV operational bundle; and
+- ``apply_operational_realization`` rolls realized production back into aggregate state.
+
+CLI example using `topm-mini` commitments against the operational tiny7 bundle:
+
+.. code-block:: bash
+
+   fhops plan tactical-operational \
+     tests/fixtures/tactical_operational/topm-mini/specification.yaml \
+     --out-json tmp/topm-mini-result.json
+
+   fhops plan compile-tactical \
+     tmp/topm-mini-result.json \
+     examples/tiny7/scenario.yaml \
+     --block-map B1=B01 \
+     --block-map B2=B02 \
+     --horizon-days 7 \
+     --out-dir tmp/topm-mini-operational
+
+The output directory contains a normal operational ``scenario.yaml`` + CSV bundle that can be
+validated and solved with the existing FHOPS commands.
+
 `topm-mini` acceptance fixture
 ------------------------------
 

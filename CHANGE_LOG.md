@@ -1,3 +1,22 @@
+# 2026-09-24 — Phase 6.6 tactical–operational handoff and rolling state (#43)
+- Merged #42 via PR #50 and started #43 on `issue-43-phase-6.6-integrated-rolling`.
+- Added `fhops.planning.tactical_operational.integration` with `TacticalCommitment` and `TacticalRollingState` handoff contracts.
+- Added conversion from tactical solve results into commitments, remaining block area/product volume, facility inventory, active road, fleet unit, and objective-component state.
+- Added `compile_business_window_scenario` to map tactical commitments onto an existing operational scenario, override harvest-system IDs, filter production rates/mobilisation, and clamp business windows.
+- Added `write_operational_scenario_bundle` so compiled scenarios round-trip through the existing YAML/CSV `load_scenario` path.
+- Added `apply_operational_realization` to roll operational assignment production back into aggregate block/product state.
+- Added `fhops plan compile-tactical` CLI support with repeatable `--block-map`, business-window options, and bundle export.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `git switch -c issue-43-phase-6.6-integrated-rolling`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_integration.py tests/model/test_tactical_operational_milp.py tests/cli/test_planning_cli.py::test_tactical_operational_plan_cli tests/planning/test_tactical_operational_contract.py` (22 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (123 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (375 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Phase 6.5 scenario overlays, diffs, batch manifests, and reporting (#42)
 - Merged #41 via PR #49 and started #42 on `issue-42-phase-6.5-scenario-reporting`.
 - Added sparse tactical scenario overlays with stable row-key merging, `_remove` support, parent/overlay provenance, and deterministic source hashes.

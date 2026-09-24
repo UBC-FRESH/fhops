@@ -133,7 +133,7 @@ before proposing new work.
 - [ ] #40 Integrate products, transport, facilities, inventory, consumption, and outside purchases. *(In progress on `issue-40-phase-6.3-flow-inventory`.)*
 - [ ] #41 Add optional roads, silviculture transitions, and fleet investment/economic-life modules. *(In progress on `issue-41-phase-6.4-infrastructure-modules`.)*
 - [ ] #42 Add scenario overlays/diffs, auditable accounting reports, and TOPM-shaped synthetic acceptance fixtures. *(In progress on `issue-42-phase-6.5-scenario-reporting`.)*
-- [ ] #43 Couple aggregate tactical decisions to the existing shift-indexed operational and rolling-horizon engines.
+- [ ] #43 Couple aggregate tactical decisions to the existing shift-indexed operational and rolling-horizon engines. *(In progress on `issue-43-phase-6.6-integrated-rolling`.)*
 - [ ] #44 Benchmark scale/decomposition options only after the integrated core is validated and profiled.
 
 ## Detailed Next Steps
