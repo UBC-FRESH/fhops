@@ -49,10 +49,16 @@ class TacticalOperationalMilpConfig:
         areas; ``continuous`` relaxes the minimum; ``whole_block`` forces the full operable area.
     demand_basis:
         Whether facility ``target_m3`` (default) or ``minimum_m3`` values drive required production.
+    enable_roads / enable_silviculture / enable_fleet_investment:
+        Optional infrastructure modules. They default to ``False`` so a scenario without explicit
+        module configuration reproduces the product-flow core exactly.
     """
 
     harvest_mode: TacticalHarvestMode = TacticalHarvestMode.SEMI_CONTINUOUS
     demand_basis: DemandBasis = DemandBasis.TARGET
+    enable_roads: bool = False
+    enable_silviculture: bool = False
+    enable_fleet_investment: bool = False
 
 
 @dataclass(frozen=True)
@@ -68,6 +74,9 @@ def build_tactical_operational_bundle(
     *,
     harvest_mode: TacticalHarvestMode | str = TacticalHarvestMode.SEMI_CONTINUOUS,
     demand_basis: DemandBasis | str = DemandBasis.TARGET,
+    enable_roads: bool = False,
+    enable_silviculture: bool = False,
+    enable_fleet_investment: bool = False,
 ) -> TacticalOperationalMilpBundle:
     """Create a tactical MILP bundle from a validated scenario."""
     return TacticalOperationalMilpBundle(
@@ -75,6 +84,9 @@ def build_tactical_operational_bundle(
         config=TacticalOperationalMilpConfig(
             harvest_mode=TacticalHarvestMode(harvest_mode),
             demand_basis=DemandBasis(demand_basis),
+            enable_roads=enable_roads,
+            enable_silviculture=enable_silviculture,
+            enable_fleet_investment=enable_fleet_investment,
         ),
     )
 
@@ -86,6 +98,9 @@ def tactical_bundle_to_dict(bundle: TacticalOperationalMilpBundle) -> dict[str, 
         "config": {
             "harvest_mode": bundle.config.harvest_mode.value,
             "demand_basis": bundle.config.demand_basis.value,
+            "enable_roads": bundle.config.enable_roads,
+            "enable_silviculture": bundle.config.enable_silviculture,
+            "enable_fleet_investment": bundle.config.enable_fleet_investment,
         },
     }
 
@@ -98,6 +113,9 @@ def tactical_bundle_from_dict(payload: Mapping[str, Any]) -> TacticalOperational
         scenario,
         harvest_mode=config_payload.get("harvest_mode", TacticalHarvestMode.SEMI_CONTINUOUS.value),
         demand_basis=config_payload.get("demand_basis", DemandBasis.TARGET.value),
+        enable_roads=bool(config_payload.get("enable_roads", False)),
+        enable_silviculture=bool(config_payload.get("enable_silviculture", False)),
+        enable_fleet_investment=bool(config_payload.get("enable_fleet_investment", False)),
     )
 
 
@@ -220,6 +238,13 @@ def build_tactical_operational_model(bundle: TacticalOperationalMilpBundle) -> p
     for option in options:
         capacity_by_system_period[(option.system_id, option.period_id)].append(option.option_id)
 
+    fleet_options = list(scenario.fleet_options)
+    fleet_option_ids = [option.option_id for option in fleet_options]
+    if config.enable_fleet_investment and fleet_option_ids:
+        model.FleetOptions = pyo.Set(initialize=fleet_option_ids)
+        model.fleet_units = pyo.Var(model.FleetOptions, domain=pyo.NonNegativeIntegers)
+    period_sequence = {period.period_id: period.sequence for period in scenario.periods}
+
     def fleet_capacity_rule(mdl: pyo.ConcreteModel, system_id: str, period_id: str):
         capacity_rows = [
             row
@@ -239,11 +264,35 @@ def build_tactical_operational_model(bundle: TacticalOperationalMilpBundle) -> p
             option = option_by_id[option_id]
             block = blocks[option.block_id]
             expr += sum(block.product_yields_m3_per_ha.values()) * mdl.area[option_id]
-        return expr <= min(capacity_m3)
+        capacity_expr = min(capacity_m3)
+        if config.enable_fleet_investment and fleet_option_ids:
+            current_sequence = period_sequence[period_id]
+            for fleet_option in fleet_options:
+                if fleet_option.system_id != system_id:
+                    continue
+                purchase_sequence = period_sequence[fleet_option.purchase_period_id]
+                if (
+                    purchase_sequence
+                    <= current_sequence
+                    < purchase_sequence + fleet_option.economic_life_periods
+                ):
+                    capacity_expr += (
+                        mdl.fleet_units[fleet_option.option_id]
+                        * fleet_option.capacity_m3_per_period
+                    )
+        return expr <= capacity_expr
 
     fleet_keys = sorted(capacity_by_system_period)
     model.FleetKeys = pyo.Set(initialize=fleet_keys, dimen=2)
     model.fleet_capacity = pyo.Constraint(model.FleetKeys, rule=fleet_capacity_rule)
+
+    if config.enable_fleet_investment and fleet_option_ids:
+
+        def fleet_option_upper_rule(mdl: pyo.ConcreteModel, option_id: str):
+            fleet_option = next(item for item in fleet_options if item.option_id == option_id)
+            return mdl.fleet_units[option_id] <= fleet_option.max_units
+
+        model.fleet_option_upper = pyo.Constraint(model.FleetOptions, rule=fleet_option_upper_rule)
 
     arcs_by_origin_product_period: dict[tuple[str, str, str], list[str]] = defaultdict(list)
     arcs_by_destination_product_period: dict[tuple[str, str, str], list[str]] = defaultdict(list)
@@ -392,6 +441,143 @@ def build_tactical_operational_model(bundle: TacticalOperationalMilpBundle) -> p
 
     model.inventory_balance = pyo.Constraint(model.FacilityKeys, rule=inventory_balance_rule)
 
+    roads = list(scenario.roads)
+    road_ids = [road.road_id for road in roads]
+    road_by_id = {road.road_id: road for road in roads}
+    if config.enable_roads and road_ids:
+        road_period_keys = [
+            (road.road_id, period.period_id) for road in roads for period in scenario.periods
+        ]
+        model.RoadPeriods = pyo.Set(initialize=road_period_keys, dimen=2)
+        model.road_build = pyo.Var(model.RoadPeriods, domain=pyo.Binary)
+        model.road_available = pyo.Var(model.RoadPeriods, domain=pyo.Binary)
+
+        def road_build_timing_rule(mdl, road_id: str, period_id: str):
+            road = road_by_id[road_id]
+            if road.earliest_period_id is None:
+                return pyo.Constraint.Skip
+            if period_sequence[period_id] < period_sequence[road.earliest_period_id]:
+                return mdl.road_build[(road_id, period_id)] == 0
+            return pyo.Constraint.Skip
+
+        def road_availability_rule(mdl, road_id: str, period_id: str):
+            current_sequence = period_sequence[period_id]
+            eligible_periods = [
+                period.period_id
+                for period in scenario.periods
+                if period.sequence <= current_sequence
+            ]
+            return mdl.road_available[(road_id, period_id)] == sum(
+                mdl.road_build[(road_id, candidate)] for candidate in eligible_periods
+            )
+
+        def road_build_once_rule(mdl, road_id: str):
+            return (
+                sum(mdl.road_build[(road_id, period.period_id)] for period in scenario.periods) <= 1
+            )
+
+        model.road_build_timing = pyo.Constraint(model.RoadPeriods, rule=road_build_timing_rule)
+        model.road_availability = pyo.Constraint(model.RoadPeriods, rule=road_availability_rule)
+        model.Roads = pyo.Set(initialize=road_ids)
+        model.road_build_once = pyo.Constraint(model.Roads, rule=road_build_once_rule)
+
+        dependencies = list(scenario.road_dependencies)
+        if dependencies:
+            model.RoadDependencies = pyo.Set(initialize=range(len(dependencies)))
+
+            # Add one constraint per dependency/period so each Pyomo rule returns a scalar relation.
+            road_dependency_keys = [
+                (index, period.period_id)
+                for index in range(len(dependencies))
+                for period in scenario.periods
+            ]
+            model.RoadDependencyKeys = pyo.Set(initialize=road_dependency_keys, dimen=2)
+
+            def road_dependency_period_rule(mdl, index: int, period_id: str):
+                dependency = dependencies[index]
+                return (
+                    mdl.road_available[(dependency.road_id, period_id)]
+                    <= mdl.road_available[(dependency.depends_on_road_id, period_id)]
+                )
+
+            model.road_dependencies = pyo.Constraint(
+                model.RoadDependencyKeys, rule=road_dependency_period_rule
+            )
+
+        access_by_block: dict[str, list[str]] = defaultdict(list)
+        for access in scenario.block_road_access:
+            access_by_block[access.block_id].append(access.road_id)
+
+        if access_by_block:
+
+            def road_access_rule(mdl, option_id: str):
+                option = option_by_id[option_id]
+                road_candidates = access_by_block.get(option.block_id, [])
+                if not road_candidates:
+                    return pyo.Constraint.Skip
+                return mdl.harvest_active[option_id] <= sum(
+                    mdl.road_available[(road_id, option.period_id)] for road_id in road_candidates
+                )
+
+            model.road_access = pyo.Constraint(model.O, rule=road_access_rule)
+
+            def road_capacity_rule(mdl, period_id: str):
+                total = 0
+                for option in options:
+                    if option.period_id != period_id:
+                        continue
+                    if option.block_id not in access_by_block:
+                        continue
+                    block = blocks[option.block_id]
+                    total += (
+                        sum(block.product_yields_m3_per_ha.values()) * mdl.area[option.option_id]
+                    )
+                active_capacity = sum(
+                    (road_by_id[road_id].capacity_m3_per_period or 0.0)
+                    * mdl.road_available[(road_id, period_id)]
+                    for road_id in road_ids
+                )
+                return total <= active_capacity
+
+            model.road_capacity = pyo.Constraint(model.T, rule=road_capacity_rule)
+
+    transitions = list(scenario.silviculture_transitions)
+    transition_ids = [transition.transition_id for transition in transitions]
+    if config.enable_silviculture and transition_ids:
+        transition_period_keys = [
+            (transition.transition_id, period.period_id)
+            for transition in transitions
+            for period in scenario.periods
+            if period.sequence >= period_sequence[transition.earliest_period_id]
+        ]
+        model.SilvicultureKeys = pyo.Set(initialize=transition_period_keys, dimen=2)
+        model.silviculture_area = pyo.Var(model.SilvicultureKeys, domain=pyo.NonNegativeReals)
+
+        def silviculture_fulfillment_rule(mdl, transition_id: str):
+            transition = next(item for item in transitions if item.transition_id == transition_id)
+            if not transition.required:
+                return pyo.Constraint.Skip
+            related_options = [
+                option
+                for option in options
+                if option.block_id == transition.block_id
+                and option.system_id == transition.system_id
+            ]
+            if not related_options:
+                return pyo.Constraint.Skip
+            harvested = sum(mdl.area[option.option_id] for option in related_options)
+            scheduled = sum(
+                mdl.silviculture_area[(transition_id, period.period_id)]
+                for period in scenario.periods
+                if (transition_id, period.period_id) in model.SilvicultureKeys
+            )
+            return scheduled == harvested
+
+        model.SilvicultureTransitions = pyo.Set(initialize=transition_ids)
+        model.silviculture_fulfillment = pyo.Constraint(
+            model.SilvicultureTransitions, rule=silviculture_fulfillment_rule
+        )
+
     cost_expr = 0
     for option in options:
         period = periods[option.period_id]
@@ -414,6 +600,32 @@ def build_tactical_operational_model(bundle: TacticalOperationalMilpBundle) -> p
         cost_expr += (
             period.discount_factor * supply.delivered_cost_per_m3 * model.purchase[supply_key]
         )
+    if config.enable_roads and road_ids:
+        for road in roads:
+            for period in scenario.periods:
+                key = (road.road_id, period.period_id)
+                cost_expr += period.discount_factor * (
+                    road.build_cost * model.road_build[key]
+                    + road.maintenance_cost_per_period * model.road_available[key]
+                )
+    if config.enable_silviculture and transition_ids:
+        for transition in transitions:
+            for period in scenario.periods:
+                key = (transition.transition_id, period.period_id)
+                if key in model.SilvicultureKeys:
+                    cost_expr += (
+                        period.discount_factor
+                        * transition.cost_per_ha
+                        * model.silviculture_area[key]
+                    )
+    if config.enable_fleet_investment and fleet_option_ids:
+        for fleet_option in fleet_options:
+            period = periods[fleet_option.purchase_period_id]
+            cost_expr += (
+                period.discount_factor
+                * fleet_option.purchase_cost
+                * model.fleet_units[fleet_option.option_id]
+            )
 
     objective_profile = scenario.economics.objective_profile
     if objective_profile == "min_discounted_delivered_cost":
@@ -425,8 +637,10 @@ def build_tactical_operational_model(bundle: TacticalOperationalMilpBundle) -> p
             if demand.value_per_m3 is None:
                 continue
             period = periods[demand.period_id]
-            key = (demand.facility_id, demand.product_id, demand.period_id)
-            value_expr += period.discount_factor * demand.value_per_m3 * model.consumption[key]
+            demand_key = (demand.facility_id, demand.product_id, demand.period_id)
+            value_expr += (
+                period.discount_factor * demand.value_per_m3 * model.consumption[demand_key]
+            )
         terminal_value_expr = 0
         if objective_profile == "max_npv":
             final_period = period_order[-1].period_id
@@ -464,6 +678,12 @@ def build_tactical_operational_model(bundle: TacticalOperationalMilpBundle) -> p
         "previous_period": previous_period,
         "facilities": facilities,
         "final_period_id": period_order[-1].period_id,
+        "roads": tuple(road_ids),
+        "road_by_id": road_by_id,
+        "transitions": tuple(transition_ids),
+        "transition_by_id": {transition.transition_id: transition for transition in transitions},
+        "fleet_options": tuple(fleet_option_ids),
+        "fleet_option_by_id": {option.option_id: option for option in fleet_options},
     }
     return model
 
@@ -509,8 +729,19 @@ def solve_tactical_operational_milp(
         purchases = _extract_purchases(model)
         inventory = _extract_inventory(model)
         consumption = _extract_consumption(model)
+        roads = _extract_roads(model)
+        silviculture = _extract_silviculture(model)
+        fleet = _extract_fleet(model)
         objective_components = _objective_components(
-            model, harvest, flows, purchases, consumption, inventory
+            model,
+            harvest,
+            flows,
+            purchases,
+            consumption,
+            inventory,
+            roads,
+            silviculture,
+            fleet,
         )
         objective = pyo.value(model.objective)
     else:
@@ -559,6 +790,29 @@ def solve_tactical_operational_milp(
         consumption = pd.DataFrame(
             columns=["facility_id", "product_id", "period_id", "consumption_m3"]
         )
+        roads = pd.DataFrame(
+            columns=["road_id", "period_id", "build", "available", "discounted_cost"]
+        )
+        silviculture = pd.DataFrame(
+            columns=[
+                "transition_id",
+                "block_id",
+                "system_id",
+                "activity_id",
+                "period_id",
+                "area_ha",
+                "discounted_cost",
+            ]
+        )
+        fleet = pd.DataFrame(
+            columns=[
+                "option_id",
+                "system_id",
+                "purchase_period_id",
+                "units",
+                "discounted_cost",
+            ]
+        )
         objective_components = {}
         objective = None
 
@@ -571,6 +825,9 @@ def solve_tactical_operational_milp(
         "purchases": purchases,
         "inventory": inventory,
         "consumption": consumption,
+        "roads": roads,
+        "silviculture": silviculture,
+        "fleet": fleet,
         "model_dimensions": bundle.scenario.dimension_summary(),
         "solver_status": str(result.solver.status),
         "termination_condition": str(result.solver.termination_condition),
@@ -578,6 +835,9 @@ def solve_tactical_operational_milp(
         "config": {
             "harvest_mode": bundle.config.harvest_mode.value,
             "demand_basis": bundle.config.demand_basis.value,
+            "enable_roads": bundle.config.enable_roads,
+            "enable_silviculture": bundle.config.enable_silviculture,
+            "enable_fleet_investment": bundle.config.enable_fleet_investment,
         },
     }
 
@@ -788,6 +1048,97 @@ def _extract_consumption(model: pyo.ConcreteModel) -> pd.DataFrame:
     )
 
 
+def _extract_roads(model: pyo.ConcreteModel) -> pd.DataFrame:
+    meta = model._tactical_meta
+    if not meta["roads"] or not hasattr(model, "road_build"):
+        return pd.DataFrame(
+            columns=["road_id", "period_id", "build", "available", "discounted_cost"]
+        )
+    rows: list[dict[str, Any]] = []
+    for road_id in meta["roads"]:
+        road = meta["road_by_id"][road_id]
+        for period in meta["bundle"].scenario.periods:
+            key = (road_id, period.period_id)
+            build = int(pyo.value(model.road_build[key]) > 0.5)
+            available = int(pyo.value(model.road_available[key]) > 0.5)
+            if not build and not available:
+                continue
+            rows.append(
+                {
+                    "road_id": road_id,
+                    "period_id": period.period_id,
+                    "build": build,
+                    "available": available,
+                    "discounted_cost": period.discount_factor
+                    * (road.build_cost * build + road.maintenance_cost_per_period * available),
+                }
+            )
+    return pd.DataFrame(
+        rows, columns=["road_id", "period_id", "build", "available", "discounted_cost"]
+    )
+
+
+def _extract_silviculture(model: pyo.ConcreteModel) -> pd.DataFrame:
+    meta = model._tactical_meta
+    columns = [
+        "transition_id",
+        "block_id",
+        "system_id",
+        "activity_id",
+        "period_id",
+        "area_ha",
+        "discounted_cost",
+    ]
+    if not meta["transitions"] or not hasattr(model, "silviculture_area"):
+        return pd.DataFrame(columns=columns)
+    rows: list[dict[str, Any]] = []
+    for transition_id in meta["transitions"]:
+        transition = meta["transition_by_id"][transition_id]
+        for period in meta["bundle"].scenario.periods:
+            key = (transition_id, period.period_id)
+            if key not in model.SilvicultureKeys:
+                continue
+            area = float(pyo.value(model.silviculture_area[key]))
+            if area <= 1e-9:
+                continue
+            rows.append(
+                {
+                    "transition_id": transition_id,
+                    "block_id": transition.block_id,
+                    "system_id": transition.system_id,
+                    "activity_id": transition.activity_id,
+                    "period_id": period.period_id,
+                    "area_ha": area,
+                    "discounted_cost": period.discount_factor * transition.cost_per_ha * area,
+                }
+            )
+    return pd.DataFrame(rows, columns=columns)
+
+
+def _extract_fleet(model: pyo.ConcreteModel) -> pd.DataFrame:
+    meta = model._tactical_meta
+    columns = ["option_id", "system_id", "purchase_period_id", "units", "discounted_cost"]
+    if not meta["fleet_options"] or not hasattr(model, "fleet_units"):
+        return pd.DataFrame(columns=columns)
+    rows: list[dict[str, Any]] = []
+    for option_id in meta["fleet_options"]:
+        option = meta["fleet_option_by_id"][option_id]
+        units = int(round(float(pyo.value(model.fleet_units[option_id]))))
+        if units <= 0:
+            continue
+        period = meta["periods"][option.purchase_period_id]
+        rows.append(
+            {
+                "option_id": option_id,
+                "system_id": option.system_id,
+                "purchase_period_id": option.purchase_period_id,
+                "units": units,
+                "discounted_cost": period.discount_factor * option.purchase_cost * units,
+            }
+        )
+    return pd.DataFrame(rows, columns=columns)
+
+
 def _objective_components(
     model: pyo.ConcreteModel,
     harvest: pd.DataFrame,
@@ -795,6 +1146,9 @@ def _objective_components(
     purchases: pd.DataFrame,
     consumption: pd.DataFrame,
     inventory: pd.DataFrame,
+    roads: pd.DataFrame,
+    silviculture: pd.DataFrame,
+    fleet: pd.DataFrame,
 ) -> dict[str, float]:
     meta = model._tactical_meta
     bundle: TacticalOperationalMilpBundle = meta["bundle"]
@@ -803,7 +1157,20 @@ def _objective_components(
     variable = float(harvest["variable_cost"].sum()) if not harvest.empty else 0.0
     transport = float(flows["transport_cost"].sum()) if not flows.empty else 0.0
     purchase = float(purchases["purchase_cost"].sum()) if not purchases.empty else 0.0
-    total_cost = fixed + variable + transport + purchase
+    road_cost = float(roads["discounted_cost"].sum()) if not roads.empty else 0.0
+    silviculture_cost = (
+        float(silviculture["discounted_cost"].sum()) if not silviculture.empty else 0.0
+    )
+    fleet_investment_cost = float(fleet["discounted_cost"].sum()) if not fleet.empty else 0.0
+    total_cost = (
+        fixed
+        + variable
+        + transport
+        + purchase
+        + road_cost
+        + silviculture_cost
+        + fleet_investment_cost
+    )
 
     product_value = 0.0
     for row in consumption.itertuples(index=False):
@@ -841,6 +1208,9 @@ def _objective_components(
         "harvest_variable_cost": variable,
         "transport_cost": transport,
         "purchase_cost": purchase,
+        "road_cost": road_cost,
+        "silviculture_cost": silviculture_cost,
+        "fleet_investment_cost": fleet_investment_cost,
         "total_cost": total_cost,
         "product_value": product_value,
         "terminal_inventory_value": terminal_inventory_value,

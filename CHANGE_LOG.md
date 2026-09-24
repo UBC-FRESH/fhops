@@ -1,3 +1,22 @@
+# 2026-09-24 — Phase 6.4 roads, silviculture, and fleet investment modules (#41)
+- Merged #40 via PR #48, updated the Phase 6 integration branch, and started #41 on `issue-41-phase-6.4-infrastructure-modules`.
+- Extended the tactical–operational contract with `roads`, `road_dependencies`, `block_road_access`, `silviculture_transitions`, and `fleet_options` tables plus cross-reference validation and dimension reporting.
+- Added optional road activation with earliest-period timing, cumulative availability, prerequisite roads, block access gates, active-road capacity, build cost, and maintenance cost.
+- Added required silviculture follow-up transitions by block/system with eligible-period scheduling and discounted per-hectare cost.
+- Added fleet acquisition variables with purchase-period cost, capacity per period, maximum units, and economic-life windows.
+- Wired `--enable-roads`, `--enable-silviculture`, and `--enable-fleet-investment` CLI toggles plus road/silviculture/fleet CSV exports; default disabled mode preserves the Phase 6.3 optimum.
+- Added regression coverage showing road activation changes the `topm-mini` optimum to 25,930, silviculture changes it to 24,618.7975 with reduced B1 area, fleet investment adds a 5,000 unit only when base capacity is constrained, and disabled modules return 24,130.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `git switch -c issue-41-phase-6.4-infrastructure-modules`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/model/test_tactical_operational_milp.py tests/cli/test_planning_cli.py::test_tactical_operational_plan_cli tests/planning/test_tactical_operational_contract.py tests/test_topm_mini_specification.py` (23 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (119 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (367 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Phase 6.3 product flow, facility inventory, and purchases (#40)
 - Started #40 on `issue-40-phase-6.3-flow-inventory`, currently stacked on the validated local #39 commit while GitHub PR creation awaits refreshed credentials.
 - Extended the tactical–operational MILP with transport-flow variables, origin supply conservation, arc capacities, facility consumption bounds, opening/carry-over inventory balances, and bounded external purchases.

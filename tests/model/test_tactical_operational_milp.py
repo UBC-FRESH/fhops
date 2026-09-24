@@ -26,10 +26,16 @@ TOPM_MINI = (
 
 
 def _solve(
-    mode: TacticalHarvestMode = TacticalHarvestMode.SEMI_CONTINUOUS, scenario_path=TOPM_MINI
+    mode: TacticalHarvestMode = TacticalHarvestMode.SEMI_CONTINUOUS,
+    scenario_path=TOPM_MINI,
+    **bundle_options,
 ):
     scenario = load_tactical_operational_scenario(scenario_path)
-    bundle = build_tactical_operational_bundle(scenario, harvest_mode=mode)
+    bundle = build_tactical_operational_bundle(
+        scenario,
+        harvest_mode=mode,
+        **bundle_options,
+    )
     replayed = tactical_bundle_from_dict(tactical_bundle_to_dict(bundle))
     return solve_tactical_operational_milp(replayed, solver="highs", time_limit=30, gap=0.0)
 
@@ -269,3 +275,63 @@ def test_whole_block_mode_uses_operable_area() -> None:
     assert result["termination_condition"].lower() == "optimal"
     harvest = result["harvest_decisions"].set_index("option_id")
     assert harvest.loc["B3__ground_fb_skid__Y1-P1", "harvested_area_ha"] == pytest.approx(4.0)
+
+
+def test_modules_disabled_preserve_product_flow_optimum() -> None:
+    result = _solve(TacticalHarvestMode.SEMI_CONTINUOUS)
+
+    assert result["objective"] == pytest.approx(24130.0)
+    assert result["roads"].empty
+    assert result["silviculture"].empty
+    assert result["fleet"].empty
+
+
+def test_road_module_adds_activation_costs_and_access() -> None:
+    result = _solve(TacticalHarvestMode.SEMI_CONTINUOUS, enable_roads=True)
+
+    assert result["termination_condition"].lower() == "optimal"
+    assert result["objective"] == pytest.approx(25930.0)
+    assert result["objective_components"]["road_cost"] == pytest.approx(1800.0)
+    roads = result["roads"].set_index(["road_id", "period_id"])
+    assert roads.loc[("road_b1", "Y1-P1"), "build"] == 1
+    assert roads.loc[("road_b2", "Y1-P1"), "build"] == 1
+    assert ("road_b3", "Y1-P1") not in roads.index
+
+
+def test_silviculture_module_adds_required_followup_cost() -> None:
+    result = _solve(TacticalHarvestMode.SEMI_CONTINUOUS, enable_silviculture=True)
+
+    assert result["termination_condition"].lower() == "optimal"
+    assert result["objective"] == pytest.approx(24618.7975)
+    assert result["objective_components"]["silviculture_cost"] == pytest.approx(461.2975)
+    silviculture = result["silviculture"]
+    assert len(silviculture) == 1
+    assert silviculture.iloc[0]["activity_id"] == "planting"
+    assert silviculture.iloc[0]["area_ha"] == pytest.approx(4.625)
+
+
+def test_fleet_module_defaults_to_no_unnecessary_purchase() -> None:
+    result = _solve(TacticalHarvestMode.SEMI_CONTINUOUS, enable_fleet_investment=True)
+
+    assert result["termination_condition"].lower() == "optimal"
+    assert result["objective"] == pytest.approx(24130.0)
+    assert result["fleet"].empty
+
+
+def test_fleet_investment_unlocks_capacity_when_base_fleet_is_limited() -> None:
+    scenario = load_tactical_operational_scenario(TOPM_MINI)
+    payload = scenario.to_dict()
+    payload["fleet_capacity"][0]["capacity_m3"] = 600.0
+    scenario = scenario.model_validate(payload)
+    bundle = build_tactical_operational_bundle(
+        scenario,
+        enable_fleet_investment=True,
+    )
+    result = solve_tactical_operational_milp(bundle, solver="highs", time_limit=30)
+
+    assert result["termination_condition"].lower() == "optimal"
+    assert result["objective"] == pytest.approx(29130.0)
+    assert result["objective_components"]["fleet_investment_cost"] == pytest.approx(5000.0)
+    fleet = result["fleet"]
+    assert len(fleet) == 1
+    assert fleet.iloc[0]["units"] == 1

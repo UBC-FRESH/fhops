@@ -288,6 +288,54 @@ external_supply:
     maximum_m3: 100.0
     delivered_cost_per_m3: 45.0
 
+roads:
+  - road_id: road_b1
+    build_cost: 1000.0
+    maintenance_cost_per_period: 0.0
+    earliest_period_id: Y1-P1
+    capacity_m3_per_period: 700.0
+  - road_id: road_b2
+    build_cost: 800.0
+    maintenance_cost_per_period: 0.0
+    earliest_period_id: Y1-P1
+    capacity_m3_per_period: 500.0
+  - road_id: road_b3
+    build_cost: 600.0
+    maintenance_cost_per_period: 0.0
+    earliest_period_id: Y1-P1
+    capacity_m3_per_period: 400.0
+
+road_dependencies:
+  - road_id: road_b3
+    depends_on_road_id: road_b1
+
+block_road_access:
+  - block_id: B1
+    road_id: road_b1
+  - block_id: B2
+    road_id: road_b2
+  - block_id: B3
+    road_id: road_b3
+
+silviculture_transitions:
+  - transition_id: B1_ground_planting
+    block_id: B1
+    system_id: ground_fb_skid
+    activity_id: planting
+    earliest_period_id: Y1-P2
+    cost_per_ha: 100.0
+    required: true
+    next_state: regenerating
+
+fleet_options:
+  - option_id: ground_fb_skid_additional_unit
+    system_id: ground_fb_skid
+    purchase_period_id: Y1-P1
+    purchase_cost: 5000.0
+    capacity_m3_per_period: 600.0
+    max_units: 1
+    economic_life_periods: 2
+
 flow_inventory_expectations:
   - case_id: sawmill_balance
     facility_id: mill_saw

@@ -241,6 +241,24 @@ def tactical_operational_plan(
             ),
         ),
     ] = None,
+    enable_roads: Annotated[
+        bool,
+        typer.Option("--enable-roads/--no-enable-roads", help="Enable road activation module."),
+    ] = False,
+    enable_silviculture: Annotated[
+        bool,
+        typer.Option(
+            "--enable-silviculture/--no-enable-silviculture",
+            help="Enable silviculture transition module.",
+        ),
+    ] = False,
+    enable_fleet_investment: Annotated[
+        bool,
+        typer.Option(
+            "--enable-fleet-investment/--no-enable-fleet-investment",
+            help="Enable fleet acquisition module.",
+        ),
+    ] = False,
     solver: Annotated[
         str,
         typer.Option("--solver", help="Pyomo solver backend (default: highs)."),
@@ -284,6 +302,18 @@ def tactical_operational_plan(
         Path | None,
         typer.Option("--out-inventory-csv", help="Optional facility inventory CSV output."),
     ] = None,
+    out_roads_csv: Annotated[
+        Path | None,
+        typer.Option("--out-roads-csv", help="Optional road activation CSV output."),
+    ] = None,
+    out_silviculture_csv: Annotated[
+        Path | None,
+        typer.Option("--out-silviculture-csv", help="Optional silviculture activity CSV output."),
+    ] = None,
+    out_fleet_csv: Annotated[
+        Path | None,
+        typer.Option("--out-fleet-csv", help="Optional fleet acquisition CSV output."),
+    ] = None,
 ) -> None:
     """Solve the aggregate TOPM-inspired harvest/system/period MILP."""
 
@@ -296,6 +326,9 @@ def tactical_operational_plan(
         scenario,
         harvest_mode=TacticalHarvestMode(harvest_mode),
         demand_basis=DemandBasis(demand_basis),
+        enable_roads=enable_roads,
+        enable_silviculture=enable_silviculture,
+        enable_fleet_investment=enable_fleet_investment,
     )
     result = solve_tactical_operational_milp(
         bundle,
@@ -320,6 +353,9 @@ def tactical_operational_plan(
             f"harvest_variable={components.get('harvest_variable_cost', 0.0):.3f} "
             f"transport={components.get('transport_cost', 0.0):.3f} "
             f"purchases={components.get('purchase_cost', 0.0):.3f} "
+            f"roads={components.get('road_cost', 0.0):.3f} "
+            f"silviculture={components.get('silviculture_cost', 0.0):.3f} "
+            f"fleet={components.get('fleet_investment_cost', 0.0):.3f} "
             f"total={components.get('total_cost', 0.0):.3f}"
         )
 
@@ -332,6 +368,9 @@ def tactical_operational_plan(
         serializable["purchases"] = result["purchases"].to_dict("records")
         serializable["inventory"] = result["inventory"].to_dict("records")
         serializable["consumption"] = result["consumption"].to_dict("records")
+        serializable["roads"] = result["roads"].to_dict("records")
+        serializable["silviculture"] = result["silviculture"].to_dict("records")
+        serializable["fleet"] = result["fleet"].to_dict("records")
         out_json.write_text(json.dumps(serializable, indent=2))
         console.print(f"Wrote summary to {out_json}")
     if out_harvest_csv:
@@ -354,3 +393,15 @@ def tactical_operational_plan(
         out_inventory_csv.parent.mkdir(parents=True, exist_ok=True)
         result["inventory"].to_csv(out_inventory_csv, index=False)
         console.print(f"Wrote inventory to {out_inventory_csv}")
+    if out_roads_csv:
+        out_roads_csv.parent.mkdir(parents=True, exist_ok=True)
+        result["roads"].to_csv(out_roads_csv, index=False)
+        console.print(f"Wrote roads to {out_roads_csv}")
+    if out_silviculture_csv:
+        out_silviculture_csv.parent.mkdir(parents=True, exist_ok=True)
+        result["silviculture"].to_csv(out_silviculture_csv, index=False)
+        console.print(f"Wrote silviculture to {out_silviculture_csv}")
+    if out_fleet_csv:
+        out_fleet_csv.parent.mkdir(parents=True, exist_ok=True)
+        result["fleet"].to_csv(out_fleet_csv, index=False)
+        console.print(f"Wrote fleet to {out_fleet_csv}")

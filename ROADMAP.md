@@ -131,7 +131,7 @@ before proposing new work.
 - [ ] #38 Add a period-hierarchical, unit-explicit tactical–operational data contract while preserving schema `1.0.0` operational workflows. *(In progress on `issue-38-phase-6.1-contract-time`.)*
 - [ ] #39 Implement the core multi-year harvest/system/period model with semi-continuous minimum cut sizes and discounted economics. *(In progress on `issue-39-phase-6.2-core-harvest-milp`.)*
 - [ ] #40 Integrate products, transport, facilities, inventory, consumption, and outside purchases. *(In progress on `issue-40-phase-6.3-flow-inventory`.)*
-- [ ] #41 Add optional roads, silviculture transitions, and fleet investment/economic-life modules.
+- [ ] #41 Add optional roads, silviculture transitions, and fleet investment/economic-life modules. *(In progress on `issue-41-phase-6.4-infrastructure-modules`.)*
 - [ ] #42 Add scenario overlays/diffs, auditable accounting reports, and TOPM-shaped synthetic acceptance fixtures.
 - [ ] #43 Couple aggregate tactical decisions to the existing shift-indexed operational and rolling-horizon engines.
 - [ ] #44 Benchmark scale/decomposition options only after the integrated core is validated and profiled.

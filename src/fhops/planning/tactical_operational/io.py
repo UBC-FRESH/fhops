@@ -10,16 +10,21 @@ import yaml
 from pydantic import TypeAdapter
 
 from fhops.planning.tactical_operational.models import (
+    BlockRoadAccess,
     Economics,
     ExternalSupply,
     Facility,
     FacilityDemand,
     FleetCapacity,
+    FleetOption,
     HarvestSystemOption,
     InitialInventory,
     PlanningPeriod,
     PlanningUnit,
     Product,
+    RoadDependency,
+    RoadProject,
+    SilvicultureTransition,
     TacticalOperationalScenario,
     TransportArc,
 )
@@ -35,6 +40,11 @@ _LIST_MODELS: dict[str, Any] = {
     "initial_inventory": list[InitialInventory],
     "transport_arcs": list[TransportArc],
     "external_supply": list[ExternalSupply],
+    "roads": list[RoadProject],
+    "road_dependencies": list[RoadDependency],
+    "block_road_access": list[BlockRoadAccess],
+    "silviculture_transitions": list[SilvicultureTransition],
+    "fleet_options": list[FleetOption],
 }
 
 
