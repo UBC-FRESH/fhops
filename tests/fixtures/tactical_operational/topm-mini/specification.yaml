@@ -254,6 +254,30 @@ transport_arcs:
     period_id: Y1-P1
     cost_per_m3: 8.0
     capacity_m3: 200.0
+  - arc_id: B2__mill_pulp__truck__Y1-P1
+    origin_id: B2
+    destination_id: mill_pulp
+    product_id: pulp
+    mode: truck
+    period_id: Y1-P1
+    cost_per_m3: 9.0
+    capacity_m3: 200.0
+  - arc_id: B3__mill_saw__truck__Y1-P1
+    origin_id: B3
+    destination_id: mill_saw
+    product_id: sawlog
+    mode: truck
+    period_id: Y1-P1
+    cost_per_m3: 12.0
+    capacity_m3: 300.0
+  - arc_id: B3__mill_pulp__truck__Y1-P1
+    origin_id: B3
+    destination_id: mill_pulp
+    product_id: pulp
+    mode: truck
+    period_id: Y1-P1
+    cost_per_m3: 14.0
+    capacity_m3: 100.0
 
 external_supply:
   - source_id: open_market
@@ -270,19 +294,19 @@ flow_inventory_expectations:
     product_id: sawlog
     period_id: Y1-P1
     opening_m3: 50.0
-    deliveries_m3: 780.0
+    deliveries_m3: 730.0
     purchases_m3: 0.0
     consumption_m3: 780.0
-    expected_closing_m3: 50.0
+    expected_closing_m3: 0.0
   - case_id: pulp_balance
     facility_id: mill_pulp
     product_id: pulp
     period_id: Y1-P1
     opening_m3: 20.0
-    deliveries_m3: 180.0
+    deliveries_m3: 160.0
     purchases_m3: 0.0
     consumption_m3: 180.0
-    expected_closing_m3: 20.0
+    expected_closing_m3: 0.0
 
 compatibility_baseline:
   schema_version: "1.0.0"

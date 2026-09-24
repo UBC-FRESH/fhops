@@ -52,13 +52,15 @@ For 780 m³ of required Y1-P1 sawlog, the hand-calculated least-cost dispatch is
 Total harvest cost: **19,320 CAD_2026**. Transport and purchase costs are deliberately excluded from
 this isolated harvest-dispatch check.
 
-### Inventory balances
+### Integrated flow and inventory balances
 
-The flow expectations encode:
+The current integrated `topm-mini` optimum uses opening mill inventory before harvesting more wood:
 
-- sawmill: opening 50 + deliveries 780 + purchases 0 − consumption 780 = closing 50;
-- pulp mill: opening 20 + deliveries 180 + purchases 0 − consumption 180 = closing 20.
+- sawmill: opening 50 + deliveries 730 + purchases 0 − consumption 780 = closing 0;
+- pulp mill: opening 20 + deliveries 160 + purchases 0 − consumption 180 = closing 0.
 
+The resulting Phase 6.3 objective is **24,130 CAD_2026**: harvest fixed 180, harvest variable
+18,000, transport 5,950, and purchases 0. Harvest dispatch is B1 = 6.0 ha and B2 ≈ 2.7778 ha.
 Future implementations must reconcile every product/facility/period balance independently.
 
 ## Acceptance use by later issues
@@ -67,7 +69,7 @@ Future implementations must reconcile every product/facility/period balance inde
   duplicate keys, invalid units, impossible windows, and inconsistent yields.
 - **#39** reproduces the harvest-mode and economic-dispatch expectations with the aggregate MILP
   (`fhops.model.milp.tactical_operational`).
-- **#40** should reproduce the product-flow and facility-inventory expectations.
+- **#40** reproduces the product-flow and facility-inventory expectations in the integrated MILP.
 - **#41–#44** may extend the fixture with roads, silviculture, fleet investment, overlays, and
   rolling-state handoffs, but must keep these original checks passing.
 

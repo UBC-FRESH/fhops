@@ -1,3 +1,20 @@
+# 2026-09-24 — Phase 6.3 product flow, facility inventory, and purchases (#40)
+- Started #40 on `issue-40-phase-6.3-flow-inventory`, currently stacked on the validated local #39 commit while GitHub PR creation awaits refreshed credentials.
+- Extended the tactical–operational MILP with transport-flow variables, origin supply conservation, arc capacities, facility consumption bounds, opening/carry-over inventory balances, and bounded external purchases.
+- Added explicit objective profiles: default `min_discounted_delivered_cost`, plus `max_discounted_profit` when demand rows carry `value_per_m3`, and `max_npv` when facilities declare terminal inventory values.
+- Added CLI export surfaces for flows, purchases, inventory, and consumption alongside harvest/production outputs.
+- Updated `topm-mini` with pulp/B3 transport arcs and integrated balance expectations: opening sawlog inventory 50 reduces harvest deliveries to 730 m³; opening pulp inventory 20 reduces pulp deliveries to 160 m³; both end period P1 at zero inventory.
+- Regressed the integrated optimum at objective 24,130 (harvest fixed 180, harvest variable 18,000, transport 5,950, purchases 0), plus external-purchase and two-period inventory carry-over fixtures.
+- Commands executed:
+  - `git switch -c issue-40-phase-6.3-flow-inventory`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/model/test_tactical_operational_milp.py tests/cli/test_planning_cli.py::test_tactical_operational_plan_cli tests/planning/test_tactical_operational_contract.py tests/test_topm_mini_specification.py` (18 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (119 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (362 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Phase 6.2 TOPM core harvest/system/period MILP (#39)
 - Merged #38 into the Phase 6 integration branch via PR #46 (squash commit `6811d38`), closed the child issue, and started #39 on `issue-39-phase-6.2-core-harvest-milp`.
 - Added `fhops.model.milp.tactical_operational` with a Pyomo aggregate harvest-allocation MILP for eligible block × system × period options, product-specific yield conversion, fleet capacity, facility-demand targets, discounted fixed/variable costs, and objective decomposition.

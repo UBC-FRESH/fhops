@@ -144,10 +144,25 @@ class Facility(BaseModel):
     facility_id: str
     facility_type: str | None = None
     accepted_products: list[str] = Field(default_factory=list)
+    terminal_inventory_value_per_m3: dict[str, float] | None = None
+
+    @field_validator("terminal_inventory_value_per_m3")
+    @classmethod
+    def _terminal_values_non_negative(
+        cls, value: dict[str, float] | None
+    ) -> dict[str, float] | None:
+        if value is None:
+            return value
+        for product_id, amount in value.items():
+            if not product_id:
+                raise ValueError("Facility terminal inventory product IDs must be non-empty")
+            if amount < 0:
+                raise ValueError("Facility terminal inventory values must be non-negative")
+        return value
 
 
 class FacilityDemand(BaseModel):
-    """Facility/product/period demand envelope in cubic metres."""
+    """Facility/product/period demand envelope and optional delivered product value."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -157,6 +172,7 @@ class FacilityDemand(BaseModel):
     minimum_m3: float = Field(default=0.0, ge=0)
     target_m3: float | None = Field(default=None, ge=0)
     maximum_m3: float | None = Field(default=None, ge=0)
+    value_per_m3: float | None = Field(default=None, ge=0)
 
     @model_validator(mode="after")
     def _validate_bounds(self) -> FacilityDemand:

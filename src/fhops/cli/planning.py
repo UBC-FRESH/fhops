@@ -231,6 +231,16 @@ def tactical_operational_plan(
         str,
         typer.Option("--demand-basis", help="Demand envelope driver: target or minimum."),
     ] = DemandBasis.TARGET.value,
+    objective_profile: Annotated[
+        str | None,
+        typer.Option(
+            "--objective-profile",
+            help=(
+                "Objective profile override: min_discounted_delivered_cost, "
+                "max_discounted_profit, or max_npv."
+            ),
+        ),
+    ] = None,
     solver: Annotated[
         str,
         typer.Option("--solver", help="Pyomo solver backend (default: highs)."),
@@ -262,10 +272,26 @@ def tactical_operational_plan(
         Path | None,
         typer.Option("--out-production-csv", help="Optional product production CSV output."),
     ] = None,
+    out_flows_csv: Annotated[
+        Path | None,
+        typer.Option("--out-flows-csv", help="Optional product transport-flow CSV output."),
+    ] = None,
+    out_purchases_csv: Annotated[
+        Path | None,
+        typer.Option("--out-purchases-csv", help="Optional external-purchase CSV output."),
+    ] = None,
+    out_inventory_csv: Annotated[
+        Path | None,
+        typer.Option("--out-inventory-csv", help="Optional facility inventory CSV output."),
+    ] = None,
 ) -> None:
     """Solve the aggregate TOPM-inspired harvest/system/period MILP."""
 
     scenario = load_tactical_operational_scenario(scenario_path)
+    if objective_profile is not None:
+        payload = scenario.to_dict()
+        payload["economics"]["objective_profile"] = objective_profile
+        scenario = scenario.model_validate(payload)
     bundle = build_tactical_operational_bundle(
         scenario,
         harvest_mode=TacticalHarvestMode(harvest_mode),
@@ -290,8 +316,10 @@ def tactical_operational_plan(
     if components:
         console.print(
             "[cyan]Objective components:[/] "
-            f"fixed={components.get('fixed_cost', 0.0):.3f} "
-            f"variable={components.get('variable_cost', 0.0):.3f} "
+            f"harvest_fixed={components.get('harvest_fixed_cost', 0.0):.3f} "
+            f"harvest_variable={components.get('harvest_variable_cost', 0.0):.3f} "
+            f"transport={components.get('transport_cost', 0.0):.3f} "
+            f"purchases={components.get('purchase_cost', 0.0):.3f} "
             f"total={components.get('total_cost', 0.0):.3f}"
         )
 
@@ -300,6 +328,10 @@ def tactical_operational_plan(
         serializable = dict(result)
         serializable["harvest_decisions"] = result["harvest_decisions"].to_dict("records")
         serializable["production"] = result["production"].to_dict("records")
+        serializable["flows"] = result["flows"].to_dict("records")
+        serializable["purchases"] = result["purchases"].to_dict("records")
+        serializable["inventory"] = result["inventory"].to_dict("records")
+        serializable["consumption"] = result["consumption"].to_dict("records")
         out_json.write_text(json.dumps(serializable, indent=2))
         console.print(f"Wrote summary to {out_json}")
     if out_harvest_csv:
@@ -310,3 +342,15 @@ def tactical_operational_plan(
         out_production_csv.parent.mkdir(parents=True, exist_ok=True)
         result["production"].to_csv(out_production_csv, index=False)
         console.print(f"Wrote production to {out_production_csv}")
+    if out_flows_csv:
+        out_flows_csv.parent.mkdir(parents=True, exist_ok=True)
+        result["flows"].to_csv(out_flows_csv, index=False)
+        console.print(f"Wrote product flows to {out_flows_csv}")
+    if out_purchases_csv:
+        out_purchases_csv.parent.mkdir(parents=True, exist_ok=True)
+        result["purchases"].to_csv(out_purchases_csv, index=False)
+        console.print(f"Wrote purchases to {out_purchases_csv}")
+    if out_inventory_csv:
+        out_inventory_csv.parent.mkdir(parents=True, exist_ok=True)
+        result["inventory"].to_csv(out_inventory_csv, index=False)
+        console.print(f"Wrote inventory to {out_inventory_csv}")

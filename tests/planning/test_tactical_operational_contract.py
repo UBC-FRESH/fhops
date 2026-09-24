@@ -41,7 +41,7 @@ def test_load_topm_mini_tactical_operational_contract() -> None:
     assert dimensions["harvest_system_options"] == 4
     assert dimensions["fleet_capacity_records"] == 2
     assert dimensions["facilities"] == 2
-    assert dimensions["transport_arcs"] == 3
+    assert dimensions["transport_arcs"] == 6
 
     round_trip = tactical_scenario_to_dict(scenario)
     replayed = TacticalOperationalScenario.model_validate(round_trip)
