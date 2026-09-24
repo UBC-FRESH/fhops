@@ -186,7 +186,7 @@ before proposing new work.
 13. **Tactical–Operational Expansion (#36; `notes/tactical_operational_expansion_plan.md`, `notes/tactical_operational_issue_tree.md`)**
     - Parent issue #36 and child issues #37–#44 are linked via GitHub sub-issues; all child PRs #45–#52 are merged into `feature/phase6-tactical-operational-expansion`.
     - The phase branch now carries the two-level architecture, tactical contract/MILP, product-flow/inventory/infrastructure modules, scenario overlays/reporting, tactical→operational handoff, and initial scale telemetry.
-    - Next gate: maintainer review of the Phase 6 integration PR into `main`; do not close #36 until that review approves the architecture and follow-up scope.
+    - Final gate: Phase 6 integration PR #53 into `main` received maintainer approval; merge closes parent #36 and moves full-scale/practitioner validation to follow-up work.
     - Remaining follow-up scope after integration: full 5-year/500+ block benchmark, practitioner case validation, guided planner notebooks, and decomposition only if measured scale requires it.
 
 ## Backlog & Ideas

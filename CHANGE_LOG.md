@@ -2,7 +2,7 @@
 - Marked all Phase 6 child issues #37–#44 complete in `ROADMAP.md` after PRs #45–#52 merged into `feature/phase6-tactical-operational-expansion`.
 - Updated `notes/tactical_operational_issue_tree.md` and `notes/tactical_operational_expansion_plan.md` to show parent issue #36 remains open only for maintainer-level integration review into `main`.
 - Recorded remaining post-integration follow-up scope: full 5-year/500+ block benchmark, practitioner case validation, guided planner notebooks, and decomposition only if measured scale requires it.
-- Preparing the final Phase 6 integration PR from `feature/phase6-tactical-operational-expansion` to `main`; that PR intentionally uses `Part of #36` and does not close the parent issue.
+- Opened the final Phase 6 integration PR #53 from `feature/phase6-tactical-operational-expansion` to `main`; maintainer approval was provided to merge and close parent issue #36 after all child PRs #45–#52 completed.
 - Commands executed:
   - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
   - `.venv/bin/ruff format src tests` (220 files unchanged)

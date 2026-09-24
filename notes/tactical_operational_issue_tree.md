@@ -25,8 +25,9 @@ All eight child issues were linked to parent #36 through GitHub sub-issues, and 
 tree were assigned the repository `Feature` issue type.
 
 2026-09-24 status: all child issues #37–#44 were merged into the Phase 6 integration branch via
-PRs #45–#52. Parent #36 remains open pending maintainer approval and the Phase 6 integration PR
-into `main`.
+PRs #45–#52. Phase 6 integration PR #53 was opened from
+`feature/phase6-tactical-operational-expansion` into `main`; maintainer approval authorizes merge
+and parent #36 closure.
 
 ## Historical scope note
 
