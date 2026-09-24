@@ -5,7 +5,7 @@
 - Added `load_tactical_operational_scenario`, round-trip serialization, and dimension reporting for inline YAML or CSV-backed long-form scenario tables.
 - Extended `fhops validate` without breaking the legacy path: `fhops validate scenario.yaml` still validates schema `1.0.0` operational bundles, while `fhops validate tactical-operational <scenario.yaml>` validates the new aggregate contract and prints model dimensions.
 - Updated `tests/fixtures/tactical_operational/topm-mini/specification.yaml` so the acceptance fixture now exercises the real contract loader; added contract, template, round-trip, compatibility, and CLI tests.
-- Added `docs/howto/tactical_operational.rst`, linked it into Sphinx, and updated the CLI reference.
+- Added `docs/howto/tactical_operational.rst`, linked it into Sphinx, and updated the CLI reference; opened draft PR #46 targeting the Phase 6 integration branch.
 - Commands executed:
   - GitHub REST: marked PR #45 ready, squash-merged it into `feature/phase6-tactical-operational-expansion` (`4e87476`), closed #37, and updated the #36 parent checklist.
   - `git switch feature/phase6-tactical-operational-expansion && git pull --ff-only`
@@ -20,7 +20,10 @@
   - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (354 passed, 210 skipped, 61 warnings)
   - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (failed on pre-existing notebook E402 findings; unrelated notebook auto-formatting was restored)
   - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #38 changed-file set (passed after whitespace normalization)
   - `git diff --check` (passed)
+  - `git push -u origin issue-38-phase-6.1-contract-time`
+  - GitHub REST `POST /repos/UBC-FRESH/fhops/pulls` (opened draft PR #46)
 
 # 2026-09-24 — Phase 6.0 workflow/architecture baseline (#37)
 - Started child issue #37 on branch `issue-37-phase-6.0-workflow-architecture` under parent #36 and the Phase 6 integration branch.

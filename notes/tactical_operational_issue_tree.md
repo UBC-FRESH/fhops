@@ -25,7 +25,8 @@ All eight child issues were linked to parent #36 through GitHub sub-issues, and 
 tree were assigned the repository `Feature` issue type.
 
 2026-09-24 status: #37 was merged into the Phase 6 integration branch via PR #45. #38 is in
-progress on branch `issue-38-phase-6.1-contract-time`.
+review as draft PR [#46](https://github.com/UBC-FRESH/fhops/pull/46) from branch
+`issue-38-phase-6.1-contract-time` into `feature/phase6-tactical-operational-expansion`.
 
 ## Historical scope note
 
