@@ -24,8 +24,8 @@ Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 All eight child issues were linked to parent #36 through GitHub sub-issues, and all issues in the
 tree were assigned the repository `Feature` issue type.
 
-2026-09-24 status: #37–#40 were merged into the Phase 6 integration branch via PRs #45–#48. #41
-is in progress on branch `issue-41-phase-6.4-infrastructure-modules`.
+2026-09-24 status: #37–#41 were merged into the Phase 6 integration branch via PRs #45–#49. #42
+is in progress on branch `issue-42-phase-6.5-scenario-reporting`.
 
 ## Historical scope note
 
