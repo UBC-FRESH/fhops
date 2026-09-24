@@ -40,6 +40,8 @@ from fhops.cli.dataset import dataset_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.cli.planning import plan_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
+from fhops.cli.reporting import report_app
+from fhops.cli.scenario import scenario_app
 from fhops.cli.synthetic import synth_app
 from fhops.cli.telemetry import telemetry_app
 from fhops.cli.watch_dashboard import LiveWatch
@@ -85,6 +87,8 @@ app.add_typer(synth_app, name="synth")
 app.add_typer(telemetry_app, name="telemetry")
 app.add_typer(dataset_app, name="dataset")
 app.add_typer(plan_app, name="plan")
+app.add_typer(scenario_app, name="scenario")
+app.add_typer(report_app, name="report")
 console = Console()
 KPI_MODE: click.ParamType = click.Choice(["basic", "extended"], case_sensitive=False)
 

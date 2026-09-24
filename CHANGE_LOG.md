@@ -1,3 +1,23 @@
+# 2026-09-24 — Phase 6.5 scenario overlays, diffs, batch manifests, and reporting (#42)
+- Merged #41 via PR #49 and started #42 on `issue-42-phase-6.5-scenario-reporting`.
+- Added sparse tactical scenario overlays with stable row-key merging, `_remove` support, parent/overlay provenance, and deterministic source hashes.
+- Added field-level tactical scenario diffs with section/key/field/base/candidate/change-type columns.
+- Added batch manifests that solve multiple base/overlay cases, emit per-case `result.json`, normalized report tables, Markdown summaries, and root-level `comparison.csv`/`comparison.md` outputs.
+- Added CLI commands: `fhops scenario overlay`, `fhops scenario diff`, `fhops scenario batch`, and `fhops report tactical`.
+- Added report writer support for CSV, Parquet, and Markdown across harvest, production, flows, purchases, inventory, consumption, roads, silviculture, and fleet tables.
+- Updated tactical Sphinx docs and CLI reference with overlay/batch/report workflows.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `git switch -c issue-42-phase-6.5-scenario-reporting`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_scenario.py tests/cli/test_scenario_reporting_cli.py` (4 passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_scenario.py tests/cli/test_scenario_reporting_cli.py tests/model/test_tactical_operational_milp.py tests/planning/test_tactical_operational_contract.py` (21 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (122 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (371 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Phase 6.4 roads, silviculture, and fleet investment modules (#41)
 - Merged #40 via PR #48, updated the Phase 6 integration branch, and started #41 on `issue-41-phase-6.4-infrastructure-modules`.
 - Extended the tactical–operational contract with `roads`, `road_dependencies`, `block_road_access`, `silviculture_transitions`, and `fleet_options` tables plus cross-reference validation and dimension reporting.

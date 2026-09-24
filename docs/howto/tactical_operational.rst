@@ -160,6 +160,51 @@ Solve the fixture from the CLI:
      --out-harvest-csv tmp/topm-mini-harvest.csv \
      --out-production-csv tmp/topm-mini-production.csv
 
+Scenario overlays, diffs, and batch reports
+-------------------------------------------
+
+Phase 6 scenarios support sparse overlays so sensitivity cases can inherit a base contract without
+copying every table. Overlay rows are matched by stable identifiers (for example ``block_id``,
+``option_id``, ``arc_id``, or composite facility/product/period keys). An overlay can update nested
+fields, append rows, and remove rows through ``_remove``.
+
+.. code-block:: yaml
+
+   overlay_id: lower-sawlog-demand
+   description: Reduce Y1-P1 sawlog target from 780 to 700 m3.
+   facility_demand:
+     - facility_id: mill_saw
+       product_id: sawlog
+       period_id: Y1-P1
+       target_m3: 700.0
+
+Apply and inspect the overlay:
+
+.. code-block:: bash
+
+   fhops scenario overlay base.yaml lower-demand.yaml --out scenario-lower.yaml
+   fhops scenario diff base.yaml scenario-lower.yaml --out tmp/scenario-diff.csv
+
+A batch manifest can solve base and overlaid cases in one command:
+
+.. code-block:: yaml
+
+   cases:
+     - case_id: base
+       scenario: base.yaml
+     - case_id: lower-demand
+       scenario: base.yaml
+       overlay: lower-demand.yaml
+       enable_roads: true
+
+.. code-block:: bash
+
+   fhops scenario batch batch.yaml --out-dir tmp/tactical-batch
+   fhops report tactical tmp/tactical-batch/base/result.json --out-dir tmp/tactical-report
+
+Each batch case writes normalized decision tables and a Markdown objective summary; the batch root
+contains ``comparison.csv`` and ``comparison.md``.
+
 `topm-mini` acceptance fixture
 ------------------------------
 

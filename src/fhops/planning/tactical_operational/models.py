@@ -320,6 +320,9 @@ class TacticalOperationalScenario(BaseModel):
     name: str
     planning_level: str = TACTICAL_OPERATIONAL_PLANNING_LEVEL
     schema_version: str = TACTICAL_OPERATIONAL_SCHEMA_VERSION
+    parent: str | None = None
+    overlay_id: str | None = None
+    source_hash: str | None = None
     economics: Economics = Field(default_factory=Economics)
     periods: list[PlanningPeriod]
     products: list[Product]

@@ -544,8 +544,8 @@ returns the Phase 3 optimum.
 
 ### Phase 5 — Scenario workflow and decision-support reporting
 
-- [ ] Implement base/overlay scenarios, batch manifests, and scenario diff.
-- [ ] Add Markdown/CSV/Parquet summaries and comparison reports.
+- [x] Implement base/overlay scenarios, batch manifests, and scenario diff.
+- [x] Add Markdown/CSV/Parquet summaries and comparison reports.
 - [ ] Add infeasibility explanation, utilization/slack reports, and provenance hashes.
 - [ ] Add guided examples/notebooks for planners.
 
