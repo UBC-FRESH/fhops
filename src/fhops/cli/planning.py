@@ -11,10 +11,17 @@ import typer
 from rich.console import Console
 
 from fhops.cli._utils import parse_solver_options
+from fhops.model.milp.tactical_operational import (
+    DemandBasis,
+    TacticalHarvestMode,
+    build_tactical_operational_bundle,
+    solve_tactical_operational_milp,
+)
 from fhops.planning import (
     RollingHorizonConfig,
     RollingInfeasibleError,
     get_solver_hook,
+    load_tactical_operational_scenario,
     rolling_assignments_dataframe,
     run_rolling_horizon,
     summarize_plan,
@@ -208,3 +215,98 @@ def rolling_plan(
         out_iterations_csv.parent.mkdir(parents=True, exist_ok=True)
         pd.DataFrame(iteration_records).to_csv(out_iterations_csv, index=False)
         console.print(f"Wrote iteration summaries to {out_iterations_csv}")
+
+
+@plan_app.command("tactical-operational")
+def tactical_operational_plan(
+    scenario_path: Path = typer.Argument(..., help="Path to tactical–operational scenario YAML."),
+    harvest_mode: Annotated[
+        str,
+        typer.Option(
+            "--harvest-mode",
+            help="Harvest quantity mode: continuous, semi_continuous, or whole_block.",
+        ),
+    ] = TacticalHarvestMode.SEMI_CONTINUOUS.value,
+    demand_basis: Annotated[
+        str,
+        typer.Option("--demand-basis", help="Demand envelope driver: target or minimum."),
+    ] = DemandBasis.TARGET.value,
+    solver: Annotated[
+        str,
+        typer.Option("--solver", help="Pyomo solver backend (default: highs)."),
+    ] = "highs",
+    time_limit: Annotated[
+        int | None,
+        typer.Option("--time-limit", help="Solver time limit in seconds."),
+    ] = None,
+    gap: Annotated[
+        float | None,
+        typer.Option("--gap", help="Relative MIP gap target (0–1)."),
+    ] = None,
+    solver_option: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--solver-option",
+            help="Repeatable name=value solver option overrides.",
+        ),
+    ] = None,
+    out_json: Annotated[
+        Path | None,
+        typer.Option("--out-json", help="Optional path to write the solve summary JSON."),
+    ] = None,
+    out_harvest_csv: Annotated[
+        Path | None,
+        typer.Option("--out-harvest-csv", help="Optional harvest decision CSV output."),
+    ] = None,
+    out_production_csv: Annotated[
+        Path | None,
+        typer.Option("--out-production-csv", help="Optional product production CSV output."),
+    ] = None,
+) -> None:
+    """Solve the aggregate TOPM-inspired harvest/system/period MILP."""
+
+    scenario = load_tactical_operational_scenario(scenario_path)
+    bundle = build_tactical_operational_bundle(
+        scenario,
+        harvest_mode=TacticalHarvestMode(harvest_mode),
+        demand_basis=DemandBasis(demand_basis),
+    )
+    result = solve_tactical_operational_milp(
+        bundle,
+        solver=solver,
+        time_limit=time_limit,
+        gap=gap,
+        solver_options=parse_solver_options(solver_option),
+    )
+
+    objective = result.get("objective")
+    objective_text = "n/a" if objective is None else f"{objective:.3f}"
+    console.print(
+        "[bold green]Tactical–operational plan completed[/]: "
+        f"objective={objective_text} solver={result.get('solver_status')} "
+        f"termination={result.get('termination_condition')}"
+    )
+    components = result.get("objective_components") or {}
+    if components:
+        console.print(
+            "[cyan]Objective components:[/] "
+            f"fixed={components.get('fixed_cost', 0.0):.3f} "
+            f"variable={components.get('variable_cost', 0.0):.3f} "
+            f"total={components.get('total_cost', 0.0):.3f}"
+        )
+
+    if out_json:
+        out_json.parent.mkdir(parents=True, exist_ok=True)
+        serializable = dict(result)
+        serializable["harvest_decisions"] = result["harvest_decisions"].to_dict("records")
+        serializable["production"] = result["production"].to_dict("records")
+        out_json.write_text(json.dumps(serializable, indent=2))
+        console.print(f"Wrote summary to {out_json}")
+    if out_harvest_csv:
+        out_harvest_csv.parent.mkdir(parents=True, exist_ok=True)
+        result["harvest_decisions"].to_csv(out_harvest_csv, index=False)
+        console.print(f"Wrote harvest decisions to {out_harvest_csv}")
+    if out_production_csv:
+        out_production_csv.parent.mkdir(parents=True, exist_ok=True)
+        result["production"].to_csv(out_production_csv, index=False)
+        console.print(f"Wrote production to {out_production_csv}")

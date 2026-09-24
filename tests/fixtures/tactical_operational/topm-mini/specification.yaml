@@ -104,7 +104,7 @@ harvest_system_options:
     eligible: true
     min_area_ha: 4.0
     max_area_ha: 4.0
-    variable_cost_per_m3: 15.0
+    variable_cost_per_m3: 40.0
     fixed_cost: 50.0
     productivity_m3_per_period: 320.0
   - option_id: B1__ctl__Y1-P2
