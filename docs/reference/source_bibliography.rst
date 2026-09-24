@@ -27,6 +27,9 @@ The public reference inventory remains available in Markdown:
 * `notes/reference/ <https://github.com/UBC-FRESH/fhops/tree/main/notes/reference>`__
   contains focused public notes such as wage tables, CPI/FX conversion notes,
   skyline residue notes, and micro-yarder source summaries.
+* `notes/tactical_operational_provenance.md <https://github.com/UBC-FRESH/fhops/blob/main/notes/tactical_operational_provenance.md>`__
+  records the public TOPM/OperMAX/Jaffray provenance trail for the Phase 6
+  tactical–operational expansion without redistributing restricted documents.
 * Runtime datasets derived from permissible tabular values live under
   ``data/reference/`` and ``data/productivity/`` so installed FHOPS packages can
   run without requiring the private document vault.
