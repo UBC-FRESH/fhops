@@ -1,10 +1,10 @@
 # ADR 0001 — Tactical–Operational Planning Architecture
 
-Date: 2026-09-24  
-Status: Proposed for maintainer review  
-Parent issue: #36  
-Child issue: #37  
-Phase branch: `feature/phase6-tactical-operational-expansion`  
+Date: 2026-09-24
+Status: Proposed for maintainer review
+Parent issue: #36
+Child issue: #37
+Phase branch: `feature/phase6-tactical-operational-expansion`
 Child branch: `issue-37-phase-6.0-workflow-architecture`
 
 ## Context

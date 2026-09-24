@@ -1,10 +1,11 @@
 # Tactical–Operational Expansion Plan (TOPM-Inspired)
 
-Date: 2026-09-24  
-Status: Proposed architecture and phased delivery plan; GitHub parent issue #36, child issues
-#37–#44, phase branch `feature/phase6-tactical-operational-expansion`  
+Date: 2026-09-24
+Status: #37 merged via PR #45; #38 in progress on branch
+`issue-38-phase-6.1-contract-time`; GitHub parent issue #36, child issues #37–#44, phase branch
+`feature/phase6-tactical-operational-expansion`
 Primary historical source: Oborn (1996), *A Mathematical Programming Application with
-Semi-Continuous Variables for Multi-Faceted Forest Operations Planning*  
+Semi-Continuous Variables for Multi-Faceted Forest Operations Planning*
 Modern design context: Jaffray, Coupland, and Paradis (2026), *Forest harvesting operational
 planning tools: a systematic review of optimization, simulation, and spatial decision support
 systems*
@@ -497,11 +498,13 @@ Exit criterion: maintainers approve the ADR, contract sketch, model scope, and a
 
 ### Phase 1 — Shared time, units, and planning contract
 
-- [ ] Implement period hierarchy/calendar templates and roll-up utilities.
-- [ ] Add tactical–operational scenario models and long-form loaders.
-- [ ] Add products, facilities, system options, yields, fleet capacity, and economics.
-- [ ] Add schema dispatch/versioning and legacy operational adapters.
-- [ ] Provide `fhops validate tactical-operational` with cross-table diagnostics.
+- [x] Implement period hierarchy/calendar templates and roll-up utilities
+  (`fhops.planning.tactical_operational.time`).
+- [x] Add tactical–operational scenario models and long-form YAML/CSV loaders
+  (`fhops.planning.tactical_operational.models` / `.io`).
+- [x] Add products, facilities, system options, yields, fleet capacity, and economics models.
+- [x] Add schema dispatch/versioning and preserve the legacy operational loader path.
+- [x] Provide `fhops validate tactical-operational` with cross-table diagnostics.
 
 Exit criterion: `topm-mini` loads, validates, round-trips, and reports model dimensions without
 building a solver model.

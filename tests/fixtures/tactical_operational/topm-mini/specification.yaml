@@ -1,3 +1,6 @@
+name: topm-mini
+planning_level: tactical_operational
+schema_version: "0.1.0"
 specification_version: "0.1.0"
 fixture_id: topm-mini
 issue: 37
@@ -114,6 +117,16 @@ harvest_system_options:
     variable_cost_per_m3: 22.0
     fixed_cost: 120.0
     productivity_m3_per_period: 650.0
+
+fleet_capacity:
+  - system_id: ground_fb_skid
+    period_id: Y1-P1
+    capacity_m3: 1080.0
+    capacity_hours: 672.0
+  - system_id: ctl
+    period_id: Y1-P2
+    capacity_m3: 650.0
+    capacity_hours: 672.0
 
 harvest_modes:
   continuous:

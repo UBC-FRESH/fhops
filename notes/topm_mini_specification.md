@@ -1,7 +1,7 @@
 # `topm-mini` Executable Specification
 
-Date: 2026-09-24  
-Issues: #36, #37  
+Date: 2026-09-24
+Issues: #36, #37
 Machine-readable source: `tests/fixtures/tactical_operational/topm-mini/specification.yaml`
 
 ## Purpose
@@ -63,7 +63,7 @@ Future implementations must reconcile every product/facility/period balance inde
 
 ## Acceptance use by later issues
 
-- **#38** should turn this YAML into validated contract objects and fail clearly on missing IDs,
+- **#38** turns this YAML into validated contract objects and fails clearly on missing IDs,
   duplicate keys, invalid units, impossible windows, and inconsistent yields.
 - **#39** should reproduce the harvest-mode and economic-dispatch expectations with the aggregate
   MILP.

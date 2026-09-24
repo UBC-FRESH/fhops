@@ -1,3 +1,27 @@
+# 2026-09-24 — Phase 6.1 tactical–operational contract and period hierarchy (#38)
+- Merged #37 into the Phase 6 integration branch via PR #45 (squash commit `4e87476`), closed the child issue, and started #38 on `issue-38-phase-6.1-contract-time`.
+- Added `fhops.planning.tactical_operational` with Pydantic contract models for periods, products, planning units, harvest-system options, fleet capacity, facilities, demand, initial inventory, transport arcs, external supply, and economics.
+- Added period hierarchy/template helpers (`four_week_periods`, `seasonal_periods`, parent/child rollups, and chronological validation) with effective-annual discount factors.
+- Added `load_tactical_operational_scenario`, round-trip serialization, and dimension reporting for inline YAML or CSV-backed long-form scenario tables.
+- Extended `fhops validate` without breaking the legacy path: `fhops validate scenario.yaml` still validates schema `1.0.0` operational bundles, while `fhops validate tactical-operational <scenario.yaml>` validates the new aggregate contract and prints model dimensions.
+- Updated `tests/fixtures/tactical_operational/topm-mini/specification.yaml` so the acceptance fixture now exercises the real contract loader; added contract, template, round-trip, compatibility, and CLI tests.
+- Added `docs/howto/tactical_operational.rst`, linked it into Sphinx, and updated the CLI reference.
+- Commands executed:
+  - GitHub REST: marked PR #45 ready, squash-merged it into `feature/phase6-tactical-operational-expansion` (`4e87476`), closed #37, and updated the #36 parent checklist.
+  - `git switch feature/phase6-tactical-operational-expansion && git pull --ff-only`
+  - `git switch -c issue-38-phase-6.1-contract-time`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pip install -e .`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_topm_mini_specification.py tests/planning/test_tactical_operational_contract.py` (10 passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops validate tactical-operational tests/fixtures/tactical_operational/topm-mini/specification.yaml` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops validate examples/tiny7/scenario.yaml` (legacy operational validation passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (118 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (354 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (failed on pre-existing notebook E402 findings; unrelated notebook auto-formatting was restored)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Phase 6.0 workflow/architecture baseline (#37)
 - Started child issue #37 on branch `issue-37-phase-6.0-workflow-architecture` under parent #36 and the Phase 6 integration branch.
 - Added `notes/adr/0001-tactical-operational-architecture.md`, recording the proposed two-level architecture, contract boundaries, harvest-mode semantics, objective strategy, rolling-state boundary, alternatives, and acceptance gates.
