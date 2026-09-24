@@ -1,6 +1,6 @@
 # Tactical–Operational Expansion Provenance
 
-Date: 2026-09-24  
+Date: 2026-09-24
 Issues: #36, #37
 
 ## Purpose

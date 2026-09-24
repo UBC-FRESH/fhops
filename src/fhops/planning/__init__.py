@@ -26,8 +26,18 @@ from fhops.planning.rolling import (
     solve_rolling_plan,
     summarize_plan,
 )
+from fhops.planning.tactical_operational import (
+    TacticalOperationalScenario,
+    load_tactical_operational_scenario,
+    tactical_scenario_dimensions,
+    tactical_scenario_to_dict,
+)
 
 __all__ = [
+    "TacticalOperationalScenario",
+    "load_tactical_operational_scenario",
+    "tactical_scenario_dimensions",
+    "tactical_scenario_to_dict",
     "RollingPlanComparison",
     "RollingHorizonConfig",
     "RollingIterationPlan",

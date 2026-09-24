@@ -1,8 +1,8 @@
 # Tactical–Operational Expansion Issue Tree
 
-Date: 2026-09-24  
-Roadmap phase: Phase 6 — Tactical–Operational Expansion (TOPM-Inspired)  
-Primary plan: `notes/tactical_operational_expansion_plan.md`  
+Date: 2026-09-24
+Roadmap phase: Phase 6 — Tactical–Operational Expansion (TOPM-Inspired)
+Primary plan: `notes/tactical_operational_expansion_plan.md`
 Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 
 ## Live GitHub structure
@@ -24,9 +24,9 @@ Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 All eight child issues were linked to parent #36 through GitHub sub-issues, and all issues in the
 tree were assigned the repository `Feature` issue type.
 
-2026-09-24 status: #37 is in review as draft PR
-[#45](https://github.com/UBC-FRESH/fhops/pull/45) from branch
-`issue-37-phase-6.0-workflow-architecture` into `feature/phase6-tactical-operational-expansion`.
+2026-09-24 status: #37 was merged into the Phase 6 integration branch via PR #45. #38 is in
+review as draft PR [#46](https://github.com/UBC-FRESH/fhops/pull/46) from branch
+`issue-38-phase-6.1-contract-time` into `feature/phase6-tactical-operational-expansion`.
 
 ## Historical scope note
 
