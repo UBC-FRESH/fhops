@@ -24,7 +24,9 @@ Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 All eight child issues were linked to parent #36 through GitHub sub-issues, and all issues in the
 tree were assigned the repository `Feature` issue type.
 
-2026-09-24 status: #37 is in progress on branch `issue-37-phase-6.0-workflow-architecture`.
+2026-09-24 status: #37 is in review as draft PR
+[#45](https://github.com/UBC-FRESH/fhops/pull/45) from branch
+`issue-37-phase-6.0-workflow-architecture` into `feature/phase6-tactical-operational-expansion`.
 
 ## Historical scope note
 

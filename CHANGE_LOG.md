@@ -4,7 +4,7 @@
 - Added `notes/tactical_operational_provenance.md` to capture Oborn/TOPM, FORCE/Robak OperMAX, CIRRELT-2012-33, and Jaffray et al. provenance without redistributing restricted documents; linked it from the public source-bibliography page.
 - Added `notes/tactical_operational_compatibility_baseline.md`, documenting the schema `1.0.0` operational contract, public CLI/API workflows, reference scenarios, fixtures, and guardrails that Phase 6 must preserve.
 - Added the copyright-safe `topm-mini` executable specification at `tests/fixtures/tactical_operational/topm-mini/specification.yaml`, plus `notes/topm_mini_specification.md` and structural tests covering period/product/block/option linkage, harvest modes, economic dispatch, and inventory balances.
-- Updated the Phase 6 plan and issue-tree manifest so #37 is in progress and Phase 0 artifacts are identified.
+- Updated the Phase 6 plan and issue-tree manifest so #37 is in progress and Phase 0 artifacts are identified; opened draft PR #45 targeting the Phase 6 integration branch.
 - Commands executed:
   - `git switch -c issue-37-phase-6.0-workflow-architecture`
   - `python -m venv /tmp/opencode/fhops-topm37-venv && /tmp/opencode/fhops-topm37-venv/bin/python -m pip install pytest pyyaml`
@@ -12,6 +12,8 @@
   - `.venv/bin/ruff format src tests` (reformatted the new test only)
   - `.venv/bin/ruff check src tests` (passed)
   - `git diff --check` (passed)
+  - `git push -u origin issue-37-phase-6.0-workflow-architecture`
+  - GitHub REST `POST /repos/UBC-FRESH/fhops/pulls` *(opened draft PR #45, base `feature/phase6-tactical-operational-expansion`)*
   - `.venv/bin/mypy src` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
   - Full `.venv/bin/pytest` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
   - `.venv/bin/pre-commit run --all-files` *(not run: entry point targets unavailable `python3.12`)*
