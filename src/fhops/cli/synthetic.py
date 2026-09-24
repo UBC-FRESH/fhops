@@ -16,6 +16,11 @@ except ModuleNotFoundError:  # pragma: no cover
 
 import yaml
 
+from fhops.planning.tactical_operational.scale import (
+    TacticalScaleConfig,
+    generate_tactical_scale_scenario,
+)
+from fhops.planning.tactical_operational.scenario import write_tactical_scenario_yaml
 from fhops.scenario.synthetic import SyntheticDatasetConfig, generate_random_dataset
 from fhops.scheduling.systems import default_system_registry
 
@@ -461,3 +466,48 @@ def generate_batch(
             overwrite=entry_overwrite,
             preview=entry_preview,
         )
+
+
+@synth_app.command("tactical")
+def generate_tactical_scale(
+    out: Path = typer.Option(..., "--out", help="Output tactical scenario YAML path."),
+    blocks: int = typer.Option(100, "--blocks", min=1, help="Number of planning units."),
+    years: int = typer.Option(1, "--years", min=1, help="Number of planning years."),
+    periods_per_year: int = typer.Option(
+        4,
+        "--periods-per-year",
+        min=1,
+        max=13,
+        help="Four-week periods per year.",
+    ),
+    products: int = typer.Option(2, "--products", min=1, help="Number of products."),
+    facilities: int = typer.Option(2, "--facilities", min=1, help="Number of facilities."),
+    systems: int = typer.Option(2, "--systems", min=1, help="Number of harvest systems."),
+    seed: int = typer.Option(44, "--seed", help="Deterministic RNG seed."),
+    demand_fraction: float = typer.Option(
+        0.25,
+        "--demand-fraction",
+        min=0.0,
+        max=1.0,
+        help="Fraction of total generated yield targeted as demand.",
+    ),
+) -> None:
+    """Generate a deterministic TOPM-shaped tactical scale scenario."""
+    scenario = generate_tactical_scale_scenario(
+        TacticalScaleConfig(
+            num_blocks=blocks,
+            years=years,
+            periods_per_year=periods_per_year,
+            num_products=products,
+            num_facilities=facilities,
+            num_systems=systems,
+            seed=seed,
+            demand_fraction=demand_fraction,
+        )
+    )
+    write_tactical_scenario_yaml(scenario, out)
+    console.print(
+        f"[green]Tactical scale scenario written to {out}[/green] "
+        f"({len(scenario.planning_units)} blocks, {len(scenario.periods)} periods, "
+        f"{len(scenario.harvest_system_options)} options)"
+    )

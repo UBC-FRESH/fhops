@@ -566,10 +566,13 @@ schedule without manual data rewriting.
 ### Phase 7 — Scale, decomposition, and uncertainty
 
 - [ ] Benchmark a TOPM-shaped 5-year scenario (hundreds of blocks, multiple systems/products/mills).
-- [ ] Add sparse variable generation and solver-native indicators/semi-continuous variables where
-  useful.
+- [x] Add sparse variable generation and compact Pyomo model-size/timing telemetry.
+- [x] Capture the first generated 25/100-block HiGHS smoke benchmark in
+  `docs/assets/tactical/tactical_scale_benchmark.md` (both optimal in <1 s; 1,018/1,261 and
+  4,018/4,936 variables/constraints).
 - [ ] Evaluate Benders/Dantzig–Wolfe, fix-and-optimize, and rolling decomposition only after profiling.
-- [ ] Add scenario ensembles/sensitivity automation before robust or stochastic MILP variants.
+- [x] Add scenario ensembles/sensitivity automation via overlays and batch manifests before robust
+  or stochastic MILP variants.
 - [ ] Validate against public or permission-cleared practitioner cases.
 
 Exit criterion: documented scale envelopes, graceful incumbent/gap behavior, and evidence that the

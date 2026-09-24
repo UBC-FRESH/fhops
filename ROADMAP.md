@@ -134,7 +134,7 @@ before proposing new work.
 - [ ] #41 Add optional roads, silviculture transitions, and fleet investment/economic-life modules. *(In progress on `issue-41-phase-6.4-infrastructure-modules`.)*
 - [ ] #42 Add scenario overlays/diffs, auditable accounting reports, and TOPM-shaped synthetic acceptance fixtures. *(In progress on `issue-42-phase-6.5-scenario-reporting`.)*
 - [ ] #43 Couple aggregate tactical decisions to the existing shift-indexed operational and rolling-horizon engines. *(In progress on `issue-43-phase-6.6-integrated-rolling`.)*
-- [ ] #44 Benchmark scale/decomposition options only after the integrated core is validated and profiled.
+- [ ] #44 Benchmark scale/decomposition options only after the integrated core is validated and profiled. *(In progress on `issue-44-phase-6.7-scale-uncertainty`.)*
 
 ## Detailed Next Steps
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
