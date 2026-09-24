@@ -24,10 +24,9 @@ Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 All eight child issues were linked to parent #36 through GitHub sub-issues, and all issues in the
 tree were assigned the repository `Feature` issue type.
 
-2026-09-24 status: all child issues #37–#44 were merged into the Phase 6 integration branch via
-PRs #45–#52. Phase 6 integration PR #53 was opened from
-`feature/phase6-tactical-operational-expansion` into `main`; maintainer approval authorizes merge
-and parent #36 closure.
+2026-09-24 final status: all child issues #37–#44 were merged into the Phase 6 integration branch
+via PRs #45–#52. Phase 6 integration PR #53 merged into `main` at commit `4a5de7f`, and parent
+issue #36 is closed. Post-merge housekeeping is tracked in issue #54.
 
 ## Historical scope note
 

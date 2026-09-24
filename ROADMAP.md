@@ -186,8 +186,8 @@ before proposing new work.
 13. **Tactical–Operational Expansion (#36; `notes/tactical_operational_expansion_plan.md`, `notes/tactical_operational_issue_tree.md`)**
     - Parent issue #36 and child issues #37–#44 are linked via GitHub sub-issues; all child PRs #45–#52 are merged into `feature/phase6-tactical-operational-expansion`.
     - The phase branch now carries the two-level architecture, tactical contract/MILP, product-flow/inventory/infrastructure modules, scenario overlays/reporting, tactical→operational handoff, and initial scale telemetry.
-    - Final gate: Phase 6 integration PR #53 into `main` received maintainer approval; merge closes parent #36 and moves full-scale/practitioner validation to follow-up work.
-    - Remaining follow-up scope after integration: full 5-year/500+ block benchmark, practitioner case validation, guided planner notebooks, and decomposition only if measured scale requires it.
+    - Final gate complete: Phase 6 integration PR #53 merged into `main`, closing parent #36.
+    - Follow-up scope is tracked separately: full 5-year/500+ block benchmark, practitioner case validation, guided planner notebooks, decomposition if measured scale requires it, and the pre-existing notebook full-pre-commit debt.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
@@ -200,5 +200,7 @@ before proposing new work.
 - [ ] Schedule “full” analytics notebook runs (no light flag) on a less frequent cadence (nightly or weekly: leaning towards weekly) to guard against stochastic regression while keeping CI duration manageable.
   - [ ] Extend CI with a `cron` job that invokes `scripts/run_analytics_notebooks.py --timeout 900` (no `--light`) and publishes the resulting reports to the telemetry Pages bundle, keeping a 4-week artifact history for comparison.
 - [ ] `pre-commit` autoupdate (especially `pre-commit-hooks`) plus workflow wiring so stage deprecation warnings are resolved before upstream removal.
+- [ ] Full `pre-commit run --all-files` notebook debt: pre-existing `examples/*.ipynb` Ruff findings (E402/F401/F541/whitespace) still need either cleanup or an explicit maintainer-approved exception.
+- [ ] Post-Phase 6 validation scale-up: full 5-year/500+ block tactical benchmark, practitioner case validation, guided planner notebooks, and decomposition only if profiling shows a bottleneck.
 - [ ] Dataset inspection + data-quality polish (see `notes/dataset_inspection_plan.md`)
   - [ ] Enforce/document 24 h/day machine availability in docs + sample datasets, and flag deviations via the inspector CLI.
