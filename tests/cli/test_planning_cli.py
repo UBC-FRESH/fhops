@@ -59,6 +59,9 @@ def test_tactical_operational_plan_cli(tmp_path: Path) -> None:
     summary_path = tmp_path / "tactical.json"
     harvest_path = tmp_path / "harvest.csv"
     production_path = tmp_path / "production.csv"
+    flows_path = tmp_path / "flows.csv"
+    purchases_path = tmp_path / "purchases.csv"
+    inventory_path = tmp_path / "inventory.csv"
 
     result = runner.invoke(
         app,
@@ -80,19 +83,33 @@ def test_tactical_operational_plan_cli(tmp_path: Path) -> None:
             str(harvest_path),
             "--out-production-csv",
             str(production_path),
+            "--out-flows-csv",
+            str(flows_path),
+            "--out-purchases-csv",
+            str(purchases_path),
+            "--out-inventory-csv",
+            str(inventory_path),
         ],
         prog_name="fhops",
     )
 
     assert result.exit_code == 0
     payload = json.loads(summary_path.read_text())
-    assert payload["objective"] == pytest.approx(19320.0)
+    assert payload["objective"] == pytest.approx(24130.0)
     assert payload["termination_condition"].lower() == "optimal"
 
     harvest_df = pd.read_csv(harvest_path)
     production_df = pd.read_csv(production_path)
+    flows_df = pd.read_csv(flows_path)
+    purchases_df = pd.read_csv(purchases_path)
+    inventory_df = pd.read_csv(inventory_path)
     assert {"option_id", "harvested_area_ha", "discounted_cost"}.issubset(harvest_df.columns)
     assert {"option_id", "product_id", "volume_m3"}.issubset(production_df.columns)
+    assert {"arc_id", "product_id", "volume_m3", "transport_cost"}.issubset(flows_df.columns)
+    assert purchases_df.empty or {"source_id", "volume_m3", "purchase_cost"}.issubset(
+        purchases_df.columns
+    )
+    assert {"facility_id", "product_id", "period_id", "closing_m3"}.issubset(inventory_df.columns)
 
 
 def test_rolling_plan_mip_solver_options(tmp_path: Path) -> None:

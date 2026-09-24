@@ -25,7 +25,9 @@ All eight child issues were linked to parent #36 through GitHub sub-issues, and 
 tree were assigned the repository `Feature` issue type.
 
 2026-09-24 status: #37 and #38 were merged into the Phase 6 integration branch via PRs #45 and
-#46. #39 is in progress on branch `issue-39-phase-6.2-core-harvest-milp`.
+#46. #39 is implemented and pushed on `issue-39-phase-6.2-core-harvest-milp`; PR creation is
+pending GitHub credential refresh. #40 is in progress on branch
+`issue-40-phase-6.3-flow-inventory`.
 
 ## Historical scope note
 

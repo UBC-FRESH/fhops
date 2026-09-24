@@ -523,11 +523,11 @@ positive harvest lies below its configured minimum.
 
 ### Phase 3 — Integrated product flow and mill inventory
 
-- [ ] Add products, facilities, transport modes/arcs, and flow conservation.
-- [ ] Add mill consumption/demand and inventory carry-over.
-- [ ] Add outside purchases and bounded contracts.
-- [ ] Add profit/NPV objective profiles.
-- [ ] Add product/facility/period reporting and balance audits.
+- [x] Add products, facilities, transport modes/arcs, and flow conservation.
+- [x] Add mill consumption/demand and inventory carry-over.
+- [x] Add outside purchases and bounded contracts.
+- [x] Add profit/NPV objective profiles.
+- [x] Add product/facility/period reporting and balance audits.
 
 Exit criterion: `topm-mini` solves an end-to-end harvest → transport/purchase → mill inventory plan
 with every product balance independently verified.

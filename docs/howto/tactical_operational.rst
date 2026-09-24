@@ -74,19 +74,45 @@ big-M constants:
 
 Continuous mode drops the lower bound; whole-block mode uses
 ``H_o = operable_area[b(o)] Z_o``. Block area, option productivity, fleet capacity, and
-facility-demand targets complete the core. The initial objective is discounted harvest cost:
+facility-demand targets complete the harvest core.
+
+Product flows, purchases, consumption, and facility inventories are coupled to that harvest core.
+For transport arc ``a``, external supply ``u``, facility/product/period ``(m,p,t)``, and previous
+period ``t-1``:
+
+.. math::
+
+   \sum_{a \in out(b,p,t)} F_a \le \sum_{o:b(o)=b,t(o)=t} V[o,p]
+
+.. math::
+
+   I[m,p,t] = I[m,p,t-1] + \sum_{a \in in(m,p,t)} F_a + P_u - C[m,p,t]
+
+Consumption is bounded by the facility demand envelope (or fixed at the target when
+``--demand-basis target``). Transport arc capacities and external purchase bounds apply directly.
+The default objective is discounted harvest + transport + purchase cost:
 
 .. math::
 
    \min \sum_o d_{t(o)} (F_o Z_o + c_o Y^{total}_{b(o)} H_o)
+   + \sum_a d_{t(a)} c_a F_a
+   + \sum_u d_{t(u)} c_u P_u
+
+Two value-oriented profiles are also available when demand rows carry ``value_per_m3``:
+``max_discounted_profit`` maximizes delivered product value minus cost, and ``max_npv`` adds the
+final-period value of declared terminal inventory. Override the scenario value with
+``--objective-profile``.
 
 The code mapping is intentionally direct:
 
 - ``area`` / ``harvest_active``: ``fhops.model.milp.tactical_operational.model.area`` and
   ``model.harvest_active``.
 - Product conversion: ``model.product_conversion``.
-- Area/productivity/fleet/demand limits: ``model.block_area``, ``model.productivity_cap``,
-  ``model.fleet_capacity``, and ``model.demand``.
+- Area/productivity/fleet limits: ``model.block_area``, ``model.productivity_cap``, and
+  ``model.fleet_capacity``.
+- Flow supply and arc capacity: ``model.flow_supply`` and ``model.arc_capacity``.
+- Purchases, consumption, and inventory: ``model.purchase_lower``/``model.purchase_upper``,
+  ``model.consumption_*``, and ``model.inventory_balance``.
 - Objective assembly: ``model.objective``.
 - Bundle replay: :func:`fhops.model.milp.tactical_operational.tactical_bundle_to_dict` and
   :func:`~fhops.model.milp.tactical_operational.tactical_bundle_from_dict`.
