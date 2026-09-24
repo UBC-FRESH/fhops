@@ -40,6 +40,8 @@ from fhops.cli.dataset import dataset_app
 from fhops.cli.geospatial import geospatial_app
 from fhops.cli.planning import plan_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
+from fhops.cli.reporting import report_app
+from fhops.cli.scenario import scenario_app
 from fhops.cli.synthetic import synth_app
 from fhops.cli.telemetry import telemetry_app
 from fhops.cli.watch_dashboard import LiveWatch
@@ -70,6 +72,7 @@ from fhops.optimization.heuristics import (
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
 from fhops.optimization.operational_problem import build_operational_problem
+from fhops.planning.tactical_operational import load_tactical_operational_scenario
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import RunTelemetryLogger, append_jsonl
@@ -84,6 +87,8 @@ app.add_typer(synth_app, name="synth")
 app.add_typer(telemetry_app, name="telemetry")
 app.add_typer(dataset_app, name="dataset")
 app.add_typer(plan_app, name="plan")
+app.add_typer(scenario_app, name="scenario")
+app.add_typer(report_app, name="report")
 console = Console()
 KPI_MODE: click.ParamType = click.Choice(["basic", "extended"], case_sensitive=False)
 
@@ -398,21 +403,48 @@ def _collect_tuning_scenarios(
 
 
 @app.command()
-def validate(scenario: Path):
-    """Validate a scenario bundle and print an entity summary.
+def validate(
+    scenario: str,
+    tactical_scenario: str | None = typer.Argument(default=None),
+):
+    """Validate an operational or tactical–operational scenario bundle.
 
     Parameters
     ----------
-    scenario : pathlib.Path
-        Path to the ``scenario.yaml`` file or directory containing the FHOPS data bundle.
+    scenario : str
+        Operational ``scenario.yaml`` path, or the literal value ``tactical-operational`` when
+        validating a tactical–operational contract.
+    tactical_scenario : str, optional
+        Tactical–operational YAML/CSV bundle path when ``scenario == "tactical-operational"``.
 
     Notes
     -----
-    The command loads the scenario via :func:`fhops.scenario.io.load_scenario`, instantiates a
-    :class:`fhops.scenario.contract.Problem`, and prints counts of days/blocks/machines/landings so
-    users can verify that parsing succeeded before attempting solver runs.
+    ``fhops validate scenario.yaml`` preserves the legacy operational behavior. The Phase 6 form,
+    ``fhops validate tactical-operational scenario.yaml``, loads the aggregate contract and prints
+    period/product/block/option/facility/flow dimensions before any solver model is built.
     """
-    sc = load_scenario(str(scenario))
+    if scenario == "tactical-operational":
+        if tactical_scenario is None:
+            raise typer.BadParameter(
+                "Missing tactical scenario path. Use: fhops validate tactical-operational <scenario.yaml>"
+            )
+        tactical = load_tactical_operational_scenario(tactical_scenario)
+        dimensions = tactical.dimension_summary()
+        table = Table(title=f"Tactical–Operational Scenario: {tactical.name}")
+        table.add_column("Dimension")
+        table.add_column("Count")
+        for key, value in dimensions.items():
+            table.add_row(key.replace("_", " ").title(), str(value))
+        console.print(table)
+        return
+
+    if tactical_scenario is not None:
+        raise typer.BadParameter(
+            "Unexpected second scenario path. Use `fhops validate tactical-operational <path>` "
+            "for tactical–operational scenarios."
+        )
+
+    sc = load_scenario(scenario)
     pb = Problem.from_scenario(sc)
     t = Table(title=f"Scenario: {sc.name}")
     t.add_column("Entities")

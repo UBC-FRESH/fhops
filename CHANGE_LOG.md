@@ -1,3 +1,208 @@
+# 2026-09-24 — Phase 6 integration branch housekeeping and review handoff
+- Marked all Phase 6 child issues #37–#44 complete in `ROADMAP.md` after PRs #45–#52 merged into `feature/phase6-tactical-operational-expansion`.
+- Updated `notes/tactical_operational_issue_tree.md` and `notes/tactical_operational_expansion_plan.md` to show parent issue #36 remains open only for maintainer-level integration review into `main`.
+- Recorded remaining post-integration follow-up scope: full 5-year/500+ block benchmark, practitioner case validation, guided planner notebooks, and decomposition only if measured scale requires it.
+- Opened the final Phase 6 integration PR #53 from `feature/phase6-tactical-operational-expansion` to `main`; maintainer approval was provided to merge and close parent issue #36 after all child PRs #45–#52 completed.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `.venv/bin/ruff format src tests` (220 files unchanged)
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (378 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files CHANGE_LOG.md ROADMAP.md notes/tactical_operational_issue_tree.md notes/tactical_operational_expansion_plan.md` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-24 — Phase 6.7 tactical scale benchmarks and uncertainty scaffolding (#44)
+- Merged #43 via PR #51 and started #44 on `issue-44-phase-6.7-scale-uncertainty` after the server restart; existing branch/auth state was recovered before continuing.
+- Added build/solve timing split and compact Pyomo model statistics (`number_of_variables`, `number_of_constraints`, binary/integer/continuous counts) to tactical MILP results.
+- Added `TacticalScaleConfig` and `generate_tactical_scale_scenario` for deterministic TOPM-shaped synthetic scale scenarios with configurable blocks, years, periods, products, facilities, systems, seed, and demand fraction.
+- Added `run_tactical_scale_benchmark` / `write_tactical_scale_benchmark` plus CLI commands `fhops synth tactical` and `fhops scenario benchmark`.
+- Captured initial HiGHS smoke envelopes in `docs/assets/tactical/tactical_scale_benchmark.{csv,json,md}`: 25 blocks (1,018 variables, 1,261 constraints, 0.461 s) and 100 blocks (4,018 variables, 4,936 constraints, 0.584 s), both optimal.
+- Documented scale benchmarking and overlay/batch scenario-ensemble guidance; decomposition remains deferred until profiling shows a bottleneck.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `git switch -c issue-44-phase-6.7-scale-uncertainty`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_scale.py tests/model/test_tactical_operational_milp.py tests/planning/test_tactical_operational_integration.py tests/planning/test_tactical_operational_scenario.py` (22 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops scenario benchmark --blocks 25 --blocks 100 --periods-per-year 4 --demand-fraction 0.1 --time-limit 60 --out-dir docs/assets/tactical` (2 optimal cases)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (378 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-24 — Phase 6.6 tactical–operational handoff and rolling state (#43)
+- Merged #42 via PR #50 and started #43 on `issue-43-phase-6.6-integrated-rolling`.
+- Added `fhops.planning.tactical_operational.integration` with `TacticalCommitment` and `TacticalRollingState` handoff contracts.
+- Added conversion from tactical solve results into commitments, remaining block area/product volume, facility inventory, active road, fleet unit, and objective-component state.
+- Added `compile_business_window_scenario` to map tactical commitments onto an existing operational scenario, override harvest-system IDs, filter production rates/mobilisation, and clamp business windows.
+- Added `write_operational_scenario_bundle` so compiled scenarios round-trip through the existing YAML/CSV `load_scenario` path.
+- Added `apply_operational_realization` to roll operational assignment production back into aggregate block/product state.
+- Added `fhops plan compile-tactical` CLI support with repeatable `--block-map`, business-window options, and bundle export.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `git switch -c issue-43-phase-6.6-integrated-rolling`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_integration.py tests/model/test_tactical_operational_milp.py tests/cli/test_planning_cli.py::test_tactical_operational_plan_cli tests/planning/test_tactical_operational_contract.py` (22 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (123 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (375 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-24 — Phase 6.5 scenario overlays, diffs, batch manifests, and reporting (#42)
+- Merged #41 via PR #49 and started #42 on `issue-42-phase-6.5-scenario-reporting`.
+- Added sparse tactical scenario overlays with stable row-key merging, `_remove` support, parent/overlay provenance, and deterministic source hashes.
+- Added field-level tactical scenario diffs with section/key/field/base/candidate/change-type columns.
+- Added batch manifests that solve multiple base/overlay cases, emit per-case `result.json`, normalized report tables, Markdown summaries, and root-level `comparison.csv`/`comparison.md` outputs.
+- Added CLI commands: `fhops scenario overlay`, `fhops scenario diff`, `fhops scenario batch`, and `fhops report tactical`.
+- Added report writer support for CSV, Parquet, and Markdown across harvest, production, flows, purchases, inventory, consumption, roads, silviculture, and fleet tables.
+- Updated tactical Sphinx docs and CLI reference with overlay/batch/report workflows.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `git switch -c issue-42-phase-6.5-scenario-reporting`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_scenario.py tests/cli/test_scenario_reporting_cli.py` (4 passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_scenario.py tests/cli/test_scenario_reporting_cli.py tests/model/test_tactical_operational_milp.py tests/planning/test_tactical_operational_contract.py` (21 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (122 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (371 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-24 — Phase 6.4 roads, silviculture, and fleet investment modules (#41)
+- Merged #40 via PR #48, updated the Phase 6 integration branch, and started #41 on `issue-41-phase-6.4-infrastructure-modules`.
+- Extended the tactical–operational contract with `roads`, `road_dependencies`, `block_road_access`, `silviculture_transitions`, and `fleet_options` tables plus cross-reference validation and dimension reporting.
+- Added optional road activation with earliest-period timing, cumulative availability, prerequisite roads, block access gates, active-road capacity, build cost, and maintenance cost.
+- Added required silviculture follow-up transitions by block/system with eligible-period scheduling and discounted per-hectare cost.
+- Added fleet acquisition variables with purchase-period cost, capacity per period, maximum units, and economic-life windows.
+- Wired `--enable-roads`, `--enable-silviculture`, and `--enable-fleet-investment` CLI toggles plus road/silviculture/fleet CSV exports; default disabled mode preserves the Phase 6.3 optimum.
+- Added regression coverage showing road activation changes the `topm-mini` optimum to 25,930, silviculture changes it to 24,618.7975 with reduced B1 area, fleet investment adds a 5,000 unit only when base capacity is constrained, and disabled modules return 24,130.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `git switch -c issue-41-phase-6.4-infrastructure-modules`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/model/test_tactical_operational_milp.py tests/cli/test_planning_cli.py::test_tactical_operational_plan_cli tests/planning/test_tactical_operational_contract.py tests/test_topm_mini_specification.py` (23 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (119 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (367 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-24 — Phase 6.3 product flow, facility inventory, and purchases (#40)
+- Started #40 on `issue-40-phase-6.3-flow-inventory`, currently stacked on the validated local #39 commit while GitHub PR creation awaits refreshed credentials.
+- Extended the tactical–operational MILP with transport-flow variables, origin supply conservation, arc capacities, facility consumption bounds, opening/carry-over inventory balances, and bounded external purchases.
+- Added explicit objective profiles: default `min_discounted_delivered_cost`, plus `max_discounted_profit` when demand rows carry `value_per_m3`, and `max_npv` when facilities declare terminal inventory values.
+- Added CLI export surfaces for flows, purchases, inventory, and consumption alongside harvest/production outputs.
+- Updated `topm-mini` with pulp/B3 transport arcs and integrated balance expectations: opening sawlog inventory 50 reduces harvest deliveries to 730 m³; opening pulp inventory 20 reduces pulp deliveries to 160 m³; both end period P1 at zero inventory.
+- Regressed the integrated optimum at objective 24,130 (harvest fixed 180, harvest variable 18,000, transport 5,950, purchases 0), plus external-purchase and two-period inventory carry-over fixtures.
+- Commands executed:
+  - `git switch -c issue-40-phase-6.3-flow-inventory`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/model/test_tactical_operational_milp.py tests/cli/test_planning_cli.py::test_tactical_operational_plan_cli tests/planning/test_tactical_operational_contract.py tests/test_topm_mini_specification.py` (18 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (119 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (362 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-24 — Phase 6.2 TOPM core harvest/system/period MILP (#39)
+- Merged #38 into the Phase 6 integration branch via PR #46 (squash commit `6811d38`), closed the child issue, and started #39 on `issue-39-phase-6.2-core-harvest-milp`.
+- Added `fhops.model.milp.tactical_operational` with a Pyomo aggregate harvest-allocation MILP for eligible block × system × period options, product-specific yield conversion, fleet capacity, facility-demand targets, discounted fixed/variable costs, and objective decomposition.
+- Implemented all three Phase 6 harvest modes: continuous partial cuts, semi-continuous minimum active areas using tight physical bounds, and whole-block all-or-nothing harvests.
+- Added tactical bundle serialization/replay helpers and solver metadata/dimension reporting for telemetry-friendly runs.
+- Added `fhops plan tactical-operational` with solver, harvest-mode, demand-basis, time-limit/gap, JSON summary, harvest CSV, and production CSV options.
+- Updated `topm-mini` so the hand-calculated 780 m³ sawlog dispatch is the true economic optimum; the MILP now reproduces B2 = 4.00 ha, B1 = 5.25 ha, fixed cost 180, variable cost 19,140, and objective 19,320 with HiGHS.
+- Added regression tests for semi-continuous minimum enforcement, continuous relaxation, whole-block area, bundle replay, CLI exports, and `topm-mini` balances.
+- Updated the tactical–operational Sphinx how-to with the core equations and equation-to-code mapping.
+- Commands executed:
+  - GitHub REST: marked PR #46 ready, squash-merged it into `feature/phase6-tactical-operational-expansion` (`6811d38`), closed #38, and updated the #36 parent checklist.
+  - `git switch feature/phase6-tactical-operational-expansion && git pull --ff-only`
+  - `git switch -c issue-39-phase-6.2-core-harvest-milp`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/model/test_tactical_operational_milp.py tests/cli/test_planning_cli.py::test_tactical_operational_plan_cli tests/planning/test_tactical_operational_contract.py tests/test_topm_mini_specification.py` (15 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (119 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (359 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-24 — Phase 6.1 tactical–operational contract and period hierarchy (#38)
+- Merged #37 into the Phase 6 integration branch via PR #45 (squash commit `4e87476`), closed the child issue, and started #38 on `issue-38-phase-6.1-contract-time`.
+- Added `fhops.planning.tactical_operational` with Pydantic contract models for periods, products, planning units, harvest-system options, fleet capacity, facilities, demand, initial inventory, transport arcs, external supply, and economics.
+- Added period hierarchy/template helpers (`four_week_periods`, `seasonal_periods`, parent/child rollups, and chronological validation) with effective-annual discount factors.
+- Added `load_tactical_operational_scenario`, round-trip serialization, and dimension reporting for inline YAML or CSV-backed long-form scenario tables.
+- Extended `fhops validate` without breaking the legacy path: `fhops validate scenario.yaml` still validates schema `1.0.0` operational bundles, while `fhops validate tactical-operational <scenario.yaml>` validates the new aggregate contract and prints model dimensions.
+- Updated `tests/fixtures/tactical_operational/topm-mini/specification.yaml` so the acceptance fixture now exercises the real contract loader; added contract, template, round-trip, compatibility, and CLI tests.
+- Added `docs/howto/tactical_operational.rst`, linked it into Sphinx, and updated the CLI reference; opened draft PR #46 targeting the Phase 6 integration branch.
+- Commands executed:
+  - GitHub REST: marked PR #45 ready, squash-merged it into `feature/phase6-tactical-operational-expansion` (`4e87476`), closed #37, and updated the #36 parent checklist.
+  - `git switch feature/phase6-tactical-operational-expansion && git pull --ff-only`
+  - `git switch -c issue-38-phase-6.1-contract-time`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pip install -e .`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_topm_mini_specification.py tests/planning/test_tactical_operational_contract.py` (10 passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops validate tactical-operational tests/fixtures/tactical_operational/topm-mini/specification.yaml` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops validate examples/tiny7/scenario.yaml` (legacy operational validation passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (118 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (354 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (failed on pre-existing notebook E402 findings; unrelated notebook auto-formatting was restored)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #38 changed-file set (passed after whitespace normalization)
+  - `git diff --check` (passed)
+  - `git push -u origin issue-38-phase-6.1-contract-time`
+  - GitHub REST `POST /repos/UBC-FRESH/fhops/pulls` (opened draft PR #46)
+
+# 2026-09-24 — Phase 6.0 workflow/architecture baseline (#37)
+- Started child issue #37 on branch `issue-37-phase-6.0-workflow-architecture` under parent #36 and the Phase 6 integration branch.
+- Added `notes/adr/0001-tactical-operational-architecture.md`, recording the proposed two-level architecture, contract boundaries, harvest-mode semantics, objective strategy, rolling-state boundary, alternatives, and acceptance gates.
+- Added `notes/tactical_operational_provenance.md` to capture Oborn/TOPM, FORCE/Robak OperMAX, CIRRELT-2012-33, and Jaffray et al. provenance without redistributing restricted documents; linked it from the public source-bibliography page.
+- Added `notes/tactical_operational_compatibility_baseline.md`, documenting the schema `1.0.0` operational contract, public CLI/API workflows, reference scenarios, fixtures, and guardrails that Phase 6 must preserve.
+- Added the copyright-safe `topm-mini` executable specification at `tests/fixtures/tactical_operational/topm-mini/specification.yaml`, plus `notes/topm_mini_specification.md` and structural tests covering period/product/block/option linkage, harvest modes, economic dispatch, and inventory balances.
+- Updated the Phase 6 plan and issue-tree manifest so #37 is in progress and Phase 0 artifacts are identified; opened draft PR #45 targeting the Phase 6 integration branch.
+- Commands executed:
+  - `git switch -c issue-37-phase-6.0-workflow-architecture`
+  - `python -m venv /tmp/opencode/fhops-topm37-venv && /tmp/opencode/fhops-topm37-venv/bin/python -m pip install pytest pyyaml`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_topm_mini_specification.py` (5 passed)
+  - `.venv/bin/ruff format src tests` (reformatted the new test only)
+  - `.venv/bin/ruff check src tests` (passed)
+  - `git diff --check` (passed)
+  - `git push -u origin issue-37-phase-6.0-workflow-architecture`
+  - GitHub REST `POST /repos/UBC-FRESH/fhops/pulls` *(opened draft PR #45, base `feature/phase6-tactical-operational-expansion`)*
+  - `.venv/bin/mypy src` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
+  - Full `.venv/bin/pytest` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
+  - `.venv/bin/pre-commit run --all-files` *(not run: entry point targets unavailable `python3.12`)*
+  - `.venv/bin/sphinx-build -b html docs _build/html -W` *(not run: `sphinx-build` absent from the current environment)*
+
+# 2026-09-24 — TOPM-inspired tactical–operational expansion planning
+- Added `notes/tactical_operational_expansion_plan.md`, a staged architecture and implementation plan for expanding FHOPS beyond its current 1–16 week shift-level focus into integrated 1–5 year tactical–operational planning.
+- Mapped Oborn's TOPM formulation to current FHOPS capabilities and gaps, including semi-continuous harvest quantities, alternative harvest systems, products/mills, transport and inventory, outside purchases, roads, silviculture, fleet investment, discounting, scenario management, and tactical-to-operational handoff.
+- Incorporated the post-thesis FORCE/Robak OperMAX lineage (including Lehoux et al. 2012, CIRRELT-2012-33) as evidence that the TOPM scope became a reusable multi-year planning shell covering harvest, transport, silviculture, roads, purchases, mill-yard inventories, roadside sales, and inter-mill deliveries.
+- Recommended separate aggregate and detailed models behind shared domain/time/economic contracts, preserving all current schema `1.0.0` operational workflows instead of extending the day/shift tensor to five years.
+- Codified the roadmap phase / parent issue / child issue / child branch workflow in `AGENTS.md` and added `notes/tactical_operational_issue_tree.md` as the Phase 6 issue manifest.
+- Added Roadmap Phase 6 and synced it to live GitHub issues: parent #36 and child issues #37–#44, all linked through GitHub sub-issues.
+- Parked the pre-existing SoftwareX round-1 work on `revision/softx-r1` as commit `2a32f87` (`Revise SoftwareX manuscript for round 1`) and pushed it to `origin/revision/softx-r1` before starting Phase 6.
+- Created and switched to the Phase 6 branch `feature/phase6-tactical-operational-expansion`.
+- Commands executed:
+  - `git status --short --branch`
+  - `git restore -- ROADMAP.md` *(temporary split step only; Phase 6 roadmap changes were restored from backup on the new branch)*
+  - `git add CHANGE_LOG.md docs notes/softwarex_manuscript_change_log.md`
+  - `git commit -m "Revise SoftwareX manuscript for round 1"` (`2a32f87` on `revision/softx-r1`)
+  - `git push -u origin revision/softx-r1`
+  - `curl -L https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.tar.gz ...` *(installed `gh` under `/tmp/opencode/gh-cli`)*
+  - `git switch main`
+  - `git switch -c feature/phase6-tactical-operational-expansion`
+  - `python /tmp/opencode/create_phase6_issues_rest.py` *(created parent #36 and children #37–#44 via GitHub REST API; token read from git credential helper and not printed)*
+  - GitHub REST `PATCH /repos/UBC-FRESH/fhops/issues/{36..44}` *(assigned the repository `Feature` issue type to the full tree)*
+  - `git diff --check`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests`
+  - `.venv/bin/mypy src` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
+  - `.venv/bin/pytest` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
+  - `.venv/bin/pre-commit run --all-files` *(not run: entry point targets unavailable `python3.12`)*
+  - `.venv/bin/sphinx-build -b html docs _build/html -W` *(not run: `sphinx-build` absent from the current environment)*
 
 # 2026-08-07 — Operations simulation onboarding notebook
 - Added `examples/01_fhops_operations_simulation.ipynb`, an executable operations-first Tiny7 walkthrough covering block and machine abstractions, harvest-system sequencing, default registry contexts, productivity helpers, deterministic playback, and a deliberate loader-before-processing sequencing violation.

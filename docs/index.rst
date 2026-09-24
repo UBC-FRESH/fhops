@@ -32,6 +32,7 @@ ensembles.
    howto/ils
    howto/tabu
    howto/rolling_horizon
+   howto/tactical_operational
 
 .. toctree::
    :maxdepth: 2
