@@ -26,6 +26,11 @@ from fhops.planning import (
     run_rolling_horizon,
     summarize_plan,
 )
+from fhops.planning.tactical_operational.integration import (
+    commitments_from_result,
+    compile_business_window_scenario,
+    write_operational_scenario_bundle,
+)
 from fhops.scenario.io import load_scenario
 
 console = Console()
@@ -405,3 +410,54 @@ def tactical_operational_plan(
         out_fleet_csv.parent.mkdir(parents=True, exist_ok=True)
         result["fleet"].to_csv(out_fleet_csv, index=False)
         console.print(f"Wrote fleet to {out_fleet_csv}")
+
+
+@plan_app.command("compile-tactical")
+def compile_tactical_window(
+    tactical_result: Path = typer.Argument(
+        ..., help="Path to `fhops plan tactical-operational --out-json` result."
+    ),
+    operational_scenario: Path = typer.Argument(
+        ..., help="Base operational scenario YAML providing machines/calendars/rates."
+    ),
+    block_map: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--block-map",
+            help="Repeatable tactical=operational block mapping (e.g., B1=B01).",
+        ),
+    ] = None,
+    start_day: Annotated[
+        int,
+        typer.Option("--start-day", help="First operational day for the business window."),
+    ] = 1,
+    horizon_days: Annotated[
+        int | None,
+        typer.Option("--horizon-days", help="Optional business-window length in days."),
+    ] = None,
+    out_dir: Path = typer.Option(
+        ...,
+        "--out-dir",
+        help="Directory where the compiled operational scenario bundle is written.",
+    ),
+) -> None:
+    """Compile tactical harvest commitments into an operational FHOPS scenario bundle."""
+
+    payload = json.loads(tactical_result.read_text(encoding="utf-8"))
+    commitments = commitments_from_result(payload)
+    base = load_scenario(operational_scenario)
+    mapping: dict[str, str] = {}
+    for item in block_map or []:
+        if "=" not in item:
+            raise typer.BadParameter(f"Invalid --block-map entry '{item}'; expected A=B")
+        tactical_id, operational_id = item.split("=", 1)
+        mapping[tactical_id] = operational_id
+    compiled = compile_business_window_scenario(
+        base,
+        commitments,
+        block_map=mapping,
+        start_day=start_day,
+        horizon_days=horizon_days,
+    )
+    output = write_operational_scenario_bundle(compiled, out_dir)
+    console.print(f"Wrote compiled operational scenario to {output}")

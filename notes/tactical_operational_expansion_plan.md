@@ -554,10 +554,10 @@ compare decisions, KPIs, and assumptions from one command.
 
 ### Phase 6 — Integrated tactical–operational planning
 
-- [ ] Define the tactical commitment/result handoff contract.
-- [ ] Compile near-term tactical decisions into current operational scenarios.
-- [ ] Generalize rolling state to inventory, roads, fleet, and commitments.
-- [ ] Feed operational realization back to the next tactical solve.
+- [x] Define the tactical commitment/result handoff contract.
+- [x] Compile near-term tactical decisions into current operational scenarios.
+- [x] Generalize rolling state to inventory, roads, fleet, and commitments.
+- [x] Feed operational realization back to aggregate rolling state.
 - [ ] Add business/anticipation horizon orchestration and warm starts.
 
 Exit criterion: a multi-year aggregate plan can produce and re-plan a detailed 4–16 week machine
