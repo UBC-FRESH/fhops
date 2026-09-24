@@ -128,13 +128,13 @@ before proposing new work.
 
 ## Phase 6 — Tactical–Operational Expansion (TOPM-Inspired)
 - [x] #37 Approve the architecture, scope boundaries, workflow contract, and TOPM/OperMAX provenance baseline in `notes/tactical_operational_expansion_plan.md` (merged via PR #45).
-- [ ] #38 Add a period-hierarchical, unit-explicit tactical–operational data contract while preserving schema `1.0.0` operational workflows. *(In progress on `issue-38-phase-6.1-contract-time`.)*
-- [ ] #39 Implement the core multi-year harvest/system/period model with semi-continuous minimum cut sizes and discounted economics. *(In progress on `issue-39-phase-6.2-core-harvest-milp`.)*
-- [ ] #40 Integrate products, transport, facilities, inventory, consumption, and outside purchases. *(In progress on `issue-40-phase-6.3-flow-inventory`.)*
-- [ ] #41 Add optional roads, silviculture transitions, and fleet investment/economic-life modules. *(In progress on `issue-41-phase-6.4-infrastructure-modules`.)*
-- [ ] #42 Add scenario overlays/diffs, auditable accounting reports, and TOPM-shaped synthetic acceptance fixtures. *(In progress on `issue-42-phase-6.5-scenario-reporting`.)*
-- [ ] #43 Couple aggregate tactical decisions to the existing shift-indexed operational and rolling-horizon engines. *(In progress on `issue-43-phase-6.6-integrated-rolling`.)*
-- [ ] #44 Benchmark scale/decomposition options only after the integrated core is validated and profiled. *(In progress on `issue-44-phase-6.7-scale-uncertainty`.)*
+- [x] #38 Add a period-hierarchical, unit-explicit tactical–operational data contract while preserving schema `1.0.0` operational workflows (merged via PR #46).
+- [x] #39 Implement the core multi-year harvest/system/period model with semi-continuous minimum cut sizes and discounted economics (merged via PR #47).
+- [x] #40 Integrate products, transport, facilities, inventory, consumption, and outside purchases (merged via PR #48).
+- [x] #41 Add optional roads, silviculture transitions, and fleet investment/economic-life modules (merged via PR #49).
+- [x] #42 Add scenario overlays/diffs, auditable accounting reports, and TOPM-shaped synthetic acceptance fixtures (merged via PR #50).
+- [x] #43 Couple aggregate tactical decisions to the existing shift-indexed operational and rolling-horizon engines (merged via PR #51).
+- [x] #44 Benchmark scale/decomposition options only after the integrated core is validated and profiled (merged via PR #52; full 5-year benchmark and practitioner validation remain follow-up scope).
 
 ## Detailed Next Steps
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
@@ -184,10 +184,10 @@ before proposing new work.
     - Preserve code-to-equation traceability against `src/fhops/model/milp/operational.py` and `src/fhops/model/milp/data.py`.
     - Add lightweight regeneration/build checks to catch drift between Markdown source and generated `.tex`/`.rst` includes.
 13. **Tactical–Operational Expansion (#36; `notes/tactical_operational_expansion_plan.md`, `notes/tactical_operational_issue_tree.md`)**
-    - Parent issue #36 and child issues #37–#44 are linked via GitHub sub-issues; phase branch is `feature/phase6-tactical-operational-expansion`.
-    - Review and approve the proposed two-level architecture: preserve detailed 1–16 week machine scheduling, add a separate 1–5 year aggregate model, and connect them through business/anticipation horizons and rolling state.
-    - Start with child #37 (workflow/architecture/provenance baseline) and a copyright-safe `topm-mini` executable specification; do not stretch the existing shift tensor to a five-year horizon or add supply-chain fields directly to the legacy `Scenario` contract.
-    - Treat Oborn (1996) and the public FORCE/Robak OperMAX lineage as historical scope references, and Jaffray et al. (2026) as the modern usability, reproducibility, validation, and adoption framework.
+    - Parent issue #36 and child issues #37–#44 are linked via GitHub sub-issues; all child PRs #45–#52 are merged into `feature/phase6-tactical-operational-expansion`.
+    - The phase branch now carries the two-level architecture, tactical contract/MILP, product-flow/inventory/infrastructure modules, scenario overlays/reporting, tactical→operational handoff, and initial scale telemetry.
+    - Next gate: maintainer review of the Phase 6 integration PR into `main`; do not close #36 until that review approves the architecture and follow-up scope.
+    - Remaining follow-up scope after integration: full 5-year/500+ block benchmark, practitioner case validation, guided planner notebooks, and decomposition only if measured scale requires it.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.

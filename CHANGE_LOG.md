@@ -1,3 +1,18 @@
+# 2026-09-24 — Phase 6 integration branch housekeeping and review handoff
+- Marked all Phase 6 child issues #37–#44 complete in `ROADMAP.md` after PRs #45–#52 merged into `feature/phase6-tactical-operational-expansion`.
+- Updated `notes/tactical_operational_issue_tree.md` and `notes/tactical_operational_expansion_plan.md` to show parent issue #36 remains open only for maintainer-level integration review into `main`.
+- Recorded remaining post-integration follow-up scope: full 5-year/500+ block benchmark, practitioner case validation, guided planner notebooks, and decomposition only if measured scale requires it.
+- Preparing the final Phase 6 integration PR from `feature/phase6-tactical-operational-expansion` to `main`; that PR intentionally uses `Part of #36` and does not close the parent issue.
+- Commands executed:
+  - `git switch feature/phase6-tactical-operational-expansion && git fetch origin && git pull --ff-only`
+  - `.venv/bin/ruff format src tests` (220 files unchanged)
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (378 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files CHANGE_LOG.md ROADMAP.md notes/tactical_operational_issue_tree.md notes/tactical_operational_expansion_plan.md` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Phase 6.7 tactical scale benchmarks and uncertainty scaffolding (#44)
 - Merged #43 via PR #51 and started #44 on `issue-44-phase-6.7-scale-uncertainty` after the server restart; existing branch/auth state was recovered before continuing.
 - Added build/solve timing split and compact Pyomo model statistics (`number_of_variables`, `number_of_constraints`, binary/integer/continuous counts) to tactical MILP results.

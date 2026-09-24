@@ -1,9 +1,8 @@
 # Tactical–Operational Expansion Plan (TOPM-Inspired)
 
 Date: 2026-09-24
-Status: #37 merged via PR #45; #38 in progress on branch
-`issue-38-phase-6.1-contract-time`; GitHub parent issue #36, child issues #37–#44, phase branch
-`feature/phase6-tactical-operational-expansion`
+Status: child issues #37–#44 merged via PRs #45–#52; Phase 6 integration branch is ready for
+maintainer review into `main` under parent issue #36
 Primary historical source: Oborn (1996), *A Mathematical Programming Application with
 Semi-Continuous Variables for Multi-Faceted Forest Operations Planning*
 Modern design context: Jaffray, Coupland, and Paradis (2026), *Forest harvesting operational
