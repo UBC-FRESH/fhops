@@ -481,16 +481,19 @@ changelog land together.
 
 ### Phase 0 — Decisions, provenance, and executable specification
 
-- [ ] Approve scope, terminology, module boundaries, and defaults in an ADR.
-- [ ] Record Oborn (1996) and the public OperMAX/FORCE/Robak lineage in the public
-  bibliography/provenance log without redistributing restricted PDFs.
-- [ ] Catalogue reusable implementation lessons from OperMAX/RoadOpt reports: stand-alone scenario
+- [x] Draft scope, terminology, module boundaries, and defaults in
+  `notes/adr/0001-tactical-operational-architecture.md` for maintainer approval.
+- [x] Record Oborn (1996) and the public OperMAX/FORCE/Robak lineage in
+  `notes/tactical_operational_provenance.md` without redistributing restricted PDFs.
+- [x] Catalogue reusable implementation lessons from OperMAX/RoadOpt reports: stand-alone scenario
   validation, pre/post-solver workflows, batch scenario comparison, and infrastructure coupling.
-- [ ] Define equations, units, and equation-to-code mapping before implementation.
-- [ ] Create a copyright-safe synthetic `topm-mini` acceptance scenario.
-- [ ] Capture current operational API/fixture baselines for compatibility checks.
+- [x] Define initial equations, units, and equation-to-code expectations before implementation.
+- [x] Create the copyright-safe synthetic `topm-mini` executable specification at
+  `tests/fixtures/tactical_operational/topm-mini/specification.yaml` with structural tests.
+- [x] Capture current operational API/fixture baselines in
+  `notes/tactical_operational_compatibility_baseline.md`.
 
-Exit criterion: maintainers approve the contract sketch, model scope, and acceptance fixtures.
+Exit criterion: maintainers approve the ADR, contract sketch, model scope, and acceptance fixtures.
 
 ### Phase 1 — Shared time, units, and planning contract
 

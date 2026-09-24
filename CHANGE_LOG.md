@@ -1,3 +1,22 @@
+# 2026-09-24 — Phase 6.0 workflow/architecture baseline (#37)
+- Started child issue #37 on branch `issue-37-phase-6.0-workflow-architecture` under parent #36 and the Phase 6 integration branch.
+- Added `notes/adr/0001-tactical-operational-architecture.md`, recording the proposed two-level architecture, contract boundaries, harvest-mode semantics, objective strategy, rolling-state boundary, alternatives, and acceptance gates.
+- Added `notes/tactical_operational_provenance.md` to capture Oborn/TOPM, FORCE/Robak OperMAX, CIRRELT-2012-33, and Jaffray et al. provenance without redistributing restricted documents; linked it from the public source-bibliography page.
+- Added `notes/tactical_operational_compatibility_baseline.md`, documenting the schema `1.0.0` operational contract, public CLI/API workflows, reference scenarios, fixtures, and guardrails that Phase 6 must preserve.
+- Added the copyright-safe `topm-mini` executable specification at `tests/fixtures/tactical_operational/topm-mini/specification.yaml`, plus `notes/topm_mini_specification.md` and structural tests covering period/product/block/option linkage, harvest modes, economic dispatch, and inventory balances.
+- Updated the Phase 6 plan and issue-tree manifest so #37 is in progress and Phase 0 artifacts are identified.
+- Commands executed:
+  - `git switch -c issue-37-phase-6.0-workflow-architecture`
+  - `python -m venv /tmp/opencode/fhops-topm37-venv && /tmp/opencode/fhops-topm37-venv/bin/python -m pip install pytest pyyaml`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_topm_mini_specification.py` (5 passed)
+  - `.venv/bin/ruff format src tests` (reformatted the new test only)
+  - `.venv/bin/ruff check src tests` (passed)
+  - `git diff --check` (passed)
+  - `.venv/bin/mypy src` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
+  - Full `.venv/bin/pytest` *(not run: project `.venv/bin/python` targets unavailable `python3.12`)*
+  - `.venv/bin/pre-commit run --all-files` *(not run: entry point targets unavailable `python3.12`)*
+  - `.venv/bin/sphinx-build -b html docs _build/html -W` *(not run: `sphinx-build` absent from the current environment)*
+
 # 2026-09-24 — TOPM-inspired tactical–operational expansion planning
 - Added `notes/tactical_operational_expansion_plan.md`, a staged architecture and implementation plan for expanding FHOPS beyond its current 1–16 week shift-level focus into integrated 1–5 year tactical–operational planning.
 - Mapped Oborn's TOPM formulation to current FHOPS capabilities and gaps, including semi-continuous harvest quantities, alternative harvest systems, products/mills, transport and inventory, outside purchases, roads, silviculture, fleet investment, discounting, scenario management, and tactical-to-operational handoff.

@@ -1,0 +1,284 @@
+specification_version: "0.1.0"
+fixture_id: topm-mini
+issue: 37
+purpose: >
+  Copyright-safe executable specification for the FHOPS tactical–operational expansion.
+  The values are synthetic and intentionally small so future contract, model, and reporting
+  implementations can verify behavior against hand-calculated outcomes.
+source_policy: >
+  All values are synthetic. This fixture does not copy Oborn thesis appendices, OperMAX data, or
+  any restricted commercial dataset.
+
+units:
+  area: ha
+  volume: m3
+  harvest_capacity: m3_per_period
+  transport_capacity: m3_per_period
+  cost: CAD_2026
+  value: CAD_2026_per_m3
+  discount_rate: effective_annual_fraction
+  distance: km
+
+periods:
+  - period_id: Y1-P1
+    level: four_week
+    sequence: 1
+    start_date: "2027-01-01"
+    end_date: "2027-01-28"
+    duration_days: 28
+    available_hours: 672
+    discount_factor: 1.0
+    season_tags: [winter]
+  - period_id: Y1-P2
+    level: four_week
+    sequence: 2
+    start_date: "2027-01-29"
+    end_date: "2027-02-25"
+    duration_days: 28
+    available_hours: 672
+    discount_factor: 0.9974
+    season_tags: [winter, breakup]
+
+products:
+  - product_id: sawlog
+    species_group: spruce
+    grade: sawlog
+  - product_id: pulp
+    species_group: spruce
+    grade: pulp
+
+planning_units:
+  - block_id: B1
+    gross_area_ha: 10.0
+    operable_area_ha: 10.0
+    forest_class: dry_belt
+    initial_state: mature
+    product_yields_m3_per_ha:
+      sawlog: 80.0
+      pulp: 20.0
+  - block_id: B2
+    gross_area_ha: 6.0
+    operable_area_ha: 6.0
+    forest_class: dry_belt
+    initial_state: mature
+    product_yields_m3_per_ha:
+      sawlog: 90.0
+      pulp: 30.0
+  - block_id: B3
+    gross_area_ha: 4.0
+    operable_area_ha: 4.0
+    forest_class: riparian_buffer
+    initial_state: mature
+    product_yields_m3_per_ha:
+      sawlog: 60.0
+      pulp: 20.0
+
+harvest_system_options:
+  - option_id: B1__ground_fb_skid__Y1-P1
+    block_id: B1
+    system_id: ground_fb_skid
+    period_id: Y1-P1
+    eligible: true
+    min_area_ha: 2.0
+    max_area_ha: 6.0
+    variable_cost_per_m3: 20.0
+    fixed_cost: 100.0
+    productivity_m3_per_period: 600.0
+  - option_id: B2__ground_fb_skid__Y1-P1
+    block_id: B2
+    system_id: ground_fb_skid
+    period_id: Y1-P1
+    eligible: true
+    min_area_ha: 1.0
+    max_area_ha: 4.0
+    variable_cost_per_m3: 18.0
+    fixed_cost: 80.0
+    productivity_m3_per_period: 480.0
+  - option_id: B3__ground_fb_skid__Y1-P1
+    block_id: B3
+    system_id: ground_fb_skid
+    period_id: Y1-P1
+    eligible: true
+    min_area_ha: 4.0
+    max_area_ha: 4.0
+    variable_cost_per_m3: 15.0
+    fixed_cost: 50.0
+    productivity_m3_per_period: 320.0
+  - option_id: B1__ctl__Y1-P2
+    block_id: B1
+    system_id: ctl
+    period_id: Y1-P2
+    eligible: true
+    min_area_ha: 2.5
+    max_area_ha: 10.0
+    variable_cost_per_m3: 22.0
+    fixed_cost: 120.0
+    productivity_m3_per_period: 650.0
+
+harvest_modes:
+  continuous:
+    allows_fractional_area: true
+    enforces_minimum_area: false
+  semi_continuous:
+    allows_fractional_area: true
+    enforces_minimum_area: true
+  whole_block:
+    allows_fractional_area: false
+    enforces_minimum_area: true
+
+hand_calculated_cases:
+  - case_id: continuous_partial_cut_allowed
+    mode: continuous
+    option_id: B1__ground_fb_skid__Y1-P1
+    requested_area_ha: 2.5
+    expected:
+      activation: 1
+      harvested_area_ha: 2.5
+      sawlog_volume_m3: 200.0
+      pulp_volume_m3: 50.0
+
+  - case_id: semi_continuous_rejects_below_minimum
+    mode: semi_continuous
+    option_id: B1__ground_fb_skid__Y1-P1
+    requested_area_ha: 1.5
+    expected:
+      activation: 0
+      harvested_area_ha: 0.0
+      sawlog_volume_m3: 0.0
+      pulp_volume_m3: 0.0
+
+  - case_id: semi_continuous_accepts_at_minimum
+    mode: semi_continuous
+    option_id: B1__ground_fb_skid__Y1-P1
+    requested_area_ha: 2.0
+    expected:
+      activation: 1
+      harvested_area_ha: 2.0
+      sawlog_volume_m3: 160.0
+      pulp_volume_m3: 40.0
+
+  - case_id: whole_block_uses_operable_area
+    mode: whole_block
+    option_id: B3__ground_fb_skid__Y1-P1
+    requested_area_ha: 3.0
+    expected:
+      activation: 1
+      harvested_area_ha: 4.0
+      sawlog_volume_m3: 240.0
+      pulp_volume_m3: 80.0
+
+  - case_id: economic_dispatch
+    mode: semi_continuous
+    period_id: Y1-P1
+    required_sawlog_m3: 780.0
+    option_ids:
+      - B1__ground_fb_skid__Y1-P1
+      - B2__ground_fb_skid__Y1-P1
+    expected:
+      harvested:
+        - option_id: B2__ground_fb_skid__Y1-P1
+          area_ha: 4.0
+          sawlog_volume_m3: 360.0
+        - option_id: B1__ground_fb_skid__Y1-P1
+          area_ha: 5.25
+          sawlog_volume_m3: 420.0
+      total_fixed_cost: 180.0
+      total_variable_cost: 19140.0
+      total_cost: 19320.0
+
+facilities:
+  - facility_id: mill_saw
+    facility_type: sawmill
+    accepted_products: [sawlog]
+  - facility_id: mill_pulp
+    facility_type: pulp_mill
+    accepted_products: [pulp]
+
+facility_demand:
+  - facility_id: mill_saw
+    product_id: sawlog
+    period_id: Y1-P1
+    minimum_m3: 700.0
+    target_m3: 780.0
+    maximum_m3: 800.0
+  - facility_id: mill_pulp
+    product_id: pulp
+    period_id: Y1-P1
+    minimum_m3: 150.0
+    target_m3: 180.0
+    maximum_m3: 220.0
+
+initial_inventory:
+  - facility_id: mill_saw
+    product_id: sawlog
+    opening_m3: 50.0
+  - facility_id: mill_pulp
+    product_id: pulp
+    opening_m3: 20.0
+
+transport_arcs:
+  - arc_id: B1__mill_saw__truck__Y1-P1
+    origin_id: B1
+    destination_id: mill_saw
+    product_id: sawlog
+    mode: truck
+    period_id: Y1-P1
+    cost_per_m3: 6.0
+    capacity_m3: 700.0
+  - arc_id: B2__mill_saw__truck__Y1-P1
+    origin_id: B2
+    destination_id: mill_saw
+    product_id: sawlog
+    mode: truck
+    period_id: Y1-P1
+    cost_per_m3: 7.0
+    capacity_m3: 500.0
+  - arc_id: B1__mill_pulp__truck__Y1-P1
+    origin_id: B1
+    destination_id: mill_pulp
+    product_id: pulp
+    mode: truck
+    period_id: Y1-P1
+    cost_per_m3: 8.0
+    capacity_m3: 200.0
+
+external_supply:
+  - source_id: open_market
+    destination_id: mill_saw
+    product_id: sawlog
+    period_id: Y1-P1
+    minimum_m3: 0.0
+    maximum_m3: 100.0
+    delivered_cost_per_m3: 45.0
+
+flow_inventory_expectations:
+  - case_id: sawmill_balance
+    facility_id: mill_saw
+    product_id: sawlog
+    period_id: Y1-P1
+    opening_m3: 50.0
+    deliveries_m3: 780.0
+    purchases_m3: 0.0
+    consumption_m3: 780.0
+    expected_closing_m3: 50.0
+  - case_id: pulp_balance
+    facility_id: mill_pulp
+    product_id: pulp
+    period_id: Y1-P1
+    opening_m3: 20.0
+    deliveries_m3: 180.0
+    purchases_m3: 0.0
+    consumption_m3: 180.0
+    expected_closing_m3: 20.0
+
+compatibility_baseline:
+  schema_version: "1.0.0"
+  scenarios:
+    - examples/tiny7/scenario.yaml
+    - examples/small21/scenario.yaml
+    - examples/med42/scenario.yaml
+    - examples/large84/scenario.yaml
+  commands:
+    - fhops validate examples/tiny7/scenario.yaml
+    - fhops solve-heur examples/tiny7/scenario.yaml --out /tmp/tiny7_sa.csv --iters 25 --seed 7
+    - fhops evaluate examples/tiny7/scenario.yaml --assignments /tmp/tiny7_sa.csv

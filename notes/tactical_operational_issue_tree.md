@@ -24,6 +24,8 @@ Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 All eight child issues were linked to parent #36 through GitHub sub-issues, and all issues in the
 tree were assigned the repository `Feature` issue type.
 
+2026-09-24 status: #37 is in progress on branch `issue-37-phase-6.0-workflow-architecture`.
+
 ## Historical scope note
 
 Oborn (1996) is the direct formulation reference. The FORCE/Robak OperMAX lineage, including the
