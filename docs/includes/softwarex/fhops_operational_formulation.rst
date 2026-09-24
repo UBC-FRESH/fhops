@@ -266,4 +266,4 @@ Domain restrictions:
   ``fhops.model.milp.data``
 
 This formulation is the canonical mathematical reference for FHOPS
-operational MILP documentation and thesis-level reporting.
+operational MILP documentation.

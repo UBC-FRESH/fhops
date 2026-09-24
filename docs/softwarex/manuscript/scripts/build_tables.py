@@ -27,7 +27,7 @@ SCENARIOS = [
     {
         "slug": "med42",
         "label": "Med42 (ground-based)",
-        "sense": "minimize",
+        "sense": "maximize",
         "comparison_key": "baseline:med42",
         "report_key": "FHOPS Medium42",
     },

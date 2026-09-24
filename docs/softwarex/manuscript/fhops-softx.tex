@@ -2,6 +2,8 @@
 \documentclass[preprint,review,12pt]{elsarticle}
 
 \usepackage{hyperref}
+\urlstyle{tt}
+\DeclareRobustCommand{\cpath}[1]{\path{#1}}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{textcomp}
@@ -10,6 +12,7 @@
 \usetikzlibrary{positioning,arrows.meta}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{tabularx}
 \usepackage{array}
 \usepackage{calc}
 \modulolinenumbers[5]
@@ -28,8 +31,10 @@
 \title{FHOPS: a reproducible optimisation and benchmarking stack for forest harvest operations}
 
 \author[ubc]{Gregory Paradis\corref{cor1}}
+\author[ubc]{Rosalia Jaffray}
+\author[ubc]{Kathleen Coupland}
 \cortext[cor1]{Corresponding author: gregory.paradis@ubc.ca}
-\address[ubc]{Faculty of Forestry, University of British Columbia, Canada}
+\address[ubc]{Faculty of Forestry \& Environmental Stewardship, University of British Columbia, 2424 Main Mall, Office 4645, Vancouver, British Columbia, V6T 1Z4, Canada}
 
 \input{sections/highlights}
 

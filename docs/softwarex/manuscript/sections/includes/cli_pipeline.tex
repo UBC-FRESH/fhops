@@ -17,34 +17,34 @@ pipeline so readers can replay each stage without bespoke tooling:
   \textbf{Benchmark solvers.} Invoke \texttt{fhops\ bench\ suite} with
   explicit \texttt{-\/-scenario} and \texttt{-\/-out-dir} arguments (for
   the manuscript:
-  \texttt{docs/softwarex/assets/data/benchmarks/\textless{}slug\textgreater{}/})
+  \path{docs/softwarex/assets/data/benchmarks/<slug>/})
   plus the desired heuristics (\texttt{-\/-include-ils},
   \texttt{-\/-include-tabu}) and iteration budgets.
 \item
   \textbf{Run the tuning harness.} Launch
-  \texttt{python\ docs/softwarex/manuscript/scripts/run\_tuning\_benchmarks.py}
-  (wrapped by \texttt{scripts/generate\_assets.sh}) to produce
+  \texttt{python\ }\path{docs/softwarex/manuscript/scripts/run_tuning_benchmarks.py}
+  (wrapped by \path{scripts/generate_assets.sh}) to produce
   leaderboard/comparison tables in
-  \texttt{docs/softwarex/assets/data/tuning/}.
+  \path{docs/softwarex/assets/data/tuning/}.
 \item
   \textbf{Replay schedules.} Call \texttt{fhops\ playback} on the best
   SA/ILS assignments (deterministic and stochastic modes) so utilisation
   and downtime metrics land under
-  \texttt{docs/softwarex/assets/data/playback/\textless{}scenario\textgreater{}/\textless{}solver\textgreater{}/\textless{}mode\textgreater{}/}.
+  \path{docs/softwarex/assets/data/playback/<scenario>/<solver>/<mode>/}.
 \item
   \textbf{Estimate costs.} Execute
   \texttt{fhops\ dataset\ estimate-cost} for each machine bundle to
   capture owning/operating/repair totals in
-  \texttt{docs/softwarex/assets/data/costing/}.
+  \path{docs/softwarex/assets/data/costing/}.
 \item
   \textbf{Synthetic scaling sweep.} Use
-  \texttt{python\ docs/softwarex/manuscript/scripts/run\_synthetic\_sweep.py}
+  \texttt{python\ }\path{docs/softwarex/manuscript/scripts/run_synthetic_sweep.py}
   to regenerate runtime-vs-size CSV/JSON + plots under
-  \texttt{docs/softwarex/assets/data/scaling/}.
+  \path{docs/softwarex/assets/data/scaling/}.
 \end{enumerate}
 
 Each command appends its parameters, commit hash, runtime, and SHA-256
-digests to \texttt{docs/softwarex/assets/benchmark\_runs.log} (when run
+digests to \path{docs/softwarex/assets/benchmark_runs.log} (when run
 through \texttt{make\ manuscript-benchmarks} or
-\texttt{scripts/generate\_assets.sh}), providing a single provenance log
+\path{scripts/generate_assets.sh}), providing a single provenance log
 for all artefacts.

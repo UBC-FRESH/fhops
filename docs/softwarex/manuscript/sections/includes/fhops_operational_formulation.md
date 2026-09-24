@@ -195,4 +195,4 @@ $$
 - Objective assembly: `model.objective` and objective-term construction around `prod_weight`, `landing_weight`, `mobilisation_weight`, `transition_weight`
 - Data/parameter normalization: `build_operational_bundle(...)` in `fhops.model.milp.data`
 
-This formulation is the canonical mathematical reference for FHOPS operational MILP documentation and thesis-level reporting.
+This formulation is the canonical mathematical reference for FHOPS operational MILP documentation.

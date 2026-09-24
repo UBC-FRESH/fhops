@@ -1,7 +1,8 @@
 \begin{figure}[t]
   \centering
+  \resizebox{\linewidth}{!}{%
   \begin{tikzpicture}[
-    font=\footnotesize,
+    font=\scriptsize,
     node distance=1.5cm,
     block/.style={rectangle, rounded corners=2pt, draw=black!60, fill=blue!4, align=center, text width=3.4cm, inner sep=6pt},
     wideblock/.style={block, text width=4.1cm},
@@ -39,7 +40,8 @@
     \draw[arrow] (core3) -- (int2);
     \draw[arrow] (int1) -- (out1);
     \draw[arrow] (int2) -- (out1);
-  \end{tikzpicture}
+  \end{tikzpicture}%
+  }
   \caption{FHOPS automation pipeline. Inputs (scenario contract + curated datasets) feed the FHOPS core (validation, solver stack, evaluation tooling). Asset scripts emit shared tables/figures consumed by the manuscript, submission package, and Sphinx docs.}
   \label{fig:fhops-prisma-overview}
 \end{figure}

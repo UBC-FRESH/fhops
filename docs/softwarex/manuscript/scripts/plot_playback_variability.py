@@ -105,13 +105,15 @@ def plot(df: pd.DataFrame, out_path: Path) -> None:
         ax.grid(axis="y", linestyle="--", alpha=0.4)
 
     axes[0].set_ylabel("Mean utilisation")
-    fig.suptitle("Playback robustness: deterministic vs stochastic utilisation")
-    fig.legend(loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.05))
+    legend = fig.legend(loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.05))
     fig.tight_layout(rect=(0, 0, 1, 0.95))
 
+    # Hold the legend in the tight bbox explicitly: older matplotlib versions drop
+    # ``fig.legend`` artists from ``bbox_inches="tight"``, clipping the legend at the
+    # top edge of the raster (reproduced with the shipped asset, 3600x1200 @ 100 dpi).
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=300)
-    fig.savefig(out_path.with_suffix(".pdf"))
+    fig.savefig(out_path, dpi=300, bbox_inches="tight", bbox_extra_artists=[legend])
+    fig.savefig(out_path.with_suffix(".pdf"), bbox_inches="tight", bbox_extra_artists=[legend])
     plt.close(fig)
 
 

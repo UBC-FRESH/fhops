@@ -3,9 +3,9 @@ FHOPS' deterministic operational solver is formulated on a day-shift
 grid and maximizes weighted delivered production while penalizing
 leftovers, landing over-capacity slack, and machine movement costs. The
 equations below mirror the implemented Pyomo model in
-\texttt{fhops.model.milp.operational.build\_operational\_model} and the
+\path{fhops.model.milp.operational.build_operational_model} and the
 bundle normalization in
-\texttt{fhops.model.milp.data.build\_operational\_bundle}.
+\path{fhops.model.milp.data.build_operational_bundle}.
 
 \textbf{Problem statement.} Given harvest blocks, machine roles, shift
 calendars, block windows, landing capacities, and harvest-system role
@@ -261,46 +261,46 @@ x, y, g \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,
 \begin{itemize}
 \tightlist
 \item
-  Machine capacity and availability: \texttt{model.machine\_capacity}
-  (\texttt{machine\_capacity\_rule})
+  Machine capacity and availability: \path{model.machine_capacity}
+  (\path{machine_capacity_rule})
 \item
-  Role compatibility: \texttt{model.role\_compatibility}
-  (\texttt{role\_compatibility\_rule})
+  Role compatibility: \path{model.role_compatibility}
+  (\path{role_compatibility_rule})
 \item
-  Production-assignment coupling: \texttt{model.production\_cap}
-  (\texttt{prod\_cap\_rule})
+  Production-assignment coupling: \path{model.production_cap}
+  (\path{prod_cap_rule})
 \item
-  Block windows: \texttt{model.block\_windows} (\texttt{window\_rule})
+  Block windows: \path{model.block_windows} (\path{window_rule})
 \item
-  Role aggregation: \texttt{model.role\_prod\_balance}
-  (\texttt{role\_prod\_balance\_rule})
+  Role aggregation: \path{model.role_prod_balance}
+  (\path{role_prod_balance_rule})
 \item
-  Transition linkage: \texttt{model.transition\_prev},
-  \texttt{model.transition\_curr}, \texttt{model.transition\_link}
+  Transition linkage: \path{model.transition_prev},
+  \path{model.transition_curr}, \path{model.transition_link}
 \item
-  Inventory dynamics and guards: \texttt{model.inventory\_start\_eq},
-  \texttt{model.inventory\_balance}, \texttt{model.inventory\_guard}
+  Inventory dynamics and guards: \path{model.inventory_start_eq},
+  \path{model.inventory_balance}, \path{model.inventory_guard}
 \item
-  Head-start activation: \texttt{model.activation\_prod},
-  \texttt{model.head\_start}, \texttt{model.role\_active\_upper},
-  \texttt{model.role\_active\_lower}
+  Head-start activation: \path{model.activation_prod},
+  \path{model.head_start}, \path{model.role_active_upper},
+  \path{model.role_active_lower}
 \item
-  Loader batching: \texttt{model.loader\_batch},
-  \texttt{model.loader\_partial\_cap}
+  Loader batching: \path{model.loader_batch},
+  \path{model.loader_partial_cap}
 \item
-  Block balance with leftovers: \texttt{model.block\_balance}
-  (\texttt{block\_balance\_rule}) + \texttt{model.leftover}
+  Block balance with leftovers: \path{model.block_balance}
+  (\path{block_balance_rule}) + \path{model.leftover}
 \item
-  Landing capacity with slack: \texttt{model.landing\_capacity}
-  (\texttt{landing\_capacity\_rule}) + \texttt{model.landing\_surplus}
+  Landing capacity with slack: \path{model.landing_capacity}
+  (\path{landing_capacity_rule}) + \path{model.landing_surplus}
 \item
-  Objective assembly: \texttt{model.objective} and objective-term
-  construction around \texttt{prod\_weight}, \texttt{landing\_weight},
-  \texttt{mobilisation\_weight}, \texttt{transition\_weight}
+  Objective assembly: \path{model.objective} and objective-term
+  construction around \path{prod_weight}, \path{landing_weight},
+  \path{mobilisation_weight}, \path{transition_weight}
 \item
-  Data/parameter normalization: \texttt{build\_operational\_bundle(...)}
-  in \texttt{fhops.model.milp.data}
+  Data/parameter normalization: \path{build_operational_bundle(...)}
+  in \path{fhops.model.milp.data}
 \end{itemize}
 
 This formulation is the canonical mathematical reference for FHOPS
-operational MILP documentation and thesis-level reporting.
+operational MILP documentation.
