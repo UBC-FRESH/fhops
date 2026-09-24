@@ -534,10 +534,10 @@ with every product balance independently verified.
 
 ### Phase 4 — Roads, silviculture, and fleet investment
 
-- [ ] Add road activation, dependencies, timing, maintenance, and access constraints.
-- [ ] Add harvest-system × forest-class silviculture transitions and delayed costs/activities.
-- [ ] Add fleet purchase/lease/retirement and economic-life capacity.
-- [ ] Add tight bounds/indicator constraints and module toggles.
+- [x] Add road activation, dependencies, timing, maintenance, and access constraints.
+- [x] Add harvest-system/block silviculture transitions and delayed costs/activities.
+- [x] Add fleet purchase options and economic-life capacity.
+- [x] Add tight bounds/indicator constraints and module toggles.
 
 Exit criterion: enabling each module changes the known tiny optimum as expected; disabling it
 returns the Phase 3 optimum.

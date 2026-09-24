@@ -103,6 +103,31 @@ Two value-oriented profiles are also available when demand rows carry ``value_pe
 final-period value of declared terminal inventory. Override the scenario value with
 ``--objective-profile``.
 
+Optional infrastructure modules
+-------------------------------
+
+The contract now includes optional long-form tables for:
+
+- road projects, dependencies, and block access (``roads``, ``road_dependencies``,
+  ``block_road_access``);
+- silviculture follow-up transitions by block/system (``silviculture_transitions``); and
+- fleet acquisition options with economic-life capacity (``fleet_options``).
+
+These modules are disabled by default so the harvest/product-flow core remains reproducible.
+Enable them independently from the CLI:
+
+.. code-block:: bash
+
+   fhops plan tactical-operational \
+     tests/fixtures/tactical_operational/topm-mini/specification.yaml \
+     --enable-roads \
+     --out-roads-csv tmp/topm-mini-roads.csv
+
+Road activation uses build/available binaries, cumulative timing, prerequisite links, access gates,
+and active-road capacity. Silviculture transitions schedule required follow-up area in eligible
+periods and add discounted per-hectare costs. Fleet acquisition variables add capacity during their
+economic life and charge the purchase-period discounted cost.
+
 The code mapping is intentionally direct:
 
 - ``area`` / ``harvest_active``: ``fhops.model.milp.tactical_operational.model.area`` and
@@ -113,6 +138,11 @@ The code mapping is intentionally direct:
 - Flow supply and arc capacity: ``model.flow_supply`` and ``model.arc_capacity``.
 - Purchases, consumption, and inventory: ``model.purchase_lower``/``model.purchase_upper``,
   ``model.consumption_*``, and ``model.inventory_balance``.
+- Roads: ``model.road_build``, ``model.road_available``, ``model.road_access``, and
+  ``model.road_capacity``.
+- Silviculture: ``model.silviculture_area`` and ``model.silviculture_fulfillment``.
+- Fleet investment: ``model.fleet_units`` and the capacity augmentation inside
+  ``model.fleet_capacity``.
 - Objective assembly: ``model.objective``.
 - Bundle replay: :func:`fhops.model.milp.tactical_operational.tactical_bundle_to_dict` and
   :func:`~fhops.model.milp.tactical_operational.tactical_bundle_from_dict`.
