@@ -19,67 +19,68 @@ maximize discounted profit/NPV when product values are supplied.
 
 **Sets and indices.**
 
-- :math:`b \in \mathcal{B}`: planning units/blocks.
-- :math:`o \in \mathcal{O}`: eligible block :math:`\times` system
-  :math:`\times` period harvest options.
-- :math:`t \in \mathcal{T}`: ordered tactical–operational periods.
-- :math:`p \in \mathcal{P}`: products/species-grade classes.
-- :math:`a \in \mathcal{A}`: product transport arcs.
-- :math:`u \in \mathcal{U}`: external supply options, indexed by
-  source/destination/product/period.
-- :math:`(f,p,t) \in \mathcal{F}`: facility/product/period balance keys.
-- :math:`r \in \mathcal{R}`: optional road projects.
-- :math:`q \in \mathcal{Q}`: optional silviculture transitions.
-- :math:`e \in \mathcal{E}`: optional fleet acquisition options.
+-  :math:`b \in \mathcal{B}`: planning units/blocks.
+-  :math:`o \in \mathcal{O}`: eligible block :math:`\times` system
+   :math:`\times` period harvest options.
+-  :math:`t \in \mathcal{T}`: ordered tactical–operational periods.
+-  :math:`p \in \mathcal{P}`: products/species-grade classes.
+-  :math:`a \in \mathcal{A}`: product transport arcs.
+-  :math:`u \in \mathcal{U}`: external supply options, indexed by
+   source/destination/product/period.
+-  :math:`(f,p,t) \in \mathcal{F}`: facility/product/period balance
+   keys.
+-  :math:`r \in \mathcal{R}`: optional road projects.
+-  :math:`q \in \mathcal{Q}`: optional silviculture transitions.
+-  :math:`e \in \mathcal{E}`: optional fleet acquisition options.
 
 **Parameters.**
 
-- :math:`A_b`: operable area of planning unit :math:`b` (ha).
-- :math:`L_o,U_o`: minimum/maximum active area for option :math:`o`
-  (ha).
-- :math:`Y_{b,p}`: product yield for block :math:`b` and product
-  :math:`p` (m\ :math:`^3`/ha).
-- :math:`K_o`: optional total production capacity for option :math:`o`
-  (m\ :math:`^3`/period).
-- :math:`K^{fleet}_{s,t}`: base fleet capacity for system :math:`s` in
-  period :math:`t` (m\ :math:`^3`).
-- :math:`F_o,c_o`: fixed cost and variable cost per m\ :math:`^3` for
-  option :math:`o`.
-- :math:`c_a,c_u`: transport cost per m\ :math:`^3` on arc :math:`a` and
-  delivered purchase cost per m\ :math:`^3` for supply :math:`u`.
-- :math:`D^{min}_{f,p,t},D^{target}_{f,p,t},D^{max}_{f,p,t}`: facility
-  demand envelope (m\ :math:`^3`).
-- :math:`v_{f,p,t}`: optional delivered product value per m\ :math:`^3`
-  for profit objectives.
-- :math:`d_t`: discount factor for period :math:`t`.
-- :math:`I^0_{f,p}`: opening facility inventory (m\ :math:`^3`).
-- :math:`C_a,C_r`: transport arc and active-road capacity
-  (m\ :math:`^3`/period).
-- :math:`B_r,M_r`: road build cost and maintenance cost per active
-  period.
-- :math:`c_q`: silviculture cost per ha for transition :math:`q`.
-- :math:`N^{max}_e,K_e,C^{fleet}_e`: maximum units, added capacity per
-  period, and purchase cost for fleet option :math:`e`.
+-  :math:`A_b`: operable area of planning unit :math:`b` (ha).
+-  :math:`L_o,U_o`: minimum/maximum active area for option :math:`o`
+   (ha).
+-  :math:`Y_{b,p}`: product yield for block :math:`b` and product
+   :math:`p` (m\ :math:`^3`/ha).
+-  :math:`K_o`: optional total production capacity for option :math:`o`
+   (m\ :math:`^3`/period).
+-  :math:`K^{fleet}_{s,t}`: base fleet capacity for system :math:`s` in
+   period :math:`t` (m\ :math:`^3`).
+-  :math:`F_o,c_o`: fixed cost and variable cost per m\ :math:`^3` for
+   option :math:`o`.
+-  :math:`c_a,c_u`: transport cost per m\ :math:`^3` on arc :math:`a`
+   and delivered purchase cost per m\ :math:`^3` for supply :math:`u`.
+-  :math:`D^{min}_{f,p,t},D^{target}_{f,p,t},D^{max}_{f,p,t}`: facility
+   demand envelope (m\ :math:`^3`).
+-  :math:`v_{f,p,t}`: optional delivered product value per m\ :math:`^3`
+   for profit objectives.
+-  :math:`d_t`: discount factor for period :math:`t`.
+-  :math:`I^0_{f,p}`: opening facility inventory (m\ :math:`^3`).
+-  :math:`C_a,C_r`: transport arc and active-road capacity
+   (m\ :math:`^3`/period).
+-  :math:`B_r,M_r`: road build cost and maintenance cost per active
+   period.
+-  :math:`c_q`: silviculture cost per ha for transition :math:`q`.
+-  :math:`N^{max}_e,K_e,C^{fleet}_e`: maximum units, added capacity per
+   period, and purchase cost for fleet option :math:`e`.
 
 **Decision variables.**
 
-- :math:`H_o \ge 0`: area harvested under option :math:`o` (ha).
-- :math:`Z_o \in \{0,1\}`: activation indicator for option :math:`o`.
-- :math:`V_{o,p} \ge 0`: product volume produced by option :math:`o`
-  (m\ :math:`^3`).
-- :math:`F_a \ge 0`: product flow on transport arc :math:`a`
-  (m\ :math:`^3`).
-- :math:`P_u \ge 0`: external purchase quantity for supply option
-  :math:`u` (m\ :math:`^3`).
-- :math:`C_{f,p,t} \ge 0`: facility consumption/demand fulfillment
-  (m\ :math:`^3`).
-- :math:`I_{f,p,t} \ge 0`: closing facility inventory (m\ :math:`^3`).
-- :math:`R^B_{r,t},R^A_{r,t} \in \{0,1\}`: road build and available
-  indicators when roads are enabled.
-- :math:`Q_{q,t} \ge 0`: silviculture activity area scheduled for
-  transition :math:`q` in period :math:`t`.
-- :math:`N_e \in \mathbb{Z}_{\ge 0}`: units purchased for fleet option
-  :math:`e`.
+-  :math:`H_o \ge 0`: area harvested under option :math:`o` (ha).
+-  :math:`Z_o \in \{0,1\}`: activation indicator for option :math:`o`.
+-  :math:`V_{o,p} \ge 0`: product volume produced by option :math:`o`
+   (m\ :math:`^3`).
+-  :math:`F_a \ge 0`: product flow on transport arc :math:`a`
+   (m\ :math:`^3`).
+-  :math:`P_u \ge 0`: external purchase quantity for supply option
+   :math:`u` (m\ :math:`^3`).
+-  :math:`C_{f,p,t} \ge 0`: facility consumption/demand fulfillment
+   (m\ :math:`^3`).
+-  :math:`I_{f,p,t} \ge 0`: closing facility inventory (m\ :math:`^3`).
+-  :math:`R^B_{r,t},R^A_{r,t} \in \{0,1\}`: road build and available
+   indicators when roads are enabled.
+-  :math:`Q_{q,t} \ge 0`: silviculture activity area scheduled for
+   transition :math:`q` in period :math:`t`.
+-  :math:`N_e \in \mathbb{Z}_{\ge 0}`: units purchased for fleet option
+   :math:`e`.
 
 **Harvest quantity modes.**
 
@@ -256,59 +257,93 @@ value:
 
 **Implementation mapping (equation blocks to code).**
 
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Equation/constraint block                       | Pyomo component / helper                 | Data provenance                                    |
-+=================================================+==========================================+====================================================+
-| Harvest upper bound                             | ``model.harvest_upper``                  | ``HarvestSystemOption.max_area_ha`` and block      |
-|                                                 |                                          | operable area                                      |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Semi-continuous minimum cut                     | ``model.harvest_lower``                  | ``HarvestSystemOption.min_area_ha``                |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Whole-block mode                                | ``model.whole_block``                    | ``PlanningUnit.operable_area_ha``                  |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Productivity cap                                | ``model.productivity_cap``               | ``HarvestSystemOption.productivity_m3_per_period`` |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Product conversion                              | ``model.product_conversion``             | ``PlanningUnit.product_yields_m3_per_ha``          |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Block area balance                              | ``model.block_area``                     | ``PlanningUnit.operable_area_ha``                  |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Fleet capacity and acquisition                  | ``model.fleet_capacity``,                | ``FleetCapacity`` and ``FleetOption``              |
-|                                                 | ``model.fleet_units``,                   |                                                    |
-|                                                 | ``model.fleet_option_upper``             |                                                    |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Flow supply                                     | ``model.flow_supply``                    | ``TransportArc`` and ``product_volume``            |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Arc capacity                                    | ``model.arc_capacity``                   | ``TransportArc.capacity_m3``                       |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Purchase bounds                                 | ``model.purchase_lower``,                | ``ExternalSupply``                                 |
-|                                                 | ``model.purchase_upper``                 |                                                    |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Consumption bounds/targets                      | ``model.consumption_lower``,             | ``FacilityDemand``                                 |
-|                                                 | ``model.consumption_target``,            |                                                    |
-|                                                 | ``model.consumption_upper``              |                                                    |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Inventory balance                               | ``model.inventory_balance``              | ``InitialInventory``, flows, purchases,            |
-|                                                 |                                          | consumption                                        |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Road                                            | ``model.road_build``,                    | ``RoadProject``, ``RoadDependency``,               |
-| build/availability/dependencies/access/capacity | ``model.road_available``,                | ``BlockRoadAccess``                                |
-|                                                 | ``model.road_build_timing``,             |                                                    |
-|                                                 | ``model.road_availability``,             |                                                    |
-|                                                 | ``model.road_build_once``,               |                                                    |
-|                                                 | ``model.road_dependencies``,             |                                                    |
-|                                                 | ``model.road_access``,                   |                                                    |
-|                                                 | ``model.road_capacity``                  |                                                    |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Silviculture fulfillment                        | ``model.silviculture_area``,             | ``SilvicultureTransition``                         |
-|                                                 | ``model.silviculture_fulfillment``       |                                                    |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Objective profiles                              | ``model.objective``                      | ``Economics.objective_profile``, costs, values,    |
-|                                                 |                                          | discount factors                                   |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
-| Bundle replay and telemetry                     | ``tactical_bundle_to_dict(...)``,        | ``fhops.model.milp.tactical_operational``          |
-|                                                 | ``tactical_bundle_from_dict(...)``,      |                                                    |
-|                                                 | ``solve_tactical_operational_milp(...)`` |                                                    |
-+-------------------------------------------------+------------------------------------------+----------------------------------------------------+
++-----------------------+-----------------------+-----------------------+
+| Equation/constraint   | Pyomo component /     | Data provenance       |
+| block                 | helper                |                       |
++=======================+=======================+=======================+
+| Harvest upper bound   | ``                    | ``HarvestSyste        |
+|                       | model.harvest_upper`` | mOption.max_area_ha`` |
+|                       |                       | and block operable    |
+|                       |                       | area                  |
++-----------------------+-----------------------+-----------------------+
+| Semi-continuous       | ``                    | ``HarvestSyste        |
+| minimum cut           | model.harvest_lower`` | mOption.min_area_ha`` |
++-----------------------+-----------------------+-----------------------+
+| Whole-block mode      | ``model.whole_block`` | ``PlanningUn          |
+|                       |                       | it.operable_area_ha`` |
++-----------------------+-----------------------+-----------------------+
+| Productivity cap      | ``mod                 | ``Harves              |
+|                       | el.productivity_cap`` | tSystemOption.product |
+|                       |                       | ivity_m3_per_period`` |
++-----------------------+-----------------------+-----------------------+
+| Product conversion    | ``model               | ``PlanningUnit.produ  |
+|                       | .product_conversion`` | ct_yields_m3_per_ha`` |
++-----------------------+-----------------------+-----------------------+
+| Block area balance    | ``model.block_area``  | ``PlanningUn          |
+|                       |                       | it.operable_area_ha`` |
++-----------------------+-----------------------+-----------------------+
+| Fleet capacity and    | ``mo                  | ``FleetCapacity`` and |
+| acquisition           | del.fleet_capacity``, | ``FleetOption``       |
+|                       | `                     |                       |
+|                       | `model.fleet_units``, |                       |
+|                       | ``model               |                       |
+|                       | .fleet_option_upper`` |                       |
++-----------------------+-----------------------+-----------------------+
+| Flow supply           | ``model.flow_supply`` | ``TransportArc`` and  |
+|                       |                       | ``product_volume``    |
++-----------------------+-----------------------+-----------------------+
+| Arc capacity          | `                     | ``Trans               |
+|                       | `model.arc_capacity`` | portArc.capacity_m3`` |
++-----------------------+-----------------------+-----------------------+
+| Purchase bounds       | ``mo                  | ``ExternalSupply``    |
+|                       | del.purchase_lower``, |                       |
+|                       | ``m                   |                       |
+|                       | odel.purchase_upper`` |                       |
++-----------------------+-----------------------+-----------------------+
+| Consumption           | ``model               | ``FacilityDemand``    |
+| bounds/targets        | .consumption_lower``, |                       |
+|                       | ``model.              |                       |
+|                       | consumption_target``, |                       |
+|                       | ``mode                |                       |
+|                       | l.consumption_upper`` |                       |
++-----------------------+-----------------------+-----------------------+
+| Inventory balance     | ``mode                | ``InitialInventory``, |
+|                       | l.inventory_balance`` | flows, purchases,     |
+|                       |                       | consumption           |
++-----------------------+-----------------------+-----------------------+
+| Road                  | ``model.road_build``, | ``RoadProject``,      |
+| build                 | ``mo                  | ``RoadDependency``,   |
+| /availability/depende | del.road_available``, | ``BlockRoadAccess``   |
+| ncies/access/capacity | ``model               |                       |
+|                       | .road_build_timing``, |                       |
+|                       | ``model               |                       |
+|                       | .road_availability``, |                       |
+|                       | ``mod                 |                       |
+|                       | el.road_build_once``, |                       |
+|                       | ``model               |                       |
+|                       | .road_dependencies``, |                       |
+|                       | `                     |                       |
+|                       | `model.road_access``, |                       |
+|                       | ``                    |                       |
+|                       | model.road_capacity`` |                       |
++-----------------------+-----------------------+-----------------------+
+| Silviculture          | ``model               | ``Sil                 |
+| fulfillment           | .silviculture_area``, | vicultureTransition`` |
+|                       | ``model.silvi         |                       |
+|                       | culture_fulfillment`` |                       |
++-----------------------+-----------------------+-----------------------+
+| Objective profiles    | ``model.objective``   | ``Economics           |
+|                       |                       | .objective_profile``, |
+|                       |                       | costs, values,        |
+|                       |                       | discount factors      |
++-----------------------+-----------------------+-----------------------+
+| Bundle replay and     | ``tactical_b          | ``fhops.model.milp.t  |
+| telemetry             | undle_to_dict(...)``, | actical_operational`` |
+|                       | ``tactical_bun        |                       |
+|                       | dle_from_dict(...)``, |                       |
+|                       | ``solve_tactical_op   |                       |
+|                       | erational_milp(...)`` |                       |
++-----------------------+-----------------------+-----------------------+
 
 This formulation is the canonical mathematical reference for the FHOPS
 tactical–operational MILP. Generated TeX/RST outputs are derived

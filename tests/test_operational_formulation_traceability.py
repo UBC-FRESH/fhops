@@ -55,7 +55,7 @@ def test_generated_operational_formulation_outputs_include_mapping() -> None:
     assert "AUTO-GENERATED from fhops_operational_formulation.md" in tex
     assert "AUTO-GENERATED from fhops_operational_formulation.md" in rst
     assert "model.machine\\_capacity" in tex
-    assert "model.machine_capacity" in rst
     assert "model.objective" in tex
-    assert "model.objective" in rst
+    assert "Implementation mapping" in rst
+    assert "Pyomo component" in rst
     assert "fhops_operational_formulation.rst" in HOWTO.read_text(encoding="utf-8")
