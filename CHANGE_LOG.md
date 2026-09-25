@@ -1,3 +1,11 @@
+# 2026-09-25 — Fix pinned Pandoc PATH in docs CI (#70)
+- Created issue #70 after the first #68 CI run failed at `Install Pandoc`: the workflow appended Pandoc 3.1.3 to `GITHUB_PATH` for later steps but did not export it in the current shell.
+- Updated `.github/workflows/ci.yml` to export the pinned Pandoc directory immediately before running `pandoc --version`.
+- Commands executed:
+  - `gh issue create --repo UBC-FRESH/fhops --title "Fix pinned Pandoc PATH in docs CI" --type Bug` (created #70)
+  - `git switch -c issue-70-pandoc-path`
+  - `git diff --check`
+
 # 2026-09-25 — Pin formulation drift checks to CI Pandoc version (#68)
 - Created issue #68 after the first #66 CI run failed in the new drift-check step: GitHub Actions installed Pandoc 3.1.3, while the Phase 5 generated assets had been produced by a newer local pypandoc binary.
 - Pinned `scripts/check_formulation_assets.py` to Pandoc 3.1.3, added a `pandoc_available()` helper, and made the drift test skip unless that exact version is available locally.
