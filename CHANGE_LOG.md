@@ -1,3 +1,21 @@
+# 2026-09-25 — Phase 5.1 operational MILP traceability (#58)
+- Merged #57 via PR #61 and started #58 on `issue-58-phase-5.1-operational-traceability`.
+- Converted the canonical operational formulation’s implementation mapping from loose bullets into an explicit equation/component/data-provenance table in `fhops_operational_formulation.md`.
+- Regenerated `fhops_operational_formulation.tex` and `docs/includes/softwarex/fhops_operational_formulation.rst` with `export_docs_assets.py`.
+- Added `tests/test_operational_formulation_traceability.py`, which verifies that every mapped Pyomo component exists in both the canonical formulation and `src/fhops/model/milp/operational.py`, and that generated TeX/RST outputs include the mapping.
+- Commands executed:
+  - `git switch feature/phase5-formal-model-sync && git pull --ff-only`
+  - `git switch -c issue-58-phase-5.1-operational-traceability`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python docs/softwarex/manuscript/scripts/export_docs_assets.py` with isolated pypandoc on `PATH`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_operational_formulation_traceability.py` (2 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (380 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #58 changed-file set (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-25 — Phase 5.0 formulation source audit and ADR (#57)
 - Started child issue #57 on `issue-57-phase-5.0-formulation-source-audit` under Phase 5 parent #56.
 - Added `notes/formal_model_sync_audit.md`, inventorying current operational formulation assets, the new tactical–operational model, the shared exporter, traceability gaps, and drift-check requirements.
