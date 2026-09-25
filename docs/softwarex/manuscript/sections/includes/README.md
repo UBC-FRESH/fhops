@@ -14,6 +14,7 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
 | 1. Motivation & significance | `docs/overview.rst`, `docs/roadmap.rst`, `notes/thesis_alignment.md` | `motivation_story.md` → `motivation_story.tex/.rst` | Explain real modelling gaps (open tooling, integrated workflows) and cite Jaffray review. Keep BC case-study carve-out for Rosalia. |
 | 2. Software description – Architecture | `docs/overview.rst`, `docs/howto/system_sequencing.rst`, `docs/api/*` | `architecture_summary.md`, `pipeline_diagram.*` | Text + figure describing scenario→solver→playback pipeline. Manuscript figure reused in docs `overview`. |
 | 2. Software description – Mathematical formulation | `src/fhops/model/milp/operational.py`, `src/fhops/model/milp/data.py`, `docs/howto/optimization_formulation.rst` | `fhops_operational_formulation.md` → `fhops_operational_formulation.tex/.rst` | Canonical operational MILP equations + equation-to-code traceability table shared across manuscript/docs and reused for thesis chapter insertion. |
+| Future formulation section / thesis or Sphinx tactical reference | `src/fhops/model/milp/tactical_operational.py`, `docs/howto/tactical_operational.rst` | `fhops_tactical_operational_formulation.md` → `fhops_tactical_operational_formulation.tex/.rst` | Phase 5.2 (#59) provides the canonical TOPM-inspired tactical–operational MILP source; manuscript inclusion remains an editorial decision per ADR 0002. |
 | 2. Software description – Heuristics/tuners | `docs/howto/heuristic_presets.rst`, `docs/howto/parallel_heuristics.rst`, `docs/howto/tabu.rst`, `docs/howto/ils.rst`, `docs/howto/telemetry_tuning.rst` | `heuristic_matrix.csv` + `heuristic_text.md` | CSV drives both manuscript table and Sphinx reference page; describe SA/ILS/Tabu + tuner automation. |
 | 3. Illustrative example | `docs/howto/quickstart.rst`, `docs/howto/benchmarks.rst`, `docs/howto/synthetic_datasets.rst` | `illustrative_walkthrough.md`, `benchmark_table.csv` | Align CLI steps + dataset notes; reuse same telemetry screenshots. |
 | 4. Impact | `docs/roadmap.rst`, `docs/releases/v1.0.0.md`, `notes/softwarex_manuscript_plan.md` | `impact_story.md` | Summarize adoption + roadmap commitments once metrics ready. |
@@ -26,7 +27,7 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
   - [x] Heuristics solver matrix now lives in `heuristics_matrix.csv` + `heuristics_notes.md` and renders into TeX/RST.
   - [x] Benchmark KPI table + notes now live in `benchmark_kpis.csv` + `benchmark_kpis_notes.md`.
 - [x] Update Sphinx `overview.rst` and `docs/templates/includes/` to ``.. include::`` the generated `.rst` snippets once available (see `docs/overview.rst` motivation section).
-- [ ] Add CI check (Phase 3) to confirm no drift between `.md` primaries and rendered assets.
+- [x] Add CI/local drift check confirming no drift between `.md`/`.csv` primaries and rendered assets (`scripts/check_formulation_assets.py`, Phase 5.3 #60).
 - [ ] PRISMA figure maintenance
   - [x] Store the LaTeX source in `prisma_overview.tex` (requires the `prisma-flow-diagram` package, already added to `fhops-softx.tex` preamble).
   - [x] Provide a docs include (`docs/includes/softwarex/prisma_overview.rst`) describing the same flow until we land an automated PNG export.

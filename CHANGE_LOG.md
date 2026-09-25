@@ -1,3 +1,106 @@
+# 2026-09-25 — Phase 5 integration housekeeping and review handoff
+- Marked Phase 5 child issues #57–#60 complete in `ROADMAP.md` after PRs #61–#64 merged into `feature/phase5-formal-model-sync`.
+- Updated `notes/formal_model_sync_issue_tree.md` and `notes/formal_model_sync_audit.md` to show the canonical operational/tactical formulation sources, traceability tests, and drift checker are complete.
+- Preparing the Phase 5 integration PR from `feature/phase5-formal-model-sync` to `main`; parent #56 remains open until maintainer approval.
+- Commands executed:
+  - `git switch feature/phase5-formal-model-sync && git fetch origin && git pull --ff-only`
+  - `.venv/bin/ruff format src tests scripts docs/softwarex/manuscript/scripts`
+  - `.venv/bin/ruff check src tests scripts docs/softwarex/manuscript/scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py docs/softwarex/manuscript/scripts/export_docs_assets.py` (126 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/check_formulation_assets.py` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (383 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the Phase 5 housekeeping file set (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-25 — Phase 5.3 formulation drift checks and closeout (#60)
+- Merged #59 via PR #63 and started #60 on `issue-60-phase-5.3-formulation-drift-closeout`.
+- Added `scripts/check_formulation_assets.py`, which copies Markdown/CSV formulation primaries into a temporary directory, regenerates TeX/RST outputs via `export_docs_assets.py`, and fails with drifted paths when checked-in generated assets are stale.
+- Hardened `export_docs_assets.py` so temporary/out-of-repo include directories can be used safely by drift checks.
+- Added `tests/test_formulation_asset_drift.py` and updated `AGENTS.md` so the formulation drift check is part of the conditional command cadence when formulation assets change.
+- Marked the SoftwareX shared-include drift-check action complete and updated the Phase 5 issue tree/roadmap/audit notes.
+- Commands executed:
+  - `git switch feature/phase5-formal-model-sync && git pull --ff-only`
+  - `git switch -c issue-60-phase-5.3-formulation-drift-closeout`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/check_formulation_assets.py` (passed)
+  - `.venv/bin/ruff format src tests scripts docs/softwarex/manuscript/scripts`
+  - `.venv/bin/ruff check src tests scripts docs/softwarex/manuscript/scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py docs/softwarex/manuscript/scripts/export_docs_assets.py` (126 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_formulation_asset_drift.py tests/test_operational_formulation_traceability.py tests/test_tactical_operational_formulation_traceability.py` (5 passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (383 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #60 changed-file set (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-25 — Phase 5.2 tactical–operational MILP canonical formulation (#59)
+- Merged #58 via PR #62 and started #59 on `issue-59-phase-5.2-tactical-formulation`.
+- Added `docs/softwarex/manuscript/sections/includes/fhops_tactical_operational_formulation.md` as the canonical TOPM-inspired tactical–operational MILP source.
+- Documented sets, parameters, decision variables, harvest modes, product conversion, fleet capacity/investment, transport, purchases, consumption, inventory, roads, silviculture, and cost/profit/NPV objective profiles.
+- Added a full equation-to-code traceability table covering `src/fhops/model/milp/tactical_operational.py` components and contract data sources.
+- Regenerated `fhops_tactical_operational_formulation.tex` and `docs/includes/softwarex/fhops_tactical_operational_formulation.rst` with the shared exporter and linked the Sphinx tactical how-to to the canonical include.
+- Added `tests/test_tactical_operational_formulation_traceability.py` to verify every mapped Pyomo component exists in code and generated outputs.
+- Commands executed:
+  - `git switch feature/phase5-formal-model-sync && git pull --ff-only`
+  - `git switch -c issue-59-phase-5.2-tactical-formulation`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python docs/softwarex/manuscript/scripts/export_docs_assets.py` with isolated pypandoc on `PATH`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_tactical_operational_formulation_traceability.py` (2 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (382 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #59 changed-file set (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-25 — Phase 5.1 operational MILP traceability (#58)
+- Merged #57 via PR #61 and started #58 on `issue-58-phase-5.1-operational-traceability`.
+- Converted the canonical operational formulation’s implementation mapping from loose bullets into an explicit equation/component/data-provenance table in `fhops_operational_formulation.md`.
+- Regenerated `fhops_operational_formulation.tex` and `docs/includes/softwarex/fhops_operational_formulation.rst` with `export_docs_assets.py`.
+- Added `tests/test_operational_formulation_traceability.py`, which verifies that every mapped Pyomo component exists in both the canonical formulation and `src/fhops/model/milp/operational.py`, and that generated TeX/RST outputs include the mapping.
+- Commands executed:
+  - `git switch feature/phase5-formal-model-sync && git pull --ff-only`
+  - `git switch -c issue-58-phase-5.1-operational-traceability`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python docs/softwarex/manuscript/scripts/export_docs_assets.py` with isolated pypandoc on `PATH`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_operational_formulation_traceability.py` (2 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (380 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #58 changed-file set (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-25 — Phase 5.0 formulation source audit and ADR (#57)
+- Started child issue #57 on `issue-57-phase-5.0-formulation-source-audit` under Phase 5 parent #56.
+- Added `notes/formal_model_sync_audit.md`, inventorying current operational formulation assets, the new tactical–operational model, the shared exporter, traceability gaps, and drift-check requirements.
+- Added `notes/adr/0002-formal-model-synchronization.md`, proposing one canonical Markdown source per MILP (`fhops_operational_formulation.md` and `fhops_tactical_operational_formulation.md`) with generated TeX/RST outputs and mandatory equation-to-code mapping.
+- Updated the SoftwareX shared-include README so the tactical formulation has a planned synchronized asset while manuscript inclusion remains an explicit editorial decision.
+- Commands executed:
+  - `git switch -c issue-57-phase-5.0-formulation-source-audit`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (378 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #57 changed-file set (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-25 — Phase 5 formal model synchronization issue tree kickoff
+- Audited and closed stale issue #31 (Phase 3 onboarding notebooks) after confirming the five-notebook series and focused support tests are complete on `main`.
+- Created Phase 5 parent issue #56 and child issues #57–#60, linked through GitHub sub-issues, for canonical source audit/ADR, operational MILP traceability, tactical–operational MILP formulation, and drift-check closeout.
+- Created `feature/phase5-formal-model-sync` and added `notes/formal_model_sync_issue_tree.md` as the phase manifest.
+- Updated `ROADMAP.md` so Phase 5 explicitly covers both the operational day×shift MILP and the Phase 6 tactical–operational MILP.
+- Commands executed:
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_example_notebook_support.py` (43 passed)
+  - `gh issue edit 31 --body-file ...` and `gh issue close 31` (closed stale Phase 3 parent issue)
+  - `python /tmp/opencode/create_phase5_issues.py` (created #56–#60 and linked child issues)
+  - `git switch -c feature/phase5-formal-model-sync`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files CHANGE_LOG.md ROADMAP.md notes/formal_model_sync_issue_tree.md` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Post-Phase 6 documentation and validation housekeeping (#54)
 - Created issue #54 from the independent reviewer audit and started branch `issue-54-post-phase6-housekeeping` from `main`.
 - Fixed the stale `fhops.model.milp.tactical_operational` module docstring so it describes the implemented product-flow, inventory, purchase, road, silviculture, fleet, objective-profile, and telemetry scope instead of calling those features follow-on work.

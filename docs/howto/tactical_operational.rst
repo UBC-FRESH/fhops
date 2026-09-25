@@ -5,6 +5,14 @@ Phase 6 adds a TOPM-inspired aggregate planning layer beside the existing day/sh
 scheduler. The tactical–operational contract is intentionally separate from schema ``1.0.0`` so
 current operational scenario bundles remain unchanged.
 
+Canonical formulation
+---------------------
+
+The full equation set and equation-to-code mapping are maintained from a shared source module used
+by Sphinx and manuscript/thesis assets:
+
+.. include:: ../includes/softwarex/fhops_tactical_operational_formulation.rst
+
 Use the tactical contract for 1–5 year plans that need:
 
 - planning periods (four-week periods, months, seasons, or custom tables);

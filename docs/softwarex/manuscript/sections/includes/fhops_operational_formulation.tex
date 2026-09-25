@@ -258,49 +258,66 @@ x, y, g \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,
 
 \textbf{Implementation mapping (equation blocks to code).}
 
-\begin{itemize}
-\tightlist
-\item
-  Machine capacity and availability: \texttt{model.machine\_capacity}
-  (\texttt{machine\_capacity\_rule})
-\item
-  Role compatibility: \texttt{model.role\_compatibility}
-  (\texttt{role\_compatibility\_rule})
-\item
-  Production-assignment coupling: \texttt{model.production\_cap}
-  (\texttt{prod\_cap\_rule})
-\item
-  Block windows: \texttt{model.block\_windows} (\texttt{window\_rule})
-\item
-  Role aggregation: \texttt{model.role\_prod\_balance}
-  (\texttt{role\_prod\_balance\_rule})
-\item
-  Transition linkage: \texttt{model.transition\_prev},
-  \texttt{model.transition\_curr}, \texttt{model.transition\_link}
-\item
-  Inventory dynamics and guards: \texttt{model.inventory\_start\_eq},
-  \texttt{model.inventory\_balance}, \texttt{model.inventory\_guard}
-\item
-  Head-start activation: \texttt{model.activation\_prod},
-  \texttt{model.head\_start}, \texttt{model.role\_active\_upper},
-  \texttt{model.role\_active\_lower}
-\item
-  Loader batching: \texttt{model.loader\_batch},
-  \texttt{model.loader\_partial\_cap}
-\item
-  Block balance with leftovers: \texttt{model.block\_balance}
-  (\texttt{block\_balance\_rule}) + \texttt{model.leftover}
-\item
-  Landing capacity with slack: \texttt{model.landing\_capacity}
-  (\texttt{landing\_capacity\_rule}) + \texttt{model.landing\_surplus}
-\item
-  Objective assembly: \texttt{model.objective} and objective-term
-  construction around \texttt{prod\_weight}, \texttt{landing\_weight},
-  \texttt{mobilisation\_weight}, \texttt{transition\_weight}
-\item
-  Data/parameter normalization: \texttt{build\_operational\_bundle(...)}
-  in \texttt{fhops.model.milp.data}
-\end{itemize}
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Equation/constraint block
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Pyomo component / helper
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Data provenance
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Machine capacity and availability & \texttt{model.machine\_capacity}
+(\texttt{machine\_capacity\_rule}) & \texttt{availability\_day} /
+\texttt{availability\_shift} from
+\texttt{build\_operational\_bundle(...)} \\
+Role compatibility & \texttt{model.role\_compatibility}
+(\texttt{role\_compatibility\_rule}) & \texttt{machine\_roles},
+\texttt{block\_system}, and \texttt{systems} from
+\texttt{build\_operational\_bundle(...)} \\
+Production-assignment coupling & \texttt{model.production\_cap}
+(\texttt{prod\_cap\_rule}) & \texttt{production\_rates} from
+\texttt{build\_operational\_bundle(...)} \\
+Block windows & \texttt{model.block\_windows} (\texttt{window\_rule}) &
+\texttt{windows} from \texttt{Scenario.window\_for(...)} \\
+Role aggregation & \texttt{model.role\_prod\_balance}
+(\texttt{role\_prod\_balance\_rule}) & \texttt{machine\_roles} +
+harvest-system role metadata \\
+Transition linkage & \texttt{model.transition\_prev},
+\texttt{model.transition\_curr}, \texttt{model.transition\_link} &
+\texttt{mobilisation\_params} / \texttt{mobilisation\_distances} \\
+Inventory dynamics and guards & \texttt{model.inventory\_start\_eq},
+\texttt{model.inventory\_balance}, \texttt{model.inventory\_guard} &
+harvest-system prerequisites and role buffers \\
+Head-start activation & \texttt{model.activation\_prod},
+\texttt{model.head\_start}, \texttt{model.role\_active\_upper},
+\texttt{model.role\_active\_lower} & \texttt{role\_headstart\_shifts} in
+harvest-system configs \\
+Loader batching & \texttt{model.loader\_batch},
+\texttt{model.loader\_partial\_cap} & \texttt{loader\_batch\_volume\_m3}
+in harvest-system configs \\
+Block balance with leftovers & \texttt{model.block\_balance}
+(\texttt{block\_balance\_rule}) + \texttt{model.leftover} &
+\texttt{work\_required} from blocks \\
+Landing capacity with slack & \texttt{model.landing\_capacity}
+(\texttt{landing\_capacity\_rule}) + \texttt{model.landing\_surplus} &
+\texttt{landing\_capacity} and \texttt{landing\_for\_block} \\
+Objective assembly & \texttt{model.objective} plus
+\texttt{prod\_weight}, \texttt{landing\_weight},
+\texttt{mobilisation\_weight}, \texttt{transition\_weight} terms &
+\texttt{ObjectiveWeights} from the scenario contract \\
+Data/parameter normalization & \texttt{build\_operational\_bundle(...)}
+& \texttt{fhops.model.milp.data} \\
+\end{longtable}
+}
 
 This formulation is the canonical mathematical reference for FHOPS
 operational MILP documentation and thesis-level reporting.
