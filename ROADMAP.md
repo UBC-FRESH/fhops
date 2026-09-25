@@ -123,7 +123,7 @@ before proposing new work.
 ## Phase 5 — Formal Model Documentation Synchronization
 - [ ] #57 Audit canonical formulation sources and approve the shared source/ADR layout for operational and tactical–operational MILPs. *(In progress on `issue-57-phase-5.0-formulation-source-audit`.)*
 - [ ] #58 Publish the operational MILP formulation as a canonical source module shared across manuscript and docs, with current `operational.py`/`data.py` traceability. *(In progress on `issue-58-phase-5.1-operational-traceability`.)*
-- [ ] #59 Publish the tactical–operational MILP formulation as a canonical source module shared across Sphinx/manuscript assets, with `tactical_operational.py` traceability.
+- [ ] #59 Publish the tactical–operational MILP formulation as a canonical source module shared across Sphinx/manuscript assets, with `tactical_operational.py` traceability. *(In progress on `issue-59-phase-5.2-tactical-formulation`.)*
 - [ ] #60 Add regression/drift checks ensuring formulation assets regenerate cleanly (`export_docs_assets.py` + docs build).
 
 ## Phase 6 — Tactical–Operational Expansion (TOPM-Inspired)

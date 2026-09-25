@@ -1,3 +1,23 @@
+# 2026-09-25 — Phase 5.2 tactical–operational MILP canonical formulation (#59)
+- Merged #58 via PR #62 and started #59 on `issue-59-phase-5.2-tactical-formulation`.
+- Added `docs/softwarex/manuscript/sections/includes/fhops_tactical_operational_formulation.md` as the canonical TOPM-inspired tactical–operational MILP source.
+- Documented sets, parameters, decision variables, harvest modes, product conversion, fleet capacity/investment, transport, purchases, consumption, inventory, roads, silviculture, and cost/profit/NPV objective profiles.
+- Added a full equation-to-code traceability table covering `src/fhops/model/milp/tactical_operational.py` components and contract data sources.
+- Regenerated `fhops_tactical_operational_formulation.tex` and `docs/includes/softwarex/fhops_tactical_operational_formulation.rst` with the shared exporter and linked the Sphinx tactical how-to to the canonical include.
+- Added `tests/test_tactical_operational_formulation_traceability.py` to verify every mapped Pyomo component exists in code and generated outputs.
+- Commands executed:
+  - `git switch feature/phase5-formal-model-sync && git pull --ff-only`
+  - `git switch -c issue-59-phase-5.2-tactical-formulation`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python docs/softwarex/manuscript/scripts/export_docs_assets.py` with isolated pypandoc on `PATH`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_tactical_operational_formulation_traceability.py` (2 passed)
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (382 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #59 changed-file set (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-25 — Phase 5.1 operational MILP traceability (#58)
 - Merged #57 via PR #61 and started #58 on `issue-58-phase-5.1-operational-traceability`.
 - Converted the canonical operational formulation’s implementation mapping from loose bullets into an explicit equation/component/data-provenance table in `fhops_operational_formulation.md`.

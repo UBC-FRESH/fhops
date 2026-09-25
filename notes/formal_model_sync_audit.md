@@ -37,6 +37,8 @@ Parent: #56
   provenance table and added `tests/test_operational_formulation_traceability.py` to verify that
   every mapped Pyomo component exists in both the formulation and implementation.
 - The shared exporter regenerated the operational TeX/RST includes cleanly after the table update.
+- #59 adds `fhops_tactical_operational_formulation.md` as the canonical TOPM-inspired tactical
+  source, generates TeX/RST includes, links the tactical how-to, and adds static traceability tests.
 
 ## Decisions needed
 
