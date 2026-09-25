@@ -101,6 +101,7 @@ module = [
   "click",
   "click.*",
   "optuna.*",
+  "pypandoc.*",
   "numpy.*",
   "pyarrow.*",
   "fastparquet.*",

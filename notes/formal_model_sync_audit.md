@@ -39,6 +39,9 @@ Parent: #56
 - The shared exporter regenerated the operational TeX/RST includes cleanly after the table update.
 - #59 adds `fhops_tactical_operational_formulation.md` as the canonical TOPM-inspired tactical
   source, generates TeX/RST includes, links the tactical how-to, and adds static traceability tests.
+- #60 adds `scripts/check_formulation_assets.py`, which regenerates formulation assets into a
+  temporary tree and fails on checked-in drift; `AGENTS.md` now includes the conditional check in
+  the command cadence.
 
 ## Decisions needed
 

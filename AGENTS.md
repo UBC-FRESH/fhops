@@ -38,6 +38,7 @@ for the design contract (the pattern is identical across all FRESH packages).
 4. `pytest`
 5. `pre-commit run --all-files` *(after `pre-commit install`)*
 6. `sphinx-build -b html docs _build/html -W`
+7. `python scripts/check_formulation_assets.py` *(when changing formulation sources or generated TeX/RST includes)*
 
 Record the exact commands executed in the current `CHANGE_LOG.md` entry. Address warnings
 instead of suppressing them; escalate only if consensus is reached with maintainers.

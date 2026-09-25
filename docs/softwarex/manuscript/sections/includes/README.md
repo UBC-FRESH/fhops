@@ -27,7 +27,7 @@ Automation hook (Phase 1 deliverable): extend `docs/softwarex/manuscript/scripts
   - [x] Heuristics solver matrix now lives in `heuristics_matrix.csv` + `heuristics_notes.md` and renders into TeX/RST.
   - [x] Benchmark KPI table + notes now live in `benchmark_kpis.csv` + `benchmark_kpis_notes.md`.
 - [x] Update Sphinx `overview.rst` and `docs/templates/includes/` to ``.. include::`` the generated `.rst` snippets once available (see `docs/overview.rst` motivation section).
-- [ ] Add CI check (Phase 3) to confirm no drift between `.md` primaries and rendered assets.
+- [x] Add CI/local drift check confirming no drift between `.md`/`.csv` primaries and rendered assets (`scripts/check_formulation_assets.py`, Phase 5.3 #60).
 - [ ] PRISMA figure maintenance
   - [x] Store the LaTeX source in `prisma_overview.tex` (requires the `prisma-flow-diagram` package, already added to `fhops-softx.tex` preamble).
   - [x] Provide a docs include (`docs/includes/softwarex/prisma_overview.rst`) describing the same flow until we land an automated PNG export.
