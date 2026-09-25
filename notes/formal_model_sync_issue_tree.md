@@ -20,8 +20,8 @@ Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 All four child issues are linked to parent #56 through GitHub sub-issues and assigned the
 repository `Feature` issue type.
 
-2026-09-25 status: #57–#59 merged into the Phase 5 branch via PRs #61–#63. #60 is in progress on
-branch `issue-60-phase-5.3-formulation-drift-closeout`.
+2026-09-25 status: all child issues #57–#60 merged into the Phase 5 branch via PRs #61–#64.
+Parent #56 remains open pending the Phase 5 integration PR into `main` and maintainer approval.
 
 ## Scope note
 

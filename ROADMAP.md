@@ -124,7 +124,7 @@ before proposing new work.
 - [x] #57 Audit canonical formulation sources and approve the shared source/ADR layout for operational and tactical–operational MILPs (merged via PR #61).
 - [x] #58 Publish the operational MILP formulation as a canonical source module shared across manuscript and docs, with current `operational.py`/`data.py` traceability (merged via PR #62).
 - [x] #59 Publish the tactical–operational MILP formulation as a canonical source module shared across Sphinx/manuscript assets, with `tactical_operational.py` traceability (merged via PR #63).
-- [ ] #60 Add regression/drift checks ensuring formulation assets regenerate cleanly (`export_docs_assets.py` + docs build). *(In progress on `issue-60-phase-5.3-formulation-drift-closeout`.)*
+- [x] #60 Add regression/drift checks ensuring formulation assets regenerate cleanly (`export_docs_assets.py` + docs build) (merged via PR #64).
 
 ## Phase 6 — Tactical–Operational Expansion (TOPM-Inspired)
 - [x] #37 Approve the architecture, scope boundaries, workflow contract, and TOPM/OperMAX provenance baseline in `notes/tactical_operational_expansion_plan.md` (merged via PR #45).
@@ -180,10 +180,10 @@ before proposing new work.
     - Expose both CLI (`fhops plan rolling`) and Python API helpers, starting with planning machinery (SA baseline) and deferring evaluation/reporting to a later phase.
     - Log per-iteration telemetry so MASc-led studies can quantify suboptimality vs. full-horizon baselines once the planning engine stabilizes.
 12. **Formal Model Documentation Sync (#56; `notes/formal_model_sync_issue_tree.md`)**
-    - Phase branch is `feature/phase5-formal-model-sync`; child issues #57–#60 cover source audit, operational traceability, tactical–operational formulation, and drift checks.
-    - Keep canonical operational and tactical–operational MILP formulations synchronized across SoftwareX manuscript, Sphinx docs, and thesis-facing assets.
-    - Preserve code-to-equation traceability against `src/fhops/model/milp/operational.py`, `src/fhops/model/milp/data.py`, and `src/fhops/model/milp/tactical_operational.py`.
-    - Add lightweight regeneration/build checks to catch drift between Markdown sources and generated `.tex`/`.rst` includes.
+    - Child issues #57–#60 are merged into `feature/phase5-formal-model-sync` via PRs #61–#64.
+    - Canonical operational and tactical–operational MILP formulations are synchronized across Markdown sources, generated TeX/RST includes, Sphinx docs, and manuscript-facing assets.
+    - `scripts/check_formulation_assets.py` now regenerates formulation assets into a temporary tree and fails on checked-in drift; traceability tests cover both MILP mapping tables.
+    - Final gate: merge the Phase 5 integration PR into `main` and close parent #56 after maintainer approval.
 13. **Tactical–Operational Expansion (#36; `notes/tactical_operational_expansion_plan.md`, `notes/tactical_operational_issue_tree.md`)**
     - Parent issue #36 and child issues #37–#44 are linked via GitHub sub-issues; all child PRs #45–#52 are merged into `feature/phase6-tactical-operational-expansion`.
     - The phase branch now carries the two-level architecture, tactical contract/MILP, product-flow/inventory/infrastructure modules, scenario overlays/reporting, tactical→operational handoff, and initial scale telemetry.

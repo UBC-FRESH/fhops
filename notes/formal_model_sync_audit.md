@@ -43,10 +43,11 @@ Parent: #56
   temporary tree and fails on checked-in drift; `AGENTS.md` now includes the conditional check in
   the command cadence.
 
-## Decisions needed
+## Decisions closed
 
-- Confirm canonical source location and naming for the tactical formulation.
-- Confirm that generated `.tex`/`.rst` files are checked in but never edited directly.
-- Confirm the drift-check command and expected local/CI placement.
-- Confirm whether SoftwareX manuscript inclusion of tactical math is deferred to a future revision
-  while Sphinx/thesis assets consume the same source immediately.
+- Canonical source layout approved through ADR 0002 and implemented for both MILPs.
+- Generated `.tex`/`.rst` files are checked in but treated as derived artifacts.
+- Drift checking is implemented by `scripts/check_formulation_assets.py` and covered by
+  `tests/test_formulation_asset_drift.py`.
+- SoftwareX manuscript inclusion of tactical math remains an editorial decision; Sphinx and future
+  thesis assets consume the canonical source now.

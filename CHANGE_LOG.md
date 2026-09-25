@@ -1,3 +1,18 @@
+# 2026-09-25 — Phase 5 integration housekeeping and review handoff
+- Marked Phase 5 child issues #57–#60 complete in `ROADMAP.md` after PRs #61–#64 merged into `feature/phase5-formal-model-sync`.
+- Updated `notes/formal_model_sync_issue_tree.md` and `notes/formal_model_sync_audit.md` to show the canonical operational/tactical formulation sources, traceability tests, and drift checker are complete.
+- Preparing the Phase 5 integration PR from `feature/phase5-formal-model-sync` to `main`; parent #56 remains open until maintainer approval.
+- Commands executed:
+  - `git switch feature/phase5-formal-model-sync && git fetch origin && git pull --ff-only`
+  - `.venv/bin/ruff format src tests scripts docs/softwarex/manuscript/scripts`
+  - `.venv/bin/ruff check src tests scripts docs/softwarex/manuscript/scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py docs/softwarex/manuscript/scripts/export_docs_assets.py` (126 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/check_formulation_assets.py` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (383 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the Phase 5 housekeeping file set (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-25 — Phase 5.3 formulation drift checks and closeout (#60)
 - Merged #59 via PR #63 and started #60 on `issue-60-phase-5.3-formulation-drift-closeout`.
 - Added `scripts/check_formulation_assets.py`, which copies Markdown/CSV formulation primaries into a temporary directory, regenerates TeX/RST outputs via `export_docs_assets.py`, and fails with drifted paths when checked-in generated assets are stale.
