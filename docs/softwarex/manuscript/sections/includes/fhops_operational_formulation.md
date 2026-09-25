@@ -181,18 +181,20 @@ $$
 
 **Implementation mapping (equation blocks to code).**
 
-- Machine capacity and availability: `model.machine_capacity` (`machine_capacity_rule`)
-- Role compatibility: `model.role_compatibility` (`role_compatibility_rule`)
-- Production-assignment coupling: `model.production_cap` (`prod_cap_rule`)
-- Block windows: `model.block_windows` (`window_rule`)
-- Role aggregation: `model.role_prod_balance` (`role_prod_balance_rule`)
-- Transition linkage: `model.transition_prev`, `model.transition_curr`, `model.transition_link`
-- Inventory dynamics and guards: `model.inventory_start_eq`, `model.inventory_balance`, `model.inventory_guard`
-- Head-start activation: `model.activation_prod`, `model.head_start`, `model.role_active_upper`, `model.role_active_lower`
-- Loader batching: `model.loader_batch`, `model.loader_partial_cap`
-- Block balance with leftovers: `model.block_balance` (`block_balance_rule`) + `model.leftover`
-- Landing capacity with slack: `model.landing_capacity` (`landing_capacity_rule`) + `model.landing_surplus`
-- Objective assembly: `model.objective` and objective-term construction around `prod_weight`, `landing_weight`, `mobilisation_weight`, `transition_weight`
-- Data/parameter normalization: `build_operational_bundle(...)` in `fhops.model.milp.data`
+| Equation/constraint block | Pyomo component / helper | Data provenance |
+|---|---|---|
+| Machine capacity and availability | `model.machine_capacity` (`machine_capacity_rule`) | `availability_day` / `availability_shift` from `build_operational_bundle(...)` |
+| Role compatibility | `model.role_compatibility` (`role_compatibility_rule`) | `machine_roles`, `block_system`, and `systems` from `build_operational_bundle(...)` |
+| Production-assignment coupling | `model.production_cap` (`prod_cap_rule`) | `production_rates` from `build_operational_bundle(...)` |
+| Block windows | `model.block_windows` (`window_rule`) | `windows` from `Scenario.window_for(...)` |
+| Role aggregation | `model.role_prod_balance` (`role_prod_balance_rule`) | `machine_roles` + harvest-system role metadata |
+| Transition linkage | `model.transition_prev`, `model.transition_curr`, `model.transition_link` | `mobilisation_params` / `mobilisation_distances` |
+| Inventory dynamics and guards | `model.inventory_start_eq`, `model.inventory_balance`, `model.inventory_guard` | harvest-system prerequisites and role buffers |
+| Head-start activation | `model.activation_prod`, `model.head_start`, `model.role_active_upper`, `model.role_active_lower` | `role_headstart_shifts` in harvest-system configs |
+| Loader batching | `model.loader_batch`, `model.loader_partial_cap` | `loader_batch_volume_m3` in harvest-system configs |
+| Block balance with leftovers | `model.block_balance` (`block_balance_rule`) + `model.leftover` | `work_required` from blocks |
+| Landing capacity with slack | `model.landing_capacity` (`landing_capacity_rule`) + `model.landing_surplus` | `landing_capacity` and `landing_for_block` |
+| Objective assembly | `model.objective` plus `prod_weight`, `landing_weight`, `mobilisation_weight`, `transition_weight` terms | `ObjectiveWeights` from the scenario contract |
+| Data/parameter normalization | `build_operational_bundle(...)` | `fhops.model.milp.data` |
 
 This formulation is the canonical mathematical reference for FHOPS operational MILP documentation and thesis-level reporting.

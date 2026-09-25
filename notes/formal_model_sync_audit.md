@@ -30,6 +30,14 @@ Parent: #56
 5. The manuscript may not need the tactical formulation for the current SoftwareX revision; the
    canonical TeX include should still exist so thesis and future manuscripts do not fork math.
 
+## 2026-09-25 progress
+
+- #57 established the canonical source/ADR layout.
+- #58 converted the operational implementation mapping into an explicit equation/component/data
+  provenance table and added `tests/test_operational_formulation_traceability.py` to verify that
+  every mapped Pyomo component exists in both the formulation and implementation.
+- The shared exporter regenerated the operational TeX/RST includes cleanly after the table update.
+
 ## Decisions needed
 
 - Confirm canonical source location and naming for the tactical formulation.
