@@ -18,17 +18,43 @@ import sys
 import tempfile
 from pathlib import Path
 
+PANDOC_VERSION = "3.1.3"
+
+
+def _pandoc_version(path: str) -> str | None:
+    try:
+        output = subprocess.run(
+            [path, "--version"],
+            text=True,
+            capture_output=True,
+            check=True,
+        ).stdout.splitlines()[0]
+    except Exception:
+        return None
+    parts = output.split()
+    return parts[1] if len(parts) > 1 and parts[0].lower() == "pandoc" else None
+
 
 def _pandoc_path() -> str | None:
+    candidates: list[str] = []
     found = shutil.which("pandoc")
     if found:
-        return found
+        candidates.append(found)
     try:
         import pypandoc
 
-        return str(pypandoc.get_pandoc_path())
+        candidates.append(str(pypandoc.get_pandoc_path()))
     except Exception:
-        return None
+        pass
+    for candidate in candidates:
+        if _pandoc_version(candidate) == PANDOC_VERSION:
+            return candidate
+    return None
+
+
+def pandoc_available() -> bool:
+    """Return True when the pinned Pandoc version is available."""
+    return _pandoc_path() is not None
 
 
 def _copy_sources(includes_dir: Path, target: Path) -> None:
@@ -73,7 +99,8 @@ def main() -> int:
     pandoc = _pandoc_path()
     if pandoc is None:
         print(
-            "[formulation-check] pandoc not found; install pandoc or pypandoc-binary.",
+            f"[formulation-check] Pandoc {PANDOC_VERSION} not found; install that version "
+            "or use the CI workflow environment.",
             file=sys.stderr,
         )
         return 2

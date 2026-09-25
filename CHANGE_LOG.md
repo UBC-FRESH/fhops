@@ -1,3 +1,23 @@
+# 2026-09-25 — Pin formulation drift checks to CI Pandoc version (#68)
+- Created issue #68 after the first #66 CI run failed in the new drift-check step: GitHub Actions installed Pandoc 3.1.3, while the Phase 5 generated assets had been produced by a newer local pypandoc binary.
+- Pinned `scripts/check_formulation_assets.py` to Pandoc 3.1.3, added a `pandoc_available()` helper, and made the drift test skip unless that exact version is available locally.
+- Updated `.github/workflows/ci.yml` to download Pandoc 3.1.3 from the upstream release instead of relying on the Ubuntu package.
+- Regenerated all formulation TeX/RST assets with Pandoc 3.1.3 and verified the drift checker passes byte-for-byte against the CI toolchain.
+- Commands executed:
+  - `gh issue create --repo UBC-FRESH/fhops --title "Pin formulation drift checks to CI Pandoc version" --type Bug` (created #68)
+  - `git switch -c issue-68-pandoc-version-drift`
+  - `curl -L https://github.com/jgm/pandoc/releases/download/3.1.3/pandoc-3.1.3-linux-amd64.tar.gz ...` *(installed Pandoc 3.1.3 under `/tmp/opencode`)*
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python docs/softwarex/manuscript/scripts/export_docs_assets.py`
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python scripts/check_formulation_assets.py` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_formulation_asset_drift.py` (1 passed)
+  - `.venv/bin/ruff format src tests scripts docs/softwarex/manuscript/scripts`
+  - `.venv/bin/ruff check src tests scripts docs/softwarex/manuscript/scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py docs/softwarex/manuscript/scripts/export_docs_assets.py` (126 source files, no issues)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (383 passed, 210 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-25 — Restore green main CI and publish updated docs (#66)
 - Confirmed the updated docs were not online because `main` CI failed before the Pages deploy job: the formulation drift test ran before Pandoc installation, and full pre-commit then failed on pre-existing onboarding notebook lint debt.
 - Moved CI Pandoc installation before pytest, added an explicit `scripts/check_formulation_assets.py` step, and made `tests/test_formulation_asset_drift.py` skip cleanly when Pandoc is unavailable locally.

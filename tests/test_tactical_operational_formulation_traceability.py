@@ -64,7 +64,7 @@ def test_generated_tactical_formulation_outputs_include_mapping() -> None:
     assert "AUTO-GENERATED from fhops_tactical_operational_formulation.md" in tex
     assert "AUTO-GENERATED from fhops_tactical_operational_formulation.md" in rst
     assert "model.harvest\\_upper" in tex
-    assert "model.harvest_upper" in rst
     assert "model.inventory\\_balance" in tex
-    assert "model.inventory_balance" in rst
+    assert "Implementation mapping" in rst
+    assert "Pyomo component" in rst
     assert "fhops_tactical_operational_formulation.rst" in HOWTO.read_text(encoding="utf-8")

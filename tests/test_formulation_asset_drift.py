@@ -2,18 +2,19 @@
 
 from __future__ import annotations
 
-import importlib.util
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
 
-PANDOC_AVAILABLE = shutil.which("pandoc") is not None or importlib.util.find_spec("pypandoc")
+from scripts.check_formulation_assets import PANDOC_VERSION, pandoc_available
 
 
-@pytest.mark.skipif(not PANDOC_AVAILABLE, reason="pandoc is not installed")
+@pytest.mark.skipif(
+    not pandoc_available(),
+    reason=f"pandoc {PANDOC_VERSION} is not installed",
+)
 def test_formulation_assets_are_synchronized() -> None:
     repo_root = Path(__file__).resolve().parents[1]
     result = subprocess.run(
