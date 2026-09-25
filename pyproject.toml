@@ -80,7 +80,7 @@ exclude = [
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP"]
 ignore = ["E501"]
-per-file-ignores = {"docs/examples/analytics/*.ipynb" = ["E402"]}
+per-file-ignores = {"docs/examples/analytics/*.ipynb" = ["E402"], "examples/*.ipynb" = ["E402"]}
 
 [tool.mypy]
 python_version = "3.11"

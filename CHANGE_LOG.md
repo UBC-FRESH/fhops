@@ -1,3 +1,22 @@
+# 2026-09-25 — Restore green main CI and publish updated docs (#66)
+- Confirmed the updated docs were not online because `main` CI failed before the Pages deploy job: the formulation drift test ran before Pandoc installation, and full pre-commit then failed on pre-existing onboarding notebook lint debt.
+- Moved CI Pandoc installation before pytest, added an explicit `scripts/check_formulation_assets.py` step, and made `tests/test_formulation_asset_drift.py` skip cleanly when Pandoc is unavailable locally.
+- Cleaned the pre-existing onboarding notebook lint debt via pre-commit/Ruff and added an explicit `E402` per-file ignore for `examples/*.ipynb`, where `sys.path` setup must precede imports.
+- Verified all five onboarding notebooks still execute through `scripts/run_example_notebooks.py --keep-going --timeout 600` (5 executed, 0 failed).
+- Commands executed:
+  - `gh issue create --repo UBC-FRESH/fhops --title "Restore green main CI and publish updated docs" --type Bug` (created #66)
+  - `git switch -c issue-66-docs-ci-green`
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (initially failed on 8 remaining notebook E402 findings, then passed after the explicit per-file ignore)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/run_example_notebooks.py --keep-going --timeout 600` (5 executed, 0 failed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_formulation_asset_drift.py tests/test_example_notebook_support.py` (44 passed)
+  - `.venv/bin/ruff format src tests scripts docs/softwarex/manuscript/scripts`
+  - `.venv/bin/ruff check src tests scripts docs/softwarex/manuscript/scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py docs/softwarex/manuscript/scripts/export_docs_assets.py` (126 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (383 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed after notebook cleanup/config)
+  - `git diff --check` (passed)
+
 # 2026-09-25 — Phase 5 integration housekeeping and review handoff
 - Marked Phase 5 child issues #57–#60 complete in `ROADMAP.md` after PRs #61–#64 merged into `feature/phase5-formal-model-sync`.
 - Updated `notes/formal_model_sync_issue_tree.md` and `notes/formal_model_sync_audit.md` to show the canonical operational/tactical formulation sources, traceability tests, and drift checker are complete.
