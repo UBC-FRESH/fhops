@@ -1,3 +1,19 @@
+# 2026-09-25 — Phase 5 formal model synchronization issue tree kickoff
+- Audited and closed stale issue #31 (Phase 3 onboarding notebooks) after confirming the five-notebook series and focused support tests are complete on `main`.
+- Created Phase 5 parent issue #56 and child issues #57–#60, linked through GitHub sub-issues, for canonical source audit/ADR, operational MILP traceability, tactical–operational MILP formulation, and drift-check closeout.
+- Created `feature/phase5-formal-model-sync` and added `notes/formal_model_sync_issue_tree.md` as the phase manifest.
+- Updated `ROADMAP.md` so Phase 5 explicitly covers both the operational day×shift MILP and the Phase 6 tactical–operational MILP.
+- Commands executed:
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_example_notebook_support.py` (43 passed)
+  - `gh issue edit 31 --body-file ...` and `gh issue close 31` (closed stale Phase 3 parent issue)
+  - `python /tmp/opencode/create_phase5_issues.py` (created #56–#60 and linked child issues)
+  - `git switch -c feature/phase5-formal-model-sync`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files CHANGE_LOG.md ROADMAP.md notes/formal_model_sync_issue_tree.md` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-24 — Post-Phase 6 documentation and validation housekeeping (#54)
 - Created issue #54 from the independent reviewer audit and started branch `issue-54-post-phase6-housekeeping` from `main`.
 - Fixed the stale `fhops.model.milp.tactical_operational` module docstring so it describes the implemented product-flow, inventory, purchase, road, silviculture, fleet, objective-profile, and telemetry scope instead of calling those features follow-on work.
