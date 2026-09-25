@@ -1,87 +1,57 @@
 .. AUTO-GENERATED from fhops_operational_formulation.md -- do not edit directly.
 
-FHOPS’ deterministic operational solver is formulated on a day-shift
-grid and maximizes weighted delivered production while penalizing
-leftovers, landing over-capacity slack, and machine movement costs. The
-equations below mirror the implemented Pyomo model in
-``fhops.model.milp.operational.build_operational_model`` and the bundle
-normalization in ``fhops.model.milp.data.build_operational_bundle``.
+FHOPS’ deterministic operational solver is formulated on a day-shift grid and maximizes weighted delivered production while penalizing leftovers, landing
+over-capacity slack, and machine movement costs. The equations below mirror the implemented Pyomo model in
+``fhops.model.milp.operational.build_operational_model`` and the bundle normalization in ``fhops.model.milp.data.build_operational_bundle``.
 
-**Problem statement.** Given harvest blocks, machine roles, shift
-calendars, block windows, landing capacities, and harvest-system role
-prerequisites, choose machine-block assignments and per-shift production
-quantities to maximize weighted production subject to feasibility and
-sequencing constraints.
+**Problem statement.** Given harvest blocks, machine roles, shift calendars, block windows, landing capacities, and harvest-system role prerequisites, choose
+machine-block assignments and per-shift production quantities to maximize weighted production subject to feasibility and sequencing constraints.
 
 **Sets and indices.**
 
 -  :math:`m \in \mathcal{M}`: machines.
 -  :math:`b \in \mathcal{B}`: blocks.
--  :math:`s=(d,\sigma) \in \mathcal{S}`: shift slots indexed by day
-   :math:`d \in \mathcal{D}` and shift label :math:`\sigma`.
--  :math:`\mathcal{R}_b`: ordered machine roles required by the harvest
-   system assigned to block :math:`b`.
+-  :math:`s=(d,\sigma) \in \mathcal{S}`: shift slots indexed by day :math:`d \in \mathcal{D}` and shift label :math:`\sigma`.
+-  :math:`\mathcal{R}_b`: ordered machine roles required by the harvest system assigned to block :math:`b`.
 -  :math:`\mathcal{L}`: landings.
--  :math:`\mathcal{P}^{\text{inv}} \subseteq \{(r,b): r \in \mathcal{R}_b\}`:
-   role-block pairs with upstream prerequisites.
--  :math:`\mathcal{P}^{\text{act}} \subseteq \mathcal{P}^{\text{inv}}`:
-   role-block pairs that require positive head-start buffer activation.
--  :math:`\mathcal{P}^{\text{load}} \subseteq \{(r,b): r \in \mathcal{R}_b\}`:
-   loader role-block pairs.
+-  :math:`\mathcal{P}^{\text{inv}} \subseteq \{(r,b): r \in \mathcal{R}_b\}`: role-block pairs with upstream prerequisites.
+-  :math:`\mathcal{P}^{\text{act}} \subseteq \mathcal{P}^{\text{inv}}`: role-block pairs that require positive head-start buffer activation.
+-  :math:`\mathcal{P}^{\text{load}} \subseteq \{(r,b): r \in \mathcal{R}_b\}`: loader role-block pairs.
 
 **Parameters.**
 
--  :math:`\bar{p}_{mb}`: production rate for machine :math:`m` on block
-   :math:`b` (units per shift).
+-  :math:`\bar{p}_{mb}`: production rate for machine :math:`m` on block :math:`b` (units per shift).
 -  :math:`W_b`: required total block production volume.
--  :math:`A_{m,s} \in \{0,1\}`: machine availability for shift
-   :math:`s`.
--  :math:`\mathbf{1}^{\text{window}}_{b,d} \in \{0,1\}`: block window
-   indicator (1 if day :math:`d` is within block :math:`b` window).
--  :math:`\omega^{\text{prod}},\omega^{\text{mob}},\omega^{\text{trans}},\omega^{\text{land}}`:
-   objective weights.
--  :math:`\delta_{m,b',b}`: mobilization cost when machine :math:`m`
-   transitions from block :math:`b'` to block :math:`b`.
+-  :math:`A_{m,s} \in \{0,1\}`: machine availability for shift :math:`s`.
+-  :math:`\mathbf{1}^{\text{window}}_{b,d} \in \{0,1\}`: block window indicator (1 if day :math:`d` is within block :math:`b` window).
+-  :math:`\omega^{\text{prod}},\omega^{\text{mob}},\omega^{\text{trans}},\omega^{\text{land}}`: objective weights.
+-  :math:`\delta_{m,b',b}`: mobilization cost when machine :math:`m` transitions from block :math:`b'` to block :math:`b`.
 -  :math:`C_{\ell}`: daily assignment capacity for landing :math:`\ell`.
 -  :math:`\ell(b)`: landing associated with block :math:`b`.
--  :math:`\mathcal{U}_{r,b}`: upstream roles that must feed role
-   :math:`r` on block :math:`b`.
--  :math:`B_{r,b}`: required staged buffer volume before role :math:`r`
-   may activate on block :math:`b`.
--  :math:`Q_{r,b}`: role production capacity upper bound per shift (used
-   for activation linearization).
--  :math:`q^{\text{batch}}_{r,b}`: loader batch size for loader role
-   :math:`r` on block :math:`b`.
--  :math:`\mathcal{T}_b \subseteq \mathcal{R}_b`: terminal roles for
-   block :math:`b` (roles credited in block completion objective terms).
+-  :math:`\mathcal{U}_{r,b}`: upstream roles that must feed role :math:`r` on block :math:`b`.
+-  :math:`B_{r,b}`: required staged buffer volume before role :math:`r` may activate on block :math:`b`.
+-  :math:`Q_{r,b}`: role production capacity upper bound per shift (used for activation linearization).
+-  :math:`q^{\text{batch}}_{r,b}`: loader batch size for loader role :math:`r` on block :math:`b`.
+-  :math:`\mathcal{T}_b \subseteq \mathcal{R}_b`: terminal roles for block :math:`b` (roles credited in block completion objective terms).
 
 **Decision variables.**
 
--  :math:`x_{m,b,s} \in \{0,1\}`: 1 if machine :math:`m` is assigned to
-   block :math:`b` in shift :math:`s`.
--  :math:`p_{m,b,s} \ge 0`: production by machine :math:`m` on block
-   :math:`b` in shift :math:`s`.
--  :math:`z_{r,b,s} \ge 0`: aggregated role-level production for role
-   :math:`r` on block :math:`b` in shift :math:`s`.
--  :math:`y_{m,b',b,s} \in \{0,1\}`: transition indicator for machine
-   :math:`m` from previous-shift block :math:`b'` to current block
-   :math:`b` (defined for non-initial shifts).
--  :math:`I^{\text{start}}_{r,b,s} \ge 0`: staged inventory available at
-   start of shift :math:`s` for role :math:`r` on block :math:`b`.
--  :math:`I_{r,b,s} \ge 0`: staged inventory at end of shift :math:`s`
-   for role :math:`r` on block :math:`b`.
--  :math:`g_{r,b,s} \in \{0,1\}`: role activation indicator for buffered
-   downstream roles.
--  :math:`n_{r,b,s} \in \mathbb{Z}_{\ge 0}`: loader batch count for
-   loader role-block pair :math:`(r,b)`.
+-  :math:`x_{m,b,s} \in \{0,1\}`: 1 if machine :math:`m` is assigned to block :math:`b` in shift :math:`s`.
+-  :math:`p_{m,b,s} \ge 0`: production by machine :math:`m` on block :math:`b` in shift :math:`s`.
+-  :math:`z_{r,b,s} \ge 0`: aggregated role-level production for role :math:`r` on block :math:`b` in shift :math:`s`.
+-  :math:`y_{m,b',b,s} \in \{0,1\}`: transition indicator for machine :math:`m` from previous-shift block :math:`b'` to current block :math:`b` (defined for
+   non-initial shifts).
+-  :math:`I^{\text{start}}_{r,b,s} \ge 0`: staged inventory available at start of shift :math:`s` for role :math:`r` on block :math:`b`.
+-  :math:`I_{r,b,s} \ge 0`: staged inventory at end of shift :math:`s` for role :math:`r` on block :math:`b`.
+-  :math:`g_{r,b,s} \in \{0,1\}`: role activation indicator for buffered downstream roles.
+-  :math:`n_{r,b,s} \in \mathbb{Z}_{\ge 0}`: loader batch count for loader role-block pair :math:`(r,b)`.
 -  :math:`u_{r,b,s} \ge 0`: loader partial remainder volume.
 -  :math:`L_b \ge 0`: leftover unmet block volume slack.
 -  :math:`S_{\ell,d} \ge 0`: landing daily surplus slack.
 
 **Objective.**
 
-FHOPS maximizes weighted terminal production and subtracts penalty
-terms:
+FHOPS maximizes weighted terminal production and subtracts penalty terms:
 
 .. math::
 
@@ -94,8 +64,7 @@ terms:
    - \omega^{\text{trans}}\!\sum_{m,b',b,s} y_{m,b',b,s}.
    \end{aligned}
 
-If a block has no terminal-role metadata, the implementation falls back
-to machine-level production sums for the production reward term.
+If a block has no terminal-role metadata, the implementation falls back to machine-level production sums for the production reward term.
 
 **Constraints.**
 
@@ -107,8 +76,7 @@ Machine assignment feasibility:
    \sum_{b\in\mathcal{B}} x_{m,b,s} \le A_{m,s}
    \qquad \forall m\in\mathcal{M},\; s\in\mathcal{S}.
 
-Role compatibility (machines can only work roles allowed by the block’s
-assigned harvest system):
+Role compatibility (machines can only work roles allowed by the block’s assigned harvest system):
 
 .. math::
 
@@ -152,8 +120,7 @@ Transition linking (for non-initial shifts only):
 
    y_{m,b',b,s} \ge x_{m,b',\operatorname{prev}(s)} + x_{m,b,s} - 1.
 
-Role inventory start and balance for prerequisite-driven downstream
-roles:
+Role inventory start and balance for prerequisite-driven downstream roles:
 
 .. math::
 
@@ -239,90 +206,50 @@ Domain restrictions:
 
 **Implementation mapping (equation blocks to code).**
 
-+-----------------------+-----------------------+-----------------------+
-| Equation/constraint   | Pyomo component /     | Data provenance       |
-| block                 | helper                |                       |
-+=======================+=======================+=======================+
-| Machine capacity and  | ``mod                 | ``availability_day``  |
-| availability          | el.machine_capacity`` | /                     |
-|                       | (``mac                | `                     |
-|                       | hine_capacity_rule``) | `availability_shift`` |
-|                       |                       | from                  |
-|                       |                       | ``build_oper          |
-|                       |                       | ational_bundle(...)`` |
-+-----------------------+-----------------------+-----------------------+
-| Role compatibility    | ``model               | ``machine_roles``,    |
-|                       | .role_compatibility`` | ``block_system``, and |
-|                       | (``role_              | ``systems`` from      |
-|                       | compatibility_rule``) | ``build_oper          |
-|                       |                       | ational_bundle(...)`` |
-+-----------------------+-----------------------+-----------------------+
-| Production-assignment | ``m                   | ``production_rates``  |
-| coupling              | odel.production_cap`` | from                  |
-|                       | (``prod_cap_rule``)   | ``build_oper          |
-|                       |                       | ational_bundle(...)`` |
-+-----------------------+-----------------------+-----------------------+
-| Block windows         | ``                    | ``windows`` from      |
-|                       | model.block_windows`` | ``Scena               |
-|                       | (``window_rule``)     | rio.window_for(...)`` |
-+-----------------------+-----------------------+-----------------------+
-| Role aggregation      | ``mode                | ``machine_roles`` +   |
-|                       | l.role_prod_balance`` | harvest-system role   |
-|                       | (``role               | metadata              |
-|                       | _prod_balance_rule``) |                       |
-+-----------------------+-----------------------+-----------------------+
-| Transition linkage    | ``mod                 | ``                    |
-|                       | el.transition_prev``, | mobilisation_params`` |
-|                       | ``mod                 | /                     |
-|                       | el.transition_curr``, | ``mob                 |
-|                       | ``mo                  | ilisation_distances`` |
-|                       | del.transition_link`` |                       |
-+-----------------------+-----------------------+-----------------------+
-| Inventory dynamics    | ``model.              | harvest-system        |
-| and guards            | inventory_start_eq``, | prerequisites and     |
-|                       | ``model               | role buffers          |
-|                       | .inventory_balance``, |                       |
-|                       | ``mo                  |                       |
-|                       | del.inventory_guard`` |                       |
-+-----------------------+-----------------------+-----------------------+
-| Head-start activation | ``mod                 | ``ro                  |
-|                       | el.activation_prod``, | le_headstart_shifts`` |
-|                       | ``model.head_start``, | in harvest-system     |
-|                       | ``model               | configs               |
-|                       | .role_active_upper``, |                       |
-|                       | ``mode                |                       |
-|                       | l.role_active_lower`` |                       |
-+-----------------------+-----------------------+-----------------------+
-| Loader batching       | ``                    | ``loa                 |
-|                       | model.loader_batch``, | der_batch_volume_m3`` |
-|                       | ``model               | in harvest-system     |
-|                       | .loader_partial_cap`` | configs               |
-+-----------------------+-----------------------+-----------------------+
-| Block balance with    | ``                    | ``work_required``     |
-| leftovers             | model.block_balance`` | from blocks           |
-|                       | (``                   |                       |
-|                       | block_balance_rule``) |                       |
-|                       | + ``model.leftover``  |                       |
-+-----------------------+-----------------------+-----------------------+
-| Landing capacity with | ``mod                 | ``landing_capacity``  |
-| slack                 | el.landing_capacity`` | and                   |
-|                       | (``lan                | ``landing_for_block`` |
-|                       | ding_capacity_rule``) |                       |
-|                       | +                     |                       |
-|                       | ``mo                  |                       |
-|                       | del.landing_surplus`` |                       |
-+-----------------------+-----------------------+-----------------------+
-| Objective assembly    | ``model.objective``   | ``ObjectiveWeights``  |
-|                       | plus ``prod_weight``, | from the scenario     |
-|                       | ``landing_weight``,   | contract              |
-|                       | ``m                   |                       |
-|                       | obilisation_weight``, |                       |
-|                       | ``transition_weight`` |                       |
-|                       | terms                 |                       |
-+-----------------------+-----------------------+-----------------------+
-| Data/parameter        | ``build_oper          | ``fh                  |
-| normalization         | ational_bundle(...)`` | ops.model.milp.data`` |
-+-----------------------+-----------------------+-----------------------+
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Equation/constraint block                          | Pyomo component / helper                           | Data provenance                                    |
++====================================================+====================================================+====================================================+
+| Machine capacity and availability                  | ``model.machine_capacity``                         | ``availability_day`` / ``availability_shift`` from |
+|                                                    | (``machine_capacity_rule``)                        | ``build_operational_bundle(...)``                  |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Role compatibility                                 | ``model.role_compatibility``                       | ``machine_roles``, ``block_system``, and           |
+|                                                    | (``role_compatibility_rule``)                      | ``systems`` from ``build_operational_bundle(...)`` |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Production-assignment coupling                     | ``model.production_cap`` (``prod_cap_rule``)       | ``production_rates`` from                          |
+|                                                    |                                                    | ``build_operational_bundle(...)``                  |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Block windows                                      | ``model.block_windows`` (``window_rule``)          | ``windows`` from ``Scenario.window_for(...)``      |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Role aggregation                                   | ``model.role_prod_balance``                        | ``machine_roles`` + harvest-system role metadata   |
+|                                                    | (``role_prod_balance_rule``)                       |                                                    |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Transition linkage                                 | ``model.transition_prev``,                         | ``mobilisation_params`` /                          |
+|                                                    | ``model.transition_curr``,                         | ``mobilisation_distances``                         |
+|                                                    | ``model.transition_link``                          |                                                    |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Inventory dynamics and guards                      | ``model.inventory_start_eq``,                      | harvest-system prerequisites and role buffers      |
+|                                                    | ``model.inventory_balance``,                       |                                                    |
+|                                                    | ``model.inventory_guard``                          |                                                    |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Head-start activation                              | ``model.activation_prod``, ``model.head_start``,   | ``role_headstart_shifts`` in harvest-system        |
+|                                                    | ``model.role_active_upper``,                       | configs                                            |
+|                                                    | ``model.role_active_lower``                        |                                                    |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Loader batching                                    | ``model.loader_batch``,                            | ``loader_batch_volume_m3`` in harvest-system       |
+|                                                    | ``model.loader_partial_cap``                       | configs                                            |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Block balance with leftovers                       | ``model.block_balance`` (``block_balance_rule``) + | ``work_required`` from blocks                      |
+|                                                    | ``model.leftover``                                 |                                                    |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Landing capacity with slack                        | ``model.landing_capacity``                         | ``landing_capacity`` and ``landing_for_block``     |
+|                                                    | (``landing_capacity_rule``) +                      |                                                    |
+|                                                    | ``model.landing_surplus``                          |                                                    |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Objective assembly                                 | ``model.objective`` plus ``prod_weight``,          | ``ObjectiveWeights`` from the scenario contract    |
+|                                                    | ``landing_weight``, ``mobilisation_weight``,       |                                                    |
+|                                                    | ``transition_weight`` terms                        |                                                    |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+| Data/parameter normalization                       | ``build_operational_bundle(...)``                  | ``fhops.model.milp.data``                          |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
 
-This formulation is the canonical mathematical reference for FHOPS
-operational MILP documentation and thesis-level reporting.
+This formulation is the canonical mathematical reference for FHOPS operational MILP documentation and thesis-level reporting.

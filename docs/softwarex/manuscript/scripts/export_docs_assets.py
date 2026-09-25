@@ -27,6 +27,7 @@ def run_pandoc(src: Path, target: Path, pandoc_format: str) -> None:
         "markdown",
         "-t",
         pandoc_format,
+        "--columns=160",
         str(src),
         "-o",
         str(target),

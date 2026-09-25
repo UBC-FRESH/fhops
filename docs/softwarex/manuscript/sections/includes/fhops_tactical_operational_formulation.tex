@@ -1,20 +1,12 @@
 % AUTO-GENERATED from fhops_tactical_operational_formulation.md -- do not edit directly.
-FHOPS' TOPM-inspired tactical--operational solver is formulated on an
-aggregate period grid and chooses harvest areas by planning unit,
-harvest system, and period while carrying products through transport,
-facility consumption, inventory, outside purchases, and optional
-infrastructure/fleet modules. The equations below mirror the implemented
-Pyomo model in
-\texttt{fhops.model.milp.tactical\_operational.build\_tactical\_operational\_model}
-and the validated contract in
+FHOPS' TOPM-inspired tactical--operational solver is formulated on an aggregate period grid and chooses harvest areas by planning unit, harvest system, and
+period while carrying products through transport, facility consumption, inventory, outside purchases, and optional infrastructure/fleet modules. The equations
+below mirror the implemented Pyomo model in \texttt{fhops.model.milp.tactical\_operational.build\_tactical\_operational\_model} and the validated contract in
 \texttt{fhops.planning.tactical\_operational.models.TacticalOperationalScenario}.
 
-\textbf{Problem statement.} Given planning units, period calendars,
-product yields, harvest-system options, facility demand envelopes,
-transport arcs, external supply, and optional road/silviculture/fleet
-modules, choose harvest quantities and downstream flows that satisfy
-demand and feasibility constraints at minimum discounted delivered cost,
-or maximize discounted profit/NPV when product values are supplied.
+\textbf{Problem statement.} Given planning units, period calendars, product yields, harvest-system options, facility demand envelopes, transport arcs, external
+supply, and optional road/silviculture/fleet modules, choose harvest quantities and downstream flows that satisfy demand and feasibility constraints at minimum
+discounted delivered cost, or maximize discounted profit/NPV when product values are supplied.
 
 \textbf{Sets and indices.}
 
@@ -23,8 +15,7 @@ or maximize discounted profit/NPV when product values are supplied.
 \item
   \(b \in \mathcal{B}\): planning units/blocks.
 \item
-  \(o \in \mathcal{O}\): eligible block \(\times\) system \(\times\)
-  period harvest options.
+  \(o \in \mathcal{O}\): eligible block \(\times\) system \(\times\) period harvest options.
 \item
   \(t \in \mathcal{T}\): ordered tactical--operational periods.
 \item
@@ -32,8 +23,7 @@ or maximize discounted profit/NPV when product values are supplied.
 \item
   \(a \in \mathcal{A}\): product transport arcs.
 \item
-  \(u \in \mathcal{U}\): external supply options, indexed by
-  source/destination/product/period.
+  \(u \in \mathcal{U}\): external supply options, indexed by source/destination/product/period.
 \item
   \((f,p,t) \in \mathcal{F}\): facility/product/period balance keys.
 \item
@@ -53,26 +43,19 @@ or maximize discounted profit/NPV when product values are supplied.
 \item
   \(L_o,U_o\): minimum/maximum active area for option \(o\) (ha).
 \item
-  \(Y_{b,p}\): product yield for block \(b\) and product \(p\)
-  (m\(^3\)/ha).
+  \(Y_{b,p}\): product yield for block \(b\) and product \(p\) (m\(^3\)/ha).
 \item
-  \(K_o\): optional total production capacity for option \(o\)
-  (m\(^3\)/period).
+  \(K_o\): optional total production capacity for option \(o\) (m\(^3\)/period).
 \item
-  \(K^{fleet}_{s,t}\): base fleet capacity for system \(s\) in period
-  \(t\) (m\(^3\)).
+  \(K^{fleet}_{s,t}\): base fleet capacity for system \(s\) in period \(t\) (m\(^3\)).
 \item
-  \(F_o,c_o\): fixed cost and variable cost per m\(^3\) for option
-  \(o\).
+  \(F_o,c_o\): fixed cost and variable cost per m\(^3\) for option \(o\).
 \item
-  \(c_a,c_u\): transport cost per m\(^3\) on arc \(a\) and delivered
-  purchase cost per m\(^3\) for supply \(u\).
+  \(c_a,c_u\): transport cost per m\(^3\) on arc \(a\) and delivered purchase cost per m\(^3\) for supply \(u\).
 \item
-  \(D^{min}_{f,p,t},D^{target}_{f,p,t},D^{max}_{f,p,t}\): facility
-  demand envelope (m\(^3\)).
+  \(D^{min}_{f,p,t},D^{target}_{f,p,t},D^{max}_{f,p,t}\): facility demand envelope (m\(^3\)).
 \item
-  \(v_{f,p,t}\): optional delivered product value per m\(^3\) for profit
-  objectives.
+  \(v_{f,p,t}\): optional delivered product value per m\(^3\) for profit objectives.
 \item
   \(d_t\): discount factor for period \(t\).
 \item
@@ -84,8 +67,7 @@ or maximize discounted profit/NPV when product values are supplied.
 \item
   \(c_q\): silviculture cost per ha for transition \(q\).
 \item
-  \(N^{max}_e,K_e,C^{fleet}_e\): maximum units, added capacity per
-  period, and purchase cost for fleet option \(e\).
+  \(N^{max}_e,K_e,C^{fleet}_e\): maximum units, added capacity per period, and purchase cost for fleet option \(e\).
 \end{itemize}
 
 \textbf{Decision variables.}
@@ -101,22 +83,17 @@ or maximize discounted profit/NPV when product values are supplied.
 \item
   \(F_a \ge 0\): product flow on transport arc \(a\) (m\(^3\)).
 \item
-  \(P_u \ge 0\): external purchase quantity for supply option \(u\)
-  (m\(^3\)).
+  \(P_u \ge 0\): external purchase quantity for supply option \(u\) (m\(^3\)).
 \item
-  \(C_{f,p,t} \ge 0\): facility consumption/demand fulfillment
-  (m\(^3\)).
+  \(C_{f,p,t} \ge 0\): facility consumption/demand fulfillment (m\(^3\)).
 \item
   \(I_{f,p,t} \ge 0\): closing facility inventory (m\(^3\)).
 \item
-  \(R^B_{r,t},R^A_{r,t} \in \{0,1\}\): road build and available
-  indicators when roads are enabled.
+  \(R^B_{r,t},R^A_{r,t} \in \{0,1\}\): road build and available indicators when roads are enabled.
 \item
-  \(Q_{q,t} \ge 0\): silviculture activity area scheduled for transition
-  \(q\) in period \(t\).
+  \(Q_{q,t} \ge 0\): silviculture activity area scheduled for transition \(q\) in period \(t\).
 \item
-  \(N_e \in \mathbb{Z}_{\ge 0}\): units purchased for fleet option
-  \(e\).
+  \(N_e \in \mathbb{Z}_{\ge 0}\): units purchased for fleet option \(e\).
 \end{itemize}
 
 \textbf{Harvest quantity modes.}
@@ -127,15 +104,13 @@ All modes enforce the physical upper bound:
 H_o \le U_o Z_o \qquad \forall o\in\mathcal{O}.
 \]
 
-Semi-continuous mode (the default) additionally enforces option-specific
-minimum active area:
+Semi-continuous mode (the default) additionally enforces option-specific minimum active area:
 
 \[
 L_o Z_o \le H_o \qquad \forall o\in\mathcal{O}.
 \]
 
-Continuous mode omits that lower bound. Whole-block mode forces full
-operable area when active:
+Continuous mode omits that lower bound. Whole-block mode forces full operable area when active:
 
 \[
 H_o = A_{b(o)} Z_o \qquad \forall o\in\mathcal{O}.
@@ -167,9 +142,7 @@ Fleet capacity with optional acquisition:
 \qquad \forall s,t,
 \]
 
-where \(\tau(e)\) is the purchase period sequence and \(L_e\) the
-economic life in periods. Purchases are bounded by
-\(0\le N_e\le N^{max}_e\).
+where \(\tau(e)\) is the purchase period sequence and \(L_e\) the economic life in periods. Purchases are bounded by \(0\le N_e\le N^{max}_e\).
 
 Flow supply and arc capacity:
 
@@ -210,8 +183,7 @@ with \(I_{f,p,0}=I^0_{f,p}\).
 
 \textbf{Optional road module.}
 
-Road build timing, one-time build, availability, dependencies, block
-access, and active capacity are represented as:
+Road build timing, one-time build, availability, dependencies, block access, and active capacity are represented as:
 
 \[
 R^A_{r,t}=\sum_{t'\le t}R^B_{r,t'},\qquad
@@ -231,8 +203,7 @@ Z_o \le \sum_{r\in access(b(o))}R^A_{r,t(o)},
 \le \sum_r C_rR^A_{r,t}.
 \]
 
-Road costs enter the objective as
-\(\sum_{r,t}d_t(B_rR^B_{r,t}+M_rR^A_{r,t})\).
+Road costs enter the objective as \(\sum_{r,t}d_t(B_rR^B_{r,t}+M_rR^A_{r,t})\).
 
 \textbf{Optional silviculture module.}
 
@@ -255,15 +226,13 @@ Default minimum discounted delivered cost:
 +\text{road, silviculture, and fleet costs}.
 \]
 
-When demand rows include value per m\(^3\),
-\texttt{max\_discounted\_profit} maximizes
+When demand rows include value per m\(^3\), \texttt{max\_discounted\_profit} maximizes
 
 \[
 \sum_{f,p,t}d_tv_{f,p,t}C_{f,p,t}-\text{Cost}.
 \]
 
-\texttt{max\_npv} additionally adds declared final-period terminal
-inventory value:
+\texttt{max\_npv} additionally adds declared final-period terminal inventory value:
 
 \[
 \sum_{f,p}d_{t_{final}}v^{terminal}_{f,p}I_{f,p,t_{final}}.
@@ -287,51 +256,28 @@ Data provenance
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Harvest upper bound & \texttt{model.harvest\_upper} &
-\texttt{HarvestSystemOption.max\_area\_ha} and block operable area \\
-Semi-continuous minimum cut & \texttt{model.harvest\_lower} &
-\texttt{HarvestSystemOption.min\_area\_ha} \\
-Whole-block mode & \texttt{model.whole\_block} &
-\texttt{PlanningUnit.operable\_area\_ha} \\
-Productivity cap & \texttt{model.productivity\_cap} &
-\texttt{HarvestSystemOption.productivity\_m3\_per\_period} \\
-Product conversion & \texttt{model.product\_conversion} &
-\texttt{PlanningUnit.product\_yields\_m3\_per\_ha} \\
-Block area balance & \texttt{model.block\_area} &
-\texttt{PlanningUnit.operable\_area\_ha} \\
-Fleet capacity and acquisition & \texttt{model.fleet\_capacity},
-\texttt{model.fleet\_units}, \texttt{model.fleet\_option\_upper} &
-\texttt{FleetCapacity} and \texttt{FleetOption} \\
-Flow supply & \texttt{model.flow\_supply} & \texttt{TransportArc} and
-\texttt{product\_volume} \\
-Arc capacity & \texttt{model.arc\_capacity} &
-\texttt{TransportArc.capacity\_m3} \\
-Purchase bounds & \texttt{model.purchase\_lower},
-\texttt{model.purchase\_upper} & \texttt{ExternalSupply} \\
-Consumption bounds/targets & \texttt{model.consumption\_lower},
-\texttt{model.consumption\_target}, \texttt{model.consumption\_upper} &
+Harvest upper bound & \texttt{model.harvest\_upper} & \texttt{HarvestSystemOption.max\_area\_ha} and block operable area \\
+Semi-continuous minimum cut & \texttt{model.harvest\_lower} & \texttt{HarvestSystemOption.min\_area\_ha} \\
+Whole-block mode & \texttt{model.whole\_block} & \texttt{PlanningUnit.operable\_area\_ha} \\
+Productivity cap & \texttt{model.productivity\_cap} & \texttt{HarvestSystemOption.productivity\_m3\_per\_period} \\
+Product conversion & \texttt{model.product\_conversion} & \texttt{PlanningUnit.product\_yields\_m3\_per\_ha} \\
+Block area balance & \texttt{model.block\_area} & \texttt{PlanningUnit.operable\_area\_ha} \\
+Fleet capacity and acquisition & \texttt{model.fleet\_capacity}, \texttt{model.fleet\_units}, \texttt{model.fleet\_option\_upper} & \texttt{FleetCapacity} and
+\texttt{FleetOption} \\
+Flow supply & \texttt{model.flow\_supply} & \texttt{TransportArc} and \texttt{product\_volume} \\
+Arc capacity & \texttt{model.arc\_capacity} & \texttt{TransportArc.capacity\_m3} \\
+Purchase bounds & \texttt{model.purchase\_lower}, \texttt{model.purchase\_upper} & \texttt{ExternalSupply} \\
+Consumption bounds/targets & \texttt{model.consumption\_lower}, \texttt{model.consumption\_target}, \texttt{model.consumption\_upper} &
 \texttt{FacilityDemand} \\
-Inventory balance & \texttt{model.inventory\_balance} &
-\texttt{InitialInventory}, flows, purchases, consumption \\
-Road build/availability/dependencies/access/capacity &
-\texttt{model.road\_build}, \texttt{model.road\_available},
-\texttt{model.road\_build\_timing}, \texttt{model.road\_availability},
-\texttt{model.road\_build\_once}, \texttt{model.road\_dependencies},
-\texttt{model.road\_access}, \texttt{model.road\_capacity} &
-\texttt{RoadProject}, \texttt{RoadDependency},
-\texttt{BlockRoadAccess} \\
-Silviculture fulfillment & \texttt{model.silviculture\_area},
-\texttt{model.silviculture\_fulfillment} &
-\texttt{SilvicultureTransition} \\
-Objective profiles & \texttt{model.objective} &
-\texttt{Economics.objective\_profile}, costs, values, discount
-factors \\
-Bundle replay and telemetry & \texttt{tactical\_bundle\_to\_dict(...)},
-\texttt{tactical\_bundle\_from\_dict(...)},
-\texttt{solve\_tactical\_operational\_milp(...)} &
-\texttt{fhops.model.milp.tactical\_operational} \\
+Inventory balance & \texttt{model.inventory\_balance} & \texttt{InitialInventory}, flows, purchases, consumption \\
+Road build/availability/dependencies/access/capacity & \texttt{model.road\_build}, \texttt{model.road\_available}, \texttt{model.road\_build\_timing},
+\texttt{model.road\_availability}, \texttt{model.road\_build\_once}, \texttt{model.road\_dependencies}, \texttt{model.road\_access},
+\texttt{model.road\_capacity} & \texttt{RoadProject}, \texttt{RoadDependency}, \texttt{BlockRoadAccess} \\
+Silviculture fulfillment & \texttt{model.silviculture\_area}, \texttt{model.silviculture\_fulfillment} & \texttt{SilvicultureTransition} \\
+Objective profiles & \texttt{model.objective} & \texttt{Economics.objective\_profile}, costs, values, discount factors \\
+Bundle replay and telemetry & \texttt{tactical\_bundle\_to\_dict(...)}, \texttt{tactical\_bundle\_from\_dict(...)},
+\texttt{solve\_tactical\_operational\_milp(...)} & \texttt{fhops.model.milp.tactical\_operational} \\
 \end{longtable}
 
-This formulation is the canonical mathematical reference for the FHOPS
-tactical--operational MILP. Generated TeX/RST outputs are derived
-artifacts and should not be edited directly.
+This formulation is the canonical mathematical reference for the FHOPS tactical--operational MILP. Generated TeX/RST outputs are derived artifacts and should
+not be edited directly.

@@ -1,3 +1,21 @@
+# 2026-09-25 — Fix generated formulation RST readability (#72)
+- Created issue #72 after verifying that the published tactical formulation page contained awkward Pandoc grid-table wrapping artifacts that split long Pyomo component names.
+- Updated `export_docs_assets.py` to render Markdown with `--columns=160`, regenerated all shared TeX/RST assets with pinned Pandoc 3.1.3, and confirmed that component names such as `model.machine_capacity` and `model.inventory_balance` now render intact in RST.
+- Strengthened the operational and tactical formulation traceability tests so they assert that generated RST includes contain intact component names, not just mapping headers.
+- Commands executed:
+  - `gh issue create --repo UBC-FRESH/fhops --title "Fix generated formulation RST readability" --type Bug` (created #72)
+  - `git switch -c issue-72-formulation-rst-readability`
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python docs/softwarex/manuscript/scripts/export_docs_assets.py`
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python scripts/check_formulation_assets.py` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_formulation_asset_drift.py tests/test_operational_formulation_traceability.py tests/test_tactical_operational_formulation_traceability.py` (5 passed)
+  - `.venv/bin/ruff format src tests scripts docs/softwarex/manuscript/scripts`
+  - `.venv/bin/ruff check src tests scripts docs/softwarex/manuscript/scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py docs/softwarex/manuscript/scripts/export_docs_assets.py` (126 source files, no issues)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (383 passed, 210 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-25 — Fix pinned Pandoc PATH in docs CI (#70)
 - Created issue #70 after the first #68 CI run failed at `Install Pandoc`: the workflow appended Pandoc 3.1.3 to `GITHUB_PATH` for later steps but did not export it in the current shell.
 - Updated `.github/workflows/ci.yml` to export the pinned Pandoc directory immediately before running `pandoc --version`.
