@@ -20,6 +20,8 @@ Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 All four child issues are linked to parent #56 through GitHub sub-issues and assigned the
 repository `Feature` issue type.
 
+2026-09-25 status: #57 is in progress on branch `issue-57-phase-5.0-formulation-source-audit`.
+
 ## Scope note
 
 Phase 5 originally targeted the operational MILP only. Following Phase 6, the phase now covers both

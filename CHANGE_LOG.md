@@ -1,3 +1,18 @@
+# 2026-09-25 — Phase 5.0 formulation source audit and ADR (#57)
+- Started child issue #57 on `issue-57-phase-5.0-formulation-source-audit` under Phase 5 parent #56.
+- Added `notes/formal_model_sync_audit.md`, inventorying current operational formulation assets, the new tactical–operational model, the shared exporter, traceability gaps, and drift-check requirements.
+- Added `notes/adr/0002-formal-model-synchronization.md`, proposing one canonical Markdown source per MILP (`fhops_operational_formulation.md` and `fhops_tactical_operational_formulation.md`) with generated TeX/RST outputs and mandatory equation-to-code mapping.
+- Updated the SoftwareX shared-include README so the tactical formulation has a planned synchronized asset while manuscript inclusion remains an explicit editorial decision.
+- Commands executed:
+  - `git switch -c issue-57-phase-5.0-formulation-source-audit`
+  - `.venv/bin/ruff format src tests`
+  - `.venv/bin/ruff check src tests` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src` (124 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (378 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #57 changed-file set (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-25 — Phase 5 formal model synchronization issue tree kickoff
 - Audited and closed stale issue #31 (Phase 3 onboarding notebooks) after confirming the five-notebook series and focused support tests are complete on `main`.
 - Created Phase 5 parent issue #56 and child issues #57–#60, linked through GitHub sub-issues, for canonical source audit/ADR, operational MILP traceability, tactical–operational MILP formulation, and drift-check closeout.
