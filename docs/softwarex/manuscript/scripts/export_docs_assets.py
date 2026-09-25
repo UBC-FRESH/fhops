@@ -211,7 +211,11 @@ def main() -> int:
         print("[export-docs] No Markdown snippets found.")
     else:
         for path in generated:
-            print(f"[export-docs] Wrote {path.relative_to(repo_root)}")
+            try:
+                display_path = path.relative_to(repo_root)
+            except ValueError:
+                display_path = path
+            print(f"[export-docs] Wrote {display_path}")
 
     return 0
 

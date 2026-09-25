@@ -121,10 +121,10 @@ before proposing new work.
 - [ ] Outreach plan (blog, seminars, partner briefings).
 
 ## Phase 5 — Formal Model Documentation Synchronization
-- [ ] #57 Audit canonical formulation sources and approve the shared source/ADR layout for operational and tactical–operational MILPs. *(In progress on `issue-57-phase-5.0-formulation-source-audit`.)*
-- [ ] #58 Publish the operational MILP formulation as a canonical source module shared across manuscript and docs, with current `operational.py`/`data.py` traceability. *(In progress on `issue-58-phase-5.1-operational-traceability`.)*
-- [ ] #59 Publish the tactical–operational MILP formulation as a canonical source module shared across Sphinx/manuscript assets, with `tactical_operational.py` traceability. *(In progress on `issue-59-phase-5.2-tactical-formulation`.)*
-- [ ] #60 Add regression/drift checks ensuring formulation assets regenerate cleanly (`export_docs_assets.py` + docs build).
+- [x] #57 Audit canonical formulation sources and approve the shared source/ADR layout for operational and tactical–operational MILPs (merged via PR #61).
+- [x] #58 Publish the operational MILP formulation as a canonical source module shared across manuscript and docs, with current `operational.py`/`data.py` traceability (merged via PR #62).
+- [x] #59 Publish the tactical–operational MILP formulation as a canonical source module shared across Sphinx/manuscript assets, with `tactical_operational.py` traceability (merged via PR #63).
+- [ ] #60 Add regression/drift checks ensuring formulation assets regenerate cleanly (`export_docs_assets.py` + docs build). *(In progress on `issue-60-phase-5.3-formulation-drift-closeout`.)*
 
 ## Phase 6 — Tactical–Operational Expansion (TOPM-Inspired)
 - [x] #37 Approve the architecture, scope boundaries, workflow contract, and TOPM/OperMAX provenance baseline in `notes/tactical_operational_expansion_plan.md` (merged via PR #45).

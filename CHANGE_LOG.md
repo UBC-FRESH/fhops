@@ -1,3 +1,22 @@
+# 2026-09-25 — Phase 5.3 formulation drift checks and closeout (#60)
+- Merged #59 via PR #63 and started #60 on `issue-60-phase-5.3-formulation-drift-closeout`.
+- Added `scripts/check_formulation_assets.py`, which copies Markdown/CSV formulation primaries into a temporary directory, regenerates TeX/RST outputs via `export_docs_assets.py`, and fails with drifted paths when checked-in generated assets are stale.
+- Hardened `export_docs_assets.py` so temporary/out-of-repo include directories can be used safely by drift checks.
+- Added `tests/test_formulation_asset_drift.py` and updated `AGENTS.md` so the formulation drift check is part of the conditional command cadence when formulation assets change.
+- Marked the SoftwareX shared-include drift-check action complete and updated the Phase 5 issue tree/roadmap/audit notes.
+- Commands executed:
+  - `git switch feature/phase5-formal-model-sync && git pull --ff-only`
+  - `git switch -c issue-60-phase-5.3-formulation-drift-closeout`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/check_formulation_assets.py` (passed)
+  - `.venv/bin/ruff format src tests scripts docs/softwarex/manuscript/scripts`
+  - `.venv/bin/ruff check src tests scripts docs/softwarex/manuscript/scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py docs/softwarex/manuscript/scripts/export_docs_assets.py` (126 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_formulation_asset_drift.py tests/test_operational_formulation_traceability.py tests/test_tactical_operational_formulation_traceability.py` (5 passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (383 passed, 210 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` with the isolated pypandoc binary on `PATH` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files ...` on the #60 changed-file set (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-25 — Phase 5.2 tactical–operational MILP canonical formulation (#59)
 - Merged #58 via PR #62 and started #59 on `issue-59-phase-5.2-tactical-formulation`.
 - Added `docs/softwarex/manuscript/sections/includes/fhops_tactical_operational_formulation.md` as the canonical TOPM-inspired tactical–operational MILP source.
