@@ -283,11 +283,54 @@ condition. Decomposition methods (Benders, Dantzig–Wolfe, fix-and-optimize) sh
 after these measurements identify a real bottleneck. The committed smoke benchmark in
 ``docs/assets/tactical/tactical_scale_benchmark.md`` currently shows HiGHS solving generated
 25-block and 100-block cases in under one second each (1,018/1,261 and 4,018/4,936
-variables/constraints, respectively).
+variables/constraints, respectively). The full-scale artifact at
+``docs/assets/tactical/full_scale/tactical_scale_benchmark.md`` covers 500 blocks × 5 years ×
+4 periods/year: 20,000 harvest options, 100,082 variables, 120,664 constraints, and an optimal
+HiGHS result in 40.8 s with about 860 MiB peak memory.
 
 For uncertainty screening, use scenario overlays plus ``fhops scenario batch`` to compare demand,
 productivity, road-cost, or purchase-price cases before attempting robust or stochastic MILP
 variants.
+
+Practitioner-scale validation case
+----------------------------------
+
+Phase 7 adds a redistributable synthetic practitioner case shaped like a small mixed-terrain tenure:
+24 blocks, 8 periods, 3 products, 2 mills, 3 harvest systems, roads/dependencies, silviculture
+follow-up, and an optional fleet expansion. Generate or inspect it with:
+
+.. code-block:: bash
+
+   fhops synth tactical-practitioner --out tmp/practitioner.yaml
+   fhops validate tactical-operational tmp/practitioner.yaml
+   fhops plan tactical-operational tmp/practitioner.yaml \
+     --enable-roads --enable-silviculture --enable-fleet-investment \
+     --out-json tmp/practitioner-result.json
+
+The checked-in fixture lives at
+``tests/fixtures/tactical_operational/practitioner-case/scenario.yaml`` and regression tests verify
+schema dimensions, minimum-cut feasibility, road/silviculture/fleet module behavior, and every
+facility/product/period inventory balance.
+
+Guided tactical planner notebook
+--------------------------------
+
+The onboarding series now includes ``examples/05_fhops_tactical_operational.ipynb``, an executable
+walkthrough covering:
+
+- practitioner-case generation and contract validation;
+- aggregate MILP solve with roads/silviculture/fleet modules;
+- objective decomposition and normalized decision tables;
+- facility inventory balance audits;
+- sparse overlays and scenario diffs;
+- report exports; and
+- tactical→operational compilation into an operational scenario bundle.
+
+Run it with:
+
+.. code-block:: bash
+
+   python scripts/run_example_notebooks.py --notebook 05
 
 `topm-mini` acceptance fixture
 ------------------------------

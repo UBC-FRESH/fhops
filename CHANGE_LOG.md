@@ -1,3 +1,111 @@
+# 2026-09-26 — Phase 7 tactical validation scale-up integration gate
+- Merged Phase 7 child issues #76–#79 into `feature/phase7-tactical-validation-release` via PRs #80–#83.
+- Marked the Phase 7 roadmap checklist complete: full-scale benchmark, practitioner validation case, guided tactical notebook, and FHOPS 1.1.0 release readiness.
+- Prepared the phase branch for integration into `main` and closure of parent issue #75.
+- Commands executed:
+  - `git switch feature/phase7-tactical-validation-release && git fetch origin && git pull --ff-only`
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py scripts/run_example_notebooks.py` (127 source files, no issues)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python scripts/check_formulation_assets.py` (synchronized)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (390 passed, 211 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/run_example_notebooks.py --keep-going --timeout 600` (6 executed, 0 failed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/hatch clean && /tmp/opencode/fhops-topm37-venv/bin/hatch build` (built `fhops-1.1.0` wheel/sdist)
+  - Clean wheel smoke in `/tmp/opencode/fhops-v110-final-smoke`: `import fhops` → `1.1.0`; tactical practitioner scenario validation passed
+  - `git diff --check` (passed)
+
+# 2026-09-26 — Phase 7.3 tactical release readiness and version bump (#79)
+- Merged #78 via PR #82 and started #79 on `issue-79-phase-7.3-release-version-bump`.
+- Bumped the package version source from `1.0.0` to `1.1.0` because Phase 6 adds substantial backward-compatible tactical–operational planning capability while preserving schema `1.0.0` operational workflows.
+- Added `docs/releases/v1.1.0.md` covering scope, highlights, new CLI surfaces, compatibility, limitations, and validation evidence.
+- Updated README and Sphinx overview install instructions to `pip install fhops==1.1.0`.
+- Commands executed:
+  - `git switch feature/phase7-tactical-validation-release && git pull --ff-only`
+  - `git switch -c issue-79-phase-7.3-release-version-bump`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_import.py tests/planning/test_tactical_practitioner_case.py tests/planning/test_tactical_operational_scale.py` (7 passed)
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py scripts/run_example_notebooks.py` (127 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (390 passed, 211 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/hatch clean && /tmp/opencode/fhops-topm37-venv/bin/hatch build` (built `fhops-1.1.0` wheel/sdist)
+  - Clean wheel smoke in `/tmp/opencode/fhops-v110-smoke`: `import fhops` → `1.1.0`; `fhops --help`; `fhops validate tactical-operational tests/fixtures/tactical_operational/practitioner-case/scenario.yaml` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-26 — Phase 7.2 guided tactical planner notebook (#78)
+- Merged #77 via PR #81 and started #78 on `issue-78-phase-7.2-guided-tactical-notebook`.
+- Added `examples/05_fhops_tactical_operational.ipynb`, an executable guided walkthrough covering practitioner-case generation, contract validation, all-module tactical solving, decision tables, inventory-balance audits, sparse overlays/diffs, normalized reports, and tactical→operational compilation.
+- Updated `scripts/run_example_notebooks.py`, `examples/README.md`, and notebook structural tests so `05` is a first-class onboarding notebook alias.
+- Updated the tactical how-to with the guided notebook workflow.
+- Commands executed:
+  - `git switch feature/phase7-tactical-validation-release && git pull --ff-only`
+  - `git switch -c issue-78-phase-7.2-guided-tactical-notebook`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python /tmp/opencode/create_tactical_notebook.py`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/run_example_notebooks.py --notebook 05 --timeout 600` (1 executed, 0 failed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_example_notebook_support.py tests/planning/test_tactical_practitioner_case.py` (51 passed)
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py scripts/run_example_notebooks.py` (127 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/run_example_notebooks.py --keep-going --timeout 600` (6 executed, 0 failed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (390 passed, 211 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-26 — Phase 7.1 practitioner-scale tactical validation case (#77)
+- Merged #76 via PR #80 and started #77 on `issue-77-phase-7.1-practitioner-validation`.
+- Added `generate_tactical_practitioner_case`, a redistributable synthetic case with 24 blocks, 8 periods, 3 products, 2 facilities, 3 harvest systems, road dependencies/access, silviculture follow-up, external supply, and optional fleet investment.
+- Added `fhops synth tactical-practitioner` and committed the generated fixture at `tests/fixtures/tactical_operational/practitioner-case/scenario.yaml`.
+- Added regression coverage for fixture dimensions/round-trip, all-module optimal solving, minimum-cut enforcement, road/silviculture/fleet activation, and every facility/product/period inventory balance.
+- Updated the tactical how-to and CLI reference with the practitioner validation workflow.
+- Commands executed:
+  - `git switch feature/phase7-tactical-validation-release && git pull --ff-only`
+  - `git switch -c issue-77-phase-7.1-practitioner-validation`
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops synth tactical-practitioner --out tests/fixtures/tactical_operational/practitioner-case/scenario.yaml`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_practitioner_case.py` (3 passed)
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py` (126 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (385 passed, 211 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-26 — Phase 7.0 full-scale tactical benchmark (#76)
+- Started #76 on `issue-76-phase-7.0-full-scale-benchmark` under Phase 7 parent #75.
+- Added process peak-memory telemetry (`peak_memory_mb`, `peak_memory_delta_mb`) to tactical scale benchmark rows and Markdown reports.
+- Ran the full generated TOPM-shaped scale case: 500 blocks × 5 years × 4 periods/year × 2 systems/products/facilities, demand fraction 0.1, HiGHS time limit 600 s.
+- Committed `docs/assets/tactical/full_scale/tactical_scale_benchmark.{csv,json,md}`: 20,000 harvest options, 100,082 variables, 120,664 constraints, optimal objective 2,389,209.89, build 13.37 s, solve 27.40 s, total 40.77 s, peak memory 860.5 MiB.
+- Updated the tactical how-to with the full-scale result; no decomposition is currently justified by this smoke-scale evidence.
+- Commands executed:
+  - `git switch -c issue-76-phase-7.0-full-scale-benchmark`
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops scenario benchmark --blocks 500 --years 5 --periods-per-year 4 --products 2 --facilities 2 --systems 2 --demand-fraction 0.1 --time-limit 600 --out-dir docs/assets/tactical/full_scale` (optimal)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_scale.py tests/model/test_tactical_operational_milp.py tests/planning/test_tactical_operational_integration.py` (19 passed)
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py` (125 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (382 passed, 211 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
+# 2026-09-26 — Phase 7 tactical validation scale-up issue tree kickoff
+- Created Phase 7 parent issue #75 and child issues #76–#79 for full-scale tactical benchmarking, practitioner validation, guided planner documentation, and the eventual FHOPS version bump.
+- Created `feature/phase7-tactical-validation-release` and added `notes/tactical_validation_issue_tree.md` as the phase manifest.
+- Updated `ROADMAP.md` so the version bump is explicitly gated on validation evidence for the new tactical–operational planning capability.
+- SoftwareX manuscript work remains out of scope for this phase; the manuscript lives in the separate `fhops-manuscript` repository.
+- Commands executed:
+  - `python /tmp/opencode/create_phase7_issues.py` (created #75–#79 and linked child issues)
+  - `git switch -c feature/phase7-tactical-validation-release`
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py` (125 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files CHANGE_LOG.md ROADMAP.md notes/tactical_validation_issue_tree.md` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-26 — DataLad-backed private reference document vault (#25)
 - Resolved issue #25 by retaining the private reference vault as an optional submodule while converting `UBC-FRESH/fhops-reference-docs` into a DataLad dataset (`--no-annex`) at commit `a345e7d`.
 - Restored `.gitmodules` and updated `reference-documents` to the DataLad-backed vault commit; the FHOPS parent repo tracks only the gitlink, not restricted contents.

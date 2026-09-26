@@ -48,6 +48,7 @@ ONBOARDING_NOTEBOOKS = [
     "02_fhops_solve_compare",
     "03_fhops_playback_kpis",
     "04_fhops_stochastic_what_if",
+    "05_fhops_tactical_operational",
 ]
 
 
@@ -68,8 +69,10 @@ def _load_runner_module():
         ("02", "02_fhops_solve_compare"),
         ("03", "03_fhops_playback_kpis"),
         ("04", "04_fhops_stochastic_what_if"),
+        ("05", "05_fhops_tactical_operational"),
         ("01.ipynb", "01_fhops_operations_simulation"),
         ("04.ipynb", "04_fhops_stochastic_what_if"),
+        ("05.ipynb", "05_fhops_tactical_operational"),
     ],
 )
 def test_runner_normalizes_notebook_alias(alias: str, expected: str) -> None:

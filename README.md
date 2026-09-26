@@ -10,7 +10,7 @@ forest harvesting operations plans. It provides:
 ## Installation
 
 ```bash
-pip install fhops==1.0.0
+pip install fhops==1.1.0
 ```
 
 For local development or release verification, use Hatch to mirror the CI suite:
