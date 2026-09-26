@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Execute the FHOPS onboarding notebook series.
 
-Runs only the five onboarding notebooks (00-04) into an untracked tmp output
-directory. Never overwrites source notebooks.
+Runs the onboarding notebooks (00-05) into an untracked tmp output directory.
+Never overwrites source notebooks.
 
 Usage:
-    python scripts/run_example_notebooks.py                     # all 5 notebooks
+    python scripts/run_example_notebooks.py                     # all 6 notebooks
     python scripts/run_example_notebooks.py --light             # skip heavy steps
     python scripts/run_example_notebooks.py --notebook 01       # shorthand alias
     python scripts/run_example_notebooks.py --notebook 00 --notebook 01  # repeatable selection
@@ -35,6 +35,7 @@ DEFAULT_NOTEBOOKS = [
     "02_fhops_solve_compare",
     "03_fhops_playback_kpis",
     "04_fhops_stochastic_what_if",
+    "05_fhops_tactical_operational",
 ]
 
 ALL_NOTEBOOKS = DEFAULT_NOTEBOOKS[:]
@@ -48,7 +49,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "-n",
         action="append",
         default=None,
-        help="Notebook name(s) to run (default: all five onboarding notebooks).",
+        help="Notebook name(s) to run (default: all onboarding notebooks).",
     )
     p.add_argument("--light", "-l", action="store_true", help="Skip heavy/heuristic steps.")
     p.add_argument(
@@ -215,8 +216,9 @@ def main(argv: list[str] | None = None) -> int:
 
     notebooks_dir = args.notebooks_dir
     if notebooks_dir is None:
-        if find_repo_root() is not None:
-            notebooks_dir = find_repo_root() / "examples"
+        repo_root = find_repo_root()
+        if repo_root is not None:
+            notebooks_dir = repo_root / "examples"
         else:
             notebooks_dir = Path.cwd() / "examples"
 

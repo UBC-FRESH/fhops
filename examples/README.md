@@ -35,7 +35,7 @@ jupyter notebook
 ```
 
 Open the notebooks in order: `00_fhops_orientation.ipynb` through
-`04_fhops_stochastic_what_if.ipynb`.
+`05_fhops_tactical_operational.ipynb`.
 
 ## Run the onboarding notebooks from the command line
 
@@ -58,7 +58,8 @@ Options:
 - `--timeout N` — per-notebook timeout in seconds (default: 600).
 - `--notebook NAME` — run only specific notebooks (repeatable); use `00`, `01`,
    `02`, `03`, or `04` as shorthand aliases (with an optional `.ipynb` suffix), or
-   pass a full notebook name such as `01_fhops_operations_simulation`.
+   pass a full notebook name such as `01_fhops_operations_simulation`. Use `05` for the
+   tactical–operational walkthrough.
 
 Notebook execution writes to an untracked temporary output directory by
 default and **never** overwrites source notebooks.
@@ -90,11 +91,18 @@ default and **never** overwrites source notebooks.
    (`fhops.evaluation.run_stochastic_playback` + `SamplingConfig`) to assess
    schedule robustness under downtime, weather, and landing-shock uncertainty.
 
+6. **`05_fhops_tactical_operational.ipynb`** — generate the practitioner-scale
+   tactical case, validate its contract, solve the aggregate MILP with optional
+   infrastructure modules, audit inventory balances, compare a sparse overlay,
+   write normalized reports, and compile selected tactical commitments into an
+   operational scenario window.
+
 ## Dataset reuse
 
-All five onboarding notebooks use the **bundled** scenarios under `examples/`.
-No external datasets or licensed solvers are required. Heuristic budgets are
-kept modest (50–200 SA iterations, seeds 7 or 42) for reproducibility.
+All six onboarding notebooks use the **bundled** scenarios under `examples/` or
+redistributable synthetic cases generated at runtime. No external datasets or
+licensed solvers are required. Heuristic budgets are kept modest (50–200 SA
+iterations, seeds 7 or 42) for reproducibility.
 
 Solver/CLI outputs (CSV assignments) are created in `tempfile.TemporaryDirectory`
 during execution and cleaned up automatically.

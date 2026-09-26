@@ -1,3 +1,23 @@
+# 2026-09-26 — Phase 7.2 guided tactical planner notebook (#78)
+- Merged #77 via PR #81 and started #78 on `issue-78-phase-7.2-guided-tactical-notebook`.
+- Added `examples/05_fhops_tactical_operational.ipynb`, an executable guided walkthrough covering practitioner-case generation, contract validation, all-module tactical solving, decision tables, inventory-balance audits, sparse overlays/diffs, normalized reports, and tactical→operational compilation.
+- Updated `scripts/run_example_notebooks.py`, `examples/README.md`, and notebook structural tests so `05` is a first-class onboarding notebook alias.
+- Updated the tactical how-to with the guided notebook workflow.
+- Commands executed:
+  - `git switch feature/phase7-tactical-validation-release && git pull --ff-only`
+  - `git switch -c issue-78-phase-7.2-guided-tactical-notebook`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python /tmp/opencode/create_tactical_notebook.py`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/run_example_notebooks.py --notebook 05 --timeout 600` (1 executed, 0 failed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_example_notebook_support.py tests/planning/test_tactical_practitioner_case.py` (51 passed)
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py scripts/run_example_notebooks.py` (127 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/run_example_notebooks.py --keep-going --timeout 600` (6 executed, 0 failed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (390 passed, 211 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-26 — Phase 7.1 practitioner-scale tactical validation case (#77)
 - Merged #76 via PR #80 and started #77 on `issue-77-phase-7.1-practitioner-validation`.
 - Added `generate_tactical_practitioner_case`, a redistributable synthetic case with 24 blocks, 8 periods, 3 products, 2 facilities, 3 harvest systems, road dependencies/access, silviculture follow-up, external supply, and optional fleet investment.
