@@ -312,6 +312,26 @@ The checked-in fixture lives at
 schema dimensions, minimum-cut feasibility, road/silviculture/fleet module behavior, and every
 facility/product/period inventory balance.
 
+Guided tactical planner notebook
+--------------------------------
+
+The onboarding series now includes ``examples/05_fhops_tactical_operational.ipynb``, an executable
+walkthrough covering:
+
+- practitioner-case generation and contract validation;
+- aggregate MILP solve with roads/silviculture/fleet modules;
+- objective decomposition and normalized decision tables;
+- facility inventory balance audits;
+- sparse overlays and scenario diffs;
+- report exports; and
+- tactical→operational compilation into an operational scenario bundle.
+
+Run it with:
+
+.. code-block:: bash
+
+   python scripts/run_example_notebooks.py --notebook 05
+
 `topm-mini` acceptance fixture
 ------------------------------
 
