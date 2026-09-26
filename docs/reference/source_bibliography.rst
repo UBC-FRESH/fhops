@@ -14,7 +14,7 @@ not allow redistribution through a public GitHub repository. If redistribution
 rights were clear for the whole corpus, the documents would simply remain beside
 the code. Because they are not, the full-text working library is held in an
 access-controlled private GitHub repository and linked into authorized checkouts
-as the ``reference-documents`` submodule.
+as the optional, DataLad-backed ``reference-documents`` submodule.
 
 Public bibliography
 -------------------
@@ -43,13 +43,12 @@ Authorized collaborators can populate the private working library with:
 
    git submodule update --init reference-documents
 
-The submodule points to the private repository
-``UBC-FRESH/fhops-reference-docs``. Access is controlled by GitHub permissions;
-users without access should use the public bibliography above to retrieve cited
-documents from the original publishers, DOI landing pages, institutional
-repositories, or FPInnovations/FERIC catalogues.
+The submodule points to the private, DataLad-backed repository
+``UBC-FRESH/fhops-reference-docs``. The FHOPS parent repository tracks only the submodule
+gitlink/commit, not the restricted contents. The vault is excluded from FHOPS wheels, source
+distributions, and public documentation builds.
 
-The private vault is a convenience copy for collaborators who already have access
-to the materials. It does not grant permission to redistribute those files, and
-it is excluded from FHOPS wheels, source distributions, and public documentation
-builds.
+DataLad users can also use ``datalad clone`` directly once their GitHub access is configured.
+Users without access should use the public bibliography above to retrieve cited documents from the
+original publishers, DOI landing pages, institutional repositories, or FPInnovations/FERIC
+catalogues.

@@ -183,7 +183,7 @@ before proposing new work.
     - Child issues #57–#60 are merged into `feature/phase5-formal-model-sync` via PRs #61–#64.
     - Canonical operational and tactical–operational MILP formulations are synchronized across Markdown sources, generated TeX/RST includes, Sphinx docs, and manuscript-facing assets.
     - `scripts/check_formulation_assets.py` now regenerates formulation assets into a temporary tree and fails on checked-in drift; traceability tests cover both MILP mapping tables.
-    - Final gate: merge the Phase 5 integration PR into `main` and close parent #56 after maintainer approval.
+    - Final gate complete: Phase 5 integration PR #65 merged into `main`, closing parent #56.
 13. **Tactical–Operational Expansion (#36; `notes/tactical_operational_expansion_plan.md`, `notes/tactical_operational_issue_tree.md`)**
     - Parent issue #36 and child issues #37–#44 are linked via GitHub sub-issues; all child PRs #45–#52 are merged into `feature/phase6-tactical-operational-expansion`.
     - The phase branch now carries the two-level architecture, tactical contract/MILP, product-flow/inventory/infrastructure modules, scenario overlays/reporting, tactical→operational handoff, and initial scale telemetry.
@@ -201,7 +201,7 @@ before proposing new work.
 - [ ] Schedule “full” analytics notebook runs (no light flag) on a less frequent cadence (nightly or weekly: leaning towards weekly) to guard against stochastic regression while keeping CI duration manageable.
   - [ ] Extend CI with a `cron` job that invokes `scripts/run_analytics_notebooks.py --timeout 900` (no `--light`) and publishes the resulting reports to the telemetry Pages bundle, keeping a 4-week artifact history for comparison.
 - [ ] `pre-commit` autoupdate (especially `pre-commit-hooks`) plus workflow wiring so stage deprecation warnings are resolved before upstream removal.
-- [ ] Full `pre-commit run --all-files` notebook debt: pre-existing `examples/*.ipynb` Ruff findings (E402/F401/F541/whitespace) are being cleaned/approved under issue #66 so `main` CI can publish docs again.
+- [x] Full `pre-commit run --all-files` notebook debt: cleaned/approved under issues #66–#70 so `main` CI publishes docs again.
 - [ ] Post-Phase 6 validation scale-up: full 5-year/500+ block tactical benchmark, practitioner case validation, guided planner notebooks, and decomposition only if profiling shows a bottleneck.
 - [ ] Dataset inspection + data-quality polish (see `notes/dataset_inspection_plan.md`)
   - [ ] Enforce/document 24 h/day machine availability in docs + sample datasets, and flag deviations via the inspector CLI.
