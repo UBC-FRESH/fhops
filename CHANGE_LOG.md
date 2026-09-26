@@ -1,3 +1,13 @@
+# 2026-09-26 — Phase 7 integration closeout (#75)
+- Merged Phase 7 integration PR #84 into `main`, closing parent issue #75.
+- Updated the roadmap and Phase 7 issue-tree manifest to record final PR numbers (#80–#84) and the completed state.
+- FHOPS 1.1.0 release readiness is now on `main`; actual PyPI/TestPyPI publication remains a separate release-day operation.
+- Commands executed:
+  - `git switch main && git pull --ff-only`
+  - `git switch -c chore/phase7-closeout`
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files CHANGE_LOG.md ROADMAP.md notes/tactical_validation_issue_tree.md` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-26 — Phase 7 tactical validation scale-up integration gate
 - Merged Phase 7 child issues #76–#79 into `feature/phase7-tactical-validation-release` via PRs #80–#83.
 - Marked the Phase 7 roadmap checklist complete: full-scale benchmark, practitioner validation case, guided tactical notebook, and FHOPS 1.1.0 release readiness.
