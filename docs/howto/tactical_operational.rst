@@ -283,7 +283,10 @@ condition. Decomposition methods (Benders, Dantzig–Wolfe, fix-and-optimize) sh
 after these measurements identify a real bottleneck. The committed smoke benchmark in
 ``docs/assets/tactical/tactical_scale_benchmark.md`` currently shows HiGHS solving generated
 25-block and 100-block cases in under one second each (1,018/1,261 and 4,018/4,936
-variables/constraints, respectively).
+variables/constraints, respectively). The full-scale artifact at
+``docs/assets/tactical/full_scale/tactical_scale_benchmark.md`` covers 500 blocks × 5 years ×
+4 periods/year: 20,000 harvest options, 100,082 variables, 120,664 constraints, and an optimal
+HiGHS result in 40.8 s with about 860 MiB peak memory.
 
 For uncertainty screening, use scenario overlays plus ``fhops scenario batch`` to compare demand,
 productivity, road-cost, or purchase-price cases before attempting robust or stochastic MILP

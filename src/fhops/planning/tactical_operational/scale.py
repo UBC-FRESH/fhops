@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+import resource
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -219,6 +220,7 @@ def run_tactical_scale_benchmark(
     """Solve generated tactical scenarios and return scale/timing/model-size telemetry."""
     rows: list[dict[str, Any]] = []
     for config in configs:
+        memory_start_mb = _peak_memory_mb()
         scenario = generate_tactical_scale_scenario(config)
         bundle = build_tactical_operational_bundle(scenario)
         result = solve_tactical_operational_milp(
@@ -229,6 +231,7 @@ def run_tactical_scale_benchmark(
         )
         stats = result.get("model_statistics") or {}
         dimensions = result.get("model_dimensions") or {}
+        memory_end_mb = _peak_memory_mb()
         rows.append(
             {
                 **asdict(config),
@@ -239,6 +242,12 @@ def run_tactical_scale_benchmark(
                 "runtime_s": result.get("runtime_s"),
                 "build_time_s": result.get("build_time_s"),
                 "solve_time_s": result.get("solve_time_s"),
+                "peak_memory_mb": memory_end_mb,
+                "peak_memory_delta_mb": (
+                    None
+                    if memory_start_mb is None or memory_end_mb is None
+                    else memory_end_mb - memory_start_mb
+                ),
                 **{f"dim_{key}": value for key, value in dimensions.items()},
                 **{f"model_{key}": value for key, value in stats.items()},
             }
@@ -262,6 +271,14 @@ def write_tactical_scale_benchmark(
     return {"csv": csv_path, "json": json_path, "markdown": md_path}
 
 
+def _peak_memory_mb() -> float | None:
+    """Return the process peak resident set size in MiB when the platform exposes it."""
+    try:
+        return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024
+    except Exception:
+        return None
+
+
 def _benchmark_markdown(frame: pd.DataFrame) -> str:
     columns = [
         "num_blocks",
@@ -275,6 +292,7 @@ def _benchmark_markdown(frame: pd.DataFrame) -> str:
         "solve_time_s",
         "model_number_of_variables",
         "model_number_of_constraints",
+        "peak_memory_mb",
     ]
     available = [column for column in columns if column in frame.columns]
     lines = [

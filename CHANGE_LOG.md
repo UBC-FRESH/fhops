@@ -1,3 +1,21 @@
+# 2026-09-26 — Phase 7.0 full-scale tactical benchmark (#76)
+- Started #76 on `issue-76-phase-7.0-full-scale-benchmark` under Phase 7 parent #75.
+- Added process peak-memory telemetry (`peak_memory_mb`, `peak_memory_delta_mb`) to tactical scale benchmark rows and Markdown reports.
+- Ran the full generated TOPM-shaped scale case: 500 blocks × 5 years × 4 periods/year × 2 systems/products/facilities, demand fraction 0.1, HiGHS time limit 600 s.
+- Committed `docs/assets/tactical/full_scale/tactical_scale_benchmark.{csv,json,md}`: 20,000 harvest options, 100,082 variables, 120,664 constraints, optimal objective 2,389,209.89, build 13.37 s, solve 27.40 s, total 40.77 s, peak memory 860.5 MiB.
+- Updated the tactical how-to with the full-scale result; no decomposition is currently justified by this smoke-scale evidence.
+- Commands executed:
+  - `git switch -c issue-76-phase-7.0-full-scale-benchmark`
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops scenario benchmark --blocks 500 --years 5 --periods-per-year 4 --products 2 --facilities 2 --systems 2 --demand-fraction 0.1 --time-limit 600 --out-dir docs/assets/tactical/full_scale` (optimal)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_operational_scale.py tests/model/test_tactical_operational_milp.py tests/planning/test_tactical_operational_integration.py` (19 passed)
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py` (125 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (382 passed, 211 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-26 — Phase 7 tactical validation scale-up issue tree kickoff
 - Created Phase 7 parent issue #75 and child issues #76–#79 for full-scale tactical benchmarking, practitioner validation, guided planner documentation, and the eventual FHOPS version bump.
 - Created `feature/phase7-tactical-validation-release` and added `notes/tactical_validation_issue_tree.md` as the phase manifest.
