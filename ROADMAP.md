@@ -140,7 +140,7 @@ before proposing new work.
 - [ ] #76 Run and document the full 5-year / 500+ block TOPM-shaped tactical benchmark with profiling evidence. *(In progress on `issue-76-phase-7.0-full-scale-benchmark`.)*
 - [ ] #77 Build a redistributable practitioner-scale tactical validation case and verify decisions/balances/reports. *(In progress on `issue-77-phase-7.1-practitioner-validation`.)*
 - [ ] #78 Add an executable guided tactical planner notebook covering contract → solve → report → operational handoff. *(In progress on `issue-78-phase-7.2-guided-tactical-notebook`.)*
-- [ ] #79 Prepare the FHOPS version bump and release notes after validation evidence lands.
+- [ ] #79 Prepare the FHOPS version bump and release notes after validation evidence lands. *(In progress on `issue-79-phase-7.3-release-version-bump`.)*
 
 ## Detailed Next Steps
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**

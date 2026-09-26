@@ -1,3 +1,22 @@
+# 2026-09-26 — Phase 7.3 tactical release readiness and version bump (#79)
+- Merged #78 via PR #82 and started #79 on `issue-79-phase-7.3-release-version-bump`.
+- Bumped the package version source from `1.0.0` to `1.1.0` because Phase 6 adds substantial backward-compatible tactical–operational planning capability while preserving schema `1.0.0` operational workflows.
+- Added `docs/releases/v1.1.0.md` covering scope, highlights, new CLI surfaces, compatibility, limitations, and validation evidence.
+- Updated README and Sphinx overview install instructions to `pip install fhops==1.1.0`.
+- Commands executed:
+  - `git switch feature/phase7-tactical-validation-release && git pull --ff-only`
+  - `git switch -c issue-79-phase-7.3-release-version-bump`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_import.py tests/planning/test_tactical_practitioner_case.py tests/planning/test_tactical_operational_scale.py` (7 passed)
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py scripts/run_example_notebooks.py` (127 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (390 passed, 211 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/hatch clean && /tmp/opencode/fhops-topm37-venv/bin/hatch build` (built `fhops-1.1.0` wheel/sdist)
+  - Clean wheel smoke in `/tmp/opencode/fhops-v110-smoke`: `import fhops` → `1.1.0`; `fhops --help`; `fhops validate tactical-operational tests/fixtures/tactical_operational/practitioner-case/scenario.yaml` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-26 — Phase 7.2 guided tactical planner notebook (#78)
 - Merged #77 via PR #81 and started #78 on `issue-78-phase-7.2-guided-tactical-notebook`.
 - Added `examples/05_fhops_tactical_operational.ipynb`, an executable guided walkthrough covering practitioner-case generation, contract validation, all-module tactical solving, decision tables, inventory-balance audits, sparse overlays/diffs, normalized reports, and tactical→operational compilation.

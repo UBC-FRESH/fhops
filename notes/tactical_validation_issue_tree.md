@@ -20,8 +20,8 @@ Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 All four child issues are linked to parent #75 through GitHub sub-issues and assigned the
 repository `Feature` issue type.
 
-2026-09-26 status: #76 and #77 merged into the Phase 7 branch via PRs #80 and #81. #78 is in
-progress on branch `issue-78-phase-7.2-guided-tactical-notebook`.
+2026-09-26 status: #76–#78 merged into the Phase 7 branch via PRs #80–#82. #79 is in progress on
+branch `issue-79-phase-7.3-release-version-bump`.
 
 ## Ongoing hygiene
 
