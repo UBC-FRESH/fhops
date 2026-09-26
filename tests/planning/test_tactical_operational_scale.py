@@ -61,6 +61,7 @@ def test_tactical_scale_benchmark_outputs(tmp_path: Path) -> None:
     )
     assert len(frame) == 2
     assert frame["model_number_of_variables"].gt(0).all()
+    assert "peak_memory_mb" in frame.columns
 
     written = write_tactical_scale_benchmark(frame, tmp_path)
     assert written["csv"].exists()
