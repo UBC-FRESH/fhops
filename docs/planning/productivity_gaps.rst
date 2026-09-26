@@ -10,8 +10,8 @@ and grapple-skidder regressions are absent, so the parsed JSON should be treated
 harvester/harwarder validation set. For primary-transport roles we must fall back to the
 external references already logged in ``notes/reference_log.md`` and the public notes under
 ``notes/reference`` (Ghaffariyan et al. 2019, Kellogg & Bettinger 1994, Allman et al. 2021,
-etc.). Full-text working copies live in the private ``reference-documents`` submodule for
-authorized collaborators.
+etc.). Full-text working copies live in the optional, DataLad-backed ``reference-documents``
+submodule for authorized collaborators.
 
 Implications
 ------------

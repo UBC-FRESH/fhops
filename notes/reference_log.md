@@ -1,6 +1,6 @@
 # FPInnovations / FERIC Reference Log
 
-Purpose: track each FPInnovations/FERIC PDF dropped under `reference-documents/notes/reference/fpinnovations/`, summarize its contents when unpacked, and flag any productivity/cost models worth extracting into the FHOPS registry.
+Purpose: track each FPInnovations/FERIC PDF available in the optional, DataLad-backed `reference-documents/notes/reference/fpinnovations/` vault, summarize its contents when unpacked, and flag any productivity/cost models worth extracting into the FHOPS registry.
 
 ## Legend
 - **Status**: `pending` = not yet reviewed, `scanned` = skimmed/notes captured, `extracted` = productivity data already ported.

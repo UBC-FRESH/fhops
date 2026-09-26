@@ -1,3 +1,17 @@
+# 2026-09-26 — DataLad-backed private reference document vault (#25)
+- Resolved issue #25 by retaining the private reference vault as an optional submodule while converting `UBC-FRESH/fhops-reference-docs` into a DataLad dataset (`--no-annex`) at commit `a345e7d`.
+- Restored `.gitmodules` and updated `reference-documents` to the DataLad-backed vault commit; the FHOPS parent repo tracks only the gitlink, not restricted contents.
+- Added `notes/reference_document_policy.md` documenting the private DataLad-backed vault, optional submodule workflow, historical-risk acceptance, and collaborator checklist.
+- Updated the public source-bibliography and planning notes so they refer to the optional DataLad-backed `reference-documents` submodule rather than a tracked/local-only directory.
+- Cleaned stale roadmap status for the Phase 5 final gate and the completed notebook pre-commit debt.
+- Commands executed:
+  - `git switch -c issue-25-reference-blob-policy`
+  - `/tmp/opencode/datalad-venv/bin/datalad create --force --no-annex` inside a private clone of `UBC-FRESH/fhops-reference-docs`
+  - `git commit -m "Enable DataLad dataset metadata"` in `fhops-reference-docs` (`a345e7d`)
+  - `git submodule add https://github.com/UBC-FRESH/fhops-reference-docs.git reference-documents`
+  - `git -C reference-documents checkout a345e7d`
+  - Validation commands recorded below after final checks.
+
 # 2026-09-25 — Fix generated formulation RST readability (#72)
 - Created issue #72 after verifying that the published tactical formulation page contained awkward Pandoc grid-table wrapping artifacts that split long Pyomo component names.
 - Updated `export_docs_assets.py` to render Markdown with `--columns=160`, regenerated all shared TeX/RST assets with pinned Pandoc 3.1.3, and confirmed that component names such as `model.machine_capacity` and `model.inventory_balance` now render intact in RST.
