@@ -1,3 +1,21 @@
+# 2026-09-26 — Phase 7 tactical validation scale-up integration gate
+- Merged Phase 7 child issues #76–#79 into `feature/phase7-tactical-validation-release` via PRs #80–#83.
+- Marked the Phase 7 roadmap checklist complete: full-scale benchmark, practitioner validation case, guided tactical notebook, and FHOPS 1.1.0 release readiness.
+- Prepared the phase branch for integration into `main` and closure of parent issue #75.
+- Commands executed:
+  - `git switch feature/phase7-tactical-validation-release && git fetch origin && git pull --ff-only`
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py scripts/run_example_notebooks.py` (127 source files, no issues)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/python scripts/check_formulation_assets.py` (synchronized)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (390 passed, 211 skipped, 61 warnings)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python scripts/run_example_notebooks.py --keep-going --timeout 600` (6 executed, 0 failed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/hatch clean && /tmp/opencode/fhops-topm37-venv/bin/hatch build` (built `fhops-1.1.0` wheel/sdist)
+  - Clean wheel smoke in `/tmp/opencode/fhops-v110-final-smoke`: `import fhops` → `1.1.0`; tactical practitioner scenario validation passed
+  - `git diff --check` (passed)
+
 # 2026-09-26 — Phase 7.3 tactical release readiness and version bump (#79)
 - Merged #78 via PR #82 and started #79 on `issue-79-phase-7.3-release-version-bump`.
 - Bumped the package version source from `1.0.0` to `1.1.0` because Phase 6 adds substantial backward-compatible tactical–operational planning capability while preserving schema `1.0.0` operational workflows.

@@ -137,10 +137,10 @@ before proposing new work.
 - [x] #44 Benchmark scale/decomposition options only after the integrated core is validated and profiled (merged via PR #52; full 5-year benchmark and practitioner validation remain follow-up scope).
 
 ## Phase 7 — Tactical Validation Scale-Up and Release Preparation
-- [ ] #76 Run and document the full 5-year / 500+ block TOPM-shaped tactical benchmark with profiling evidence. *(In progress on `issue-76-phase-7.0-full-scale-benchmark`.)*
-- [ ] #77 Build a redistributable practitioner-scale tactical validation case and verify decisions/balances/reports. *(In progress on `issue-77-phase-7.1-practitioner-validation`.)*
-- [ ] #78 Add an executable guided tactical planner notebook covering contract → solve → report → operational handoff. *(In progress on `issue-78-phase-7.2-guided-tactical-notebook`.)*
-- [ ] #79 Prepare the FHOPS version bump and release notes after validation evidence lands. *(In progress on `issue-79-phase-7.3-release-version-bump`.)*
+- [x] #76 Run and document the full 5-year / 500+ block TOPM-shaped tactical benchmark with profiling evidence (merged via PR #80).
+- [x] #77 Build a redistributable practitioner-scale tactical validation case and verify decisions/balances/reports (merged via PR #81).
+- [x] #78 Add an executable guided tactical planner notebook covering contract → solve → report → operational handoff (merged via PR #82).
+- [x] #79 Prepare the FHOPS version bump and release notes after validation evidence lands (merged via PR #83).
 
 ## Detailed Next Steps
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
