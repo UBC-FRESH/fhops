@@ -16,6 +16,9 @@ except ModuleNotFoundError:  # pragma: no cover
 
 import yaml
 
+from fhops.planning.tactical_operational.practitioner import (
+    generate_tactical_practitioner_case,
+)
 from fhops.planning.tactical_operational.scale import (
     TacticalScaleConfig,
     generate_tactical_scale_scenario,
@@ -508,6 +511,21 @@ def generate_tactical_scale(
     write_tactical_scenario_yaml(scenario, out)
     console.print(
         f"[green]Tactical scale scenario written to {out}[/green] "
+        f"({len(scenario.planning_units)} blocks, {len(scenario.periods)} periods, "
+        f"{len(scenario.harvest_system_options)} options)"
+    )
+
+
+@synth_app.command("tactical-practitioner")
+def generate_tactical_practitioner(
+    out: Path = typer.Option(..., "--out", help="Output practitioner scenario YAML path."),
+    seed: int = typer.Option(2601, "--seed", help="Deterministic RNG seed."),
+) -> None:
+    """Generate the redistributable practitioner-scale tactical validation case."""
+    scenario = generate_tactical_practitioner_case(seed=seed)
+    write_tactical_scenario_yaml(scenario, out)
+    console.print(
+        f"[green]Tactical practitioner scenario written to {out}[/green] "
         f"({len(scenario.planning_units)} blocks, {len(scenario.periods)} periods, "
         f"{len(scenario.harvest_system_options)} options)"
     )

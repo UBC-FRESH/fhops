@@ -292,6 +292,26 @@ For uncertainty screening, use scenario overlays plus ``fhops scenario batch`` t
 productivity, road-cost, or purchase-price cases before attempting robust or stochastic MILP
 variants.
 
+Practitioner-scale validation case
+----------------------------------
+
+Phase 7 adds a redistributable synthetic practitioner case shaped like a small mixed-terrain tenure:
+24 blocks, 8 periods, 3 products, 2 mills, 3 harvest systems, roads/dependencies, silviculture
+follow-up, and an optional fleet expansion. Generate or inspect it with:
+
+.. code-block:: bash
+
+   fhops synth tactical-practitioner --out tmp/practitioner.yaml
+   fhops validate tactical-operational tmp/practitioner.yaml
+   fhops plan tactical-operational tmp/practitioner.yaml \
+     --enable-roads --enable-silviculture --enable-fleet-investment \
+     --out-json tmp/practitioner-result.json
+
+The checked-in fixture lives at
+``tests/fixtures/tactical_operational/practitioner-case/scenario.yaml`` and regression tests verify
+schema dimensions, minimum-cut feasibility, road/silviculture/fleet module behavior, and every
+facility/product/period inventory balance.
+
 `topm-mini` acceptance fixture
 ------------------------------
 

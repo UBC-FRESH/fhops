@@ -1,3 +1,22 @@
+# 2026-09-26 — Phase 7.1 practitioner-scale tactical validation case (#77)
+- Merged #76 via PR #80 and started #77 on `issue-77-phase-7.1-practitioner-validation`.
+- Added `generate_tactical_practitioner_case`, a redistributable synthetic case with 24 blocks, 8 periods, 3 products, 2 facilities, 3 harvest systems, road dependencies/access, silviculture follow-up, external supply, and optional fleet investment.
+- Added `fhops synth tactical-practitioner` and committed the generated fixture at `tests/fixtures/tactical_operational/practitioner-case/scenario.yaml`.
+- Added regression coverage for fixture dimensions/round-trip, all-module optimal solving, minimum-cut enforcement, road/silviculture/fleet activation, and every facility/product/period inventory balance.
+- Updated the tactical how-to and CLI reference with the practitioner validation workflow.
+- Commands executed:
+  - `git switch feature/phase7-tactical-validation-release && git pull --ff-only`
+  - `git switch -c issue-77-phase-7.1-practitioner-validation`
+  - `/tmp/opencode/fhops-topm37-venv/bin/fhops synth tactical-practitioner --out tests/fixtures/tactical_operational/practitioner-case/scenario.yaml`
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/planning/test_tactical_practitioner_case.py` (3 passed)
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py` (126 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (385 passed, 211 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-26 — Phase 7.0 full-scale tactical benchmark (#76)
 - Started #76 on `issue-76-phase-7.0-full-scale-benchmark` under Phase 7 parent #75.
 - Added process peak-memory telemetry (`peak_memory_mb`, `peak_memory_delta_mb`) to tactical scale benchmark rows and Markdown reports.
