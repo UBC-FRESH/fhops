@@ -1,3 +1,17 @@
+# 2026-09-26 — Phase 7 tactical validation scale-up issue tree kickoff
+- Created Phase 7 parent issue #75 and child issues #76–#79 for full-scale tactical benchmarking, practitioner validation, guided planner documentation, and the eventual FHOPS version bump.
+- Created `feature/phase7-tactical-validation-release` and added `notes/tactical_validation_issue_tree.md` as the phase manifest.
+- Updated `ROADMAP.md` so the version bump is explicitly gated on validation evidence for the new tactical–operational planning capability.
+- SoftwareX manuscript work remains out of scope for this phase; the manuscript lives in the separate `fhops-manuscript` repository.
+- Commands executed:
+  - `python /tmp/opencode/create_phase7_issues.py` (created #75–#79 and linked child issues)
+  - `git switch -c feature/phase7-tactical-validation-release`
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py` (125 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/pre-commit run --files CHANGE_LOG.md ROADMAP.md notes/tactical_validation_issue_tree.md` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-26 — DataLad-backed private reference document vault (#25)
 - Resolved issue #25 by retaining the private reference vault as an optional submodule while converting `UBC-FRESH/fhops-reference-docs` into a DataLad dataset (`--no-annex`) at commit `a345e7d`.
 - Restored `.gitmodules` and updated `reference-documents` to the DataLad-backed vault commit; the FHOPS parent repo tracks only the gitlink, not restricted contents.
