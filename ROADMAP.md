@@ -137,6 +137,7 @@ before proposing new work.
 - [x] #44 Benchmark scale/decomposition options only after the integrated core is validated and profiled (merged via PR #52; full 5-year benchmark and practitioner validation remain follow-up scope).
 
 ## Phase 7 — Tactical Validation Scale-Up and Release Preparation
+- [x] #75 Integrate Phase 7 into `main` (merged via PR #84).
 - [x] #76 Run and document the full 5-year / 500+ block TOPM-shaped tactical benchmark with profiling evidence (merged via PR #80).
 - [x] #77 Build a redistributable practitioner-scale tactical validation case and verify decisions/balances/reports (merged via PR #81).
 - [x] #78 Add an executable guided tactical planner notebook covering contract → solve → report → operational handoff (merged via PR #82).
@@ -196,8 +197,9 @@ before proposing new work.
     - Final gate complete: Phase 6 integration PR #53 merged into `main`, closing parent #36.
     - Follow-up scope is tracked separately: full 5-year/500+ block benchmark, practitioner case validation, guided planner notebooks, decomposition if measured scale requires it, and the pre-existing notebook full-pre-commit debt.
 14. **Tactical Validation Scale-Up and Release Preparation (#75; `notes/tactical_validation_issue_tree.md`)**
-    - Phase branch is `feature/phase7-tactical-validation-release`; child issues #76–#79 cover full-scale benchmarking, practitioner validation, guided planner documentation, and the eventual version bump.
-    - The package version bump should wait for benchmark and practitioner evidence because Phase 6 materially expands FHOPS's potential use cases.
+    - Phase branch `feature/phase7-tactical-validation-release` carried child issues #76–#79 for full-scale benchmarking, practitioner validation, guided planner documentation, and the FHOPS 1.1.0 version bump.
+    - All child PRs #80–#83 merged into the phase branch; Phase 7 integration PR #84 merged into `main`, closing parent #75.
+    - The version bump was gated on benchmark and practitioner evidence because Phase 6 materially expands FHOPS's potential use cases.
     - SoftwareX manuscript edits are out of scope here; the manuscript lives in the separate `fhops-manuscript` repository.
 
 ## Backlog & Ideas

@@ -20,8 +20,8 @@ Workflow contract: `AGENTS.md` → “Roadmap phase and issue-tree workflow”
 All four child issues are linked to parent #75 through GitHub sub-issues and assigned the
 repository `Feature` issue type.
 
-2026-09-26 status: #76–#79 merged into the Phase 7 branch via PRs #80–#83. The phase branch is
-ready for integration into `main`; parent #75 will close after the integration PR merges.
+2026-09-26 status: #76–#79 merged into the Phase 7 branch via PRs #80–#83. Phase 7 integration
+PR #84 merged into `main`, closing parent #75.
 
 ## Ongoing hygiene
 
