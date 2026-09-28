@@ -1,9 +1,10 @@
-# 2026-09-28 — FHOPS 1.1.0a1 GitHub prerelease published; PyPI awaiting credentials (#86)
+# 2026-09-28 — FHOPS 1.1.0a1 GitHub/PyPI alpha published (#86)
 - Merged PR #87 into `main`, setting the package version to `1.1.0a1` and marking the tactical release as alpha.
 - Built `fhops-1.1.0a1` wheel/sdist from `main` and smoke-tested the wheel in a clean venv (`fhops.__version__ == "1.1.0a1"`; tactical practitioner validation passed).
 - Attempted a signed tag, but no local GPG secret key is configured for `Gregory Paradis <0@01101.io>`; pushed unsigned annotated tag `v1.1.0a1` instead.
 - Created GitHub prerelease `v1.1.0a1` at https://github.com/UBC-FRESH/fhops/releases/tag/v1.1.0a1 with the wheel and sdist attached.
-- PyPI/TestPyPI publication is blocked because this environment exposes no `TWINE_PASSWORD`, `PYPI_TOKEN`, or `TESTPYPI_TOKEN`; once credentials are available, run `python -m twine upload dist/fhops-1.1.0a1*` from the `main` checkout (optionally with `--repository testpypi` first).
+- Uploaded `fhops-1.1.0a1` to TestPyPI and verified a clean install from https://test.pypi.org/project/fhops/1.1.0a1/.
+- Uploaded `fhops-1.1.0a1` to PyPI and verified a clean `--pre fhops==1.1.0a1` install from https://pypi.org/project/fhops/1.1.0a1/ after index propagation.
 - Commands executed:
   - `git switch main && git pull --ff-only`
   - `/tmp/opencode/fhops-topm37-venv/bin/hatch clean && /tmp/opencode/fhops-topm37-venv/bin/hatch build`
@@ -12,6 +13,10 @@
   - `git tag -a v1.1.0a1 -m "FHOPS 1.1.0a1 tactical alpha (unsigned: no local signing key configured)"`
   - `git push origin v1.1.0a1`
   - `gh release create v1.1.0a1 --prerelease --target main ...` (published)
+  - `twine upload --repository testpypi dist/fhops-1.1.0a1*` using `/home/gep/projects/tmp/credentials` (published)
+  - Clean TestPyPI install smoke in `/tmp/opencode/fhops-v110a1-testpypi-smoke` (passed)
+  - `twine upload dist/fhops-1.1.0a1*` using `/home/gep/projects/tmp/credentials` (published)
+  - Clean PyPI install smoke in `/tmp/opencode/fhops-v110a1-pypi-smoke` with `--pre fhops==1.1.0a1` (passed)
 
 # 2026-09-28 — Recut tactical release as FHOPS 1.1.0a1 alpha (#86)
 - Created issue #86 after deciding the tactical–operational expansion needs broader testing before a stable release.
