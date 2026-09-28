@@ -1,3 +1,18 @@
+# 2026-09-28 — FHOPS 1.1.0a1 GitHub prerelease published; PyPI awaiting credentials (#86)
+- Merged PR #87 into `main`, setting the package version to `1.1.0a1` and marking the tactical release as alpha.
+- Built `fhops-1.1.0a1` wheel/sdist from `main` and smoke-tested the wheel in a clean venv (`fhops.__version__ == "1.1.0a1"`; tactical practitioner validation passed).
+- Attempted a signed tag, but no local GPG secret key is configured for `Gregory Paradis <0@01101.io>`; pushed unsigned annotated tag `v1.1.0a1` instead.
+- Created GitHub prerelease `v1.1.0a1` at https://github.com/UBC-FRESH/fhops/releases/tag/v1.1.0a1 with the wheel and sdist attached.
+- PyPI/TestPyPI publication is blocked because this environment exposes no `TWINE_PASSWORD`, `PYPI_TOKEN`, or `TESTPYPI_TOKEN`; once credentials are available, run `python -m twine upload dist/fhops-1.1.0a1*` from the `main` checkout (optionally with `--repository testpypi` first).
+- Commands executed:
+  - `git switch main && git pull --ff-only`
+  - `/tmp/opencode/fhops-topm37-venv/bin/hatch clean && /tmp/opencode/fhops-topm37-venv/bin/hatch build`
+  - Clean wheel smoke in `/tmp/opencode/fhops-v110a1-main-smoke` (passed)
+  - `git tag -s v1.1.0a1 -m "FHOPS 1.1.0a1 tactical alpha"` (failed: no GPG secret key)
+  - `git tag -a v1.1.0a1 -m "FHOPS 1.1.0a1 tactical alpha (unsigned: no local signing key configured)"`
+  - `git push origin v1.1.0a1`
+  - `gh release create v1.1.0a1 --prerelease --target main ...` (published)
+
 # 2026-09-28 — Recut tactical release as FHOPS 1.1.0a1 alpha (#86)
 - Created issue #86 after deciding the tactical–operational expansion needs broader testing before a stable release.
 - Changed the package version source from `1.1.0` to PEP 440 alpha `1.1.0a1` and updated the import regression.
