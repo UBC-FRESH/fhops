@@ -34,9 +34,9 @@ Automation pipeline
 Installation
 ------------
 
-FHOPS publishes wheels/sdists via Hatch. Install the stable v1.1.0 release with::
+FHOPS publishes wheels/sdists via Hatch. Install the current v1.1.0a1 tactical alpha with::
 
-   pip install fhops==1.1.0
+   pip install fhops==1.1.0a1
 
 The wheel contains the FHOPS package, CLI, solver dependencies, and runtime reference data. The
 worked examples under ``examples/`` and developer notes under ``notes/`` live in the source
