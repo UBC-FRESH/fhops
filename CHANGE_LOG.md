@@ -1,3 +1,24 @@
+# 2026-09-28 — Recut tactical release as FHOPS 1.1.0a1 alpha (#86)
+- Created issue #86 after deciding the tactical–operational expansion needs broader testing before a stable release.
+- Changed the package version source from `1.1.0` to PEP 440 alpha `1.1.0a1` and updated the import regression.
+- Renamed `docs/releases/v1.1.0.md` to `docs/releases/v1.1.0a1.md` and rewrote it as an alpha prerelease note with explicit provisional-API and validation limitations.
+- Updated README and Sphinx overview install instructions to `pip install fhops==1.1.0a1`.
+- Updated the Phase 7 roadmap wording so the release-readiness evidence is tied to the alpha line.
+- Commands executed:
+  - `gh issue create --repo UBC-FRESH/fhops --title "Release FHOPS 1.1.0a1 tactical alpha"` (#86)
+  - `git switch -c issue-86-v110a1-alpha-release`
+  - `git mv docs/releases/v1.1.0.md docs/releases/v1.1.0a1.md`
+  - `.venv/bin/ruff format src tests scripts`
+  - `.venv/bin/ruff check src tests scripts` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/mypy --python-version 3.12 src scripts/check_formulation_assets.py scripts/run_example_notebooks.py` (127 source files, no issues)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest -q tests/test_import.py tests/planning/test_tactical_practitioner_case.py tests/planning/test_tactical_operational_scale.py` (7 passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/python -m pytest` (390 passed, 211 skipped, 61 warnings)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/sphinx-build -b html docs _build/html -W` (passed)
+  - `PATH=/tmp/opencode/pandoc-3.1.3/...:$PATH /tmp/opencode/fhops-topm37-venv/bin/pre-commit run --all-files` (passed)
+  - `/tmp/opencode/fhops-topm37-venv/bin/hatch clean && /tmp/opencode/fhops-topm37-venv/bin/hatch build` (built `fhops-1.1.0a1` wheel/sdist)
+  - Clean wheel smoke in `/tmp/opencode/fhops-v110a1-smoke`: `import fhops` → `1.1.0a1`; `fhops --help`; `fhops validate tactical-operational tests/fixtures/tactical_operational/practitioner-case/scenario.yaml` (passed)
+  - `git diff --check` (passed)
+
 # 2026-09-26 — Phase 7 integration closeout (#75)
 - Merged Phase 7 integration PR #84 into `main`, closing parent issue #75.
 - Updated the roadmap and Phase 7 issue-tree manifest to record final PR numbers (#80–#84) and the completed state.
