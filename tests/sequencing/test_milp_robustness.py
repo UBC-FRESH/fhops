@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import random
 from dataclasses import replace
 
@@ -313,33 +314,52 @@ def test_loader_tail_binaries_only_where_the_tail_is_reachable() -> None:
 
 def test_role_remaining_above_work_required_is_capped() -> None:
     # Audit case fuzz_incons seed 5: the feller may "still output" 69.4 m³ on a 54 m³ block.
-    state = ScenarioInitialState(
-        blocks=[
-            BlockInitialState(
-                block_id="B1",
-                role_remaining={
-                    "feller_buncher": 69.392,
-                    "grapple_skidder": 37.414,
-                    "processor": 53.992,
-                },
-                staged_inventory={"feller_buncher": 31.978, "grapple_skidder": 16.578},
-            )
-        ]
-    )
-    scenario = pipeline_scenario(
-        roles=ROLES[:3],
-        fleet={
-            "feller_buncher": [("FE1", 47.622), ("FE2", 71.329)],
-            "grapple_skidder": [("GR1", 35.021), ("GR2", 56.321)],
-            "processor": [("PR1", 18.58), ("PR2", 72.522)],
+    # Scenario/Problem validation rejects this since #118, so the valid scenario carries the
+    # consistent cap (R = W) and the inconsistent 69.392 is injected into the MILP bundle to
+    # exercise the defensive min(R, W) cap (#115); the plan must replay cleanly against the
+    # consistent scenario.
+    def state_with(feller_remaining: float) -> ScenarioInitialState:
+        return ScenarioInitialState(
+            blocks=[
+                BlockInitialState(
+                    block_id="B1",
+                    role_remaining={
+                        "feller_buncher": feller_remaining,
+                        "grapple_skidder": 37.414,
+                        "processor": 53.992,
+                    },
+                    staged_inventory={"feller_buncher": 31.978, "grapple_skidder": 16.578},
+                )
+            ]
+        )
+
+    def build(state: ScenarioInitialState) -> Scenario:
+        return pipeline_scenario(
+            roles=ROLES[:3],
+            fleet={
+                "feller_buncher": [("FE1", 47.622), ("FE2", 71.329)],
+                "grapple_skidder": [("GR1", 35.021), ("GR2", 56.321)],
+                "processor": [("PR1", 18.58), ("PR2", 72.522)],
+            },
+            headstart={"grapple_skidder": 1.0},
+            blocks={"B1": 53.992},
+            num_days=2,
+            shifts=("S1", "S2"),
+            initial_state=state,
+        )
+
+    with pytest.raises(ValueError, match="above the block's work_required"):
+        build(state_with(69.392))
+    pb = Problem.from_scenario(build(state_with(53.992)))
+    ctx = build_operational_problem(pb)
+    bundle = dataclasses.replace(
+        ctx.bundle,
+        initial_role_remaining={
+            **ctx.bundle.initial_role_remaining,
+            ("B1", "feller_buncher"): 69.392,
         },
-        headstart={"grapple_skidder": 1.0},
-        blocks={"B1": 53.992},
-        num_days=2,
-        shifts=("S1", "S2"),
-        initial_state=state,
     )
-    pb, result = _solve(scenario)
+    result = solve_operational_milp(bundle, solver="highs", time_limit=60)
     _assert_clean_replay(pb, result)
     frame = result["assignments"]
     felled = frame[frame.machine_id.str.startswith("FE")]["production"].sum()

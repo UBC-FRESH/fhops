@@ -496,6 +496,65 @@ Tests: `tests/model/test_milp_blackouts.py` (slot set = heuristic set, shift-cal
 bundle round trip, `machine_capacity` bounds, MILP and SA use exactly the open slots, rolling MILP
 locks no blackout day).
 
+### 8.15 Contract validation, packaging, CI, compatibility docs (#118)
+Pre-release audit of the 1.0.1 candidate (f31aa65); evidence in `/tmp/opencode/audit-{1,2,4}-scratch/`,
+`/tmp/opencode/floors118/`, `/tmp/opencode/compat118/`, `/tmp/opencode/roll118/`.
+
+1. **Security / packaging.** The tree tracked an unrelated Django ("Codex") app state under
+   `config/` (`secret_key`, `codex.sqlite3` with an admin password hash, `hypercorn.toml`,
+   `cache/**`), shipped in the candidate sdist. Removed from the tree (`git rm -r config`; history
+   not rewritten — the secret must be rotated), ignored (`/config/`, `*.sqlite3`, `secret_key`,
+   `*.djcache`), excluded in `[tool.hatch.build]` (also `.env*`, `.pypirc`), and
+   `release-build.yml` now fails if artifacts contain such files. The new sdist file list equals
+   the candidate's minus the 26 `config/` files (wheel unchanged). Remaining non-secret leak noted:
+   committed SoftwareX telemetry/benchmark assets contain absolute developer paths
+   (`/home/gep/projects/fhops/...`), as in v1.0.0; left unchanged (regenerating assets is out of
+   scope).
+2. **Dependency floors** (fresh `uv` venvs, Python 3.11.17 and 3.12.3, every other dependency at
+   its floor; smoke = import, `fhops --help`, tiny7 `solve-heur`, `solve-mip-operational` with and
+   without `--incumbent` (HiGHS must accept the start), `eval-playback`, `plan rolling --solver mip`;
+   full `pytest` at the floors):
+   - `typer>=0.12.4`: 0.12.3 and older (incl. the old floor 0.9.0) fail to build the CLI
+     (`RuntimeError: Type not yet supported: pathlib.Path | None`).
+   - `pyomo>=6.9.2`: 6.9.1 cannot create `SolverFactory("highs")` (falls back to the ASL
+     executable); ≤ 6.9.0 also fails the warm start (`LegacySolverInterface.solve()` rejects
+     `warmstart`); 6.9.1 + highspy 1.7 lacks `HandleKeyboardInterrupt`. The audit's "6.9.4" floor
+     came from testing 6.9.0 only; 6.9.2 and 6.9.3 pass everything.
+   - `highspy>=1.8.1`: 1.7.0 was never published with files; 1.7.1–1.8.0 pass the smoke but report a
+     rejected MIP start as "status unknown" (`tests/model/test_operational_driver.py::
+     test_highs_warm_start_flags_infeasible_incumbent` fails).
+   - `PyYAML>=6.0.1`: 6.0 has no Python 3.12 wheel and fails to build.
+   - Unchanged floors verified working: click 8.1.0, rich 13.7.0, pydantic 2.6.0, pandas 2.2.0,
+     numpy 1.26.0, pyarrow 15.0.0, optuna 3.5.0.
+   - At the floors: `pytest` 448 passed / 212 skipped and the CLI suites 20 passed on both Pythons.
+3. **Validation** (`Scenario._cross_validate`, `validate_initial_state`): locks outside the block's
+   `[earliest_start, latest_finish]` window; locks on a block with `harvest_system_id` whose machine
+   has no role or a role outside that system (registry = defaults overlaid with
+   `harvest_systems`; unknown systems skip the check; blocks without a system accept any machine);
+   `role_remaining > work_required + 1e-6`. Deviation: tolerance 1e-6 m³ (the tracker's
+   `SEQUENCING_TOLERANCE`) instead of 1e-9, so carry-forward states built from HiGHS plans (~5e-7
+   noise) cannot be rejected; measured on rolling SA/MILP runs (tiny7 7/4/2, 7/3/1; small21 21/7/3;
+   med42 42/14/7; ka_6 28/14/7) the largest `role_remaining − work_required` in any window was
+   −5.18 m³ (never positive). Role-less machines are rejected on explicit-system blocks because
+   the operational MILP fixes their assignment to 0 there (the heuristics allow them), so such a
+   lock was infeasible for the MILP. New checks run after all existing lock checks, so existing
+   error messages are unchanged.
+4. **Compatibility.** All 27 scenario YAMLs in the repo (examples, SoftwareX assets, test fixtures;
+   2 intentionally invalid) and the 9 Jaffray scenarios load to identical `Scenario` dumps / identical
+   errors under PyPI 1.0.0, the candidate (f31aa65), and this branch. 19 tiny7-derived edge cases
+   document what each version accepts (`/tmp/opencode/compat118/cases.md`).
+5. **CI.** `ci.yml` runs `tests/test_cli_operational_mip.py`, `tests/test_cli_playback.py`,
+   `tests/test_cli_playback_exports.py` with `FHOPS_RUN_FULL_CLI_TESTS=1` (~10–30 s); `tests/cli/`
+   already ran in the main pytest step; dataset CLI suites stay excluded (#103).
+6. **Docs.** Removed "behaves exactly as in v1.0.0" claims (data contract, `ScenarioInitialState`,
+   `Scenario.initial_state`, release notes); documented `Scenario.shift_labels()`, the
+   `fhops>=1.0.1` requirement for `initial_state` / lock `shift_id` files, and every input now
+   rejected at load (data contract "Compatibility with FHOPS 1.0.0", release notes). SoftwareX
+   prose: introduction names v1.0.1 as the specific release; dependency row in
+   `metadata/current_code_version.tex` updated to the new floors. Left for the manuscript authors:
+   `illustrative_example.tex` ("FHOPS 1.0.0" in the benchmark software context) and
+   `software_description.tex` (lists scipy, which is not a dependency).
+
 ### 8.12 Operational MILP robustness and correctness (#115)
 Pre-release antagonistic audit of the 1.0.1 candidate (f31aa65); repro scripts in
 `/tmp/opencode/audit-{1,2,4}-scratch/`, branch `issue-115-milp-robustness`. Design and decisions:

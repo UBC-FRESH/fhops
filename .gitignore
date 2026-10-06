@@ -217,3 +217,9 @@ examples/tiny7/out/
 .continue
 tmp/
 notes/coding-agent-conversation-log.txt
+
+# Local state of unrelated tools (never part of FHOPS; see #118)
+/config/
+*.sqlite3
+secret_key
+*.djcache

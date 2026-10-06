@@ -80,11 +80,15 @@ The Pydantic models enforce consistency:
 - Mobilisation distances must reference known blocks; mobilisation parameters must reference
   known machines.
 - Crew assignments (optional) require unique crew IDs and valid machine IDs.
-- Locked assignments reference known machines/blocks, lie inside the horizon, avoid blackouts, and
-  use known shift labels; a machine may have one day-level lock *or* distinct shift-level locks per
-  day.
+- Locked assignments reference known machines/blocks, lie inside the horizon and inside the
+  block's ``earliest_start``/``latest_finish`` window, avoid blackouts, and use known shift labels;
+  on blocks with a ``harvest_system_id`` the locked machine's role must be one of that system's
+  roles. A machine may have one day-level lock *or* distinct shift-level locks per day.
 - ``initial_state`` entries reference known blocks/machines, carry non-negative values, use roles of
-  the block's harvest system, and point ``last_block_id`` at scenario blocks.
+  the block's harvest system, keep every ``role_remaining`` value at or below the block's
+  ``work_required``, and point ``last_block_id`` at scenario blocks.
+
+See :ref:`contract-compatibility` for the inputs FHOPS 1.0.1 rejects that 1.0.0 accepted.
 
 Optional Extras
 ---------------
@@ -205,12 +209,25 @@ fixed to zero for that machine). Add ``shift_id`` to lock a single slot in multi
        day: 5
        shift_id: night
 
-``shift_id`` must be one of the scenario's shift labels (``shift_calendar`` labels, timeline shift
-names, or ``S1`` for day-indexed scenarios). Duplicate ``(machine, day, shift)`` locks and mixing a
-day-level lock with shift-level locks for the same machine/day are rejected. Locks must reference
-known machines and blocks, fall within ``1..num_days``, and avoid timeline blackout days.
-``load_scenario`` applies exactly the same checks to YAML ``locked_assignments`` as to locks passed
-to :class:`fhops.scenario.contract.Scenario` in Python (FHOPS 1.0.0 skipped them for YAML input).
+``shift_id`` must be one of the scenario's shift labels, as returned by
+:meth:`fhops.scenario.contract.Scenario.shift_labels`: the ``shift_calendar`` labels when a shift
+calendar is present, otherwise the timeline shift names, otherwise ``{"S1"}`` (the single synthetic
+shift of day-indexed scenarios). Duplicate ``(machine, day, shift)`` locks and mixing a day-level
+lock with shift-level locks for the same machine/day are rejected. Locks must reference known
+machines and blocks, fall within ``1..num_days`` and within the block's
+``[earliest_start, latest_finish]`` window (``latest_finish`` defaults to ``num_days``), and avoid
+timeline blackout days. On a block with ``harvest_system_id`` the locked machine must have a role
+of that harvest system (a machine without a role is rejected too, because the operational MILP
+cannot assign it to such a block); blocks without ``harvest_system_id`` accept any machine, and
+blocks whose system is not found in ``harvest_systems`` or the default registry skip the role
+check. ``load_scenario`` applies exactly the same checks to YAML ``locked_assignments`` as to locks
+passed to :class:`fhops.scenario.contract.Scenario` in Python (FHOPS 1.0.0 skipped them for YAML
+input).
+
+.. note::
+
+   Scenario files that use ``shift_id`` on a lock require ``fhops>=1.0.1``. FHOPS 1.0.0 silently
+   drops the field and treats the entry as a whole-day lock.
 
 .. _initial-state:
 
@@ -221,8 +238,17 @@ Initial State (Resuming Mid-Operation)
 :class:`fhops.scenario.contract.ScenarioInitialState` model) that describes where operations stand
 at day 1 of the horizon. Typical uses are rolling-horizon windows and re-plans after part of the
 work is done; the rolling planner builds it for every window from the locked plan so far (see
-:doc:`rolling_horizon`). When it is omitted, every solver and evaluator behaves exactly as in FHOPS
-v1.0.0.
+:doc:`rolling_horizon`). When it is omitted, the horizon starts from the same initial conditions as
+in FHOPS 1.0.0: no staged inventory, zero role shift counts, each role may output the block's full
+``work_required``, and machines have no prior position (their first move is free). Results are not
+guaranteed to match 1.0.0 even then, because 1.0.1 also fixes MILP/playback sequencing, blackouts in
+the MILP, stochastic playback events, empty-plan KPIs, and rolling-horizon state (see
+``docs/releases/v1.0.1.md``).
+
+.. note::
+
+   Scenario files that use ``initial_state`` require ``fhops>=1.0.1``. FHOPS 1.0.0 silently ignores
+   the section and plans from an empty state; ``schema_version`` stays ``1.0.0``.
 
 .. code-block:: yaml
 
@@ -264,11 +290,50 @@ Semantics:
   in the MILP objective (first slot), the heuristic score, and playback mobilisation KPIs.
 - Role keys are normalised like machine roles (``Feller-Buncher`` → ``feller_buncher``) and must be
   roles of the block's harvest system; role-keyed state therefore requires ``harvest_system_id``.
+- ``role_remaining`` values may not exceed the block's ``work_required`` (tolerance 1e-6 m³): an
+  upstream role has always output at least as much as the terminal role, so it cannot have more
+  volume left than the block still has to deliver.
 
 Note that the operational MILP charges the boundary move only when the machine works in the first
 shift slot (consistent with its slot-to-slot transition variables), whereas the heuristics and
 playback charge it on the machine's first worked slot. The legacy ``fhops solve-mip`` builder does
 not model ``initial_state`` and warns when one is present.
+
+.. _contract-compatibility:
+
+Compatibility with FHOPS 1.0.0
+------------------------------
+
+``schema_version`` is unchanged (``1.0.0``) and every 1.0.1 addition is optional, but files are
+not interchangeable in both directions:
+
+- **Files that need 1.0.1.** Scenarios that use ``initial_state`` or ``locked_assignments[].shift_id``
+  require ``fhops>=1.0.1``. FHOPS 1.0.0 does not reject them: it ignores ``initial_state`` and reads a
+  shift lock as a whole-day lock, so it silently plans something else.
+- **Inputs 1.0.1 rejects at load.** FHOPS 1.0.0 attached optional YAML sections without
+  cross-validation and had no window, role, or initial-state checks. ``load_scenario`` (and therefore
+  every CLI command, including ``fhops validate``, the solvers, ``eval-playback``, and
+  ``fhops plan rolling``, which now fails at load instead of during or after the run) raises a
+  ``ValidationError`` for:
+
+  * locks on a timeline blackout day;
+  * locks that reference an unknown machine or block, or a day outside ``1..num_days``;
+  * duplicate locks for the same machine/day (or day/shift), and a day-level lock combined with
+    shift-level locks for the same machine/day;
+  * locks with an unknown ``shift_id`` (see :meth:`~fhops.scenario.contract.Scenario.shift_labels`);
+  * locks outside the block's ``earliest_start``/``latest_finish`` window (also rejected for
+    scenarios built in Python);
+  * locks on a block with ``harvest_system_id`` whose machine has no role or a role outside that
+    harvest system (also rejected in Python);
+  * mobilisation distance tables (``distance_csv``) that mention blocks not in the scenario — a
+    distance CSV covering a *superset* of the scenario's blocks must be trimmed;
+  * crew assignments or mobilisation ``machine_params`` that reference unknown machines, and
+    duplicate crew ids;
+  * invalid ``initial_state`` entries (unknown ids, roles outside the block's harvest system,
+    ``role_remaining`` above ``work_required``).
+
+  The 1.0.1 release was checked against every scenario in this repository and the companion BC case
+  study scenarios: all load to the same validated ``Scenario`` as under 1.0.0.
 
 GeoJSON Ingestion & Distances
 -----------------------------
