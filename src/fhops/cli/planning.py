@@ -14,6 +14,7 @@ from fhops.cli._utils import parse_solver_options
 from fhops.planning import (
     RollingHorizonConfig,
     RollingInfeasibleError,
+    RollingPlanResult,
     get_solver_hook,
     rolling_assignments_dataframe,
     run_rolling_horizon,
@@ -89,7 +90,8 @@ def rolling_plan(
             "--out-assignments",
             help=(
                 "Optional path to write locked assignments CSV aggregated across iterations "
-                "(machine_id, block_id, day, shift_id, assigned + run metadata)."
+                "(machine_id, block_id, day, shift_id, assigned, production for MILP runs + run "
+                "metadata)."
             ),
         ),
     ] = None,
@@ -114,12 +116,25 @@ def rolling_plan(
             help="Cap the number of rolling iterations (defaults to full master horizon).",
         ),
     ] = None,
+    fail_on_empty_window: Annotated[
+        bool,
+        typer.Option(
+            "--fail-on-empty-window",
+            help=(
+                "Stop at the first window whose solver returns no solution (exit code 1) instead "
+                "of leaving its lock span idle and continuing. Partial outputs are still written."
+            ),
+        ),
+    ] = False,
 ) -> None:
     """Execute a rolling-horizon plan using a solver hook.
 
     Each window after the first starts from the state reached by the locked plan so far (remaining
     block volume, staged inventory, role progress, machine positions), and user locks from the
-    scenario are enforced in every window they fall in.
+    scenario are enforced in every window they fall in. A window whose solver returns no solution
+    is recorded (status ``no_solution``) and its lock span left idle unless
+    ``--fail-on-empty-window`` is set. The requested outputs are always written, also when the run
+    fails part-way (exit code 1).
     """
 
     scenario = load_scenario(scenario_path)
@@ -131,27 +146,45 @@ def rolling_plan(
         lock_days=lock_days,
     )
 
-    solver_hook = get_solver_hook(
-        solver,
-        sa_iters=sa_iters,
-        sa_seed=sa_seed,
-        mip_solver=mip_solver,
-        mip_time_limit=mip_time_limit,
-        mip_solver_options=solver_options,
-    )
+    try:
+        solver_hook = get_solver_hook(
+            solver,
+            sa_iters=sa_iters,
+            sa_seed=sa_seed,
+            mip_solver=mip_solver,
+            mip_time_limit=mip_time_limit,
+            mip_solver_options=solver_options,
+        )
+    except RollingInfeasibleError as exc:
+        raise typer.BadParameter(str(exc))
 
+    failure: BaseException | None = None
     try:
         result = run_rolling_horizon(
             config,
             solver_hook,
             max_iterations=max_iterations,
             solver_name=solver,
+            fail_on_empty_window=fail_on_empty_window,
         )
-    except RollingInfeasibleError as exc:
-        raise typer.BadParameter(str(exc))
+    except Exception as exc:
+        partial = getattr(exc, "partial_result", None)
+        if not isinstance(partial, RollingPlanResult):
+            raise
+        result = partial
+        failure = exc
 
     summary = summarize_plan(result)
-    console.print(f"[bold green]Rolling plan completed[/]: {len(result.locked_assignments)} locks")
+    if failure is None:
+        console.print(
+            f"[bold green]Rolling plan completed[/]: {len(result.locked_assignments)} locks"
+        )
+    else:
+        console.print(
+            f"[bold red]Rolling plan failed[/] ({type(failure).__name__}): {failure}\n"
+            f"Writing partial outputs: {len(result.locked_assignments)} locks from "
+            f"{len(result.iteration_summaries)} recorded iteration(s)."
+        )
 
     metadata_obj = summary.get("metadata") or {}
     metadata = metadata_obj if isinstance(metadata_obj, dict) else {}
@@ -168,18 +201,25 @@ def rolling_plan(
                 f"options={metadata.get('mip_solver_options') or {}}"
             )
 
-    iterations = summary.get("iterations") or []
-    if not isinstance(iterations, list):
-        iterations = []
-    iterations = [dict(iteration) for iteration in iterations]
-    for iteration in iterations:
+    iteration_records = summary.get("iterations") or []
+    if not isinstance(iteration_records, list):
+        iteration_records = []
+    for iteration in iteration_records:
         start_day = iteration.get("start_day", 0)
         horizon_days = iteration.get("horizon_days", 0)
         locked_assignments = iteration.get("locked_assignments", 0)
+        flag = " [yellow](empty)[/]" if iteration.get("empty") else ""
         console.print(
             f" - Iter {iteration.get('iteration_index', '?')}: "
             f"days {start_day}-{start_day + horizon_days - 1}, "
-            f"locked {locked_assignments} assignments"
+            f"status {iteration.get('status', 'solved')}, "
+            f"locked {locked_assignments} assignments{flag}"
+        )
+    if summary.get("empty_windows"):
+        console.print(
+            f"[yellow]Empty windows:[/] {summary.get('empty_windows')} "
+            f"(no solution: {summary.get('no_solution_windows')}, "
+            f"skipped: {summary.get('skipped_windows')})"
         )
 
     warnings = summary.get("warnings") or []
@@ -191,12 +231,11 @@ def rolling_plan(
 
     if out_json:
         out_json.parent.mkdir(parents=True, exist_ok=True)
-        out_json.write_text(json.dumps(summary, indent=2))
+        payload = dict(summary)
+        if failure is not None:
+            payload["error"] = f"{type(failure).__name__}: {failure}"
+        out_json.write_text(json.dumps(payload, indent=2))
         console.print(f"Wrote summary to {out_json}")
-
-    iteration_records = summary.get("iterations") or []
-    if not isinstance(iteration_records, list):
-        iteration_records = []
 
     if out_assignments:
         out_assignments.parent.mkdir(parents=True, exist_ok=True)
@@ -216,3 +255,6 @@ def rolling_plan(
         out_iterations_csv.parent.mkdir(parents=True, exist_ok=True)
         pd.DataFrame(iteration_records).to_csv(out_iterations_csv, index=False)
         console.print(f"Wrote iteration summaries to {out_iterations_csv}")
+
+    if failure is not None:
+        raise typer.Exit(code=1)

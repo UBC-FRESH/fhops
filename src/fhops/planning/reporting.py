@@ -45,7 +45,8 @@ class RollingPlanComparison:
         non-zero baseline exists). Only numeric KPI entries are compared.
     metadata : dict[str, object]
         Copy of :class:`fhops.planning.rolling.RollingPlanResult.metadata` with the additional
-        ``baseline_label`` and assignment counts so telemetry exports can capture context.
+        ``baseline_label``, assignment counts, and the ``empty_windows`` / ``no_solution_windows``
+        iteration counts (#117) so telemetry exports can capture context.
     """
 
     rolling_kpis: KPIResult
@@ -116,6 +117,8 @@ def evaluate_rolling_plan(
         len(comparison.baseline_assignments) if comparison.baseline_assignments is not None else 0
     )
     metadata["baseline_assignment_count"] = baseline_count
+    metadata["empty_windows"] = len(result.empty_windows)
+    metadata["no_solution_windows"] = len(result.no_solution_windows)
 
     return RollingPlanComparison(
         rolling_kpis=comparison.rolling_kpis,
