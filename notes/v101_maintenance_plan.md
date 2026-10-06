@@ -217,6 +217,38 @@ includes already describe `W_b` as volume and were left untouched (no asset rege
 - Regenerate playback assets with the fixed events (`run_playback_analysis.py`) and record the
   benchmark log. Deterministic benchmark/tuning/scaling assets must be unchanged.
 
+**Implementation notes (#95, branch `issue-95-playback-figure`):**
+- Figure: 3 panels, one legend row above them (`fig.legend(loc="outside upper center")` with
+  constrained layout, saved with `bbox_inches="tight"` + `bbox_extra_artists`), no suptitle,
+  upper-case SA/ILS ticks, y label "Mean day-level utilisation", 9 pt text everywhere, error bars
+  only on the stochastic bars (population std over the 50 samples), PNG at 300 dpi plus PDF
+  (PDF `CreationDate` dropped so reruns are byte-identical).
+- **Deviation (size):** the issue asked for ~6.5 in. The manuscript (`elsarticle`
+  `preprint,review,12pt`) has `\linewidth` = 390 pt = 5.4 in, measured from the R1 PDF (the old
+  figure is placed 5.396 in wide). A 6.5 in figure would be scaled to 83% and 9 pt text would print
+  at ~7.5 pt. The figure is drawn at 5.35 × 2.4 in instead (saved 5.30 × 2.33 in), so
+  text prints at ≥ 9 pt in the review PDF and only grows in a wider journal layout.
+- Playback regenerated with `run_playback_analysis.py` (unchanged `STOCHASTIC_FLAGS`; downtime
+  durations now use the `eval-playback` defaults of 4 h mean / 1.5 h std, documented in the
+  script). The script now calls `sys.executable`, writes `metrics.json` and `summary.md` with a
+  trailing newline (the committed copies had been normalised by the end-of-file-fixer hook), and
+  documents that `tabulate` must be installed (otherwise `summary.md` falls back to CSV blocks).
+  A second run into a temp directory was byte-identical.
+- Deterministic playback is byte-identical except `med42/ils/deterministic`. The committed copy
+  was stale: it came from an earlier ILS assignment set. Mobilisation $10,662.28 vs $10,682.68 in
+  the committed `benchmarks/med42/summary.csv`; v1.0.0 code reproduces the new file from the
+  committed `ils_assignments.csv`. Utilisation is unchanged (0.5635, same 213 shifts); production
+  and mobilisation now match the benchmark assignments.
+- Stochastic utilisation drops less than in v1.0.0 because a downtime hit now loses ~4 h of a
+  24 h shift (≈ 0.05 × 4/24 ≈ 0.8% of hours) instead of the whole shift (5%); weather and landing
+  shocks scale production, not hours.
+- SA reproducibility under the maintenance branch: tiny7 (SA default/diversify/mobilisation,
+  8000 iters, seed 42; ILS 1500 iters, batch 4, workers 12) and small21 (SA 4000 iters, seed 42,
+  three presets) re-solved in `/tmp/opencode/pb95-bench`: objective, assignments, production,
+  mobilisation, completed blocks and day utilisation match the committed `summary.csv` exactly and
+  every assignment CSV is byte-identical (details in CHANGE_LOG #95). No committed MILP row exists.
+- `benchmark_runs.log` entry is a partial regeneration (playback only) with a `note:` line.
+
 ### 8.6 Release and forward-port (#96)
 Version `1.0.1`; release notes in `docs/releases/v1.0.1.md`; Hatch build, clean-venv smoke,
 TestPyPI → PyPI, annotated tag `v1.0.1`, GitHub release. Forward-port the fixes to `main` (next
