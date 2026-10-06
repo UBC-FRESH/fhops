@@ -65,20 +65,23 @@ export GRB_LICENSE_FILE=/path/to/gurobi.lic
 python -c "import gurobipy as gp; m = gp.Model(); m.setParam('OutputFlag', 0); m.optimize()"
 ```
 
-After the licence is active you can run FHOPS MIP commands with ``--driver gurobi`` (or
-``gurobi-appsi`` / ``gurobi-direct``). Without an available licence FHOPS falls back to HiGHS.
+After the licence is active you can run the operational MILP with
+``fhops solve-mip-operational ... --solver gurobi`` (HiGHS is the default solver).
 
 ## Validate & Evaluate
 
 ```bash
 fhops validate examples/tiny7/scenario.yaml
-fhops solve-mip examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
+fhops solve-mip-operational examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
 fhops solve-heur examples/tiny7/scenario.yaml --out examples/tiny7/out/sa_solution.csv
 fhops evaluate examples/tiny7/scenario.yaml --assignments examples/tiny7/out/mip_solution.csv
 ```
 
+`fhops solve-mip-operational` solves the operational MILP documented in the FHOPS paper
+(`fhops solve-mip` is a deprecated alias of it since 1.0.1; the legacy day-level MIP it used to run
+is infeasible for scenarios with loader roles).
+
 ```bash
-fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv
 fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
 fhops evaluate tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv
 ```

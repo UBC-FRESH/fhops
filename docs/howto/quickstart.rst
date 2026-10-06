@@ -29,9 +29,10 @@ What those commands do:
 
 - ``fhops validate`` ensures CSV/YAML inputs satisfy the data contract.
 - ``fhops solve-mip-operational`` builds the operational (day × shift) Pyomo MILP and solves it
-  with HiGHS. The resulting CSV lists the selected machine/block/shift assignments. (The legacy
-  ``fhops solve-mip`` reports ``outcome=infeasible`` for tiny7 and the other bundled examples
-  because of its loader-buffer constraint; see :doc:`../reference/cli`.)
+  with HiGHS. The resulting CSV lists the selected machine/block/shift assignments. (``fhops
+  solve-mip`` is a deprecated alias of this command since FHOPS 1.0.1; the legacy day-level MIP it
+  used to run is infeasible for tiny7 and the other bundled examples because of its loader-buffer
+  constraint; see :doc:`../reference/cli`.)
 - ``fhops solve-heur`` runs the simulated annealing heuristic.
 - ``fhops evaluate`` replays a schedule CSV and reports KPIs such as production,
   mobilisation cost, and sequencing health (when harvest systems are configured).
@@ -50,7 +51,6 @@ expected KPI/objective values the automated tests assert against.
 
 .. code-block:: bash
 
-   fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv
    fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
    fhops evaluate tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv
 

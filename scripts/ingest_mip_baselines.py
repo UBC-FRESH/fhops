@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Solve MIP baselines for scenarios and log results into the telemetry store."""
+"""Solve operational MILP baselines for scenarios and log results into the telemetry store."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import pandas as pd
 
 from fhops.cli.main import _collect_tuning_scenarios
 from fhops.evaluation.metrics.kpis import compute_kpis
-from fhops.optimization.mip import solve_mip
+from fhops.optimization.mip.highs_driver import solve_with_operational_milp
 from fhops.scenario.contract import Problem
 from fhops.scenario.io.loaders import load_scenario
 from fhops.telemetry.run_logger import RunTelemetryLogger
@@ -58,7 +58,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--driver",
         default="auto",
-        help="MIP solver driver (auto, highs-appsi, highs-exec, gurobi, gurobi-appsi, gurobi-direct).",
+        help="Operational MILP solver as a legacy driver name (auto, highs-appsi, highs-exec, gurobi, gurobi-appsi, gurobi-direct).",
     )
     parser.add_argument(
         "--time-limit",
@@ -134,12 +134,18 @@ def main(argv: list[str] | None = None) -> int:
             print(f"[MIP] Solving {scenario_path}")
         problem = Problem.from_scenario(scenario_obj)
 
-        result = solve_mip(
+        result = solve_with_operational_milp(
             problem,
             time_limit=args.time_limit,
             driver=args.driver,
         )
-        objective = float(result.get("objective", 0.0))
+        if not result.get("has_solution"):
+            print(
+                f"[MIP] {scenario_path}: no solution (outcome={result.get('outcome')}, "
+                f"solver_error={result.get('solver_error')}); not logged."
+            )
+            continue
+        objective = float(result["objective"])
         assignments = pd.DataFrame(result["assignments"])
         kpis = compute_kpis(problem, assignments).to_dict()
 
@@ -172,7 +178,7 @@ def main(argv: list[str] | None = None) -> int:
             run_logger.finalize(
                 status="ok",
                 metrics={"objective": objective},
-                extra={"status": "optimal"},
+                extra={"status": result.get("outcome")},
                 kpis=kpis,
             )
         if args.verbose:

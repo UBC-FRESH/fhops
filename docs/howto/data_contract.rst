@@ -296,8 +296,9 @@ Semantics:
 
 Note that the operational MILP charges the boundary move only when the machine works in the first
 shift slot (consistent with its slot-to-slot transition variables), whereas the heuristics and
-playback charge it on the machine's first worked slot. The legacy ``fhops solve-mip`` builder does
-not model ``initial_state`` and warns when one is present.
+playback charge it on the machine's first worked slot. The deprecated legacy builder
+(:func:`fhops.optimization.mip.builder.build_model`) does not model ``initial_state`` and warns
+when one is present; ``fhops solve-mip`` runs the operational MILP since 1.0.1.
 
 .. _contract-compatibility:
 
