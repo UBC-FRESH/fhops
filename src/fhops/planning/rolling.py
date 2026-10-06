@@ -71,6 +71,11 @@ from fhops.evaluation.sequencing import (
     SequencingTracker,
     build_sequencing_tracker,
 )
+from fhops.model.milp.data import (
+    build_operational_bundle,
+    machine_slot_available,
+    ordered_shift_keys,
+)
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics.sa import solve_sa
 from fhops.optimization.operational_problem import build_operational_problem
@@ -286,9 +291,10 @@ def carry_forward_state(
     locked_assignments :
         Stitched locked plan in base-scenario coordinates (e.g.
         :attr:`RollingPlanResult.locked_assignments`). Entries with ``day > through_day`` are
-        ignored. ``shift_id`` and ``production`` are honoured; a missing ``shift_id`` is replayed
-        as the day's only shift slot when the day has exactly one (otherwise it is passed to
-        playback unset, which treats it as ``"S1"``).
+        ignored. ``shift_id`` and ``production`` are honoured. A lock without ``shift_id`` is a
+        day-level lock and is replayed in every shift slot of its day in which the machine is
+        available (operational MILP semantics, #125; FHOPS < 1.0.1 replayed it as ``"S1"`` on
+        multi-shift days).
     through_day :
         Last base day (inclusive) to replay. Must be ``>= 0``.
 
@@ -297,6 +303,12 @@ def carry_forward_state(
     RollingCarryState
         Remaining terminal volume per block plus the per-block/per-machine initial state for a
         window starting at ``through_day + 1``.
+
+    Raises
+    ------
+    ValueError
+        If a day-level lock carries a planned ``production`` and its day has more than one
+        available shift slot for the machine (the split is ambiguous).
 
     Notes
     -----
@@ -313,8 +325,10 @@ def carry_forward_state(
 
     if through_day < 0:
         raise ValueError("through_day must be >= 0")
-    locks = [lock for lock in locked_assignments if lock.day <= through_day]
     problem = Problem.from_scenario(base)
+    locks = _expand_day_locks(
+        problem, [lock for lock in locked_assignments if lock.day <= through_day]
+    )
     tracker = _replay_tracker(problem, locks)
     ctx = tracker.ctx
 
@@ -372,7 +386,7 @@ def carry_forward_state(
         shift_id = item.shift_id or _DEFAULT_SHIFT_ID
         return (item.day, ctx.shift_index.get((item.day, shift_id), unknown_slot), shift_id)
 
-    for lock in sorted(_fill_shift_ids(problem, locks), key=_lock_order):
+    for lock in sorted(locks, key=_lock_order):
         last_block[lock.machine_id] = lock.block_id
     machine_states = [
         MachineInitialState(machine_id=machine.id, last_block_id=last_block[machine.id])
@@ -393,7 +407,7 @@ def carry_forward_state(
 def _replay_tracker(problem: Problem, locks: Sequence[ScheduleLock]) -> SequencingTracker:
     """Replay ``locks`` through deterministic playback and return the finalised tracker."""
 
-    frame = _locks_frame(_fill_shift_ids(problem, locks))
+    frame = _locks_frame(_expand_day_locks(problem, locks))
     if frame.empty:
         return build_sequencing_tracker(problem)
     records = assignments_to_records(problem, frame)
@@ -406,28 +420,55 @@ def _replay_tracker(problem: Problem, locks: Sequence[ScheduleLock]) -> Sequenci
     return tracker
 
 
-def _fill_shift_ids(problem: Problem, locks: Sequence[ScheduleLock]) -> list[ScheduleLock]:
-    """Return ``locks`` with a missing ``shift_id`` set to the day's only shift slot.
+def _expand_day_locks(problem: Problem, locks: Sequence[ScheduleLock]) -> list[ScheduleLock]:
+    """Return ``locks`` with every day-level lock expanded to the day's available shift slots.
 
-    Day-level locks on days with exactly one shift slot are unambiguous, so they are labelled with
-    that slot (e.g. ``"day"`` for a single timeline shift) before they reach playback. Locks on
-    multi-shift days (or days without slots) keep ``shift_id=None``.
+    A lock without ``shift_id`` means "this machine works this block in every shift of the day in
+    which it is available" (operational MILP semantics,
+    :func:`fhops.model.milp.data.resolve_locked_slots`; the heuristics apply the same rule). It is
+    replaced by one
+    shift-level lock per slot of the problem's grid on that day (chronological order) in which
+    the machine is available (day/shift calendars, timeline blackouts). Slots already covered by
+    a shift-level lock of the same machine keep that lock; a day lock with no available slot is
+    dropped (the machine is idle, as in the MILP). Shift-level locks are returned unchanged and
+    the input order is kept.
+
+    Raises
+    ------
+    ValueError
+        If a day lock carries a planned ``production`` and expands to more than one slot (the
+        split of that volume over the shifts is ambiguous).
     """
 
     if all(lock.shift_id is not None for lock in locks):
         return list(locks)
-    by_day: dict[int, list[str]] = {}
-    for shift in problem.shifts:
-        labels = by_day.setdefault(shift.day, [])
-        if shift.shift_id not in labels:
-            labels.append(shift.shift_id)
-    filled: list[ScheduleLock] = []
+    grid: dict[int, list[str]] = {}
+    for day, shift_id in ordered_shift_keys(problem):
+        grid.setdefault(day, []).append(shift_id)
+    bundle = build_operational_bundle(problem)
+    blackout = frozenset(bundle.blackout_slots)
+    explicit = {
+        (lock.machine_id, lock.day, lock.shift_id) for lock in locks if lock.shift_id is not None
+    }
+    expanded: list[ScheduleLock] = []
     for lock in locks:
-        labels = by_day.get(lock.day, [])
-        if lock.shift_id is None and len(labels) == 1:
-            lock = lock.model_copy(update={"shift_id": labels[0]})
-        filled.append(lock)
-    return filled
+        if lock.shift_id is not None:
+            expanded.append(lock)
+            continue
+        slots = [
+            shift_id
+            for shift_id in grid.get(lock.day, [])
+            if (lock.machine_id, lock.day, shift_id) not in explicit
+            and machine_slot_available(bundle, lock.machine_id, lock.day, shift_id, blackout)
+        ]
+        if lock.production is not None and len(slots) > 1:
+            raise ValueError(
+                f"day-level lock {lock.machine_id}->{lock.block_id} on day {lock.day} carries a "
+                f"planned production of {lock.production} m³ but covers {len(slots)} shift slots "
+                f"({', '.join(slots)}); give one lock per shift (shift_id) instead"
+            )
+        expanded.extend(lock.model_copy(update={"shift_id": shift_id}) for shift_id in slots)
+    return expanded
 
 
 def _locks_frame(locks: Iterable[ScheduleLock]) -> pd.DataFrame:
@@ -953,9 +994,11 @@ def run_rolling_horizon(
         (``locked_assignments=``: the base scenario's user locks that fall in the window, rebased to
         window days; identical to ``scenario.locked_assignments``) and returns a
         :class:`SolverOutput` whose ``assignments`` are window-day :class:`ScheduleLock` entries.
-        Hooks should set ``ScheduleLock.shift_id``; a missing label is filled with the day's only
-        shift slot when unambiguous (multi-shift days keep ``None``, which playback treats as
-        ``"S1"``). Hooks report a failed solve with ``SolverOutput(has_solution=False)``.
+        Hooks should set ``ScheduleLock.shift_id``; an assignment without it is a day-level
+        lock and is expanded to one lock per shift slot of that day in which the machine is
+        available (MILP semantics, #125); a day-level assignment with a planned ``production``
+        on a day with several such slots raises ``ValueError``. Hooks report a failed solve with
+        ``SolverOutput(has_solution=False)``.
     max_iterations:
         Optional guard to cap the number of iterations (useful for smoke tests).
     solver_name:
@@ -968,7 +1011,8 @@ def run_rolling_horizon(
     Returns
     -------
     RollingPlanResult
-        Locked assignments in base-scenario coordinates (``shift_id`` preserved) plus
+        Locked assignments in base-scenario coordinates (``shift_id`` preserved; day-level
+        hook output expanded to shift-level locks) plus
         per-iteration summaries (``status``, ``has_solution``, ``planned_delivered``,
         ``locked_delivered``, ``empty``). ``warnings`` lists slicer notices (e.g. a carried
         ``last_block_id`` that falls outside a window) and the no-solution / skipped /
@@ -1133,7 +1177,7 @@ def _run_iteration(
                 message += f"; {len(user_locks)} user lock(s) in that span were not applied"
             policy_messages.append(message)
 
-    assignments = _fill_shift_ids(window_problem, assignments)
+    assignments = _expand_day_locks(window_problem, assignments)
     locked_portion = _lift_locks_to_base(assignments, plan.start_day, plan.lock_days)
     locked_base.extend(locked_portion)
     planned_delivered = 0.0
@@ -1686,6 +1730,7 @@ def rolling_assignments_dataframe(
     result: RollingPlanResult,
     *,
     include_metadata: bool = False,
+    scenario: Scenario | Problem | None = None,
 ) -> pd.DataFrame:
     """Return locked assignments as a DataFrame for playback/KPI workflows.
 
@@ -1696,6 +1741,11 @@ def rolling_assignments_dataframe(
     include_metadata :
         When ``True`` append run metadata (scenario, horizons, solver label) to each row so exports
         remain self-describing.
+    scenario :
+        Optional base scenario (or :class:`~fhops.scenario.contract.Problem`). When given,
+        day-level locks (``shift_id`` ``None``) are expanded to one row per shift slot of the day
+        in which the machine is available, as in :func:`carry_forward_state`. Plans returned by
+        :func:`run_rolling_horizon` are already shift-level; this matters for hand-built results.
 
     Returns
     -------
@@ -1703,15 +1753,22 @@ def rolling_assignments_dataframe(
         Columns ``machine_id``, ``block_id``, ``day``, ``shift_id``, ``assigned`` (always ``1``),
         ``production`` (only when locks carry planned production, e.g. MILP rolling runs; m³), and
         optionally the metadata keys, sorted by ``day``, ``shift_id``, ``machine_id``,
-        ``block_id``. ``shift_id`` is ``None`` for day-level locks.
+        ``block_id``. ``shift_id`` is ``None`` for day-level locks when ``scenario`` is omitted.
+
+    Raises
+    ------
+    ValueError
+        With ``scenario``: a day-level lock with a planned ``production`` covers several shift
+        slots.
 
     Notes
     -----
     The resulting frame can be passed directly to :func:`fhops.evaluation.compute_kpis` or
     :func:`fhops.evaluation.playback.run_playback` to evaluate the rolling plan in the same way as a
-    monolithic solve. Playback treats a missing ``shift_id`` as ``\"S1\"``. Evaluating the frame
-    against the base scenario reproduces exactly the state carried between windows (see
-    :func:`carry_forward_state`).
+    monolithic solve. Playback rejects rows without ``shift_id`` on multi-shift scenarios (and
+    treats them as ``\"S1\"`` otherwise), so pass ``scenario`` for plans with day-level locks.
+    Evaluating the frame against the base scenario reproduces exactly the state carried between
+    windows (see :func:`carry_forward_state`).
     """
 
     metadata = result.metadata or {}
@@ -1723,8 +1780,12 @@ def rolling_assignments_dataframe(
         "lock_days",
         "start_day",
     ]
+    locks = list(result.locked_assignments)
+    if scenario is not None:
+        problem = scenario if isinstance(scenario, Problem) else Problem.from_scenario(scenario)
+        locks = _expand_day_locks(problem, locks)
     rows: list[dict[str, object]] = []
-    for lock in result.locked_assignments:
+    for lock in locks:
         row: dict[str, object] = {
             "machine_id": lock.machine_id,
             "block_id": lock.block_id,
@@ -1738,7 +1799,7 @@ def rolling_assignments_dataframe(
                     row[key] = metadata[key]
         rows.append(row)
 
-    has_production = any(lock.production is not None for lock in result.locked_assignments)
+    has_production = any(lock.production is not None for lock in locks)
     columns = (
         ["machine_id", "block_id", "day", "shift_id", "assigned"]
         + (["production"] if has_production else [])
@@ -1797,6 +1858,11 @@ def compute_rolling_kpis(
 
     Notes
     -----
+    Day-level locks (``shift_id`` ``None``) in a :class:`RollingPlanResult` or ``ScheduleLock``
+    sequence are expanded to every shift slot of their day in which the machine is available
+    (:func:`carry_forward_state` semantics, #125). DataFrame rows are passed to playback as given
+    (rows without ``shift_id`` are rejected on multi-shift scenarios).
+
     Empty plans never look complete (#108):
 
     * An empty rolling plan raises ``ValueError`` (unchanged from v1.0.0) so a failed rolling run
@@ -1820,7 +1886,8 @@ def compute_rolling_kpis(
     5000.0  # example value
     """
 
-    baseline_df = _normalize_assignments_input(baseline_assignments)
+    problem = scenario if isinstance(scenario, Problem) else Problem.from_scenario(scenario)
+    baseline_df = _normalize_assignments_input(baseline_assignments, problem)
     if baseline_df is None and baseline_assignments is not None:
         # An explicitly supplied but empty baseline (e.g. a failed full-horizon solve) is a
         # zero-delivery plan, not a missing one.
@@ -1831,14 +1898,15 @@ def compute_rolling_kpis(
     if isinstance(result, RollingPlanResult):
         if not result.locked_assignments:
             raise ValueError("Rolling plan contains no locked assignments; cannot compute KPIs.")
-        rolling_assignments = rolling_assignments_dataframe(result, include_metadata=False)
+        rolling_assignments = rolling_assignments_dataframe(
+            result, include_metadata=False, scenario=problem
+        )
     else:
-        rolling_assignments = _normalize_assignments_input(result)
+        rolling_assignments = _normalize_assignments_input(result, problem)
 
     if rolling_assignments is None:
         raise ValueError("Rolling plan contains no locked assignments; cannot compute KPIs.")
 
-    problem = scenario if isinstance(scenario, Problem) else Problem.from_scenario(scenario)
     rolling_kpis = compute_kpis(problem, rolling_assignments)
     baseline_kpis: KPIResult | None = None
     if baseline_df is not None:
@@ -1882,6 +1950,7 @@ def _numeric_totals(kpi: KPIResult) -> dict[str, float]:
 
 def _normalize_assignments_input(
     assignments: pd.DataFrame | Sequence[ScheduleLock] | None,
+    problem: Problem | None = None,
 ) -> pd.DataFrame | None:
     """Return a DataFrame representation of assignments or ``None`` when empty."""
 
@@ -1911,6 +1980,7 @@ def _normalize_assignments_input(
                 metadata={},
             ),
             include_metadata=False,
+            scenario=problem,
         )
     raise TypeError(
         "assignments input must be a pandas.DataFrame or a sequence of ScheduleLock entries"
