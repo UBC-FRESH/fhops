@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Callable, Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from fhops.scenario.contract import Problem
+from fhops.scenario.contract import Problem, Scenario
 
 if TYPE_CHECKING:  # pragma: no cover - import for typing only
     import pandas as pd
@@ -21,6 +21,7 @@ __all__ = [
     "run_playback",
     "summarise_shifts",
     "summarise_days",
+    "shift_hours_resolver",
 ]
 
 
@@ -369,11 +370,83 @@ def summarise_days(
         yield day_summary
 
 
+def shift_hours_resolver(
+    scenario: Scenario,
+) -> Callable[[str, str, int], tuple[float | None, str | None]]:
+    """Build the lookup playback uses to assign hours to a machine-shift.
+
+    Parameters
+    ----------
+    scenario : fhops.scenario.contract.Scenario
+        Scenario providing optional ``timeline.shifts`` definitions, the optional
+        ``shift_calendar`` and machine ``daily_hours``.
+
+    Returns
+    -------
+    Callable[[str, str, int], tuple[float | None, str | None]]
+        Function ``(machine_id, shift_id, day) -> (hours, source)``:
+
+        * ``ShiftDefinition.hours`` of the matching ``timeline.shifts`` entry
+          (``source="shift_definition"``);
+        * otherwise the machine's ``daily_hours`` divided by the number of shifts the machine has
+          that day (``source="machine_daily_hours"``). The shift count is the number of distinct
+          ``shift_calendar`` shift IDs for ``(machine_id, day)`` (available or not); when the
+          machine has no calendar entry that day, the number of distinct shift IDs any machine has
+          that day; without a shift calendar, the number of ``timeline.shifts`` definitions; and
+          ``1`` otherwise (one shift per day, so ``daily_hours`` itself);
+        * ``(None, None)`` for an unknown machine.
+
+    Notes
+    -----
+    Deterministic playback (``hours_worked``), shift availability (utilisation denominators) and
+    the stochastic downtime event (lost fraction ``d / shift_hours``) all use this rule, so they
+    stay on one scale. FHOPS 1.0.0 used the full ``daily_hours`` for every shift of a multi-shift
+    day when no timeline definition matched, overstating hours (e.g. 3 × 24 h per machine-day).
+    Single-shift scenarios are unchanged.
+    """
+
+    machine_hours = {machine.id: machine.daily_hours for machine in scenario.machines}
+    shift_hours_map: dict[str, float] = {}
+    timeline_shift_count = 0
+    if scenario.timeline and scenario.timeline.shifts:
+        shift_hours_map = {
+            shift_def.name: shift_def.hours for shift_def in scenario.timeline.shifts
+        }
+        timeline_shift_count = len(shift_hours_map)
+    machine_day_shifts: dict[tuple[str, int], set[str]] = defaultdict(set)
+    day_shifts: dict[int, set[str]] = defaultdict(set)
+    for entry in scenario.shift_calendar or []:
+        machine_day_shifts[(entry.machine_id, entry.day)].add(entry.shift_id)
+        day_shifts[entry.day].add(entry.shift_id)
+    has_shift_calendar = bool(machine_day_shifts)
+
+    def shifts_on(machine_id: str, day: int) -> int:
+        if has_shift_calendar:
+            shifts = machine_day_shifts.get((machine_id, day)) or day_shifts.get(day)
+            return max(len(shifts), 1) if shifts else 1
+        return max(timeline_shift_count, 1)
+
+    def hours_for(machine_id: str, shift_id: str, day: int) -> tuple[float | None, str | None]:
+        if shift_id in shift_hours_map:
+            return shift_hours_map[shift_id], "shift_definition"
+        hours = machine_hours.get(machine_id)
+        if hours is not None:
+            count = shifts_on(machine_id, int(day))
+            return (hours / count if count > 1 else hours), "machine_daily_hours"
+        return None, None
+
+    return hours_for
+
+
 def _compute_shift_availability(
     problem: Problem,
     config: PlaybackConfig,
 ) -> dict[tuple[int, str, str], float]:
-    """Derive available hours per machine/day/shift from scenario data."""
+    """Derive available hours per machine/day/shift from scenario data.
+
+    Shift hours follow :func:`shift_hours_resolver` (timeline definition, else the machine's
+    ``daily_hours`` split over its shifts that day).
+    """
 
     scenario = problem.scenario
     machines = {machine.id: machine for machine in scenario.machines}
@@ -385,6 +458,7 @@ def _compute_shift_availability(
     shift_hours = {}
     if scenario.timeline and scenario.timeline.shifts:
         shift_hours = {shift_def.name: shift_def.hours for shift_def in scenario.timeline.shifts}
+    hours_for = shift_hours_resolver(scenario)
 
     availability: dict[tuple[int, str, str], float] = {}
 
@@ -401,7 +475,9 @@ def _compute_shift_availability(
                 continue
             hours = shift_hours.get(shift_entry.shift_id)
             if hours is None and config.infer_missing_shifts:
-                hours = machines[shift_entry.machine_id].daily_hours
+                hours, _source = hours_for(
+                    shift_entry.machine_id, shift_entry.shift_id, shift_entry.day
+                )
             if hours is None:
                 continue
             availability[(shift_entry.day, shift_entry.shift_id, shift_entry.machine_id)] = hours

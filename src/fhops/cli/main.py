@@ -25,6 +25,7 @@ import pandas as pd
 import typer
 import yaml
 from rich.console import Console
+from rich.markup import escape
 from rich.table import Table
 
 from fhops.cli._utils import (
@@ -58,6 +59,7 @@ from fhops.evaluation import (
     shift_dataframe,
     shift_dataframe_from_ensemble,
 )
+from fhops.evaluation.playback.adapters import normalise_shift_ids
 from fhops.model.milp.data import bundle_from_dict, bundle_to_dict
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import (
@@ -1915,7 +1917,7 @@ def eval_playback(
         min=0.0,
         help=(
             "Standard deviation of the downtime duration in hours. Durations are clipped to "
-            "[0, shift hours]; a full-shift loss cancels the assignment."
+            "between 0 and the shift length; a full-shift loss cancels the assignment."
         ),
     ),
     weather_probability: float = typer.Option(
@@ -2012,16 +2014,19 @@ def eval_playback(
         RNG seed forwarded to stochastic playback.
     downtime_probability / downtime_max_concurrent / downtime_mean_hours / downtime_std_hours :
         Parameters that control random downtime events. Each hit machine-shift samples a
-        duration ``~ Normal(downtime_mean_hours, downtime_std_hours)`` clipped to
-        ``[0, shift_hours]`` and loses that fraction of its production; a full-shift loss
-        cancels the assignment.
+        duration ``~ Normal(downtime_mean_hours, downtime_std_hours)`` clipped to between 0 and
+        the shift length and loses that fraction of its production; a full-shift loss cancels
+        the assignment. Shift length is the timeline shift's ``hours``, else the machine's
+        ``daily_hours`` divided by its number of shifts that day.
     weather_probability / weather_severity / weather_window :
         Parameters that control weather impacts.
     landing_probability / landing_multiplier_low / landing_multiplier_high / landing_duration :
         Parameters for landing throughput shocks: for each landing and calendar day a shock
         starts with ``landing_probability``, lasts ``landing_duration`` days and scales the
-        production of every assignment on that landing by a multiplier drawn uniformly from
-        ``[landing_multiplier_low, landing_multiplier_high]`` (minimum across overlaps).
+        production of every assignment on that landing by a multiplier drawn uniformly between
+        ``landing_multiplier_low`` and ``landing_multiplier_high`` (minimum across overlaps).
+        The expected fraction of shocked landing-days is
+        ``1 - (1 - landing_probability) ** landing_duration``.
     summary_md : pathlib.Path | None
         Optional Markdown report destination.
     telemetry_log : pathlib.Path | None
@@ -2031,14 +2036,22 @@ def eval_playback(
     -----
     Use this command when you need shift/day tables, KPI exports, or stochastic playback for Monte
     Carlo studies.  Deterministic playback is automatically selected when all stochastic knobs are
-    zeroed out.
+    zeroed out. On scenarios with more than one shift per day the assignments CSV must provide
+    ``shift_id`` for every assigned row (the command exits with an error otherwise).
     """
+    # Keep square brackets out of this docstring and the option help: Rich treats ``[word ...]``
+    # as markup and silently drops it from ``--help`` output.
 
     sc = load_scenario(str(scenario))
     machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
 
     df = pd.read_csv(assignments_csv)
+    try:
+        df = normalise_shift_ids(pb, df)
+    except ValueError as exc:
+        console.print(f"[red]{escape(str(exc))}[/red]")
+        raise typer.Exit(1) from exc
 
     config_snapshot = {
         "include_idle": include_idle,
