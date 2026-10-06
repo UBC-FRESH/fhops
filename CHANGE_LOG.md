@@ -1,3 +1,8 @@
+# 2026-10-06 — CI: float tolerance in Phase 8 regression tests (#96, part of #90)
+- CI (`ci.yml`, Python 3.11, numpy 2.4.6) failed on the feature branch since #93/#108 because new regression tests compared floats exactly: e.g. large84 playback `remaining_work_total` 281346.09359100007 (CI) vs 281346.093591 (local Python 3.12, numpy 2.5.3), and med42 SA objective -38434.227316000004 vs -38434.22731600001.
+- `tests/test_kpi_empty_plans.py::test_full_plan_kpis_unchanged_from_pre108` and `tests/initial_state/test_v100_regression.py` now compare floats to 1e-6 (m³ / objective units) and keep exact equality for assignments, integers, and strings.
+- Observation recorded in `notes/v101_maintenance_plan.md`: on one CI run (6e60a36) the med42 SA regression (150 iters, seed 7) followed a different trajectory (-38703.91), i.e. last-bit float differences across platforms can flip a simulated-annealing acceptance decision. Seeded heuristic results are bit-reproducible on a fixed platform (verified for PYTHONHASHSEED 0–7 locally) but not guaranteed across numpy/Python builds.
+
 # 2026-10-06 — Release preparation for FHOPS 1.0.1 (#96, part of #90)
 - Bumped `fhops.__version__` to `1.0.1` (`src/fhops/__init__.py`, `tests/test_import.py`), install pins in `README.md` and `docs/overview.rst`, and the in-repo SoftwareX metadata tables (`docs/softwarex/manuscript/metadata/*.tex`).
 - Release notes `docs/releases/v1.0.1.md` covering #91, #92, #93, #94, #95, #99, #100, #108, #109, #110.

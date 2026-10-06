@@ -311,6 +311,16 @@ def test_full_plan_kpis_unchanged_from_pre108(name: str) -> None:
     pb = _problem(name)
     assignments = _fixture_assignments(name)
     result = run_playback(pb, assignments)
-    assert result.delivered_total == expected["delivered_total"]
-    assert result.remaining_work_total == expected["remaining_work_total"]
-    assert compute_kpis(pb, assignments).to_dict() == expected["kpis"]
+    # Floats are compared to 1e-6 m³: the same plan sums to values that differ in the last bits
+    # across platforms / numpy builds (e.g. CI on Python 3.11 + numpy 2.4).
+    assert result.delivered_total == pytest.approx(expected["delivered_total"], rel=0, abs=1e-6)
+    assert result.remaining_work_total == pytest.approx(
+        expected["remaining_work_total"], rel=0, abs=1e-6
+    )
+    actual = compute_kpis(pb, assignments).to_dict()
+    assert set(actual) == set(expected["kpis"])
+    for key, value in expected["kpis"].items():
+        if isinstance(value, float):
+            assert actual[key] == pytest.approx(value, rel=0, abs=1e-6), key
+        else:
+            assert actual[key] == value, key
