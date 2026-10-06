@@ -712,9 +712,11 @@ class RollingKPIComparison:
     rolling_kpis :
         KPI totals computed from the rolling plan assignments.
     baseline_assignments :
-        Optional baseline schedule (full-horizon heuristic/MIP output) for comparison.
+        Optional baseline schedule (full-horizon heuristic/MIP output) for comparison. An empty
+        frame (no rows) when an empty baseline was supplied.
     baseline_kpis :
-        KPI totals computed from ``baseline_assignments`` when provided.
+        KPI totals computed from ``baseline_assignments`` when provided (zero-delivery KPIs for
+        an empty baseline).
     delta_totals :
         Numeric difference ``rolling - baseline`` for KPI keys present in both payloads.
     """
@@ -1396,7 +1398,8 @@ def compute_rolling_kpis(
         Optional baseline schedule (full-horizon MILP/SA run) supplied as a Pandas DataFrame or
         sequence of :class:`fhops.scenario.contract.models.ScheduleLock` rows. Required columns
         mirror the rolling assignments (``machine_id``, ``block_id``, ``day`` and optional
-        ``shift_id``). When omitted, delta fields remain ``None``.
+        ``shift_id``). When omitted (``None``), delta fields remain ``None``. An empty DataFrame
+        or empty sequence is evaluated as a plan with no assignments (see Notes).
 
     Returns
     -------
@@ -1408,9 +1411,25 @@ def compute_rolling_kpis(
     Raises
     ------
     ValueError
-        If the rolling plan does not contain any locked assignments.
+        If the rolling plan does not contain any locked assignments (a ``RollingPlanResult``
+        without locks, an empty DataFrame, or an empty ``ScheduleLock`` sequence).
     TypeError
         If ``baseline_assignments`` is not a DataFrame or sequence of ``ScheduleLock`` entries.
+
+    Notes
+    -----
+    Empty plans never look complete (#108):
+
+    * An empty rolling plan raises ``ValueError`` (unchanged from v1.0.0) so a failed rolling run
+      cannot be scored silently. To score it as a zero-delivery plan call
+      :func:`fhops.evaluation.compute_kpis` with an empty frame directly.
+    * An explicitly supplied empty baseline is scored as a zero-delivery plan:
+      ``baseline_kpis["total_production"] == 0`` and ``remaining_work_total`` equals the
+      scenario's total ``work_required``. ``<metric>_pct_delta`` entries are omitted where the
+      baseline value is zero. (v1.0.0 silently dropped an empty baseline and returned
+      ``baseline_kpis=None``.)
+    * Rows with ``assigned <= 0`` are kept in ``rolling_assignments`` but deliver nothing, so a
+      DataFrame whose rows are all unassigned is scored as a zero-delivery plan.
 
     Examples
     --------
@@ -1423,6 +1442,12 @@ def compute_rolling_kpis(
     """
 
     baseline_df = _normalize_assignments_input(baseline_assignments)
+    if baseline_df is None and baseline_assignments is not None:
+        # An explicitly supplied but empty baseline (e.g. a failed full-horizon solve) is a
+        # zero-delivery plan, not a missing one.
+        baseline_df = pd.DataFrame(
+            columns=["machine_id", "block_id", "day", "shift_id", "assigned"]
+        )
     rolling_assignments: pd.DataFrame | None
     if isinstance(result, RollingPlanResult):
         if not result.locked_assignments:

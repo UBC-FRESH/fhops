@@ -355,6 +355,58 @@ Not changed: `Scenario._validate_system_ids` (block `harvest_system_id` vs `harv
 as a field validator before `harvest_systems` is available in field order, so it still does not
 fire for YAML or Python construction; behaviour is unchanged.
 
+### 8.9 KPIs for empty and partial plans (#108)
+Problem (pre-existing at v1.0.0, noted in §8.2): `compute_kpis` on an **empty** assignment table
+reported `total_production = Σ work_required` and `remaining_work_total = 0` (ka_6: 30913.355595
+m³ for a time-limited MIP run with no incumbent). `compute_rolling_kpis` / `evaluate_rolling_plan`
+never forwarded an empty frame (empty rolling plans raised `ValueError`, empty baselines were
+silently dropped to `baseline_kpis=None`), but any direct `compute_kpis` call (CLI KPI output,
+benchmark harness, experiment scripts) was affected.
+
+Root cause: `assignments_to_records` returned a bare `iter(())` for an empty frame, without the
+`sequencing_tracker` attribute, so `run_playback` left `remaining_work_total` at its `0.0`
+default; `compute_kpis` then set `total_production = Σ work_required − remaining_work_total`
+unconditionally. Frames with rows but no `assigned > 0` row already built a tracker and were
+correct.
+
+Fix (branch `issue-108-empty-plan-kpis`):
+1. `assignments_to_records` always attaches a fresh tracker (empty frames, `None`, or no assigned
+   rows) — `run_playback` now always reads `delivered_total`, `remaining_work_total` and
+   `sequencing_debug` from the tracker (a missing tracker is a `RuntimeError`).
+2. `compute_kpis` uses the playback `delivered_total` as `total_production`; the
+   `Σ work_required − remaining` form is only used as a float-tidy replacement when it agrees
+   with `delivered_total` (tolerance `max(1e-6, 1e-9 · Σ work_required)`), so non-empty plans keep
+   byte-identical KPIs.
+3. `compute_rolling_kpis`: an empty rolling plan still raises `ValueError` (deliberately kept from
+   v1.0.0 so a failed rolling run cannot be scored silently); an explicitly supplied **empty
+   baseline** is now scored as a zero-delivery plan (v1.0.0 silently dropped it and returned
+   `baseline_kpis=None`). `baseline_assignments=None` still skips the comparison.
+
+Empty-plan KPI semantics (documented in `compute_kpis`, `docs/howto/evaluation.rst`,
+`docs/howto/rolling_horizon.rst`): `total_production = 0`, `remaining_work_total =
+staged_production = Σ work_required` of the evaluated scenario (carried-forward volume for a
+rolling window; `initial_state` staged inventory does not change it), `completed_blocks = 0`,
+`makespan_day = 0` / `makespan_shift = "N/A"`, day utilisation `0`, shift/machine/role
+utilisation, mobilisation, downtime and weather keys absent, sequencing counts `0` with every
+harvest-system block counted as clean. Stochastic playback of an empty plan reports
+`delivered_total = 0` and full remaining work for the base result and every sample.
+
+Audit of the other KPIs for partial plans: production, completion, mobilisation, sequencing,
+utilisation, makespan, downtime and weather KPIs are all derived from the playback records or the
+tracker and needed no change; for any plan `total_production + remaining_work_total =
+Σ work_required`.
+
+Evidence: KPIs for `tests/fixtures/playback/{tiny7,med42,large84}_assignments.csv` and the three
+`tests/fixtures/v100_regression` CSVs are byte-identical before/after (JSON dump compare); of the
+48 ka_6 assignment CSVs in the read-only Jaffray repo, only the 2 empty ones change
+(`ka_6_sub14_lock14_mip_20260305_012750`, `ka_6_sub14_lock14_mip_20260322_010456`: 30913.355595 →
+0 m³ delivered). Tests: `tests/test_kpi_empty_plans.py` (15 of 26 fail on the pre-fix code; the
+pre-fix KPI snapshot lives in `tests/fixtures/kpi/pre108_snapshot.json`).
+
+Downstream: any Jaffray rolling-horizon result whose MIP baseline (or rolling run) produced an
+empty assignment table must be re-evaluated; the old "full-horizon MIP baseline = 30913 m³" figure
+is this artefact.
+
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
 `sphinx-build -b html docs _build/html -W`, and `python scripts/check_formulation_assets.py`

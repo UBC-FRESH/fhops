@@ -126,10 +126,16 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
     staged inventory, role remaining volumes, and role shift counts, and each machine's
     mobilisation tracking starts at its ``last_block_id`` so the first move to a different block
     is charged (matching the operational MILP and the heuristics).
+
+    An empty plan (``assignments`` is ``None``, has no rows, or has no row with
+    ``assigned > 0``) yields no records but still exposes a fresh ``sequencing_tracker``, so
+    callers see the full ``Block.work_required`` as remaining and nothing delivered. Empty
+    frames are accepted without the required-column check.
     """
 
+    tracker = build_sequencing_tracker(problem)
     if assignments is None or assignments.empty:
-        return iter(())
+        return _RecordIterator(iter(()), tracker)
 
     required = {"machine_id", "block_id", "day"}
     missing = required - set(assignments.columns)
@@ -146,8 +152,9 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
         if "_downtime" in df.columns:
             keep |= df["_downtime"].fillna(0).astype(bool)
         df = df[keep]
+    if df.empty:
+        return _RecordIterator(iter(()), tracker)
 
-    tracker = build_sequencing_tracker(problem)
     machine_roles = tracker.ctx.bundle.machine_roles
     role_order_lookup = build_role_order_lookup(tracker.ctx)
     role_priority = build_role_priority(tracker.ctx)
@@ -317,15 +324,18 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             )
         tracker.finalize()
 
-    class RecordIterator:
-        def __init__(self, iterator: Iterator[PlaybackRecord], tracker: SequencingTracker) -> None:
-            self._iterator = iterator
-            self.sequencing_tracker = tracker
+    return _RecordIterator(iter_records(), tracker)
 
-        def __iter__(self) -> RecordIterator:
-            return self
 
-        def __next__(self) -> PlaybackRecord:
-            return next(self._iterator)
+class _RecordIterator:
+    """Record iterator exposing the :class:`SequencingTracker` that capped its production."""
 
-    return RecordIterator(iter_records(), tracker)
+    def __init__(self, iterator: Iterator[PlaybackRecord], tracker: SequencingTracker) -> None:
+        self._iterator = iterator
+        self.sequencing_tracker = tracker
+
+    def __iter__(self) -> _RecordIterator:
+        return self
+
+    def __next__(self) -> PlaybackRecord:
+        return next(self._iterator)
