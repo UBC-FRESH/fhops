@@ -61,13 +61,25 @@ MILP's terminal production:
 * **Head starts are staged volume.** ``role_headstart_shifts`` = ``β`` means the downstream role may
   work only when at least ``β × Σ`` (upstream machines' rates on the block, m³/shift) is staged at
   the start of the slot. The buffer is waived once every upstream role has output its whole volume
-  (the pipeline is draining). Shift counts (``initial_state.role_shift_counts``) are informational.
+  before the slot (the pipeline is draining); an upstream role finishing the block in the same slot
+  does not waive it (MILP ``upstream_done`` uses output up to the previous slot; heuristics and
+  playback since 1.0.1, #116). Shift counts (``initial_state.role_shift_counts``) are informational.
 * **Loaders need a truckload staged.** A loader may work only when the volume staged at the start of
   the slot covers ``loader_batch_volume_m3``, or the remaining block volume when that is smaller
   (playback and heuristics use the volume still to deliver; the MILP uses the remaining volume at
   the start of its horizon, which is never less strict).
 * **Blocks without** ``harvest_system_id`` have no role obligations: any machine may work them and
   every machine's output counts towards ``work_required``.
+
+Landing capacity is not a sequencing rule and is modelled differently by the solvers: the MILP
+limits machine-shifts per landing and day to ``Landing.daily_capacity`` plus a slack priced by the
+``landing_surplus`` weight (free at weight 0), while the heuristics count machines per landing in
+each shift and charge 1000 per machine beyond ``daily_capacity`` when ``landing_surplus`` is 0
+(otherwise the weighted surplus). Because
+staged output moves on at the next shift, a multi-shift heuristic repair could put every role of a
+block on its landing in the same shift; on days with more than one shift the heuristic repair
+therefore only keeps or fills an assignment when the block's landing has room in that shift
+(scenarios that weight ``landing_surplus`` at 0, the default). Single-shift days are unchanged.
 
 Playback flags an assignment with ``sequencing_violation = "missing_prereq"`` when its planned
 production exceeds the staged input or a head-start/truckload threshold is not met (volume

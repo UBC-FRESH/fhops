@@ -496,6 +496,153 @@ Tests: `tests/model/test_milp_blackouts.py` (slot set = heuristic set, shift-cal
 bundle round trip, `machine_capacity` bounds, MILP and SA use exactly the open slots, rolling MILP
 locks no blackout day).
 
+### 8.13 Heuristics, tracker, and playback fixes from the pre-release audit (#116)
+Pre-release antagonistic audit of the 1.0.1 candidate (f31aa65; evidence and repro scripts in
+`/tmp/opencode/audit-{3,4}-scratch/`, this branch's scripts in `/tmp/opencode/w116/`). Branch
+`issue-116-heuristics-playback-audit`.
+
+**1. Multi-shift heuristic regression since #109 (root cause).** On the Jaffray 3-shift scenarios
+(`ka_6`, `pg_6`, `ni_6`, `ka_18`, `pg_18`; landings with `daily_capacity = 2`, heuristics count
+machines per landing per *shift*, 1000 per extra machine because `landing_surplus` is weighted 0)
+SA/ILS/Tabu objectives dropped versus v1.0.0 purely through more landing-capacity penalties
+(delivered volume and sequencing were equal). Ablation on copies of f31aa65
+(`/tmp/opencode/w116/mkvar.py`, greedy seed + `evaluate_schedule`):
+
+| Variant of f31aa65 | ka_6 greedy obj / landing penalties | pg_6 |
+|---|---|---|
+| f31aa65 | −17086.64 / 48 | 22923.96 / 45 |
+| repair releases staged output per **day** again (only change) | −6086.64 / 37 | 34923.96 / 33 |
+| tracker per day (evaluation only) | −70556.29 / 43 violations | −47035.66 / 55 violations |
+| v1.0.0 loader rule in the repair | −17086.64 / 48 | 22923.96 / 45 |
+| v1.0.0 | −6086.64 / 37 | 34923.96 / 33 |
+
+Reverting only the repair's per-slot release reproduces v1.0.0 exactly; the loader rule and the
+head-start volume (no head starts in these scenarios) are no-ops and the slot order is unchanged
+(`S1`–`S3` are defined in label order). Mechanism: neither the greedy seed nor the repair looks at
+landing capacity. Under per-day release (v1.0.0) a downstream role could not use output staged
+earlier the same day, so the repair dropped/moved most downstream machines away from a block on the
+days its upstream roles worked it — accidentally spreading the crew over landings. With per-slot
+release (#109, correct per E7) the repair keeps feller, skidder, processor and loader on the same
+block in consecutive shifts of one day, i.e. 3–4 machines on a capacity-2 landing per shift.
+
+Fix (heuristics only; `OperationalProblem.multi_shift_days`, `common._repair_schedule_cover_blocks`):
+on days with more than one shift slot, and only when `landing_surplus` is weighted 0, the repair
+keeps or fills an assignment only if fewer than `daily_capacity` *other* machines are planned on
+the block's landing in that shift (other machines count with their current plan, so existing
+assignments of machines visited later in the slot keep their position; locked slots are exempt).
+Single-shift days are untouched, so the reference ladder is byte-identical. Two alternatives were
+measured and rejected: first-come-first-served in role order (upstream roles take the landing;
+lower delivered volume on 14/28-day ka_6 windows, e.g. 18424–18770 vs 19084–19556 m³) and a
+look-ahead that ignores later machines whose assignment would be dropped (lower on pg_6 28-day
+windows: 17089–17616 vs 18910 objective). The chosen rule's objective and delivered volume are
+≥ f31aa65 on every truncated-horizon run (ka_6 14/28 d, pg_6/ni_6/ka_18 28 d, SA 500 iterations,
+seeds 1–3; `/tmp/opencode/w116/cmp_trunc.py`).
+
+SA, 1500 iterations (`/tmp/opencode/w116/cmp.py`; objective / delivered m³ / playback sequencing
+violations / landing-capacity excess in the final plan; "greedy" = seed schedule after repair):
+
+| Scenario | Seed | v1.0.0 | f31aa65 | this branch |
+|---|---|---|---|---|
+| ka_6 | greedy | -6086.64 / – / – / 37 | -17086.64 / – / – / 48 | 30913.36 / – / – / 0 |
+| ka_6 | 1 | 24913.36 / 30913.4 / 0 / 6 | 15913.36 / 30913.4 / 0 / 15 | 30913.36 / 30913.4 / 0 / 0 |
+| ka_6 | 2 | 23913.36 / 30913.4 / 0 / 7 | 13913.36 / 30913.4 / 0 / 17 | 30913.36 / 30913.4 / 0 / 0 |
+| ka_6 | 3 | 22913.36 / 30913.4 / 0 / 8 | 18913.36 / 30913.4 / 0 / 12 | 30913.36 / 30913.4 / 0 / 0 |
+| pg_6 | greedy | 34923.96 / – / – / 33 | 22923.96 / – / – / 45 | 67923.96 / – / – / 0 |
+| pg_6 | 1 | 60923.96 / 67924.0 / 0 / 7 | 58923.96 / 67924.0 / 0 / 9 | 67923.96 / 67924.0 / 0 / 0 |
+| pg_6 | 2 | 58923.96 / 67924.0 / 0 / 9 | 62923.96 / 67924.0 / 0 / 5 | 67923.96 / 67924.0 / 0 / 0 |
+| pg_6 | 3 | 60923.96 / 67924.0 / 0 / 7 | 50923.96 / 67924.0 / 0 / 17 | 67923.96 / 67924.0 / 0 / 0 |
+| ni_6 | greedy | -126706.64 / – / – / 230 | -138889.32 / – / – / 248 | 1961.36 / – / – / 0 |
+| ni_6 | 1 | 24925.36 / 214508.0 / 0 / 81 | 24189.36 / 217140.0 / 0 / 87 | 113821.36 / 218456.0 / 0 / 0 |
+| ni_6 | 2 | 14609.36 / 213850.0 / 0 / 90 | 22189.36 / 217140.0 / 0 / 89 | 112505.36 / 217798.0 / 0 / 0 |
+| ni_6 | 3 | 41609.36 / 213850.0 / 0 / 63 | 42873.36 / 216482.0 / 0 / 67 | 111189.36 / 217140.0 / 0 / 0 |
+| ka_18 | greedy | -123613.87 / – / – / 195 | -135613.87 / – / – / 207 | 71386.13 / – / – / 0 |
+| ka_18 | 1 | -49613.87 / 71386.1 / 0 / 121 | -63613.87 / 71386.1 / 0 / 135 | 71386.13 / 71386.1 / 0 / 0 |
+| ka_18 | 2 | -37613.87 / 71386.1 / 0 / 109 | -45613.87 / 71386.1 / 0 / 117 | 71386.13 / 71386.1 / 0 / 0 |
+| ka_18 | 3 | -26613.87 / 71386.1 / 0 / 98 | -43613.87 / 71386.1 / 0 / 115 | 71386.13 / 71386.1 / 0 / 0 |
+| pg_18 | greedy | -1021173.44 / – / – / 1311 | -1044697.44 / – / – / 1349 | 173999.63 / – / – / 0 |
+| pg_18 | 1 | — | — | — |
+| pg_18 | 2 | — | — | — |
+| pg_18 | 3 | — | — | — |
+
+ILS (100 iterations) and Tabu (1000 iterations), seed 1:
+
+| Scenario | Solver (seed 1) | v1.0.0 | f31aa65 | this branch |
+|---|---|---|---|---|
+| ka_6 | ils | 13913.36 / 30913.4 / 0 / 17 | 13913.36 / 30913.4 / 0 / 17 | 30913.36 / 30913.4 / 0 / 0 |
+| ka_6 | tabu | 20913.36 / 30913.4 / 0 / 10 | 12913.36 / 30913.4 / 0 / 18 | 30913.36 / 30913.4 / 0 / 0 |
+| pg_6 | ils | 62923.96 / 67924.0 / 0 / 5 | 59923.96 / 67924.0 / 0 / 8 | 67923.96 / 67924.0 / 0 / 0 |
+| pg_6 | tabu | 66923.96 / 67924.0 / 0 / 1 | 66923.96 / 67924.0 / 0 / 1 | 67923.96 / 67924.0 / 0 / 0 |
+
+Trade-off: on capacity-limited horizons the plans now respect landing capacity instead of buying
+volume with 1000-point overloads; in the Jaffray rolling smoke (`rolling_rerun_v101.py --smoke`,
+28-day master, SA 50 iterations/window) the 14-day-window SA runs deliver 30380.5 m³ instead of
+30913.4 m³ but with 0 instead of 35–37 landing overloads (full-horizon and 28-day windows still
+deliver 30913.4 m³). The MILP's landing constraint is per day with a slack that is free at weight 0
+— a pre-existing modelling difference left for the MILP owners (#115).
+
+**2. Head-start waiver.** `SequencingTracker._upstream_exhausted` and the repair's
+`meets_headstart` now add the upstream output staged in the current slot back before testing
+"upstream finished", i.e. they use output before the slot, as the MILP `upstream_done` does.
+`waiver_same_slot.py` now reports the day-3 skidder row as `missing_prereq` (the MILP rejects the
+same plan as infeasible). Tests: `tests/sequencing/test_headstart_waiver.py` (2 of 4 fail on f31aa65).
+
+**3. Missing `shift_id`.** `normalise_shift_ids` / `multi_shift_days`
+(`evaluation/playback/adapters.py`): when any day has more than one shift slot
+(`Problem.shifts`, i.e. shift calendar or timeline) and an active row (`assigned > 0`) has no
+`shift_id`, playback, `compute_kpis`, stochastic playback and `fhops eval-playback` raise /
+exit 1 with a clear message; single-shift scenarios keep the `S1` default. Internal callers: SA/ILS/
+Tabu, the operational MILP driver and the HiGHS MIP driver always emit `shift_id`; rolling stitched
+plans carry the solver's `shift_id`. Not changed here (other owners): `fhops evaluate` surfaces
+the same `ValueError` as a traceback (only `eval-playback` is in this change's CLI scope), and
+`planning.rolling.carry_forward_state` still replays a missing lock `shift_id` as `S1` in its own
+replay (#117) — on multi-shift scenarios a day-level lock should expand to every shift or be
+rejected, for consistency with playback.
+
+**4. Duplicate DataFrame index.** Events work on `reset_index(drop=True)` copies and restore the
+caller's index; `run_stochastic_playback` and `assignments_to_records` drop the index. `dupindex.py`
+now gives identical delivered totals with/without duplicate labels (downtime 3728.035 / 3829.001 /
+3876.63; weather 2844.927 / 1936.829 / 4148.061); f31aa65 gave 0.0 / 0.0 / 133.543 and
+1104.866 / 1746.854 / 2143.296 with duplicates.
+
+**5. Shift-hours fallback.** `playback.core.shift_hours_resolver(scenario)(machine, shift, day)`:
+timeline definition, else `daily_hours / (#shift-calendar shifts of that machine that day)` (or the
+day's shift count for a machine without entries, or the number of timeline shifts without a shift
+calendar, else 1). Used for recorded `hours_worked`, shift availability (utilisation) and the
+downtime fraction. `multishift.py`: shift calendar without timeline now records 8 h per shift
+(24 h per machine-day, was 72 h) and a 4 h downtime removes 4/8 of a shift (was 4/24), identical to
+the explicit 3 × 8 h timeline. Single-shift scenarios unchanged.
+
+**6. Loss KPIs.** `downtime_production_loss_est` = Σ per downtime record of the proposed volume the
+event removed (new private column `_downtime_lost` → record metadata `downtime_production_lost`;
+fallback `rate × min(d / shift_hours, 1)`); `weather_production_loss_est` = Σ `_weather_lost`
+(`volume × severity`; fallback `production × s / (1 − s)`); `weather_hours_est` = Σ
+`severity × shift_hours`. On an unsequenced, uncapped scenario the downtime/weather loss equals the
+drop in delivered volume exactly (tests). The f31aa65 formula (hours × delivered / all-role hours)
+is replaced; shift/day summary schemas are unchanged.
+
+**7. Landing-shock calibration.** Expected shocked landing-day fraction
+`f = 1 − (1 − p)^D`. Defaults (`p = 0.1`, `D = 1`): 10 %. Synthetic presets were `medium` 0.18/2 →
+32.8 %, `large` 0.25/3 → 57.8 %; now 0.025/2 → 4.94 % and 0.035/3 → 10.14 %. Documented in
+`LandingShockConfig`, `LandingShockEvent`, `sampling_config_for`, `docs/howto/evaluation.rst`.
+Shipped `examples/synthetic/*/metadata.yaml` keep the values used when they were generated (data
+regeneration with the generator reproduces the CSVs; not needed, not edited).
+
+**8. Deprecated fields.** `correlated_days` warns only for an explicit non-default value (`False`);
+`seed_offset` (never used by any event) is deprecated the same way (non-zero warns, results
+unchanged — verified). `sampling_config_dump` drops both from the synthetic preset merge and from
+generated `metadata.yaml`. Loading the four shipped `examples/synthetic` metadata configs emits no
+warning (test).
+
+**9.** `eval-playback` help: the docstring and option help no longer use square brackets (Rich
+dropped `[landing_multiplier_low, landing_multiplier_high]`); `[0, shift hours]` rephrased too.
+
+**10.** `seed_offset`: see 8 (deprecated, documented in `SamplingEventConfig` and evaluation.rst).
+
+Reference ladder (`fhops bench suite`, committed flags, into a temp dir): tiny7 SA ×3 / ILS / Tabu
+and small21 SA ×3 / ILS / Tabu rows and assignment CSVs byte-identical. SoftwareX playback assets
+(`run_playback_analysis.py --out-dir <tmp>`): every generated file byte-identical to
+`docs/softwarex/assets/data/playback` (the two figure files are produced by a different script).
+
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
 `sphinx-build -b html docs _build/html -W`, and `python scripts/check_formulation_assets.py`
