@@ -22,3 +22,10 @@ fast_mode: 1 (manual regeneration)
 duration_s: 3600
 assets_hash: 18dc0ad8fc447a1fbd1f73af443e233adadad33e378ea625b629237ff380f304
 ----
+run_started: 2026-10-06T06:07:46Z
+commit: 30f30a2
+fast_mode: 0
+duration_s: 59
+assets_hash: f3785a486c2e8981ccdea727453b0fc783009889048dde6fe4a14297419a66c7
+note: partial regeneration for FHOPS 1.0.1 (#95): only playback assets (run_playback_analysis.py + plot_playback_variability.py) were regenerated; benchmark/tuning/costing/scaling/dataset assets untouched, and SA (tiny7, small21) plus ILS (tiny7) re-solves reproduced the committed benchmark summaries and assignment CSVs exactly
+----
