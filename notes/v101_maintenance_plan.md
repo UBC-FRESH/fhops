@@ -845,6 +845,111 @@ Evidence: audit harness `run_adv.py` (5 scenario variants × SA/MILP × 5 window
 30913.4 m³ in every run, MILP 30 s windows return all-zero incumbents → flagged `empty` (baseline 1,
 14/14 2, 28/14 2, 14/7 3, 28/7 3 empty windows), 0 violations.
 
+### 8.16 SoftwareX benchmark asset consistency (#119, audit)
+Pre-release audit finding (audit-3 MINOR 9): committed med42 SA assignment CSVs did not match
+`summary.csv`. Branch `issue-119-softwarex-asset-consistency`; scratch in `/tmp/opencode/w119/`.
+
+**Audit tool.** `docs/softwarex/manuscript/scripts/audit_asset_consistency.py` (no solver runs):
+every benchmark/scaling `summary.csv` row vs its assignment CSV (`compute_kpis`: assignments,
+delivered production, mobilisation, completed blocks, day utilisation), `data/tables/*` vs a fresh
+`build_tables.py` rendering (optionally vs the manuscript's `sections/includes/*.tex`), each
+deterministic playback export re-played from the benchmark CSV it claims to use (day-level
+production/hours/mobilisation) plus `metrics.json` vs the benchmark KPIs, `scaling_summary.csv` vs
+the tier summaries, and the tuning comparison/report vs `runs.jsonl` (best/mean objective, mean
+runtime). Also checked separately: every `summary.json` equals its `summary.csv` (rows matched on
+solver/preset).
+
+**Re-runs** (`fhops bench suite` on this branch, committed `generate_assets.sh` settings, into
+`/tmp/opencode/w119/regen`; med42 split into SA / ILS / Tabu processes, the same per-solver calls
+and arguments): every row compared column by column with the committed `summary.csv` except
+`scenario_path`, `runtime_s` and the run-dependent `best_heuristic_*`/ratio columns, and every
+assignment CSV compared byte for byte.
+
+Consistency matrix (KPI = assignments, delivered m³, mobilisation, completed blocks, day
+utilisation re-derived from the CSV; "re-run" = deterministic re-run reproduces the committed row
+exactly and the CSV byte for byte):
+
+| Scenario | Solver / preset | KPI vs CSV (before) | Re-run | Table row | Action |
+|---|---|---|---|---|---|
+| tiny7 | SA default / diversify / mobilisation | OK | reproduced, CSV identical | OK | none |
+| tiny7 | ILS, Tabu | OK | reproduced, CSV identical | OK | none |
+| small21 | SA default / diversify / mobilisation | OK | reproduced, CSV identical | OK | none |
+| small21 | ILS, Tabu | OK | reproduced, CSV identical | OK | none |
+| med42 | SA default | **stale** (mobilisation 10662.04 vs 10564.68) | reproduced (−27271.221414, 32071.863994 m³, 10564.68) | **stale** (−28271.22 / 124.48 s / 10662.04) | CSV replaced by re-run output; table regenerated |
+| med42 | SA diversify | **stale** (214 vs 210 rows, 32715.39 vs 32297.03 m³, 8 vs 6 blocks) | reproduced (−30977.725738) | not tabled | CSV replaced by re-run output |
+| med42 | SA mobilisation | OK | reproduced, CSV identical | not tabled | none |
+| med42 | ILS | OK | reproduced, CSV identical | **stale** (−41581.70 / 182.33 s / 32702.07 / 10662.28) | table regenerated |
+| med42 | Tabu | OK | reproduced, CSV identical | **stale** runtime (177.37 s vs 7391.10 s) | table regenerated |
+| synthetic_small | SA ×3, ILS, Tabu | OK | reproduced, CSV identical | OK | none |
+| scaling small/medium/large | SA | OK; `scaling_summary.csv` = tier summaries | reproduced (objective, assignments, CSV identical) | n/a | none (see manuscript note) |
+| tuning (4 scenarios × 5 tuners) | — | comparison/report = `runs.jsonl` | not re-run | med42 row **wrong** (sense) | `build_tables.py` fixed, table regenerated |
+| playback deterministic (6) | — | day.csv = replay of the benchmark CSV, except med42 SA (stale CSV) | — | — | med42 SA re-derived; `metrics.json` schema fixed |
+
+Provenance of the stale files (from the committed `telemetry.jsonl`): on 2025-12-03 a reduced
+med42 run (SA 2000 iterations: default −28271.22, diversify −41420.41; ILS 400: −41581.70; Tabu
+1000: −46063.73, all from `examples/med42/scenario.yaml`) overwrote `sa_assignments.csv`,
+`sa_assignments_diversify.csv` and the tables, while the full-budget rows were merged back into
+`summary.csv`. The regenerated SA CSVs are byte-identical to the copies in the manuscript
+repository's import snapshot (`fhops-manuscript` 510b7f5, `assets/data/benchmarks/med42`), i.e. the
+full-budget files existed but were never committed here.
+
+Decisions:
+1. **Summaries are not rewritten.** Every committed row was reproduced, so `summary.csv/json` and
+   `telemetry.jsonl` are kept byte-for-byte; only the two stale CSVs are replaced with the files
+   written by the reproducing run. Published runtimes therefore stay the committed ones: the
+   tables take `runtime_s` from `summary.csv`, which is unchanged (re-run wall-clock times on the
+   loaded 72-core host differed by −49 % … +59 % and are recorded only in the scratch logs).
+2. **`build_tables.py` med42 sense** `minimize` → `maximize` (all FHOPS heuristics maximise; the
+   manuscript R1 change log describes this fix, but it never reached this repo). Table 4 is
+   unaffected (one row per solver); Table 5 med42 becomes Bayes −35485.30, Δ −8214.08, 5.29 s. The
+   regenerated `.tex` tables equal the manuscript's `sections/includes/*.tex` byte for byte.
+3. **Playback `metrics.json`** (written by `run_playback_analysis.py`): `total_production` is now
+   the terminal delivered volume (tracker `delivered_total`, = benchmark `kpi_total_production`),
+   with `total_production_std`, `remaining_work`, and `all_roles_production_units` (the former
+   value: production summed over every role, e.g. tiny7 17658.81 vs 4414.70 m³ delivered). Hours
+   and mobilisation are per-sample means (they were summed over the 50 stochastic samples, e.g.
+   med42 SA mobilisation 533102 = 50 × 10662.04). Delivered volumes come from an in-process replay
+   with the `eval-playback` defaults + `STOCHASTIC_OPTIONS`; the script aborts unless the replay's
+   day-level production and hours equal the CLI's `day.csv`. `summary.md` still prints the CLI's
+   all-roles "Total production units" (CLI exporter, unchanged).
+4. **med42 SA playback** re-derived from the corrected CSV: production/mobilisation columns change
+   (mobilisation 10662.04 → 10564.68; stochastic mean delivered 28195.59 m³), utilisation is
+   unchanged (same machine-shifts worked: 0.558201 deterministic, 0.553755 stochastic), and the
+   figure (`utilisation_robustness.png/pdf`) is byte-identical.
+5. **small21 provenance.** `generate_assets.sh` never generated the committed small21 assets; it
+   now has a small21 case with the verified settings (SA 4000, ILS 800, Tabu 7000, batch 1,
+   4 workers).
+
+Findings left open (reported, not changed here):
+- **Scaling runtimes quoted in the manuscript are not these assets.** FHOPS assets (reproduced
+  here except wall-clock) give 31.68 / 83.58 / 105.42 s; the manuscript quotes 31.81 / 84.88 /
+  108.97 s and embeds a `runtime_vs_blocks.png` from the manuscript repository's own asset snapshot
+  (510b7f5, same objectives and assignment counts, different run). The authors must either quote
+  the FHOPS values and figure or treat the snapshot as the source of record.
+- **Heuristic objective ≠ fresh evaluation of the exported schedule** (pre-existing; identical at
+  v1.0.0). SA/ILS/Tabu report the score of their internal best `Schedule`, whose per-machine
+  mobilisation cache can lack machines: candidates reach `evaluate_schedule` with an empty
+  `mobilisation_cache` and a `dirty_machines` set holding only the mutated machines, so
+  `_ensure_mobilisation_stats` charges only those machines. Re-scoring the exported CSVs gives
+  lower objectives (gap: tiny7 10.748 for every row; small21 54–151; med42 SA 3060.62 / 837.70 /
+  3088.80, ILS 2031.90, Tabu 0; synthetic 0). Delivered production and mobilisation in the tables
+  come from `compute_kpis` and are correct; the Objective column and the tuning objectives are the
+  solvers' internal scores. A fix changes search trajectories, so every benchmark/tuning asset
+  would have to be regenerated (src owners; not 1.0.1 asset work).
+- The in-repo manuscript draft (`docs/softwarex/manuscript/sections/illustrative_example.tex`)
+  still quotes the stale med42 values (ILS −41581.7 in 182 s, SA −28271.2 in 124 s, Tabu 177 s,
+  Random −39725.9); the submitted manuscript (separate repo) already has the corrected values.
+- Under 1.0.1 `synth generate` writes different sampling metadata (`metadata.yaml`: deprecated
+  keys dropped, medium/large landing-shock presets, #116); scenario CSVs, benchmark rows and
+  assignments are unchanged, so the committed dataset metadata was left as generated.
+
+Manuscript-quoted values (old → new): Table 4 med42 SA −27271.22 / 1245.04 s, ILS −33452.28 /
+1791.73 s, Tabu −46063.73 / 7391.10 s, production 30026.28–33025.19 m³, mobilisation
+9846.12–10682.68 CAD — unchanged; Table 5 Bayes −35485.30, Δ −8214.08, 5.29 s — unchanged (the
+FHOPS table now matches); §3.2 utilisation tiny7 0.37 → 0.36, med42 SA 0.558 → 0.554, ILS 0.564 →
+0.559, synthetic-small 0.62 → 0.60 — unchanged; scaling 31.81 / 84.88 / 108.97 s — **not backed by
+the FHOPS assets** (31.68 / 83.58 / 105.42 s).
+
 ### 8.17 Legacy solve-mip no-raise, rolling hook warnings, manuscript copy (#124)
 Hand-offs from #115 (§8.12) and #118 (§8.15). Branch `issue-124-legacy-mip-hook-warnings`; repro
 scripts in `/tmp/opencode/t124/`.

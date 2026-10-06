@@ -27,7 +27,9 @@ SCENARIOS = [
     {
         "slug": "med42",
         "label": "Med42 (ground-based)",
-        "sense": "minimize",
+        # FHOPS heuristics maximise the objective on every scenario; med42 scores are negative
+        # (penalty/mobilisation dominated), not minimised.
+        "sense": "maximize",
         "comparison_key": "baseline:med42",
         "report_key": "FHOPS Medium42",
     },

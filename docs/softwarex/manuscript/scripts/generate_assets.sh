@@ -61,6 +61,7 @@ rm -rf "${bench_dir}" && mkdir -p "${bench_dir}"
 
 scenario_specs=(
   "${repo_root}/examples/tiny7/scenario.yaml|tiny7|Tiny7 reference scenario"
+  "${repo_root}/examples/small21/scenario.yaml|small21|Small21 reference scenario"
   "${repo_root}/examples/med42/scenario.yaml|med42|Med42 reference scenario"
   "${synthetic_scenario}|synthetic_small|Synthetic tier (small)"
 )
@@ -102,6 +103,24 @@ for spec in "${scenario_specs[@]}"; do
           tabu_batch="4"
           ils_workers="12"
           tabu_workers="12"
+        fi
+        ;;
+      small21)
+        # Committed small21 assets: SA 4000, ILS 800 and Tabu 7000 iterations with the default
+        # batch (1) and worker (4) counts (re-verified in #109 and #119).
+        time_limit="${default_time_limit}"
+        sa_local="${default_sa_iters}"
+        ils_local="${default_ils_iters}"
+        tabu_local="${default_tabu_iters}"
+        ils_batch="${default_ils_batch}"
+        tabu_batch="${default_tabu_batch}"
+        ils_workers="${default_ils_workers}"
+        tabu_workers="${default_tabu_workers}"
+        if [[ "${fast_mode}" != "1" ]]; then
+          time_limit="600"
+          sa_local="4000"
+          ils_local="800"
+          tabu_local="7000"
         fi
         ;;
       med42)
