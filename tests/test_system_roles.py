@@ -1,4 +1,5 @@
 import pyomo.environ as pyo
+import pytest
 
 from fhops.optimization.heuristics.common import Schedule, evaluate_schedule
 from fhops.optimization.mip.builder import build_model
@@ -13,6 +14,11 @@ from fhops.scenario.contract.models import (
     Scenario,
 )
 from fhops.scheduling.systems import HarvestSystem, SystemJob
+
+# These tests exercise the deprecated legacy builder on purpose (#127).
+pytestmark = pytest.mark.filterwarnings(
+    "ignore::fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning"
+)
 
 
 def _shift_key(pb: Problem, day: int, shift_id: str | None = None) -> tuple[int, str]:

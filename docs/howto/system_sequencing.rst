@@ -118,9 +118,11 @@ MIP
 
 .. code-block:: bash
 
-   fhops solve-mip examples/med42/scenario.yaml --out tmp/med42_mip.csv --time-limit 600
+   fhops solve-mip-operational examples/tiny7/scenario.yaml --out tmp/tiny7_mip.csv --time-limit 60
 
-If sequencing conflicts exist (e.g., machine roles missing), blocks stay unassigned. The
+(``fhops solve-mip`` is a deprecated alias of this command since FHOPS 1.0.1. On med42 the MILP
+needs long time limits or Gurobi; with HiGHS and a 600 s limit it typically stops at an incumbent
+that assigns no machines.) If sequencing conflicts exist (e.g., machine roles missing), blocks stay unassigned. The
 operational MILP (``fhops solve-mip-operational``) reports an ``outcome`` (``optimal``,
 ``feasible``, ``infeasible``, ``no_solution``, ``error``) and never raises for infeasible models or
 time limits without an incumbent; see :doc:`mip_warm_starts` for the result fields.

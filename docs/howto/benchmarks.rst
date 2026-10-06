@@ -35,7 +35,7 @@ CLI Options
   The quick-start example above still shows ``--time-limit 180`` for a smoke run; omit that flag to use the
   higher default when you want optimal certificates on the largest instance.
 * ``--sa-iters`` / ``--sa-seed`` — simulated annealing iteration budget and RNG seed.
-* ``--driver`` — MIP driver (``auto``/``highs-appsi``/``highs-exec``/``gurobi``/``gurobi-appsi``/``gurobi-direct``) mirroring the ``solve-mip`` CLI.
+* ``--driver`` — operational MILP solver (``highs`` default, ``gurobi``, or ``auto``: Gurobi when it runs, otherwise HiGHS; legacy names such as ``highs-appsi``/``gurobi-direct`` are accepted).
 * ``--include-mip`` / ``--include-sa`` — toggle individual solvers when running experiments.
 * ``--out-dir`` — destination for summary files (default: ``tmp/benchmarks``).
 

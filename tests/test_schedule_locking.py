@@ -25,6 +25,11 @@ from fhops.scheduling.mobilisation import (
     MobilisationConfig,
 )
 
+# These tests exercise the deprecated legacy builder on purpose (#127).
+pytestmark = pytest.mark.filterwarnings(
+    "ignore::fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning"
+)
+
 
 def _shift_tuple(pb: Problem, day: int, shift_id: str | None = None) -> tuple[int, str]:
     candidates = [shift for shift in pb.shifts if shift.day == day]

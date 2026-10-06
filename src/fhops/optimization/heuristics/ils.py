@@ -1,4 +1,9 @@
-"""Iterated Local Search / hybrid heuristic leveraging the operator registry."""
+"""Iterated Local Search / hybrid heuristic leveraging the operator registry.
+
+The optional hybrid step (``hybrid_use_mip``) warm-starts the operational MILP
+(:func:`fhops.model.milp.driver.solve_operational_milp`) from the best ILS schedule when the search
+stalls (#127, #104).
+"""
 
 from __future__ import annotations
 
@@ -13,6 +18,7 @@ import pandas as pd
 
 from fhops.evaluation import compute_kpis
 from fhops.model.milp.data import ordered_shift_keys
+from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics.common import (
     Schedule,
     build_watch_metadata_from_debug,
@@ -24,7 +30,6 @@ from fhops.optimization.heuristics.common import (
     resolve_objective_weight_overrides,
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
-from fhops.optimization.mip import solve_mip
 from fhops.optimization.operational_problem import (
     OperationalProblem,
     build_operational_problem,
@@ -35,13 +40,40 @@ from fhops.telemetry import RunTelemetryLogger
 from fhops.telemetry.watch import Snapshot, SnapshotSink
 
 
+def _schedule_to_incumbent(schedule: Schedule) -> pd.DataFrame | None:
+    """Convert a schedule into the assignment table used as an operational MILP incumbent.
+
+    Returns ``None`` when the schedule assigns no machine (nothing to seed).
+    """
+    rows = [
+        {
+            "machine_id": machine_id,
+            "block_id": block_id,
+            "day": int(day),
+            "shift_id": shift_id,
+            "assigned": 1,
+        }
+        for machine_id, plan in schedule.plan.items()
+        for (day, shift_id), block_id in plan.items()
+        if block_id is not None
+    ]
+    if not rows:
+        return None
+    return pd.DataFrame(rows)
+
+
 def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule:
-    """Convert an assignments DataFrame into the internal Schedule plan structure."""
+    """Convert an assignments DataFrame into the internal Schedule plan structure.
+
+    Rows with ``assigned`` equal to 0 (when the column exists) are ignored.
+    """
     shifts = list(ordered_shift_keys(pb))
     plan: dict[str, dict[tuple[int, str], str | None]] = {
         machine.id: {(day, shift_id): None for (day, shift_id) in shifts}
         for machine in pb.scenario.machines
     }
+    if "assigned" in assignments.columns:
+        assignments = assignments[pd.to_numeric(assignments["assigned"]) > 0.5]
     for record in assignments.to_dict(orient="records"):
         machine_raw = record.get("machine_id")
         day_raw = record.get("day")
@@ -172,7 +204,7 @@ def solve_ils(
     objective_weight_overrides: dict[str, float] | None = None,
     milp_objective: float | None = None,
 ) -> dict[str, Any]:
-    """Run Iterated Local Search (optionally with MIP warm starts).
+    """Run Iterated Local Search (optionally with operational MILP warm starts).
 
     Parameters
     ----------
@@ -195,9 +227,16 @@ def solve_ils(
     stall_limit : int, default=10
         Non-improving iterations before triggering perturbation or hybrid restart.
     hybrid_use_mip : bool, default=False
-        When ``True`` attempt a time-boxed MIP warm start once stalls exceed the limit.
+        When ``True``, each time ``stall_limit`` is reached the operational MILP
+        (:func:`fhops.model.milp.driver.solve_operational_milp`, HiGHS) is solved with the best ILS
+        schedule as its incumbent (a genuine MIP start through the APPSI HiGHS interface; the
+        bundle carries the same objective weights as the ILS run). The MILP schedule replaces the
+        ILS best only when it scores higher under the heuristic evaluator; a solve without a
+        solution (infeasible, time limit without an incumbent, solver error) keeps the ILS
+        schedule. Before 1.0.1 this step solved the legacy day-level MIP without an incumbent
+        (#104, #127).
     hybrid_mip_time_limit : int, default=60
-        Time limit (seconds) forwarded to the hybrid MIP warm start.
+        Time limit (seconds) for each hybrid operational MILP solve.
     telemetry_log : str | pathlib.Path | None
         Optional telemetry JSONL log capturing run metadata and (when configured) step logs.
     telemetry_context : dict[str, Any] | None
@@ -226,7 +265,12 @@ def solve_ils(
     -------
     dict
         Dictionary mirroring :func:`solve_sa` with ``objective``, ``assignments`` DataFrame, and a
-        ``meta`` payload describing operator stats, iterations, and telemetry identifiers.
+        ``meta`` payload describing operator stats, iterations, and telemetry identifiers. With
+        ``hybrid_use_mip`` the ``meta`` also holds ``hybrid_mip``: one record per hybrid solve with
+        ``iteration``, ``seed_score`` (heuristic score of the seeded ILS best), ``outcome``,
+        ``objective`` (MILP objective or ``None``), ``solver_error``, ``warm_start_accepted``,
+        ``warm_start_seeded_slots``, ``hybrid_score`` (heuristic score of the MILP schedule or
+        ``None``) and ``adopted`` (whether it replaced the ILS best).
     """
 
     rng = _random.Random(seed)
@@ -358,6 +402,7 @@ def solve_ils(
         restarts = 0
         improvement_steps = 0
         operator_stats: dict[str, dict[str, float]] = {}
+        hybrid_calls: list[dict[str, Any]] = []
         run_start = time.perf_counter()
 
         def emit_snapshot(iteration: int) -> None:
@@ -465,16 +510,51 @@ def solve_ils(
 
             if stalls >= stall_limit:
                 if hybrid_use_mip:
+                    hybrid_record: dict[str, Any] = {
+                        "iteration": iteration,
+                        "seed_score": float(best_score),
+                        "outcome": None,
+                        "objective": None,
+                        "solver_error": None,
+                        "warm_start_accepted": None,
+                        "warm_start_seeded_slots": 0,
+                        "hybrid_score": None,
+                        "adopted": False,
+                    }
+                    hybrid_calls.append(hybrid_record)
                     try:
-                        mip_res = solve_mip(
-                            pb, time_limit=hybrid_mip_time_limit, driver="auto", debug=False
+                        mip_res = solve_operational_milp(
+                            ctx.bundle,
+                            solver="highs",
+                            time_limit=hybrid_mip_time_limit,
+                            incumbent_assignments=_schedule_to_incumbent(best),
+                            context=ctx,
                         )
+                    except Exception as exc:  # pragma: no cover - defensive path
+                        hybrid_record["outcome"] = "error"
+                        hybrid_record["solver_error"] = f"{type(exc).__name__}: {exc}"
+                        mip_res = None
+                    if mip_res is not None:
+                        mip_objective = mip_res.get("objective")
+                        warm_info = mip_res.get("warm_start") or {}
+                        hybrid_record.update(
+                            outcome=mip_res.get("outcome"),
+                            objective=mip_objective,
+                            solver_error=mip_res.get("solver_error"),
+                            warm_start_accepted=warm_info.get("accepted"),
+                            warm_start_seeded_slots=int(warm_info.get("seeded_slots") or 0),
+                        )
+                    if mip_res is not None and mip_res.get(
+                        "has_solution", mip_res.get("objective") is not None
+                    ):
                         assignments = cast(pd.DataFrame, mip_res["assignments"]).copy()
                         hybrid_schedule = _assignments_to_schedule(pb, assignments)
                         hybrid_score, hybrid_debug = _score_schedule(
                             hybrid_schedule, capture=debug_capture
                         )
+                        hybrid_record["hybrid_score"] = float(hybrid_score)
                         if hybrid_score > best_score:
+                            hybrid_record["adopted"] = True
                             best, best_score = hybrid_schedule, hybrid_score
                             best_debug_stats = dict(hybrid_debug) if hybrid_debug else None
                             current = best
@@ -485,8 +565,6 @@ def solve_ils(
                             stalls = 0
                             restarts += 1
                             continue
-                    except Exception:  # pragma: no cover - defensive path
-                        pass
                 current = best
                 current = _perturb_schedule(
                     pb, current, registry, rng, ctx, perturbation_strength, operator_stats
@@ -543,6 +621,8 @@ def solve_ils(
             "operators": registry.weights(),
             "improvement_steps": improvement_steps,
         }
+        if hybrid_use_mip:
+            meta["hybrid_mip"] = hybrid_calls
         if milp_objective is not None:
             meta["milp_objective"] = float(milp_objective)
             meta["milp_gap"] = float(best_score - milp_objective)
