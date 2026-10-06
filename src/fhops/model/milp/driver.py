@@ -606,7 +606,7 @@ def _derive_state_with_tracker(
 
             key = (machine.id, assigned_block, (day, shift_id))
             proposed = provided_prod.get(key, rate_value)
-            sequencing = tracker.process(day, machine.id, assigned_block, proposed)
+            sequencing = tracker.process(day, machine.id, assigned_block, proposed, shift_id)
             prod_units = max(0.0, sequencing.production_units)
             production_lookup[key] = prod_units
 
@@ -803,6 +803,7 @@ def _apply_bundle_locks(
 
     if not bundle.locked_assignments:
         return
+    blackout_slots = frozenset(bundle.blackout_slots)
     for machine_id, block_id, lock_day, lock_shift in bundle.locked_assignments:
         for slot in shift_list:
             day, shift_id = slot
@@ -810,7 +811,9 @@ def _apply_bundle_locks(
                 continue
             key = (machine_id, slot)
             shift_flag = bundle.availability_shift.get((machine_id, day, shift_id))
-            if shift_flag is not None:
+            if (machine_id, day, shift_id) in blackout_slots:
+                available = False
+            elif shift_flag is not None:
                 available = shift_flag == 1
             else:
                 available = bundle.availability_day.get((machine_id, day), 1) == 1
@@ -875,6 +878,32 @@ def _seed_model_from_state(
             shift = _slot_key(day, shift_id)
             key = (role, block_id, shift)
             var.set_value(1.0 if role_assignment_counts.get(key, 0) > 0 else 0.0)
+            var.stale = False
+
+    if hasattr(model, "role_cumulative") and hasattr(model, "upstream_done"):
+        cumulative: dict[tuple[str, str], float] = {}
+        cumulative_before: dict[tuple[str, str, ShiftKey], float] = {}
+        for day, shift_id in shift_list:
+            shift = _slot_key(day, shift_id)
+            for role, block_id in model.CumulativePairs:
+                pair = (role, block_id)
+                cumulative_before[(role, block_id, shift)] = cumulative.get(pair, 0.0)
+                cumulative[pair] = cumulative.get(pair, 0.0) + role_prod_lookup.get(
+                    (role, block_id, shift), 0.0
+                )
+                cum_var = model.role_cumulative[role, block_id, day, shift_id]
+                cum_var.set_value(cumulative[pair])
+                cum_var.stale = False
+        for (role, block_id, day, shift_id), var in model.upstream_done.items():
+            shift = _slot_key(day, shift_id)
+            done = all(
+                cumulative_before.get((up_role, block_id, shift), 0.0) + 1e-9
+                >= bundle.initial_role_remaining.get(
+                    (block_id, up_role), bundle.work_required.get(block_id, 0.0)
+                )
+                for up_role in role_upstream.get((role, block_id), ())
+            )
+            var.set_value(1.0 if done else 0.0)
             var.stale = False
 
     if hasattr(model, "loads") and hasattr(model, "loader_partial"):

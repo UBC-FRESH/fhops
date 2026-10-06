@@ -1,0 +1,80 @@
+{
+  "large84": {
+    "delivered_total": 93357.464003,
+    "kpis": {
+      "completed_blocks": 4.0,
+      "makespan_day": 84,
+      "makespan_shift": "S1",
+      "mobilisation_cost": 48474.56000000001,
+      "mobilisation_cost_by_landing": "{\"L1\": 1752.92, \"L10\": 1141.8, \"L11\": 2053.64, \"L12\": 2733.04, \"L13\": 1231.28, \"L14\": 2637.12, \"L15\": 2310.48, \"L16\": 1246.12, \"L17\": 488.04, \"L18\": 1594.6, \"L19\": 1679.72, \"L2\": 2303.56, \"L20\": 389.0, \"L21\": 274.6, \"L22\": 438.88, \"L23\": 944.2, \"L24\": 672.0, \"L25\": 1159.56, \"L26\": 830.76, \"L27\": 598.84, \"L28\": 547.76, \"L29\": 443.68, \"L3\": 1076.36, \"L30\": 450.64, \"L31\": 731.48, \"L32\": 1045.16, \"L33\": 597.88, \"L34\": 894.8, \"L35\": 670.8, \"L36\": 727.88, \"L37\": 532.4, \"L38\": 401.48, \"L39\": 725.72, \"L4\": 1796.08, \"L40\": 1032.0, \"L41\": 328.32, \"L42\": 622.84, \"L43\": 773.44, \"L44\": 435.04, \"L45\": 578.96, \"L46\": 1095.32, \"L47\": 278.44, \"L48\": 808.72, \"L5\": 53.24, \"L6\": 380.84, \"L7\": 537.92, \"L8\": 987.84, \"L9\": 3439.36}",
+      "mobilisation_cost_by_machine": "{\"H1\": 4361.48, \"H10\": 4201.76, \"H11\": 3988.8, \"H12\": 2340.48, \"H13\": 4070.08, \"H14\": 3872.72, \"H15\": 2132.8, \"H16\": 605.8, \"H2\": 4445.0, \"H3\": 4515.0, \"H4\": 4510.44, \"H5\": 4327.44, \"H6\": 4450.44, \"H7\": 492.36, \"H8\": 159.96}",
+      "remaining_work_total": 281346.093591,
+      "sequencing_clean_blocks": 48,
+      "sequencing_violation_blocks": 0,
+      "sequencing_violation_breakdown": "none",
+      "sequencing_violation_count": 0,
+      "sequencing_violation_days": 0,
+      "staged_production": 281346.093591,
+      "total_production": 93357.464003,
+      "utilisation_ratio_by_machine": "{\"H1\": 1.0, \"H10\": 1.0, \"H11\": 1.0, \"H12\": 1.0, \"H13\": 1.0, \"H14\": 1.0, \"H15\": 1.0, \"H16\": 1.0, \"H17\": 1.0, \"H2\": 1.0, \"H3\": 1.0, \"H4\": 1.0, \"H5\": 1.0, \"H6\": 1.0, \"H7\": 1.0, \"H8\": 1.0}",
+      "utilisation_ratio_by_role": "{\"feller_buncher\": 1.0, \"grapple_skidder\": 1.0, \"processor\": 1.0, \"loader\": 1.0}",
+      "utilisation_ratio_mean_day": 0.6124338624338626,
+      "utilisation_ratio_mean_shift": 1.0,
+      "utilisation_ratio_weighted_day": 0.6124338624338624,
+      "utilisation_ratio_weighted_shift": 1.0
+    },
+    "remaining_work_total": 281346.093591
+  },
+  "med42": {
+    "delivered_total": 32071.863994,
+    "kpis": {
+      "completed_blocks": 7.0,
+      "makespan_day": 42,
+      "makespan_shift": "S1",
+      "mobilisation_cost": 10662.03999999997,
+      "mobilisation_cost_by_landing": "{\"L1\": 1254.52, \"L10\": 807.24, \"L11\": 801.24, \"L12\": 1631.04, \"L2\": 1307.28, \"L3\": 429.52, \"L4\": 1190.96, \"L5\": 268.12, \"L6\": 106.72, \"L7\": 324.48, \"L8\": 375.56, \"L9\": 2165.36}",
+      "mobilisation_cost_by_machine": "{\"H1\": 1072.0, \"H2\": 864.08, \"H3\": 2168.96, \"H4\": 2113.56, \"H5\": 1247.08, \"H6\": 213.44, \"H7\": 1953.36, \"H8\": 1029.56}",
+      "remaining_work_total": 6121.365407999998,
+      "sequencing_clean_blocks": 12,
+      "sequencing_violation_blocks": 0,
+      "sequencing_violation_breakdown": "none",
+      "sequencing_violation_count": 0,
+      "sequencing_violation_days": 0,
+      "staged_production": 6121.365407999998,
+      "total_production": 32071.863994,
+      "utilisation_ratio_by_machine": "{\"H1\": 1.0, \"H2\": 1.0, \"H3\": 1.0, \"H4\": 1.0, \"H5\": 1.0, \"H6\": 1.0, \"H7\": 1.0, \"H8\": 1.0, \"H9\": 1.0}",
+      "utilisation_ratio_by_role": "{\"feller_buncher\": 1.0, \"grapple_skidder\": 1.0, \"processor\": 1.0, \"loader\": 1.0}",
+      "utilisation_ratio_mean_day": 0.558201058201058,
+      "utilisation_ratio_mean_shift": 1.0,
+      "utilisation_ratio_weighted_day": 0.5582010582010583,
+      "utilisation_ratio_weighted_shift": 1.0
+    },
+    "remaining_work_total": 6121.365408000003
+  },
+  "tiny7": {
+    "delivered_total": 4414.702752,
+    "kpis": {
+      "completed_blocks": 2.0,
+      "makespan_day": 7,
+      "makespan_shift": "S1",
+      "mobilisation_cost": 479.16,
+      "mobilisation_cost_by_landing": "{\"L2\": 479.16}",
+      "mobilisation_cost_by_machine": "{\"H1\": 53.24, \"H2\": 53.24, \"H3\": 53.24, \"H4\": 53.24, \"H5\": 53.24, \"H6\": 53.24, \"H7\": 53.24, \"H8\": 53.24, \"H9\": 53.24}",
+      "remaining_work_total": 0.0,
+      "sequencing_clean_blocks": 2,
+      "sequencing_violation_blocks": 0,
+      "sequencing_violation_breakdown": "none",
+      "sequencing_violation_count": 0,
+      "sequencing_violation_days": 0,
+      "staged_production": 0.0,
+      "total_production": 4414.702752,
+      "utilisation_ratio_by_machine": "{\"H1\": 1.0, \"H2\": 1.0, \"H3\": 1.0, \"H4\": 1.0, \"H5\": 1.0, \"H6\": 1.0, \"H7\": 1.0, \"H8\": 1.0, \"H9\": 1.0}",
+      "utilisation_ratio_by_role": "{\"feller_buncher\": 1.0, \"grapple_skidder\": 1.0, \"processor\": 1.0, \"loader\": 1.0}",
+      "utilisation_ratio_mean_day": 0.38095238095238093,
+      "utilisation_ratio_mean_shift": 1.0,
+      "utilisation_ratio_weighted_day": 0.38095238095238093,
+      "utilisation_ratio_weighted_shift": 1.0
+    },
+    "remaining_work_total": 1.1368683772161603e-13
+  }
+}

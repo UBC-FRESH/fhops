@@ -3,7 +3,17 @@ Rolling-Horizon Planning
 
 FHOPS can build multi-week plans by solving shorter subproblems and locking in the leading days
 before advancing the horizon. This page outlines the workflow and CLI surface that currently ships
-with stub, SA, and MILP solver hooks.
+with stub, SA, and MILP solver hooks, what state is carried from one window to the next, and how to
+evaluate the stitched plan.
+
+.. note::
+
+   FHOPS 1.0.0 carried **no** state between windows: every window re-planned each block's full
+   ``work_required`` (including blocks already finished in locked days), staged inventory and
+   machine positions reset to zero, user locks were dropped, and blackouts were not rebased. The
+   stitched plans it produced therefore under-delivered badly when evaluated against the base
+   scenario. FHOPS 1.0.1 fixes this (issue #92); results produced with 1.0.0 rolling runs should be
+   regenerated.
 
 When to use
 -----------
@@ -19,6 +29,48 @@ Key parameters
 - ``lock_days``: number of leading days to freeze after each solve before advancing.
 - Horizons must fit the scenario: ``start_day + master_days - 1 <= Scenario.num_days``. Adjust the
   values or pick a longer scenario if you hit this guardrail.
+
+How state carries between windows
+---------------------------------
+Each iteration solves a window ``[start, start + sub_days - 1]`` and freezes its first
+``lock_days`` days. Before the next window is solved, the orchestrator
+(:func:`fhops.planning.run_rolling_horizon`) does the following:
+
+1. **Replay the stitched locked plan** (all locks so far, base-day coordinates, ``shift_id``
+   preserved) against the **base** scenario with the deterministic playback sequencing tracker
+   (:func:`fhops.planning.carry_forward_state`). Production follows the playback rule: each locked
+   assignment proposes its planned production when the lock carries one (MILP runs store the MILP
+   ``prod`` value in ``ScheduleLock.production``) and ``min(rate, block remaining)`` otherwise (SA
+   runs, user locks); the tracker caps it by the role's remaining output and the staged upstream
+   inventory (output becomes available downstream from the next shift slot). The carried state is
+   exactly what :func:`fhops.planning.compute_rolling_kpis` reports for the same plan, and for MILP
+   runs it is the state the window MILP planned, so stitched MILP plans replay without sequencing
+   violations.
+2. **Derive the window's boundary state** from the tracker at the end of the last locked day:
+
+   - ``Block.work_required`` = remaining terminal volume (finished blocks stay in the window with
+     ``work_required = 0``, so their ids remain valid);
+   - ``Scenario.initial_state`` (see :ref:`initial-state`): per explicit-system block,
+     ``role_remaining``, ``staged_inventory`` (non-terminal roles) and ``role_shift_counts``; per
+     machine, ``last_block_id`` = the block of its last locked assignment in chronological slot
+     order (day, then the scenario's shift order). Entries at their contract default (zero, or ``role_remaining`` equal to
+     the remaining volume) are omitted.
+3. **Slice the base scenario** for the window: machine and shift calendars, timeline blackouts
+   (clipped to the window and shifted so the window start is day 1), block windows, production
+   rates, and mobilisation distances are rebased; blocks whose ``earliest_start``/``latest_finish``
+   window does not overlap the sub-horizon are dropped.
+4. **Merge user locks**: ``Scenario.locked_assignments`` entries that fall inside the window are
+   rebased (``shift_id`` kept) and attached to the window scenario; the solver hooks merge the locks
+   they receive with the scenario's own locks instead of overwriting them, so user locks are
+   enforced in every window that covers them and end up in the stitched plan.
+
+If the base scenario already has an ``initial_state``, the first window uses it verbatim and the
+replay for later windows starts from it, so user-supplied state and the stitched plan compose. The
+first window otherwise equals the base scenario restricted to ``sub_days``; a single-window run
+(``master_days = sub_days = lock_days``) is identical to a direct solve.
+
+Per-iteration telemetry reports ``remaining_work_start`` (terminal m³ still to deliver at the window
+start), the hook's wall-clock ``runtime_s``, objective, and solver status.
 
 CLI usage
 ---------
@@ -82,11 +134,13 @@ Outputs
 - JSON summary (``--out-json``) with iteration windows, locked counts, objectives, runtimes,
   warnings, and metadata (scenario, horizons, solver).
 - CSV of locked assignments (``--out-assignments``) aggregated across all iterations. Columns
-  include ``machine_id``, ``block_id``, ``day``, ``assigned``, and run metadata
+  include ``machine_id``, ``block_id``, ``day``, ``shift_id``, ``assigned``, and run metadata
   (scenario, solver, master/sub/lock spans, start day) so the file can drop directly into playback
-  or KPI tooling.
+  or KPI tooling. ``shift_id`` keeps multi-shift plans unambiguous (one row per machine and shift
+  slot).
 - Optional per-iteration exports: JSONL (``--out-iterations-jsonl``) and CSV
-  (``--out-iterations-csv``) containing objective/runtime/lock span and warnings per iteration.
+  (``--out-iterations-csv``) containing objective, runtime, lock span, ``remaining_work_start`` and
+  warnings per iteration.
 
 MILP example with solver options
 --------------------------------
@@ -107,8 +161,13 @@ HiGHS also honours ``mip_solver_options`` (e.g., ``{\"mip_rel_gap\": 0.01}``).
 
 Evaluating rolling plans
 ------------------------
-Use :func:`fhops.planning.rolling_assignments_dataframe` to obtain a playback-ready DataFrame and
-:func:`fhops.planning.compute_rolling_kpis` to compare the rolling run against a monolithic baseline:
+Always score a rolling run on its **stitched** locked plan replayed against the base scenario, not on
+the objective of individual windows (window objectives cover overlapping, partly discarded
+sub-horizons). Use :func:`fhops.planning.rolling_assignments_dataframe` to obtain a playback-ready
+DataFrame and :func:`fhops.planning.compute_rolling_kpis` to compare the rolling run against a
+monolithic baseline (``master_days = sub_days = lock_days``). The stitched-plan KPIs are computed with
+the same playback rule as the carried state, so ``total_production`` never exceeds the base volume
+and ``remaining_work_total`` equals the remaining volume the next window would have received:
 
 .. code-block:: python
 
@@ -137,7 +196,7 @@ Use :func:`fhops.planning.rolling_assignments_dataframe` to obtain a playback-re
 The ``comparison`` payload includes:
 
 - ``rolling_assignments`` — DataFrame matching the CLI export schema (``machine_id``, ``block_id``,
-  ``day``, ``assigned`` plus optional metadata when requested).
+  ``day``, ``shift_id``, ``assigned`` plus optional metadata when requested).
 - ``rolling_kpis`` — KPI totals computed via deterministic playback.
 - ``baseline_kpis`` — KPI totals for the supplied baseline DataFrame (``None`` when omitted).
 - ``delta_totals`` — numeric differences keyed by ``<metric>_delta`` and percentage deltas when the
@@ -145,6 +204,26 @@ The ``comparison`` payload includes:
 
 For quick CLI-to-evaluation loops, feed ``--out-assignments`` directly into ``fhops eval-playback``
 or stash the JSON summary and KPI deltas alongside telemetry artefacts for later reporting.
+
+.. _rolling-empty-plans:
+
+Empty rolling plans and baselines
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A failed solve must never look like a perfect plan (`#108
+<https://github.com/UBC-FRESH/fhops/issues/108>`_):
+
+- An empty **rolling** plan (no locked assignments, an empty DataFrame, or an empty lock list) makes
+  :func:`fhops.planning.compute_rolling_kpis` and :func:`fhops.planning.evaluate_rolling_plan` raise
+  ``ValueError`` (unchanged from v1.0.0). To score it as a zero-delivery plan, call
+  :func:`fhops.evaluation.compute_kpis` with an empty frame.
+- An explicitly supplied but empty **baseline** (e.g. a full-horizon MILP that found no solution) is
+  scored as a zero-delivery plan: ``baseline_kpis["total_production"] == 0``,
+  ``remaining_work_total`` equals the scenario volume, and ``<metric>_pct_delta`` entries are omitted
+  where the baseline is zero. FHOPS 1.0.0 silently dropped an empty baseline
+  (``baseline_kpis=None``); passing ``baseline_assignments=None`` still skips the comparison.
+- Rows with ``assigned = 0`` deliver nothing, so a frame whose rows are all unassigned is scored as a
+  zero-delivery plan.
 
 Rolling comparison helper
 -------------------------
@@ -231,7 +310,9 @@ metrics (e.g., utilisation, mobilisation) to the ``metrics`` list to broaden the
 
 Sample artefacts
 ----------------
-Reference CSV/PNG bundles live under ``docs/assets/rolling``:
+Reference CSV/PNG bundles live under ``docs/assets/rolling``. They were produced with FHOPS 1.0.0,
+i.e. **without** state carry-forward, and therefore overstate the rolling-horizon gap; treat them as
+historical examples of the workflow and regenerate them before quoting numbers.
 
 - ``masc_comparison_tiny7.{csv,png}`` — SA baseline (7/7/7) vs 7/5/3 and 7/4/2 (300 iters, seed 99).
 - ``masc_comparison_med42.{csv,png}`` — Gurobi (Threads=64) baseline vs 21/7 and 14/7 sub/lock windows
@@ -246,12 +327,13 @@ Artefact provenance & regeneration
   ``aborted with solution`` under the tight cap; loosen ``--mip-time-limit`` for higher-quality gaps.
 - tiny7 assets used SA with 300 iterations and ``--sa-seed 99``.
 
-To regenerate the med42 bundle locally (Gurobi licence required):
+To regenerate the med42 bundle locally (Gurobi licence required; the baseline is the single-window
+full-horizon solve):
 
 .. code-block:: bash
 
    fhops plan rolling examples/med42/scenario.yaml \
-     --master-days 42 --sub-days 21 --lock-days 7 \
+     --master-days 42 --sub-days 42 --lock-days 42 \
      --solver mip --mip-solver gurobi \
      --mip-solver-option Threads=64 --mip-time-limit 10 \
      --out-json tmp/med42_baseline.json --out-assignments tmp/med42_baseline.csv
@@ -296,7 +378,7 @@ Gotchas
 -------
 - Ensure ``master_days + start_day - 1 <= Scenario.num_days``; otherwise the CLI fails fast.
 - MILP runs can be slow—set sensible ``--mip-time-limit``/``mip_solver_options`` and use a Gurobi
-  licence when available. HiGHS remains the default for lightweight runs.
+  licence when available. HiGHS is the default (``--mip-solver auto`` resolves to ``highs``).
 - Gurobi threads can be set via ``mip_solver_options`` (``{\"Threads\": 32}``) or ``GRB_THREADS``.
 - When the solver aborts but returns a solution, treat results as heuristics; rerun with larger caps
   if you need high-quality gaps.
@@ -317,9 +399,39 @@ Notes
 -----
 - Locked assignments are treated as immutable across iterations; if a subproblem has no feasible
   availability, the CLI will fail fast with a clear error.
-- SA and MILP hooks accept the current locks as incumbents; MILP warm starts are best-effort.
+- The hooks enforce locks as hard constraints (equality constraints in the operational MILP, the
+  lock-aware sanitizer in SA); they do not pass incumbents or warm starts to the solver.
 - Telemetry/reporting layers will evolve; current exports are meant to unblock experimentation.
 - ``master_days`` must not exceed the base scenario horizon. Use a scenario with enough days or lower
   the master/sub/lock settings to fit within ``Scenario.num_days``.
-- ``--mip-solver`` passes through to Pyomo (use ``highs`` or ``gurobi``); ``--max-iterations`` can
-  cap the rolling loop for smoke tests or partial plans.
+- ``--mip-solver`` passes through to Pyomo (use ``highs`` or ``gurobi``; ``auto`` resolves to
+  ``highs``); ``--max-iterations`` can cap the rolling loop for smoke tests or partial plans.
+- A user lock that falls in a window but targets a block outside that window's block set (its
+  ``earliest_start``/``latest_finish`` window does not overlap) raises
+  :class:`fhops.planning.RollingInfeasibleError`; conflicting locks are rejected by scenario
+  validation.
+
+Limitations
+-----------
+- **No end-of-window valuation.** Window objectives reward only terminal (delivered) volume, so a
+  window shorter than the harvest-system pipeline can see no value in upstream work: e.g. on tiny7
+  (four-role chain) a MILP run with ``master/sub/lock = 7/3/1`` plans no felling at all. Since MILP
+  locks replay their planned production (1.0.1, #109), the window MILP's choice of how much
+  upstream work to do on locked days (any amount its own window cannot finish has no value, so
+  equal-objective plans are broken arbitrarily by the solver) carries into the next window: tiny7
+  ``7/4/2`` and ``7/5/3`` deliver about 3.9 of 4.4 thousand m³ (the earlier rate-based replay
+  credited unplanned full-rate upstream work and reported the full volume, together with
+  sequencing violations), ``7/6/3`` about 4.40 and ``7/7/7`` the full volume. Choose ``sub_days``
+  comfortably longer than the number of roles plus ``lock_days``.
+- **Replay rule vs. MILP plan.** Resolved in 1.0.1 (#109): playback, the heuristics, and the MILP
+  share one sequencing semantics (staged output usable from the next shift slot, head-start buffers
+  as staged volume, per-role output capped by the block volume), and MILP rolling locks carry the
+  planned production, so stitched MILP plans replay without sequencing violations and the carried
+  state is the state the window MILP planned.
+- **Blocks outside a window** are dropped from that window. If a machine's carried
+  ``last_block_id`` is such a block (its ``latest_finish`` has passed), the position is dropped
+  for that window with a warning in ``RollingPlanResult.warnings`` and its next move is not
+  charged in the window solve (playback still charges it).
+- **Blackouts in the MILP.** Resolved in 1.0.1 (#110): rebased blackouts are honoured by the
+  operational MILP (zero availability in the blocked slots) as well as by the heuristics, and
+  flagged by playback.

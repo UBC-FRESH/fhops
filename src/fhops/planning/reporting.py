@@ -39,7 +39,7 @@ class RollingPlanComparison:
         scalar totals plus cached shift/day calendars via :class:`fhops.evaluation.metrics.kpis.KPIResult`.
     baseline_kpis : KPIResult | None
         KPI bundle computed from a full-horizon baseline such as a monolithic MILP solve. ``None``
-        when a baseline DataFrame or lock list is not supplied.
+        when no baseline is supplied; an empty baseline yields zero-delivery KPIs.
     deltas : dict[str, float]
         Numeric KPI differences keyed by ``<metric>_delta`` and ``<metric>_pct_delta`` (when a
         non-zero baseline exists). Only numeric KPI entries are compared.
@@ -78,7 +78,9 @@ def evaluate_rolling_plan(
         Optional baseline schedule to compare against. Accepts either a schedule DataFrame with
         ``machine_id``, ``block_id``, ``day`` (and optional ``shift_id``) columns or a sequence of
         :class:`fhops.scenario.contract.models.ScheduleLock` entries. Use a monolithic MILP/SA
-        schedule to quantify rolling suboptimality; pass ``None`` to skip baseline deltas.
+        schedule to quantify rolling suboptimality; pass ``None`` to skip baseline deltas. An
+        empty DataFrame/sequence (e.g. a baseline solve that found no solution) is scored as a
+        zero-delivery plan rather than dropped.
     baseline_label :
         Label describing the baseline schedule (e.g., ``"full_mip_600s"``). This value is threaded
         into the comparison metadata so telemetry exports remain traceable.
@@ -91,8 +93,14 @@ def evaluate_rolling_plan(
 
     Raises
     ------
+    ValueError
+        If ``result`` contains no locked assignments.
     TypeError
         If ``baseline_assignments`` is not a DataFrame or sequence of ``ScheduleLock`` items.
+
+    Notes
+    -----
+    Empty-plan semantics follow :func:`fhops.planning.compute_rolling_kpis`.
     """
 
     comparison: RollingKPIComparison = compute_rolling_kpis(

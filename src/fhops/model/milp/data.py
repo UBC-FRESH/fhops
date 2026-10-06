@@ -75,6 +75,17 @@ class OperationalMilpBundle:
     initial_machine_block:
         ``machine_id -> block_id`` occupied in the last worked slot before the horizon. Empty by
         default (first move is free).
+    blackout_slots:
+        Sorted ``(machine_id, day, shift_id)`` slots blocked by ``Scenario.timeline`` blackout
+        windows (:func:`build_blackout_slots`). The operational MILP sets availability
+        ``A_{m,s} = 0`` for them and the heuristics skip them. Empty without blackouts (and for
+        bundles serialised before this field existed).
+    unsequenced_blocks:
+        Blocks without an explicit ``harvest_system_id``. They carry no sequencing obligations
+        (any machine may work them and every machine's output counts towards ``work_required``),
+        matching the heuristics and the playback sequencing tracker. ``block_system`` still maps
+        them to the default system for role-order lookups. Empty for bundles serialised before
+        this field existed (every block is then treated as sequenced).
 
     Notes
     -----
@@ -106,6 +117,8 @@ class OperationalMilpBundle:
     initial_role_remaining: dict[BlockRole, float] = field(default_factory=dict)
     initial_role_shift_counts: dict[BlockRole, int] = field(default_factory=dict)
     initial_machine_block: dict[str, str] = field(default_factory=dict)
+    unsequenced_blocks: tuple[str, ...] = ()
+    blackout_slots: tuple[tuple[str, int, str], ...] = ()
 
     def has_initial_state(self) -> bool:
         """Return ``True`` when any initial-state mapping is non-empty."""
@@ -115,6 +128,78 @@ class OperationalMilpBundle:
             or self.initial_role_shift_counts
             or self.initial_machine_block
         )
+
+
+def ordered_shift_keys(pb: Problem) -> tuple[tuple[int, str], ...]:
+    """Return the problem's ``(day, shift_id)`` slots in chronological order.
+
+    Parameters
+    ----------
+    pb:
+        Problem whose ``shifts`` define the slot grid.
+
+    Returns
+    -------
+    tuple[tuple[int, str], ...]
+        Unique slots sorted by day; shifts within a day keep their ``Problem.shifts`` order (the
+        ``timeline.shifts`` definition order, or ``shift_id`` order for shift calendars). The
+        operational MILP (``prev(s)``), the heuristics, and playback all use this order, so a
+        shift defined first is worked first even when its label sorts later (e.g. ``night`` before
+        ``day``).
+    """
+
+    seen: set[tuple[int, str]] = set()
+    keys: list[tuple[int, str]] = []
+    for shift in sorted(pb.shifts, key=lambda s: s.day):
+        key = (shift.day, shift.shift_id)
+        if key not in seen:
+            seen.add(key)
+            keys.append(key)
+    return tuple(keys)
+
+
+def build_blackout_slots(pb: Problem) -> tuple[tuple[str, int, str], ...]:
+    """Return the ``(machine_id, day, shift_id)`` slots blocked by timeline blackouts.
+
+    Parameters
+    ----------
+    pb:
+        Problem whose ``scenario.timeline.blackouts`` define the blocked days.
+
+    Returns
+    -------
+    tuple[tuple[str, int, str], ...]
+        Sorted slots. Every day of every ``BlackoutWindow`` (``start_day``..``end_day``,
+        inclusive) blocks **every machine** (blackouts are fleet-wide, not per landing): the
+        machine's ``shift_calendar`` shifts for that day when it has any, otherwise every
+        ``timeline.shifts`` name, otherwise ``S1``. Empty when the scenario has no blackouts.
+
+    Notes
+    -----
+    Shared by the operational MILP (availability ``A_{m,s} = 0``) and the heuristics
+    (:attr:`fhops.optimization.operational_problem.OperationalProblem.blackout_shifts`), so both
+    solver families block exactly the same slots. Playback does not cancel work in blackouts; it
+    flags it (``PlaybackRecord.blackout_hit``).
+    """
+
+    scenario = pb.scenario
+    timeline = scenario.timeline
+    if not timeline or not timeline.blackouts:
+        return ()
+    blackout: set[tuple[str, int, str]] = set()
+    shift_lookup: dict[tuple[str, int], list[str]] = {}
+    if scenario.shift_calendar:
+        for entry in scenario.shift_calendar:
+            shift_lookup.setdefault((entry.machine_id, entry.day), []).append(entry.shift_id)
+    timeline_shift_ids = [shift_def.name for shift_def in timeline.shifts or []]
+    fallback_shifts = timeline_shift_ids or ["S1"]
+    for window in timeline.blackouts:
+        for day in range(window.start_day, window.end_day + 1):
+            for machine in scenario.machines:
+                keys = shift_lookup.get((machine.id, day))
+                for shift_id in keys or fallback_shifts:
+                    blackout.add((machine.id, day, shift_id))
+    return tuple(sorted(blackout))
 
 
 def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
@@ -138,7 +223,7 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
     machines = tuple(machine.id for machine in sc.machines)
     blocks = tuple(block.id for block in sc.blocks)
     days = tuple(pb.days)
-    shifts = tuple((shift.day, shift.shift_id) for shift in pb.shifts)
+    shifts = ordered_shift_keys(pb)
 
     machine_roles = {machine.id: machine.role for machine in sc.machines}
     machine_daily_hours = {machine.id: machine.daily_hours for machine in sc.machines}
@@ -206,6 +291,8 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
             for role, count in block_state.role_shift_counts.items():
                 initial_role_shift_counts[(block_state.block_id, role)] = int(count)
         initial_machine_block = sc.initial_state.last_block_by_machine()
+    unsequenced_blocks = tuple(block.id for block in sc.blocks if not block.harvest_system_id)
+    blackout_slots = build_blackout_slots(pb)
 
     return OperationalMilpBundle(
         machines=machines,
@@ -231,7 +318,60 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
         initial_role_remaining=initial_role_remaining,
         initial_role_shift_counts=initial_role_shift_counts,
         initial_machine_block=initial_machine_block,
+        unsequenced_blocks=unsequenced_blocks,
+        blackout_slots=blackout_slots,
     )
+
+
+def headstart_buffer_volumes(bundle: OperationalMilpBundle) -> dict[BlockRole, float]:
+    """Return the head-start buffer volume ``B_{r,b}`` (m³) of every buffered role-block pair.
+
+    Parameters
+    ----------
+    bundle:
+        Operational bundle; uses ``block_system``, ``systems``, ``machine_roles`` and
+        ``production_rates``.
+
+    Returns
+    -------
+    dict[tuple[str, str], float]
+        ``(block_id, role) -> m³`` for roles with ``buffer_shifts > 0`` and at least one upstream
+        role. ``B = buffer_shifts × Σ`` rates (m³ per shift) of every machine of the upstream roles
+        on the block; when no upstream machine has a positive rate, the role's own fleet rate (or
+        1.0) is used instead. Loader batch thresholds are **not** included (the MILP takes
+        ``max(B, q_batch)`` for loaders; see :mod:`fhops.model.milp.operational`).
+
+    Notes
+    -----
+    The operational MILP (head-start constraint E8) and the sequencing tracker / heuristics share
+    this helper, so a MILP plan and its playback apply the same buffer volume.
+    """
+
+    role_to_machines: dict[str, list[str]] = {}
+    for machine_id, role in bundle.machine_roles.items():
+        if role:
+            role_to_machines.setdefault(role, []).append(machine_id)
+    volumes: dict[BlockRole, float] = {}
+    for block in bundle.blocks:
+        system_cfg = bundle.systems.get(bundle.block_system.get(block, ""))
+        if system_cfg is None:
+            continue
+        for role_cfg in system_cfg.roles:
+            if role_cfg.buffer_shifts <= 0 or not role_cfg.upstream_roles:
+                continue
+            cap = sum(
+                bundle.production_rates.get((machine_id, block), 0.0)
+                for machine_id in role_to_machines.get(role_cfg.role, [])
+            )
+            if cap <= 0:
+                cap = 1.0
+            upstream_capacity = 0.0
+            for upstream_role in role_cfg.upstream_roles:
+                for machine_id in role_to_machines.get(upstream_role, []):
+                    upstream_capacity += bundle.production_rates.get((machine_id, block), 0.0)
+            reference_capacity = upstream_capacity if upstream_capacity > 0 else cap
+            volumes[(block, role_cfg.role)] = role_cfg.buffer_shifts * reference_capacity
+    return volumes
 
 
 def _build_system_configs(systems: Iterable[HarvestSystem]) -> dict[str, SystemConfig]:
@@ -286,8 +426,9 @@ def _is_loader_job(job: SystemJob) -> bool:
 def bundle_to_dict(bundle: OperationalMilpBundle) -> dict[str, Any]:
     """Serialize an :class:`OperationalMilpBundle` into a JSON-friendly dict.
 
-    The optional ``locked_assignments`` and ``initial_state`` keys are emitted only when the bundle
-    carries locks or initial state, so dumps of default bundles are unchanged from v1.0.0.
+    The optional ``locked_assignments``, ``unsequenced_blocks``, ``blackout_slots`` and
+    ``initial_state`` keys are emitted only when non-empty, so dumps of scenarios whose blocks all name a harvest system and
+    carry no locks or initial state are unchanged from v1.0.0.
     """
 
     payload: dict[str, Any] = {
@@ -350,6 +491,13 @@ def bundle_to_dict(bundle: OperationalMilpBundle) -> dict[str, Any]:
             {"machine_id": mach, "block_id": blk, "day": day, "shift_id": shift_id}
             for mach, blk, day, shift_id in bundle.locked_assignments
         ]
+    if bundle.unsequenced_blocks:
+        payload["unsequenced_blocks"] = list(bundle.unsequenced_blocks)
+    if bundle.blackout_slots:
+        payload["blackout_slots"] = [
+            {"machine_id": mach, "day": day, "shift_id": shift_id}
+            for mach, day, shift_id in bundle.blackout_slots
+        ]
     if bundle.has_initial_state():
 
         def _block_role_rows(mapping: Mapping[BlockRole, float | int]) -> list[dict[str, Any]]:
@@ -370,8 +518,9 @@ def bundle_to_dict(bundle: OperationalMilpBundle) -> dict[str, Any]:
 def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
     """Reconstruct an :class:`OperationalMilpBundle` from ``bundle_to_dict`` output.
 
-    Payloads written by v1.0.0 (without ``locked_assignments``/``initial_state`` keys) load with
-    empty locks and initial state.
+    Payloads written by v1.0.0 (without ``locked_assignments``/``unsequenced_blocks``/
+    ``blackout_slots``/``initial_state`` keys) load with empty locks, blackouts and initial state,
+    and every block sequenced.
     """
 
     machines = tuple(payload["machines"])
@@ -481,6 +630,11 @@ def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
         initial_machine_block={
             str(mach): str(blk) for mach, blk in initial_payload.get("machine_block", {}).items()
         },
+        unsequenced_blocks=tuple(str(blk) for blk in payload.get("unsequenced_blocks", [])),
+        blackout_slots=tuple(
+            (str(entry["machine_id"]), int(entry["day"]), str(entry["shift_id"]))
+            for entry in payload.get("blackout_slots", [])
+        ),
     )
 
 
@@ -490,6 +644,9 @@ __all__ = [
     "SystemRoleConfig",
     "build_operational_bundle",
     "bundle_to_dict",
+    "build_blackout_slots",
+    "headstart_buffer_volumes",
+    "ordered_shift_keys",
     "bundle_from_dict",
     "DEFAULT_TRUCKLOAD_M3",
 ]

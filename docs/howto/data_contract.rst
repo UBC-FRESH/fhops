@@ -141,6 +141,13 @@ Add a top-level ``timeline`` block in your scenario YAML to describe shifts and 
 
 The loader converts this into a ``TimelineConfig`` instance available via ``scenario.timeline``.
 
+Blackout windows are fleet-wide and inclusive: on every day from ``start_day`` to ``end_day`` no
+machine may work any of its shifts (its ``shift_calendar`` shifts for that day, otherwise every
+``timeline.shifts`` name, otherwise ``S1``). The operational MILP treats these slots as unavailable
+(availability ``A_{m,s} = 0``), the heuristics never assign them, and locks may not fall inside
+them. Playback does not cancel work scheduled in a blackout (for example, from an external plan);
+it flags the record with ``blackout_hit``.
+
 Shift Calendars & Defaults
 --------------------------
 
@@ -184,7 +191,8 @@ Lock a machine to a block on a given day by adding ``locked_assignments``:
        day: 5
 
 Any attempt to reassign that machine/day is blocked in the operational MILP
-(``solve-mip-operational``), the legacy MIP builder, and the heuristics (SA/ILS/Tabu). A lock
+(``solve-mip-operational``), the legacy MIP builder, the heuristics (SA/ILS/Tabu), and every
+rolling-horizon window that covers the day (``fhops plan rolling``). A lock
 without ``shift_id`` pins every available shift of that day to the block (all other blocks are
 fixed to zero for that machine). Add ``shift_id`` to lock a single slot in multi-shift scenarios:
 
@@ -198,7 +206,10 @@ fixed to zero for that machine). Add ``shift_id`` to lock a single slot in multi
 
 ``shift_id`` must be one of the scenario's shift labels (``shift_calendar`` labels, timeline shift
 names, or ``S1`` for day-indexed scenarios). Duplicate ``(machine, day, shift)`` locks and mixing a
-day-level lock with shift-level locks for the same machine/day are rejected.
+day-level lock with shift-level locks for the same machine/day are rejected. Locks must reference
+known machines and blocks, fall within ``1..num_days``, and avoid timeline blackout days.
+``load_scenario`` applies exactly the same checks to YAML ``locked_assignments`` as to locks passed
+to :class:`fhops.scenario.contract.Scenario` in Python (FHOPS 1.0.0 skipped them for YAML input).
 
 .. _initial-state:
 
@@ -208,7 +219,9 @@ Initial State (Resuming Mid-Operation)
 ``initial_state`` is an optional top-level YAML mapping (or the
 :class:`fhops.scenario.contract.ScenarioInitialState` model) that describes where operations stand
 at day 1 of the horizon. Typical uses are rolling-horizon windows and re-plans after part of the
-work is done. When it is omitted, every solver and evaluator behaves exactly as in FHOPS v1.0.0.
+work is done; the rolling planner builds it for every window from the locked plan so far (see
+:doc:`rolling_horizon`). When it is omitted, every solver and evaluator behaves exactly as in FHOPS
+v1.0.0.
 
 .. code-block:: yaml
 
@@ -221,7 +234,7 @@ work is done. When it is omitted, every solver and evaluator behaves exactly as 
          staged_inventory:      # m³ output by the role, not yet consumed downstream
            feller_buncher: 150.0
            grapple_skidder: 60.0
-         role_shift_counts:     # shifts already worked (head-start accounting)
+         role_shift_counts:     # shifts already worked (informational)
            feller_buncher: 4
            grapple_skidder: 2
      machines:
@@ -237,12 +250,15 @@ Semantics:
   consume, at the start of the horizon, the minimum staged volume over its upstream roles (the
   single upstream value for linear chains). The operational MILP uses that value as the first-slot
   ``inventory_start`` and in the head-start check; the heuristics and playback sequencing tracker
-  start their per-role inventories from it.
+  start their per-role inventories from it and apply the same head-start check (staged volume at
+  the start of the slot against the buffer volume).
 - ``role_remaining`` caps each role's cumulative output (the tracker, greedy seed, and repair use it
-  as the initial remaining volume; the MILP adds ``sum_s z[r,b,s] <= role_remaining``). Omitted
+  as the initial remaining volume; the MILP enforces ``sum_s z[r,b,s] <= role_remaining``). Omitted
   roles default to ``work_required``.
-- ``role_shift_counts`` seeds the head-start shift accounting used by the heuristics and playback
-  tracker (``role_headstart_shifts`` in harvest systems).
+- ``role_shift_counts`` is informational: it seeds the tracker's shift counters (reported by the
+  rolling-horizon carry-forward) but does not affect sequencing. Head-start buffers
+  (``role_headstart_shifts``) are enforced as staged volume in every solver and in playback
+  (see :doc:`system_sequencing`).
 - ``last_block_id`` makes the first move away from that block cost mobilisation (and a transition)
   in the MILP objective (first slot), the heuristic score, and playback mobilisation KPIs.
 - Role keys are normalised like machine roles (``Feller-Buncher`` → ``feller_buncher``) and must be

@@ -11,7 +11,11 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Any
 
-from fhops.evaluation.sequencing import SequencingTracker, build_role_priority
+from fhops.evaluation.sequencing import (
+    SEQUENCING_TOLERANCE,
+    SequencingTracker,
+    build_role_priority,
+)
 from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
 from fhops.optimization.operational_problem import OperationalProblem
 from fhops.scenario.contract import Problem
@@ -302,7 +306,7 @@ def _repair_schedule_cover_blocks(
     block_system = bundle.block_system
     explicit_blocks = ctx.blocks_with_explicit_system
     prereq_roles = ctx.prereq_roles
-    role_headstarts = ctx.role_headstarts
+    role_headstart_volume = ctx.role_headstart_volume
     role_priority = build_role_priority(ctx)
 
     shift_keys = ctx.shift_keys
@@ -377,9 +381,8 @@ def _repair_schedule_cover_blocks(
         float, ctx.initial_role_inventory
     )
     role_inventory_today: defaultdict[tuple[str, str], float] = defaultdict(float)
-    current_day: int | None = None
-    role_counts_total: defaultdict[tuple[str, str], int] = defaultdict(int, ctx.initial_role_counts)
-    role_counts_day: defaultdict[tuple[str, str], int] = defaultdict(int)
+    current_slot: tuple[int, str] | None = None
+    role_consumed_slot: defaultdict[tuple[str, str], float] = defaultdict(float)
 
     def is_terminal(block_id: str, role: str | None) -> bool:
         if block_id not in explicit_blocks:
@@ -402,6 +405,14 @@ def _repair_schedule_cover_blocks(
             return min(base_rate, role_remaining[(block_id, role)])
         return min(base_rate, block_remaining.get(block_id, base_rate))
 
+    def slot_start_volume(block_id: str, prereqs: frozenset[str]) -> float:
+        return min(
+            role_inventory_estimate[(block_id, upstream)]
+            + role_consumed_slot.get((block_id, upstream), 0.0)
+            for upstream in prereqs
+        )
+
+    # Same rules as SequencingTracker.process (formulation E7/E8).
     def has_inventory(block_id: str, role: str | None, production: float) -> bool:
         if block_id not in explicit_blocks or role is None:
             return True
@@ -411,45 +422,50 @@ def _repair_schedule_cover_blocks(
         available_volume = min(
             role_inventory_estimate[(block_id, upstream)] for upstream in prereqs
         )
-        loader_requirement = 0.0
+        if available_volume + SEQUENCING_TOLERANCE < production:
+            return False
         if (block_id, role) in ctx.loader_roles:
             loader_requirement = min(
                 ctx.loader_batch_volume.get(block_id, 0.0),
                 block_remaining.get(block_id, 0.0),
             )
-        required_volume = max(production, loader_requirement)
-        return available_volume + 1e-9 >= required_volume
+            if loader_requirement > 0.0:
+                start_volume = slot_start_volume(block_id, prereqs)
+                if start_volume + SEQUENCING_TOLERANCE < loader_requirement:
+                    return False
+        return True
 
     def meets_headstart(block_id: str, role: str | None) -> bool:
         if block_id not in explicit_blocks or role is None:
             return True
-        buffer = role_headstarts.get((block_id, role), 0.0)
-        if buffer <= 0.0:
+        buffer_volume = role_headstart_volume.get((block_id, role), 0.0)
+        if buffer_volume <= 0.0:
             return True
         prereqs = prereq_roles.get((block_id, role))
         if not prereqs:
             return True
-        downstream_total = role_counts_total[(block_id, role)]
-        for upstream in prereqs:
-            upstream_total = role_counts_total[(block_id, upstream)]
-            if (upstream_total - downstream_total) + 1e-9 < buffer:
-                return False
-        return True
+        if all(
+            role_remaining.get((block_id, upstream), 0.0) <= SEQUENCING_TOLERANCE
+            for upstream in prereqs
+        ):
+            return True
+        return slot_start_volume(block_id, prereqs) + SEQUENCING_TOLERANCE >= buffer_volume
 
-    def advance_day(day: int) -> None:
-        nonlocal current_day
-        if current_day is None:
-            current_day = day
+    def advance_slot(day: int, shift_id: str) -> None:
+        # Output staged in a slot becomes available to downstream roles from the next slot
+        # (formulation E7: I_start(s) = I(prev(s))), matching SequencingTracker.
+        nonlocal current_slot
+        slot = (day, shift_id)
+        if current_slot is None:
+            current_slot = slot
             return
-        if day == current_day:
+        if slot == current_slot:
             return
         for key, volume in role_inventory_today.items():
             role_inventory_estimate[key] += volume
         role_inventory_today.clear()
-        for key, count in role_counts_day.items():
-            role_counts_total[key] += count
-        role_counts_day.clear()
-        current_day = day
+        role_consumed_slot.clear()
+        current_slot = slot
 
     def has_demand(block_id: str, role: str | None) -> bool:
         if block_id in explicit_blocks and role is not None and (block_id, role) in role_remaining:
@@ -470,9 +486,9 @@ def _repair_schedule_cover_blocks(
             if prereqs:
                 for upstream in prereqs:
                     key = (block_id, upstream)
-                    role_inventory_estimate[key] = max(
-                        0.0, role_inventory_estimate.get(key, 0.0) - production
-                    )
+                    current = role_inventory_estimate.get(key, 0.0)
+                    role_inventory_estimate[key] = max(0.0, current - production)
+                    role_consumed_slot[key] += min(production, current)
             role_inventory_today[(block_id, role)] += production
             role_key = (block_id, role)
             if role_key in role_remaining:
@@ -483,7 +499,6 @@ def _repair_schedule_cover_blocks(
                     0.0, block_remaining.get(block_id, 0.0) - production
                 )
                 block_delta = production
-            role_counts_day[(block_id, role)] += 1
         else:
             block_remaining[block_id] = max(0.0, block_remaining.get(block_id, 0.0) - production)
             block_delta = production
@@ -567,7 +582,7 @@ def _repair_schedule_cover_blocks(
         return best_block
 
     for day, shift_id in shift_iteration:
-        advance_day(day)
+        advance_slot(day, shift_id)
         if limit_to_dirty_slots:
             machines_for_slot = slots_to_process.get((day, shift_id))
             if not machines_for_slot:
@@ -961,7 +976,7 @@ def evaluate_schedule(
                 penalty += 1000.0
                 continue
 
-            sequencing = tracker.process(day, machine.id, block_id, rate_value)
+            sequencing = tracker.process(day, machine.id, block_id, rate_value, shift_id)
             if sequencing.violation_reason:
                 penalty += 1000.0
 
