@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 import random
 import time
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from contextlib import nullcontext
 from datetime import UTC, datetime
 from pathlib import Path
@@ -229,6 +229,27 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
         console.print(
             f"[red]Repair Usage Alert:[/red] non-default FPInnovations usage bucket for {alert}"
         )
+
+
+def _print_warm_start_summary(info: Mapping[str, Any]) -> None:
+    """Report how the ``--incumbent`` warm start was passed to the MILP solver."""
+
+    method = info.get("method")
+    seeded = info.get("seeded_slots", 0)
+    if method is None:
+        console.print(
+            f"[yellow]Warm start not used[/] (seeded_slots={seeded}, solver={info.get('solver')})."
+        )
+        return
+    accepted = info.get("accepted")
+    status = {True: "accepted", False: "rejected", None: "status unknown"}.get(
+        accepted, "status unknown"
+    )
+    console.print(
+        f"Warm start: method={method} solver={info.get('solver')} seeded_slots={seeded} ({status})"
+    )
+    for message in info.get("solver_messages") or []:
+        console.print(f"  [dim]{message}[/]")
 
 
 def _print_sequencing_debug(stats: dict[str, Any] | None) -> None:
@@ -559,8 +580,11 @@ def solve_mip_operational_cmd(
         None,
         "--incumbent",
         help=(
-            "Assignments CSV (e.g., from solve-heur) used to seed the MILP as a warm start. "
-            "Columns must include machine_id, block_id, day, shift_id."
+            "Assignments CSV (e.g., from solve-heur) used to seed the MILP as a warm start "
+            "(MIP start). Columns must include machine_id, block_id, day, shift_id. Supported "
+            "with highs (via Pyomo's appsi_highs interface; the log reports whether HiGHS "
+            "accepted the start) and with warm-start-capable Pyomo plugins such as gurobi, cbc, "
+            "and cplex. Other solvers run without the start and emit a warning."
         ),
     ),
     debug: bool = typer.Option(False, "--debug", help="Verbose solver output/tracebacks."),
@@ -695,6 +719,9 @@ def solve_mip_operational_cmd(
                 f"termination={result.get('termination_condition')} "
                 f"objective={result.get('objective')}"
             )
+            warm_start_info = result.get("warm_start")
+            if incumbent_assignments is not None and isinstance(warm_start_info, Mapping):
+                _print_warm_start_summary(warm_start_info)
             console.print(f"Assignments written to {out}")
             if not assignments.empty and pb is not None:
                 metrics_obj = compute_kpis(pb, assignments)
@@ -715,6 +742,8 @@ def solve_mip_operational_cmd(
                     "solver_status": result.get("solver_status"),
                     "termination_condition": result.get("termination_condition"),
                 }
+                if incumbent_assignments is not None and isinstance(warm_start_info, Mapping):
+                    extra_payload["warm_start"] = dict(warm_start_info)
                 kpi_payload = _ensure_kpi_dict(metrics_obj) if metrics_obj is not None else {}
                 run_logger.finalize(
                     metrics=metrics_payload,

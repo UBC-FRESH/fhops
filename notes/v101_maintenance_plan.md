@@ -126,7 +126,7 @@ Implemented as designed, with these additions/deviations:
    `4388.082751999992` (±1e-6), and playback KPIs for the three assignment tables (exact).
 
 Observed pre-existing issues (not changed here): `solve_operational_milp(..., incumbent_assignments=...)`
-with `solver="highs"` raises `TypeError` (`LegacySolverWrapper.solve()` rejects `warmstart`);
+with `solver="highs"` raises `TypeError` (`LegacySolverWrapper.solve()` rejects `warmstart`; fixed in 8.7, #99);
 `load_scenario` attaches YAML `locked_assignments` via `model_copy`, so they skip cross-validation.
 
 ### 8.2 Rolling carry-forward (#92)
@@ -182,6 +182,39 @@ data-contract docs, and the loader/playback docs; no behaviour change.
 Version `1.0.1`; release notes in `docs/releases/v1.0.1.md`; Hatch build, clean-venv smoke,
 TestPyPI → PyPI, annotated tag `v1.0.1`, GitHub release. Forward-port the fixes to `main` (next
 1.1.0 alpha) via a PR, resolving ROADMAP/CHANGE_LOG conflicts.
+
+### 8.7 MILP warm start with HiGHS (#99)
+Problem: `solve_operational_milp(..., incumbent_assignments=...)` passed `warmstart=True` to
+`SolverFactory("highs")`, which on Pyomo ≥ 6.9 (venv: Pyomo 6.10.1, highspy 1.15.1) is the
+`pyomo.contrib.solver` HiGHS wrapped in `LegacySolverWrapper`; its `solve()` has no `warmstart`
+keyword (`TypeError`) and the interface has no MIP-start support at all.
+
+Fix (branch `issue-99-highs-warm-start`, `src/fhops/model/milp/driver.py`):
+1. Seeded `highs`/`appsi_highs` solves use `SolverFactory("appsi_highs")` with `warmstart=True`;
+   APPSI's `Highs._warm_start` passes every seeded value to `highspy.Highs.setSolution`.
+   Unseeded solves still use `highs` (v1.0.0 regression baselines unchanged).
+2. The APPSI solve uses `load_solutions=False` + `opt.load_vars()` (APPSI raises when asked to
+   load a missing solution) and routes the HiGHS log to a private logger; the lines about the MIP
+   start become `result["warm_start"]["solver_messages"]` and `accepted` (`True` on
+   `MIP start solution is feasible`, `False` when the completion LP is infeasible, else `None`).
+3. Legacy plugins with `warm_start_capable()` (Gurobi, CBC ≥ 2.8, CPLEX, …) keep receiving
+   `warmstart=True`; everything else (including other `LegacySolverWrapper` solvers) solves
+   without the start and emits `MilpWarmStartWarning`.
+4. A solve stopped by a limit (`maxTimeLimit`, `maxIterations`, `maxEvaluations`,
+   `objectiveLimit`) that holds a feasible incumbent now reports it (objective + assignments)
+   instead of `objective=None`; otherwise a time-limited warm start would discard the very
+   incumbent it was given. This also applies to unseeded time-limited solves.
+5. CLI prints `Warm start: method=… (accepted|rejected|status unknown)` plus the HiGHS lines, and
+   telemetry stores the dict under `extra.warm_start`.
+
+Evidence (tiny7): cold HiGHS solve optimal `4388.082751999992`; warm re-solve logs
+`MIP start solution is feasible, objective value is 4388.082752` and finishes optimal in ≈0.2 s;
+with `time_limit=1e-6` the warm solve still returns the seed (`4388.08…`, `maxTimeLimit`).
+
+Follow-ups (not in this change): the rolling MILP hook does not pass incumbents (rolling.py owned
+by #92); ILS "hybrid MIP warm start" calls `solve_mip` without an incumbent; `pyomo.contrib.solver`
+interfaces may gain native warm starts (e.g. Gurobi `warmstart_discrete_vars`), at which point
+the APPSI route can be revisited.
 
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
