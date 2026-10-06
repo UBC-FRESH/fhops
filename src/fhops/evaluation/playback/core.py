@@ -112,6 +112,9 @@ class PlaybackResult:
     -----
     ``delivered_total`` is the volume (m³) delivered by terminal roles and
     ``remaining_work_total`` the volume (m³) of ``Block.work_required`` still undelivered.
+    :func:`run_playback` always sets both from the sequencing tracker; for an empty plan
+    ``delivered_total == 0`` and ``remaining_work_total == sum(Block.work_required)`` (the field
+    defaults only apply to hand-built instances).
     """
 
     records: Sequence[PlaybackRecord]
@@ -131,7 +134,33 @@ def run_playback(
     config: PlaybackConfig | None = None,
     sample_id: int = 0,
 ) -> PlaybackResult:
-    """Convert solver assignments into playback records and aggregated summaries."""
+    """Convert solver assignments into playback records and aggregated summaries.
+
+    Parameters
+    ----------
+    problem : fhops.scenario.contract.Problem
+        Problem wrapping the scenario being replayed (including any ``initial_state``).
+    assignments : pandas.DataFrame
+        Assignment rows accepted by :func:`~fhops.evaluation.playback.adapters.assignments_to_records`.
+        May be empty (no rows, no columns) or contain only ``assigned <= 0`` rows.
+    config : PlaybackConfig | None, default=None
+        Playback options; ``None`` uses :class:`PlaybackConfig` defaults.
+    sample_id : int, default=0
+        Identifier stamped on the summaries (stochastic playback sample index).
+
+    Returns
+    -------
+    PlaybackResult
+        Records, shift/day summaries, the tracker's ``sequencing_debug`` snapshot,
+        ``delivered_total`` and ``remaining_work_total`` (m³).
+
+    Notes
+    -----
+    An empty plan yields no records and no shift summaries; day summaries still list the
+    available hours of every scenario day (utilisation ``0``). ``delivered_total`` is ``0`` and
+    ``remaining_work_total`` equals ``sum(Block.work_required)`` (FHOPS ≤ 1.0.0 reported ``0``
+    remaining for an empty frame, which made a plan with no assignments look complete).
+    """
 
     cfg = config or PlaybackConfig()
     availability_map = _compute_shift_availability(problem, cfg)
@@ -142,14 +171,14 @@ def run_playback(
 
     # Materialise records since downstream summaries iterate multiple times.
     records: tuple[PlaybackRecord, ...] = tuple(record_iter)
-    sequencing_debug: dict[str, object] | None = None
     tracker = getattr(record_iter, "sequencing_tracker", None)
-    delivered_total = 0.0
-    remaining_work_total = 0.0
-    if tracker is not None:
-        sequencing_debug = tracker.debug_snapshot()
-        delivered_total = float(getattr(tracker, "delivered_total", 0.0) or 0.0)
-        remaining_work_total = float(sum(tracker.remaining_work.values()))
+    if tracker is None:  # pragma: no cover - assignments_to_records always attaches one
+        raise RuntimeError("assignments_to_records did not expose a sequencing tracker")
+    # The tracker exists even for an empty plan, so totals come from its state rather than
+    # from defaults (an empty plan must report the full work_required as remaining).
+    sequencing_debug: dict[str, object] | None = tracker.debug_snapshot()
+    delivered_total = float(tracker.delivered_total)
+    remaining_work_total = float(sum(tracker.remaining_work.values()))
 
     shift_summaries = tuple(
         summarise_shifts(

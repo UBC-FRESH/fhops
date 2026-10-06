@@ -202,6 +202,26 @@ The ``comparison`` payload includes:
 For quick CLI-to-evaluation loops, feed ``--out-assignments`` directly into ``fhops eval-playback``
 or stash the JSON summary and KPI deltas alongside telemetry artefacts for later reporting.
 
+.. _rolling-empty-plans:
+
+Empty rolling plans and baselines
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A failed solve must never look like a perfect plan (`#108
+<https://github.com/UBC-FRESH/fhops/issues/108>`_):
+
+- An empty **rolling** plan (no locked assignments, an empty DataFrame, or an empty lock list) makes
+  :func:`fhops.planning.compute_rolling_kpis` and :func:`fhops.planning.evaluate_rolling_plan` raise
+  ``ValueError`` (unchanged from v1.0.0). To score it as a zero-delivery plan, call
+  :func:`fhops.evaluation.compute_kpis` with an empty frame.
+- An explicitly supplied but empty **baseline** (e.g. a full-horizon MILP that found no solution) is
+  scored as a zero-delivery plan: ``baseline_kpis["total_production"] == 0``,
+  ``remaining_work_total`` equals the scenario volume, and ``<metric>_pct_delta`` entries are omitted
+  where the baseline is zero. FHOPS 1.0.0 silently dropped an empty baseline
+  (``baseline_kpis=None``); passing ``baseline_assignments=None`` still skips the comparison.
+- Rows with ``assigned = 0`` deliver nothing, so a frame whose rows are all unassigned is scored as a
+  zero-delivery plan.
+
 Rolling comparison helper
 -------------------------
 The :func:`fhops.planning.evaluate_rolling_plan` helper runs deterministic playback on the

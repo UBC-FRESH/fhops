@@ -208,6 +208,28 @@ The current KPI bundle includes:
   stochastic playback, useful for correlating production drops with weather samples.
 * ``weather_hours_est`` / ``weather_production_loss_est`` — estimated hours and production impact attributable to weather, derived from the aggregate severity multiplied by the average shift length and production rate.
 
+Empty and partial plans
+~~~~~~~~~~~~~~~~~~~~~~~
+
+An empty assignment table (no rows, or only ``assigned = 0`` rows — e.g. a MILP run that found no
+solution) is evaluated like any other plan, so it never looks complete:
+
+* ``total_production = 0``; ``remaining_work_total`` and ``staged_production`` equal
+  ``sum(Block.work_required)`` of the evaluated scenario (the carried-forward volume for a rolling
+  window); ``completed_blocks = 0``; ``makespan_day = 0`` and ``makespan_shift = "N/A"``.
+* Day-level utilisation is ``0`` (every available day is idle); the shift, machine, and role
+  utilisation keys are absent, as are the mobilisation, downtime, and weather keys.
+* Sequencing counts are ``0`` and ``sequencing_clean_blocks`` counts every harvest-system block.
+
+For any plan (empty, partial, or complete) ``total_production`` is the playback delivered volume
+and ``total_production + remaining_work_total = sum(Block.work_required)``. Deterministic and
+stochastic playback (:func:`fhops.evaluation.run_playback`,
+:func:`fhops.evaluation.run_stochastic_playback`) report ``delivered_total = 0`` and
+``remaining_work_total = sum(Block.work_required)`` for an empty plan. FHOPS 1.0.0 reported the
+full scenario volume as delivered for an empty frame (`#108
+<https://github.com/UBC-FRESH/fhops/issues/108>`_). For rolling-horizon comparisons see
+:ref:`rolling-empty-plans`.
+
 Weather & downtime cost assumptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
