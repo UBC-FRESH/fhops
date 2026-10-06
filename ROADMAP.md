@@ -125,6 +125,16 @@ before proposing new work.
 - [ ] Maintain an equation-to-code traceability table (`operational.py` and `data.py` mapping).
 - [ ] Add a regression check ensuring formulation assets regenerate cleanly (`export_docs_assets.py` + docs build).
 
+## Phase 8 — 1.0.1 Maintenance (rolling-horizon carry-forward + playback fixes)
+Parent #90; branch `feature/phase8-v101-maintenance` (from tag `v1.0.0`); plan `notes/v101_maintenance_plan.md`.
+Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is forward-ported there.
+- [ ] #91 Optional `Scenario.initial_state` honoured by MILP, heuristics, and playback.
+- [ ] #92 Rolling-horizon state carry-forward plus lock/blackout/shift fixes.
+- [ ] #93 Stochastic playback event fixes (landing-shock days, downtime duration, `correlated_days`).
+- [ ] #94 Document `Block.work_required` units (m³).
+- [ ] #95 SoftwareX playback figure legibility and regenerated playback assets.
+- [ ] #96 Release FHOPS 1.0.1 and forward-port to `main`.
+
 ## Detailed Next Steps
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
    - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.

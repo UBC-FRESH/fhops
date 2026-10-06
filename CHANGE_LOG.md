@@ -1,3 +1,8 @@
+# 2026-10-06 — Phase 8 (1.0.1 maintenance) opened (#90)
+- Opened parent #90 with children #91–#96 (linked as GitHub sub-issues) after the SoftwareX R2 review (UBC-FRESH/fhops-manuscript#20) exposed defects in v1.0.0: the rolling horizon carries no state between windows (full block volume re-planned, staged inventories/role progress reset, free boundary moves, user locks dropped, blackouts not rebased, locks lose `shift_id`); stochastic playback landing shocks decrement per row, downtime ignores duration settings, `correlated_days` unused; `Block.work_required` units documented inconsistently.
+- Created `feature/phase8-v101-maintenance` from tag `v1.0.0` (worktree `../fhops-v101`) and added `notes/v101_maintenance_plan.md` plus the Phase 8 roadmap section.
+- Baseline verification at `v1.0.0` (fresh venv `/tmp/opencode/fhops-v101-venv`, `pip install -e ".[dev]"`): `ruff format --check src tests` (204 files formatted), `ruff check src tests` (pass), `mypy src` (114 files, no issues), `pytest` (511 collected, exit 0).
+
 # 2026-06-14 — v1.0.0 user-facing documentation readiness sweep
 - Started the `issue-27-docs-readiness` branch for #27 under the v1.0.0 GA release issue tree.
 - Fixed README rendering by closing the development-install code block before the optional Gurobi setup.
