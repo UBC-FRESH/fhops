@@ -61,7 +61,21 @@ Solver support
      - Solved **without** the incumbent; :class:`fhops.model.milp.driver.MilpWarmStartWarning` is emitted.
      - ``Warm start not used`` in the CLI output.
 
-From Python, :func:`fhops.model.milp.driver.solve_operational_milp` returns the same information in ``result["warm_start"]`` (``method``, ``solver``, ``seeded_slots``, ``accepted``, ``solver_messages``). A solve stopped by its time limit still returns the best incumbent it holds—which, for an accepted warm start, is at least as good as the seed.
+From Python, :func:`fhops.model.milp.driver.solve_operational_milp` returns the same information in ``result["warm_start"]`` (``method``, ``solver``, ``seeded_slots``, ``accepted``, ``acceptance``, ``solver_messages``). A solve stopped by its time limit still returns the best incumbent it holds—which, for an accepted warm start, is at least as good as the seed.
+
+HiGHS does not always log a verdict about the MIP start (e.g. on large models stopped by a time limit). ``accepted`` then defaults to ``None`` unless acceptance can be inferred, in which case ``accepted=True`` and ``acceptance="inferred"`` (``"log"`` when the verdict comes from the HiGHS log). The rule: a solution was returned and either (a) its assignment variables ``x`` equal the seeded ones, or (b) the seeded point satisfied every model constraint (FHOPS records the seeded values and checks them after the solve, only when needed; tolerance 1e-6), so HiGHS could adopt it as its first incumbent, and the returned objective is at least the seed objective. The CLI prints a note when acceptance was inferred.
+
+Solve outcomes
+--------------
+
+The driver never raises because a model is infeasible, a time limit was reached without an incumbent, or the solver failed; it reports these cases (1.0.1, #115):
+
+- ``has_solution`` / ``objective``: ``objective`` is ``None`` and ``assignments`` is an empty table with the usual columns when no feasible solution was loaded.
+- ``outcome``: ``optimal``, ``feasible`` (incumbent at a limit), ``infeasible``, ``no_solution`` (limit without incumbent), or ``error``.
+- ``solver_error``: set for genuine solver failures rather than infeasibility, e.g. HiGHS refusing ``threads=1`` after its global scheduler was initialised with another thread count in the same process (``ERROR: Option 'threads' is set to 1 but global scheduler has already been initialized …``). The CLI prints it and exits with status 1.
+- ``warnings``: locks the model dropped or pinned to idle instead of becoming infeasible.
+
+Every solver path calls Pyomo with ``load_solutions=False`` and loads a solution only when the solver holds one (APPSI ``load_vars()``, otherwise ``model.solutions.load_from(results)``). Exported ``production`` values are clamped at 0 (no ``-0.0``).
 
 Current limitations
 -------------------

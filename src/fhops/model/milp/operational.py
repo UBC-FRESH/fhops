@@ -1,4 +1,12 @@
-"""Operational MILP builder (day × shift grid)."""
+"""Operational MILP builder (day × shift grid).
+
+Builds the Pyomo model of the canonical operational formulation
+(``docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.md``) from an
+:class:`~fhops.model.milp.data.OperationalMilpBundle`. The driver
+(:mod:`fhops.model.milp.driver`) solves it; the heuristics and the playback sequencing tracker
+(:mod:`fhops.evaluation.sequencing`) apply the same sequencing rules, so MILP plans replay without
+violations.
+"""
 
 from __future__ import annotations
 
@@ -6,9 +14,16 @@ from collections import defaultdict
 
 import pyomo.environ as pyo
 
-from fhops.model.milp.data import OperationalMilpBundle, headstart_buffer_volumes
+from fhops.model.milp.data import (
+    OperationalMilpBundle,
+    headstart_buffer_volumes,
+    machine_slot_available,
+    resolve_locked_slots,
+)
 
 __all__ = ["build_operational_model"]
+
+_REDUNDANCY_TOLERANCE = 1e-6
 
 
 def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
@@ -25,21 +40,45 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         Maximisation model implementing the canonical operational formulation
         (``docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.md``). The
         model carries a ``_warm_start_meta`` dict used by
-        :func:`fhops.model.milp.driver.solve_operational_milp` to seed incumbents.
+        :func:`fhops.model.milp.driver.solve_operational_milp` to seed incumbents; its
+        ``"warnings"`` entry lists locks the model had to drop or pin to zero (see
+        :func:`fhops.model.milp.data.resolve_locked_slots`).
 
     Notes
     -----
-    Sequencing rules shared with the playback tracker and the heuristics (#109; see
+    Sequencing rules shared with the playback tracker and the heuristics (#109, #115; see
     ``docs/howto/system_sequencing.rst``):
 
-    * ``role_remaining_cap`` limits every role's total output on a block to ``R_{r,b}`` (carried-in
-      ``role_remaining`` or ``work_required``), so upstream roles cannot handle more wood than the
-      block holds.
-    * ``head_start`` requires the staged volume at the end of the previous slot to cover the buffer
-      ``B_{r,b}`` (:func:`fhops.model.milp.data.headstart_buffer_volumes`) whenever the role works;
-      for loaders the buffer is at least ``min(loader_batch_volume_m3, R_{r,b})``. For roles with a
-      head start, ``upstream_done_link`` waives the buffer once every upstream role has output its
-      whole remaining volume (binary ``upstream_done``, cumulative output ``role_cumulative``).
+    * **Staged inventories per upstream role (E7).** ``inventory[u, b, s]`` is the output of role
+      ``u`` on block ``b`` not yet consumed by its downstream roles (``model.InventoryPairs``
+      holds every ``(u, b)`` with at least one downstream role). Every downstream role ``r`` of
+      ``u`` consumes its own output ``z_r`` from it, and ``inventory_guard`` requires
+      ``Σ_{r downstream of u} z_r ≤ inventory_start[u]`` for **every** upstream role, so a role
+      with several upstream roles (a join) can only process what each of them has staged — the
+      tracker's minimum rule. For linear chains this is the v1.0.0/1.0.0 model with the inventory
+      indexed by the upstream instead of the downstream role.
+    * ``role_remaining_cap`` limits every role's total output on a block to
+      ``R_{r,b} = min(role_remaining, W_b)`` (``role_remaining`` defaults to ``W_b``).
+    * ``head_start`` requires the staged volume of every upstream role at the end of the previous
+      slot to cover the buffer ``B_{r,b}`` (:func:`fhops.model.milp.data.headstart_buffer_volumes`)
+      when the role produces (``role_active = 1``); ``upstream_done_link`` waives it once every
+      upstream role has output its carried-in remaining volume (binary ``upstream_done``,
+      cumulative output ``role_cumulative``).
+    * ``loader_threshold`` requires the staged volume of every upstream role of a loader to cover
+      ``min(q_batch, W_b − D_b(<s))`` when the loader produces, where ``D_b(<s)`` is the terminal
+      output delivered before the slot (the tracker's dynamic truckload rule). Slots in which the
+      remaining volume cannot drop below a truckload use ``q_batch``; blocks no larger than a
+      truckload use the remaining volume; otherwise a monotone binary ``loader_tail[b, s]``
+      (1 once the remaining volume is at most ``q_batch``) selects the active term.
+    * ``role_active`` gates production only (``activation_prod``). An **unlocked** assigned
+      machine of the role forces ``role_active = 1`` (``role_active_upper``), so unlocked plans
+      keep the published semantics; a locked machine may be assigned and idle (``x = 1``,
+      production 0) when its role has nothing to process, so locks never make the model
+      infeasible through the activation coupling.
+    * ``role_slot_remaining`` adds ``z_r(s) + D_b(≤s) ≤ W_b`` for non-terminal roles whenever it
+      is not implied by the flow balances (systems with forks/several terminal roles, or carried-in
+      staged inventory inconsistent with ``role_remaining``), matching the tracker's cap of each
+      assignment at the block's remaining volume.
     * Blocks listed in ``bundle.unsequenced_blocks`` (no ``harvest_system_id``) have no role
       constraints; all machine production counts towards their balance and the objective.
 
@@ -49,16 +88,18 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
     Initial state and locks (no-ops for default bundles):
 
-    * ``bundle.initial_staged_inventory`` sets the first-slot ``inventory_start`` of each
-      downstream role to the minimum staged volume over its upstream roles; the head-start
-      comparison at the first slot uses the same value instead of zero.
-    * ``bundle.initial_role_remaining`` sets ``R_{r,b}`` in ``role_remaining_cap``: total role
-      output over the horizon cannot exceed the carried-in remaining volume.
+    * ``bundle.initial_staged_inventory`` sets the first-slot ``inventory_start[u, b]`` of each
+      upstream role to its carried-in staged volume; head-start and loader thresholds at the first
+      slot use the same value.
+    * ``bundle.initial_role_remaining`` sets ``R_{r,b}`` (capped at ``W_b``) and the head-start
+      waiver threshold.
     * ``bundle.initial_machine_block`` adds a linear boundary term on the first slot:
       ``-(ω_mob·δ(m,b0,b) + ω_trans)·x[m,b,first]`` for ``b ≠ b0``.
-    * ``bundle.locked_assignments`` adds ``locked_assignment`` equality constraints: a day lock
-      pins every available shift of the day to its block (other blocks 0); a shift lock pins only
-      its slot. Unavailable locked slots are pinned to 0.
+    * ``bundle.locked_assignments`` adds ``locked_assignment`` equality constraints resolved by
+      :func:`fhops.model.milp.data.resolve_locked_slots`: a day lock pins every available shift of
+      the day to its block (other blocks 0); a shift lock pins only its slot. Unavailable slots and
+      contradictory locks (outside the block window, role not in the block's system) are pinned to
+      0; the latter are reported in ``_warm_start_meta["warnings"]``.
     """
 
     model = pyo.ConcreteModel()
@@ -88,28 +129,35 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     system_configs = bundle.systems
     block_roles: dict[str, tuple[str, ...]] = {}
     role_block_pairs: list[tuple[str, str]] = []
-    inventory_pairs: list[tuple[str, str]] = []
     activation_pairs: list[tuple[str, str]] = []
     loader_pairs: list[tuple[str, str]] = []
+    loader_gate_pairs: list[tuple[str, str]] = []
     role_upstream: dict[tuple[str, str], tuple[str, ...]] = {}
     role_buffer_volume: dict[tuple[str, str], float] = {}
     role_capacity: dict[tuple[str, str], float] = {}
     loader_batch_volume: dict[tuple[str, str], float] = {}
     block_terminal_roles: dict[str, tuple[str, ...]] = {}
     terminal_pairs: list[tuple[str, str]] = []
+    # Staged inventories are indexed by the *upstream* role: (u, b) -> downstream roles of u.
+    stage_pairs: list[tuple[str, str]] = []
+    stage_downstream: dict[tuple[str, str], list[str]] = {}
     mobilisation_params = bundle.mobilisation_params
     mobilisation_distances = bundle.mobilisation_distances
 
     headstart_volumes = headstart_buffer_volumes(bundle)
     headstart_pairs: list[tuple[str, str]] = []
 
-    # Remaining output each role may still produce on a block (R_{r,b}): the carried-in
-    # ``role_remaining`` when supplied, otherwise W_b. Every role handles the same wood, so no role
-    # can output more than the block holds.
-    def _role_remaining(role: str, blk: str) -> float:
+    # Carried-in remaining output of a role (R^0_{r,b}; W_b by default). The waiver compares the
+    # cumulative upstream output with this value (the tracker's role_remaining); the output cap
+    # uses min(R^0, W_b) because no role can handle more wood than the block still holds.
+    def _role_remaining_raw(role: str, blk: str) -> float:
         return bundle.initial_role_remaining.get((blk, role), bundle.work_required[blk])
 
+    def _role_remaining(role: str, blk: str) -> float:
+        return min(_role_remaining_raw(role, blk), bundle.work_required[blk])
+
     system_terminal_roles: dict[str, tuple[str, ...]] = {}
+    system_downstream: dict[str, dict[str, set[str]]] = {}
     for system in system_configs.values():
         downstream: dict[str, set[str]] = defaultdict(set)
         for role_cfg in system.roles:
@@ -124,6 +172,7 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             if role_cfg.role and not downstream.get(role_cfg.role)
         )
         system_terminal_roles[system.system_id] = terminal_roles
+        system_downstream[system.system_id] = downstream
 
     unsequenced = frozenset(bundle.unsequenced_blocks)
     for block in blocks:
@@ -154,23 +203,29 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             buffer_volume = headstart_volumes.get((block, role_name), 0.0)
             if buffer_volume > 0 and role_cfg.upstream_roles:
                 headstart_pairs.append(pair)
-            if role_cfg.is_loader and role_cfg.upstream_roles:
-                # One truckload staged, or the whole remaining block volume when it is smaller.
-                truckload = min(
-                    system_cfg.loader_batch_volume_m3, _role_remaining(role_name, block)
-                )
-                buffer_volume = max(buffer_volume, truckload)
             role_buffer_volume[pair] = buffer_volume
+            loader_gate = bool(
+                role_cfg.is_loader
+                and role_cfg.upstream_roles
+                and system_cfg.loader_batch_volume_m3 > 0
+                and bundle.work_required[block] > 0
+            )
+            if loader_gate:
+                loader_gate_pairs.append(pair)
 
             if role_cfg.upstream_roles:
-                inventory_pairs.append(pair)
-                if buffer_volume > 0:
+                for upstream_role in role_cfg.upstream_roles:
+                    stage = (upstream_role, block)
+                    if stage not in stage_downstream:
+                        stage_pairs.append(stage)
+                        stage_downstream[stage] = []
+                    if role_name not in stage_downstream[stage]:
+                        stage_downstream[stage].append(role_name)
+                if (buffer_volume > 0) or loader_gate:
                     activation_pairs.append(pair)
+            loader_batch_volume[pair] = system_cfg.loader_batch_volume_m3
             if role_cfg.is_loader:
                 loader_pairs.append(pair)
-                loader_batch_volume[pair] = system_cfg.loader_batch_volume_m3
-            else:
-                loader_batch_volume[pair] = system_cfg.loader_batch_volume_m3
 
         block_roles[block] = tuple(roles_for_block)
         terminal_for_block = tuple(
@@ -180,8 +235,6 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         terminal_pairs.extend((role, block) for role in terminal_for_block)
 
     window_lookup = bundle.windows
-    availability_day = bundle.availability_day
-    availability_shift = bundle.availability_shift
 
     def _within_window(block_id: str, day: int) -> bool:
         earliest, latest = window_lookup[block_id]
@@ -191,11 +244,13 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
     def _is_available(machine_id: str, day: int, shift_id: str) -> bool:
         # A_{m,s}: calendars, and 0 in timeline blackout slots (same slots the heuristics skip).
-        if (machine_id, day, shift_id) in blackout_slots:
-            return False
-        if (machine_id, day, shift_id) in availability_shift:
-            return availability_shift[(machine_id, day, shift_id)] == 1
-        return availability_day.get((machine_id, day), 1) == 1
+        return machine_slot_available(bundle, machine_id, day, shift_id, blackout_slots)
+
+    # Locks are resolved first: the activation coupling needs to know which machines are locked.
+    lock_slot_targets, lock_warnings = resolve_locked_slots(bundle)
+    locked_on_block: set[tuple[str, str, tuple[int, str]]] = {
+        (mach, blk, slot) for (mach, slot), blk in lock_slot_targets.items() if blk is not None
+    }
 
     model.x = pyo.Var(model.M, model.B, model.S, domain=pyo.Binary, initialize=0)
     model.prod = pyo.Var(model.M, model.B, model.S, domain=pyo.NonNegativeReals, initialize=0)
@@ -326,42 +381,47 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             for day, shift_id in model.S_transition
         )
 
-    # Initial staged inventory available to each downstream role at the first slot (E7). A role
-    # with several upstream roles can only consume what every upstream role has staged, so the
-    # start value is the minimum over upstream roles (matching the sequencing tracker). Without an
-    # initial state every value is 0.0, which reproduces the v1.0.0 equations.
+    # Initial staged inventory of each upstream role at the first slot (E7): the carried-in
+    # output of u not yet consumed downstream (0.0 without an initial state, as in v1.0.0).
     initial_staged = bundle.initial_staged_inventory
-    initial_inventory_start: dict[tuple[str, str], float] = {}
-    for role, blk in inventory_pairs:
-        upstream_roles = role_upstream[(role, blk)]
-        initial_inventory_start[(role, blk)] = (
-            min(initial_staged.get((blk, up_role), 0.0) for up_role in upstream_roles)
-            if initial_staged
-            else 0.0
-        )
+    initial_inventory_start: dict[tuple[str, str], float] = {
+        (up_role, blk): float(initial_staged.get((blk, up_role), 0.0))
+        for up_role, blk in stage_pairs
+    }
 
-    # Inventory tracking (only for roles with upstream requirements)
-    model.InventoryPairs = pyo.Set(initialize=inventory_pairs, dimen=2)
+    # Inventory tracking per upstream role (E7)
+    model.InventoryPairs = pyo.Set(initialize=stage_pairs, dimen=2)
     model.inventory_start = pyo.Var(model.InventoryPairs, model.S, domain=pyo.NonNegativeReals)
     model.inventory = pyo.Var(model.InventoryPairs, model.S, domain=pyo.NonNegativeReals)
 
-    def inventory_start_rule(mdl, role, blk, day, shift_id):
+    def inventory_start_rule(mdl, up_role, blk, day, shift_id):
         slot = (day, shift_id)
         prev_slot = prev_shift_map[slot]
         if prev_slot is None:
-            return mdl.inventory_start[role, blk, slot] == initial_inventory_start[(role, blk)]
-        return mdl.inventory_start[role, blk, slot] == mdl.inventory[role, blk, prev_slot]
+            return (
+                mdl.inventory_start[up_role, blk, slot] == initial_inventory_start[(up_role, blk)]
+            )
+        return mdl.inventory_start[up_role, blk, slot] == mdl.inventory[up_role, blk, prev_slot]
 
-    def inventory_balance_rule(mdl, role, blk, day, shift_id):
+    def inventory_balance_rule(mdl, up_role, blk, day, shift_id):
         slot = (day, shift_id)
-        upstream_roles = role_upstream[(role, blk)]
-        upstream_sum = sum(mdl.role_prod[up_role, blk, slot] for up_role in upstream_roles)
+        consumed = sum(
+            mdl.role_prod[down_role, blk, slot] for down_role in stage_downstream[(up_role, blk)]
+        )
         return (
-            mdl.inventory[role, blk, slot]
-            == mdl.inventory_start[role, blk, slot] + upstream_sum - mdl.role_prod[role, blk, slot]
+            mdl.inventory[up_role, blk, slot]
+            == mdl.inventory_start[up_role, blk, slot]
+            + mdl.role_prod[up_role, blk, slot]
+            - consumed
         )
 
-    if inventory_pairs:
+    def _prev_inventory(mdl, up_role: str, blk: str, slot: tuple[int, str]):
+        prev_slot = prev_shift_map[slot]
+        if prev_slot is None:
+            return initial_inventory_start[(up_role, blk)]
+        return mdl.inventory[up_role, blk, prev_slot]
+
+    if stage_pairs:
         model.inventory_start_eq = pyo.Constraint(
             model.InventoryPairs, model.S, rule=inventory_start_rule
         )
@@ -369,29 +429,77 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             model.InventoryPairs, model.S, rule=inventory_balance_rule
         )
 
-        def downstream_inventory_guard_rule(mdl, role, blk, day, shift_id):
+        def downstream_inventory_guard_rule(mdl, up_role, blk, day, shift_id):
+            slot = (day, shift_id)
             return (
-                mdl.role_prod[role, blk, (day, shift_id)]
-                <= mdl.inventory_start[role, blk, (day, shift_id)]
+                sum(
+                    mdl.role_prod[down_role, blk, slot]
+                    for down_role in stage_downstream[(up_role, blk)]
+                )
+                <= mdl.inventory_start[up_role, blk, slot]
             )
 
         model.inventory_guard = pyo.Constraint(
             model.InventoryPairs, model.S, rule=downstream_inventory_guard_rule
         )
 
+    # Delivered terminal output D_b(s) is needed by the dynamic loader threshold and by the
+    # per-slot remaining caps; both are only built where they can bind.
+    def _system_is_in_forest(system_id: str) -> bool:
+        downstream = system_downstream.get(system_id, {})
+        return len(system_terminal_roles.get(system_id, ())) == 1 and all(
+            len(children) <= 1 for children in downstream.values()
+        )
+
+    def _path_to_terminal(system_id: str, role: str) -> list[str]:
+        downstream = system_downstream.get(system_id, {})
+        path: list[str] = []
+        current = role
+        seen: set[str] = set()
+        while current not in seen and downstream.get(current):
+            seen.add(current)
+            path.append(current)
+            current = next(iter(downstream[current]))
+        return path  # roles from `role` up to (excluding) the terminal role
+
+    slot_cap_pairs: list[tuple[str, str]] = []
+    for role, blk in role_block_pairs:
+        if role in block_terminal_roles.get(blk, ()) or not role_to_machines.get(role):
+            continue
+        system_id = block_system[blk]
+        if _system_is_in_forest(system_id):
+            staged_downstream = sum(
+                initial_staged.get((blk, path_role), 0.0)
+                for path_role in _path_to_terminal(system_id, role)
+            )
+            work = bundle.work_required[blk]
+            if _role_remaining(role, blk) + staged_downstream <= work + _REDUNDANCY_TOLERANCE * max(
+                1.0, work
+            ):
+                continue  # implied by the inventory balances and role_remaining_cap
+        slot_cap_pairs.append((role, blk))
+
+    loader_tail_blocks = sorted({blk for _, blk in loader_gate_pairs})
+    delivery_blocks = sorted(
+        {blk for _, blk in slot_cap_pairs} | set(loader_tail_blocks),
+        key=blocks.index,
+    )
+    delivery_terminal_pairs = {
+        (role, blk) for blk in delivery_blocks for role in block_terminal_roles.get(blk, ())
+    }
+
     # Head-start waiver (only for roles with role_headstart_shifts > 0): upstream_done[r,b,s] = 1
-    # only if every upstream role of r has output its whole remaining volume R_{u,b} before slot s;
-    # the buffer is then waived (the pipeline is draining and the buffer can no longer grow).
+    # only if every upstream role of r has output its whole carried-in remaining volume before
+    # slot s; the buffer is then waived (the pipeline is draining and the buffer can no longer
+    # grow).
     if headstart_pairs:
         model.HeadstartPairs = pyo.Set(initialize=headstart_pairs, dimen=2)
         model.upstream_done = pyo.Var(model.HeadstartPairs, model.S, domain=pyo.Binary)
-        cumulative_pairs = sorted(
-            {
-                (up_role, blk)
-                for role, blk in headstart_pairs
-                for up_role in role_upstream[(role, blk)]
-            }
-        )
+    cumulative_pairs = sorted(
+        {(up_role, blk) for role, blk in headstart_pairs for up_role in role_upstream[(role, blk)]}
+        | delivery_terminal_pairs
+    )
+    if cumulative_pairs:
         model.CumulativePairs = pyo.Set(initialize=cumulative_pairs, dimen=2)
         model.role_cumulative = pyo.Var(model.CumulativePairs, model.S, domain=pyo.NonNegativeReals)
 
@@ -405,6 +513,16 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             model.CumulativePairs, model.S, rule=role_cumulative_rule
         )
 
+    def _delivered_through(mdl, blk: str, slot: tuple[int, str] | None):
+        """Terminal output delivered on ``blk`` up to and including ``slot`` (0 before s1)."""
+
+        if slot is None:
+            return 0.0
+        return sum(
+            mdl.role_cumulative[role, blk, slot] for role in block_terminal_roles.get(blk, ())
+        )
+
+    if headstart_pairs:
         model.UpstreamDoneIndex = pyo.Set(
             initialize=[
                 (role, blk, up_role, day, shift_id)
@@ -419,13 +537,13 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             slot = (day, shift_id)
             prev_slot = prev_shift_map[slot]
             produced = mdl.role_cumulative[up_role, blk, prev_slot] if prev_slot else 0.0
-            return produced >= _role_remaining(up_role, blk) * mdl.upstream_done[role, blk, slot]
+            return (
+                produced >= _role_remaining_raw(up_role, blk) * mdl.upstream_done[role, blk, slot]
+            )
 
         model.upstream_done_link = pyo.Constraint(model.UpstreamDoneIndex, rule=upstream_done_rule)
 
-    headstart_set = frozenset(headstart_pairs)
-
-    # Head-start buffers via activation binaries (only when buffer > 0)
+    # Activation binaries gate production of buffered roles and loaders (E8).
     if activation_pairs:
         model.ActivationPairs = pyo.Set(initialize=activation_pairs, dimen=2)
         model.role_active = pyo.Var(model.ActivationPairs, model.S, domain=pyo.Binary)
@@ -437,35 +555,42 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
                 <= cap * mdl.role_active[role, blk, (day, shift_id)]
             )
 
-        def head_start_rule(mdl, role, blk, day, shift_id):
+        def head_start_rule(mdl, role, blk, up_role, day, shift_id):
             slot = (day, shift_id)
-            prev_slot = prev_shift_map[slot]
-            prev_inventory = (
-                mdl.inventory[role, blk, prev_slot]
-                if prev_slot
-                else initial_inventory_start[(role, blk)]
-            )
             buffer_volume = role_buffer_volume[(role, blk)]
-            if buffer_volume <= 0:
-                return pyo.Constraint.Skip
-            if (role, blk) in headstart_set:
-                return prev_inventory >= buffer_volume * (
-                    mdl.role_active[role, blk, slot] - mdl.upstream_done[role, blk, slot]
-                )
-            return prev_inventory >= buffer_volume * mdl.role_active[role, blk, slot]
+            return _prev_inventory(mdl, up_role, blk, slot) >= buffer_volume * (
+                mdl.role_active[role, blk, slot] - mdl.upstream_done[role, blk, slot]
+            )
 
         model.activation_prod = pyo.Constraint(
             model.ActivationPairs, model.S, rule=activation_prod_rule
         )
-        model.head_start = pyo.Constraint(model.ActivationPairs, model.S, rule=head_start_rule)
+        if headstart_pairs:
+            model.HeadStartIndex = pyo.Set(
+                initialize=[
+                    (role, blk, up_role, day, shift_id)
+                    for role, blk in headstart_pairs
+                    for up_role in role_upstream[(role, blk)]
+                    for day, shift_id in shift_list
+                ],
+                dimen=5,
+            )
+            model.head_start = pyo.Constraint(model.HeadStartIndex, rule=head_start_rule)
 
         def activation_assignment_upper_rule(mdl, role, blk, day, shift_id):
+            slot = (day, shift_id)
             machines_for_role = role_to_machines.get(role, [])
             if not machines_for_role:
-                return mdl.role_active[role, blk, (day, shift_id)] == 0
+                return mdl.role_active[role, blk, slot] == 0
+            # Locked machines may sit idle (x = 1, no production) without activating the role.
+            unlocked = [
+                mach for mach in machines_for_role if (mach, blk, slot) not in locked_on_block
+            ]
+            if not unlocked:
+                return pyo.Constraint.Skip
             return (
-                sum(mdl.x[mach, blk, (day, shift_id)] for mach in machines_for_role)
-                <= len(machines_for_role) * mdl.role_active[role, blk, (day, shift_id)]
+                sum(mdl.x[mach, blk, slot] for mach in unlocked)
+                <= len(unlocked) * mdl.role_active[role, blk, slot]
             )
 
         def activation_assignment_lower_rule(mdl, role, blk, day, shift_id):
@@ -505,6 +630,115 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             model.LoaderPairs, model.S, rule=loader_partial_cap_rule
         )
 
+    # Dynamic loader threshold (E8): a producing loader needs min(q, W_b - D_b(<s)) staged by
+    # every upstream role at the start of the slot.
+    loader_slot_mode: dict[tuple[str, tuple[int, str]], str] = {}
+    loader_tail_index: list[tuple[str, int, str]] = []
+    loader_block_batch: dict[str, float] = {}
+    for blk in loader_tail_blocks:
+        system_cfg = system_configs[block_system[blk]]
+        batch = system_cfg.loader_batch_volume_m3
+        loader_block_batch[blk] = batch
+        work = bundle.work_required[blk]
+        if work <= batch:
+            for slot in shift_list:
+                loader_slot_mode[(blk, slot)] = "remaining"
+            continue
+        # Upper bound on terminal deliveries before each slot (terminal fleet capacity in open
+        # slots); the remaining volume can only fall to a truckload once this bound exceeds W - q.
+        delivered_bound = 0.0
+        for slot in shift_list:
+            if delivered_bound > work - batch + 1e-9:
+                loader_slot_mode[(blk, slot)] = "tail"
+                loader_tail_index.append((blk, slot[0], slot[1]))
+            else:
+                loader_slot_mode[(blk, slot)] = "batch"
+            if _within_window(blk, slot[0]):
+                for role in block_terminal_roles.get(blk, ()):
+                    for mach in role_to_machines.get(role, []):
+                        if _is_available(mach, slot[0], slot[1]):
+                            delivered_bound += bundle.production_rates.get((mach, blk), 0.0)
+            delivered_bound = min(delivered_bound, work)
+
+    if loader_gate_pairs:
+        if loader_tail_index:
+            model.LoaderTailIndex = pyo.Set(initialize=loader_tail_index, dimen=3)
+            model.loader_tail = pyo.Var(model.LoaderTailIndex, domain=pyo.Binary)
+            tail_set = frozenset(loader_tail_index)
+
+            def loader_tail_reached_rule(mdl, blk, day, shift_id):
+                # loader_tail = 1 only once the remaining volume is at most one truckload.
+                slot = (day, shift_id)
+                work = bundle.work_required[blk]
+                batch = loader_block_batch[blk]
+                return (
+                    _delivered_through(mdl, blk, prev_shift_map[slot])
+                    >= (work - batch) * mdl.loader_tail[blk, day, shift_id]
+                )
+
+            def loader_tail_monotone_rule(mdl, blk, day, shift_id):
+                prev_slot = prev_shift_map[(day, shift_id)]
+                if prev_slot is None or (blk, prev_slot[0], prev_slot[1]) not in tail_set:
+                    return pyo.Constraint.Skip
+                return (
+                    mdl.loader_tail[blk, day, shift_id]
+                    >= mdl.loader_tail[blk, prev_slot[0], prev_slot[1]]
+                )
+
+            model.loader_tail_reached = pyo.Constraint(
+                model.LoaderTailIndex, rule=loader_tail_reached_rule
+            )
+            model.loader_tail_monotone = pyo.Constraint(
+                model.LoaderTailIndex, rule=loader_tail_monotone_rule
+            )
+
+        threshold_index = [
+            (role, blk, up_role, day, shift_id)
+            for role, blk in loader_gate_pairs
+            for up_role in role_upstream[(role, blk)]
+            for day, shift_id in shift_list
+        ]
+        model.LoaderThresholdIndex = pyo.Set(initialize=threshold_index, dimen=5)
+
+        def loader_threshold_rule(mdl, role, blk, up_role, day, shift_id):
+            slot = (day, shift_id)
+            staged = _prev_inventory(mdl, up_role, blk, slot)
+            active = mdl.role_active[role, blk, slot]
+            batch = loader_block_batch[blk]
+            work = bundle.work_required[blk]
+            mode = loader_slot_mode[(blk, slot)]
+            if mode == "batch":
+                return staged >= batch * active
+            delivered = _delivered_through(mdl, blk, prev_shift_map[slot])
+            if mode == "remaining":
+                # min(q, W - D) = W - D: staged >= (W - D)·g, exact because W - D <= W.
+                return staged + delivered >= work * active
+            # Tail slot, remaining volume above a truckload: staged >= q·g.
+            return staged >= batch * (active - mdl.loader_tail[blk, day, shift_id])
+
+        def loader_threshold_tail_rule(mdl, role, blk, up_role, day, shift_id):
+            slot = (day, shift_id)
+            if loader_slot_mode[(blk, slot)] != "tail":
+                return pyo.Constraint.Skip
+            staged = _prev_inventory(mdl, up_role, blk, slot)
+            delivered = _delivered_through(mdl, blk, prev_shift_map[slot])
+            batch = loader_block_batch[blk]
+            work = bundle.work_required[blk]
+            # Tail reached: staged >= W - D when producing (vacuous otherwise).
+            return (
+                staged + delivered
+                >= batch * mdl.role_active[role, blk, slot]
+                + (work - batch) * mdl.loader_tail[blk, day, shift_id]
+            )
+
+        model.loader_threshold = pyo.Constraint(
+            model.LoaderThresholdIndex, rule=loader_threshold_rule
+        )
+        if loader_tail_index:
+            model.loader_threshold_tail = pyo.Constraint(
+                model.LoaderThresholdIndex, rule=loader_threshold_tail_rule
+            )
+
     # Block balance ensures required work is met (with leftover slack)
     model.leftover = pyo.Var(model.B, domain=pyo.NonNegativeReals)
 
@@ -520,7 +754,7 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
     model.block_balance = pyo.Constraint(model.B, rule=block_balance_rule)
 
-    # Per-role output cap: Σ_s z[r,b,s] <= R_{r,b} (carried-in role_remaining, otherwise W_b).
+    # Per-role output cap: Σ_s z[r,b,s] <= R_{r,b} = min(carried-in role_remaining, W_b).
     role_remaining_pairs = list(role_block_pairs)
     if role_remaining_pairs:
         model.RoleRemainingPairs = pyo.Set(initialize=role_remaining_pairs, dimen=2)
@@ -534,21 +768,29 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             model.RoleRemainingPairs, rule=role_remaining_rule
         )
 
-    # Scenario locks: a day-level lock pins every available shift of that day to the block (other
-    # blocks to 0); a shift-level lock pins only its slot. Expressed as equality constraints rather
-    # than fixed variables so warm starts cannot overwrite them.
+    # Per-slot remaining cap for non-terminal roles where the flow balances do not imply it.
+    if slot_cap_pairs:
+        model.SlotCapPairs = pyo.Set(initialize=slot_cap_pairs, dimen=2)
+
+        def role_slot_remaining_rule(mdl, role, blk, day, shift_id):
+            slot = (day, shift_id)
+            return (
+                mdl.role_prod[role, blk, slot] + _delivered_through(mdl, blk, slot)
+                <= bundle.work_required[blk]
+            )
+
+        model.role_slot_remaining = pyo.Constraint(
+            model.SlotCapPairs, model.S, rule=role_slot_remaining_rule
+        )
+
+    # Scenario locks (resolved by resolve_locked_slots): a day-level lock pins every available
+    # shift of that day to the block (other blocks to 0); a shift-level lock pins only its slot.
+    # Expressed as equality constraints rather than fixed variables so warm starts cannot
+    # overwrite them.
     lock_targets: dict[tuple[str, str, tuple[int, str]], int] = {}
-    for lock_machine, lock_block, lock_day, lock_shift in bundle.locked_assignments:
-        if lock_machine not in machines or lock_block not in blocks:
-            continue
-        for slot in shift_list:
-            slot_day, slot_shift = slot
-            if slot_day != lock_day or (lock_shift is not None and slot_shift != lock_shift):
-                continue
-            available = _is_available(lock_machine, slot_day, slot_shift)
-            for blk in blocks:
-                target = 1 if (blk == lock_block and available) else 0
-                lock_targets[(lock_machine, blk, slot)] = target
+    for (lock_machine, slot), target_block in lock_slot_targets.items():
+        for blk in blocks:
+            lock_targets[(lock_machine, blk, slot)] = 1 if blk == target_block else 0
     if lock_targets:
         model.LockedSlots = pyo.Set(
             initialize=[(mach, blk, slot[0], slot[1]) for mach, blk, slot in lock_targets],
@@ -664,7 +906,8 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         "role_to_machines": {role: tuple(machines) for role, machines in role_to_machines.items()},
         "block_terminal_roles": block_terminal_roles,
         "loader_batch_volume": loader_batch_volume,
-        "inventory_pairs": tuple(inventory_pairs),
+        "inventory_pairs": tuple(stage_pairs),
+        "stage_downstream": {pair: tuple(roles) for pair, roles in stage_downstream.items()},
         "activation_pairs": tuple(activation_pairs),
         "loader_pairs": tuple(loader_pairs),
         "terminal_pairs": tuple(terminal_pairs),
@@ -672,6 +915,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         "initial_inventory_start": dict(initial_inventory_start),
         "boundary_mobilisation": dict(boundary_mobilisation),
         "boundary_transitions": tuple(boundary_transitions),
+        "locked_on_block": frozenset(locked_on_block),
+        "lock_slot_targets": dict(lock_slot_targets),
+        "loader_block_batch": dict(loader_block_batch),
+        "warnings": list(lock_warnings),
     }
 
     return model

@@ -53,19 +53,29 @@ MILP's terminal production:
   day in multi-shift scenarios (formulation E7: ``I_start(s) = I(prev(s))``). Slots follow the
   scenario's shift order (``timeline.shifts`` definition order), not the alphabetical order of
   shift labels.
-* **Production is capped by staged input.** A downstream role cannot output more than the volume
-  its upstream role(s) have staged (minimum over upstream roles); machines of the same role in one
-  slot draw from it in turn.
+* **Production is capped by staged input, per upstream role.** Each role's output that is not yet
+  consumed is staged separately (``initial_state`` ``staged_inventory`` per role). A downstream
+  role consumes its output from the staged volume of **every** upstream role, so a role with
+  several upstream roles (a join) cannot output more than the smallest of them has staged;
+  machines of the same role in one slot draw from it in turn. The MILP keeps one staged inventory
+  per upstream role (formulation E7, 1.0.1 audit #115); before, it pooled the upstream outputs of
+  a join.
 * **No role handles more wood than the block holds.** Each role's cumulative output on a block is
-  capped by ``work_required`` (or the carried-in ``initial_state`` ``role_remaining``).
+  capped by ``min(role_remaining, work_required)`` (``role_remaining`` from ``initial_state``,
+  ``work_required`` by default), and no assignment outputs more than the block still has to
+  deliver.
 * **Head starts are staged volume.** ``role_headstart_shifts`` = ``β`` means the downstream role may
   work only when at least ``β × Σ`` (upstream machines' rates on the block, m³/shift) is staged at
-  the start of the slot. The buffer is waived once every upstream role has output its whole volume
-  (the pipeline is draining). Shift counts (``initial_state.role_shift_counts``) are informational.
+  the start of the slot by every upstream role. When no upstream machine has a positive rate on
+  the block, the role's own fleet rate is used. The buffer is waived once every upstream role has
+  output its whole carried-in remaining volume (the pipeline is draining). Shift counts
+  (``initial_state.role_shift_counts``) are informational.
 * **Loaders need a truckload staged.** A loader may work only when the volume staged at the start of
-  the slot covers ``loader_batch_volume_m3``, or the remaining block volume when that is smaller
-  (playback and heuristics use the volume still to deliver; the MILP uses the remaining volume at
-  the start of its horizon, which is never less strict).
+  the slot covers ``loader_batch_volume_m3``, or the volume the block still has to deliver when
+  that is smaller (``work_required`` minus the terminal output delivered before the slot), so the
+  last partial truckload of a block can be loaded. The MILP linearises this rule exactly with a
+  binary per block and slot, created only for slots in which the remaining volume can have fallen
+  to one truckload.
 * **Blocks without** ``harvest_system_id`` have no role obligations: any machine may work them and
   every machine's output counts towards ``work_required``.
 
@@ -74,6 +84,19 @@ production exceeds the staged input or a head-start/truckload threshold is not m
 tolerance 1e-6 m³, which absorbs MILP solver feasibility noise). Rolling-horizon MILP runs store
 the planned production in their locks, so stitched plans replay the MILP plan rather than the full
 production rate (:doc:`rolling_horizon`).
+
+Locks and the operational MILP
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A locked machine is always assigned to its block, but it does not have to produce: when its role
+has nothing to process (a loader before a truckload is staged, a head-start role before its buffer)
+the MILP keeps it idle (``assigned = 1``, ``production = 0``) instead of becoming infeasible. Only
+unlocked assigned machines force the role's head-start/truckload checks. Playback still reports a
+locked idle machine of a buffered role as ``missing_prereq`` (the lock places it there before the
+buffer exists). Locks that contradict the model (a day outside the block window, a machine whose
+role is not part of the block's harvest system) are rejected by scenario validation; if such a lock
+reaches the MILP anyway (e.g. a hand-edited bundle) it is pinned to idle and listed in the solve
+result's ``warnings``.
 
 Running the Solvers
 -------------------
@@ -85,8 +108,10 @@ MIP
 
    fhops solve-mip examples/med42/scenario.yaml --out tmp/med42_mip.csv --time-limit 600
 
-If sequencing conflicts exist (e.g., machine roles missing), the solver will fail or leave blocks
-unassigned.
+If sequencing conflicts exist (e.g., machine roles missing), blocks stay unassigned. The
+operational MILP (``fhops solve-mip-operational``) reports an ``outcome`` (``optimal``,
+``feasible``, ``infeasible``, ``no_solution``, ``error``) and never raises for infeasible models or
+time limits without an incumbent; see :doc:`mip_warm_starts` for the result fields.
 
 Simulated Annealing
 ^^^^^^^^^^^^^^^^^^^

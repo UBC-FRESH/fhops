@@ -87,7 +87,35 @@ def test_blackout_slots_follow_machine_shift_calendar() -> None:
         blackouts=[BlackoutWindow(start_day=2, end_day=2)],
     )
     slots = set(build_blackout_slots(Problem.from_scenario(scenario)))
-    assert slots == {("M1", 2, "S1"), ("M1", 2, "S2"), ("M2", 2, "N")}
+    # Fleet-wide on every slot of the day's grid (S1, S2, N) for every machine (#115): M1 has no
+    # calendar entry for N and M2 none for S1/S2, yet both are blocked there too.
+    assert slots == {(m, 2, s) for m in ("M1", "M2") for s in ("N", "S1", "S2")}
+
+
+def test_blackout_covers_machines_without_shift_calendar() -> None:
+    # Only M1 has a shift calendar (AM/PM); M2 relies on the day calendar. Before #115, M2 was
+    # blocked only in the timeline shift names (S1, S2) that are not in the AM/PM grid, so the
+    # MILP and the heuristics let it work the blackout day.
+    shift_calendar = [
+        ShiftCalendarEntry(machine_id="M1", day=d, shift_id=s, available=1)
+        for d in (1, 2)
+        for s in ("AM", "PM")
+    ]
+    scenario = _scenario(
+        num_days=2,
+        shift_calendar=shift_calendar,
+        blackouts=[BlackoutWindow(start_day=1, end_day=1)],
+    )
+    pb = Problem.from_scenario(scenario)
+    slots = set(build_blackout_slots(pb))
+    assert {(m, 1, s) for m in ("M1", "M2") for s in ("AM", "PM")} <= slots
+    milp = solve_operational_milp(build_operational_bundle(pb), solver="highs", time_limit=30)
+    assert milp["outcome"] == "optimal"
+    worked = _worked_slots(milp["assignments"])
+    assert worked
+    assert not [slot for slot in worked if slot[1] == 1]
+    sa_worked = _worked_slots(solve_sa(pb, iters=200, seed=1)["assignments"])
+    assert not [slot for slot in sa_worked if slot[1] == 1]
 
 
 def test_no_blackouts_leave_bundle_unchanged() -> None:
