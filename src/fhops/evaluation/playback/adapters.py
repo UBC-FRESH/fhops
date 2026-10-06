@@ -52,7 +52,31 @@ def schedule_to_records(problem: Problem, schedule: Schedule) -> Iterator[Playba
 
 
 def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Iterator[PlaybackRecord]:
-    """Convert solver assignments dataframe into playback records."""
+    """Convert solver assignments dataframe into playback records.
+
+    Parameters
+    ----------
+    problem:
+        Problem whose scenario drives production rates, mobilisation, and sequencing.
+    assignments:
+        DataFrame with ``machine_id``, ``block_id``, ``day`` and optional ``shift_id`` (default
+        ``S1``), ``assigned`` (rows with ``assigned <= 0`` are dropped), and ``production``
+        (overrides the rate-based production proposal) columns.
+
+    Returns
+    -------
+    Iterator[PlaybackRecord]
+        Iterator over chronologically ordered records. The iterator exposes a
+        ``sequencing_tracker`` attribute holding the :class:`SequencingTracker` used to cap
+        production.
+
+    Notes
+    -----
+    When ``Scenario.initial_state`` is set, the sequencing tracker starts from the carried-in
+    staged inventory, role remaining volumes, and role shift counts, and each machine's
+    mobilisation tracking starts at its ``last_block_id`` so the first move to a different block
+    is charged (matching the operational MILP and the heuristics).
+    """
 
     if assignments is None or assignments.empty:
         return iter(())
@@ -110,6 +134,7 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
         else {}
     )
     previous_block: dict[str, str | None] = defaultdict(lambda: None)
+    previous_block.update(tracker.ctx.initial_machine_block)
 
     landing_lookup = {block.id: block.landing_id for block in scenario.blocks}
 

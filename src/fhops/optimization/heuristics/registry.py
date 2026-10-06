@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from bisect import insort
 from collections import defaultdict
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from itertools import combinations
 from random import Random
@@ -226,12 +226,25 @@ def _set_slot(
     schedule.dirty_slots.add((machine_id, shift_key[0], shift_key[1]))
 
 
-def _locked_assignments(problem: Problem) -> dict[tuple[str, int], str]:
-    """Return a lookup of (machine, day) → block IDs that must remain fixed."""
+def _locked_assignments(
+    problem: Problem, shift_keys: Sequence[tuple[int, str]]
+) -> dict[tuple[str, tuple[int, str]], str]:
+    """Return a lookup of ``(machine, (day, shift_id))`` → block IDs that must remain fixed.
+
+    Day-level locks (``ScheduleLock.shift_id is None``) expand to every slot of that day in
+    ``shift_keys``; shift-level locks cover only their own slot.
+    """
     locks = getattr(problem.scenario, "locked_assignments", None)
     if not locks:
         return {}
-    return {(lock.machine_id, lock.day): lock.block_id for lock in locks}
+    lookup: dict[tuple[str, tuple[int, str]], str] = {}
+    for lock in locks:
+        shift_id = getattr(lock, "shift_id", None)
+        for slot in shift_keys:
+            if slot[0] != lock.day or (shift_id is not None and slot[1] != shift_id):
+                continue
+            lookup[(lock.machine_id, slot)] = lock.block_id
+    return lookup
 
 
 def _production_rates(problem: Problem) -> dict[tuple[str, str], float]:
@@ -345,7 +358,7 @@ class BlockInsertionOperator:
         schedule = context.schedule
         pb = context.problem
         rng = context.rng
-        locks = _locked_assignments(pb)
+        locks = _locked_assignments(pb, context.shift_keys)
         production = _production_rates(pb)
         machines = list(schedule.plan.keys())
         if not machines:
@@ -354,7 +367,7 @@ class BlockInsertionOperator:
             (machine, shift_key, block_id)
             for machine, machine_plan in schedule.plan.items()
             for shift_key, block_id in machine_plan.items()
-            if block_id is not None and locks.get((machine, shift_key[0])) != block_id
+            if block_id is not None and locks.get((machine, shift_key)) != block_id
         ]
         if not assignments:
             return None
@@ -370,7 +383,7 @@ class BlockInsertionOperator:
                         continue
                     if not _window_allows(shift_day, block_id, context):
                         continue
-                    lock_key = (machine_tgt, shift_day)
+                    lock_key = (machine_tgt, (shift_day, shift_id))
                     locked_block = locks.get(lock_key)
                     if locked_block is not None and locked_block != block_id:
                         continue
@@ -405,7 +418,7 @@ class CoverageInjectionOperator:
         pb = context.problem
         production = _production_rates(pb)
         work_required = {block.id: block.work_required for block in pb.scenario.blocks}
-        locks = _locked_assignments(pb)
+        locks = _locked_assignments(pb, context.shift_keys)
         capacities: defaultdict[str, float] = defaultdict(float)
         assignments: defaultdict[str, list[tuple[str, tuple[int, str]]]] = defaultdict(list)
         idle_slots: list[tuple[str, tuple[int, str]]] = []
@@ -435,7 +448,7 @@ class CoverageInjectionOperator:
         rng = context.rng
 
         def _maybe_add_slot(machine_id: str, shift_key: tuple[int, str]) -> None:
-            locked_block = locks.get((machine_id, shift_key[0]))
+            locked_block = locks.get((machine_id, shift_key))
             if locked_block is not None and locked_block != target_block:
                 return
             if not _window_allows(shift_key[0], target_block, context):
@@ -482,7 +495,7 @@ class CrossExchangeOperator:
         schedule = context.schedule
         pb = context.problem
         rng = context.rng
-        locks = _locked_assignments(pb)
+        locks = _locked_assignments(pb, context.shift_keys)
         production = _production_rates(pb)
         assignments: list[tuple[str, tuple[int, str], str]] = [
             (machine, shift_key, block_id)
@@ -498,8 +511,8 @@ class CrossExchangeOperator:
         for (machine_a, shift_a, block_a), (machine_b, shift_b, block_b) in pairs:
             if machine_a == machine_b:
                 continue
-            lock_a = locks.get((machine_a, shift_a[0]))
-            lock_b = locks.get((machine_b, shift_b[0]))
+            lock_a = locks.get((machine_a, shift_a))
+            lock_b = locks.get((machine_b, shift_b))
             if lock_a == block_a or lock_b == block_b:
                 continue
             if production.get((machine_a, block_b), 0.0) <= 0.0:
@@ -538,7 +551,7 @@ class MobilisationShakeOperator:
         schedule = context.schedule
         pb = context.problem
         rng = context.rng
-        locks = _locked_assignments(pb)
+        locks = _locked_assignments(pb, context.shift_keys)
         production = _production_rates(pb)
         distance_lookup = context.distance_lookup or {}
         machines = list(schedule.plan.keys())
@@ -548,7 +561,7 @@ class MobilisationShakeOperator:
             (machine, shift_key, block_id)
             for machine, machine_plan in schedule.plan.items()
             for shift_key, block_id in machine_plan.items()
-            if block_id is not None and locks.get((machine, shift_key[0])) != block_id
+            if block_id is not None and locks.get((machine, shift_key)) != block_id
         ]
         if not assignments:
             return None
@@ -566,7 +579,7 @@ class MobilisationShakeOperator:
                         continue
                     if not _window_allows(day_tgt, block_id, context):
                         continue
-                    lock_key = (machine_tgt, day_tgt)
+                    lock_key = (machine_tgt, shift_tgt)
                     locked_block = locks.get(lock_key)
                     if locked_block is not None and locked_block != block_id:
                         continue

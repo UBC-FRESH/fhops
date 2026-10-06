@@ -275,7 +275,6 @@ def _derive_state_with_tracker(
     availability_day = bundle.availability_day
     availability_shift = bundle.availability_shift
     blackout = ctx.blackout_shifts
-    locked = ctx.locked_assignments
     landing_of = bundle.landing_for_block
 
     plan: dict[str, dict[ShiftKey, str | None]] = {
@@ -300,10 +299,10 @@ def _derive_state_with_tracker(
     for day, shift_id in shift_keys:
         for machine in ordered_machines:
             slot_block: str | None = plan[machine.id].get((day, shift_id))
-            lock_key = (machine.id, day)
             assigned_block = slot_block
-            if lock_key in locked:
-                assigned_block = locked[lock_key]
+            locked_block = ctx.lock_for(machine.id, day, shift_id)
+            if locked_block is not None:
+                assigned_block = locked_block
 
             if (
                 availability_shift.get((machine.id, day, shift_id), 1) == 0
@@ -476,6 +475,8 @@ def _build_incumbent_state(
                     prod_val = 0.0
                 provided_production[(machine_id, block_id, shift_tuple)] = prod_val
 
+    _apply_bundle_locks(bundle, shift_list, assignment_lookup)
+
     context: OperationalProblem | None = meta.get("operational_problem")
     if context is not None:
         derived = _derive_state_with_tracker(
@@ -510,6 +511,36 @@ def _build_incumbent_state(
         block_terminal_total=derived["block_terminal_total"],
         block_generic_total=derived["block_generic_total"],
     )
+
+
+def _apply_bundle_locks(
+    bundle: OperationalMilpBundle,
+    shift_list: tuple[ShiftKey, ...],
+    assignment_lookup: dict[tuple[str, ShiftKey], str],
+) -> None:
+    """Overlay ``bundle.locked_assignments`` onto an incumbent assignment lookup (in place).
+
+    Locked slots take the locked block when the machine is available and are cleared otherwise,
+    mirroring the ``locked_assignment`` constraints so the seeded ``x`` values respect locks.
+    """
+
+    if not bundle.locked_assignments:
+        return
+    for machine_id, block_id, lock_day, lock_shift in bundle.locked_assignments:
+        for slot in shift_list:
+            day, shift_id = slot
+            if day != lock_day or (lock_shift is not None and shift_id != lock_shift):
+                continue
+            key = (machine_id, slot)
+            shift_flag = bundle.availability_shift.get((machine_id, day, shift_id))
+            if shift_flag is not None:
+                available = shift_flag == 1
+            else:
+                available = bundle.availability_day.get((machine_id, day), 1) == 1
+            if available:
+                assignment_lookup[key] = block_id
+            else:
+                assignment_lookup.pop(key, None)
 
 
 def _seed_model_from_state(
@@ -600,7 +631,10 @@ def _seed_model_from_state(
                 var.stale = False
 
     if inventory_pairs:
-        inventory_prev: dict[tuple[str, str], float] = {pair: 0.0 for pair in inventory_pairs}
+        initial_start: Mapping[tuple[str, str], float] = meta.get("initial_inventory_start", {})
+        inventory_prev: dict[tuple[str, str], float] = {
+            pair: float(initial_start.get(pair, 0.0)) for pair in inventory_pairs
+        }
         for day, shift_id in shift_list:
             shift = _slot_key(day, shift_id)
             for role, block_id in inventory_pairs:
