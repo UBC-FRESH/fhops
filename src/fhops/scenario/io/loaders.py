@@ -26,7 +26,6 @@ from fhops.scenario.contract.models import (
     ScenarioInitialState,
     ScheduleLock,
     ShiftCalendarEntry,
-    validate_initial_state,
 )
 from fhops.scenario.io.mobilisation import populate_mobilisation_distances
 from fhops.scheduling.mobilisation import MobilisationConfig
@@ -144,10 +143,16 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     * accepts inline YAML overrides for optional tables (road construction, shift calendar, crew map),
     * re-roots GeoJSON paths relative to the scenario directory,
     * ensures every optional extra (timeline, mobilisation config, objective weights) is copied into
-      the resulting Scenario instance, and
+      the resulting Scenario instance,
     * parses an optional inline ``initial_state`` mapping (see
       :class:`fhops.scenario.contract.ScenarioInitialState`) and validates it against the loaded
-      blocks, machines, and harvest systems.
+      blocks, machines, and harvest systems, and
+    * re-validates the assembled scenario once all optional sections are attached, so YAML
+      ``locked_assignments`` (machine/block/day/``shift_id`` checks, duplicates, day+shift mixes,
+      blackout clashes), mobilisation, crew assignments, and ``initial_state`` get the same
+      :class:`fhops.scenario.contract.Scenario` cross-validation as Python-constructed scenarios.
+      Core tables are validated first, so their errors are reported before optional-section
+      errors.
 
     Examples
     --------
@@ -165,8 +170,8 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     Raises
     ------
     ValueError
-        (Pydantic ``ValidationError``) when any table or the ``initial_state`` section fails
-        validation.
+        (Pydantic ``ValidationError``) when any table, the ``locked_assignments`` or
+        ``initial_state`` section, or the scenario cross-validation fails.
     """
     base_path = Path(yaml_path).resolve()
     with base_path.open("r", encoding="utf-8") as handle:
@@ -224,44 +229,49 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     elif "harvest_systems" in meta:
         harvest_systems_payload = meta["harvest_systems"]
 
-    scenario = Scenario(
-        name=meta["name"],
-        num_days=int(meta["num_days"]),
-        start_date=meta.get("start_date"),
-        blocks=blocks,
-        machines=machines,
-        landings=landings,
-        calendar=calendar,
-        shift_calendar=shift_calendar,
-        production_rates=rates,
-    )
+    base_fields: dict[str, object] = {
+        "name": meta["name"],
+        "num_days": int(meta["num_days"]),
+        "start_date": meta.get("start_date"),
+        "blocks": blocks,
+        "machines": machines,
+        "landings": landings,
+        "calendar": calendar,
+        "shift_calendar": shift_calendar,
+        "production_rates": rates,
+    }
+    # Validate the core tables first so their errors surface before optional-section errors.
+    base_scenario = Scenario.model_validate(base_fields)
+
+    # Optional sections are collected and the Scenario is re-validated with all of them at once, so
+    # YAML locks (incl. ``shift_id`` rules and blackout clashes), timeline, mobilisation, crew
+    # maps, harvest systems, and the initial state go through ``Scenario`` cross-validation.
+    # (Attaching them with ``model_copy(update=...)`` would skip validation, as FHOPS <= 1.0.0 did.)
+    extras: dict[str, object] = {}
     if road_construction is not None:
-        scenario = scenario.model_copy(update={"road_construction": road_construction})
+        extras["road_construction"] = road_construction
 
     mobilisation = None
     if "mobilisation" in meta:
         mobilisation = TypeAdapter(MobilisationConfig).validate_python(meta["mobilisation"])
-        scenario = scenario.model_copy(update={"mobilisation": mobilisation})
 
     mobilisation = populate_mobilisation_distances(
         root,
-        scenario.name,
+        base_scenario.name,
         data_section,
-        mobilisation or scenario.mobilisation,
+        mobilisation,
     )
     if mobilisation is not None:
-        scenario = scenario.model_copy(update={"mobilisation": mobilisation})
+        extras["mobilisation"] = mobilisation
 
     if "timeline" in meta:
-        timeline = TypeAdapter(TimelineConfig).validate_python(meta["timeline"])
-        scenario = scenario.model_copy(update={"timeline": timeline})
+        extras["timeline"] = TypeAdapter(TimelineConfig).validate_python(meta["timeline"])
 
     if "crew_assignments" in data_section:
         crew_df = read_csv(require("crew_assignments"))
-        crew_assignments = TypeAdapter(list[CrewAssignment]).validate_python(
+        extras["crew_assignments"] = TypeAdapter(list[CrewAssignment]).validate_python(
             crew_df.to_dict("records")
         )
-        scenario = scenario.model_copy(update={"crew_assignments": crew_assignments})
 
     block_geo = meta.get("geo_block_path") or data_section.get("geo_block_path")
     landing_geo = meta.get("geo_landing_path") or data_section.get("geo_landing_path")
@@ -280,31 +290,35 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         landing_geo_ref = _validate_geojson(landing_geo_path, "landing_id", landing_ids, root)
 
     if block_geo_ref or landing_geo_ref or geo_crs:
-        geo_metadata = GeoMetadata(
+        extras["geo"] = GeoMetadata(
             block_geojson=block_geo_ref,
             landing_geojson=landing_geo_ref,
             crs=geo_crs,
         )
-        scenario = scenario.model_copy(update={"geo": geo_metadata})
 
     if "locked_assignments" in meta:
-        locks = TypeAdapter(list[ScheduleLock]).validate_python(meta["locked_assignments"])
-        scenario = scenario.model_copy(update={"locked_assignments": locks})
+        extras["locked_assignments"] = TypeAdapter(list[ScheduleLock]).validate_python(
+            meta["locked_assignments"]
+        )
 
     if "objective_weights" in meta:
-        weights = TypeAdapter(ObjectiveWeights).validate_python(meta["objective_weights"])
-        scenario = scenario.model_copy(update={"objective_weights": weights})
+        extras["objective_weights"] = TypeAdapter(ObjectiveWeights).validate_python(
+            meta["objective_weights"]
+        )
 
     if harvest_systems_payload is not None:
-        harvest_systems = TypeAdapter(dict[str, HarvestSystem]).validate_python(
+        extras["harvest_systems"] = TypeAdapter(dict[str, HarvestSystem]).validate_python(
             harvest_systems_payload
         )
-        scenario = scenario.model_copy(update={"harvest_systems": harvest_systems})
 
     if meta.get("initial_state") is not None:
-        initial_state = TypeAdapter(ScenarioInitialState).validate_python(meta["initial_state"])
-        scenario = scenario.model_copy(update={"initial_state": initial_state})
-        validate_initial_state(scenario)
+        extras["initial_state"] = TypeAdapter(ScenarioInitialState).validate_python(
+            meta["initial_state"]
+        )
+
+    scenario = base_scenario
+    if extras:
+        scenario = Scenario.model_validate({**base_fields, **extras})
 
     _emit_block_range_warnings(cast(list[dict[str, object]], blocks_raw), scenario.name)
     return scenario
