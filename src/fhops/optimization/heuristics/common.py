@@ -383,6 +383,13 @@ def _repair_schedule_cover_blocks(
     role_inventory_today: defaultdict[tuple[str, str], float] = defaultdict(float)
     current_slot: tuple[int, str] | None = None
     role_consumed_slot: defaultdict[tuple[str, str], float] = defaultdict(float)
+    # Landing capacity on multi-shift days (see ``landing_has_room``): only when landing
+    # overloads are hard penalties (``landing_surplus`` weight 0).
+    landing_of = bundle.landing_for_block
+    landing_cap = bundle.landing_capacity
+    landing_guard_days = (
+        ctx.multi_shift_days if bundle.objective_weights.landing_surplus == 0.0 else frozenset()
+    )
 
     def is_terminal(block_id: str, role: str | None) -> bool:
         if block_id not in explicit_blocks:
@@ -435,6 +442,28 @@ def _repair_schedule_cover_blocks(
                     return False
         return True
 
+    def landing_has_room(machine_id: str, day: int, shift_id: str, block_id: str) -> bool:
+        # True when fewer than ``capacity`` *other* machines are planned on the block's landing
+        # in this slot. Every other machine counts with its current plan (machines placed earlier
+        # in the slot with their repaired block, later ones with the block they hold before the
+        # repair reaches them), so existing assignments keep their landing position and the
+        # machine being kept or placed yields when the landing is full.
+        landing_id = landing_of.get(block_id)
+        if landing_id is None or landing_id not in landing_cap:
+            return True
+        capacity = max(landing_cap.get(landing_id, 0), 0)
+        slot = (day, shift_id)
+        others = 0
+        for other in sc.machines:
+            if other.id == machine_id:
+                continue
+            other_block = plan[other.id].get(slot)
+            if other_block is not None and landing_of.get(other_block) == landing_id:
+                others += 1
+                if others >= capacity:
+                    return False
+        return True
+
     def meets_headstart(block_id: str, role: str | None) -> bool:
         if block_id not in explicit_blocks or role is None:
             return True
@@ -444,8 +473,12 @@ def _repair_schedule_cover_blocks(
         prereqs = prereq_roles.get((block_id, role))
         if not prereqs:
             return True
+        # Waiver: every upstream role finished before this slot (output staged in the current
+        # slot is added back), as in SequencingTracker._upstream_exhausted / MILP upstream_done.
         if all(
-            role_remaining.get((block_id, upstream), 0.0) <= SEQUENCING_TOLERANCE
+            role_remaining.get((block_id, upstream), 0.0)
+            + role_inventory_today.get((block_id, upstream), 0.0)
+            <= SEQUENCING_TOLERANCE
             for upstream in prereqs
         ):
             return True
@@ -516,6 +549,7 @@ def _repair_schedule_cover_blocks(
     def slot_is_valid(
         machine_id: str,
         day: int,
+        shift_id: str,
         block_id: str | None,
         role: str | None,
         *,
@@ -539,6 +573,17 @@ def _repair_schedule_cover_blocks(
             return False
         if enforce_prereq and (
             not has_inventory(block_id, role, production) or not meets_headstart(block_id, role)
+        ):
+            return False
+        # Multi-shift days: keep/fill a slot only when the block's landing has room in that
+        # shift. Output staged in a shift is usable from the next shift (E7), so without this
+        # guard the repair stacks every role of a block on its landing in the same shift and the
+        # schedule pays a landing-capacity penalty per extra machine (#116). Locked slots are
+        # exempt (``enforce_prereq=False``).
+        if (
+            enforce_prereq
+            and day in landing_guard_days
+            and not landing_has_room(machine_id, day, shift_id, block_id)
         ):
             return False
         return True
@@ -572,7 +617,7 @@ def _repair_schedule_cover_blocks(
         best_block: str | None = None
         best_rate = 0.0
         for block_id in pending_blocks_for(role):
-            if not slot_is_valid(machine_id, day, block_id, role):
+            if not slot_is_valid(machine_id, day, shift_id, block_id, role):
                 continue
             candidate_rate = rate.get((machine_id, block_id), 0.0)
             if candidate_rate <= best_rate:
@@ -628,6 +673,7 @@ def _repair_schedule_cover_blocks(
                 if not slot_is_valid(
                     machine.id,
                     day,
+                    shift_id,
                     slot_block,
                     role,
                     enforce_prereq=not locked_slot,

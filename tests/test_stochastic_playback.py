@@ -251,14 +251,18 @@ def test_landing_shock_seeded_apply_matches_sampled_map():
         assert row["production"] == pytest.approx(assignments.loc[idx, "production"] * factor)
 
 
-def test_correlated_days_warns_only_when_set_explicitly():
+def test_correlated_days_warns_only_for_explicit_non_default():
     with pytest.warns(DeprecationWarning, match="correlated_days"):
-        WeatherEventConfig(correlated_days=True)
+        WeatherEventConfig(correlated_days=False)
     with pytest.warns(DeprecationWarning, match="correlated_days"):
         SamplingConfig.model_validate({"weather": {"correlated_days": False}})
 
     with warnings.catch_warnings():
         warnings.simplefilter("error", DeprecationWarning)
+        # Explicit default and round trips of dumped defaults do not warn (#116).
+        WeatherEventConfig(correlated_days=True)
+        SamplingConfig.model_validate(SamplingConfig().model_dump())
+        SamplingConfig.model_validate({"weather": {"correlated_days": True}})
         WeatherEventConfig()
         WeatherEventConfig(impact_window_days=3)
         SamplingConfig()
