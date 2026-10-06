@@ -244,7 +244,9 @@ includes already describe `W_b` as volume and were left untouched (no asset rege
   shocks scale production, not hours.
 - SA reproducibility under the maintenance branch: tiny7 (SA default/diversify/mobilisation,
   8000 iters, seed 42; ILS 1500 iters, batch 4, workers 12) and small21 (SA 4000 iters, seed 42,
-  three presets) re-solved in `/tmp/opencode/pb95-bench`; see CHANGE_LOG #95 for results.
+  three presets) re-solved in `/tmp/opencode/pb95-bench`: objective, assignments, production,
+  mobilisation, completed blocks and day utilisation match the committed `summary.csv` exactly and
+  every assignment CSV is byte-identical (details in CHANGE_LOG #95). No committed MILP row exists.
 - `benchmark_runs.log` entry is a partial regeneration (playback only) with a `note:` line.
 
 ### 8.6 Release and forward-port (#96)
