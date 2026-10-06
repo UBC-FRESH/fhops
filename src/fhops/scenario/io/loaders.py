@@ -23,8 +23,10 @@ from fhops.scenario.contract.models import (
     ProductionRate,
     RoadConstruction,
     Scenario,
+    ScenarioInitialState,
     ScheduleLock,
     ShiftCalendarEntry,
+    validate_initial_state,
 )
 from fhops.scenario.io.mobilisation import populate_mobilisation_distances
 from fhops.scheduling.mobilisation import MobilisationConfig
@@ -140,9 +142,31 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     * normalises optional string columns (e.g., ``harvest_system_id`` blanks → ``None``),
     * back-fills mobilisation distance matrices from ``*_block_distances.csv`` whenever present,
     * accepts inline YAML overrides for optional tables (road construction, shift calendar, crew map),
-    * re-roots GeoJSON paths relative to the scenario directory, and
+    * re-roots GeoJSON paths relative to the scenario directory,
     * ensures every optional extra (timeline, mobilisation config, objective weights) is copied into
-      the resulting Scenario instance.
+      the resulting Scenario instance, and
+    * parses an optional inline ``initial_state`` mapping (see
+      :class:`fhops.scenario.contract.ScenarioInitialState`) and validates it against the loaded
+      blocks, machines, and harvest systems.
+
+    Examples
+    --------
+    An inline ``initial_state`` section in ``scenario.yaml``::
+
+        initial_state:
+          blocks:
+            - block_id: B01
+              role_remaining: {feller_buncher: 0.0}
+              staged_inventory: {feller_buncher: 150.0}
+          machines:
+            - machine_id: H3
+              last_block_id: B02
+
+    Raises
+    ------
+    ValueError
+        (Pydantic ``ValidationError``) when any table or the ``initial_state`` section fails
+        validation.
     """
     base_path = Path(yaml_path).resolve()
     with base_path.open("r", encoding="utf-8") as handle:
@@ -276,6 +300,11 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
             harvest_systems_payload
         )
         scenario = scenario.model_copy(update={"harvest_systems": harvest_systems})
+
+    if meta.get("initial_state") is not None:
+        initial_state = TypeAdapter(ScenarioInitialState).validate_python(meta["initial_state"])
+        scenario = scenario.model_copy(update={"initial_state": initial_state})
+        validate_initial_state(scenario)
 
     _emit_block_range_warnings(cast(list[dict[str, object]], blocks_raw), scenario.name)
     return scenario

@@ -12,7 +12,36 @@ __all__ = ["build_operational_model"]
 
 
 def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
-    """Construct a Pyomo model from an :class:`OperationalMilpBundle`."""
+    """Construct a Pyomo model from an :class:`OperationalMilpBundle`.
+
+    Parameters
+    ----------
+    bundle:
+        Normalised operational data (see :func:`fhops.model.milp.data.build_operational_bundle`).
+
+    Returns
+    -------
+    pyomo.ConcreteModel
+        Maximisation model implementing the canonical operational formulation
+        (``docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.md``). The
+        model carries a ``_warm_start_meta`` dict used by
+        :func:`fhops.model.milp.driver.solve_operational_milp` to seed incumbents.
+
+    Notes
+    -----
+    Initial state and locks (all no-ops for default bundles, which reproduce the v1.0.0 model):
+
+    * ``bundle.initial_staged_inventory`` sets the first-slot ``inventory_start`` of each
+      downstream role to the minimum staged volume over its upstream roles; the head-start
+      comparison at the first slot uses the same value instead of zero.
+    * ``bundle.initial_role_remaining`` adds ``role_remaining_cap``: total role output over the
+      horizon cannot exceed the carried-in remaining volume.
+    * ``bundle.initial_machine_block`` adds a linear boundary term on the first slot:
+      ``-(ω_mob·δ(m,b0,b) + ω_trans)·x[m,b,first]`` for ``b ≠ b0``.
+    * ``bundle.locked_assignments`` adds ``locked_assignment`` equality constraints: a day lock
+      pins every available shift of the day to its block (other blocks 0); a shift lock pins only
+      its slot. Unavailable locked slots are pinned to 0.
+    """
 
     model = pyo.ConcreteModel()
 
@@ -183,6 +212,20 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
     model.role_prod_balance = pyo.Constraint(model.RB, model.S, rule=role_prod_balance_rule)
 
+    def _mobil_cost(mach: str, prev_blk: str, curr_blk: str) -> float:
+        if prev_blk == curr_blk:
+            return 0.0
+        params = mobilisation_params.get(mach)
+        if not params:
+            return 0.0
+        distance = mobilisation_distances.get((prev_blk, curr_blk), 0.0)
+        cost = params["setup_cost"]
+        if distance <= params["walk_threshold_m"]:
+            cost += params["walk_cost_per_meter"] * distance
+        else:
+            cost += params["move_cost_flat"]
+        return cost
+
     # Transition tracking for mobilisation penalties
     transition_slots = [slot for slot in model.S if prev_shift_map.get(slot) is not None]
     needs_transitions = bool(transition_slots)
@@ -229,20 +272,6 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             model.M, model.B, model.B, model.S_transition, rule=_link_rule
         )
 
-        def _mobil_cost(mach: str, prev_blk: str, curr_blk: str) -> float:
-            if prev_blk == curr_blk:
-                return 0.0
-            params = mobilisation_params.get(mach)
-            if not params:
-                return 0.0
-            distance = mobilisation_distances.get((prev_blk, curr_blk), 0.0)
-            cost = params["setup_cost"]
-            if distance <= params["walk_threshold_m"]:
-                cost += params["walk_cost_per_meter"] * distance
-            else:
-                cost += params["move_cost_flat"]
-            return cost
-
         mobilisation_expr = sum(
             _mobil_cost(mach, prev_blk, curr_blk)
             * model.y[mach, prev_blk, curr_blk, (day, shift_id)]
@@ -259,6 +288,20 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             for day, shift_id in model.S_transition
         )
 
+    # Initial staged inventory available to each downstream role at the first slot (E7). A role
+    # with several upstream roles can only consume what every upstream role has staged, so the
+    # start value is the minimum over upstream roles (matching the sequencing tracker). Without an
+    # initial state every value is 0.0, which reproduces the v1.0.0 equations.
+    initial_staged = bundle.initial_staged_inventory
+    initial_inventory_start: dict[tuple[str, str], float] = {}
+    for role, blk in inventory_pairs:
+        upstream_roles = role_upstream[(role, blk)]
+        initial_inventory_start[(role, blk)] = (
+            min(initial_staged.get((blk, up_role), 0.0) for up_role in upstream_roles)
+            if initial_staged
+            else 0.0
+        )
+
     # Inventory tracking (only for roles with upstream requirements)
     model.InventoryPairs = pyo.Set(initialize=inventory_pairs, dimen=2)
     model.inventory_start = pyo.Var(model.InventoryPairs, model.S, domain=pyo.NonNegativeReals)
@@ -268,7 +311,7 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         slot = (day, shift_id)
         prev_slot = prev_shift_map[slot]
         if prev_slot is None:
-            return mdl.inventory_start[role, blk, slot] == 0.0
+            return mdl.inventory_start[role, blk, slot] == initial_inventory_start[(role, blk)]
         return mdl.inventory_start[role, blk, slot] == mdl.inventory[role, blk, prev_slot]
 
     def inventory_balance_rule(mdl, role, blk, day, shift_id):
@@ -313,7 +356,11 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         def head_start_rule(mdl, role, blk, day, shift_id):
             slot = (day, shift_id)
             prev_slot = prev_shift_map[slot]
-            prev_inventory = mdl.inventory[role, blk, prev_slot] if prev_slot else 0.0
+            prev_inventory = (
+                mdl.inventory[role, blk, prev_slot]
+                if prev_slot
+                else initial_inventory_start[(role, blk)]
+            )
             buffer_volume = role_buffer_volume[(role, blk)]
             if buffer_volume <= 0:
                 return pyo.Constraint.Skip
@@ -385,6 +432,51 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
     model.block_balance = pyo.Constraint(model.B, rule=block_balance_rule)
 
+    # Remaining per-role output carried in from the initial state (only emitted when provided).
+    role_remaining_pairs = [
+        (role, blk)
+        for role, blk in role_block_pairs
+        if (blk, role) in bundle.initial_role_remaining
+    ]
+    if role_remaining_pairs:
+        model.RoleRemainingPairs = pyo.Set(initialize=role_remaining_pairs, dimen=2)
+
+        def role_remaining_rule(mdl, role, blk):
+            return (
+                sum(mdl.role_prod[role, blk, slot] for slot in mdl.S)
+                <= bundle.initial_role_remaining[(blk, role)]
+            )
+
+        model.role_remaining_cap = pyo.Constraint(
+            model.RoleRemainingPairs, rule=role_remaining_rule
+        )
+
+    # Scenario locks: a day-level lock pins every available shift of that day to the block (other
+    # blocks to 0); a shift-level lock pins only its slot. Expressed as equality constraints rather
+    # than fixed variables so warm starts cannot overwrite them.
+    lock_targets: dict[tuple[str, str, tuple[int, str]], int] = {}
+    for lock_machine, lock_block, lock_day, lock_shift in bundle.locked_assignments:
+        if lock_machine not in machines or lock_block not in blocks:
+            continue
+        for slot in shift_list:
+            slot_day, slot_shift = slot
+            if slot_day != lock_day or (lock_shift is not None and slot_shift != lock_shift):
+                continue
+            available = _is_available(lock_machine, slot_day, slot_shift)
+            for blk in blocks:
+                target = 1 if (blk == lock_block and available) else 0
+                lock_targets[(lock_machine, blk, slot)] = target
+    if lock_targets:
+        model.LockedSlots = pyo.Set(
+            initialize=[(mach, blk, slot[0], slot[1]) for mach, blk, slot in lock_targets],
+            dimen=4,
+        )
+
+        def locked_assignment_rule(mdl, mach, blk, day, shift_id):
+            return mdl.x[mach, blk, (day, shift_id)] == lock_targets[(mach, blk, (day, shift_id))]
+
+        model.locked_assignment = pyo.Constraint(model.LockedSlots, rule=locked_assignment_rule)
+
     # Landing capacity with slack
     landing_ids = sorted(
         {
@@ -443,6 +535,33 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     if transition_expr is not None and transition_weight:
         obj_expr -= transition_weight * transition_expr
 
+    # Boundary transition from each machine's carried-in block into the first slot (E6). Only
+    # added when the initial state names a last block, so default models are unchanged.
+    boundary_mobilisation: dict[tuple[str, str], float] = {}
+    boundary_transitions: list[tuple[str, str]] = []
+    if bundle.initial_machine_block and shift_list:
+        for mach, prev_blk in bundle.initial_machine_block.items():
+            if mach not in machines or prev_blk not in blocks:
+                continue
+            for blk in blocks:
+                if blk == prev_blk:
+                    continue
+                boundary_transitions.append((mach, blk))
+                cost = _mobil_cost(mach, prev_blk, blk)
+                if cost:
+                    boundary_mobilisation[(mach, blk)] = cost
+    if boundary_transitions:
+        first_slot = shift_list[0]
+        if mobilisation_weight and boundary_mobilisation:
+            obj_expr -= mobilisation_weight * sum(
+                cost * model.x[mach, blk, first_slot]
+                for (mach, blk), cost in boundary_mobilisation.items()
+            )
+        if transition_weight:
+            obj_expr -= transition_weight * sum(
+                model.x[mach, blk, first_slot] for mach, blk in boundary_transitions
+            )
+
     model.objective = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
     # Attach warm-start metadata so the driver can rebuild incumbent states.
@@ -459,6 +578,9 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         "loader_pairs": tuple(loader_pairs),
         "terminal_pairs": tuple(terminal_pairs),
         "needs_transitions": needs_transitions,
+        "initial_inventory_start": dict(initial_inventory_start),
+        "boundary_mobilisation": dict(boundary_mobilisation),
+        "boundary_transitions": tuple(boundary_transitions),
     }
 
     return model

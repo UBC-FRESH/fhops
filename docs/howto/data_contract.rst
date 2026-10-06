@@ -80,6 +80,11 @@ The Pydantic models enforce consistency:
 - Mobilisation distances must reference known blocks; mobilisation parameters must reference
   known machines.
 - Crew assignments (optional) require unique crew IDs and valid machine IDs.
+- Locked assignments reference known machines/blocks, lie inside the horizon, avoid blackouts, and
+  use known shift labels; a machine may have one day-level lock *or* distinct shift-level locks per
+  day.
+- ``initial_state`` entries reference known blocks/machines, carry non-negative values, use roles of
+  the block's harvest system, and point ``last_block_id`` at scenario blocks.
 
 Optional Extras
 ---------------
@@ -90,7 +95,11 @@ Recent helpers enable richer metadata:
 - ``GeoMetadata`` — optional GeoJSON paths and CRS tags for blocks/landings.
 - ``CrewAssignment`` — map crew identifiers to machines/roles for downstream planners.
 - ``TimelineConfig`` — shift definitions and blackout windows controlling daily availability.
-- ``ScheduleLock`` — pre-assign specific machine/block/day combinations (enforced in MIP & SA).
+- ``ScheduleLock`` — pre-assign specific machine/block/day (optionally day/shift) combinations
+  (enforced by the operational MILP, the legacy MIP builder, and the heuristics).
+- ``ScenarioInitialState`` — optional carried-in state (staged inventory, remaining role output,
+  head-start shift counts, last block per machine) for resuming mid-operation; see
+  :ref:`initial-state`.
 - ``ObjectiveWeights`` — tweak solver objective weighting (production, mobilisation penalties,
   transition counts, optional landing-cap slack penalties).
 - Round-the-clock operations — unless you override ``machines.csv`` or the calendar, FHOPS
@@ -174,7 +183,75 @@ Lock a machine to a block on a given day by adding ``locked_assignments``:
        block_id: B12
        day: 5
 
-Any attempt to reassign that machine/day is blocked in both the MIP builder and the SA heuristic.
+Any attempt to reassign that machine/day is blocked in the operational MILP
+(``solve-mip-operational``), the legacy MIP builder, and the heuristics (SA/ILS/Tabu). A lock
+without ``shift_id`` pins every available shift of that day to the block (all other blocks are
+fixed to zero for that machine). Add ``shift_id`` to lock a single slot in multi-shift scenarios:
+
+.. code-block:: yaml
+
+   locked_assignments:
+     - machine_id: YARDER1
+       block_id: B12
+       day: 5
+       shift_id: night
+
+``shift_id`` must be one of the scenario's shift labels (``shift_calendar`` labels, timeline shift
+names, or ``S1`` for day-indexed scenarios). Duplicate ``(machine, day, shift)`` locks and mixing a
+day-level lock with shift-level locks for the same machine/day are rejected.
+
+.. _initial-state:
+
+Initial State (Resuming Mid-Operation)
+--------------------------------------
+
+``initial_state`` is an optional top-level YAML mapping (or the
+:class:`fhops.scenario.contract.ScenarioInitialState` model) that describes where operations stand
+at day 1 of the horizon. Typical uses are rolling-horizon windows and re-plans after part of the
+work is done. When it is omitted, every solver and evaluator behaves exactly as in FHOPS v1.0.0.
+
+.. code-block:: yaml
+
+   initial_state:
+     blocks:
+       - block_id: B01
+         role_remaining:        # m³ the role may still output on this block
+           feller_buncher: 0.0
+           grapple_skidder: 150.0
+         staged_inventory:      # m³ output by the role, not yet consumed downstream
+           feller_buncher: 150.0
+           grapple_skidder: 60.0
+         role_shift_counts:     # shifts already worked (head-start accounting)
+           feller_buncher: 4
+           grapple_skidder: 2
+     machines:
+       - machine_id: H3
+         last_block_id: B02     # block occupied in the last worked slot
+
+Semantics:
+
+- **Terminal volume** still to deliver is ``Block.work_required`` itself (set it to the remaining
+  volume; finished blocks can stay in the scenario with ``work_required: 0`` so their ids remain
+  valid for mobilisation distances and ``last_block_id``).
+- ``staged_inventory`` is keyed by the role that *produced* the volume. A downstream role can
+  consume, at the start of the horizon, the minimum staged volume over its upstream roles (the
+  single upstream value for linear chains). The operational MILP uses that value as the first-slot
+  ``inventory_start`` and in the head-start check; the heuristics and playback sequencing tracker
+  start their per-role inventories from it.
+- ``role_remaining`` caps each role's cumulative output (the tracker, greedy seed, and repair use it
+  as the initial remaining volume; the MILP adds ``sum_s z[r,b,s] <= role_remaining``). Omitted
+  roles default to ``work_required``.
+- ``role_shift_counts`` seeds the head-start shift accounting used by the heuristics and playback
+  tracker (``role_headstart_shifts`` in harvest systems).
+- ``last_block_id`` makes the first move away from that block cost mobilisation (and a transition)
+  in the MILP objective (first slot), the heuristic score, and playback mobilisation KPIs.
+- Role keys are normalised like machine roles (``Feller-Buncher`` → ``feller_buncher``) and must be
+  roles of the block's harvest system; role-keyed state therefore requires ``harvest_system_id``.
+
+Note that the operational MILP charges the boundary move only when the machine works in the first
+shift slot (consistent with its slot-to-slot transition variables), whereas the heuristics and
+playback charge it on the machine's first worked slot. The legacy ``fhops solve-mip`` builder does
+not model ``initial_state`` and warns when one is present.
 
 GeoJSON Ingestion & Distances
 -----------------------------

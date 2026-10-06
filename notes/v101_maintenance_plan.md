@@ -86,6 +86,49 @@ Semantics:
   other blocks to 0; a lock with `shift_id` fixes only that slot.
 - `ScheduleLock` gains `shift_id: str | None = None` (backward compatible).
 
+#### 8.1 implementation status and deviations (#91, branch `issue-91-initial-state-contract`)
+Implemented as designed, with these additions/deviations:
+1. **MILP `role_remaining` cap (addition).** `role_remaining` is honoured by the MILP too:
+   `model.role_remaining_cap` adds `Σ_s z[r,b,s] ≤ R_{r,b}` for pairs supplied by the initial state
+   (no constraint otherwise), so MILP schedules replay consistently with the tracker.
+2. **Locks as equality constraints.** `model.locked_assignment` uses equality constraints rather
+   than `Var.fix()` so warm-start seeding cannot overwrite them; incumbents are overlaid with locks
+   before seeding. Unavailable locked slots (shift *or* day calendar) are pinned to 0. The legacy
+   `optimization/mip/builder.py` keeps `fix()` but is now shift-aware, and warns (`UserWarning`)
+   that it ignores `initial_state`.
+3. **Shift locks in heuristics.** `OperationalProblem.lock_for(machine, day, shift)` combines
+   day-level (`locked_assignments`) and shift-level (`locked_shift_assignments`) locks; greedy seed,
+   repair, sanitizer, `evaluate_schedule`, the operator registry, and the MILP warm-start tracker
+   use it. Validation rejects unknown shift labels, duplicate `(machine, day, shift)` locks, and a
+   day-level lock mixed with shift-level locks for the same machine/day.
+4. **Role-keyed state requires `harvest_system_id`.** The tracker ignores roles on blocks without an
+   explicit system while the MILP applies the registry's default system, so role-keyed initial state
+   on such blocks would be ambiguous; validation rejects it. Role keys are normalised like machine
+   roles.
+5. **Boundary move semantics.** The MILP charges the boundary move only when the machine works in
+   the first slot (its slot-to-slot `y` variables already ignore idle gaps); the heuristics and
+   playback charge it on the machine's first *worked* slot. Identical when the machine works the
+   first slot (tested); documented in `docs/howto/data_contract.rst`.
+6. **Formulation assets.** `scripts/check_formulation_assets.py` and the OBJ/E6/E7 labels live only
+   on `main` (Phase 5, #64/#65); on the 1.0.1 line the canonical source is
+   `docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.md`, rendered by
+   `docs/softwarex/manuscript/scripts/export_docs_assets.py`. Pandoc **3.6** reproduces the
+   committed v1.0.0 TeX/RST byte-for-byte (3.1.3, pinned on `main`, changes RST list indentation),
+   so assets were regenerated with 3.6. The forward-port (#96) must apply the same terms to the
+   labelled OBJ/E6/E7 blocks on `main`.
+7. **Bundle serialisation.** `OperationalMilpBundle` carries `locked_assignments` and `initial_*`
+   mappings; `bundle_to_dict` emits them only when non-empty, so v1.0.0 dumps are unchanged and old
+   dumps still load.
+8. **Regression evidence.** `tests/initial_state/test_v100_regression.py` compares against
+   baselines captured on unmodified v1.0.0 code (`tests/fixtures/v100_regression/`): SA tiny7
+   (seed 123, 300 iters) objective `4306.522752000001` + assignments, SA med42 (seed 7, 150 iters)
+   objective `-38434.22731600001` + assignments, operational MILP tiny7/HiGHS objective
+   `4388.082751999992` (±1e-6), and playback KPIs for the three assignment tables (exact).
+
+Observed pre-existing issues (not changed here): `solve_operational_milp(..., incumbent_assignments=...)`
+with `solver="highs"` raises `TypeError` (`LegacySolverWrapper.solve()` rejects `warmstart`);
+`load_scenario` attaches YAML `locked_assignments` via `model_copy`, so they skip cross-validation.
+
 ### 8.2 Rolling carry-forward (#92)
 After each iteration locks its leading days:
 1. Replay the stitched locked plan against the **base** scenario with the sequencing tracker
@@ -123,6 +166,36 @@ After each iteration locks its leading days:
 - `WeatherEvent.correlated_days`: deprecated. Emit a `DeprecationWarning` when it is set
   explicitly; behaviour is unchanged (`impact_window_days` models spells).
 - Update tests that pin stochastic numbers; add tests for each corrected semantic.
+
+**Implementation notes (#93, branch `issue-93-playback-event-fixes`):**
+- Landing shocks sample over the full scenario horizon (`1..num_days`), landing-major then
+  day-ascending: one `rng.random()` per landing-day, plus one `rng.uniform` per started shock.
+  New helper `LandingShockEvent.sample_multipliers()` returns the `(landing, day) -> multiplier` map.
+- Downtime keeps the v1.0.0 selection rule (per day: `rng.choice` of exactly
+  `min(max_concurrent, n)` rows when `max_concurrent` is set, otherwise one `rng.random()` per row),
+  then one `rng.normal` per selected row. "Truncated" is implemented as **clipping** to
+  `[0, shift_hours]` (censoring, one draw per hit), so a full-shift loss has positive probability;
+  `d == 0` leaves the row untouched.
+- `shift_hours` deviation: deterministic playback records `hours_worked` as the timeline shift
+  hours, else the machine `daily_hours` (no division by shifts per day). Downtime uses the same
+  shared resolver (`adapters.shift_hours_resolver`) so sampled downtime and recorded hours stay on
+  one scale; the two rules differ only for multi-shift scenarios without `timeline.shifts`, where
+  playback itself already reports `daily_hours` per shift (left unchanged; out of scope).
+- Downtime KPIs: in v1.0.0 downtime rows were filtered out (`assigned = 0`) before records were
+  built, so `downtime_hours_total` was always 0. Rows flagged by downtime now always yield a
+  record: cancelled shifts emit `production = 0`, `hours_worked = 0`, `downtime_hours = shift_hours`
+  and bypass the sequencing tracker and mobilisation costing (same delivered volume as before);
+  partial losses report `hours_worked = shift_hours - d`. `PlaybackRecord.downtime_hours` is new.
+- Event composition: weather and landing shocks now multiply the row's *current* production
+  instead of overwriting it from the deterministic baseline (otherwise partial downtime would be
+  erased by a later weather/landing event). Results are identical when a single event is active.
+  Cancelled rows are skipped by weather/landing.
+- `correlated_days`: `model_validator(mode="after")` warns when `"correlated_days" in
+  model_fields_set`. `sampling_config_for()` (synthetic tiers) drops the field before its
+  dump/re-validate round trip so it does not warn spuriously.
+- CLI: new `--downtime-mean` / `--downtime-std` options (defaults 4.0 / 1.5 h, matching
+  `DowntimeEventConfig`); help text for downtime/landing/weather flags updated.
+- `test_kpi_stochastic_snapshot` fixture regenerated (`tests/fixtures/kpi/stochastic.json`).
 
 ### 8.4 Units docs (#94)
 `Block.work_required` documented as m³ (terminal delivered volume) in the contract docstring,

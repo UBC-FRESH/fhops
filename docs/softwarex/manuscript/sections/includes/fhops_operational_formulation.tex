@@ -38,6 +38,20 @@ sequencing constraints.
 \item
   \(\mathcal{P}^{\text{load}} \subseteq \{(r,b): r \in \mathcal{R}_b\}\):
   loader role-block pairs.
+\item
+  \(s_1 \in \mathcal{S}\): first shift slot of the horizon.
+\item
+  \(\mathcal{M}^{0} \subseteq \mathcal{M}\): machines with a known
+  initial block \(b^{0}_m\) (optional initial state; empty by default).
+\item
+  \(\mathcal{P}^{\text{rem}} \subseteq \{(r,b): r \in \mathcal{R}_b\}\):
+  role-block pairs with a carried-in remaining-output cap (optional
+  initial state; empty by default).
+\item
+  \(\mathcal{K}\): locked assignments \(k=(m_k,b_k,d_k,\sigma_k)\),
+  where \(\sigma_k\) is a shift label or empty (whole day);
+  \(\mathcal{S}_k = \{s=(d_k,\sigma) \in \mathcal{S} : \sigma_k \text{ empty or } \sigma=\sigma_k\}\)
+  (empty by default).
 \end{itemize}
 
 \textbf{Parameters.}
@@ -79,6 +93,20 @@ sequencing constraints.
 \item
   \(\mathcal{T}_b \subseteq \mathcal{R}_b\): terminal roles for block
   \(b\) (roles credited in block completion objective terms).
+\item
+  \(\bar{I}_{u,b} \ge 0\): initial staged volume output by role \(u\) on
+  block \(b\) and not yet consumed downstream (optional initial state; 0
+  by default).
+\item
+  \(I^{0}_{r,b} = \min_{u\in\mathcal{U}_{r,b}} \bar{I}_{u,b}\): initial
+  input inventory available to downstream role \(r\) on block \(b\) (0
+  by default).
+\item
+  \(R_{r,b} \ge 0\): remaining volume role \(r\) may still output on
+  block \(b\), for \((r,b)\in\mathcal{P}^{\text{rem}}\).
+\item
+  \(b^{0}_m\): block machine \(m\in\mathcal{M}^{0}\) occupied in its
+  last worked slot before the horizon.
 \end{itemize}
 
 \textbf{Decision variables.}
@@ -129,9 +157,16 @@ terms:
 - \omega^{\text{prod}}\!\sum_{b\in\mathcal{B}} L_b \\
 &- \omega^{\text{land}}\!\sum_{\ell\in\mathcal{L}}\sum_{d\in\mathcal{D}} S_{\ell,d} \\
 &- \omega^{\text{mob}}\!\sum_{m,b',b,s} \delta_{m,b',b}\, y_{m,b',b,s}
-- \omega^{\text{trans}}\!\sum_{m,b',b,s} y_{m,b',b,s}.
+- \omega^{\text{trans}}\!\sum_{m,b',b,s} y_{m,b',b,s} \\
+&- \sum_{m\in\mathcal{M}^{0}}\sum_{b\in\mathcal{B}\setminus\{b^{0}_m\}}
+\left(\omega^{\text{mob}}\,\delta_{m,b^{0}_m,b} + \omega^{\text{trans}}\right) x_{m,b,s_1}.
 \end{aligned}
 \]
+
+The last line is the boundary transition from each machine's initial
+block into the first slot. It is linear in \(x\) because \(b^{0}_m\) is
+data; with no initial state (\(\mathcal{M}^{0}=\emptyset\)) it vanishes
+and the objective is the v1.0.0 objective.
 
 If a block has no terminal-role metadata, the implementation falls back
 to machine-level production sums for the production reward term.
@@ -188,7 +223,7 @@ roles:
 \[
 I^{\text{start}}_{r,b,s}=
 \begin{cases}
-0, & s \text{ is first shift}\\
+I^{0}_{r,b}, & s = s_1\\
 I_{r,b,\operatorname{prev}(s)}, & \text{otherwise}
 \end{cases}
 \qquad \forall (r,b)\in\mathcal{P}^{\text{inv}}, s,
@@ -214,6 +249,7 @@ z_{r,b,s} \le Q_{r,b}\,g_{r,b,s}
 \[
 I_{r,b,\operatorname{prev}(s)} \ge B_{r,b}\,g_{r,b,s}
 \qquad \forall (r,b)\in\mathcal{P}^{\text{act}}, s,
+\qquad \text{with } I_{r,b,\operatorname{prev}(s_1)} := I^{0}_{r,b},
 \]
 
 \[
@@ -242,6 +278,22 @@ Block completion balance with leftover slack:
 \qquad \forall b\in\mathcal{B}.
 \]
 
+Carried-in remaining role output (only for pairs supplied by the initial
+state):
+
+\[
+\sum_{s\in\mathcal{S}} z_{r,b,s} \le R_{r,b}
+\qquad \forall (r,b)\in\mathcal{P}^{\text{rem}}.
+\]
+
+Locked assignments (a lock without a shift label pins every available
+shift of its day; a lock with a shift label pins only that slot):
+
+\[
+x_{m_k,b,s} = A_{m_k,s}\,\mathbf{1}[b=b_k]
+\qquad \forall k\in\mathcal{K},\; s\in\mathcal{S}_k,\; b\in\mathcal{B}.
+\]
+
 Landing daily assignment capacity with surplus slack:
 
 \[
@@ -255,6 +307,13 @@ Domain restrictions:
 \[
 x, y, g \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L,S \ge 0.
 \]
+
+\textbf{Initial state defaults.} Without
+\texttt{Scenario.initial\_state} and
+\texttt{Scenario.locked\_assignments} (\(\bar{I}\equiv 0\), hence
+\(I^{0}\equiv 0\);
+\(\mathcal{M}^{0}=\mathcal{P}^{\text{rem}}=\mathcal{K}=\emptyset\))
+every equation above reduces exactly to the FHOPS v1.0.0 formulation.
 
 \textbf{Implementation mapping (equation blocks to code).}
 
@@ -278,7 +337,9 @@ x, y, g \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,
   Transition linkage: \texttt{model.transition\_prev},
   \texttt{model.transition\_curr}, \texttt{model.transition\_link}
 \item
-  Inventory dynamics and guards: \texttt{model.inventory\_start\_eq},
+  Inventory dynamics and guards: \texttt{model.inventory\_start\_eq}
+  (first slot uses \(I^{0}_{r,b}\) from
+  \texttt{bundle.initial\_staged\_inventory}),
   \texttt{model.inventory\_balance}, \texttt{model.inventory\_guard}
 \item
   Head-start activation: \texttt{model.activation\_prod},
@@ -291,15 +352,25 @@ x, y, g \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,
   Block balance with leftovers: \texttt{model.block\_balance}
   (\texttt{block\_balance\_rule}) + \texttt{model.leftover}
 \item
+  Carried-in remaining role output: \texttt{model.role\_remaining\_cap}
+  (from \texttt{bundle.initial\_role\_remaining})
+\item
+  Locked assignments: \texttt{model.locked\_assignment} (from
+  \texttt{bundle.locked\_assignments})
+\item
   Landing capacity with slack: \texttt{model.landing\_capacity}
   (\texttt{landing\_capacity\_rule}) + \texttt{model.landing\_surplus}
 \item
   Objective assembly: \texttt{model.objective} and objective-term
   construction around \texttt{prod\_weight}, \texttt{landing\_weight},
-  \texttt{mobilisation\_weight}, \texttt{transition\_weight}
+  \texttt{mobilisation\_weight}, \texttt{transition\_weight}, including
+  the first-slot boundary term from
+  \texttt{bundle.initial\_machine\_block}
 \item
   Data/parameter normalization: \texttt{build\_operational\_bundle(...)}
-  in \texttt{fhops.model.milp.data}
+  in \texttt{fhops.model.milp.data} (flattens
+  \texttt{Scenario.initial\_state} and
+  \texttt{Scenario.locked\_assignments} into the bundle)
 \end{itemize}
 
 This formulation is the canonical mathematical reference for FHOPS

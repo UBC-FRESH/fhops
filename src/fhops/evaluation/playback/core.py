@@ -35,7 +35,15 @@ class PlaybackConfig:
 
 @dataclass(slots=True)
 class PlaybackRecord:
-    """Atomic shift-level record produced by deterministic playback."""
+    """Atomic shift-level record produced by deterministic playback.
+
+    Notes
+    -----
+    ``hours_worked`` is the productive time of the machine-shift (hours); ``production_units``
+    is the delivered volume (m³) after sequencing caps. ``downtime`` flags machine-shifts hit
+    by stochastic downtime and ``downtime_hours`` stores the sampled hours lost (``None`` when
+    unknown, in which case summaries fall back to ``hours_worked``).
+    """
 
     day: int
     shift_id: str
@@ -51,6 +59,7 @@ class PlaybackRecord:
     weather_severity: float | None = None
     metadata: dict[str, object] = field(default_factory=dict)
     sample_id: int = 0
+    downtime_hours: float | None = None
 
 
 @dataclass(slots=True)
@@ -201,6 +210,12 @@ def summarise_shifts(
         (resulting in ``total_hours = 0`` but preserving the availability baseline).
     sample_id:
         Identifier propagated through stochastic playback so downstream aggregations can group rows.
+
+    Notes
+    -----
+    ``downtime_hours`` sums each downtime record's sampled ``downtime_hours`` (falling back to
+    ``hours_worked`` when the record carries no sampled value) and ``downtime_events`` counts
+    those records.
     """
 
     aggregates: dict[tuple[int, str, str], ShiftSummary] = {}
@@ -243,9 +258,13 @@ def summarise_shifts(
             summary.blackout_conflicts += 1
         if record.metadata.get("sequencing_violation"):
             summary.sequencing_violations += 1
-        if record.downtime and record.hours_worked is not None:
-            summary.downtime_hours += record.hours_worked
-            summary.downtime_events += 1
+        if record.downtime:
+            lost_hours = (
+                record.downtime_hours if record.downtime_hours is not None else record.hours_worked
+            )
+            if lost_hours is not None:
+                summary.downtime_hours += lost_hours
+                summary.downtime_events += 1
         if record.weather_severity:
             summary.weather_severity_total += float(record.weather_severity)
 

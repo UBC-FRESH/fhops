@@ -1,9 +1,15 @@
-"""Operational MILP data bundle helpers."""
+"""Operational MILP data bundle helpers.
+
+The bundle is the solver-agnostic, JSON-serialisable snapshot of a :class:`Problem` consumed by the
+operational MILP builder (:mod:`fhops.model.milp.operational`), the shared heuristic context
+(:mod:`fhops.optimization.operational_problem`), and the ``fhops solve-mip-operational
+--dump-bundle/--bundle-json`` CLI round trip.
+"""
 
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from fhops.costing.machine_rates import normalize_machine_role
@@ -14,6 +20,8 @@ from fhops.scheduling.systems import HarvestSystem, SystemJob, default_system_re
 
 ShiftKey = tuple[int, str]
 MachineBlock = tuple[str, str]
+BlockRole = tuple[str, str]
+LockEntry = tuple[str, str, int, str | None]
 
 DEFAULT_TRUCKLOAD_M3 = 30.0
 
@@ -44,6 +52,30 @@ class SystemConfig:
 class OperationalMilpBundle:
     """Normalized data extracted from a :class:`Problem` for MILP construction.
 
+    Attributes
+    ----------
+    machines, blocks, days, shifts:
+        Index sets (shift slots are ``(day, shift_id)`` tuples in solver order).
+    machine_roles, machine_daily_hours, production_rates, work_required, windows,
+    landing_for_block, landing_capacity, availability_day, availability_shift,
+    objective_weights, block_system, systems, mobilisation_params, mobilisation_distances:
+        Normalised scenario data (see :func:`build_operational_bundle`).
+    locked_assignments:
+        Tuple of ``(machine_id, block_id, day, shift_id | None)`` locks copied from
+        ``Scenario.locked_assignments``. ``shift_id=None`` locks every available shift of the day.
+        Empty by default.
+    initial_staged_inventory:
+        ``(block_id, role) -> m³`` output by ``role`` on the block but not yet consumed downstream
+        (from ``Scenario.initial_state``). Empty by default (v1.0.0: inventories start at zero).
+    initial_role_remaining:
+        ``(block_id, role) -> m³`` the role may still output. Empty by default (each role may
+        output the full ``work_required``).
+    initial_role_shift_counts:
+        ``(block_id, role) -> shifts`` already worked (head-start accounting). Empty by default.
+    initial_machine_block:
+        ``machine_id -> block_id`` occupied in the last worked slot before the horizon. Empty by
+        default (first move is free).
+
     Notes
     -----
     ``work_required`` (block → terminal delivered volume) and ``production_rates``
@@ -69,10 +101,38 @@ class OperationalMilpBundle:
     systems: dict[str, SystemConfig]
     mobilisation_params: dict[str, dict[str, float]]
     mobilisation_distances: dict[tuple[str, str], float]
+    locked_assignments: tuple[LockEntry, ...] = ()
+    initial_staged_inventory: dict[BlockRole, float] = field(default_factory=dict)
+    initial_role_remaining: dict[BlockRole, float] = field(default_factory=dict)
+    initial_role_shift_counts: dict[BlockRole, int] = field(default_factory=dict)
+    initial_machine_block: dict[str, str] = field(default_factory=dict)
+
+    def has_initial_state(self) -> bool:
+        """Return ``True`` when any initial-state mapping is non-empty."""
+        return bool(
+            self.initial_staged_inventory
+            or self.initial_role_remaining
+            or self.initial_role_shift_counts
+            or self.initial_machine_block
+        )
 
 
 def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
-    """Construct an :class:`OperationalMilpBundle` from a :class:`Problem`."""
+    """Construct an :class:`OperationalMilpBundle` from a :class:`Problem`.
+
+    Parameters
+    ----------
+    pb:
+        Problem produced by :meth:`fhops.scenario.contract.Problem.from_scenario`.
+
+    Returns
+    -------
+    OperationalMilpBundle
+        Normalised bundle. ``Scenario.locked_assignments`` are copied into
+        ``locked_assignments`` and ``Scenario.initial_state`` (when present) is flattened into the
+        ``initial_*`` mappings keyed by ``(block_id, role)`` / ``machine_id``. Without locks or
+        initial state those fields are empty and the bundle is identical to the v1.0.0 bundle.
+    """
 
     sc = pb.scenario
     machines = tuple(machine.id for machine in sc.machines)
@@ -129,6 +189,24 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
                 )
         block_system[block.id] = system_id
 
+    locked_assignments: tuple[LockEntry, ...] = tuple(
+        (lock.machine_id, lock.block_id, int(lock.day), lock.shift_id)
+        for lock in (sc.locked_assignments or [])
+    )
+    initial_staged_inventory: dict[BlockRole, float] = {}
+    initial_role_remaining: dict[BlockRole, float] = {}
+    initial_role_shift_counts: dict[BlockRole, int] = {}
+    initial_machine_block: dict[str, str] = {}
+    if sc.initial_state is not None:
+        for block_state in sc.initial_state.blocks:
+            for role, volume in block_state.staged_inventory.items():
+                initial_staged_inventory[(block_state.block_id, role)] = float(volume)
+            for role, volume in block_state.role_remaining.items():
+                initial_role_remaining[(block_state.block_id, role)] = float(volume)
+            for role, count in block_state.role_shift_counts.items():
+                initial_role_shift_counts[(block_state.block_id, role)] = int(count)
+        initial_machine_block = sc.initial_state.last_block_by_machine()
+
     return OperationalMilpBundle(
         machines=machines,
         blocks=blocks,
@@ -148,6 +226,11 @@ def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
         systems=system_configs,
         mobilisation_params=mobilisation_params,
         mobilisation_distances=mobilisation_distances,
+        locked_assignments=locked_assignments,
+        initial_staged_inventory=initial_staged_inventory,
+        initial_role_remaining=initial_role_remaining,
+        initial_role_shift_counts=initial_role_shift_counts,
+        initial_machine_block=initial_machine_block,
     )
 
 
@@ -201,9 +284,13 @@ def _is_loader_job(job: SystemJob) -> bool:
 
 
 def bundle_to_dict(bundle: OperationalMilpBundle) -> dict[str, Any]:
-    """Serialize an :class:`OperationalMilpBundle` into a JSON-friendly dict."""
+    """Serialize an :class:`OperationalMilpBundle` into a JSON-friendly dict.
 
-    return {
+    The optional ``locked_assignments`` and ``initial_state`` keys are emitted only when the bundle
+    carries locks or initial state, so dumps of default bundles are unchanged from v1.0.0.
+    """
+
+    payload: dict[str, Any] = {
         "machines": list(bundle.machines),
         "blocks": list(bundle.blocks),
         "days": list(bundle.days),
@@ -258,10 +345,34 @@ def bundle_to_dict(bundle: OperationalMilpBundle) -> dict[str, Any]:
             for (prev, nxt), dist in bundle.mobilisation_distances.items()
         ],
     }
+    if bundle.locked_assignments:
+        payload["locked_assignments"] = [
+            {"machine_id": mach, "block_id": blk, "day": day, "shift_id": shift_id}
+            for mach, blk, day, shift_id in bundle.locked_assignments
+        ]
+    if bundle.has_initial_state():
+
+        def _block_role_rows(mapping: Mapping[BlockRole, float | int]) -> list[dict[str, Any]]:
+            return [
+                {"block_id": blk, "role": role, "value": value}
+                for (blk, role), value in mapping.items()
+            ]
+
+        payload["initial_state"] = {
+            "staged_inventory": _block_role_rows(bundle.initial_staged_inventory),
+            "role_remaining": _block_role_rows(bundle.initial_role_remaining),
+            "role_shift_counts": _block_role_rows(bundle.initial_role_shift_counts),
+            "machine_block": dict(bundle.initial_machine_block),
+        }
+    return payload
 
 
 def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
-    """Reconstruct an :class:`OperationalMilpBundle` from ``bundle_to_dict`` output."""
+    """Reconstruct an :class:`OperationalMilpBundle` from ``bundle_to_dict`` output.
+
+    Payloads written by v1.0.0 (without ``locked_assignments``/``initial_state`` keys) load with
+    empty locks and initial state.
+    """
 
     machines = tuple(payload["machines"])
     blocks = tuple(payload["blocks"])
@@ -316,6 +427,22 @@ def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
         }
         for machine_id, values in payload.get("mobilisation_params", {}).items()
     }
+    locked_assignments: tuple[LockEntry, ...] = tuple(
+        (
+            str(entry["machine_id"]),
+            str(entry["block_id"]),
+            int(entry["day"]),
+            None if entry.get("shift_id") is None else str(entry["shift_id"]),
+        )
+        for entry in payload.get("locked_assignments", [])
+    )
+    initial_payload = payload.get("initial_state") or {}
+
+    def _block_role_map(key: str) -> dict[BlockRole, float]:
+        return {
+            (str(row["block_id"]), str(row["role"])): float(row["value"])
+            for row in initial_payload.get(key, [])
+        }
 
     return OperationalMilpBundle(
         machines=machines,
@@ -345,6 +472,15 @@ def bundle_from_dict(payload: Mapping[str, Any]) -> OperationalMilpBundle:
         systems=systems,
         mobilisation_params=mobilisation_params,
         mobilisation_distances=mobilisation_distances,
+        locked_assignments=locked_assignments,
+        initial_staged_inventory=_block_role_map("staged_inventory"),
+        initial_role_remaining=_block_role_map("role_remaining"),
+        initial_role_shift_counts={
+            key: int(value) for key, value in _block_role_map("role_shift_counts").items()
+        },
+        initial_machine_block={
+            str(mach): str(blk) for mach, blk in initial_payload.get("machine_block", {}).items()
+        },
     )
 
 

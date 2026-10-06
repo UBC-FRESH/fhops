@@ -128,14 +128,16 @@ before proposing new work.
 ## Phase 8 — 1.0.1 Maintenance (rolling-horizon carry-forward + playback fixes)
 Parent #90; branch `feature/phase8-v101-maintenance` (from tag `v1.0.0`); plan `notes/v101_maintenance_plan.md`.
 Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is forward-ported there.
-- [ ] #91 Optional `Scenario.initial_state` honoured by MILP, heuristics, and playback.
+- [x] #91 Optional `Scenario.initial_state` honoured by MILP, heuristics, and playback.
 - [ ] #92 Rolling-horizon state carry-forward plus lock/blackout/shift fixes.
-- [ ] #93 Stochastic playback event fixes (landing-shock days, downtime duration, `correlated_days`).
+- [x] #93 Stochastic playback event fixes (landing-shock days, downtime duration, `correlated_days`).
 - [x] #94 Document `Block.work_required` units (m³).
 - [ ] #95 SoftwareX playback figure legibility and regenerated playback assets.
 - [ ] #96 Release FHOPS 1.0.1 and forward-port to `main`.
 
 ## Detailed Next Steps
+0. **Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**
+   - 2026-10-06: #91 (`issue-91-initial-state-contract`) adds optional `Scenario.initial_state` and `ScheduleLock.shift_id`, honoured by the operational MILP (first-slot inventory/head-start, role-remaining cap, boundary move, lock constraints), heuristics, and playback, with v1.0.0 regression parity tests. Next: #92 rolling-horizon carry-forward builds on this contract.
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
    - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
    - 2026-06-14: v1.0.0 GA issue tree opened; first child branch (`issue-15-v100-green-ci`) is restoring the green CI/local verification gate before release metadata changes.
