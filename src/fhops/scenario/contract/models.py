@@ -58,7 +58,7 @@ class ObjectiveWeights(BaseModel):
     Attributes
     ----------
     production:
-        Multiplier for production (volume/work units). Defaults to 1.0.
+        Multiplier for production (delivered volume, m³). Defaults to 1.0.
     mobilisation:
         Multiplier for mobilisation costs estimated from transition binaries. Defaults to 1.0.
     transitions:
@@ -99,7 +99,11 @@ class Block(BaseModel):
     landing_id:
         Landing where wood is forwarded; constrains landing daily capacity.
     work_required:
-        Total work units (machine-hours equivalent) necessary to complete the block.
+        Volume (m³) that must be delivered from the block to complete it — the terminal
+        (e.g., loader) output measured in the same units as ``ProductionRate.rate``. Every role
+        of an explicit harvest system processes up to this volume; loader truckload batching,
+        playback production, KPIs (``total_production``, ``remaining_work_total``) and all
+        reference datasets treat it as m³. Must be non-negative.
     earliest_start:
         Optional earliest day (inclusive, 1-indexed) when the block can begin.
     latest_finish:
@@ -118,7 +122,7 @@ class Block(BaseModel):
 
     id: str
     landing_id: str
-    work_required: float  # in 'work units' (e.g., machine-hours) to complete block
+    work_required: float  # terminal delivered volume (m³) required to complete the block
     earliest_start: Day | None = 1
     latest_finish: Day | None = None
     harvest_system_id: str | None = None
@@ -376,7 +380,7 @@ class ShiftCalendarEntry(BaseModel):
 
 
 class ProductionRate(BaseModel):
-    """Per-day production rate measured in work units for a machine/block pair.
+    """Production rate (m³ per assignment) for a machine/block pair.
 
     Attributes
     ----------
@@ -385,12 +389,13 @@ class ProductionRate(BaseModel):
     block_id:
         Block identifier (must exist in ``Scenario.blocks``).
     rate:
-        Work units produced per full shift/day assignment. Must be non-negative.
+        Volume (m³) produced per full shift assignment (per day in single-shift scenarios),
+        in the same units as ``Block.work_required``. Must be non-negative.
     """
 
     machine_id: str
     block_id: str
-    rate: float  # work units per day if assigned (<= work_required/block)
+    rate: float  # m³ per shift assignment (same units as Block.work_required)
 
     @field_validator("rate")
     @classmethod
@@ -586,7 +591,7 @@ class Scenario(BaseModel):
     calendar / shift_calendar:
         Availability tables. ``shift_calendar`` may be ``None`` for day-level scenarios.
     production_rates:
-        Machine/block productivity table measured in work units per assignment.
+        Machine/block productivity table measured in m³ per shift assignment.
     timeline:
         Optional :class:`~fhops.scheduling.timeline.models.TimelineConfig` describing shifts, blackout windows, etc.
     mobilisation:

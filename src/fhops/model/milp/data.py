@@ -75,6 +75,12 @@ class OperationalMilpBundle:
     initial_machine_block:
         ``machine_id -> block_id`` occupied in the last worked slot before the horizon. Empty by
         default (first move is free).
+
+    Notes
+    -----
+    ``work_required`` (block → terminal delivered volume) and ``production_rates``
+    ((machine, block) → volume per shift assignment) are both in m³, matching
+    ``SystemConfig.loader_batch_volume_m3``.
     """
 
     machines: tuple[str, ...]

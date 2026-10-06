@@ -1,3 +1,17 @@
+# 2026-10-06 — Phase 8.4: document `Block.work_required` units (m³) (#94, part of #90)
+- Documentation only; no behaviour change. `Block.work_required` is now documented consistently as the block's terminal delivered volume in m³ (previously "work units (machine-hours equivalent)"), matching loader truckload batching, playback, KPIs, and every reference dataset.
+- `src/fhops/scenario/contract/models.py`: `Block` docstring + inline comment, `ProductionRate` (m³ per shift assignment), `ObjectiveWeights.production`, `Scenario.production_rates`.
+- Docstrings documenting the m³ convention: `compute_kpis`, `SequencingTracker`, `PlaybackResult`, `OperationalMilpBundle`, `SyntheticDatasetConfig`.
+- Docs: `docs/howto/data_contract.rst` (blocks / production-rate notes), `docs/howto/evaluation.rst` (KPI units, `total_production` definition), `docs/howto/system_sequencing.rst` (example comment).
+- Notes/roadmap: `notes/v101_maintenance_plan.md` §8.4 implementation notes; ROADMAP Phase 8 #94 ticked.
+- Commands executed (worktree `fhops-wt-94`, venv `/tmp/opencode/fhops-v101-venv`):
+  - `git worktree add -b issue-94-work-required-units ../fhops-wt-94 feature/phase8-v101-maintenance`
+  - `grep -rn -i "work units\|machine-hours\|work_required\|work required" src docs README.md`
+  - `ruff format src tests`
+  - `ruff check src tests`
+  - `mypy src`
+  - `pytest -n 8 -p no:warnings -o addopts=""` (301 passed, 210 skipped; 511 collected, matching the v1.0.0 baseline)
+  - `PATH=/tmp/opencode/pandoc-bin:$PATH sphinx-build -b html docs /tmp/opencode/sphinx-94 -W`
 # 2026-10-06 — Phase 8.3: stochastic playback event fixes (#93, part of #90)
 - `LandingShockEvent`: for each landing and each calendar day of the horizon a shock starts with `probability`, draws a multiplier from `capacity_multiplier_range`, and lasts `duration_days` days; every assignment on the landing's blocks is scaled on the affected days, with the minimum multiplier on overlaps (v1.0.0 sampled once per landing and decremented per assignment row). New `LandingShockEvent.sample_multipliers()` exposes the sampled `(landing, day)` map.
 - `DowntimeEvent`: each hit machine-shift samples `d ~ Normal(mean_duration_hours, std_duration_hours)` clipped to `[0, shift_hours]` and loses the fraction `d / shift_hours` of its production; a full-shift loss still sets `assigned = 0`/`production = 0`. `shift_hours` uses the shared playback rule (`timeline.shifts` hours, else machine `daily_hours`; new `adapters.shift_hours_resolver`). `max_concurrent` selection unchanged.

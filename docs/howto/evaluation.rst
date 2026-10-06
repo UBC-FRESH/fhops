@@ -27,7 +27,7 @@ Example (building on the regression fixtures):
 
 The command prints two tables:
 
-* **Shift Playback Summary** — one row per machine/day/shift. Columns include production units,
+* **Shift Playback Summary** — one row per machine/day/shift. Columns include production (m³),
   worked hours, idle hours (when ``--include-idle`` is used), mobilisation cost, and sequencing
   violation counts gathered during playback.
 * **Day Playback Summary** — day-level aggregation with production, total/idle hours, mobilisation
@@ -187,8 +187,11 @@ KPI formulas & required signals
 
 The current KPI bundle includes:
 
-* ``total_production`` — sum of ``production_units`` over all day summaries.
-* ``completed_blocks`` — count of blocks whose remaining work is zero after playback.
+* ``total_production`` — delivered volume (m³): the part of ``Block.work_required`` delivered by each
+  block's terminal role during playback. ``production_units`` in the shift/day summaries is in the same
+  units (m³, like ``ProductionRate.rate``) but counts every role's output.
+* ``completed_blocks`` — count of blocks whose remaining volume (``work_required`` minus delivered m³)
+  is zero after playback.
 * ``mobilisation_cost`` — total mobilisation spend accumulated in playback record metadata.
 * ``mobilisation_cost_by_machine`` / ``mobilisation_cost_by_landing`` — JSON mappings that expose
   cumulative mobilisation outlay by machine and landing.

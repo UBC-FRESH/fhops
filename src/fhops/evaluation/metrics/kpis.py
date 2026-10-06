@@ -85,7 +85,23 @@ class KPIResult(Mapping[str, float | int | str]):
 
 
 def compute_kpis(pb: Problem, assignments: pd.DataFrame) -> KPIResult:
-    """Compute production, mobilisation, utilisation, and sequencing KPIs from assignments."""
+    """Compute production, mobilisation, utilisation, and sequencing KPIs from assignments.
+
+    Parameters
+    ----------
+    pb : fhops.scenario.contract.Problem
+        Problem wrapping the scenario whose blocks define ``work_required`` (m³).
+    assignments : pandas.DataFrame
+        Solver assignments (``machine_id``, ``block_id``, ``day`` and optional ``shift_id``,
+        ``assigned``, ``production``) replayed through deterministic playback.
+
+    Returns
+    -------
+    KPIResult
+        Scalar KPI totals. Volume KPIs are in m³, the units of ``Block.work_required``:
+        ``total_production`` is the volume delivered by each block's terminal role and
+        ``remaining_work_total`` / ``staged_production`` the volume still to deliver.
+    """
 
     playback_result = run_playback(pb, assignments, config=PlaybackConfig())
     shift_df = shift_dataframe(playback_result)

@@ -201,6 +201,15 @@ After each iteration locks its leading days:
 `Block.work_required` documented as m³ (terminal delivered volume) in the contract docstring,
 data-contract docs, and the loader/playback docs; no behaviour change.
 
+**Implementation notes (#94, branch `issue-94-work-required-units`):** `Block`, `ProductionRate`,
+`ObjectiveWeights` and `Scenario.production_rates` docstrings/inline comments now state m³ (rates
+in m³ per shift assignment); `docs/howto/data_contract.rst` (blocks/production-rate notes),
+`docs/howto/evaluation.rst` (KPI units), and `docs/howto/system_sequencing.rst` (example comment)
+updated; `compute_kpis`, `SequencingTracker`, `PlaybackResult`, `OperationalMilpBundle` and
+`SyntheticDatasetConfig` docstrings document the m³ convention. `PlaybackRecord`/
+`assignments_to_records` m³ notes land with #93 to avoid overlapping hunks. The formulation
+includes already describe `W_b` as volume and were left untouched (no asset regeneration).
+
 ### 8.5 SoftwareX figure and assets (#95)
 - `docs/softwarex/manuscript/scripts/plot_playback_variability.py`: column-width figure size,
   ≥ 9 pt fonts at print size, legend inside the canvas (no clipping, no suptitle), upper-case

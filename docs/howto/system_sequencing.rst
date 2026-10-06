@@ -26,7 +26,7 @@ Minimal snippet:
          - {name: loading, machine_role: loader, prerequisites: [processing]}
    blocks:
      - id: B1
-       work_required: 16
+       work_required: 16   # m³ delivered by the terminal (loader) role
        harvest_system_id: ground_fb_skid
 
 Machines should specify roles that satisfy the system jobs. The synthetic generator helper
