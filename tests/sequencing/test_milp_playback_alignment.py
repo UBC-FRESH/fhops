@@ -266,7 +266,7 @@ def test_headstart_volume_matches_milp_buffer() -> None:
     assert ctx.role_headstart_volume == {("B1", "grapple_skidder"): pytest.approx(100.0)}
     assert headstart_buffer_volumes(ctx.bundle) == ctx.role_headstart_volume
     model = build_operational_model(ctx.bundle)
-    con = model.head_start["grapple_skidder", "B1", 1, "S2"]
+    con = model.head_start["grapple_skidder", "B1", "feller_buncher", 1, "S2"]
     coefficients = {str(v): c for v, c in zip(*_linear_terms(con.body), strict=True)}
     assert abs(coefficients["role_active[grapple_skidder,B1,1,S2]"]) == pytest.approx(100.0)
 

@@ -139,6 +139,7 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
 - [x] #108 Correct KPIs for empty and partial plans (an empty assignment table no longer reports full delivery).
 - [x] #109 Align operational-MILP and playback/heuristic sequencing semantics (MILP plans replay with zero violations).
 - [x] #110 Enforce timeline blackouts in the operational MILP (zero availability, same slots as the heuristics).
+- [x] #115 Operational MILP robustness and correctness (audit): no-raise driver with solver-error reporting, idle-feasible locks, per-upstream inventories for joins, dynamic loader threshold, `min(R, W)`, fleet-wide blackouts on partial shift calendars.
 
 ## Detailed Next Steps
 0. **Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**
@@ -148,6 +149,7 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
    - 2026-10-06: #92 (`issue-92-rolling-carry-forward`) replays the stitched locked plan on the base scenario after every iteration (`carry_forward_state`) and slices the next window with remaining volume + `initial_state`; user locks are merged into every window, blackouts rebased, locks keep `shift_id`, hooks record runtime and resolve `solver="auto"` to HiGHS. Follow-ups noted in the plan: empty-plan KPI artefact, MILP blackouts, end-of-window valuation, MILP/playback same-day inventory mismatch.
    - 2026-10-06: #108 (`issue-108-empty-plan-kpis`) fixes the empty-plan KPI artefact: playback always carries a sequencing tracker, `compute_kpis` reports the delivered volume (0 for an empty plan, remaining = Σ `work_required`), and `compute_rolling_kpis` scores an empty baseline as zero delivery (an empty rolling plan still raises).
    - 2026-10-06: #109/#110 (`issue-109-milp-playback-alignment`) align the operational MILP, heuristics, and playback sequencing rules (slot-level release, volume head starts, per-role output caps, unsequenced blocks, shift order, planned production in MILP rolling locks) so MILP plans replay without violations, and enforce timeline blackouts in the MILP. Reference-ladder heuristic results unchanged.
+   - 2026-10-06: #115 (`issue-115-milp-robustness`, pre-release audit) hardens the operational MILP: the driver never raises for infeasible/no-incumbent solves and reports HiGHS errors as errors; locked machines may sit idle (no lock-induced infeasibility); joins use per-upstream staged inventories; the loader threshold follows the remaining block volume; `role_remaining` is capped at `work_required`; blackouts block every grid slot. Linear loader-free models are byte-identical; tiny7 optimum unchanged (4388.082752).
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
    - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
    - 2026-06-14: v1.0.0 GA issue tree opened; first child branch (`issue-15-v100-green-ci`) is restoring the green CI/local verification gate before release metadata changes.
