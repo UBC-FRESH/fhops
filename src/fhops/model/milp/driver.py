@@ -90,6 +90,11 @@ def solve_operational_milp(
 
     Notes
     -----
+    Locks (``bundle.locked_assignments``) and initial state (``bundle.initial_*``, from
+    ``Scenario.initial_state``) are enforced by the model itself (see
+    :func:`fhops.model.milp.operational.build_operational_model`). Incumbents are overlaid with the
+    locks before seeding, and seeded inventories start from the carried-in staged volumes.
+
     The warm-start plumbing is “best effort”: setting ``incumbent_assignments`` is always safe, but
     it only accelerates a solve if the incumbent is close to feasible for the operational MILP.
     Today that means tiny7/small21 runs reuse the incumbent immediately, while med42/large84 usually
