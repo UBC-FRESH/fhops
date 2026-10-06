@@ -59,7 +59,7 @@ def rolling_plan(
         str,
         typer.Option(
             "--mip-solver",
-            help="MILP solver name (e.g., highs, gurobi) when --solver mip",
+            help="MILP solver name (e.g., highs, gurobi) when --solver mip; auto resolves to highs.",
         ),
     ] = "auto",
     mip_time_limit: Annotated[
@@ -87,7 +87,10 @@ def rolling_plan(
         Path | None,
         typer.Option(
             "--out-assignments",
-            help="Optional path to write locked assignments CSV aggregated across iterations.",
+            help=(
+                "Optional path to write locked assignments CSV aggregated across iterations "
+                "(machine_id, block_id, day, shift_id, assigned + run metadata)."
+            ),
         ),
     ] = None,
     out_iterations_jsonl: Annotated[
@@ -112,7 +115,12 @@ def rolling_plan(
         ),
     ] = None,
 ) -> None:
-    """Execute a rolling-horizon plan using a solver hook."""
+    """Execute a rolling-horizon plan using a solver hook.
+
+    Each window after the first starts from the state reached by the locked plan so far (remaining
+    block volume, staged inventory, role progress, machine positions), and user locks from the
+    scenario are enforced in every window they fall in.
+    """
 
     scenario = load_scenario(scenario_path)
     solver_options = parse_solver_options(mip_solver_option)
