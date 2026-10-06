@@ -173,14 +173,19 @@ def _recompute_mobilisation_for(
     machine_id: str,
     ctx: OperationalProblem,
 ) -> None:
-    """Recompute mobilisation stats for a single machine."""
+    """Recompute mobilisation stats for a single machine.
+
+    The machine starts at ``ctx.initial_machine_block`` (``Scenario.initial_state``
+    ``last_block_id``) when known, so its first move to a different block is charged; otherwise
+    the first worked block is free (v1.0.0 behaviour).
+    """
 
     params = ctx.mobilisation_params.get(machine_id)
     row = _ensure_machine_matrix(schedule, machine_id, ctx)
     distance_lookup = ctx.distance_lookup
     cost = 0.0
     transitions = 0.0
-    prev_block: str | None = None
+    prev_block: str | None = ctx.initial_machine_block.get(machine_id)
     for block_id in row:
         if block_id is None:
             continue
@@ -278,7 +283,7 @@ def _repair_schedule_cover_blocks(
     shift_availability = bundle.availability_shift
     availability = bundle.availability_day
     blackout = ctx.blackout_shifts
-    locked = ctx.locked_assignments
+    lock_for = ctx.lock_for
     if limit_to_dirty_slots:
         block_remaining = sched.block_remaining_cache
         if block_remaining is None:
@@ -368,10 +373,12 @@ def _repair_schedule_cover_blocks(
         key=lambda m: (role_priority.get(machine_roles.get(m.id) or "", 999), m.id)
     )
 
-    role_inventory_estimate: defaultdict[tuple[str, str], float] = defaultdict(float)
+    role_inventory_estimate: defaultdict[tuple[str, str], float] = defaultdict(
+        float, ctx.initial_role_inventory
+    )
     role_inventory_today: defaultdict[tuple[str, str], float] = defaultdict(float)
     current_day: int | None = None
-    role_counts_total: defaultdict[tuple[str, str], int] = defaultdict(int)
+    role_counts_total: defaultdict[tuple[str, str], int] = defaultdict(int, ctx.initial_role_counts)
     role_counts_day: defaultdict[tuple[str, str], int] = defaultdict(int)
 
     def is_terminal(block_id: str, role: str | None) -> bool:
@@ -578,7 +585,7 @@ def _repair_schedule_cover_blocks(
             slot_key = (day, shift_id)
             machine_plan = plan[machine.id]
             slot_block: str | None = machine_plan.get(slot_key)
-            lock_block = locked.get((machine.id, day))
+            lock_block = lock_for(machine.id, day, shift_id)
             locked_slot = lock_block is not None
             if locked_slot:
                 slot_block = lock_block
@@ -648,7 +655,22 @@ def _repair_schedule_cover_blocks(
 
 
 def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
-    """Construct an initial Schedule by greedily filling shifts with best-rate blocks."""
+    """Construct an initial Schedule by greedily filling shifts with best-rate blocks.
+
+    Parameters
+    ----------
+    pb:
+        Problem to schedule.
+    ctx:
+        Shared operational context. Locks (``ctx.lock_for``) are applied first; per-role demand
+        starts from ``ctx.role_work_required`` (which includes any ``initial_state``
+        ``role_remaining``), and mobilisation stats start from ``ctx.initial_machine_block``.
+
+    Returns
+    -------
+    Schedule
+        Greedy schedule with populated block/role remaining caches and mobilisation stats.
+    """
 
     sc = pb.scenario
     bundle = ctx.bundle
@@ -659,7 +681,7 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
     allowed_roles = ctx.allowed_roles
     machine_roles = bundle.machine_roles
     blackout = ctx.blackout_shifts
-    locked = ctx.locked_assignments
+    lock_for = ctx.lock_for
     block_system = bundle.block_system
     explicit_blocks = ctx.blocks_with_explicit_system
     block_remaining = dict(bundle.work_required)
@@ -760,7 +782,7 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
     # Respect locked assignments up front.
     for day, shift_id in shift_keys:
         for machine in sc.machines:
-            lock_block = locked.get((machine.id, day))
+            lock_block = lock_for(machine.id, day, shift_id)
             if lock_block is None:
                 continue
             assign(machine.id, day, shift_id, lock_block)
@@ -834,7 +856,29 @@ def evaluate_schedule(
     *,
     limit_repairs_to_dirty: bool = False,
 ) -> float:
-    """Score a schedule using production, mobilisation, transition, and slack penalties."""
+    """Score a schedule using production, mobilisation, transition, and slack penalties.
+
+    Parameters
+    ----------
+    pb:
+        Problem being solved.
+    sched:
+        Candidate schedule (repaired in place before scoring).
+    ctx:
+        Shared operational context. The sequencing tracker, repair pass, and mobilisation cache
+        all start from the context's initial state (staged inventory, role remaining, role shift
+        counts, last block per machine), which is empty unless ``Scenario.initial_state`` is set.
+    debug:
+        Optional dict receiving sequencing debug statistics and watch metrics.
+    limit_repairs_to_dirty:
+        Restrict the repair pass to dirty slots (incremental evaluation).
+
+    Returns
+    -------
+    float
+        ``ω_prod·(delivered − leftover) − ω_mob·mobilisation − ω_trans·transitions −
+        ω_land·landing_surplus − penalties``.
+    """
 
     repair_stats: dict[str, float] | None = {} if limit_repairs_to_dirty else None
     _repair_schedule_cover_blocks(
@@ -853,7 +897,6 @@ def evaluate_schedule(
     landing_cap = bundle.landing_capacity
     allowed_roles = ctx.allowed_roles
     blackout = ctx.blackout_shifts
-    locked = ctx.locked_assignments
     shift_availability = bundle.availability_shift
     availability = bundle.availability_day
 
@@ -865,7 +908,9 @@ def evaluate_schedule(
     landing_surplus_total = 0.0
     penalty = 0.0
 
-    previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
+    previous_block: dict[str, str | None] = {
+        machine.id: ctx.initial_machine_block.get(machine.id) for machine in sc.machines
+    }
     tracker = SequencingTracker(ctx, debug=bool(debug))
 
     role_priority = build_role_priority(ctx)
@@ -878,7 +923,6 @@ def evaluate_schedule(
         used = {landing.id: 0 for landing in sc.landings}
         for machine in ordered_machines:
             block_id = sched.plan[machine.id][(day, shift_id)]
-            lock_key = (machine.id, day)
 
             if (
                 shift_availability.get((machine.id, day, shift_id), 1) == 0
@@ -892,7 +936,7 @@ def evaluate_schedule(
                 previous_block[machine.id] = None
                 continue
 
-            locked_block = locked.get(lock_key)
+            locked_block = ctx.lock_for(machine.id, day, shift_id)
             if locked_block is not None:
                 if block_id is not None and block_id != locked_block:
                     penalty += 1000.0

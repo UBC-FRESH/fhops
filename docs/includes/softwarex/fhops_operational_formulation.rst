@@ -28,6 +28,18 @@ sequencing constraints.
   role-block pairs that require positive head-start buffer activation.
 - :math:`\mathcal{P}^{\text{load}} \subseteq \{(r,b): r \in \mathcal{R}_b\}`:
   loader role-block pairs.
+- :math:`s_1 \in \mathcal{S}`: first shift slot of the horizon.
+- :math:`\mathcal{M}^{0} \subseteq \mathcal{M}`: machines with a known
+  initial block :math:`b^{0}_m` (optional initial state; empty by
+  default).
+- :math:`\mathcal{P}^{\text{rem}} \subseteq \{(r,b): r \in \mathcal{R}_b\}`:
+  role-block pairs with a carried-in remaining-output cap (optional
+  initial state; empty by default).
+- :math:`\mathcal{K}`: locked assignments
+  :math:`k=(m_k,b_k,d_k,\sigma_k)`, where :math:`\sigma_k` is a shift
+  label or empty (whole day);
+  :math:`\mathcal{S}_k = \{s=(d_k,\sigma) \in \mathcal{S} : \sigma_k \text{ empty or } \sigma=\sigma_k\}`
+  (empty by default).
 
 **Parameters.**
 
@@ -53,6 +65,17 @@ sequencing constraints.
   :math:`r` on block :math:`b`.
 - :math:`\mathcal{T}_b \subseteq \mathcal{R}_b`: terminal roles for
   block :math:`b` (roles credited in block completion objective terms).
+- :math:`\bar{I}_{u,b} \ge 0`: initial staged volume output by role
+  :math:`u` on block :math:`b` and not yet consumed downstream (optional
+  initial state; 0 by default).
+- :math:`I^{0}_{r,b} = \min_{u\in\mathcal{U}_{r,b}} \bar{I}_{u,b}`:
+  initial input inventory available to downstream role :math:`r` on
+  block :math:`b` (0 by default).
+- :math:`R_{r,b} \ge 0`: remaining volume role :math:`r` may still
+  output on block :math:`b`, for
+  :math:`(r,b)\in\mathcal{P}^{\text{rem}}`.
+- :math:`b^{0}_m`: block machine :math:`m\in\mathcal{M}^{0}` occupied in
+  its last worked slot before the horizon.
 
 **Decision variables.**
 
@@ -90,8 +113,16 @@ terms:
    - \omega^{\text{prod}}\!\sum_{b\in\mathcal{B}} L_b \\
    &- \omega^{\text{land}}\!\sum_{\ell\in\mathcal{L}}\sum_{d\in\mathcal{D}} S_{\ell,d} \\
    &- \omega^{\text{mob}}\!\sum_{m,b',b,s} \delta_{m,b',b}\, y_{m,b',b,s}
-   - \omega^{\text{trans}}\!\sum_{m,b',b,s} y_{m,b',b,s}.
+   - \omega^{\text{trans}}\!\sum_{m,b',b,s} y_{m,b',b,s} \\
+   &- \sum_{m\in\mathcal{M}^{0}}\sum_{b\in\mathcal{B}\setminus\{b^{0}_m\}}
+   \left(\omega^{\text{mob}}\,\delta_{m,b^{0}_m,b} + \omega^{\text{trans}}\right) x_{m,b,s_1}.
    \end{aligned}
+
+The last line is the boundary transition from each machine’s initial
+block into the first slot. It is linear in :math:`x` because
+:math:`b^{0}_m` is data; with no initial state
+(:math:`\mathcal{M}^{0}=\emptyset`) it vanishes and the objective is the
+v1.0.0 objective.
 
 If a block has no terminal-role metadata, the implementation falls back
 to machine-level production sums for the production reward term.
@@ -159,7 +190,7 @@ roles:
 
    I^{\text{start}}_{r,b,s}=
    \begin{cases}
-   0, & s \text{ is first shift}\\
+   I^{0}_{r,b}, & s = s_1\\
    I_{r,b,\operatorname{prev}(s)}, & \text{otherwise}
    \end{cases}
    \qquad \forall (r,b)\in\mathcal{P}^{\text{inv}}, s,
@@ -189,6 +220,7 @@ Head-start activation for buffered downstream roles:
 
    I_{r,b,\operatorname{prev}(s)} \ge B_{r,b}\,g_{r,b,s}
    \qquad \forall (r,b)\in\mathcal{P}^{\text{act}}, s,
+   \qquad \text{with } I_{r,b,\operatorname{prev}(s_1)} := I^{0}_{r,b},
 
 .. math::
 
@@ -220,6 +252,24 @@ Block completion balance with leftover slack:
    \sum_{r\in\mathcal{T}_b}\sum_{s\in\mathcal{S}} z_{r,b,s} + L_b = W_b
    \qquad \forall b\in\mathcal{B}.
 
+Carried-in remaining role output (only for pairs supplied by the initial
+state):
+
+.. math::
+
+
+   \sum_{s\in\mathcal{S}} z_{r,b,s} \le R_{r,b}
+   \qquad \forall (r,b)\in\mathcal{P}^{\text{rem}}.
+
+Locked assignments (a lock without a shift label pins every available
+shift of its day; a lock with a shift label pins only that slot):
+
+.. math::
+
+
+   x_{m_k,b,s} = A_{m_k,s}\,\mathbf{1}[b=b_k]
+   \qquad \forall k\in\mathcal{K},\; s\in\mathcal{S}_k,\; b\in\mathcal{B}.
+
 Landing daily assignment capacity with surplus slack:
 
 .. math::
@@ -236,6 +286,12 @@ Domain restrictions:
 
    x, y, g \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L,S \ge 0.
 
+**Initial state defaults.** Without ``Scenario.initial_state`` and
+``Scenario.locked_assignments`` (:math:`\bar{I}\equiv 0`, hence
+:math:`I^{0}\equiv 0`;
+:math:`\mathcal{M}^{0}=\mathcal{P}^{\text{rem}}=\mathcal{K}=\emptyset`)
+every equation above reduces exactly to the FHOPS v1.0.0 formulation.
+
 **Implementation mapping (equation blocks to code).**
 
 - Machine capacity and availability: ``model.machine_capacity``
@@ -249,21 +305,29 @@ Domain restrictions:
   (``role_prod_balance_rule``)
 - Transition linkage: ``model.transition_prev``,
   ``model.transition_curr``, ``model.transition_link``
-- Inventory dynamics and guards: ``model.inventory_start_eq``,
-  ``model.inventory_balance``, ``model.inventory_guard``
+- Inventory dynamics and guards: ``model.inventory_start_eq`` (first
+  slot uses :math:`I^{0}_{r,b}` from
+  ``bundle.initial_staged_inventory``), ``model.inventory_balance``,
+  ``model.inventory_guard``
 - Head-start activation: ``model.activation_prod``,
   ``model.head_start``, ``model.role_active_upper``,
   ``model.role_active_lower``
 - Loader batching: ``model.loader_batch``, ``model.loader_partial_cap``
 - Block balance with leftovers: ``model.block_balance``
   (``block_balance_rule``) + ``model.leftover``
+- Carried-in remaining role output: ``model.role_remaining_cap`` (from
+  ``bundle.initial_role_remaining``)
+- Locked assignments: ``model.locked_assignment`` (from
+  ``bundle.locked_assignments``)
 - Landing capacity with slack: ``model.landing_capacity``
   (``landing_capacity_rule``) + ``model.landing_surplus``
 - Objective assembly: ``model.objective`` and objective-term
   construction around ``prod_weight``, ``landing_weight``,
-  ``mobilisation_weight``, ``transition_weight``
+  ``mobilisation_weight``, ``transition_weight``, including the
+  first-slot boundary term from ``bundle.initial_machine_block``
 - Data/parameter normalization: ``build_operational_bundle(...)`` in
-  ``fhops.model.milp.data``
+  ``fhops.model.milp.data`` (flattens ``Scenario.initial_state`` and
+  ``Scenario.locked_assignments`` into the bundle)
 
 This formulation is the canonical mathematical reference for FHOPS
 operational MILP documentation and thesis-level reporting.

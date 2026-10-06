@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from dataclasses import replace as dc_replace
 from typing import TYPE_CHECKING
 
@@ -26,7 +26,39 @@ else:  # pragma: no cover - runtime placeholder
 
 @dataclass(frozen=True)
 class OperationalProblem:
-    """Precomputed scenario metadata shared across heuristic solvers."""
+    """Precomputed scenario metadata shared across heuristic solvers.
+
+    Attributes
+    ----------
+    problem, bundle:
+        Source :class:`Problem` and its :class:`OperationalMilpBundle`.
+    allowed_roles, prereq_roles, machines_by_role, role_headstarts, loader_batch_volume,
+    loader_roles, terminal_roles, blocks_with_explicit_system:
+        Harvest-system role metadata derived from the bundle.
+    role_work_required:
+        Initial remaining output per ``(block_id, role)`` for explicit-system blocks:
+        ``work_required`` by default, overridden by ``initial_state`` ``role_remaining`` values.
+    blackout_shifts:
+        ``(machine_id, day, shift_id)`` slots blocked by timeline blackouts.
+    locked_assignments:
+        Day-level locks ``(machine_id, day) -> block_id`` (``ScheduleLock.shift_id is None``).
+    locked_shift_assignments:
+        Shift-level locks ``(machine_id, day, shift_id) -> block_id``. Use :meth:`lock_for` to
+        query both lock maps.
+    mobilisation_params, distance_lookup:
+        Mobilisation parameters per machine and the block-to-block distance lookup.
+    shift_keys, shift_index:
+        Ordered ``(day, shift_id)`` slots and their positional index.
+    initial_role_inventory:
+        ``(block_id, role) -> m³`` staged output carried in from ``initial_state`` (explicit-system
+        blocks only). Empty by default.
+    initial_role_counts:
+        ``(block_id, role) -> shifts`` already worked, seeding head-start accounting. Empty by
+        default.
+    initial_machine_block:
+        ``machine_id -> block_id`` occupied before the horizon; the first move away from it is
+        charged mobilisation. Empty by default.
+    """
 
     problem: Problem
     bundle: OperationalMilpBundle
@@ -45,6 +77,23 @@ class OperationalProblem:
     terminal_roles: Mapping[str, frozenset[str]]
     shift_keys: tuple[tuple[int, str], ...]
     shift_index: Mapping[tuple[int, str], int]
+    locked_shift_assignments: Mapping[tuple[str, int, str], str] = field(default_factory=dict)
+    initial_role_inventory: Mapping[tuple[str, str], float] = field(default_factory=dict)
+    initial_role_counts: Mapping[tuple[str, str], int] = field(default_factory=dict)
+    initial_machine_block: Mapping[str, str] = field(default_factory=dict)
+
+    def lock_for(self, machine_id: str, day: int, shift_id: str) -> str | None:
+        """Return the block locked for ``machine_id`` in slot ``(day, shift_id)`` (or ``None``).
+
+        Shift-level locks take precedence over day-level locks (scenario validation forbids both
+        for the same machine/day).
+        """
+
+        if self.locked_shift_assignments:
+            block_id = self.locked_shift_assignments.get((machine_id, day, shift_id))
+            if block_id is not None:
+                return block_id
+        return self.locked_assignments.get((machine_id, day))
 
     def build_sanitizer(self, schedule_cls: type[Schedule]) -> Sanitizer:
         """Return a schedule sanitizer enforcing locks, availability, and landing caps."""
@@ -52,7 +101,7 @@ class OperationalProblem:
         bundle = self.bundle
         machine_roles = bundle.machine_roles
         allowed_roles = self.allowed_roles
-        locked = self.locked_assignments
+        lock_for = self.lock_for
         shift_availability = bundle.availability_shift
         day_availability = bundle.availability_day
         blackout = self.blackout_shifts
@@ -66,9 +115,9 @@ class OperationalProblem:
                 role = machine_roles.get(machine_id)
                 plan[machine_id] = {}
                 for (day, shift_id), block_id in assignments.items():
-                    lock_key = (machine_id, day)
-                    if lock_key in locked:
-                        plan[machine_id][(day, shift_id)] = locked[lock_key]
+                    locked_block = lock_for(machine_id, day, shift_id)
+                    if locked_block is not None:
+                        plan[machine_id][(day, shift_id)] = locked_block
                         continue
                     shift_available = shift_availability.get((machine_id, day, shift_id), 1)
                     day_available = day_availability.get((machine_id, day), 1)
@@ -103,7 +152,20 @@ class OperationalProblem:
 
 
 def build_operational_problem(pb: Problem) -> OperationalProblem:
-    """Construct an :class:`OperationalProblem` for the provided :class:`Problem`."""
+    """Construct an :class:`OperationalProblem` for the provided :class:`Problem`.
+
+    Parameters
+    ----------
+    pb:
+        Problem produced by :meth:`fhops.scenario.contract.Problem.from_scenario`.
+
+    Returns
+    -------
+    OperationalProblem
+        Shared context. When ``pb.scenario.initial_state`` is set, ``role_work_required`` reflects
+        the carried-in ``role_remaining`` values and the ``initial_*`` mappings are populated;
+        otherwise the context is identical to v1.0.0.
+    """
 
     bundle = build_operational_bundle(pb)
     explicit_blocks = frozenset(block.id for block in pb.scenario.blocks if block.harvest_system_id)
@@ -115,8 +177,21 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         role_work_required,
         terminal_roles,
     ) = _derive_role_metadata(bundle, explicit_blocks)
+    for key, remaining in bundle.initial_role_remaining.items():
+        if key in role_work_required:
+            role_work_required[key] = remaining
+    initial_role_inventory = {
+        key: volume
+        for key, volume in bundle.initial_staged_inventory.items()
+        if key[0] in explicit_blocks
+    }
+    initial_role_counts = {
+        key: count
+        for key, count in bundle.initial_role_shift_counts.items()
+        if key[0] in explicit_blocks
+    }
     blackout = _build_blackout_shifts(pb)
-    locked = _build_locked_assignments(pb)
+    locked, locked_shift = _build_locked_assignments(pb)
     mobilisation_params = _build_mobilisation_params(pb)
     distance_lookup = bundle.mobilisation_distances or build_distance_lookup(
         pb.scenario.mobilisation
@@ -145,6 +220,10 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         terminal_roles=terminal_roles,
         shift_keys=shift_keys,
         shift_index=shift_index,
+        locked_shift_assignments=locked_shift,
+        initial_role_inventory=initial_role_inventory,
+        initial_role_counts=initial_role_counts,
+        initial_machine_block=dict(bundle.initial_machine_block),
     )
 
 
@@ -284,11 +363,21 @@ def _build_blackout_shifts(pb: Problem) -> frozenset[tuple[str, int, str]]:
     return frozenset(blackout)
 
 
-def _build_locked_assignments(pb: Problem) -> dict[tuple[str, int], str]:
+def _build_locked_assignments(
+    pb: Problem,
+) -> tuple[dict[tuple[str, int], str], dict[tuple[str, int, str], str]]:
     locks = getattr(pb.scenario, "locked_assignments", None)
     if not locks:
-        return {}
-    return {(lock.machine_id, lock.day): lock.block_id for lock in locks}
+        return {}, {}
+    day_locks: dict[tuple[str, int], str] = {}
+    shift_locks: dict[tuple[str, int, str], str] = {}
+    for lock in locks:
+        shift_id = getattr(lock, "shift_id", None)
+        if shift_id is None:
+            day_locks[(lock.machine_id, lock.day)] = lock.block_id
+        else:
+            shift_locks[(lock.machine_id, lock.day, shift_id)] = lock.block_id
+    return day_locks, shift_locks
 
 
 def _build_mobilisation_params(pb: Problem) -> dict[str, MachineMobilisation]:

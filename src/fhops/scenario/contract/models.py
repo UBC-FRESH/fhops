@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from datetime import date
 from enum import StrEnum
+from typing import cast
 
-from pydantic import BaseModel, ValidationInfo, field_validator, model_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 
 from fhops.costing.machine_rates import compose_default_rental_rate_for_role, normalize_machine_role
 from fhops.scheduling import MobilisationConfig, TimelineConfig
@@ -13,7 +14,7 @@ from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
 
 class ScheduleLock(BaseModel):
-    """Immutable assignment of a machine to a block on a specific day.
+    """Immutable assignment of a machine to a block on a specific day (or day/shift slot).
 
     Attributes
     ----------
@@ -23,11 +24,32 @@ class ScheduleLock(BaseModel):
         Identifier of the block that must be worked during the lock.
     day:
         One-indexed day within the planning horizon where the lock applies.
+    shift_id:
+        Optional shift label. ``None`` (default) locks every available shift of ``day`` to
+        ``block_id`` (the v1.0.0 behaviour). When set, only the ``(day, shift_id)`` slot is locked;
+        the label must belong to the scenario's shift grid (``shift_calendar`` labels, timeline
+        shift names, or ``S1`` for day-indexed scenarios).
+
+    Notes
+    -----
+    A day-level lock and a shift-level lock for the same machine/day are rejected by
+    :class:`Scenario` validation, as are duplicate ``(machine_id, day, shift_id)`` entries.
     """
 
     machine_id: str
     block_id: str
     day: Day
+    shift_id: str | None = None
+
+    @field_validator("shift_id")
+    @classmethod
+    def _shift_not_blank(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        stripped = value.strip()
+        if not stripped:
+            raise ValueError("ScheduleLock.shift_id must be non-empty when provided")
+        return stripped
 
 
 class ObjectiveWeights(BaseModel):
@@ -378,6 +400,164 @@ class ProductionRate(BaseModel):
         return value
 
 
+def _normalise_role_mapping(
+    mapping: dict[str, float] | dict[str, int], field_name: str
+) -> dict[str, float] | dict[str, int]:
+    """Normalise role keys and reject negative values or duplicate normalised keys."""
+
+    normalised: dict = {}
+    for raw_role, value in mapping.items():
+        role = normalize_machine_role(raw_role)
+        if role is None:
+            raise ValueError(f"BlockInitialState.{field_name} contains a blank role key")
+        if value < 0:
+            raise ValueError(
+                f"BlockInitialState.{field_name}[{raw_role!r}] must be non-negative (got {value})"
+            )
+        if role in normalised:
+            raise ValueError(
+                f"BlockInitialState.{field_name} lists role {role!r} more than once "
+                "(after role-name normalisation)"
+            )
+        normalised[role] = value
+    return normalised
+
+
+class BlockInitialState(BaseModel):
+    """Carried-over sequencing state for one block at the start of the horizon.
+
+    Used to resume planning mid-operation (e.g. a rolling-horizon window that starts after some
+    volume has already been felled, extracted, or processed). The *terminal* volume still to be
+    delivered is expressed through ``Block.work_required`` itself; this model captures the
+    intermediate (non-terminal) state of the harvest-system roles.
+
+    Attributes
+    ----------
+    block_id:
+        Identifier of a block in ``Scenario.blocks``.
+    role_remaining:
+        Mapping ``role -> volume`` (m³) the role may still output on this block, i.e.
+        ``work_required`` at the original start minus the role's cumulative output. Roles omitted
+        here default to the block's ``work_required`` (the v1.0.0 initialisation). Values must be
+        non-negative.
+    staged_inventory:
+        Mapping ``role -> volume`` (m³) output by that role on this block but not yet consumed by
+        its downstream role(s) (for example, felled-but-unskidded wood is keyed by the felling
+        role). A downstream role ``r`` starts with ``min`` over its upstream roles' staged volume
+        available as input. Roles omitted here start with zero staged volume. Values must be
+        non-negative.
+    role_shift_counts:
+        Mapping ``role -> shifts`` already worked on this block, used by head-start
+        (``role_headstart_shifts``) accounting in the heuristics and playback sequencing tracker.
+        Roles omitted here start at zero. Values must be non-negative integers.
+
+    Notes
+    -----
+    Role keys are normalised with :func:`fhops.costing.machine_rates.normalize_machine_role`
+    (case-insensitive, punctuation → ``_``), so ``"Feller-Buncher"`` becomes ``feller_buncher``.
+    Scenario-level validation requires every role key to be a role of the block's harvest system,
+    which means the block must declare ``harvest_system_id`` when any role-keyed state is given.
+    """
+
+    block_id: str
+    role_remaining: dict[str, float] = Field(default_factory=dict)
+    staged_inventory: dict[str, float] = Field(default_factory=dict)
+    role_shift_counts: dict[str, int] = Field(default_factory=dict)
+
+    @field_validator("role_remaining", "staged_inventory")
+    @classmethod
+    def _volumes_valid(cls, value: dict[str, float], info: ValidationInfo) -> dict[str, float]:
+        return cast(dict[str, float], _normalise_role_mapping(value, str(info.field_name)))
+
+    @field_validator("role_shift_counts")
+    @classmethod
+    def _counts_valid(cls, value: dict[str, int], info: ValidationInfo) -> dict[str, int]:
+        return cast(dict[str, int], _normalise_role_mapping(value, str(info.field_name)))
+
+
+class MachineInitialState(BaseModel):
+    """Carried-over position of one machine at the start of the horizon.
+
+    Attributes
+    ----------
+    machine_id:
+        Identifier of a machine in ``Scenario.machines``.
+    last_block_id:
+        Block the machine occupied in its last worked slot before the horizon, or ``None`` when
+        unknown (the v1.0.0 behaviour: the first move is free). When set, the machine's first
+        assignment to a different block is charged mobilisation (``MobilisationConfig``) and a
+        transition by the operational MILP, the heuristics, and playback.
+    """
+
+    machine_id: str
+    last_block_id: str | None = None
+
+
+class ScenarioInitialState(BaseModel):
+    """Optional initial state for a scenario (resume planning mid-operation).
+
+    When ``Scenario.initial_state`` is ``None`` (default) every solver, tracker, and playback path
+    behaves exactly as in FHOPS v1.0.0: staged inventories and role shift counts start at zero,
+    each role may output the full ``work_required``, and machines have no prior position.
+
+    Attributes
+    ----------
+    blocks:
+        Per-block :class:`BlockInitialState` entries (at most one per ``block_id``). Blocks not
+        listed start from the default (empty) state.
+    machines:
+        Per-machine :class:`MachineInitialState` entries (at most one per ``machine_id``).
+
+    Examples
+    --------
+    >>> state = ScenarioInitialState(
+    ...     blocks=[
+    ...         BlockInitialState(
+    ...             block_id="B01",
+    ...             role_remaining={"feller_buncher": 0.0},
+    ...             staged_inventory={"feller_buncher": 120.0},
+    ...         )
+    ...     ],
+    ...     machines=[MachineInitialState(machine_id="H3", last_block_id="B02")],
+    ... )
+    >>> state.block_state("B01").staged_inventory
+    {'feller_buncher': 120.0}
+    """
+
+    blocks: list[BlockInitialState] = Field(default_factory=list)
+    machines: list[MachineInitialState] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _unique_ids(self) -> ScenarioInitialState:
+        seen_blocks: set[str] = set()
+        for block_state in self.blocks:
+            if block_state.block_id in seen_blocks:
+                raise ValueError(
+                    f"initial_state lists block_id={block_state.block_id} more than once"
+                )
+            seen_blocks.add(block_state.block_id)
+        seen_machines: set[str] = set()
+        for machine_state in self.machines:
+            if machine_state.machine_id in seen_machines:
+                raise ValueError(
+                    f"initial_state lists machine_id={machine_state.machine_id} more than once"
+                )
+            seen_machines.add(machine_state.machine_id)
+        return self
+
+    def block_state(self, block_id: str) -> BlockInitialState | None:
+        """Return the :class:`BlockInitialState` for ``block_id`` (``None`` when absent)."""
+        return next((state for state in self.blocks if state.block_id == block_id), None)
+
+    def last_block_by_machine(self) -> dict[str, str]:
+        """Return ``machine_id -> last_block_id`` for machines with a known prior position."""
+        return {
+            state.machine_id: state.last_block_id
+            for state in self.machines
+            if state.last_block_id is not None
+        }
+
+
 class Scenario(BaseModel):
     """Top-level container for the FHOPS data contract.
 
@@ -418,11 +598,19 @@ class Scenario(BaseModel):
     crew_assignments:
         Optional list mapping crew IDs to machines for reporting/telemetry.
     locked_assignments:
-        Optional list of :class:`ScheduleLock` entries that pin machines to blocks on specific days.
+        Optional list of :class:`ScheduleLock` entries that pin machines to blocks on specific days
+        (or specific day/shift slots when ``ScheduleLock.shift_id`` is set). Enforced by the
+        operational MILP, the legacy MIP builder, and the heuristics.
     objective_weights:
         Optional :class:`ObjectiveWeights` overriding default solver weights.
     road_construction:
         Optional list of :class:`RoadConstruction` entries used by telemetry/costing exports.
+    initial_state:
+        Optional :class:`ScenarioInitialState` carrying staged inter-role inventory, remaining
+        per-role output, head-start shift counts, and each machine's last block at the start of
+        the horizon. ``None`` (default) reproduces the v1.0.0 behaviour exactly. Validation
+        requires known block/machine ids, non-negative values, role keys drawn from the block's
+        harvest-system roles, and ``last_block_id`` values that are scenario blocks.
 
     Notes
     -----
@@ -448,6 +636,7 @@ class Scenario(BaseModel):
     locked_assignments: list[ScheduleLock] | None = None
     objective_weights: ObjectiveWeights | None = None
     road_construction: list[RoadConstruction] | None = None
+    initial_state: ScenarioInitialState | None = None
 
     @field_validator("num_days")
     @classmethod
@@ -572,7 +761,10 @@ class Scenario(BaseModel):
                 seen_crews.add(assignment.crew_id)
 
         if self.locked_assignments:
-            seen_locks: set[tuple[str, int]] = set()
+            day_locks: set[tuple[str, int]] = set()
+            shift_locks: set[tuple[str, int, str]] = set()
+            shift_locked_days: set[tuple[str, int]] = set()
+            known_shift_ids = self.shift_labels()
             for lock in self.locked_assignments:
                 if lock.machine_id not in machine_ids:
                     raise ValueError(
@@ -585,11 +777,26 @@ class Scenario(BaseModel):
                 if lock.day < 1 or lock.day > self.num_days:
                     raise ValueError(f"Locked assignment day {lock.day} outside scenario horizon")
                 key = (lock.machine_id, lock.day)
-                if key in seen_locks:
+                if lock.shift_id is None:
+                    if key in day_locks or key in shift_locked_days:
+                        raise ValueError(
+                            f"Multiple locked assignments for machine {lock.machine_id} on day {lock.day}"
+                        )
+                    day_locks.add(key)
+                    continue
+                if lock.shift_id not in known_shift_ids:
                     raise ValueError(
-                        f"Multiple locked assignments for machine {lock.machine_id} on day {lock.day}"
+                        f"Locked assignment for machine {lock.machine_id} references unknown "
+                        f"shift_id={lock.shift_id} (known: {', '.join(sorted(known_shift_ids))})"
                     )
-                seen_locks.add(key)
+                shift_key = (lock.machine_id, lock.day, lock.shift_id)
+                if key in day_locks or shift_key in shift_locks:
+                    raise ValueError(
+                        f"Multiple locked assignments for machine {lock.machine_id} on day "
+                        f"{lock.day} shift {lock.shift_id}"
+                    )
+                shift_locks.add(shift_key)
+                shift_locked_days.add(key)
             if self.timeline and self.timeline.blackouts:
                 for lock in self.locked_assignments:
                     for blackout in self.timeline.blackouts:
@@ -606,7 +813,100 @@ class Scenario(BaseModel):
                     )
                 seen_jobs.add(road_job.id)
 
+        if self.initial_state is not None:
+            validate_initial_state(self)
+
         return self
+
+    def shift_labels(self) -> set[str]:
+        """Return the shift labels of the scenario's shift grid.
+
+        Returns
+        -------
+        set[str]
+            ``shift_calendar`` labels when a shift calendar is present, otherwise the timeline shift
+            names, otherwise ``{"S1"}`` (the synthetic single shift used by
+            :meth:`Problem.from_scenario` for day-indexed scenarios).
+        """
+        if self.shift_calendar:
+            return {entry.shift_id for entry in self.shift_calendar}
+        if self.timeline and self.timeline.shifts:
+            return {shift_def.name for shift_def in self.timeline.shifts}
+        return {"S1"}
+
+
+def validate_initial_state(scenario: Scenario) -> None:
+    """Validate ``scenario.initial_state`` against the scenario's blocks, machines, and systems.
+
+    Called automatically by :class:`Scenario` validation and by
+    :func:`fhops.scenario.io.load_scenario` after harvest systems are attached (``model_copy``
+    updates bypass Pydantic validators).
+
+    Parameters
+    ----------
+    scenario:
+        Scenario whose ``initial_state`` should be checked. ``None`` initial state is accepted.
+
+    Raises
+    ------
+    ValueError
+        If a block/machine id is unknown, a ``last_block_id`` is not a scenario block, a block with
+        role-keyed state has no ``harvest_system_id``, or a role key is not a role of the block's
+        harvest system. Harvest systems are looked up in ``scenario.harvest_systems`` (falling back
+        to :func:`fhops.scheduling.systems.default_system_registry`, mirroring
+        :meth:`Problem.from_scenario`).
+    """
+
+    state = scenario.initial_state
+    if state is None:
+        return
+    blocks = {block.id: block for block in scenario.blocks}
+    machine_ids = {machine.id for machine in scenario.machines}
+    registry: dict[str, HarvestSystem] = dict(default_system_registry())
+    if scenario.harvest_systems:
+        registry.update(scenario.harvest_systems)
+
+    for block_state in state.blocks:
+        block = blocks.get(block_state.block_id)
+        if block is None:
+            raise ValueError(f"initial_state references unknown block_id={block_state.block_id}")
+        role_keys = (
+            set(block_state.role_remaining)
+            | set(block_state.staged_inventory)
+            | set(block_state.role_shift_counts)
+        )
+        if not role_keys:
+            continue
+        if not block.harvest_system_id:
+            raise ValueError(
+                f"initial_state for block {block.id} sets role-keyed state but the block has no "
+                "harvest_system_id"
+            )
+        system = registry.get(block.harvest_system_id)
+        if system is None:
+            raise ValueError(
+                f"initial_state for block {block.id} references unknown harvest system "
+                f"{block.harvest_system_id}"
+            )
+        system_roles = {job.machine_role for job in system.jobs if job.machine_role}
+        unknown = sorted(role_keys - system_roles)
+        if unknown:
+            raise ValueError(
+                f"initial_state for block {block.id} uses role(s) {', '.join(unknown)} that are not "
+                f"roles of harvest system {system.system_id} "
+                f"({', '.join(sorted(system_roles))})"
+            )
+
+    for machine_state in state.machines:
+        if machine_state.machine_id not in machine_ids:
+            raise ValueError(
+                f"initial_state references unknown machine_id={machine_state.machine_id}"
+            )
+        if machine_state.last_block_id is not None and machine_state.last_block_id not in blocks:
+            raise ValueError(
+                f"initial_state machine {machine_state.machine_id} references unknown "
+                f"last_block_id={machine_state.last_block_id}"
+            )
 
 
 class ShiftInstance(BaseModel):
@@ -704,6 +1004,10 @@ __all__ = [
     "ScheduleLock",
     "ObjectiveWeights",
     "ShiftInstance",
+    "BlockInitialState",
+    "MachineInitialState",
+    "ScenarioInitialState",
+    "validate_initial_state",
 ]
 
 
