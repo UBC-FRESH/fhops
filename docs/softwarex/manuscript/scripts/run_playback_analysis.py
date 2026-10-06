@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
-"""Run deterministic + stochastic playback for benchmark assignments."""
+"""Run deterministic + stochastic playback for benchmark assignments.
+
+Stochastic playback uses ``STOCHASTIC_FLAGS`` (50 samples, base seed 123, downtime probability
+0.05, weather probability 0.1, landing-shock probability 0.05). Since FHOPS 1.0.1 each downtime hit
+samples a duration from the ``fhops eval-playback`` defaults (mean 4 h, std 1.5 h, clipped to the
+shift length; a full-shift loss cancels the assignment) instead of always removing the whole shift,
+and landing shocks are sampled per landing and calendar day and scale every assignment on the
+landing for their duration. Assets generated with FHOPS 1.0.0 therefore differ in the stochastic
+outputs only (see ``docs/howto/evaluation.rst``, "Stochastic event semantics").
+
+Install ``tabulate`` before running so ``summary.md`` contains Markdown tables (without it the
+playback exporter falls back to CSV blocks and the committed summaries change).
+"""
 
 from __future__ import annotations
 
 import argparse
 import json
 import subprocess
+import sys
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -53,6 +66,8 @@ SCENARIOS = [
     },
 ]
 
+# Downtime duration uses the eval-playback defaults (--downtime-mean 4.0, --downtime-std 1.5) and the
+# default base seed (--seed 123).
 STOCHASTIC_FLAGS = [
     "--samples",
     "50",
@@ -96,7 +111,14 @@ def summarize_metrics(shift_csv: Path, day_csv: Path, dest: Path) -> None:
     shift_df = pd.read_csv(shift_csv)
     day_df = pd.read_csv(day_csv)
     metrics = playback_summary_metrics(shift_df, day_df)
-    dest.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    dest.write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
+
+
+def ensure_trailing_newline(path: Path) -> None:
+    """Match the repository's end-of-file-fixer hook so regenerated assets are byte-stable."""
+    text = path.read_text(encoding="utf-8")
+    if text and not text.endswith("\n"):
+        path.write_text(text + "\n", encoding="utf-8")
 
 
 def main() -> int:
@@ -127,7 +149,7 @@ def main() -> int:
                 day_csv = mode_dir / "day.csv"
                 summary_md = mode_dir / "summary.md"
                 cmd = [
-                    "python",
+                    sys.executable,
                     "-m",
                     "fhops.cli.main",
                     "eval-playback",
@@ -144,6 +166,7 @@ def main() -> int:
                 cmd.extend(extra_flags)
                 print(f"[playback] {slug}/{solver} ({mode})")
                 run_eval(cmd)
+                ensure_trailing_newline(summary_md)
                 summarize_metrics(shift_csv, day_csv, mode_dir / "metrics.json")
     return 0
 
