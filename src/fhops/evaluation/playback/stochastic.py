@@ -1,17 +1,26 @@
-"""Stochastic playback helpers (downtime, weather sampling)."""
+"""Stochastic playback helpers (downtime, weather, landing shocks).
+
+This module replays a fixed schedule under sampled operational disturbances to quantify
+schedule robustness. Each sample copies the deterministic assignments, applies the configured
+events in order (downtime → weather → landing shocks), and re-runs deterministic playback so
+the sequencing tracker re-caps production. Event effects compose multiplicatively on the
+assignment's production (volume, m³). Sample ``i`` uses ``numpy.random.default_rng(base_seed +
+i)`` shared by all events in that order, so results are reproducible for a given seed and event
+configuration.
+"""
 
 from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Protocol, TypedDict, cast
+from typing import Protocol, cast
 
 import numpy as np
 import pandas as pd
 
 from fhops.scenario.contract import Problem
 
-from .adapters import assignments_to_records
+from .adapters import assignments_to_records, shift_hours_resolver
 from .core import PlaybackResult, run_playback
 from .events import SamplingConfig
 
@@ -20,6 +29,7 @@ __all__ = [
     "PlaybackEvent",
     "DowntimeEvent",
     "WeatherEvent",
+    "LandingShockEvent",
     "PlaybackSample",
     "EnsembleResult",
     "run_stochastic_playback",
@@ -50,8 +60,60 @@ class PlaybackEvent(Protocol):
     ) -> pd.DataFrame: ...
 
 
+def _row_key(row: pd.Series) -> Key:
+    """Return the ``(machine, block, day, shift)`` production-map key for an assignment row."""
+    return (
+        str(row["machine_id"]),
+        str(row["block_id"]),
+        int(row["day"]),
+        str(row.get("shift_id", "S1")),
+    )
+
+
+def _current_production(row: pd.Series, base_production: dict[Key, float]) -> float:
+    """Return the row's current production, falling back to the deterministic baseline."""
+    value = row.get("production")
+    if value is not None and pd.notna(value):
+        return float(value)
+    return float(base_production.get(_row_key(row), 0.0) or 0.0)
+
+
+def _active_mask(df: pd.DataFrame) -> pd.Series:
+    """Return a mask of rows that are still assigned (``assigned > 0`` or no flag column)."""
+    if "assigned" not in df.columns:
+        return pd.Series(True, index=df.index)
+    return df["assigned"].fillna(0) > 0
+
+
 class DowntimeEvent:
-    """Randomly remove assignments to simulate downtime."""
+    """Remove part or all of a machine-shift's production to simulate downtime.
+
+    Parameters
+    ----------
+    config : DowntimeEventConfig
+        Probability, duration distribution (hours), ``max_concurrent`` and role filter.
+
+    Notes
+    -----
+    Eligible rows are assignments with ``assigned > 0`` whose machine role passes
+    ``target_machine_roles``. Sampling order (deterministic for a given RNG state):
+
+    1. Days are visited in ascending order.
+    2. Selection on each day: with ``max_concurrent`` set, ``rng.choice`` draws
+       ``min(max_concurrent, n)`` of the day's ``n`` eligible rows without replacement
+       (``probability`` only acts as an on/off switch); otherwise one ``rng.random()`` per
+       eligible row (in frame order) selects the row when ``<= probability``.
+    3. For each selected row (in selection order) one ``rng.normal(mean_duration_hours,
+       std_duration_hours)`` draw gives the duration ``d``, clipped to ``[0, shift_hours]``.
+
+    ``shift_hours`` follows deterministic playback (:func:`shift_hours_resolver`): the
+    matching ``timeline.shifts`` definition, else the machine's ``daily_hours``. With
+    ``0 < d < shift_hours`` the row's production is multiplied by ``1 - d / shift_hours``;
+    with ``d == shift_hours`` (or unknown shift hours) the shift is lost entirely
+    (``assigned = 0``, ``production = 0``); ``d == 0`` leaves the row untouched. Affected rows
+    get ``_downtime = 1`` and ``_downtime_hours = d`` so playback summaries report the sampled
+    downtime hours.
+    """
 
     def __init__(self, config):
         self.config = config
@@ -62,6 +124,7 @@ class DowntimeEvent:
         assignments: pd.DataFrame,
         base_production: dict[Key, float],
     ) -> pd.DataFrame:
+        """Return a copy of ``assignments`` with downtime applied (see class notes)."""
         df = assignments.copy()
         if df.empty or self.config.probability <= 0:
             return df
@@ -71,38 +134,73 @@ class DowntimeEvent:
         }
         df["_target_role"] = df["machine_id"].map(machine_roles)
         role_filter = self.config.target_machine_roles
-        mask = df["_target_role"].notna() if role_filter else pd.Series(True, index=df.index)
+        mask = _active_mask(df)
         if role_filter:
-            allowed = set(role_filter)
-            mask &= df["_target_role"].isin(allowed)
+            mask &= df["_target_role"].notna() & df["_target_role"].isin(set(role_filter))
         candidates = df[mask]
+        df.drop(columns="_target_role", inplace=True)
         if candidates.empty:
-            df.drop(columns="_target_role", inplace=True)
             return df
 
-        df["_downtime"] = 0
-        grouped = candidates.groupby("day")
-        for day, day_frame in grouped:
+        hours_for = shift_hours_resolver(scenario)
+        mean = float(self.config.mean_duration_hours)
+        std = float(self.config.std_duration_hours)
+        if "assigned" not in df.columns:
+            df["assigned"] = 1
+        if "_downtime" not in df.columns:
+            df["_downtime"] = 0
+        if "_downtime_hours" not in df.columns:
+            df["_downtime_hours"] = 0.0
+        rng = context.rng
+        for _day, day_frame in candidates.groupby("day"):
             indices = day_frame.index.tolist()
-            rng = context.rng
             if self.config.max_concurrent is not None:
                 k = min(len(indices), self.config.max_concurrent)
                 if k == 0:
                     continue
-                selected = rng.choice(indices, size=k, replace=False)
+                selected = list(rng.choice(indices, size=k, replace=False))
             else:
                 selected = [idx for idx in indices if rng.random() <= self.config.probability]
             for idx in selected:
                 row_index = cast(int | str, idx)
-                df.loc[row_index, "assigned"] = 0
-                df.loc[row_index, "production"] = 0.0
+                row = cast(pd.Series, df.loc[row_index])
+                sampled = float(rng.normal(mean, std))
+                shift_hours, _source = hours_for(
+                    str(row["machine_id"]), str(row.get("shift_id", "S1"))
+                )
+                duration = max(sampled, 0.0)
+                if shift_hours is not None and shift_hours > 0:
+                    duration = min(duration, float(shift_hours))
+                if duration <= 0.0:
+                    continue
+                if shift_hours is None or shift_hours <= 0 or duration >= shift_hours:
+                    df.loc[row_index, "assigned"] = 0
+                    df.loc[row_index, "production"] = 0.0
+                else:
+                    current = _current_production(row, base_production)
+                    df.loc[row_index, "production"] = current * (1.0 - duration / shift_hours)
                 df.loc[row_index, "_downtime"] = 1
-        df.drop(columns="_target_role", inplace=True)
+                df.loc[row_index, "_downtime_hours"] = duration
         return df
 
 
 class WeatherEvent:
-    """Adjust production based on weather severity."""
+    """Scale production on days hit by sampled weather spells.
+
+    Parameters
+    ----------
+    config : WeatherEventConfig
+        Day probability, severity levels, spell length and optional shift filter.
+
+    Notes
+    -----
+    Sampling order: for each distinct assignment day in ascending order, one
+    ``rng.random()`` draw starts a spell when ``<= day_probability``; a started spell draws its
+    severity level with ``rng.integers``. Each spell covers ``impact_window_days`` consecutive
+    days; overlapping spells keep the maximum severity. Affected, still-assigned rows have their
+    *current* production multiplied by ``1 - severity`` (so effects compose with earlier
+    events) and record ``_weather_severity``. ``correlated_days`` is deprecated and ignored.
+    """
 
     def __init__(self, config):
         self.config = config
@@ -113,6 +211,7 @@ class WeatherEvent:
         assignments: pd.DataFrame,
         base_production: dict[Key, float],
     ) -> pd.DataFrame:
+        """Return a copy of ``assignments`` with weather impacts applied (see class notes)."""
         df = assignments.copy()
         if df.empty or self.config.day_probability <= 0:
             return df
@@ -133,42 +232,79 @@ class WeatherEvent:
             return df
 
         shifts_filter = set(self.config.affected_shifts) if self.config.affected_shifts else None
+        active = _active_mask(df)
 
         df["_weather_severity"] = 0.0
-        for idx, row in df.iterrows():
+        for idx, row in df[active].iterrows():
             severity = affected.get(int(row["day"]))
             if severity is None:
                 continue
             shift_id = row.get("shift_id", "S1")
             if shifts_filter and shift_id not in shifts_filter:
                 continue
-            key = (
-                str(row["machine_id"]),
-                str(row["block_id"]),
-                int(row["day"]),
-                str(shift_id),
-            )
-            base = base_production.get(key, row.get("production", 0.0) or 0.0)
-            adjusted = max(base * (1 - severity), 0.0)
+            current = _current_production(row, base_production)
+            adjusted = max(current * (1 - severity), 0.0)
             row_index = cast(int | str, idx)
             df.loc[row_index, "production"] = adjusted
             df.loc[row_index, "_weather_severity"] = severity
         return df
 
 
-class LandingShockState(TypedDict):
-    """State tracked for each landing shock (duration, multiplier, remaining days)."""
-
-    duration: int
-    multiplier: float
-    remaining: int
-
-
 class LandingShockEvent:
-    """Reduce landing throughput via random shocks."""
+    """Reduce landing throughput via random multi-day shocks.
+
+    Parameters
+    ----------
+    config : LandingShockConfig
+        Start probability, multiplier range, duration (days) and optional landing filter.
+
+    Notes
+    -----
+    Sampling order (deterministic for a given RNG state): landings are visited in the order
+    of ``target_landing_ids`` (or ``scenario.landings``); for each landing, every calendar day
+    ``1..num_days`` of the scenario horizon is visited in ascending order and one
+    ``rng.random()`` draw starts a shock when ``<= probability``. A started shock immediately
+    draws its multiplier with ``rng.uniform(low, high)`` and covers ``duration_days``
+    consecutive days starting on its start day. When shocks overlap, the minimum multiplier
+    applies on each day.
+
+    Every still-assigned row whose block is served by a shocked landing on an affected day has
+    its *current* production multiplied by the shock multiplier (so effects compose with earlier
+    events) and records ``_landing_multiplier``.
+    """
 
     def __init__(self, config):
         self.config = config
+
+    def sample_multipliers(self, context: SamplingContext) -> dict[tuple[str, int], float]:
+        """Sample landing shocks and return the per-(landing, day) multiplier map.
+
+        Parameters
+        ----------
+        context : SamplingContext
+            Sample context providing the scenario and RNG (consumed in the documented order).
+
+        Returns
+        -------
+        dict[tuple[str, int], float]
+            Mapping ``(landing_id, day) -> multiplier`` for every day covered by at least one
+            shock (minimum multiplier across overlapping shocks). Days without a shock are absent.
+        """
+        rng = context.rng
+        scenario = context.problem.scenario
+        landings = self.config.target_landing_ids or [landing.id for landing in scenario.landings]
+        duration = max(int(self.config.duration_days), 1)
+        lower, upper = self.config.capacity_multiplier_range
+        multipliers: dict[tuple[str, int], float] = {}
+        for landing_id in landings:
+            for start_day in range(1, int(scenario.num_days) + 1):
+                if rng.random() > self.config.probability:
+                    continue
+                multiplier = float(rng.uniform(lower, upper))
+                for day in range(start_day, start_day + duration):
+                    key = (landing_id, day)
+                    multipliers[key] = min(multipliers.get(key, multiplier), multiplier)
+        return multipliers
 
     def apply(
         self,
@@ -176,57 +312,30 @@ class LandingShockEvent:
         assignments: pd.DataFrame,
         base_production: dict[Key, float],
     ) -> pd.DataFrame:
+        """Return a copy of ``assignments`` with landing shocks applied (see class notes)."""
         df = assignments.copy()
         if df.empty or self.config.probability <= 0:
             return df
-        rng = context.rng
         scenario = context.problem.scenario
-
-        landings = self.config.target_landing_ids or [landing.id for landing in scenario.landings]
-        if not landings:
+        multipliers = self.sample_multipliers(context)
+        if not multipliers:
             return df
 
-        shocks: dict[str, LandingShockState] = {}
-        for landing_id in landings:
-            if rng.random() <= self.config.probability:
-                duration = max(self.config.duration_days, 1)
-                lower, upper = self.config.capacity_multiplier_range
-                multiplier = float(rng.uniform(lower, upper))
-                shocks[landing_id] = {
-                    "duration": duration,
-                    "multiplier": multiplier,
-                    "remaining": duration,
-                }
-
-        if not shocks:
-            return df
-
-        landing_lookup = {}
-        for block in scenario.blocks:
-            landing_lookup[block.id] = block.landing_id
+        landing_lookup = {block.id: block.landing_id for block in scenario.blocks}
+        active = _active_mask(df)
 
         df["_landing_multiplier"] = 1.0
-        for idx, row in df.iterrows():
-            block_id = str(row["block_id"])
-            landing_id = landing_lookup.get(block_id)
-            if not landing_id or landing_id not in shocks:
+        for idx, row in df[active].iterrows():
+            landing_id = landing_lookup.get(str(row["block_id"]))
+            if landing_id is None:
                 continue
-            shock = shocks[landing_id]
-            if shock["remaining"] <= 0:
+            multiplier = multipliers.get((landing_id, int(row["day"])))
+            if multiplier is None:
                 continue
-            multiplier = shock["multiplier"]
-            key = (
-                str(row["machine_id"]),
-                block_id,
-                int(row["day"]),
-                str(row.get("shift_id", "S1")),
-            )
-            baseline = base_production.get(key, row.get("production", 0.0) or 0.0)
-            adjusted = max(baseline * multiplier, 0.0)
+            current = _current_production(row, base_production)
             row_index = cast(int | str, idx)
-            df.loc[row_index, "production"] = adjusted
+            df.loc[row_index, "production"] = max(current * multiplier, 0.0)
             df.loc[row_index, "_landing_multiplier"] = multiplier
-            shock["remaining"] -= 1
 
         return df
 
@@ -286,7 +395,34 @@ def run_stochastic_playback(
     sampling_config: SamplingConfig,
     events: Iterable[PlaybackEvent] | None = None,
 ) -> EnsembleResult:
-    """Run stochastic playback over multiple samples."""
+    """Run stochastic playback over multiple samples.
+
+    Parameters
+    ----------
+    problem : fhops.scenario.contract.Problem
+        Problem wrapping the scenario being replayed.
+    assignments : pandas.DataFrame
+        Deterministic assignments (``machine_id``, ``block_id``, ``day``, optional ``shift_id``,
+        ``assigned``, ``production``).
+    sampling_config : SamplingConfig
+        Number of samples, ``base_seed`` and per-event configuration.
+    events : Iterable[PlaybackEvent] | None, default=None
+        Custom events applied in the given order; ``None`` builds the enabled default events in
+        the order downtime → weather → landing shocks.
+
+    Returns
+    -------
+    EnsembleResult
+        ``base_result`` (deterministic playback of ``assignments``) and one
+        :class:`PlaybackSample` per sample.
+
+    Notes
+    -----
+    Sample ``i`` seeds ``numpy.random.default_rng(sampling_config.base_seed + i)``; every event
+    consumes that generator in turn, following the sampling order documented on
+    :class:`DowntimeEvent`, :class:`WeatherEvent` and :class:`LandingShockEvent`. Each sample
+    starts from the deterministic baseline production and events compose multiplicatively.
+    """
 
     base_assignments = _ensure_columns(assignments)
     base_result = run_playback(problem, base_assignments)

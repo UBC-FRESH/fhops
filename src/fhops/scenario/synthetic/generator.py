@@ -575,7 +575,8 @@ def sampling_config_for(config: SyntheticDatasetConfig) -> SamplingConfig:
     base = SamplingConfig(samples=10)
     tier_key = (config.tier or "").lower()
     preset_updates = SAMPLING_PRESETS.get(tier_key, {})
-    data = base.model_dump()
+    # Drop the deprecated weather flag so re-validation does not mark it as explicitly set.
+    data = base.model_dump(exclude={"weather": {"correlated_days"}})
     if preset_updates:
         data = _deep_merge(data, preset_updates)
     if config.sampling_overrides:
