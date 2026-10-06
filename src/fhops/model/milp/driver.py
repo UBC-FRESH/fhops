@@ -1,7 +1,26 @@
-"""Operational MILP driver (solve + watch wrappers)."""
+"""Operational MILP driver (solve + watch wrappers).
+
+The driver builds the operational Pyomo model, optionally seeds it with an incumbent schedule
+(warm start / MIP start), dispatches it to the requested solver, and converts the solution back
+into an assignment table.
+
+Warm-start dispatch per solver (see :func:`solve_operational_milp`):
+
+* ``highs`` / ``appsi_highs`` — Pyomo's default ``highs`` plugin (``pyomo.contrib.solver``) does
+  not accept MIP starts, so seeded solves are routed through the APPSI HiGHS interface
+  (``appsi_highs``), which hands every seeded variable value to ``highspy.Highs.setSolution``.
+  The HiGHS log is captured to report whether the start was accepted.
+* Legacy Pyomo plugins whose ``warm_start_capable()`` is ``True`` (``gurobi``, ``gurobi_direct``,
+  ``gurobi_persistent``, ``cbc`` ≥ 2.8, ``cplex``, …) receive ``warmstart=True`` as before.
+* Any other solver is called without a warm start and a :class:`MilpWarmStartWarning` is emitted.
+"""
 
 from __future__ import annotations
 
+import logging
+import math
+import re
+import warnings
 from collections import defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -25,7 +44,40 @@ ASSIGNMENT_COLUMNS = [
     "production",
 ]
 
-__all__ = ["solve_operational_milp"]
+__all__ = ["MilpWarmStartWarning", "solve_operational_milp"]
+
+_HIGHS_SOLVER_NAMES = frozenset({"highs", "appsi_highs"})
+_HIGHS_LOGGER_NAME = "fhops.model.milp.driver.highs"
+_LIMIT_TERMINATIONS = frozenset(
+    {"maxtimelimit", "maxiterations", "maxevaluations", "objectivelimit"}
+)
+_HIGHS_START_ACCEPTED = re.compile(r"MIP start solution is feasible", re.IGNORECASE)
+_HIGHS_START_REJECTED = re.compile(
+    r"MIP start solution is infeasible|cannot yield feasible solution|"
+    r"User-supplied solution .* has violations",
+    re.IGNORECASE,
+)
+_HIGHS_START_LINE = re.compile(r"MIP start|user-supplied", re.IGNORECASE)
+
+
+class MilpWarmStartWarning(UserWarning):
+    """Warning emitted when an incumbent cannot be passed to the selected MILP solver.
+
+    Raised (via :func:`warnings.warn`) by :func:`solve_operational_milp` when
+    ``incumbent_assignments`` is supplied but the solver interface has no MIP-start support (or the
+    APPSI HiGHS interface is unavailable). The solve still runs, just without the warm start.
+    """
+
+
+class _LineCollector(logging.Handler):
+    """Logging handler that keeps the formatted messages it receives."""
+
+    def __init__(self) -> None:
+        super().__init__(level=logging.DEBUG)
+        self.lines: list[str] = []
+
+    def emit(self, record: logging.LogRecord) -> None:
+        self.lines.append(record.getMessage())
 
 
 @dataclass(slots=True)
@@ -74,9 +126,10 @@ def solve_operational_milp(
         Optional :class:`pandas.DataFrame` with ``machine_id``, ``block_id``, ``day``, ``shift_id``,
         and optional ``assigned``/``production`` columns. When provided we derive every state
         variable implied by the schedule (assignments, production, transitions, mobilisation flags,
-        inventories, landing surplus) and request a Pyomo warm start. The solver will still discard
-        the start if the incumbent is weak; right now only tiny7/small21 benefit measurably, whereas
-        med42/large84 respond better to the solver’s own heuristics.
+        inventories, landing surplus) and pass it to the solver as a MIP start (see *Notes* for
+        the per-solver mechanism). The solver will still discard the start if the incumbent is
+        infeasible; right now only tiny7/small21 benefit measurably, whereas med42/large84 respond
+        better to the solver’s own heuristics.
     context :
         :class:`fhops.optimization.operational_problem.OperationalProblem` describing the scenario.
         Required if the incumbent needs to be expanded into loader and landing state (the CLI and
@@ -85,11 +138,53 @@ def solve_operational_milp(
     Returns
     -------
     dict
-        Dictionary carrying ``objective``, ``production``, ``assignments`` (DataFrame), and solver
-        status/termination metadata. ``objective`` is ``None`` when the solver fails.
+        Dictionary carrying ``objective``, ``production``, ``assignments`` (DataFrame), solver
+        status/termination metadata (``solver_status``, ``termination_condition``), and a
+        ``warm_start`` dictionary. ``objective`` is ``None`` when the solver returns no feasible
+        solution. A solve stopped by a limit (time, iterations, objective) that still holds a
+        feasible incumbent reports that incumbent's objective and assignments.
+
+        ``warm_start`` keys:
+
+        ``requested`` (bool)
+            ``True`` when ``incumbent_assignments`` was non-empty.
+        ``seeded_slots`` (int)
+            Number of ``(machine, shift)`` assignment slots seeded from the incumbent.
+        ``method`` (str | None)
+            ``"appsi_highs"`` (HiGHS MIP start via ``highspy.Highs.setSolution``),
+            ``"pyomo_warmstart"`` (legacy ``solve(..., warmstart=True)``), or ``None`` when no
+            warm start was passed to the solver.
+        ``solver`` (str)
+            Pyomo solver name actually used (``appsi_highs`` for seeded HiGHS solves).
+        ``accepted`` (bool | None)
+            HiGHS only: ``True`` when the log reports ``MIP start solution is feasible``,
+            ``False`` when HiGHS reports the start infeasible, ``None`` when unknown (other
+            solvers, or no start passed).
+        ``solver_messages`` (list[str])
+            HiGHS log lines that mention the MIP start (empty for other solvers).
+
+    Warns
+    -----
+    MilpWarmStartWarning
+        When an incumbent was supplied but the solver interface cannot take a MIP start (the solve
+        continues without it).
 
     Notes
     -----
+    Warm starts per solver:
+
+    * ``highs`` (default) and ``appsi_highs``: seeded solves use Pyomo's APPSI HiGHS interface
+      (``SolverFactory("appsi_highs")``) with ``warmstart=True``. Pyomo's default ``highs``
+      plugin (``pyomo.contrib.solver``'s ``LegacySolverWrapper``) rejects the ``warmstart``
+      keyword, so it is only used for unseeded solves. HiGHS prints
+      ``MIP start solution is feasible, objective value is …`` when it adopts the start.
+    * ``gurobi``, ``gurobi_direct``, ``gurobi_persistent``, ``cplex``, ``cbc`` (≥ 2.8) and other
+      legacy plugins that report ``warm_start_capable()``: ``warmstart=True`` is forwarded
+      unchanged.
+    * Anything else (e.g., ``glpk`` or other ``pyomo.contrib.solver`` interfaces): solved without
+      a warm start and a :class:`MilpWarmStartWarning` is emitted.
+
+
     Locks (``bundle.locked_assignments``) and initial state (``bundle.initial_*``, from
     ``Scenario.initial_state``) are enforced by the model itself (see
     :func:`fhops.model.milp.operational.build_operational_model`). Incumbents are overlaid with the
@@ -109,7 +204,15 @@ def solve_operational_milp(
     if incumbent_assignments is not None:
         seeded = _apply_incumbent_start(model, incumbent_assignments)
 
-    opt = SolverFactory(solver)
+    opt, solver_used, method = _create_solver(solver, warm_start=seeded > 0)
+    warm_info: dict[str, Any] = {
+        "requested": incumbent_assignments is not None and not incumbent_assignments.empty,
+        "seeded_slots": seeded,
+        "method": method,
+        "solver": solver_used,
+        "accepted": None,
+        "solver_messages": [],
+    }
     if time_limit is not None:
         opt.options["time_limit"] = time_limit
     if gap is not None:
@@ -121,12 +224,26 @@ def solve_operational_milp(
         for key, value in solver_options.items():
             opt.options[str(key)] = value
     solve_kwargs: dict[str, object] = {"tee": tee, "load_solutions": True}
-    if seeded > 0:
+    if method is not None:
         solve_kwargs["warmstart"] = True
-    result = opt.solve(model, **solve_kwargs)
+
+    if method == "appsi_highs":
+        result, has_solution, log_lines = _solve_appsi_highs(opt, model, solve_kwargs)
+        accepted, messages = _parse_highs_start_log(log_lines)
+        warm_info["accepted"] = accepted
+        warm_info["solver_messages"] = messages
+    else:
+        result = opt.solve(model, **solve_kwargs)
+        has_solution = None
     status = str(result.solver.status).lower()
     termination = str(result.solver.termination_condition).lower()
-    solved = termination in {"optimal", "feasible"} or status in {"optimal", "feasible"}
+    if has_solution is not None:
+        # APPSI path: values are only in the model when a solution was explicitly loaded.
+        solved = has_solution
+    else:
+        solved = termination in {"optimal", "feasible"} or status in {"optimal", "feasible"}
+        if not solved and termination in _LIMIT_TERMINATIONS:
+            solved = _has_incumbent(result, model)
     if solved:
         assignments = _extract_assignments(model)
         prod = sum(pyo.value(model.prod[idx]) for idx in model.prod)
@@ -139,7 +256,162 @@ def solve_operational_milp(
         "assignments": assignments,
         "solver_status": str(result.solver.status),
         "termination_condition": str(result.solver.termination_condition),
+        "warm_start": warm_info,
     }
+
+
+def _create_solver(solver: str, *, warm_start: bool) -> tuple[Any, str, str | None]:
+    """Instantiate the Pyomo solver and decide how (or whether) to pass a warm start.
+
+    Parameters
+    ----------
+    solver :
+        Solver name requested by the caller (``SolverFactory`` name).
+    warm_start :
+        ``True`` when the model carries seeded variable values.
+
+    Returns
+    -------
+    tuple
+        ``(opt, solver_used, method)`` where ``method`` is ``"appsi_highs"``,
+        ``"pyomo_warmstart"``, or ``None`` (no warm start). Emits :class:`MilpWarmStartWarning`
+        when ``warm_start`` is requested but unsupported.
+    """
+
+    solver_key = solver.strip().lower()
+    if not warm_start:
+        return SolverFactory(solver), solver, None
+
+    if solver_key in _HIGHS_SOLVER_NAMES:
+        appsi = SolverFactory("appsi_highs")
+        if _solver_available(appsi):
+            return appsi, "appsi_highs", "appsi_highs"
+        warnings.warn(
+            "The APPSI HiGHS interface (SolverFactory('appsi_highs')) is unavailable, so the "
+            "incumbent cannot be passed to HiGHS as a MIP start; solving without a warm start.",
+            MilpWarmStartWarning,
+            stacklevel=3,
+        )
+        return SolverFactory(solver), solver, None
+
+    opt = SolverFactory(solver)
+    if _accepts_warmstart_keyword(opt):
+        return opt, solver, "pyomo_warmstart"
+    warnings.warn(
+        f"Solver '{solver}' does not support MIP warm starts through Pyomo; solving without the "
+        "incumbent. Use solver='highs' or a warm-start-capable solver (gurobi, cbc, cplex).",
+        MilpWarmStartWarning,
+        stacklevel=3,
+    )
+    return opt, solver, None
+
+
+def _solver_available(opt: Any) -> bool:
+    try:
+        return bool(opt.available(exception_flag=False))
+    except Exception:
+        return False
+
+
+def _accepts_warmstart_keyword(opt: Any) -> bool:
+    """Return ``True`` when ``opt.solve(..., warmstart=True)`` is supported and meaningful."""
+
+    try:
+        from pyomo.contrib.solver.common.base import LegacySolverWrapper
+    except ImportError:  # pragma: no cover - older Pyomo without contrib.solver
+        LegacySolverWrapper = None
+    if LegacySolverWrapper is not None and isinstance(opt, LegacySolverWrapper):
+        return False
+    capable = getattr(opt, "warm_start_capable", None)
+    if not callable(capable):
+        return False
+    try:
+        return bool(capable())
+    except Exception:
+        # e.g. the CBC plugin probes the executable version and fails when it is missing.
+        return False
+
+
+def _solve_appsi_highs(
+    opt: Any, model: pyo.ConcreteModel, solve_kwargs: Mapping[str, object]
+) -> tuple[Any, bool, list[str]]:
+    """Run a warm-started APPSI HiGHS solve, capturing the HiGHS log.
+
+    Solutions are loaded explicitly (``load_solutions=False`` + ``opt.load_vars()``) because the
+    APPSI interface raises when asked to load a solution that does not exist. The HiGHS log is
+    routed to a private logger (also streamed to stdout when ``tee=True``) so the caller can tell
+    whether the MIP start was accepted.
+
+    Returns
+    -------
+    tuple
+        ``(legacy_results, has_solution, log_lines)``.
+    """
+
+    collector = _LineCollector()
+    highs_logger = logging.getLogger(_HIGHS_LOGGER_NAME)
+    previous_level = highs_logger.level
+    previous_propagate = highs_logger.propagate
+    highs_logger.addHandler(collector)
+    highs_logger.setLevel(logging.DEBUG)
+    highs_logger.propagate = False
+    config = getattr(opt, "config", None)
+    if config is not None:
+        try:
+            config.solver_output_logger = highs_logger
+            config.log_level = logging.DEBUG
+        except (AttributeError, ValueError):
+            pass
+    kwargs = dict(solve_kwargs)
+    kwargs["load_solutions"] = False
+    try:
+        result = opt.solve(model, **kwargs)
+        solution = getattr(result, "solution", None)
+        has_solution = bool(solution is not None and len(solution) > 0)
+        if has_solution:
+            opt.load_vars()
+    finally:
+        highs_logger.removeHandler(collector)
+        highs_logger.setLevel(previous_level)
+        highs_logger.propagate = previous_propagate
+    return result, has_solution, collector.lines
+
+
+def _parse_highs_start_log(lines: list[str]) -> tuple[bool | None, list[str]]:
+    """Return ``(accepted, messages)`` extracted from HiGHS log lines about the MIP start."""
+
+    messages: list[str] = []
+    repair_infeasible = False
+    awaiting_repair_status = False
+    for raw in lines:
+        line = raw.strip()
+        if _HIGHS_START_LINE.search(line):
+            messages.append(line)
+            awaiting_repair_status = "attempting to find feasible solution" in line.lower()
+        elif awaiting_repair_status and line.lower().startswith("model status"):
+            # Outcome of the LP/MIP HiGHS solves to complete the user-supplied discrete values.
+            messages.append(line)
+            repair_infeasible = "infeasible" in line.lower()
+            awaiting_repair_status = False
+    if any(_HIGHS_START_ACCEPTED.search(line) for line in messages):
+        return True, messages
+    if repair_infeasible or any(_HIGHS_START_REJECTED.search(line) for line in messages):
+        return False, messages
+    return None, messages
+
+
+def _has_incumbent(result: Any, model: pyo.ConcreteModel) -> bool:
+    """Return ``True`` when legacy results report a finite incumbent objective."""
+
+    problem = getattr(result, "problem", None)
+    if problem is None:
+        return False
+    try:
+        maximize = model.objective.sense == pyo.maximize
+        bound = problem.lower_bound if maximize else problem.upper_bound
+        return bound is not None and math.isfinite(float(bound))
+    except (AttributeError, TypeError, ValueError):
+        return False
 
 
 def _extract_assignments(model: pyo.ConcreteModel) -> pd.DataFrame:
