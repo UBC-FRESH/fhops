@@ -170,9 +170,11 @@ def build_blackout_slots(pb: Problem) -> tuple[tuple[str, int, str], ...]:
     -------
     tuple[tuple[str, int, str], ...]
         Sorted slots. Every day of every ``BlackoutWindow`` (``start_day``..``end_day``,
-        inclusive) blocks **every machine** (blackouts are fleet-wide, not per landing): the
-        machine's ``shift_calendar`` shifts for that day when it has any, otherwise every
-        ``timeline.shifts`` name, otherwise ``S1``. Empty when the scenario has no blackouts.
+        inclusive) blocks **every machine** (blackouts are fleet-wide, not per landing) in every
+        slot of the problem's shift grid on that day (``pb.shifts``) plus the machine's own
+        ``shift_calendar`` shifts for that day. Days without grid slots and calendar entries fall
+        back to every ``timeline.shifts`` name, otherwise ``S1``. Empty when the scenario has no
+        blackouts.
 
     Notes
     -----
@@ -180,6 +182,12 @@ def build_blackout_slots(pb: Problem) -> tuple[tuple[str, int, str], ...]:
     (:attr:`fhops.optimization.operational_problem.OperationalProblem.blackout_shifts`), so both
     solver families block exactly the same slots. Playback does not cancel work in blackouts; it
     flags it (``PlaybackRecord.blackout_hit``).
+
+    Until 1.0.1 (#115) a machine without ``shift_calendar`` entries on a blackout day was blocked
+    only in the ``timeline.shifts`` names (or ``S1``) even when the grid came from other machines'
+    shift calendars, so it could still work the blackout day. Including the grid slots makes the
+    blackout fleet-wide on every grid; for scenarios whose machines all have calendar entries on
+    the grid (or no shift calendar at all) the slot set is unchanged.
     """
 
     scenario = pb.scenario
@@ -191,15 +199,141 @@ def build_blackout_slots(pb: Problem) -> tuple[tuple[str, int, str], ...]:
     if scenario.shift_calendar:
         for entry in scenario.shift_calendar:
             shift_lookup.setdefault((entry.machine_id, entry.day), []).append(entry.shift_id)
+    grid_by_day: dict[int, list[str]] = {}
+    for day, shift_id in ordered_shift_keys(pb):
+        grid_by_day.setdefault(day, []).append(shift_id)
     timeline_shift_ids = [shift_def.name for shift_def in timeline.shifts or []]
     fallback_shifts = timeline_shift_ids or ["S1"]
     for window in timeline.blackouts:
         for day in range(window.start_day, window.end_day + 1):
+            grid_shifts = grid_by_day.get(day, [])
             for machine in scenario.machines:
-                keys = shift_lookup.get((machine.id, day))
+                keys = list(shift_lookup.get((machine.id, day), [])) + grid_shifts
                 for shift_id in keys or fallback_shifts:
                     blackout.add((machine.id, day, shift_id))
     return tuple(sorted(blackout))
+
+
+def machine_slot_available(
+    bundle: OperationalMilpBundle,
+    machine_id: str,
+    day: int,
+    shift_id: str,
+    blackout_slots: frozenset[tuple[str, int, str]] | None = None,
+) -> bool:
+    """Return the operational MILP availability ``A_{m,s}`` of a machine in a shift slot.
+
+    Parameters
+    ----------
+    bundle:
+        Operational bundle (uses ``availability_shift``, ``availability_day`` and
+        ``blackout_slots``).
+    machine_id, day, shift_id:
+        Machine and ``(day, shift_id)`` slot.
+    blackout_slots:
+        Optional pre-built ``frozenset(bundle.blackout_slots)`` (avoids rebuilding it per call).
+
+    Returns
+    -------
+    bool
+        ``False`` in timeline blackout slots; otherwise the shift-calendar flag when the slot has
+        one, else the day-calendar flag (default available).
+    """
+
+    blocked = blackout_slots if blackout_slots is not None else frozenset(bundle.blackout_slots)
+    if (machine_id, day, shift_id) in blocked:
+        return False
+    flag = bundle.availability_shift.get((machine_id, day, shift_id))
+    if flag is not None:
+        return flag == 1
+    return bundle.availability_day.get((machine_id, day), 1) == 1
+
+
+def resolve_locked_slots(
+    bundle: OperationalMilpBundle,
+) -> tuple[dict[tuple[str, ShiftKey], str | None], tuple[str, ...]]:
+    """Resolve ``bundle.locked_assignments`` into per-slot lock targets for the operational MILP.
+
+    Parameters
+    ----------
+    bundle:
+        Operational bundle with ``locked_assignments``.
+
+    Returns
+    -------
+    tuple[dict, tuple[str, ...]]
+        ``(targets, warnings)``. ``targets`` maps ``(machine_id, (day, shift_id))`` to the locked
+        block (the MILP fixes ``x = 1`` there and ``x = 0`` on every other block) or to ``None``
+        (the machine is pinned to ``x = 0`` on every block in that slot). A day lock
+        (``shift_id=None``) covers every slot of its day; a shift lock only its slot.
+
+        Pinned to ``None``:
+
+        * slots where the machine is unavailable (calendar or timeline blackout), silently, as
+          documented for day locks spanning unavailable shifts;
+        * locks that contradict the model (block outside its window on that day, or a machine
+          whose role is not part of the block's harvest system), with a warning;
+
+        Skipped with a warning: locks naming an unknown machine/block, locks that match no slot
+        of the grid, and a second lock on an already locked ``(machine, slot)`` (the first lock
+        wins). Scenario validation rejects these cases for scenarios built through
+        :class:`fhops.scenario.contract.Scenario`; the MILP resolves them so that a lock never
+        makes the model infeasible.
+
+    Notes
+    -----
+    Shared by the model builder (``locked_assignment`` constraints) and the warm-start overlay in
+    :mod:`fhops.model.milp.driver`, so seeded incumbents respect exactly the same locks.
+    """
+
+    targets: dict[tuple[str, ShiftKey], str | None] = {}
+    warnings_out: list[str] = []
+    if not bundle.locked_assignments:
+        return targets, ()
+    machines = set(bundle.machines)
+    blocks = set(bundle.blocks)
+    unsequenced = set(bundle.unsequenced_blocks)
+    blackout = frozenset(bundle.blackout_slots)
+    for machine_id, block_id, lock_day, lock_shift in bundle.locked_assignments:
+        label = f"lock ({machine_id}, {block_id}, day {lock_day}, shift {lock_shift or '*'})"
+        if machine_id not in machines or block_id not in blocks:
+            warnings_out.append(f"{label} ignored: unknown machine or block")
+            continue
+        slots = [
+            slot
+            for slot in bundle.shifts
+            if slot[0] == lock_day and (lock_shift is None or slot[1] == lock_shift)
+        ]
+        if not slots:
+            warnings_out.append(f"{label} ignored: no matching slot in the shift grid")
+            continue
+        earliest, latest = bundle.windows.get(block_id, (lock_day, lock_day))
+        contradiction: str | None = None
+        if not earliest <= lock_day <= latest:
+            contradiction = f"day {lock_day} is outside the block window {earliest}-{latest}"
+        elif block_id not in unsequenced:
+            system = bundle.systems.get(bundle.block_system.get(block_id, ""))
+            role = bundle.machine_roles.get(machine_id)
+            system_roles = {cfg.role for cfg in system.roles} if system is not None else set()
+            if not role or role not in system_roles:
+                contradiction = (
+                    f"machine role {role!r} is not part of the block's harvest system "
+                    f"{bundle.block_system.get(block_id)!r}"
+                )
+        if contradiction is not None:
+            warnings_out.append(f"{label} pinned to x=0: {contradiction}")
+        for slot in slots:
+            key = (machine_id, slot)
+            if key in targets:
+                if targets[key] != block_id:
+                    warnings_out.append(
+                        f"{label} ignored for slot {slot}: machine already locked to "
+                        f"{targets[key]!r}"
+                    )
+                continue
+            available = machine_slot_available(bundle, machine_id, slot[0], slot[1], blackout)
+            targets[key] = block_id if available and contradiction is None else None
+    return targets, tuple(warnings_out)
 
 
 def build_operational_bundle(pb: Problem) -> OperationalMilpBundle:
@@ -646,7 +780,9 @@ __all__ = [
     "bundle_to_dict",
     "build_blackout_slots",
     "headstart_buffer_volumes",
+    "machine_slot_available",
     "ordered_shift_keys",
+    "resolve_locked_slots",
     "bundle_from_dict",
     "DEFAULT_TRUCKLOAD_M3",
 ]
