@@ -27,7 +27,7 @@ Example (building on the regression fixtures):
 
 The command prints two tables:
 
-* **Shift Playback Summary** — one row per machine/day/shift. Columns include production units,
+* **Shift Playback Summary** — one row per machine/day/shift. Columns include production (m³),
   worked hours, idle hours (when ``--include-idle`` is used), mobilisation cost, and sequencing
   violation counts gathered during playback.
 * **Day Playback Summary** — day-level aggregation with production, total/idle hours, mobilisation
@@ -187,8 +187,11 @@ KPI formulas & required signals
 
 The current KPI bundle includes:
 
-* ``total_production`` — sum of ``production_units`` over all day summaries.
-* ``completed_blocks`` — count of blocks whose remaining work is zero after playback.
+* ``total_production`` — delivered volume (m³): the part of ``Block.work_required`` delivered by each
+  block's terminal role during playback. ``production_units`` in the shift/day summaries is in the same
+  units (m³, like ``ProductionRate.rate``) but counts every role's output.
+* ``completed_blocks`` — count of blocks whose remaining volume (``work_required`` minus delivered m³)
+  is zero after playback.
 * ``mobilisation_cost`` — total mobilisation spend accumulated in playback record metadata.
 * ``mobilisation_cost_by_machine`` / ``mobilisation_cost_by_landing`` — JSON mappings that expose
   cumulative mobilisation outlay by machine and landing.
@@ -199,7 +202,7 @@ The current KPI bundle includes:
 * ``makespan_day`` / ``makespan_shift`` — latest day/shift containing productive assignments according to
   the scenario’s shift definition order.
 * ``downtime_hours_total`` / ``downtime_event_count`` / ``downtime_hours_by_machine`` — aggregate downtime
-  exposure derived from stochastic sampling (zero for deterministic runs).
+  exposure derived from the sampled downtime durations (zero for deterministic runs).
 * ``downtime_production_loss_est`` — estimated production loss, computed as ``downtime_hours_total`` multiplied by the average production rate observed in the current playback.
 * ``weather_severity_total`` / ``weather_severity_by_machine`` — cumulative weather intensity applied during
   stochastic playback, useful for correlating production drops with weather samples.
@@ -237,13 +240,55 @@ Stochastic playback toggles
 The command also exposes stochastic options mirroring the API:
 
 * ``--samples`` — number of stochastic samples to evaluate (defaults to ``1`` for deterministic playback).
-* ``--downtime-prob`` / ``--downtime-max`` — probability of downtime events and an optional maximum number of assignments to drop per day.
+* ``--downtime-prob`` / ``--downtime-max`` / ``--downtime-mean`` / ``--downtime-std`` — probability that a
+  machine-shift is hit by downtime (or an exact number of hits per day with ``--downtime-max``) and the
+  Normal duration distribution in hours (defaults ``4.0`` / ``1.5``).
 * ``--weather-prob`` / ``--weather-severity`` / ``--weather-window`` — frequency, severity, and duration of weather-induced production reductions.
-* ``--landing-prob`` / ``--landing-mult-min`` / ``--landing-mult-max`` / ``--landing-duration`` — sample landing congestion shocks that scale production by a multiplier for a fixed number of days.
+* ``--landing-prob`` / ``--landing-mult-min`` / ``--landing-mult-max`` / ``--landing-duration`` — daily
+  probability that a congestion shock starts at each landing, the multiplier range, and the shock length
+  in days.
 
 By default these probabilities are ``0.0`` so the command behaves deterministically unless you turn them on.
 Each sample’s shift/day summaries are concatenated in the exported CSVs, making it easy to aggregate or
 visualise variability across runs.
+
+Stochastic event semantics
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:func:`fhops.evaluation.run_stochastic_playback` copies the deterministic assignments for every sample,
+applies the enabled events in the order downtime → weather → landing shocks, and re-runs deterministic
+playback so sequencing caps still apply. Event effects compose multiplicatively on each assignment's
+production (m³). Sample ``i`` uses ``numpy.random.default_rng(base_seed + i)``, shared by the events in that
+order, so a given seed and configuration always reproduce the same ensemble.
+
+* **Downtime** (:class:`~fhops.evaluation.playback.events.DowntimeEventConfig`). Days are visited in
+  ascending order. On each day every eligible assignment (``assigned > 0``, optional
+  ``target_machine_roles``) is hit with ``probability``; with ``max_concurrent`` set, exactly
+  ``min(max_concurrent, n)`` of the day's ``n`` eligible assignments are hit instead. Each hit samples a
+  duration ``d ~ Normal(mean_duration_hours, std_duration_hours)`` clipped to ``[0, shift_hours]`` and
+  multiplies the assignment's production by ``1 - d / shift_hours``. A full-shift loss
+  (``d == shift_hours``) cancels the assignment (``assigned = 0``, production ``0``). ``shift_hours`` is the
+  matching ``timeline.shifts`` definition, otherwise the machine's ``daily_hours`` — the same hours
+  deterministic playback records. The shift summaries report ``downtime_hours`` (the sampled hours,
+  including cancelled shifts) and ``total_hours = shift_hours - d`` for affected shifts, so
+  ``downtime_hours_total`` and utilisation reflect the sampled durations.
+* **Weather** (:class:`~fhops.evaluation.playback.events.WeatherEventConfig`). For each assignment day a
+  spell starts with ``day_probability``, picks a severity level, and covers ``impact_window_days``
+  consecutive days (overlaps keep the highest severity). Affected production is multiplied by
+  ``1 - severity``. ``correlated_days`` is deprecated since 1.0.1: it never had an effect, and setting it
+  explicitly emits a ``DeprecationWarning``. Use ``impact_window_days`` to model multi-day spells.
+* **Landing shocks** (:class:`~fhops.evaluation.playback.events.LandingShockConfig`). For each landing and
+  each calendar day of the horizon a shock starts with ``probability``, draws a multiplier uniformly from
+  ``capacity_multiplier_range``, and lasts ``duration_days`` calendar days from its start day. Every
+  assignment on a block served by that landing has its production scaled by the multiplier on the
+  affected days; overlapping shocks use the minimum multiplier.
+
+.. note::
+
+   FHOPS 1.0.0 applied landing shocks to the first assignment rows of a shocked landing rather than to
+   calendar days, always removed a whole shift on downtime (ignoring the duration settings), and dropped
+   downtime-cancelled shifts from the summaries (so ``downtime_hours_total`` stayed at zero). Stochastic
+   playback results from 1.0.1 onwards therefore differ from 1.0.0 for the same seed.
 
 Relationship to KPI evaluation
 ------------------------------

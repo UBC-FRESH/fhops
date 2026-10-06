@@ -48,6 +48,14 @@ class SequencingTracker:
     role_counts_total:
         ``(block_id, role) -> shifts`` worked before the current day (head-start accounting).
         Starts from ``ctx.initial_role_counts`` (empty by default).
+
+    Notes
+    -----
+    All volumes are m³. ``remaining_work`` starts at ``Block.work_required`` (terminal delivered
+    volume) and is debited by the terminal role (or by any role for blocks without an explicit
+    harvest system); ``role_remaining`` caps each role at the same volume; ``role_inventory``
+    holds volume output by a role and not yet consumed downstream; ``delivered_total`` sums the
+    terminal deliveries.
     """
 
     ctx: OperationalProblem

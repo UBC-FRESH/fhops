@@ -1888,13 +1888,35 @@ def eval_playback(
         "--downtime-prob",
         min=0.0,
         max=1.0,
-        help="Probability of downtime per eligible assignment (0 disables downtime).",
+        help=(
+            "Probability that an assignment (machine-shift) is hit by downtime (0 disables "
+            "downtime). Each hit samples a duration from --downtime-mean/--downtime-std, clipped "
+            "to the shift length, and removes that fraction of the shift's production."
+        ),
     ),
     downtime_max_concurrent: int | None = typer.Option(
         None,
         "--downtime-max",
         min=1,
-        help="Max assignments to drop per day (None uses binomial sampling).",
+        help=(
+            "Hit exactly this many assignments per day (chosen at random; --downtime-prob then "
+            "only enables the event). Omit for independent per-assignment draws."
+        ),
+    ),
+    downtime_mean_hours: float = typer.Option(
+        4.0,
+        "--downtime-mean",
+        min=0.0,
+        help="Mean downtime duration in hours per hit (Normal distribution).",
+    ),
+    downtime_std_hours: float = typer.Option(
+        1.5,
+        "--downtime-std",
+        min=0.0,
+        help=(
+            "Standard deviation of the downtime duration in hours. Durations are clipped to "
+            "[0, shift hours]; a full-shift loss cancels the assignment."
+        ),
     ),
     weather_probability: float = typer.Option(
         0.0,
@@ -1914,14 +1936,17 @@ def eval_playback(
         1,
         "--weather-window",
         min=1,
-        help="Number of consecutive days affected once weather occurs.",
+        help="Number of consecutive days affected once weather occurs (models multi-day spells).",
     ),
     landing_probability: float = typer.Option(
         0.0,
         "--landing-prob",
         min=0.0,
         max=1.0,
-        help="Probability a landing experiences a throughput shock (0 disables).",
+        help=(
+            "Daily probability that a throughput shock starts at each landing (0 disables). "
+            "A shock scales production of every assignment on the landing's blocks."
+        ),
     ),
     landing_multiplier_low: float = typer.Option(
         0.4,
@@ -1941,7 +1966,10 @@ def eval_playback(
         1,
         "--landing-duration",
         min=1,
-        help="Number of consecutive days landing shocks persist.",
+        help=(
+            "Number of consecutive calendar days each landing shock lasts; overlapping shocks "
+            "use the lowest multiplier."
+        ),
     ),
     shift_parquet: Path | None = typer.Option(
         None,
@@ -1982,12 +2010,18 @@ def eval_playback(
         Number of stochastic samples to run (``1`` keeps deterministic playback).
     base_seed : int, default=123
         RNG seed forwarded to stochastic playback.
-    downtime_probability / downtime_max_concurrent :
-        Parameters that control random downtime events.
+    downtime_probability / downtime_max_concurrent / downtime_mean_hours / downtime_std_hours :
+        Parameters that control random downtime events. Each hit machine-shift samples a
+        duration ``~ Normal(downtime_mean_hours, downtime_std_hours)`` clipped to
+        ``[0, shift_hours]`` and loses that fraction of its production; a full-shift loss
+        cancels the assignment.
     weather_probability / weather_severity / weather_window :
         Parameters that control weather impacts.
     landing_probability / landing_multiplier_low / landing_multiplier_high / landing_duration :
-        Parameters for landing throughput shocks.
+        Parameters for landing throughput shocks: for each landing and calendar day a shock
+        starts with ``landing_probability``, lasts ``landing_duration`` days and scales the
+        production of every assignment on that landing by a multiplier drawn uniformly from
+        ``[landing_multiplier_low, landing_multiplier_high]`` (minimum across overlaps).
     summary_md : pathlib.Path | None
         Optional Markdown report destination.
     telemetry_log : pathlib.Path | None
@@ -2011,6 +2045,8 @@ def eval_playback(
         "samples": samples,
         "downtime_probability": downtime_probability,
         "downtime_max_concurrent": downtime_max_concurrent,
+        "downtime_mean_hours": downtime_mean_hours,
+        "downtime_std_hours": downtime_std_hours,
         "weather_probability": weather_probability,
         "weather_severity": weather_severity,
         "weather_window": weather_window,
@@ -2074,6 +2110,8 @@ def eval_playback(
             sampling_config.downtime.enabled = downtime_probability > 0
             sampling_config.downtime.probability = downtime_probability
             sampling_config.downtime.max_concurrent = downtime_max_concurrent
+            sampling_config.downtime.mean_duration_hours = downtime_mean_hours
+            sampling_config.downtime.std_duration_hours = downtime_std_hours
             sampling_config.weather.enabled = weather_probability > 0
             sampling_config.weather.day_probability = weather_probability
             sampling_config.weather.severity_levels = {"default": weather_severity}

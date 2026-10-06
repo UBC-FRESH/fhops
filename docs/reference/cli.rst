@@ -29,7 +29,8 @@ Baseline usage:
 - ``fhops evaluate tests/fixtures/regression/regression.yaml --assignments tmp/regression_sa.csv --kpi-mode extended``
 - ``fhops eval-playback tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv --shift-out tmp/shift_summary.csv --day-out tmp/day_summary.csv``
 - ``fhops eval-playback tests/fixtures/regression/regression.yaml --assignments tmp/regression_sa.csv --samples 10 --downtime-prob 0.1 --weather-prob 0.2`` — run stochastic playback, capturing downtime and weather variability.
-- ``fhops eval-playback ... --landing-prob 0.3 --landing-mult-min 0.3 --landing-mult-max 0.7 --landing-duration 2`` — simulate landing congestion shocks that temporarily reduce throughput.
+- ``fhops eval-playback ... --downtime-prob 0.1 --downtime-mean 4 --downtime-std 1.5`` — each hit machine-shift loses a sampled number of hours (clipped to the shift length) and the matching fraction of its production; a full-shift loss cancels the assignment.
+- ``fhops eval-playback ... --landing-prob 0.3 --landing-mult-min 0.3 --landing-mult-max 0.7 --landing-duration 2`` — simulate landing congestion shocks: each landing-day starts a shock with the given probability, and the shock scales every assignment on that landing for ``--landing-duration`` days (minimum multiplier when shocks overlap).
 - ``fhops eval-playback ... --shift-parquet tmp/shift.parquet --day-parquet tmp/day.parquet --summary-md tmp/playback.md`` — export Parquet files and a Markdown summary alongside the CSV outputs.
   See :doc:`../howto/evaluation` for a full end-to-end example.
 - ``fhops eval-playback ... --shift-out tmp/shift_summary.csv --day-out tmp/day_summary.csv`` — recommended when using shift calendars/blackouts so you can verify shift-level KPIs roll up to the day totals.

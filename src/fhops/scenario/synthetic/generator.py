@@ -290,7 +290,14 @@ class BlackoutBias:
 
 @dataclass
 class SyntheticDatasetConfig:
-    """Configuration for generating random synthetic datasets."""
+    """Configuration for generating random synthetic datasets.
+
+    Notes
+    -----
+    ``work_required`` and ``production_rate`` are sampling ranges in m³ (block volume to deliver
+    and volume per shift assignment), matching ``Block.work_required`` and
+    ``ProductionRate.rate``; ``shift_hours`` and ``machine_daily_hours`` are hours.
+    """
 
     name: str
     num_blocks: tuple[int, int] | int
@@ -575,7 +582,8 @@ def sampling_config_for(config: SyntheticDatasetConfig) -> SamplingConfig:
     base = SamplingConfig(samples=10)
     tier_key = (config.tier or "").lower()
     preset_updates = SAMPLING_PRESETS.get(tier_key, {})
-    data = base.model_dump()
+    # Drop the deprecated weather flag so re-validation does not mark it as explicitly set.
+    data = base.model_dump(exclude={"weather": {"correlated_days"}})
     if preset_updates:
         data = _deep_merge(data, preset_updates)
     if config.sampling_overrides:

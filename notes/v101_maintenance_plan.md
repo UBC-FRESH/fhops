@@ -167,9 +167,48 @@ After each iteration locks its leading days:
   explicitly; behaviour is unchanged (`impact_window_days` models spells).
 - Update tests that pin stochastic numbers; add tests for each corrected semantic.
 
+**Implementation notes (#93, branch `issue-93-playback-event-fixes`):**
+- Landing shocks sample over the full scenario horizon (`1..num_days`), landing-major then
+  day-ascending: one `rng.random()` per landing-day, plus one `rng.uniform` per started shock.
+  New helper `LandingShockEvent.sample_multipliers()` returns the `(landing, day) -> multiplier` map.
+- Downtime keeps the v1.0.0 selection rule (per day: `rng.choice` of exactly
+  `min(max_concurrent, n)` rows when `max_concurrent` is set, otherwise one `rng.random()` per row),
+  then one `rng.normal` per selected row. "Truncated" is implemented as **clipping** to
+  `[0, shift_hours]` (censoring, one draw per hit), so a full-shift loss has positive probability;
+  `d == 0` leaves the row untouched.
+- `shift_hours` deviation: deterministic playback records `hours_worked` as the timeline shift
+  hours, else the machine `daily_hours` (no division by shifts per day). Downtime uses the same
+  shared resolver (`adapters.shift_hours_resolver`) so sampled downtime and recorded hours stay on
+  one scale; the two rules differ only for multi-shift scenarios without `timeline.shifts`, where
+  playback itself already reports `daily_hours` per shift (left unchanged; out of scope).
+- Downtime KPIs: in v1.0.0 downtime rows were filtered out (`assigned = 0`) before records were
+  built, so `downtime_hours_total` was always 0. Rows flagged by downtime now always yield a
+  record: cancelled shifts emit `production = 0`, `hours_worked = 0`, `downtime_hours = shift_hours`
+  and bypass the sequencing tracker and mobilisation costing (same delivered volume as before);
+  partial losses report `hours_worked = shift_hours - d`. `PlaybackRecord.downtime_hours` is new.
+- Event composition: weather and landing shocks now multiply the row's *current* production
+  instead of overwriting it from the deterministic baseline (otherwise partial downtime would be
+  erased by a later weather/landing event). Results are identical when a single event is active.
+  Cancelled rows are skipped by weather/landing.
+- `correlated_days`: `model_validator(mode="after")` warns when `"correlated_days" in
+  model_fields_set`. `sampling_config_for()` (synthetic tiers) drops the field before its
+  dump/re-validate round trip so it does not warn spuriously.
+- CLI: new `--downtime-mean` / `--downtime-std` options (defaults 4.0 / 1.5 h, matching
+  `DowntimeEventConfig`); help text for downtime/landing/weather flags updated.
+- `test_kpi_stochastic_snapshot` fixture regenerated (`tests/fixtures/kpi/stochastic.json`).
+
 ### 8.4 Units docs (#94)
 `Block.work_required` documented as m³ (terminal delivered volume) in the contract docstring,
 data-contract docs, and the loader/playback docs; no behaviour change.
+
+**Implementation notes (#94, branch `issue-94-work-required-units`):** `Block`, `ProductionRate`,
+`ObjectiveWeights` and `Scenario.production_rates` docstrings/inline comments now state m³ (rates
+in m³ per shift assignment); `docs/howto/data_contract.rst` (blocks/production-rate notes),
+`docs/howto/evaluation.rst` (KPI units), and `docs/howto/system_sequencing.rst` (example comment)
+updated; `compute_kpis`, `SequencingTracker`, `PlaybackResult`, `OperationalMilpBundle` and
+`SyntheticDatasetConfig` docstrings document the m³ convention. `PlaybackRecord`/
+`assignments_to_records` m³ notes land with #93 to avoid overlapping hunks. The formulation
+includes already describe `W_b` as volume and were left untouched (no asset regeneration).
 
 ### 8.5 SoftwareX figure and assets (#95)
 - `docs/softwarex/manuscript/scripts/plot_playback_variability.py`: column-width figure size,
