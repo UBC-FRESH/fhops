@@ -56,6 +56,18 @@ jobs:
       - name: Pytest
         run: pytest -m "not milp_refactor"
 
+      # tests/test_cli_* are skipped unless FHOPS_RUN_FULL_CLI_TESTS is set (tests/conftest.py).
+      # Run the operational-MILP and playback CLI suites here (~20 s). The dataset CLI suites stay
+      # excluded until their known failures are fixed (#103); tests/cli/ already runs above.
+      - name: Pytest (operational MILP + playback CLI)
+        env:
+          FHOPS_RUN_FULL_CLI_TESTS: "1"
+        run: >-
+          pytest -m "not milp_refactor"
+          tests/test_cli_operational_mip.py
+          tests/test_cli_playback.py
+          tests/test_cli_playback_exports.py
+
       - name: Pre-commit hooks
         run: pre-commit run --all-files
 

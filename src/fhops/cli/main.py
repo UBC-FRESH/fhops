@@ -596,7 +596,13 @@ def solve_mip_operational_cmd(
         help="Print sequencing diagnostics (first violation, backlog deficits).",
     ),
 ):
-    """Solve the operational (day×shift) MILP prototype and emit assignments."""
+    """Solve the operational (day×shift) MILP prototype and emit assignments.
+
+    Prints the solve ``outcome`` (``optimal``, ``feasible``, ``infeasible``, ``no_solution`` or
+    ``error``) with the solver status; the objective is shown only when a feasible solution was
+    returned. Infeasible models and limits without an incumbent write an empty assignment table
+    and exit 0; a solver error (e.g. a HiGHS option error) is printed and exits 1.
+    """
 
     if debug:
         _enable_rich_tracebacks()
@@ -694,6 +700,7 @@ def solve_mip_operational_cmd(
     assignments = pd.DataFrame()
     objective_value = 0.0
     metrics_obj = None
+    solver_failed = False
     try:
         with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
             emit_snapshot(0, 0.0, 0.0)
@@ -711,51 +718,93 @@ def solve_mip_operational_cmd(
             except ValueError as exc:
                 raise typer.BadParameter(str(exc)) from exc
             runtime_seconds = time.perf_counter() - start_time
-            objective_value = float(result.get("objective") or 0.0)
+            raw_objective = result.get("objective")
+            has_solution = bool(result.get("has_solution", raw_objective is not None))
+            solver_error = result.get("solver_error")
+            outcome = result.get("outcome") or (
+                "error" if solver_error else ("feasible" if has_solution else "no_solution")
+            )
+            objective_value = (
+                float(raw_objective) if has_solution and raw_objective is not None else 0.0
+            )
             emit_snapshot(1, objective_value, runtime_seconds)
             assignments = cast(pd.DataFrame, result.get("assignments", pd.DataFrame()))
             out.parent.mkdir(parents=True, exist_ok=True)
             assignments.to_csv(str(out), index=False)
+            objective_text = f"objective={raw_objective}" if has_solution else "objective=n/a"
             console.print(
-                f"Operational MILP solver_status={result.get('solver_status')} "
-                f"termination={result.get('termination_condition')} "
-                f"objective={result.get('objective')}"
+                f"Operational MILP outcome={outcome} solver_status={result.get('solver_status')} "
+                f"termination={result.get('termination_condition')} {objective_text}"
             )
+            if solver_error:
+                solver_failed = True
+                console.print(f"[red]Solver error:[/] {solver_error}")
+            for message in result.get("warnings") or []:
+                console.print(f"[yellow]Warning:[/] {message}")
             warm_start_info = result.get("warm_start")
             if incumbent_assignments is not None and isinstance(warm_start_info, Mapping):
                 _print_warm_start_summary(warm_start_info)
+                if warm_start_info.get("acceptance") == "inferred":
+                    console.print(
+                        "  [dim]HiGHS logged no MIP-start verdict; acceptance inferred from the "
+                        "returned incumbent (equal to, or at least as good as, the feasible seed).[/]"
+                    )
             console.print(f"Assignments written to {out}")
-            if not assignments.empty and pb is not None:
+            if not has_solution:
+                reason = {
+                    "error": "the solver failed",
+                    "infeasible": "the model is infeasible",
+                }.get(outcome, "the solver stopped without a feasible solution")
+                console.print(
+                    f"[yellow]No feasible solution: {reason}; wrote an empty assignment table and "
+                    "skipped the KPI summary.[/]"
+                )
+            elif assignments.empty:
+                console.print(
+                    "[yellow]The incumbent assigns no machines (all work is left over, objective "
+                    f"{objective_value:.3f}); skipping the KPI summary.[/]"
+                )
+            elif pb is None:
+                console.print(
+                    "[yellow]No scenario supplied (--bundle-json); skipping the KPI summary.[/]"
+                )
+            else:
                 metrics_obj = compute_kpis(pb, assignments)
                 _print_kpi_summary(metrics_obj)
                 if sequencing_debug:
                     _print_sequencing_debug(getattr(metrics_obj, "sequencing_debug", None))
-            else:
-                console.print(
-                    "[yellow]No feasible assignment returned or scenario missing; skipping KPI summary.[/]"
-                )
             if telemetry_logger and run_logger:
                 metrics_payload = {
-                    "objective": objective_value,
+                    "objective": objective_value if has_solution else None,
                     "production": float(result.get("production") or 0.0),
                     "runtime_seconds": runtime_seconds,
                 }
                 extra_payload = {
                     "solver_status": result.get("solver_status"),
                     "termination_condition": result.get("termination_condition"),
+                    "outcome": outcome,
+                    "has_solution": has_solution,
                 }
+                if solver_error:
+                    extra_payload["solver_error"] = solver_error
+                if result.get("warnings"):
+                    extra_payload["warnings"] = list(result.get("warnings") or [])
                 if incumbent_assignments is not None and isinstance(warm_start_info, Mapping):
                     extra_payload["warm_start"] = dict(warm_start_info)
                 kpi_payload = _ensure_kpi_dict(metrics_obj) if metrics_obj is not None else {}
                 run_logger.finalize(
+                    status="error" if solver_error else "ok",
                     metrics=metrics_payload,
                     extra=extra_payload,
+                    error=str(solver_error) if solver_error else None,
                     artifacts=[str(out)],
                     kpis=kpi_payload,
                 )
     finally:
         if watch_runner:
             watch_runner.stop()
+    if solver_failed:
+        raise typer.Exit(code=1)
 
 
 @app.command("solve-heur")

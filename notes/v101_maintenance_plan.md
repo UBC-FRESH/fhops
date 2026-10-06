@@ -177,7 +177,7 @@ carry_state=)`), with these decisions/deviations:
    (a zero-work placeholder could not be made unavailable within contract validation). A carried
    `last_block_id` pointing to a dropped block is removed with a warning in
    `RollingPlanResult.warnings`; a user lock targeting a dropped block raises
-   `RollingInfeasibleError`.
+   `RollingInfeasibleError`. (Superseded in §8.14: such locks are rejected up front.)
 5. **Slices are re-validated** (`Scenario.model_validate`), so merged locks get full
    cross-validation; hooks also merge + re-validate and no longer mutate the scenario they receive.
 6. **Telemetry addition.** `RollingIterationSummary.remaining_work_start` (also in
@@ -644,6 +644,206 @@ Reference ladder (`fhops bench suite`, committed flags, into a temp dir): tiny7 
 and small21 SA ×3 / ILS / Tabu rows and assignment CSVs byte-identical. SoftwareX playback assets
 (`run_playback_analysis.py --out-dir <tmp>`): every generated file byte-identical to
 `docs/softwarex/assets/data/playback` (the two figure files are produced by a different script).
+
+### 8.15 Contract validation, packaging, CI, compatibility docs (#118)
+Pre-release audit of the 1.0.1 candidate (f31aa65); evidence in `/tmp/opencode/audit-{1,2,4}-scratch/`,
+`/tmp/opencode/floors118/`, `/tmp/opencode/compat118/`, `/tmp/opencode/roll118/`.
+
+1. **Security / packaging.** The tree tracked an unrelated Django ("Codex") app state under
+   `config/` (`secret_key`, `codex.sqlite3` with an admin password hash, `hypercorn.toml`,
+   `cache/**`), shipped in the candidate sdist. Removed from the tree (`git rm -r config`; history
+   not rewritten — the secret must be rotated), ignored (`/config/`, `*.sqlite3`, `secret_key`,
+   `*.djcache`), excluded in `[tool.hatch.build]` (also `.env*`, `.pypirc`), and
+   `release-build.yml` now fails if artifacts contain such files. The new sdist file list equals
+   the candidate's minus the 26 `config/` files (wheel unchanged). Remaining non-secret leak noted:
+   committed SoftwareX telemetry/benchmark assets contain absolute developer paths
+   (`/home/gep/projects/fhops/...`), as in v1.0.0; left unchanged (regenerating assets is out of
+   scope).
+2. **Dependency floors** (fresh `uv` venvs, Python 3.11.17 and 3.12.3, every other dependency at
+   its floor; smoke = import, `fhops --help`, tiny7 `solve-heur`, `solve-mip-operational` with and
+   without `--incumbent` (HiGHS must accept the start), `eval-playback`, `plan rolling --solver mip`;
+   full `pytest` at the floors):
+   - `typer>=0.12.4`: 0.12.3 and older (incl. the old floor 0.9.0) fail to build the CLI
+     (`RuntimeError: Type not yet supported: pathlib.Path | None`).
+   - `pyomo>=6.9.2`: 6.9.1 cannot create `SolverFactory("highs")` (falls back to the ASL
+     executable); ≤ 6.9.0 also fails the warm start (`LegacySolverInterface.solve()` rejects
+     `warmstart`); 6.9.1 + highspy 1.7 lacks `HandleKeyboardInterrupt`. The audit's "6.9.4" floor
+     came from testing 6.9.0 only; 6.9.2 and 6.9.3 pass everything.
+   - `highspy>=1.8.1`: 1.7.0 was never published with files; 1.7.1–1.8.0 pass the smoke but report a
+     rejected MIP start as "status unknown" (`tests/model/test_operational_driver.py::
+     test_highs_warm_start_flags_infeasible_incumbent` fails).
+   - `PyYAML>=6.0.1`: 6.0 has no Python 3.12 wheel and fails to build.
+   - Unchanged floors verified working: click 8.1.0, rich 13.7.0, pydantic 2.6.0, pandas 2.2.0,
+     numpy 1.26.0, pyarrow 15.0.0, optuna 3.5.0.
+   - At the floors: `pytest` 448 passed / 212 skipped and the CLI suites 20 passed on both Pythons.
+3. **Validation** (`Scenario._cross_validate`, `validate_initial_state`): locks outside the block's
+   `[earliest_start, latest_finish]` window; locks on a block with `harvest_system_id` whose machine
+   has no role or a role outside that system (registry = defaults overlaid with
+   `harvest_systems`; unknown systems skip the check; blocks without a system accept any machine);
+   `role_remaining > work_required + 1e-6`. Deviation: tolerance 1e-6 m³ (the tracker's
+   `SEQUENCING_TOLERANCE`) instead of 1e-9, so carry-forward states built from HiGHS plans (~5e-7
+   noise) cannot be rejected; measured on rolling SA/MILP runs (tiny7 7/4/2, 7/3/1; small21 21/7/3;
+   med42 42/14/7; ka_6 28/14/7) the largest `role_remaining − work_required` in any window was
+   −5.18 m³ (never positive). Role-less machines are rejected on explicit-system blocks because
+   the operational MILP fixes their assignment to 0 there (the heuristics allow them), so such a
+   lock was infeasible for the MILP. New checks run after all existing lock checks, so existing
+   error messages are unchanged.
+4. **Compatibility.** All 27 scenario YAMLs in the repo (examples, SoftwareX assets, test fixtures;
+   2 intentionally invalid) and the 9 Jaffray scenarios load to identical `Scenario` dumps / identical
+   errors under PyPI 1.0.0, the candidate (f31aa65), and this branch. 19 tiny7-derived edge cases
+   document what each version accepts (`/tmp/opencode/compat118/cases.md`).
+5. **CI.** `ci.yml` runs `tests/test_cli_operational_mip.py`, `tests/test_cli_playback.py`,
+   `tests/test_cli_playback_exports.py` with `FHOPS_RUN_FULL_CLI_TESTS=1` (~10–30 s); `tests/cli/`
+   already ran in the main pytest step; dataset CLI suites stay excluded (#103).
+6. **Docs.** Removed "behaves exactly as in v1.0.0" claims (data contract, `ScenarioInitialState`,
+   `Scenario.initial_state`, release notes); documented `Scenario.shift_labels()`, the
+   `fhops>=1.0.1` requirement for `initial_state` / lock `shift_id` files, and every input now
+   rejected at load (data contract "Compatibility with FHOPS 1.0.0", release notes). SoftwareX
+   prose: introduction names v1.0.1 as the specific release; dependency row in
+   `metadata/current_code_version.tex` updated to the new floors. Left for the manuscript authors:
+   `illustrative_example.tex` ("FHOPS 1.0.0" in the benchmark software context) and
+   `software_description.tex` (lists scipy, which is not a dependency).
+
+### 8.12 Operational MILP robustness and correctness (#115)
+Pre-release antagonistic audit of the 1.0.1 candidate (f31aa65); repro scripts in
+`/tmp/opencode/audit-{1,2,4}-scratch/`, branch `issue-115-milp-robustness`. Design and decisions:
+
+1. **Driver never raises for missing solutions** (`model/milp/driver.py`). Every solver path calls
+   `solve(..., load_solutions=False)` and loads only when a solution exists (APPSI `load_vars()`;
+   `model.solutions.load_from(results)` for Pyomo's `highs` `LegacySolverWrapper` and legacy
+   plugins, the latter gated on optimal/feasible or limit + finite incumbent). The result gains
+   `has_solution`, `outcome` (`optimal | feasible | infeasible | no_solution | error`),
+   `solver_error` and `warnings`; without a solution `objective=None` and the assignment table is
+   empty with the usual columns. Genuine solver failures are **not** reported as infeasible: HiGHS
+   `ERROR` log lines (captured for the `highs` path via `tee=[stream]`, for APPSI via the private
+   logger), solver exceptions (`ApplicationError`, `RuntimeError`), or an error/unknown
+   termination without solution set `solver_error` (audit `opt3.py`: HiGHS refuses `threads=1`
+   once its global scheduler was initialised with 36 threads — previously
+   `NoFeasibleSolutionError`, i.e. "infeasible"). Exported production is clamped at 0 (no `-0.0`).
+2. **Warm-start acceptance inference.** When the HiGHS log has no verdict, `accepted=True`,
+   `acceptance="inferred"` if a solution was returned and either its `x` equal the seeded `x`, or
+   the returned objective is ≥ the seed objective and the seed satisfies every constraint
+   (checked lazily on the recorded seed values, tolerance 1e-6; the check costs ~10 s on ka_6, so it
+   only runs when needed). `acceptance="log"` when the verdict comes from the log.
+3. **CLI** (`solve-mip-operational` only): prints `outcome=…` and the objective only with a
+   solution; an incumbent with no machine assignment ("objective = −Σ W") is reported as such
+   instead of "No feasible assignment returned"; lock warnings and solver errors are printed; a
+   solver error exits 1 (telemetry `status=error`).
+4. **Locks never cause infeasibility.** `resolve_locked_slots(bundle)` (data.py, shared by the
+   builder and the warm-start overlay) resolves locks per `(machine, slot)`: unavailable slots →
+   pinned to 0 (silently, as before); contradictory locks (day outside the block window, role not
+   in the block's system) → pinned to 0 with a warning; unknown ids / no matching slot / a second
+   lock on a locked slot → ignored with a warning (scenario validation rejects these; #118). The
+   activation coupling is reworked so `g` gates production only: `role_active_upper` excludes
+   machines locked to the block in that slot, so a locked loader/head-start machine may be
+   assigned and idle (`x=1`, `p=0`). For unlocked machines the published coupling
+   (`Σx ≤ |M(r)| g`) is unchanged. Playback still flags a locked idle machine of a buffered role
+   (`missing_prereq`; tracker semantics, #116).
+5. **Per-upstream staged inventories (joins).** `inventory[u,b,s]` is indexed by the upstream role
+   (`InventoryPairs` = `(u,b)` with ≥1 downstream role); balance
+   `I_u = I_u^start + z_u − Σ_{r∈N(u)} z_r`, guard `Σ_{r∈N(u)} z_r ≤ I_u^start`, initial value
+   `staged_inventory[u]`, head start `I_u(prev) ≥ B(g−h)` and loader threshold per upstream role.
+   This is exactly the tracker (`role_inventory[(b,u)]` decremented by each downstream role's
+   production; min over upstream; head start on the min slot-start volume), including roles feeding
+   several roles (shared pool, consumption summed — keyed by `u`, not by `u→r` pairs, which would
+   double-count a fork against the tracker; identical without forks). For linear chains the model
+   is the previous one with the inventory renamed from the downstream to the upstream role: LP files
+   written with numeric labels are **byte-identical** to f31aa65 for 30 random loader-free chains
+   (head starts, consistent initial states).
+6. **Dynamic loader threshold.** `I_u(prev) ≥ min(q_b, W_b − D_b(prev(s)))·g` (tracker rule:
+   `min(loader_batch, remaining_work)`; the tracker's within-slot remaining is never larger, so the
+   MILP is never less strict). Exact linearisation: slots where the remaining volume provably exceeds
+   a truckload (`D̄_b(<s) ≤ W−q`, terminal fleet capacity bound) keep `I ≥ q·g`; blocks with
+   `W ≤ q` use `I + D ≥ W·g`; tail slots use a monotone block binary `λ_{b,s}`
+   (`I ≥ q(g−λ)`, `I + D ≥ q g + (W−q)λ`, `D ≥ (W−q)λ`, `λ_s ≥ λ_prev`); big-Ms are `W` and `q`.
+   `D` uses `role_cumulative` of the terminal roles. Loader head starts and the truckload rule are
+   now separate constraints (the waiver applies to the head start only, as in the tracker).
+7. **`role_remaining > work_required`.** Cap `Σ z ≤ min(R⁰, W)`; the head-start waiver still
+   compares with the carried-in `R⁰` (the tracker's `role_remaining`), so it never fires when
+   `R⁰ > W`. Where the flow balances do not imply it — systems with forks / several terminal roles,
+   or chains/joins whose carried-in state violates `R_r + Σ_{path} staged ≤ W` — the per-slot cap
+   `z_r(s) + D_b(≤s) ≤ W_b` mirrors the tracker's cap of every assignment at the remaining volume
+   (without it 1/100 fork+state fuzz cases replayed with a violation).
+8. **Blackouts on partial shift calendars.** `build_blackout_slots` blocks, on every blackout day,
+   every grid slot of the day (`pb.shifts`) plus each machine's own calendar shifts; fallback to
+   timeline names / `S1` only for days without grid slots. API unchanged; slot sets are unchanged
+   when every machine has calendar entries on the grid or no shift calendar exists.
+9. **Formulation** (`fhops_operational_formulation.md`, TeX/RST regenerated with pandoc 3.6, which
+   reproduced the committed files byte-for-byte before editing): sets `P^stg`, `N_{u,b}`, `P^thr`,
+   `P^act`, `P^cap`, `S^tail_b`; `B_{r,b}` fallback (own capacity when no upstream machine has a
+   rate) and `Q_{r,b}` definition; `R⁰`/`R = min(R⁰, W)`; variables `I_{u,b,s}`, `λ`, notation
+   `D_{b,s}`; E7/E8 rewritten; per-slot cap; locks with `χ_k`; fleet-wide blackouts; "Changes from
+   FHOPS v1.0.0 (1.0.1)" rewritten as one list (i)–(vii).
+
+Evidence (before = f31aa65 copy, after = branch; full tables in CHANGE_LOG #115): every audit
+repro is fixed (locks feasible, joins replay with 0 violations, loader tail 80/98 → 100,
+`fuzz_incons` 7/40 → 0/40, `opt3.py` reported as solver error, blackout day empty); random DAG
+MILP→playback replay (`/tmp/opencode/t115/fuzz_dag.py`, 100 seeds each): joins 33 → 0, forks
+35 → 0, joins + random initial state 44 → 0, forks + state 36 → 0 bad cases (planned terminal
+production == playback delivered in every clean case). Reference: tiny7 optimal 4388.082752
+unchanged; 60 random linear pipelines with loaders give identical optimal objectives; at equal time
+limits (both versions side by side) small21 improves (120 s: empty → −13655.25; 600 s: 15004.45 →
+15645.73) and med42 (120/600 s) / ka_6 (120 s) stay at the empty incumbent for both. Model size:
+ka_6 +1967 binaries (+2.3 %, loader tail), +7911 constraints (+2.9 %); tiny7 +12 binaries; build
+time unchanged within noise.
+
+The tiny7 MILP has alternative optima (a no-good cut on the returned assignment re-solves to the
+same objective), so the regression tests check objective, constraint feasibility and replay
+consistency instead of exact assignments.
+
+Hand-offs: playback flags a locked idle machine of a buffered role (`missing_prereq`) — tracker
+semantics owned by #116; the rolling MILP hook may forward `solver_error`/`warnings` (#117);
+contradictory locks are validated at scenario level by #118; the legacy day-level `solve_mip`
+(`fhops solve-mip`) still raises on infeasible models (its CLI formats the objective as a float).
+
+### 8.14 Rolling-horizon robustness (#117, audit)
+Pre-release audit of the 1.0.1 candidate (f31aa65; repros in `/tmp/opencode/audit-1-scratch/`).
+Branch `issue-117-rolling-robustness`.
+
+Findings → fixes:
+1. **MILP windows without a solution crashed the run** (`lockinfeas.py` MILP 2/2:
+   `NoFeasibleSolutionError` from Pyomo). Policy now: `MILPSolver` returns
+   `SolverOutput(has_solution=False)` when the driver raises or reports no solution
+   (`has_solution` false / `objective is None`, so it works before and after #115's driver change);
+   `run_rolling_horizon` records `status="no_solution"`, `objective=None`, a warning (iteration,
+   run, `UserWarning`), locks **nothing** for the lock span (machines idle; user locks there are not
+   applied and are counted in the warning), so the carried state is unchanged across the span, and
+   continues. `fail_on_empty_window=True` / `--fail-on-empty-window` raises
+   `RollingInfeasibleError` (naming the iteration; `iteration_index`, `partial_result`). Windows with
+   nothing to plan (no blocks, no rates, no available shift slots) are `status="skipped"` and the
+   solver is not called (before: `RollingInfeasibleError` for "no blocks"/"no production rates").
+2. **Empty windows were silent** (ka_6 smoke: 30 s MILP windows return an all-zero incumbent with
+   objective = −leftover penalty). New per-iteration `planned_delivered` (window plan replayed on the
+   window scenario), `locked_delivered`, `empty` (window blocks hold work but 0 locks or 0 planned
+   delivery), and run counts `empty_windows` / `no_solution_windows` / `skipped_windows` (+ index
+   lists) in `summarize_plan`, `RollingPlanResult.empty_windows` / `no_solution_windows`, and
+   `evaluate_rolling_plan` metadata.
+3. **Locks outside their block window** behaved differently per window setting (`lockout.py`: SA 6/6
+   silently dropped the lock, MILP 6/6 infeasible, 3/3 `... does not overlap`). Now rejected up front
+   for every lock, before any solve, with one message (also rejected at validation once #118 lands).
+   Valid locks always lie in a window that keeps their block, so the slicer's overlap error is
+   unreachable from `run_rolling_horizon`. Downstream user locks made infeasible by short
+   non-overlapping windows go through policy 1 (documented limitation).
+4. **Partial `shift_calendar`** (`shiftcal.py`): a window with no calendar entries fell back to `S1`
+   (rolling 4/4 delivered 2400 m³ vs 1600 m³ direct). The slicer now emits explicit `available=0`
+   entries for such windows (no shift slots), and the window is skipped: 1600 m³.
+5. **Tests**: the v1.0.0 zero constant in `test_stitched_kpis_bounded_and_close_to_full_horizon` is
+   replaced by: full horizon finishes tiny7; for 7/4/2 and 7/6/3, 0 violations, no empty windows,
+   Σ `locked_delivered` = stitched delivery, SA ≥ 95 % of full, MILP delivery = planned loader
+   production and ≥ 99 % of full for `sub=6`. `_assert_window_matches_replay` sorts by the
+   scenario's slot order (night-before-day test added). `tests/planning/test_rolling_robustness.py`
+   adds a hand-written linear-chain state machine (no `assignments_to_records`) compared with
+   carried state, window scenarios, iteration telemetry and stitched KPIs (2/3 roles, 1/2 shifts,
+   user initial state; SA and MILP), plus tests for 1–4; CLI partial-output tests.
+6. Small hardening: carried `role_remaining` is capped at the block's remaining terminal volume
+   (float noise must not violate #118's `role_remaining <= work_required`); day-level locks get the
+   day's only shift label before playback/exports (playback will reject unlabeled multi-shift rows
+   after #116; multi-shift days keep `None`).
+
+Evidence: audit harness `run_adv.py` (5 scenario variants × SA/MILP × 5 window settings): 50 runs,
+0 state problems, 0 sequencing violations. Jaffray smoke (`--smoke`, ka_6): 10/10 runs ok, SA
+30913.4 m³ in every run, MILP 30 s windows return all-zero incumbents → flagged `empty` (baseline 1,
+14/14 2, 28/14 2, 14/7 3, 28/7 3 empty windows), 0 violations.
 
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,

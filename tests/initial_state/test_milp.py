@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import dataclasses
+
 import pandas as pd
 import pyomo.environ as pyo
 import pytest
@@ -64,16 +66,17 @@ def test_initial_staged_inventory_feeds_first_slot() -> None:
     assert skid["production"].sum() == pytest.approx(40.0)
 
 
-def test_first_slot_inventory_start_is_min_over_upstream() -> None:
+def test_first_slot_inventory_start_is_upstream_staged_volume() -> None:
+    # Staged inventories are indexed by the upstream role (#115): the feller's staged output.
     model = build_operational_model(
         build_operational_problem(
             Problem.from_scenario(chain_scenario(initial_state=_staged(25.0)))
         ).bundle
     )
     meta = getattr(model, "_warm_start_meta")
-    assert meta["initial_inventory_start"][("grapple_skidder", "B1")] == pytest.approx(25.0)
-    assert meta["initial_inventory_start"][("grapple_skidder", "B2")] == pytest.approx(0.0)
-    constraint = model.inventory_start_eq["grapple_skidder", "B1", 1, "S1"]
+    assert meta["initial_inventory_start"][("feller_buncher", "B1")] == pytest.approx(25.0)
+    assert meta["initial_inventory_start"][("feller_buncher", "B2")] == pytest.approx(0.0)
+    constraint = model.inventory_start_eq["feller_buncher", "B1", 1, "S1"]
     assert pyo.value(constraint.upper) == pytest.approx(25.0)
 
 
@@ -97,6 +100,28 @@ def test_role_remaining_caps_upstream_output() -> None:
     assert delivered(uncapped) == pytest.approx(60.0)
     assert capped["objective"] == pytest.approx(0.0)
     assert uncapped["objective"] == pytest.approx(20.0)
+
+
+def test_role_remaining_above_work_required_uses_min_r_w() -> None:
+    # Scenario/Problem validation rejects role_remaining (90) > work_required (40) since #118, so
+    # the inconsistent value is injected into the MILP bundle directly to exercise the defensive
+    # cap: the MILP caps the feller at min(R, W) = 40 (#115).
+    with pytest.raises(ValueError, match="above the block's work_required"):
+        chain_scenario(num_days=2, work_b1=40.0, initial_state=_staged(0.0, remaining=90.0))
+    pb = Problem.from_scenario(
+        chain_scenario(num_days=2, work_b1=40.0, initial_state=_staged(0.0, remaining=40.0))
+    )
+    bundle = build_operational_problem(pb).bundle
+    bundle = dataclasses.replace(
+        bundle,
+        initial_role_remaining={**bundle.initial_role_remaining, ("B1", "feller_buncher"): 90.0},
+    )
+    model = build_operational_model(bundle)
+    assert pyo.value(model.role_remaining_cap["feller_buncher", "B1"].upper) == pytest.approx(40.0)
+    result = solve_operational_milp(bundle, solver="highs")
+    assert result["termination_condition"].lower() == "optimal"
+    frame = result["assignments"]
+    assert frame[frame["machine_id"] == "F1"]["production"].sum() <= 40.0 + 1e-6
 
 
 def test_last_block_charges_first_slot_boundary_move() -> None:
@@ -195,8 +220,8 @@ def test_warm_start_respects_locks_and_initial_inventory() -> None:
         [{"machine_id": "S1", "block_id": "B1", "day": 1, "shift_id": "S1", "assigned": 1}]
     )
     _apply_incumbent_start(staged_model, staged_incumbent)
-    assert staged_model.inventory_start["grapple_skidder", "B1", (1, "S1")].value == pytest.approx(
+    assert staged_model.inventory_start["feller_buncher", "B1", (1, "S1")].value == pytest.approx(
         40.0
     )
     assert staged_model.prod["S1", "B1", (1, "S1")].value == pytest.approx(40.0)
-    assert staged_model.inventory["grapple_skidder", "B1", (1, "S1")].value == pytest.approx(0.0)
+    assert staged_model.inventory["feller_buncher", "B1", (1, "S1")].value == pytest.approx(0.0)

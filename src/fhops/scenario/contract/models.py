@@ -518,9 +518,15 @@ class MachineInitialState(BaseModel):
 class ScenarioInitialState(BaseModel):
     """Optional initial state for a scenario (resume planning mid-operation).
 
-    When ``Scenario.initial_state`` is ``None`` (default) every solver, tracker, and playback path
-    behaves exactly as in FHOPS v1.0.0: staged inventories and role shift counts start at zero,
-    each role may output the full ``work_required``, and machines have no prior position.
+    When ``Scenario.initial_state`` is ``None`` (default) the horizon starts from the FHOPS 1.0.0
+    initial conditions: staged inventories and role shift counts start at zero, each role may
+    output the full ``work_required``, and machines have no prior position (their first move is
+    free). Solver and playback results can still differ from 1.0.0 because of other 1.0.1 fixes
+    (MILP/playback sequencing alignment, MILP blackouts, stochastic playback events; see
+    ``docs/releases/v1.0.1.md``).
+
+    Scenario files that contain ``initial_state`` require ``fhops>=1.0.1``: FHOPS 1.0.0 silently
+    ignores the section (``schema_version`` is unchanged at ``1.0.0``).
 
     Attributes
     ----------
@@ -622,7 +628,12 @@ class Scenario(BaseModel):
     locked_assignments:
         Optional list of :class:`ScheduleLock` entries that pin machines to blocks on specific days
         (or specific day/shift slots when ``ScheduleLock.shift_id`` is set). Enforced by the
-        operational MILP, the legacy MIP builder, and the heuristics.
+        operational MILP, the legacy MIP builder, and the heuristics. Validation rejects unknown
+        machine/block ids, days outside the horizon or the block's
+        ``[earliest_start, latest_finish]`` window, blackout days, unknown shift labels (see
+        :meth:`shift_labels`), duplicate or mixed day/shift locks, and machines whose role is not
+        a role of the block's explicit harvest system. Files using ``shift_id`` require
+        ``fhops>=1.0.1`` (1.0.0 reads such entries as whole-day locks).
     objective_weights:
         Optional :class:`ObjectiveWeights` overriding default solver weights.
     road_construction:
@@ -630,9 +641,12 @@ class Scenario(BaseModel):
     initial_state:
         Optional :class:`ScenarioInitialState` carrying staged inter-role inventory, remaining
         per-role output, head-start shift counts, and each machine's last block at the start of
-        the horizon. ``None`` (default) reproduces the v1.0.0 behaviour exactly. Validation
-        requires known block/machine ids, non-negative values, role keys drawn from the block's
-        harvest-system roles, and ``last_block_id`` values that are scenario blocks.
+        the horizon. ``None`` (default) starts from the 1.0.0 initial conditions (empty staged
+        inventory, full ``work_required`` per role, no prior machine position); it does not undo
+        other 1.0.1 behaviour changes. Validation requires known block/machine ids, non-negative
+        values, role keys drawn from the block's harvest-system roles, ``role_remaining`` values
+        not above the block's ``work_required``, and ``last_block_id`` values that are scenario
+        blocks. Files using this field require ``fhops>=1.0.1`` (1.0.0 ignores it).
 
     Notes
     -----
@@ -826,6 +840,7 @@ class Scenario(BaseModel):
                             raise ValueError(
                                 f"Locked assignment for machine {lock.machine_id} falls within blackout"
                             )
+            _validate_lock_windows_and_roles(self)
         if self.road_construction:
             seen_jobs: set[str] = set()
             for road_job in self.road_construction:
@@ -843,18 +858,93 @@ class Scenario(BaseModel):
     def shift_labels(self) -> set[str]:
         """Return the shift labels of the scenario's shift grid.
 
+        These are the labels accepted for ``ScheduleLock.shift_id`` and used for the ``shift_id``
+        column of solver and playback outputs. The source mirrors :meth:`Problem.from_scenario`.
+
         Returns
         -------
         set[str]
-            ``shift_calendar`` labels when a shift calendar is present, otherwise the timeline shift
-            names, otherwise ``{"S1"}`` (the synthetic single shift used by
-            :meth:`Problem.from_scenario` for day-indexed scenarios).
+            ``shift_calendar`` labels when a shift calendar is present (whether or not each entry is
+            available), otherwise the timeline shift names, otherwise ``{"S1"}`` (the synthetic
+            single shift used for day-indexed scenarios).
+
+        Examples
+        --------
+        >>> from fhops.scenario.io import load_scenario
+        >>> load_scenario("examples/tiny7/scenario.yaml").shift_labels()
+        {'S1'}
         """
         if self.shift_calendar:
             return {entry.shift_id for entry in self.shift_calendar}
         if self.timeline and self.timeline.shifts:
             return {shift_def.name for shift_def in self.timeline.shifts}
         return {"S1"}
+
+
+ROLE_REMAINING_TOLERANCE = 1e-6
+"""Volume tolerance (m³) when checking ``role_remaining <= work_required``.
+
+Equal to the sequencing tracker's volume tolerance, so rolling-horizon carry-forward states built
+from solver plans (which carry ~1e-7 m³ of solver noise) are not rejected."""
+
+
+def _harvest_system_registry(scenario: Scenario) -> dict[str, HarvestSystem]:
+    """Return the default harvest-system registry overlaid with ``scenario.harvest_systems``."""
+
+    registry: dict[str, HarvestSystem] = dict(default_system_registry())
+    if scenario.harvest_systems:
+        registry.update(scenario.harvest_systems)
+    return registry
+
+
+def _validate_lock_windows_and_roles(scenario: Scenario) -> None:
+    """Reject locks outside the block window or on a role the block's harvest system lacks.
+
+    Called from :class:`Scenario` validation after the id/day/shift/blackout lock checks.
+
+    Raises
+    ------
+    ValueError
+        If a lock's ``day`` lies outside the block's ``[earliest_start, latest_finish]`` window
+        (``latest_finish`` defaults to ``num_days``), or if the block declares
+        ``harvest_system_id`` and the locked machine's ``role`` is missing or is not a role of that
+        harvest system. Blocks without ``harvest_system_id`` accept any machine (unsequenced
+        blocks), and blocks whose harvest system cannot be found in ``scenario.harvest_systems`` or
+        the default registry skip the role check.
+    """
+
+    locks = scenario.locked_assignments
+    if not locks:
+        return
+    blocks = {block.id: block for block in scenario.blocks}
+    machine_roles = {machine.id: machine.role for machine in scenario.machines}
+    registry: dict[str, HarvestSystem] | None = None
+    for lock in locks:
+        block = blocks[lock.block_id]
+        earliest = block.earliest_start if block.earliest_start is not None else 1
+        latest = block.latest_finish if block.latest_finish is not None else scenario.num_days
+        if not earliest <= lock.day <= latest:
+            raise ValueError(
+                f"Locked assignment for machine {lock.machine_id} on day {lock.day} falls outside "
+                f"block {block.id} window [{earliest}, {latest}] "
+                "(earliest_start/latest_finish)"
+            )
+        if not block.harvest_system_id:
+            continue
+        if registry is None:
+            registry = _harvest_system_registry(scenario)
+        system = registry.get(block.harvest_system_id)
+        if system is None:
+            continue
+        system_roles = {job.machine_role for job in system.jobs if job.machine_role}
+        role = machine_roles.get(lock.machine_id)
+        if role not in system_roles:
+            role_label = f"role {role}" if role else "no role"
+            raise ValueError(
+                f"Locked assignment for machine {lock.machine_id} ({role_label}) on block "
+                f"{block.id} is incompatible with harvest system {system.system_id} "
+                f"(roles: {', '.join(sorted(system_roles))})"
+            )
 
 
 def validate_initial_state(scenario: Scenario) -> None:
@@ -873,9 +963,12 @@ def validate_initial_state(scenario: Scenario) -> None:
     ------
     ValueError
         If a block/machine id is unknown, a ``last_block_id`` is not a scenario block, a block with
-        role-keyed state has no ``harvest_system_id``, or a role key is not a role of the block's
-        harvest system. Harvest systems are looked up in ``scenario.harvest_systems`` (falling back
-        to :func:`fhops.scheduling.systems.default_system_registry`, mirroring
+        role-keyed state has no ``harvest_system_id``, a role key is not a role of the block's
+        harvest system, or a ``role_remaining`` value exceeds the block's ``work_required`` by more
+        than ``ROLE_REMAINING_TOLERANCE`` (1e-6 m³; an upstream role can never have more left
+        to output than the terminal volume still to deliver). Harvest systems are looked up in
+        ``scenario.harvest_systems`` (falling back to
+        :func:`fhops.scheduling.systems.default_system_registry`, mirroring
         :meth:`Problem.from_scenario`).
     """
 
@@ -884,9 +977,7 @@ def validate_initial_state(scenario: Scenario) -> None:
         return
     blocks = {block.id: block for block in scenario.blocks}
     machine_ids = {machine.id for machine in scenario.machines}
-    registry: dict[str, HarvestSystem] = dict(default_system_registry())
-    if scenario.harvest_systems:
-        registry.update(scenario.harvest_systems)
+    registry = _harvest_system_registry(scenario)
 
     for block_state in state.blocks:
         block = blocks.get(block_state.block_id)
@@ -918,6 +1009,13 @@ def validate_initial_state(scenario: Scenario) -> None:
                 f"roles of harvest system {system.system_id} "
                 f"({', '.join(sorted(system_roles))})"
             )
+        for role, remaining in sorted(block_state.role_remaining.items()):
+            if remaining > block.work_required + ROLE_REMAINING_TOLERANCE:
+                raise ValueError(
+                    f"initial_state for block {block.id} sets role_remaining[{role!r}]={remaining} "
+                    f"above the block's work_required={block.work_required}; a role cannot have "
+                    "more volume left to output than the block still has to deliver"
+                )
 
     for machine_state in state.machines:
         if machine_state.machine_id not in machine_ids:
