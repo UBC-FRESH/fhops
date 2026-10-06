@@ -498,21 +498,7 @@ def test_valid_lock_at_block_window_edge_never_hits_overlap_error(sub: int, lock
 @pytest.mark.filterwarnings("ignore::UserWarning")
 @pytest.mark.parametrize(
     "sub,lock",
-    [
-        (6, 6),
-        pytest.param(
-            2,
-            2,
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason=(
-                    "#116: the tracker flags an idle locked head-start machine as missing_prereq; "
-                    "remove this mark when #116 lands"
-                ),
-            ),
-        ),
-        (3, 2),
-    ],
+    [(6, 6), (2, 2), (3, 2)],
 )
 def test_downstream_user_lock_in_short_windows_does_not_crash(sub: int, lock: int) -> None:
     scenario = lockinfeas_scenario()
@@ -535,6 +521,15 @@ def test_downstream_user_lock_in_short_windows_does_not_crash(sub: int, lock: in
         assert ("S1", "B2", 3) in {
             (lk.machine_id, lk.block_id, lk.day) for lk in result.locked_assignments
         }
+        if solver == "mip" and sub == 2:
+            # Nothing is staged on B2 in the 2-day window starting on day 3, so the MILP idles
+            # the locked skidder; an idle slot is not a sequencing violation (#125).
+            (locked,) = [
+                lk
+                for lk in result.locked_assignments
+                if (lk.machine_id, lk.block_id, lk.day) == ("S1", "B2", 3)
+            ]
+            assert locked.production == pytest.approx(0.0, abs=1e-6)
 
 
 # (4) Partial shift calendars ---------------------------------------------------------------------
