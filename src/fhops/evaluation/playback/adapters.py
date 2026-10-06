@@ -110,7 +110,9 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
     Returns
     -------
     Iterator[PlaybackRecord]
-        Iterator exposing the ``sequencing_tracker`` used to cap production.
+        Iterator over chronologically ordered records. The iterator exposes a
+        ``sequencing_tracker`` attribute holding the :class:`SequencingTracker` used to cap
+        production.
 
     Notes
     -----
@@ -119,6 +121,11 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
     and ``downtime_hours`` equal to the lost shift hours, and they bypass the sequencing
     tracker and mobilisation costing (the machine did not work). Partially lost shifts report
     ``hours_worked = shift_hours - downtime_hours``.
+
+    When ``Scenario.initial_state`` is set, the sequencing tracker starts from the carried-in
+    staged inventory, role remaining volumes, and role shift counts, and each machine's
+    mobilisation tracking starts at its ``last_block_id`` so the first move to a different block
+    is charged (matching the operational MILP and the heuristics).
     """
 
     if assignments is None or assignments.empty:
@@ -174,6 +181,7 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
         else {}
     )
     previous_block: dict[str, str | None] = defaultdict(lambda: None)
+    previous_block.update(tracker.ctx.initial_machine_block)
 
     landing_lookup = {block.id: block.landing_id for block in scenario.blocks}
 

@@ -86,6 +86,49 @@ Semantics:
   other blocks to 0; a lock with `shift_id` fixes only that slot.
 - `ScheduleLock` gains `shift_id: str | None = None` (backward compatible).
 
+#### 8.1 implementation status and deviations (#91, branch `issue-91-initial-state-contract`)
+Implemented as designed, with these additions/deviations:
+1. **MILP `role_remaining` cap (addition).** `role_remaining` is honoured by the MILP too:
+   `model.role_remaining_cap` adds `Σ_s z[r,b,s] ≤ R_{r,b}` for pairs supplied by the initial state
+   (no constraint otherwise), so MILP schedules replay consistently with the tracker.
+2. **Locks as equality constraints.** `model.locked_assignment` uses equality constraints rather
+   than `Var.fix()` so warm-start seeding cannot overwrite them; incumbents are overlaid with locks
+   before seeding. Unavailable locked slots (shift *or* day calendar) are pinned to 0. The legacy
+   `optimization/mip/builder.py` keeps `fix()` but is now shift-aware, and warns (`UserWarning`)
+   that it ignores `initial_state`.
+3. **Shift locks in heuristics.** `OperationalProblem.lock_for(machine, day, shift)` combines
+   day-level (`locked_assignments`) and shift-level (`locked_shift_assignments`) locks; greedy seed,
+   repair, sanitizer, `evaluate_schedule`, the operator registry, and the MILP warm-start tracker
+   use it. Validation rejects unknown shift labels, duplicate `(machine, day, shift)` locks, and a
+   day-level lock mixed with shift-level locks for the same machine/day.
+4. **Role-keyed state requires `harvest_system_id`.** The tracker ignores roles on blocks without an
+   explicit system while the MILP applies the registry's default system, so role-keyed initial state
+   on such blocks would be ambiguous; validation rejects it. Role keys are normalised like machine
+   roles.
+5. **Boundary move semantics.** The MILP charges the boundary move only when the machine works in
+   the first slot (its slot-to-slot `y` variables already ignore idle gaps); the heuristics and
+   playback charge it on the machine's first *worked* slot. Identical when the machine works the
+   first slot (tested); documented in `docs/howto/data_contract.rst`.
+6. **Formulation assets.** `scripts/check_formulation_assets.py` and the OBJ/E6/E7 labels live only
+   on `main` (Phase 5, #64/#65); on the 1.0.1 line the canonical source is
+   `docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.md`, rendered by
+   `docs/softwarex/manuscript/scripts/export_docs_assets.py`. Pandoc **3.6** reproduces the
+   committed v1.0.0 TeX/RST byte-for-byte (3.1.3, pinned on `main`, changes RST list indentation),
+   so assets were regenerated with 3.6. The forward-port (#96) must apply the same terms to the
+   labelled OBJ/E6/E7 blocks on `main`.
+7. **Bundle serialisation.** `OperationalMilpBundle` carries `locked_assignments` and `initial_*`
+   mappings; `bundle_to_dict` emits them only when non-empty, so v1.0.0 dumps are unchanged and old
+   dumps still load.
+8. **Regression evidence.** `tests/initial_state/test_v100_regression.py` compares against
+   baselines captured on unmodified v1.0.0 code (`tests/fixtures/v100_regression/`): SA tiny7
+   (seed 123, 300 iters) objective `4306.522752000001` + assignments, SA med42 (seed 7, 150 iters)
+   objective `-38434.22731600001` + assignments, operational MILP tiny7/HiGHS objective
+   `4388.082751999992` (±1e-6), and playback KPIs for the three assignment tables (exact).
+
+Observed pre-existing issues (not changed here): `solve_operational_milp(..., incumbent_assignments=...)`
+with `solver="highs"` raises `TypeError` (`LegacySolverWrapper.solve()` rejects `warmstart`);
+`load_scenario` attaches YAML `locked_assignments` via `model_copy`, so they skip cross-validation.
+
 ### 8.2 Rolling carry-forward (#92)
 After each iteration locks its leading days:
 1. Replay the stitched locked plan against the **base** scenario with the sequencing tracker

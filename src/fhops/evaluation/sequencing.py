@@ -24,7 +24,31 @@ class SequencingResult:
 
 @dataclass(slots=True)
 class SequencingTracker:
-    """Tracks staged volume and sequencing feasibility as playback iterates."""
+    """Tracks staged volume and sequencing feasibility as playback iterates.
+
+    The tracker replays assignments in chronological order (call :meth:`process` per
+    assignment, then :meth:`finalize`). Staged output produced today becomes available to
+    downstream roles from the next day onward.
+
+    Attributes
+    ----------
+    ctx:
+        Shared :class:`~fhops.optimization.operational_problem.OperationalProblem` context.
+    debug:
+        When ``True`` callers may request :meth:`debug_snapshot` for telemetry.
+    remaining_work:
+        ``block_id -> m³`` terminal volume still to deliver (starts at ``work_required``).
+    role_inventory:
+        ``(block_id, role) -> m³`` output by ``role`` and not yet consumed downstream. Starts from
+        ``ctx.initial_role_inventory`` (``Scenario.initial_state`` staged inventory; empty by
+        default).
+    role_remaining:
+        ``(block_id, role) -> m³`` output the role may still produce. Starts from
+        ``ctx.role_work_required`` (``work_required`` or the carried-in ``role_remaining``).
+    role_counts_total:
+        ``(block_id, role) -> shifts`` worked before the current day (head-start accounting).
+        Starts from ``ctx.initial_role_counts`` (empty by default).
+    """
 
     ctx: OperationalProblem
     debug: bool = False
@@ -46,10 +70,10 @@ class SequencingTracker:
 
     def __post_init__(self) -> None:
         self.remaining_work = dict(self.ctx.bundle.work_required)
-        self.role_inventory = defaultdict(float)
+        self.role_inventory = defaultdict(float, self.ctx.initial_role_inventory)
         self.role_inventory_today = defaultdict(float)
         self.role_remaining = dict(self.ctx.role_work_required)
-        self.role_counts_total = defaultdict(int)
+        self.role_counts_total = defaultdict(int, self.ctx.initial_role_counts)
         self.role_counts_day = defaultdict(int)
         self.completed_blocks = set()
         self.debug_violation_counts = Counter()
@@ -287,7 +311,18 @@ class SequencingTracker:
 
 
 def build_sequencing_tracker(problem: Problem) -> SequencingTracker:
-    """Create a sequencing tracker for the supplied problem."""
+    """Create a sequencing tracker for the supplied problem.
+
+    Parameters
+    ----------
+    problem:
+        Problem whose scenario (including any ``initial_state``) seeds the tracker state.
+
+    Returns
+    -------
+    SequencingTracker
+        Fresh tracker; see :class:`SequencingTracker` for the initial-state seeding rules.
+    """
 
     ctx = build_operational_problem(problem)
     return SequencingTracker(ctx=ctx)
