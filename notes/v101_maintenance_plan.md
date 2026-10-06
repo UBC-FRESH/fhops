@@ -560,9 +560,9 @@ violations / landing-capacity excess in the final plan; "greedy" = seed schedule
 | ka_18 | 2 | -37613.87 / 71386.1 / 0 / 109 | -45613.87 / 71386.1 / 0 / 117 | 71386.13 / 71386.1 / 0 / 0 |
 | ka_18 | 3 | -26613.87 / 71386.1 / 0 / 98 | -43613.87 / 71386.1 / 0 / 115 | 71386.13 / 71386.1 / 0 / 0 |
 | pg_18 | greedy | -1021173.44 / – / – / 1311 | -1044697.44 / – / – / 1349 | 173999.63 / – / – / 0 |
-| pg_18 | 1 | — | — | — |
-| pg_18 | 2 | — | — | — |
-| pg_18 | 3 | — | — | — |
+| pg_18 | 1 | -292768.37 / 432997.0 / 0 / 601 | -271608.37 / 439577.0 / 0 / 593 | 289872.45 / 423817.4 / 0 / 0 |
+| pg_18 | 2 | -362716.37 / 431023.0 / 0 / 667 | -275608.37 / 439577.0 / 0 / 597 | 285859.63 / 421811.0 / 0 / 0 |
+| pg_18 | 3 | -342084.37 / 432339.0 / 0 / 649 | -299292.37 / 440235.0 / 0 / 622 | 299019.63 / 428391.0 / 0 / 0 |
 
 ILS (100 iterations) and Tabu (1000 iterations), seed 1:
 
@@ -574,7 +574,9 @@ ILS (100 iterations) and Tabu (1000 iterations), seed 1:
 | pg_6 | tabu | 66923.96 / 67924.0 / 0 / 1 | 66923.96 / 67924.0 / 0 / 1 | 67923.96 / 67924.0 / 0 / 0 |
 
 Trade-off: on capacity-limited horizons the plans now respect landing capacity instead of buying
-volume with 1000-point overloads; in the Jaffray rolling smoke (`rolling_rerun_v101.py --smoke`,
+volume with 1000-point overloads. `pg_18` (557762 m³ required, no plan completes it) delivers
+421811–428391 m³ instead of 431023–432997 (v1.0.0) / 439577–440235 (f31aa65), i.e. 1–4 % less,
+with 0 instead of ~600 overloads (objective +590k); in the Jaffray rolling smoke (`rolling_rerun_v101.py --smoke`,
 28-day master, SA 50 iterations/window) the 14-day-window SA runs deliver 30380.5 m³ instead of
 30913.4 m³ but with 0 instead of 35–37 landing overloads (full-horizon and 28-day windows still
 deliver 30913.4 m³). The MILP's landing constraint is per day with a slack that is free at weight 0
