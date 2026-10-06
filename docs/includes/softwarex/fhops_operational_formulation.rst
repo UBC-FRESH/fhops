@@ -93,7 +93,11 @@ sequencing constraints.
   objective weights.
 - :math:`\delta_{m,b',b}`: mobilization cost when machine :math:`m`
   transitions from block :math:`b'` to block :math:`b`.
-- :math:`C_{\ell}`: daily assignment capacity for landing :math:`\ell`.
+- :math:`C_{\ell}`: assignment capacity of landing :math:`\ell`, the
+  number of machines that may work its blocks concurrently in one shift
+  slot (``Landing.daily_capacity``);
+  :math:`K_{\ell} = |\mathcal{M}| - C_{\ell}` bounds the machines beyond
+  capacity in a slot.
 - :math:`\ell(b)`: landing associated with block :math:`b`.
 - :math:`\mathcal{U}_{r,b}`: upstream roles that must feed role
   :math:`r` on block :math:`b`.
@@ -163,7 +167,10 @@ sequencing constraints.
   loader role-block pair :math:`(r,b)`.
 - :math:`u_{r,b,s} \ge 0`: loader partial remainder volume.
 - :math:`L_b \ge 0`: leftover unmet block volume slack.
-- :math:`S_{\ell,d} \ge 0`: landing daily surplus slack.
+- :math:`S_{\ell,s,k} \in [0,1]`, :math:`k = 1,\dots,K_{\ell}`: unit
+  landing surplus slack for the :math:`k`-th machine beyond capacity on
+  landing :math:`\ell` in slot :math:`s` (only when
+  :math:`\omega^{\text{land}} > 0`).
 
 **Objective.**
 
@@ -176,7 +183,7 @@ terms:
    \begin{aligned}
    \max\; &\omega^{\text{prod}}\!\sum_{b\in\mathcal{B}}\sum_{r\in\mathcal{T}_b}\sum_{s\in\mathcal{S}} z_{r,b,s}
    - \omega^{\text{prod}}\!\sum_{b\in\mathcal{B}} L_b \\
-   &- \omega^{\text{land}}\!\sum_{\ell\in\mathcal{L}}\sum_{d\in\mathcal{D}} S_{\ell,d} \\
+   &- \omega^{\text{land}}\!\sum_{\ell\in\mathcal{L}}\sum_{s\in\mathcal{S}}\sum_{k=1}^{K_{\ell}} k\, S_{\ell,s,k} \\
    &- \omega^{\text{mob}}\!\sum_{m,b',b,s} \delta_{m,b',b}\, y_{m,b',b,s}
    - \omega^{\text{trans}}\!\sum_{m,b',b,s} y_{m,b',b,s} \\
    &- \sum_{m\in\mathcal{M}^{0}}\sum_{b\in\mathcal{B}\setminus\{b^{0}_m\}}
@@ -187,7 +194,8 @@ The last line is the boundary transition from each machine’s initial
 block into the first slot. It is linear in :math:`x` because
 :math:`b^{0}_m` is data; with no initial state
 (:math:`\mathcal{M}^{0}=\emptyset`) it vanishes and the objective is the
-v1.0.0 objective.
+v1.0.0 objective, apart from the landing term, which is now indexed by
+shift slot and priced per surplus machine (change (viii) below).
 
 For blocks without terminal roles (:math:`\mathcal{T}_b=\emptyset`, in
 particular blocks outside :math:`\mathcal{B}^{\text{seq}}`) the
@@ -399,21 +407,40 @@ system) and :math:`\chi_k=1` otherwise. Such locks are rejected by
 scenario validation; a lock that still reaches the model pins the
 machine to idle and is reported as a warning instead of making the model
 infeasible. A second lock on an already locked machine slot is ignored
-with a warning. Landing daily assignment capacity with surplus slack:
+with a warning. Landing capacity per shift slot, the machines working a
+landing’s blocks concurrently:
 
 .. math::
 
 
-   \sum_{b:\,\ell(b)=\ell}\sum_{m\in\mathcal{M}}\sum_{\sigma:(d,\sigma)\in\mathcal{S}} x_{m,b,(d,\sigma)}
-   \le C_{\ell} + S_{\ell,d}
-   \qquad \forall \ell\in\mathcal{L},\; d\in\mathcal{D}.
+   \sum_{b:\,\ell(b)=\ell}\sum_{m\in\mathcal{M}} x_{m,b,s}
+   \le
+   \begin{cases}
+   \max\{C_{\ell},\, N^{\text{lock}}_{\ell,s}\} & \text{if } \omega^{\text{land}} = 0,\\
+   C_{\ell} + \sum_{k=1}^{K_{\ell}} S_{\ell,s,k} & \text{if } \omega^{\text{land}} > 0,
+   \end{cases}
+   \qquad \forall \ell\in\mathcal{L},\; s\in\mathcal{S},
+
+where
+:math:`N^{\text{lock}}_{\ell,s} = \sum_{b:\,\ell(b)=\ell}|\mathcal{K}_{b,s}|`
+is the number of machines locked to the landing’s blocks in slot
+:math:`s`. With :math:`\omega^{\text{land}}=0` the capacity is hard; a
+slot in which locks alone exceed it keeps the locked machines, admits no
+other machine, and is reported as a warning (the heuristics charge the
+same unavoidable overload). With :math:`\omega^{\text{land}}>0` the
+marginal price :math:`k\,\omega^{\text{land}}` of the slack pieces
+increases, so an optimal solution uses
+:math:`S_{\ell,s,1},\dots,S_{\ell,s,e}` for :math:`e` machines beyond
+capacity and pays :math:`\omega^{\text{land}}\,e(e+1)/2`: the
+:math:`k`-th machine beyond capacity in a slot costs
+:math:`k\,\omega^{\text{land}}`, as in the heuristics’ evaluation.
 
 Domain restrictions:
 
 .. math::
 
 
-   x, y, g, h, \lambda \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L,S \ge 0.
+   x, y, g, h, \lambda \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L \ge 0,\quad S \in [0,1].
 
 **Initial state defaults.** Without ``Scenario.initial_state`` and
 ``Scenario.locked_assignments`` (:math:`\bar{I}\equiv 0`;
@@ -447,8 +474,15 @@ model infeasible; contradictory locks are pinned to idle and reported;
 obligations, as documented in the data contract (v1.0.0 applied the
 registry’s default system to them); (vii) timeline blackouts, which
 v1.0.0 enforced only in the heuristics, set :math:`A_{m,s}=0` in every
-slot of a blackout day for every machine. Playback, the heuristics, and
-the rolling-horizon carry-forward apply the same rules: staged output is
+slot of a blackout day for every machine; (viii) landing capacity counts
+the machines on a landing per shift slot and is hard when
+:math:`\omega^{\text{land}}=0`, as in the heuristics (v1.0.0 counted
+machine-shifts per day,
+:math:`\sum_{\sigma} x_{m,b,(d,\sigma)} \le C_{\ell} + S_{\ell,d}`, with
+a slack that was free at the default :math:`\omega^{\text{land}}=0`, so
+the capacity did not bind; on single-shift scenarios the per-slot and
+per-day counts coincide). Playback, the heuristics, and the
+rolling-horizon carry-forward apply the same rules: staged output is
 available from the next shift slot, buffers and truckload thresholds are
 staged volume at the start of the slot, and production is capped by
 :math:`R_{r,b}` and by the volume the block still holds. For linear
@@ -498,8 +532,11 @@ downstream role.
   ``bundle.locked_assignments``, resolved by
   ``resolve_locked_slots(...)`` in ``fhops.model.milp.data``; warnings
   in the solve result)
-- Landing capacity with slack: ``model.landing_capacity``
-  (``landing_capacity_rule``) + ``model.landing_surplus``
+- Landing capacity per shift slot: ``model.landing_capacity``
+  (``landing_capacity_rule``, indexed by landing and slot; locked
+  overloads from ``_landing_slot_capacities``) +
+  ``model.landing_surplus`` (unit pieces ``model.LandingSurplusIndex``,
+  only when :math:`\omega^{\text{land}}>0`)
 - Objective assembly: ``model.objective`` and objective-term
   construction around ``prod_weight``, ``landing_weight``,
   ``mobilisation_weight``, ``transition_weight``, including the
