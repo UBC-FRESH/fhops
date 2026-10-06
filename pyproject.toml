@@ -58,6 +58,14 @@ exclude = [
   "docs/softwarex/reference/**",
   "notes/**",
   "reference-documents/**",
+  # Local state of unrelated tools must never ship (#118).
+  "/config/**",
+  "*.sqlite3",
+  "*.djcache",
+  "**/secret_key",
+  ".env",
+  ".env.*",
+  ".pypirc",
 ]
 
 [tool.hatch.build.targets.wheel]
