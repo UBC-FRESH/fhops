@@ -12,6 +12,7 @@ from fhops.planning.reporting import (
     rolling_assignments_dataframe,
 )
 from fhops.planning.rolling import (
+    RollingCarryState,
     RollingHorizonConfig,
     RollingInfeasibleError,
     RollingIterationPlan,
@@ -19,6 +20,7 @@ from fhops.planning.rolling import (
     RollingKPIComparison,
     RollingPlanResult,
     SolverOutput,
+    carry_forward_state,
     compute_rolling_kpis,
     get_solver_hook,
     run_rolling_horizon,
@@ -30,6 +32,7 @@ from fhops.planning.rolling import (
 __all__ = [
     "RollingPlanComparison",
     "RollingHorizonConfig",
+    "RollingCarryState",
     "RollingIterationPlan",
     "RollingIterationSummary",
     "RollingPlanResult",
@@ -40,6 +43,7 @@ __all__ = [
     "get_solver_hook",
     "run_rolling_horizon",
     "slice_scenario_for_window",
+    "carry_forward_state",
     "summarize_plan",
     "compute_rolling_kpis",
     "rolling_assignments_dataframe",

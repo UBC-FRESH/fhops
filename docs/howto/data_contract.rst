@@ -184,7 +184,8 @@ Lock a machine to a block on a given day by adding ``locked_assignments``:
        day: 5
 
 Any attempt to reassign that machine/day is blocked in the operational MILP
-(``solve-mip-operational``), the legacy MIP builder, and the heuristics (SA/ILS/Tabu). A lock
+(``solve-mip-operational``), the legacy MIP builder, the heuristics (SA/ILS/Tabu), and every
+rolling-horizon window that covers the day (``fhops plan rolling``). A lock
 without ``shift_id`` pins every available shift of that day to the block (all other blocks are
 fixed to zero for that machine). Add ``shift_id`` to lock a single slot in multi-shift scenarios:
 
@@ -208,7 +209,9 @@ Initial State (Resuming Mid-Operation)
 ``initial_state`` is an optional top-level YAML mapping (or the
 :class:`fhops.scenario.contract.ScenarioInitialState` model) that describes where operations stand
 at day 1 of the horizon. Typical uses are rolling-horizon windows and re-plans after part of the
-work is done. When it is omitted, every solver and evaluator behaves exactly as in FHOPS v1.0.0.
+work is done; the rolling planner builds it for every window from the locked plan so far (see
+:doc:`rolling_horizon`). When it is omitted, every solver and evaluator behaves exactly as in FHOPS
+v1.0.0.
 
 .. code-block:: yaml
 
