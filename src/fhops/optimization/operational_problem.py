@@ -44,7 +44,8 @@ class OperationalProblem:
         Initial remaining output per ``(block_id, role)`` for explicit-system blocks:
         ``work_required`` by default, overridden by ``initial_state`` ``role_remaining`` values.
     blackout_shifts:
-        ``(machine_id, day, shift_id)`` slots blocked by timeline blackouts.
+        ``(machine_id, day, shift_id)`` slots blocked by timeline blackouts (the bundle's
+        ``blackout_slots``; the operational MILP treats the same slots as unavailable).
     locked_assignments:
         Day-level locks ``(machine_id, day) -> block_id`` (``ScheduleLock.shift_id is None``).
     locked_shift_assignments:
@@ -206,7 +207,7 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         for key, volume in headstart_buffer_volumes(bundle).items()
         if key[0] in explicit_blocks and key in headstarts
     }
-    blackout = _build_blackout_shifts(pb)
+    blackout = frozenset(bundle.blackout_slots)
     locked, locked_shift = _build_locked_assignments(pb)
     mobilisation_params = _build_mobilisation_params(pb)
     distance_lookup = bundle.mobilisation_distances or build_distance_lookup(
@@ -350,31 +351,6 @@ def _build_loader_metadata(
             if role_cfg.is_loader and role_cfg.role:
                 loader_roles.add((block_id, role_cfg.role))
     return loader_batch, frozenset(loader_roles)
-
-
-def _build_blackout_shifts(pb: Problem) -> frozenset[tuple[str, int, str]]:
-    scenario = pb.scenario
-    timeline = getattr(scenario, "timeline", None)
-    if not timeline or not getattr(timeline, "blackouts", None):
-        return frozenset()
-    blackout: set[tuple[str, int, str]] = set()
-    shift_lookup: dict[tuple[str, int], list[str]] = {}
-    if scenario.shift_calendar:
-        for entry in scenario.shift_calendar:
-            shift_lookup.setdefault((entry.machine_id, entry.day), []).append(entry.shift_id)
-    timeline_shift_ids = [shift_def.name for shift_def in getattr(timeline, "shifts", []) or []]
-    fallback_shifts = timeline_shift_ids or ["S1"]
-    for window in timeline.blackouts:
-        for day in range(window.start_day, window.end_day + 1):
-            for machine in scenario.machines:
-                keys = shift_lookup.get((machine.id, day))
-                if keys:
-                    for shift_id in keys:
-                        blackout.add((machine.id, day, shift_id))
-                else:
-                    for shift_id in fallback_shifts:
-                        blackout.add((machine.id, day, shift_id))
-    return frozenset(blackout)
 
 
 def _build_locked_assignments(

@@ -23,7 +23,7 @@ Given harvest blocks, machine roles, shift calendars, block windows, landing cap
 
 - $\bar{p}_{mb}$: production rate for machine $m$ on block $b$ (units per shift).
 - $W_b$: required total block production volume.
-- $A_{m,s} \in \{0,1\}$: machine availability for shift $s$.
+- $A_{m,s} \in \{0,1\}$: machine availability for shift $s$: $A_{m,s}=0$ when the machine's day or shift calendar marks it unavailable or when $s$ falls in a timeline blackout window, 1 otherwise. Blackouts are fleet-wide: on every day of a blackout window every machine is unavailable in all its shifts (its shift-calendar shifts for that day, otherwise every timeline shift).
 - $\mathbf{1}^{\text{window}}_{b,d} \in \{0,1\}$: block window indicator (1 if day $d$ is within block $b$ window).
 - $\omega^{\text{prod}},\omega^{\text{mob}},\omega^{\text{trans}},\omega^{\text{land}}$: objective weights.
 - $\delta_{m,b',b}$: mobilization cost when machine $m$ transitions from block $b'$ to block $b$.
@@ -219,11 +219,11 @@ $$
 
 **Initial state defaults.** Without `Scenario.initial_state` and `Scenario.locked_assignments` ($\bar{I}\equiv 0$, hence $I^{0}\equiv 0$; $R_{r,b}\equiv W_b$; $\mathcal{M}^{0}=\mathcal{K}=\emptyset$) the initial-state and lock terms vanish.
 
-**Changes from FHOPS v1.0.0 (1.0.1).** Three corrections make every MILP plan physically feasible and replayable by the playback sequencing tracker without violations: (i) the remaining-output cap now applies to every role with $R_{r,b}=W_b$ by default (v1.0.0 let upstream roles output more volume than the block holds and used that volume to meet head-start and loader thresholds); (ii) the head-start constraint of roles with a head start is waived through $h_{r,b,s}$ once every upstream role has output its whole remaining volume, and the loader threshold is $\min(q^{\text{batch}}_{r,b}, R_{r,b})$, so blocks smaller than a buffer or a truckload can still be finished without the excess volume; (iii) blocks without a harvest system ($\mathcal{B}\setminus\mathcal{B}^{\text{seq}}$) have no role obligations, as documented in the data contract (v1.0.0 applied the registry's default system to them). Playback, the heuristics, and the rolling-horizon carry-forward apply the same rules: staged output is available from the next shift slot, buffers are staged volume at the start of the slot, and production is capped by $R_{r,b}$.
+**Changes from FHOPS v1.0.0 (1.0.1).** Three corrections make every MILP plan physically feasible and replayable by the playback sequencing tracker without violations: (i) the remaining-output cap now applies to every role with $R_{r,b}=W_b$ by default (v1.0.0 let upstream roles output more volume than the block holds and used that volume to meet head-start and loader thresholds); (ii) the head-start constraint of roles with a head start is waived through $h_{r,b,s}$ once every upstream role has output its whole remaining volume, and the loader threshold is $\min(q^{\text{batch}}_{r,b}, R_{r,b})$, so blocks smaller than a buffer or a truckload can still be finished without the excess volume; (iii) blocks without a harvest system ($\mathcal{B}\setminus\mathcal{B}^{\text{seq}}$) have no role obligations, as documented in the data contract (v1.0.0 applied the registry's default system to them). Timeline blackouts, which v1.0.0 enforced only in the heuristics, now set $A_{m,s}=0$ in the MILP as well. Playback, the heuristics, and the rolling-horizon carry-forward apply the same rules: staged output is available from the next shift slot, buffers are staged volume at the start of the slot, and production is capped by $R_{r,b}$.
 
 **Implementation mapping (equation blocks to code).**
 
-- Machine capacity and availability: `model.machine_capacity` (`machine_capacity_rule`)
+- Machine capacity and availability: `model.machine_capacity` (`machine_capacity_rule`; $A_{m,s}$ from the calendars and `bundle.blackout_slots`, built by `build_blackout_slots(...)` and shared with the heuristics)
 - Role compatibility: `model.role_compatibility` (`role_compatibility_rule`; skipped for `bundle.unsequenced_blocks`)
 - Production-assignment coupling: `model.production_cap` (`prod_cap_rule`)
 - Block windows: `model.block_windows` (`window_rule`)

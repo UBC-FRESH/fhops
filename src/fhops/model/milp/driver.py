@@ -803,6 +803,7 @@ def _apply_bundle_locks(
 
     if not bundle.locked_assignments:
         return
+    blackout_slots = frozenset(bundle.blackout_slots)
     for machine_id, block_id, lock_day, lock_shift in bundle.locked_assignments:
         for slot in shift_list:
             day, shift_id = slot
@@ -810,7 +811,9 @@ def _apply_bundle_locks(
                 continue
             key = (machine_id, slot)
             shift_flag = bundle.availability_shift.get((machine_id, day, shift_id))
-            if shift_flag is not None:
+            if (machine_id, day, shift_id) in blackout_slots:
+                available = False
+            elif shift_flag is not None:
                 available = shift_flag == 1
             else:
                 available = bundle.availability_day.get((machine_id, day), 1) == 1

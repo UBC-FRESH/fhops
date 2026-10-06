@@ -56,7 +56,12 @@ sequencing constraints.
 - :math:`\bar{p}_{mb}`: production rate for machine :math:`m` on block
   :math:`b` (units per shift).
 - :math:`W_b`: required total block production volume.
-- :math:`A_{m,s} \in \{0,1\}`: machine availability for shift :math:`s`.
+- :math:`A_{m,s} \in \{0,1\}`: machine availability for shift :math:`s`:
+  :math:`A_{m,s}=0` when the machine’s day or shift calendar marks it
+  unavailable or when :math:`s` falls in a timeline blackout window, 1
+  otherwise. Blackouts are fleet-wide: on every day of a blackout window
+  every machine is unavailable in all its shifts (its shift-calendar
+  shifts for that day, otherwise every timeline shift).
 - :math:`\mathbf{1}^{\text{window}}_{b,d} \in \{0,1\}`: block window
   indicator (1 if day :math:`d` is within block :math:`b` window).
 - :math:`\omega^{\text{prod}},\omega^{\text{mob}},\omega^{\text{trans}},\omega^{\text{land}}`:
@@ -339,15 +344,19 @@ blocks smaller than a buffer or a truckload can still be finished
 without the excess volume; (iii) blocks without a harvest system
 (:math:`\mathcal{B}\setminus\mathcal{B}^{\text{seq}}`) have no role
 obligations, as documented in the data contract (v1.0.0 applied the
-registry’s default system to them). Playback, the heuristics, and the
-rolling-horizon carry-forward apply the same rules: staged output is
-available from the next shift slot, buffers are staged volume at the
-start of the slot, and production is capped by :math:`R_{r,b}`.
+registry’s default system to them). Timeline blackouts, which v1.0.0
+enforced only in the heuristics, now set :math:`A_{m,s}=0` in the MILP
+as well. Playback, the heuristics, and the rolling-horizon carry-forward
+apply the same rules: staged output is available from the next shift
+slot, buffers are staged volume at the start of the slot, and production
+is capped by :math:`R_{r,b}`.
 
 **Implementation mapping (equation blocks to code).**
 
 - Machine capacity and availability: ``model.machine_capacity``
-  (``machine_capacity_rule``)
+  (``machine_capacity_rule``; :math:`A_{m,s}` from the calendars and
+  ``bundle.blackout_slots``, built by ``build_blackout_slots(...)`` and
+  shared with the heuristics)
 - Role compatibility: ``model.role_compatibility``
   (``role_compatibility_rule``; skipped for
   ``bundle.unsequenced_blocks``)

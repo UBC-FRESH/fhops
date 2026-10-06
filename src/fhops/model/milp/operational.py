@@ -43,6 +43,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     * Blocks listed in ``bundle.unsequenced_blocks`` (no ``harvest_system_id``) have no role
       constraints; all machine production counts towards their balance and the objective.
 
+    Availability ``A_{m,s}`` combines the day/shift calendars with ``bundle.blackout_slots``
+    (timeline blackouts, #110): ``machine_capacity`` forces ``Σ_b x[m,b,s] = 0`` in unavailable
+    slots.
+
     Initial state and locks (no-ops for default bundles):
 
     * ``bundle.initial_staged_inventory`` sets the first-slot ``inventory_start`` of each
@@ -183,7 +187,12 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         earliest, latest = window_lookup[block_id]
         return earliest <= day <= latest
 
+    blackout_slots = frozenset(bundle.blackout_slots)
+
     def _is_available(machine_id: str, day: int, shift_id: str) -> bool:
+        # A_{m,s}: calendars, and 0 in timeline blackout slots (same slots the heuristics skip).
+        if (machine_id, day, shift_id) in blackout_slots:
+            return False
         if (machine_id, day, shift_id) in availability_shift:
             return availability_shift[(machine_id, day, shift_id)] == 1
         return availability_day.get((machine_id, day), 1) == 1

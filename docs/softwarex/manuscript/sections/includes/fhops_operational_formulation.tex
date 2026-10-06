@@ -75,7 +75,12 @@ sequencing constraints.
 \item
   \(W_b\): required total block production volume.
 \item
-  \(A_{m,s} \in \{0,1\}\): machine availability for shift \(s\).
+  \(A_{m,s} \in \{0,1\}\): machine availability for shift \(s\):
+  \(A_{m,s}=0\) when the machine's day or shift calendar marks it
+  unavailable or when \(s\) falls in a timeline blackout window, 1
+  otherwise. Blackouts are fleet-wide: on every day of a blackout window
+  every machine is unavailable in all its shifts (its shift-calendar
+  shifts for that day, otherwise every timeline shift).
 \item
   \(\mathbf{1}^{\text{window}}_{b,d} \in \{0,1\}\): block window
   indicator (1 if day \(d\) is within block \(b\) window).
@@ -363,10 +368,12 @@ smaller than a buffer or a truckload can still be finished without the
 excess volume; (iii) blocks without a harvest system
 (\(\mathcal{B}\setminus\mathcal{B}^{\text{seq}}\)) have no role
 obligations, as documented in the data contract (v1.0.0 applied the
-registry's default system to them). Playback, the heuristics, and the
-rolling-horizon carry-forward apply the same rules: staged output is
-available from the next shift slot, buffers are staged volume at the
-start of the slot, and production is capped by \(R_{r,b}\).
+registry's default system to them). Timeline blackouts, which v1.0.0
+enforced only in the heuristics, now set \(A_{m,s}=0\) in the MILP as
+well. Playback, the heuristics, and the rolling-horizon carry-forward
+apply the same rules: staged output is available from the next shift
+slot, buffers are staged volume at the start of the slot, and production
+is capped by \(R_{r,b}\).
 
 \textbf{Implementation mapping (equation blocks to code).}
 
@@ -374,7 +381,9 @@ start of the slot, and production is capped by \(R_{r,b}\).
 \tightlist
 \item
   Machine capacity and availability: \texttt{model.machine\_capacity}
-  (\texttt{machine\_capacity\_rule})
+  (\texttt{machine\_capacity\_rule}; \(A_{m,s}\) from the calendars and
+  \texttt{bundle.blackout\_slots}, built by
+  \texttt{build\_blackout\_slots(...)} and shared with the heuristics)
 \item
   Role compatibility: \texttt{model.role\_compatibility}
   (\texttt{role\_compatibility\_rule}; skipped for

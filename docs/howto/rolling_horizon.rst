@@ -432,6 +432,6 @@ Limitations
   ``last_block_id`` is such a block (its ``latest_finish`` has passed), the position is dropped
   for that window with a warning in ``RollingPlanResult.warnings`` and its next move is not
   charged in the window solve (playback still charges it).
-- **Blackouts in the MILP.** Rebased blackouts are honoured by the heuristics and flagged by
-  playback; the operational MILP does not model ``timeline.blackouts`` (use calendars to remove
-  availability if the MILP must respect them).
+- **Blackouts in the MILP.** Resolved in 1.0.1 (#110): rebased blackouts are honoured by the
+  operational MILP (zero availability in the blocked slots) as well as by the heuristics, and
+  flagged by playback.

@@ -472,6 +472,30 @@ Trade-offs / follow-ups:
   thresholds found no 28-day ka_6 incumbent in 1200 s with HiGHS, hence loaders use the static
   `min(q, R)` threshold instead.
 
+### 8.11 Timeline blackouts in the operational MILP (#110)
+Problem: `Scenario.timeline.blackouts` blocked slots for the heuristics (`OperationalProblem.
+blackout_shifts`: repair, greedy seed, sanitizer, `evaluate_schedule` penalty) and were flagged by
+playback (`blackout_hit`), but the operational MILP ignored them (evidence: a 2-machine, 2-shift,
+4-day scenario with days 2–3 blacked out — the MILP worked all 8 blocked slots, 640 m³; now 0
+slots, 320 m³).
+
+Heuristic semantics (kept exactly): fleet-wide, inclusive day windows; for each blackout day and
+every machine, the blocked shifts are the machine's `shift_calendar` shifts that day, otherwise
+every `timeline.shifts` name, otherwise `S1`. Not per landing or block.
+
+Fix (same branch/PR as #109, separate commit; both touch `model/milp/{data,operational}.py`):
+`build_blackout_slots(pb)` in `fhops.model.milp.data` (moved from the private
+`_build_blackout_shifts`), stored as `OperationalMilpBundle.blackout_slots` (sorted; serialised
+only when non-empty). `OperationalProblem.blackout_shifts` is now `frozenset(bundle.blackout_slots)`
+and the MILP's availability check returns 0 for those slots (`machine_capacity` forces
+`Σ_b x = 0`; locks in such slots are pinned to 0, and warm-start lock overlays skip them). The
+canonical formulation defines `A_{m,s} = 0` in blackout slots. Rolling windows already rebase
+blackouts (8.2), so window MILPs now honour them too.
+
+Tests: `tests/model/test_milp_blackouts.py` (slot set = heuristic set, shift-calendar per machine,
+bundle round trip, `machine_capacity` bounds, MILP and SA use exactly the open slots, rolling MILP
+locks no blackout day).
+
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
 `sphinx-build -b html docs _build/html -W`, and `python scripts/check_formulation_assets.py`

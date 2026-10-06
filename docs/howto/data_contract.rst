@@ -141,6 +141,13 @@ Add a top-level ``timeline`` block in your scenario YAML to describe shifts and 
 
 The loader converts this into a ``TimelineConfig`` instance available via ``scenario.timeline``.
 
+Blackout windows are fleet-wide and inclusive: on every day from ``start_day`` to ``end_day`` no
+machine may work any of its shifts (its ``shift_calendar`` shifts for that day, otherwise every
+``timeline.shifts`` name, otherwise ``S1``). The operational MILP treats these slots as unavailable
+(availability ``A_{m,s} = 0``), the heuristics never assign them, and locks may not fall inside
+them. Playback does not cancel work scheduled in a blackout (for example, from an external plan);
+it flags the record with ``blackout_hit``.
+
 Shift Calendars & Defaults
 --------------------------
 
