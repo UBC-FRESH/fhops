@@ -29,6 +29,12 @@ class ScheduleLock(BaseModel):
         ``block_id`` (the v1.0.0 behaviour). When set, only the ``(day, shift_id)`` slot is locked;
         the label must belong to the scenario's shift grid (``shift_calendar`` labels, timeline
         shift names, or ``S1`` for day-indexed scenarios).
+    production:
+        Optional planned production (m³, ``>= 0``) of the locked slot. Solvers ignore it; it is
+        used when a lock table is *replayed* (rolling-horizon carry-forward and
+        :func:`fhops.planning.compute_rolling_kpis`), so a stitched operational-MILP plan is
+        evaluated with the production the MILP planned rather than the full production rate.
+        ``None`` (default) replays with ``min(rate, remaining)``.
 
     Notes
     -----
@@ -40,6 +46,14 @@ class ScheduleLock(BaseModel):
     block_id: str
     day: Day
     shift_id: str | None = None
+    production: float | None = None
+
+    @field_validator("production")
+    @classmethod
+    def _production_non_negative(cls, value: float | None) -> float | None:
+        if value is not None and value < 0:
+            raise ValueError("ScheduleLock.production must be >= 0")
+        return value
 
     @field_validator("shift_id")
     @classmethod
@@ -452,9 +466,12 @@ class BlockInitialState(BaseModel):
         available as input. Roles omitted here start with zero staged volume. Values must be
         non-negative.
     role_shift_counts:
-        Mapping ``role -> shifts`` already worked on this block, used by head-start
-        (``role_headstart_shifts``) accounting in the heuristics and playback sequencing tracker.
-        Roles omitted here start at zero. Values must be non-negative integers.
+        Mapping ``role -> shifts`` already worked on this block. Informational: it seeds
+        :attr:`fhops.evaluation.sequencing.SequencingTracker.role_counts_total` (reported by the
+        rolling-horizon carry-forward) but no longer affects sequencing checks, because head-start
+        buffers (``role_headstart_shifts``) are enforced as staged upstream volume
+        (``staged_inventory``) in the MILP, the heuristics, and playback alike (#109). Roles
+        omitted here start at zero. Values must be non-negative integers.
 
     Notes
     -----

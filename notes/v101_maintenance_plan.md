@@ -407,6 +407,71 @@ Downstream: any Jaffray rolling-horizon result whose MIP baseline (or rolling ru
 empty assignment table must be re-evaluated; the old "full-horizon MIP baseline = 30913 m³" figure
 is this artefact.
 
+### 8.10 MILP / playback sequencing alignment (#109)
+Problem: operational-MILP plans for the Jaffray ka_6 scenario replayed with ~50–130 sequencing
+violations (full horizon and rolling 28/14/7) and playback under-reported the MILP's delivered
+volume. The issue assumed one shift per day; ka_6 actually has **three timeline shifts per day**
+(`S1`–`S3`, 8 h each, 336 slots over 112 days).
+
+Diagnosis (branch `issue-109-milp-playback-alignment`; scripts in `/tmp/opencode/fhops109`:
+`diag.py` solve + replay + classify, `fuzz.py` random 2–4-role pipelines solved to optimality,
+`roll.py` rolling replay). Root causes, each with a test in
+`tests/sequencing/test_milp_playback_alignment.py`:
+1. **Release per day vs per slot (E7).** The MILP lets a role use upstream output from the previous
+   *shift* (`I_start(s) = I(prev(s))`); `SequencingTracker` and the heuristic repair released staged
+   output only at the day roll. This is the **only** class on ka_6: with slot-level release alone,
+   7/14/28-day MILP plans replay with 0 violations (20/42/57 before).
+2. **Solver noise.** The tracker compared inventories with a 1e-9 m³ tolerance; HiGHS plans miss
+   by up to ~5e-7 m³ (e.g. 12.8629995 vs 12.863). Tolerance is now `SEQUENCING_TOLERANCE = 1e-6`.
+3. **Loader threshold per machine.** With two loaders in a slot the tracker checked the truckload
+   rule against what the first loader left (28.86 < 30 m³); E8 checks the volume staged at the
+   start of the slot for the whole role. The tracker/repair now use the slot-start volume.
+4. **Head start in shifts vs volume (E8).** The tracker counted upstream/downstream machine-shifts;
+   the MILP requires staged volume `B = β × Σ upstream fleet rate`. Shared helper
+   `headstart_buffer_volumes`; tracker and repair compare slot-start staged volume with it.
+   `initial_state.role_shift_counts` is now informational.
+5. **Phantom upstream volume (formulation gap).** Only the terminal role was tied to `W_b`, so MILP
+   plans felled/processed more wood than the block holds (ka_6: 6238.6 m³ felled on a 5077.4 m³
+   block) and used that volume to meet head-start/loader thresholds (fuzz: a 255 m³ buffer met on a
+   112 m³ block). The MILP now caps every role (`Σ_s z ≤ R_{r,b}`, `R = W_b` by default); the
+   head-start buffer is waived once every upstream role has output its whole remaining volume
+   (binary `upstream_done`, head-start roles only); the loader threshold is
+   `min(q_batch, R_{r,b})`. Formulation updated (sets `B^seq`, `P^hs`; parameters `B`, `R`;
+   variable `h`; E8; remaining-output cap; "Changes from v1.0.0").
+6. **Blocks without `harvest_system_id`.** The MILP applied the registry's default system; the
+   tracker/heuristics treat them as unsequenced (documented contract). Playback then delivered more
+   than the MILP (fuzz: 19/30 cases). New bundle field `unsequenced_blocks`: no role compatibility,
+   no inventory/activation, machine-level production counts (serialised only when non-empty).
+7. **Shift order.** The MILP used `Problem.shifts` (timeline definition order) while heuristics and
+   playback sorted labels (`day` before `night`). `ordered_shift_keys` (data.py) now defines the
+   order everywhere (bundle, `OperationalProblem.shift_keys`, ILS, playback sort, rolling
+   `last_block_id`). Identical for single-shift and lexicographically ordered labels.
+8. **Rolling replay at the production rate.** MILP rolling locks dropped the planned production, so
+   carry-forward and `compute_rolling_kpis` replayed every lock at `min(rate, remaining)`: the
+   carried state differed from the plan the next window built on, and full-rate proposals with
+   less input were flagged (93 violations on ka_6 28/14/7 even with fixes 1–7).
+   `ScheduleLock.production` (optional, ignored by solvers) is now set by the MILP hook and used by
+   carry-forward/KPIs; SA locks keep the rate rule.
+
+Not changed (no violations possible): E9 batching (`z = q·n + u` imposes nothing beyond `z ≥ 0`),
+role-compatibility vs `forbidden_role`, roles without machines (MILP stricter), landing capacity
+(MILP: per day with slack; heuristics: per shift; not a sequencing rule).
+
+Reference ladder: single-slot days, buffers 0, explicit systems; fixes 1–4 are no-ops there.
+`fhops bench suite` re-runs (committed flags) for tiny7 (SA ×3, ILS, Tabu) and small21 (SA ×3,
+ILS, Tabu) match the committed `summary.csv` and assignment CSVs exactly (see CHANGE_LOG #109);
+`tests/initial_state/test_v100_regression.py` (SA tiny7/med42, MILP tiny7 4388.082752) passes.
+
+Trade-offs / follow-ups:
+- MILP rolling totals now reflect the window plans: tiny7 7/4/2 and 7/5/3 deliver ≈3.9k of 4.4k m³
+  (previously the rate replay credited unplanned upstream work; still the end-of-window valuation
+  limitation, 8.2).
+- MILP with caps is never less strict than playback at block tails: a loader fleet slower than one
+  truckload per shift can leave < `q_batch` per block undelivered.
+- Head-start waivers add `|P^hs| × |S|` binaries; an earlier variant that also waived loader
+  thresholds found no 28-day ka_6 incumbent in 1200 s with HiGHS, hence loaders use the static
+  `min(q, R)` threshold instead.
+
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
 `sphinx-build -b html docs _build/html -W`, and `python scripts/check_formulation_assets.py`

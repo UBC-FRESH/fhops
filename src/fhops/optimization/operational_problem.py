@@ -8,7 +8,12 @@ from dataclasses import dataclass, field
 from dataclasses import replace as dc_replace
 from typing import TYPE_CHECKING
 
-from fhops.model.milp.data import OperationalMilpBundle, build_operational_bundle
+from fhops.model.milp.data import (
+    OperationalMilpBundle,
+    build_operational_bundle,
+    headstart_buffer_volumes,
+    ordered_shift_keys,
+)
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
 
@@ -58,6 +63,11 @@ class OperationalProblem:
     initial_machine_block:
         ``machine_id -> block_id`` occupied before the horizon; the first move away from it is
         charged mobilisation. Empty by default.
+    role_headstart_volume:
+        ``(block_id, role) -> m³`` head-start buffer volume ``B_{r,b}`` of the operational MILP
+        (:func:`fhops.model.milp.data.headstart_buffer_volumes`) for explicit-system blocks. A
+        buffered role may only work in a slot when the staged upstream volume at the start of the
+        slot is at least this value. Empty when no role has ``buffer_shifts > 0``.
     """
 
     problem: Problem
@@ -81,6 +91,7 @@ class OperationalProblem:
     initial_role_inventory: Mapping[tuple[str, str], float] = field(default_factory=dict)
     initial_role_counts: Mapping[tuple[str, str], int] = field(default_factory=dict)
     initial_machine_block: Mapping[str, str] = field(default_factory=dict)
+    role_headstart_volume: Mapping[tuple[str, str], float] = field(default_factory=dict)
 
     def lock_for(self, machine_id: str, day: int, shift_id: str) -> str | None:
         """Return the block locked for ``machine_id`` in slot ``(day, shift_id)`` (or ``None``).
@@ -190,6 +201,11 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         for key, count in bundle.initial_role_shift_counts.items()
         if key[0] in explicit_blocks
     }
+    role_headstart_volume = {
+        key: volume
+        for key, volume in headstart_buffer_volumes(bundle).items()
+        if key[0] in explicit_blocks and key in headstarts
+    }
     blackout = _build_blackout_shifts(pb)
     locked, locked_shift = _build_locked_assignments(pb)
     mobilisation_params = _build_mobilisation_params(pb)
@@ -197,10 +213,7 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         pb.scenario.mobilisation
     )
     loader_batch_volume, loader_roles = _build_loader_metadata(bundle)
-    shift_keys = tuple(
-        (shift.day, shift.shift_id)
-        for shift in sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
-    )
+    shift_keys = ordered_shift_keys(pb)
     shift_index = {key: idx for idx, key in enumerate(shift_keys)}
     return OperationalProblem(
         problem=pb,
@@ -224,6 +237,7 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         initial_role_inventory=initial_role_inventory,
         initial_role_counts=initial_role_counts,
         initial_machine_block=dict(bundle.initial_machine_block),
+        role_headstart_volume=role_headstart_volume,
     )
 
 

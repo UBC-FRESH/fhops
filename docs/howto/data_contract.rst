@@ -227,7 +227,7 @@ v1.0.0.
          staged_inventory:      # m³ output by the role, not yet consumed downstream
            feller_buncher: 150.0
            grapple_skidder: 60.0
-         role_shift_counts:     # shifts already worked (head-start accounting)
+         role_shift_counts:     # shifts already worked (informational)
            feller_buncher: 4
            grapple_skidder: 2
      machines:
@@ -243,12 +243,15 @@ Semantics:
   consume, at the start of the horizon, the minimum staged volume over its upstream roles (the
   single upstream value for linear chains). The operational MILP uses that value as the first-slot
   ``inventory_start`` and in the head-start check; the heuristics and playback sequencing tracker
-  start their per-role inventories from it.
+  start their per-role inventories from it and apply the same head-start check (staged volume at
+  the start of the slot against the buffer volume).
 - ``role_remaining`` caps each role's cumulative output (the tracker, greedy seed, and repair use it
-  as the initial remaining volume; the MILP adds ``sum_s z[r,b,s] <= role_remaining``). Omitted
+  as the initial remaining volume; the MILP enforces ``sum_s z[r,b,s] <= role_remaining``). Omitted
   roles default to ``work_required``.
-- ``role_shift_counts`` seeds the head-start shift accounting used by the heuristics and playback
-  tracker (``role_headstart_shifts`` in harvest systems).
+- ``role_shift_counts`` is informational: it seeds the tracker's shift counters (reported by the
+  rolling-horizon carry-forward) but does not affect sequencing. Head-start buffers
+  (``role_headstart_shifts``) are enforced as staged volume in every solver and in playback
+  (see :doc:`system_sequencing`).
 - ``last_block_id`` makes the first move away from that block cost mobilisation (and a transition)
   in the MILP objective (first slot), the heuristic score, and playback mobilisation KPIs.
 - Role keys are normalised like machine roles (``Feller-Buncher`` → ``feller_buncher``) and must be
