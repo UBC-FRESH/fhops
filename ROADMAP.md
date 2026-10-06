@@ -134,10 +134,12 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
 - [x] #94 Document `Block.work_required` units (m³).
 - [ ] #95 SoftwareX playback figure legibility and regenerated playback assets.
 - [ ] #96 Release FHOPS 1.0.1 and forward-port to `main`.
+- [x] #99 Working operational-MILP warm start with HiGHS (`appsi_highs` MIP start, documented per-solver fallback).
 
 ## Detailed Next Steps
 0. **Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**
    - 2026-10-06: #91 (`issue-91-initial-state-contract`) adds optional `Scenario.initial_state` and `ScheduleLock.shift_id`, honoured by the operational MILP (first-slot inventory/head-start, role-remaining cap, boundary move, lock constraints), heuristics, and playback, with v1.0.0 regression parity tests. Next: #92 rolling-horizon carry-forward builds on this contract.
+   - 2026-10-06: #99 (`issue-99-highs-warm-start`) fixes the `--incumbent` `TypeError` with HiGHS: seeded HiGHS solves go through Pyomo's `appsi_highs` MIP start, the result/CLI/telemetry report whether HiGHS accepted the start, unsupported solvers warn (`MilpWarmStartWarning`), and limit-stopped solves keep their incumbent.
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
    - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
    - 2026-06-14: v1.0.0 GA issue tree opened; first child branch (`issue-15-v100-green-ci`) is restoring the green CI/local verification gate before release metadata changes.

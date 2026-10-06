@@ -1,3 +1,23 @@
+# 2026-10-06 — Phase 8.7: working MILP warm start with HiGHS (#99, part of #90)
+- Bug: `solve_operational_milp(..., incumbent_assignments=...)` / `fhops solve-mip-operational --incumbent` with `solver="highs"` raised `TypeError` because Pyomo 6.10's `SolverFactory("highs")` is the `pyomo.contrib.solver` HiGHS behind `LegacySolverWrapper`, whose `solve()` has no `warmstart` keyword (and no MIP-start support).
+- Driver (`src/fhops/model/milp/driver.py`): seeded `highs`/`appsi_highs` solves now use Pyomo's APPSI HiGHS interface (`SolverFactory("appsi_highs")`, `warmstart=True` → `highspy.Highs.setSolution`); unseeded solves still use `highs`. The HiGHS log is captured and the result carries `warm_start = {requested, seeded_slots, method, solver, accepted, solver_messages}` (`accepted=True` on `MIP start solution is feasible`, `False` when HiGHS cannot complete the start). Legacy plugins with `warm_start_capable()` (Gurobi, CBC ≥ 2.8, CPLEX, …) still get `warmstart=True`; any other solver runs without the start and emits the new `MilpWarmStartWarning` instead of failing. Limit-stopped solves (`maxTimeLimit`, `maxIterations`, `maxEvaluations`, `objectiveLimit`) that hold a feasible incumbent now return it (objective + assignments) instead of `objective=None` — this also applies to unseeded time-limited solves.
+- CLI: `solve-mip-operational --incumbent` help lists per-solver support; the command prints `Warm start: method=… (accepted|rejected|status unknown)` with the HiGHS MIP-start lines, and telemetry records `extra.warm_start`.
+- Evidence (tiny7, HiGHS 1.15.1): cold solve optimal `4388.082751999992`; re-solve seeded with its assignments logs `MIP start solution is feasible, objective value is 4388.082752` and reaches optimality in ≈0.2 s; with `time_limit=1e-6` the seeded solve still returns the seed objective.
+- Docs: `docs/howto/mip_warm_starts.rst` (HiGHS workflow, log interpretation, per-solver support table), `docs/reference/cli.rst`. Plan: section 8.7 in `notes/v101_maintenance_plan.md`; ROADMAP Phase 8 line for #99 ticked.
+- Tests: `tests/model/test_operational_driver.py` (HiGHS warm start accepted with objective ≥ cold, survives a 1e-6 s time limit, infeasible incumbent flagged `accepted=False`, fallback warning when `appsi_highs` is unavailable or the solver lacks warm-start support, `warmstart=True` forwarded to capable plugins, contrib `highs` wrapper detected as non-capable); `tests/test_cli_operational_mip.py` CLI regression (gated by `FHOPS_RUN_FULL_CLI_TESTS`).
+- Commands executed:
+  - `PYTHONPATH=src /tmp/opencode/fhops-v101-venv/bin/python /tmp/opencode/w99/exp1.py` (reproduced the `TypeError` before the fix)
+  - `PYTHONPATH=src /tmp/opencode/fhops-v101-venv/bin/python /tmp/opencode/w99/exp4.py` and `.../exp5.py` (warm start accepted/rejected, time-limit behaviour)
+  - `PYTHONPATH=src /tmp/opencode/fhops-v101-venv/bin/python -m fhops.cli.main solve-mip-operational examples/tiny7/scenario.yaml --out /tmp/opencode/w99/cli_cold.csv --time-limit 60`
+  - `PYTHONPATH=src /tmp/opencode/fhops-v101-venv/bin/python -m fhops.cli.main solve-mip-operational examples/tiny7/scenario.yaml --out /tmp/opencode/w99/cli_warm.csv --time-limit 10 --incumbent /tmp/opencode/w99/cli_cold.csv --telemetry-log /tmp/opencode/w99/tel.jsonl` (and with `--debug`)
+  - `/tmp/opencode/fhops-v101-venv/bin/ruff format src tests`
+  - `/tmp/opencode/fhops-v101-venv/bin/ruff check src tests` (pass)
+  - `/tmp/opencode/fhops-v101-venv/bin/mypy src` (114 files, no issues)
+  - `/tmp/opencode/fhops-v101-venv/bin/pytest -o addopts="" -q` (346 passed, 211 skipped)
+  - `FHOPS_RUN_FULL_CLI_TESTS=1 /tmp/opencode/fhops-v101-venv/bin/pytest -o addopts="" -q tests/test_cli_operational_mip.py tests/test_cli_profiles.py` (9 passed)
+  - `PATH=/tmp/opencode/fhops-v101-venv/bin:$PATH pre-commit run --all-files` (pass)
+  - `PATH=/tmp/opencode/pandoc-3.6/bin:/tmp/opencode/fhops-v101-venv/bin:$PATH sphinx-build -b html docs /tmp/opencode/sphinx-99 -W` (build succeeded)
+
 # 2026-10-06 — Phase 8.4: document `Block.work_required` units (m³) (#94, part of #90)
 - Documentation only; no behaviour change. `Block.work_required` is now documented consistently as the block's terminal delivered volume in m³ (previously "work units (machine-hours equivalent)"), matching loader truckload batching, playback, KPIs, and every reference dataset.
 - `src/fhops/scenario/contract/models.py`: `Block` docstring + inline comment, `ProductionRate` (m³ per shift assignment), `ObjectiveWeights.production`, `Scenario.production_rates`.

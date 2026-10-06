@@ -23,9 +23,45 @@ Workflow
          --incumbent tmp/med42_greedy_incumbent.csv \
          --out tmp/med42_mip_seeded.csv
 
-   The CLI rebuilds the :class:`fhops.optimization.operational_problem.OperationalProblem` context, derives the implied transitions, activation binaries, per-role inventories, landing surplus, and leftovers, and then sets Pyomo's ``warmstart=True`` flag before launching the solver.
+   The CLI rebuilds the :class:`fhops.optimization.operational_problem.OperationalProblem` context, derives the implied transitions, activation binaries, per-role inventories, landing surplus, and leftovers, and then hands the seeded values to the solver as a MIP start (see :ref:`mip-warm-start-solvers`).
 
-#. **Inspect the solver log.** Successful warm starts show the candidate objective up-front. When the log contains ``User MIP start did not produce a new incumbent solution`` the solver ignored the seed (usually because it can find a better incumbent through its own heuristics).
+   With the default open-source solver the same workflow is::
+
+       fhops solve-mip-operational examples/tiny7/scenario.yaml \
+         --time-limit 60 --out tmp/tiny7_mip.csv
+       fhops solve-mip-operational examples/tiny7/scenario.yaml \
+         --time-limit 5 --incumbent tmp/tiny7_mip.csv --out tmp/tiny7_mip_seeded.csv
+
+   and the CLI reports how the start was used::
+
+       Warm start: method=appsi_highs solver=appsi_highs seeded_slots=25 (accepted)
+         MIP start solution is feasible, objective value is 4388.082752
+
+#. **Inspect the solver log.** Successful warm starts show the candidate objective up-front. HiGHS prints ``MIP start solution is feasible, objective value is …``; when it instead reports ``Attempting to find feasible solution by solving LP for user-supplied values of discrete variables`` followed by ``Model status : Infeasible`` the seed was rejected. With Gurobi, ``User MIP start did not produce a new incumbent solution`` means the solver ignored the seed (usually because it can find a better incumbent through its own heuristics). Add ``--debug`` to stream the full solver log.
+
+.. _mip-warm-start-solvers:
+
+Solver support
+--------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 40 38
+
+   * - ``--solver``
+     - How the incumbent reaches the solver
+     - Feedback
+   * - ``highs`` (default), ``appsi_highs``
+     - Pyomo's default ``highs`` plugin (``pyomo.contrib.solver``) rejects the ``warmstart`` keyword, so seeded solves switch to the APPSI HiGHS interface (``appsi_highs``), which passes every seeded variable value to ``highspy.Highs.setSolution``. Unseeded solves keep using ``highs``.
+     - The HiGHS log is captured; the CLI prints ``accepted``/``rejected`` plus the HiGHS MIP-start lines and telemetry records them under ``extra.warm_start``.
+   * - ``gurobi``, ``gurobi_direct``, ``gurobi_persistent``, ``cplex``, ``cbc`` (≥ 2.8)
+     - Unchanged: Pyomo's ``solve(..., warmstart=True)`` (only when the plugin reports ``warm_start_capable()``).
+     - Read the solver log (``--debug`` or e.g. ``--solver-option LogFile=run.log``); ``accepted`` is reported as unknown.
+   * - anything else (e.g., ``glpk``)
+     - Solved **without** the incumbent; :class:`fhops.model.milp.driver.MilpWarmStartWarning` is emitted.
+     - ``Warm start not used`` in the CLI output.
+
+From Python, :func:`fhops.model.milp.driver.solve_operational_milp` returns the same information in ``result["warm_start"]`` (``method``, ``solver``, ``seeded_slots``, ``accepted``, ``solver_messages``). A solve stopped by its time limit still returns the best incumbent it holds—which, for an accepted warm start, is at least as good as the seed.
 
 Current limitations
 -------------------
@@ -37,7 +73,7 @@ Current limitations
 Practical guidance
 ------------------
 
-- Capture solver logs with ``--solver-option LogFile=med42.log`` when experimenting so you can confirm whether the incumbent was accepted.
+- Capture solver logs with ``--solver-option LogFile=med42.log`` (Gurobi) or ``--solver-option log_file=med42.log`` (HiGHS) when experimenting so you can confirm whether the incumbent was accepted.
 - Budget heuristics so they can produce a schedule that finishes close to the horizon (e.g., SA with ``--iters 2000`` and ``--watch`` set to 60 seconds). Seeds that leave large staged volume or violate sequencing will be discarded.
 - Fall back to solver-based heuristics (pure Gurobi/HiGHS) if the warm start keeps getting rejected—the solver is often faster at generating its own incumbent once it hits the strong root relaxation.
 
