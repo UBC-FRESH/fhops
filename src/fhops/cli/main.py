@@ -511,10 +511,19 @@ def solve_mip_cmd(
 
     Notes
     -----
-    The command streams a KPI summary to the console via :func:`fhops.evaluation.compute_kpis`.
-    The return value mirrors :func:`fhops.optimization.mip.solve_mip` (objective, assignments,
-    solver metadata) and is serialized through the CLI side-effects.
+    Prints ``MIP outcome=<outcome> solver_status=… termination=… objective=…`` where ``outcome``
+    is ``optimal``, ``feasible`` (incumbent at the time limit), ``infeasible``, ``no_solution``
+    (time limit without an incumbent) or ``error`` (see
+    :func:`fhops.optimization.mip.solve_mip`); the objective is ``n/a`` without a solution. With a
+    solution the KPI summary follows (:func:`fhops.evaluation.compute_kpis`); without one an empty
+    assignment table (same columns) is written and the KPI summary is skipped.
+
+    Exit codes: ``0`` when the solver ran (including infeasible models and time limits without an
+    incumbent), ``1`` on a solver error or when the requested solver is unavailable, ``2`` for
+    invalid arguments (e.g. an unknown ``--driver``).
     """
+    from fhops.optimization.mip.highs_driver import SolverUnavailable
+
     if debug:
         _enable_rich_tracebacks()
         console.print(
@@ -525,16 +534,52 @@ def solve_mip_cmd(
     pb = Problem.from_scenario(sc)
 
     out.parent.mkdir(parents=True, exist_ok=True)
-    res = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
+    try:
+        res = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
+    except SolverUnavailable as exc:
+        console.print(f"[red]Solver unavailable:[/] {exc}")
+        raise typer.Exit(1) from exc
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc), param_hint="--driver") from exc
     assignments = cast(pd.DataFrame, res["assignments"])
-    objective = cast(float, res.get("objective", 0.0))
+    raw_objective = res.get("objective")
+    has_solution = bool(res.get("has_solution", raw_objective is not None))
+    solver_error = res.get("solver_error")
+    outcome = res.get("outcome") or (
+        "error" if solver_error else ("feasible" if has_solution else "no_solution")
+    )
 
     assignments.to_csv(str(out), index=False)
-    console.print(f"Objective: {objective:.3f}. Saved to {out}")
-    metrics = compute_kpis(pb, assignments)
-    _print_kpi_summary(metrics)
-    if sequencing_debug:
-        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
+    objective_text = (
+        f"objective={cast(float, raw_objective):.3f}"
+        if has_solution and raw_objective is not None
+        else "objective=n/a"
+    )
+    console.print(
+        f"MIP outcome={outcome} solver_status={res.get('solver_status')} "
+        f"termination={res.get('termination_condition')} {objective_text}"
+    )
+    if solver_error:
+        console.print(f"[red]Solver error:[/] {solver_error}")
+    for message in cast(Sequence[str], res.get("warnings") or []):
+        console.print(f"[yellow]Warning:[/] {message}")
+    console.print(f"Assignments written to {out}")
+    if not has_solution:
+        reason = {
+            "error": "the solver failed",
+            "infeasible": "the model is infeasible",
+        }.get(cast(str, outcome), "the solver stopped without a feasible solution")
+        console.print(
+            f"[yellow]No feasible solution: {reason}; wrote an empty assignment table and "
+            "skipped the KPI summary.[/]"
+        )
+    else:
+        metrics = compute_kpis(pb, assignments)
+        _print_kpi_summary(metrics)
+        if sequencing_debug:
+            _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
+    if solver_error:
+        raise typer.Exit(1)
 
 
 @app.command("solve-mip-operational")
@@ -2373,37 +2418,64 @@ def benchmark(
     This helper predates the richer ``fhops bench`` app but remains handy for quick smoke tests.  It
     writes ``mip_solution.csv`` and ``sa_solution.csv`` under ``out_dir`` and prints KPI summaries
     for both solvers.
+
+    When the MIP returns no solution (infeasible model, time limit without an incumbent, solver
+    error) ``mip_solution.csv`` is an empty assignment table, ``MIP obj=n/a (outcome=…)`` is printed
+    and the MIP metrics are skipped; SA still runs. Exit codes as for ``fhops solve-mip``: ``1``
+    when the MIP solver failed (after the SA results are printed) or is unavailable.
     """
+    from fhops.optimization.mip.highs_driver import SolverUnavailable
+
     if debug:
         _enable_rich_tracebacks()
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    res_mip = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
+    try:
+        res_mip = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
+    except SolverUnavailable as exc:
+        console.print(f"[red]Solver unavailable:[/] {exc}")
+        raise typer.Exit(1) from exc
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc), param_hint="--driver") from exc
     mip_csv = out_dir / "mip_solution.csv"
     mip_assignments = cast(pd.DataFrame, res_mip["assignments"])
     mip_assignments.to_csv(str(mip_csv), index=False)
+    mip_objective = res_mip.get("objective")
+    mip_has_solution = bool(res_mip.get("has_solution", mip_objective is not None))
+    mip_solver_error = res_mip.get("solver_error")
 
     res_sa = solve_sa(pb, iters=iters)
     sa_csv = out_dir / "sa_solution.csv"
     sa_assignments = cast(pd.DataFrame, res_sa["assignments"])
     sa_assignments.to_csv(str(sa_csv), index=False)
 
-    mip_metrics = compute_kpis(pb, mip_assignments)
+    mip_metrics = compute_kpis(pb, mip_assignments) if mip_has_solution else None
     sa_metrics = compute_kpis(pb, sa_assignments)
 
-    console.print(
-        f"MIP obj={cast(float, res_mip['objective']):.3f}, "
-        f"SA obj={cast(float, res_sa['objective']):.3f}"
+    mip_text = (
+        f"{cast(float, mip_objective):.3f}"
+        if mip_has_solution and mip_objective is not None
+        else f"n/a (outcome={res_mip.get('outcome')})"
     )
+    console.print(f"MIP obj={mip_text}, SA obj={cast(float, res_sa['objective']):.3f}")
+    if mip_solver_error:
+        console.print(f"[red]MIP solver error:[/] {mip_solver_error}")
     console.print(f"Saved: {mip_csv}, {sa_csv}")
-    console.print("MIP metrics:")
-    for key, value in mip_metrics.items():
-        console.print(f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}")
+    if mip_metrics is not None:
+        console.print("MIP metrics:")
+        for key, value in mip_metrics.items():
+            console.print(
+                f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}"
+            )
+    else:
+        console.print("[yellow]MIP returned no feasible solution; MIP metrics skipped.[/]")
     console.print("SA metrics:")
     for key, value in sa_metrics.items():
         console.print(f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}")
+    if mip_solver_error:
+        raise typer.Exit(1)
 
 
 @app.command("tune-random")

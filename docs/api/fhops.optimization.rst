@@ -16,10 +16,20 @@ Typical usage:
    from fhops.scenario.contract import Problem
    from fhops.optimization.mip import solve_mip
 
-   pb = Problem.from_scenario(load_scenario("examples/tiny7/scenario.yaml"))
+   pb = Problem.from_scenario(load_scenario("tests/fixtures/regression/regression.yaml"))
    result = solve_mip(pb, time_limit=300)
-   assignments = result["assignments"]
-   print(result["objective"], len(assignments))
+   if result["has_solution"]:
+       print(result["outcome"], result["objective"], len(result["assignments"]))
+   else:
+       # "infeasible", "no_solution" (time limit) or "error" (see result["solver_error"])
+       print(result["outcome"], result["solver_error"])
+
+Since FHOPS 1.0.1 ``solve_mip`` does not raise for infeasible models, time limits without an
+incumbent or solver errors; it returns ``has_solution``, ``outcome``, ``solver_error`` and
+``warnings`` like :func:`fhops.model.milp.driver.solve_operational_milp`. Only a missing solver
+raises :class:`~fhops.optimization.mip.highs_driver.SolverUnavailable`. The bundled examples
+(tiny7–large84) are infeasible for this legacy model (see :doc:`../reference/cli`); use the
+operational MILP for them.
 
 .. automodule:: fhops.optimization
    :members:

@@ -26,7 +26,7 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
   \item Hooks for forthcoming BC validation datasets (ground-based, skyline, tethered, and salvage systems). The interface already supports alternative block layouts and mobilisation constraints so companion studies can drop their data in without modifying FHOPS core.
 \end{itemize}
 
-\textbf{Dependencies.} Pydantic for schema enforcement, pandas/numpy for IO, PyYAML/pyarrow for CSV/Parquet parsing.
+\textbf{Dependencies.} Pydantic for schema enforcement, pandas/numpy for CSV IO, PyYAML for scenario files, pyarrow for Parquet.
 
 \textbf{Outputs.} Validated \texttt{Scenario} objects plus manifest metadata: harvest-system inventories, road/mobilisation task tables, calendar definitions, and JSON summaries consumed by the benchmark/playback tools. Each ingest run writes a summary JSON to the user-specified output directory (e.g., `docs/softwarex/assets/data/datasets/`) so the dataset composition cited in Section~\ref{sec:illustrative-example} can be inspected or versioned.
 
@@ -39,7 +39,7 @@ Figure~\ref{fig:fhops-prisma-overview} summarises the automation pipeline that u
   \item Playback + KPI generation (\texttt{fhops.evaluation.playback} / \texttt{fhops.evaluation.metrics}) – replays solver output deterministically or with stochastic shocks (downtime, weather, landing congestion) to compute shift/day KPIs, utilisation, and cost metrics.
 \end{itemize}
 
-\textbf{Dependencies.} numpy, scipy, Pyomo/HiGHS (exact solver), Typer/Rich for CLI ergonomics, Optuna for Bayesian tuning, pandas for CSV summaries.
+\textbf{Dependencies.} numpy, Pyomo with HiGHS via highspy (exact solver), Typer/Click/Rich for CLI ergonomics, Optuna for Bayesian tuning, pandas for CSV summaries.
 
 \textbf{Outputs.} Each solver/tuning run produces a summary (objective, runtime, assignments), per-iteration telemetry, and optional playback/cost reports through the standard FHOPS CLI. Users control the destination via \texttt{--out-dir} and related flags—e.g., `fhops bench suite --scenario examples/med42/scenario.yaml --out-dir docs/softwarex/assets/data/benchmarks/med42 --telemetry-log ...`—so assets can be archived, compared, or re-ingested by downstream tools. These same artifacts underpin the illustrative example in Section~\ref{sec:illustrative-example}.
 

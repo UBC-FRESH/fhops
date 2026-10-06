@@ -845,6 +845,59 @@ Evidence: audit harness `run_adv.py` (5 scenario variants × SA/MILP × 5 window
 30913.4 m³ in every run, MILP 30 s windows return all-zero incumbents → flagged `empty` (baseline 1,
 14/14 2, 28/14 2, 14/7 3, 28/7 3 empty windows), 0 violations.
 
+### 8.17 Legacy solve-mip no-raise, rolling hook warnings, manuscript copy (#124)
+Hand-offs from #115 (§8.12) and #118 (§8.15). Branch `issue-124-legacy-mip-hook-warnings`; repro
+scripts in `/tmp/opencode/t124/`.
+
+1. **Legacy driver** (`optimization/mip/highs_driver.py`, `solve_mip`): same policy as §8.12.
+   APPSI interfaces (HiGHS, Gurobi) run with `config.load_solution = False` and load with
+   `load_vars()` only when `best_feasible_objective` is set; Pyomo's `highs` interface and the
+   `gurobi` plugin go through the operational driver's `_run_solver` (`load_solutions=False`).
+   The HiGHS log is captured (private logger for APPSI; `tee=[stream]` for `highs`), and the
+   operational driver's classification is reused (imported lazily: `fhops.model.milp.driver`
+   imports `fhops.evaluation.sequencing`, which imports `fhops.optimization`). Result keys added:
+   `has_solution`, `outcome`, `solver_status`, `termination_condition`, `solver_error`,
+   `warnings`; `objective=None` and an empty assignment table (usual columns) without a solution.
+   `SolverUnavailable` only for a missing solver; unknown drivers raise `ValueError` before the
+   model is built. Gurobi: an APPSI failure falls through to the `gurobi` plugin (noted in
+   `warnings`); under `driver="auto"` a failed Gurobi run falls back to HiGHS (noted in `warnings`;
+   1.0.0 did the same for exceptions). Normal solves are unchanged: 20/20 cases (regression fixture
+   and 9 linear chains × `auto`/`highs-exec`) give identical objectives and assignment tables
+   before (b73376d) and after.
+2. **CLI.** `solve-mip` prints `MIP outcome=… solver_status=… termination=… objective=…|n/a`,
+   solver errors and warnings; without a solution it writes the empty table and skips the KPI
+   summary. Exit codes: 0 solver ran (incl. infeasible / no incumbent), 1 solver error or solver
+   unavailable, 2 bad arguments (unknown `--driver` → `BadParameter`). `benchmark` prints
+   `MIP obj=n/a (outcome=…)`, skips MIP metrics, still runs SA, exits 1 after SA on a MIP solver
+   error. Only these two functions in `cli/main.py` changed (#116 edits `eval-playback`); the
+   `SolverUnavailable` import is local to them.
+3. **Finding (pre-existing, not fixed): the legacy MIP is infeasible for every bundled example.**
+   `system_loader_buffer` (`constraints/system_sequencing.py`) is
+   `Σ_{≤s} prod_loader ≤ Σ_{<s} prod_prereq − batch`; in the first shift the right side is
+   `−batch` (30 m³), so any block whose system has a loader role with machines makes the model
+   infeasible. tiny7, small21 and med42 are proven infeasible by HiGHS (also at `v1.0.0`, where
+   `solve-mip` raised `RuntimeError`); large84 has 48 such rows (model build > 15 min, not
+   solved). The regression fixture (no loader) solves (objective 8.0). The quickstart now uses
+   `solve-mip-operational` for tiny7, and the CLI reference / API page document the limitation.
+   Still showing `solve-mip` on examples (left for a docs/formulation follow-up, outside this
+   issue's files): README quickstart (tiny7), `docs/howto/thesis_eval.rst`,
+   `docs/howto/mobilisation_geo.rst`, `docs/howto/system_sequencing.rst` (med42),
+   `docs/api/fhops.evaluation.rst` (tiny7 example). Fixing the constraint (`− batch · active`)
+   changes the legacy model and is not in scope for 1.0.1.
+4. **Rolling hook** (`MILPSolver`): appends `solver_error=<text>` and each driver `warnings` entry
+   to `SolverOutput.warnings` after the status lines, skipping duplicates;
+   `run_rolling_horizon` already copies them into the iteration warnings. Real driver warning
+   that #118 validation still allows: a block whose `harvest_system_id` is not in the registry
+   (scenario without custom `harvest_systems`) skips the validation role check, while the MILP knows
+   no roles for that system and pins the lock to 0 with a warning (the block cannot be harvested
+   by the MILP at all; noted, not changed). Tests: fake driver (with/without solution, duplicates)
+   and this real HiGHS case.
+5. **Manuscript copy** (`docs/softwarex/manuscript/sections/`): `illustrative_example.tex` states
+   that the benchmarks were generated with FHOPS 1.0.0, reproduce exactly under 1.0.1 on the
+   documented platform, and that the playback assets were regenerated with 1.0.1 (§8.5).
+   `software_description.tex`: scipy removed (not a dependency, not imported); dependency lists
+   now match `pyproject.toml` (highspy, Click, PyYAML for scenario files, pyarrow for Parquet).
+
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
 `sphinx-build -b html docs _build/html -W`, and `python scripts/check_formulation_assets.py`

@@ -21,15 +21,17 @@ Workbench: ``examples/tiny7``
 .. code-block:: bash
 
    fhops validate examples/tiny7/scenario.yaml
-   fhops solve-mip examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
+   fhops solve-mip-operational examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
    fhops solve-heur examples/tiny7/scenario.yaml --out examples/tiny7/out/sa_solution.csv
    fhops evaluate examples/tiny7/scenario.yaml --assignments examples/tiny7/out/mip_solution.csv
 
 What those commands do:
 
 - ``fhops validate`` ensures CSV/YAML inputs satisfy the data contract.
-- ``fhops solve-mip`` builds a Pyomo model and solves it with HiGHS. The resulting CSV
-  lists the selected machine/block assignments.
+- ``fhops solve-mip-operational`` builds the operational (day × shift) Pyomo MILP and solves it
+  with HiGHS. The resulting CSV lists the selected machine/block/shift assignments. (The legacy
+  ``fhops solve-mip`` reports ``outcome=infeasible`` for tiny7 and the other bundled examples
+  because of its loader-buffer constraint; see :doc:`../reference/cli`.)
 - ``fhops solve-heur`` runs the simulated annealing heuristic.
 - ``fhops evaluate`` replays a schedule CSV and reports KPIs such as production,
   mobilisation cost, and sequencing health (when harvest systems are configured).
@@ -81,8 +83,8 @@ runs quickly with either SA or HiGHS; swap in med42 when you want a realistic la
 
 .. code-block:: bash
 
-   # 1) Full-horizon baseline (HiGHS)
-   fhops solve-mip examples/tiny7/scenario.yaml --out tmp/tiny7_full.csv --driver highs
+   # 1) Full-horizon baseline (operational MILP, HiGHS)
+   fhops solve-mip-operational examples/tiny7/scenario.yaml --out tmp/tiny7_full.csv
 
    # 2) Rolling MILP (Gurobi shown; use --mip-solver highs if Gurobi is unavailable)
    fhops plan rolling examples/tiny7/scenario.yaml \

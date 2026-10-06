@@ -42,6 +42,36 @@ Both ``solve-mip`` and ``solve-heur`` export schedules with the columns ``machin
 ``day``, and ``shift_id``. The shift identifier matches the scenario's shift calendar (or defaults to
 ``S1`` when only day-level data is provided) so downstream tooling can analyse sub-daily assignments.
 
+``solve-mip`` outcomes and exit codes
+-------------------------------------
+
+Since FHOPS 1.0.1, ``fhops solve-mip`` (legacy day-level MIP,
+:func:`fhops.optimization.mip.solve_mip`) reports its outcome the same way as
+``solve-mip-operational`` instead of raising a traceback::
+
+   MIP outcome=<outcome> solver_status=<status> termination=<condition> objective=<value|n/a>
+
+``outcome`` is ``optimal``, ``feasible`` (incumbent at the time limit), ``infeasible``,
+``no_solution`` (time limit before any incumbent) or ``error`` (the solver failed, e.g. a HiGHS
+option error; printed as ``Solver error: …``). Without a solution the CSV is an empty assignment
+table with the usual columns and the KPI summary is skipped. Exit codes:
+
+- ``0`` — the solver ran, including infeasible models and time limits without an incumbent;
+- ``1`` — solver error, or the requested solver is not available;
+- ``2`` — invalid arguments (e.g. an unknown ``--driver``).
+
+``fhops benchmark`` prints ``MIP obj=n/a (outcome=…)`` and skips the MIP metrics when the MIP has no
+solution; SA still runs, and a MIP solver error exits ``1`` after the SA results.
+
+.. note::
+
+   The legacy MIP's loader-buffer constraint cannot be satisfied in the first shift, so scenarios
+   whose harvest systems have loader roles with a batch volume — every bundled example
+   (``tiny7``, ``small21``, ``med42``, ``large84``) — are infeasible under ``solve-mip``
+   (``outcome=infeasible``; FHOPS 1.0.0 raised an exception for the same models). Use
+   ``fhops solve-mip-operational`` for these scenarios; ``solve-mip`` solves the regression
+   fixture (``tests/fixtures/regression/regression.yaml``).
+
 Heuristic configuration reference
 ----------------------------------
 

@@ -1391,7 +1391,11 @@ class MILPSolver:
     ``assigned = 1``, preserves ``shift_id`` and the planned ``production`` (so carry-forward and
     :func:`compute_rolling_kpis` replay the MILP plan, not the full production rate), and records
     the wall-clock runtime of model build + solve in ``SolverOutput.runtime_s``. Solver status and
-    termination condition are reported as warnings.
+    termination condition are reported as warnings (``solver_status=…``,
+    ``termination_condition=…``), followed by the driver's ``solver_error`` (as
+    ``solver_error=<text>``) and each entry of its ``warnings`` list (e.g. locks the MILP pinned to
+    zero or ignored), without duplicates; :func:`run_rolling_horizon` copies them into the
+    iteration warnings.
 
     A window without a solution returns ``SolverOutput(has_solution=False, assignments=[],
     objective=None)`` instead of raising: the driver reported no solution (``has_solution`` false,
@@ -1450,6 +1454,13 @@ class MILPSolver:
         termination_condition = result.get("termination_condition")
         if termination_condition:
             messages.append(f"termination_condition={termination_condition}")
+        solver_error = result.get("solver_error")
+        if solver_error:
+            messages.append(f"solver_error={solver_error}")
+        for message in result.get("warnings") or []:
+            text = str(message)
+            if text not in messages:
+                messages.append(text)
 
         objective = result.get("objective")
         has_solution = result.get("has_solution")

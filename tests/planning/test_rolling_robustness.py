@@ -310,6 +310,102 @@ def test_milp_hook_reports_no_solution_instead_of_raising(
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
+@pytest.mark.parametrize("has_solution", [False, True])
+def test_milp_hook_forwards_driver_solver_error_and_warnings(
+    monkeypatch: pytest.MonkeyPatch, has_solution: bool
+) -> None:
+    """#124: the driver's ``solver_error`` and ``warnings`` reach SolverOutput / iterations."""
+
+    lock_warning = "lock (F1, B1, day 1, shift *) pinned to x=0: day 1 is outside the block window"
+
+    def fake_driver(*args: object, **kwargs: object) -> dict[str, object]:
+        rows = [
+            {"machine_id": "F1", "block_id": "B1", "day": 1, "shift_id": "S1"},
+            {"machine_id": "F1", "block_id": "B1", "day": 2, "shift_id": "S1"},
+        ]
+        return {
+            "objective": 1.0 if has_solution else None,
+            "production": 0.0,
+            "assignments": pd.DataFrame(
+                [dict(row, assigned=1, production=100.0) for row in rows] if has_solution else [],
+                columns=["machine_id", "block_id", "day", "shift_id", "assigned", "production"],
+            ),
+            "has_solution": has_solution,
+            "outcome": "feasible" if has_solution else "error",
+            "solver_status": "aborted" if has_solution else "unknown",
+            "termination_condition": "maxTimeLimit" if has_solution else "unknown",
+            "solver_error": None if has_solution else "ERROR:   Option 'threads' is set to 997",
+            # Duplicates (also of the status line) are dropped.
+            "warnings": [lock_warning, lock_warning, "termination_condition=maxTimeLimit"],
+        }
+
+    monkeypatch.setattr(rolling_module, "solve_operational_milp", fake_driver)
+    scenario = chain_scenario(num_days=4)
+    plan = RollingIterationPlan(iteration_index=0, start_day=1, horizon_days=4, lock_days=2)
+    output = MILPSolver(solver="highs", time_limit=1)(scenario, plan, locked_assignments=[])
+    assert output.has_solution is has_solution
+    if has_solution:
+        assert output.warnings == [
+            "solver_status=aborted",
+            "termination_condition=maxTimeLimit",
+            lock_warning,
+        ]
+    else:
+        assert output.warnings == [
+            "solver_status=unknown",
+            "termination_condition=unknown",
+            "solver_error=ERROR:   Option 'threads' is set to 997",
+            lock_warning,
+            "termination_condition=maxTimeLimit",
+        ]
+
+    result = run_rolling_horizon(
+        _config(scenario, 4, 2, 2), MILPSolver(solver="highs", time_limit=1)
+    )
+    for summary in result.iteration_summaries:
+        assert summary.warnings is not None
+        assert summary.warnings.count(lock_warning) == 1
+        assert any(w.startswith("solver_error=") for w in summary.warnings) is not has_solution
+
+
+@pytest.mark.filterwarnings("ignore::UserWarning")
+def test_milp_hook_forwards_real_highs_lock_warning() -> None:
+    """A real driver warning that scenario validation (#118) still allows.
+
+    A block whose ``harvest_system_id`` is not in the registry (no custom ``harvest_systems``)
+    passes validation, and the role check on its locks is skipped; the operational MILP knows no
+    roles for that system and pins the lock to ``x = 0`` with a warning.
+    """
+
+    scenario = Scenario(
+        name="unknown-system-lock",
+        num_days=4,
+        blocks=[Block(id="B1", landing_id="L1", work_required=200.0, harvest_system_id="mystery")],
+        machines=[Machine(id="F1", role="feller_buncher")],
+        landings=[Landing(id="L1", daily_capacity=2)],
+        calendar=[CalendarEntry(machine_id="F1", day=day, available=1) for day in range(1, 5)],
+        production_rates=[ProductionRate(machine_id="F1", block_id="B1", rate=100.0)],
+        locked_assignments=[ScheduleLock(machine_id="F1", block_id="B1", day=1)],
+    )
+    expected = (
+        "lock (F1, B1, day 1, shift *) pinned to x=0: machine role 'feller_buncher' is not part "
+        "of the block's harvest system 'mystery'"
+    )
+    plan = RollingIterationPlan(iteration_index=0, start_day=1, horizon_days=4, lock_days=2)
+    output = MILPSolver(solver="highs", time_limit=30)(scenario, plan, locked_assignments=[])
+    assert output.has_solution is True
+    assert output.warnings is not None
+    assert output.warnings.count(expected) == 1
+    assert not any(w.startswith("solver_error=") for w in output.warnings)
+
+    result = run_rolling_horizon(
+        _config(scenario, 4, 4, 2), MILPSolver(solver="highs", time_limit=30)
+    )
+    first = result.iteration_summaries[0]
+    assert first.warnings is not None and expected in first.warnings
+
+
+@pytest.mark.filterwarnings("ignore::UserWarning")
 def test_hook_assignments_are_ignored_without_a_solution() -> None:
     def hook(scenario, plan, *, locked_assignments):  # type: ignore[no-untyped-def]
         return SolverOutput(
