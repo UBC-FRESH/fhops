@@ -290,7 +290,14 @@ class BlackoutBias:
 
 @dataclass
 class SyntheticDatasetConfig:
-    """Configuration for generating random synthetic datasets."""
+    """Configuration for generating random synthetic datasets.
+
+    Notes
+    -----
+    ``work_required`` and ``production_rate`` are sampling ranges in m³ (block volume to deliver
+    and volume per shift assignment), matching ``Block.work_required`` and
+    ``ProductionRate.rate``; ``shift_hours`` and ``machine_daily_hours`` are hours.
+    """
 
     name: str
     num_blocks: tuple[int, int] | int

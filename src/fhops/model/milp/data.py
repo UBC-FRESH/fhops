@@ -42,7 +42,14 @@ class SystemConfig:
 
 @dataclass(frozen=True)
 class OperationalMilpBundle:
-    """Normalized data extracted from a :class:`Problem` for MILP construction."""
+    """Normalized data extracted from a :class:`Problem` for MILP construction.
+
+    Notes
+    -----
+    ``work_required`` (block → terminal delivered volume) and ``production_rates``
+    ((machine, block) → volume per shift assignment) are both in m³, matching
+    ``SystemConfig.loader_batch_volume_m3``.
+    """
 
     machines: tuple[str, ...]
     blocks: tuple[str, ...]

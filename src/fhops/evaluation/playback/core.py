@@ -97,7 +97,13 @@ class DaySummary:
 
 @dataclass(slots=True)
 class PlaybackResult:
-    """Container grouping playback outputs."""
+    """Container grouping playback outputs.
+
+    Notes
+    -----
+    ``delivered_total`` is the volume (m³) delivered by terminal roles and
+    ``remaining_work_total`` the volume (m³) of ``Block.work_required`` still undelivered.
+    """
 
     records: Sequence[PlaybackRecord]
     shift_summaries: Sequence[ShiftSummary]

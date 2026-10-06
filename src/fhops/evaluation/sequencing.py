@@ -24,7 +24,16 @@ class SequencingResult:
 
 @dataclass(slots=True)
 class SequencingTracker:
-    """Tracks staged volume and sequencing feasibility as playback iterates."""
+    """Tracks staged volume and sequencing feasibility as playback iterates.
+
+    Notes
+    -----
+    All volumes are m³. ``remaining_work`` starts at ``Block.work_required`` (terminal delivered
+    volume) and is debited by the terminal role (or by any role for blocks without an explicit
+    harvest system); ``role_remaining`` caps each role at the same volume; ``role_inventory``
+    holds volume output by a role and not yet consumed downstream; ``delivered_total`` sums the
+    terminal deliveries.
+    """
 
     ctx: OperationalProblem
     debug: bool = False

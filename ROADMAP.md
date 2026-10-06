@@ -131,7 +131,7 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
 - [ ] #91 Optional `Scenario.initial_state` honoured by MILP, heuristics, and playback.
 - [ ] #92 Rolling-horizon state carry-forward plus lock/blackout/shift fixes.
 - [ ] #93 Stochastic playback event fixes (landing-shock days, downtime duration, `correlated_days`).
-- [ ] #94 Document `Block.work_required` units (m³).
+- [x] #94 Document `Block.work_required` units (m³).
 - [ ] #95 SoftwareX playback figure legibility and regenerated playback assets.
 - [ ] #96 Release FHOPS 1.0.1 and forward-port to `main`.
 
