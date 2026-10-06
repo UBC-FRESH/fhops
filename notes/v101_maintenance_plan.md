@@ -156,6 +156,47 @@ After each iteration locks its leading days:
 7. Docs: `docs/howto/rolling_horizon.rst` describes the carried state and its evaluation;
    `notes/rolling_horizon_plan.md` checkboxes are corrected.
 
+#### 8.2 implementation status and deviations (#92, branch `issue-92-rolling-carry-forward`)
+Implemented as designed (`carry_forward_state`, `RollingCarryState`, `slice_scenario_for_window(...,
+carry_state=)`), with these decisions/deviations:
+1. **Replay production rule.** The replay uses the playback rule (`min(rate, block remaining)`
+   capped by the tracker), not the MILP's planned `prod`. `ScheduleLock` carries no production, and
+   `compute_rolling_kpis` evaluates the same lock table with the same rule, so carried state and
+   stitched KPIs agree by construction (tested: final `remaining_work` = KPI
+   `remaining_work_total`). Consequence: the MILP's same-day shift-to-shift inventory use is not
+   reproduced by the tracker (next-day availability), which shows up as playback sequencing
+   violations on multi-shift MILP plans (pre-existing, also for full-horizon plans).
+2. **Omission rules.** `staged_inventory` omits zeros **and terminal roles** (the tracker books
+   terminal output into `role_inventory`, but it is delivered volume with no downstream consumer);
+   `role_remaining` omits values equal to the window's `work_required` (contract default; this also
+   means no MILP `role_remaining_cap` for such roles, as in a fresh scenario); counts omit zeros.
+   Volumes `<= 1e-6` are zeroed (tracker `BLOCK_EPSILON`).
+3. **Shift order.** `last_block_id` uses `(day, shift_id)` lexicographic order (missing shift →
+   `S1`), the same order the MILP slot list, heuristics, and playback use.
+4. **Block filtering kept.** Blocks whose time window does not overlap a window are still dropped
+   (a zero-work placeholder could not be made unavailable within contract validation). A carried
+   `last_block_id` pointing to a dropped block is removed with a warning in
+   `RollingPlanResult.warnings`; a user lock targeting a dropped block raises
+   `RollingInfeasibleError`.
+5. **Slices are re-validated** (`Scenario.model_validate`), so merged locks get full
+   cross-validation; hooks also merge + re-validate and no longer mutate the scenario they receive.
+6. **Telemetry addition.** `RollingIterationSummary.remaining_work_start` (also in
+   `summarize_plan`/CLI exports); `MILPSolver.requested_solver` keeps the user value while
+   `MILPSolver.solver`/metadata `mip_solver` report the resolved backend.
+7. **MILP hook drops `assigned = 0` rows** (the driver also emits rows with production but no
+   assignment flag); v1.0.0 turned them into locks.
+8. **Time-limited MILP windows** depend on the 8.7 driver change (#99/#102) that keeps
+   limit-stopped incumbents. Before it, `maxTimeLimit` returned an empty schedule and 30 s/window
+   MIP rolling runs on ka_6 locked nothing in three of four windows (found during the #92 sanity
+   check; an equivalent local fix was dropped when rebasing onto 8.7).
+
+Observed pre-existing issues (not changed here): `compute_kpis` on an **empty** assignment table
+reports `total_production = Σ work_required` (playback has no tracker, `remaining_work_total`
+defaults to 0) — the v1.0.0 "MIP baseline delivered 30913 m³" on ka_6 is this artefact of an empty
+(time-limited) plan; the operational MILP ignores `timeline.blackouts`; window objectives have no
+end-of-window value for staged inventory, so windows shorter than the harvest pipeline can plan no
+upstream work (tiny7 MILP 7/3/1).
+
 ### 8.3 Playback event fixes (#93)
 - Landing shocks: for each landing and each day, a shock starts with `probability`, lasts
   `duration_days` calendar days, and scales production of every assignment on that landing on the

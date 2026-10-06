@@ -129,7 +129,7 @@ before proposing new work.
 Parent #90; branch `feature/phase8-v101-maintenance` (from tag `v1.0.0`); plan `notes/v101_maintenance_plan.md`.
 Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is forward-ported there.
 - [x] #91 Optional `Scenario.initial_state` honoured by MILP, heuristics, and playback.
-- [ ] #92 Rolling-horizon state carry-forward plus lock/blackout/shift fixes.
+- [x] #92 Rolling-horizon state carry-forward plus lock/blackout/shift fixes.
 - [x] #93 Stochastic playback event fixes (landing-shock days, downtime duration, `correlated_days`).
 - [x] #94 Document `Block.work_required` units (m³).
 - [x] #95 SoftwareX playback figure legibility and regenerated playback assets.
@@ -142,6 +142,7 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
    - 2026-10-06: #91 (`issue-91-initial-state-contract`) adds optional `Scenario.initial_state` and `ScheduleLock.shift_id`, honoured by the operational MILP (first-slot inventory/head-start, role-remaining cap, boundary move, lock constraints), heuristics, and playback, with v1.0.0 regression parity tests. Next: #92 rolling-horizon carry-forward builds on this contract.
    - 2026-10-06: #99 (`issue-99-highs-warm-start`) fixes the `--incumbent` `TypeError` with HiGHS: seeded HiGHS solves go through Pyomo's `appsi_highs` MIP start, the result/CLI/telemetry report whether HiGHS accepted the start, unsupported solvers warn (`MilpWarmStartWarning`), and limit-stopped solves keep their incumbent.
    - 2026-10-06: #95 (`issue-95-playback-figure`) redraws the SoftwareX playback figure for legibility (manuscript text width, 9 pt text, legend above the panels) and regenerates only the playback assets with the #93 event fixes; deterministic benchmark/tuning/scaling assets unchanged and SA re-solves reproduce the committed tiny7/small21 summaries.
+   - 2026-10-06: #92 (`issue-92-rolling-carry-forward`) replays the stitched locked plan on the base scenario after every iteration (`carry_forward_state`) and slices the next window with remaining volume + `initial_state`; user locks are merged into every window, blackouts rebased, locks keep `shift_id`, hooks record runtime and resolve `solver="auto"` to HiGHS. Follow-ups noted in the plan: empty-plan KPI artefact, MILP blackouts, end-of-window valuation, MILP/playback same-day inventory mismatch.
 1. **Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**
    - Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
    - 2026-06-14: v1.0.0 GA issue tree opened; first child branch (`issue-15-v100-green-ci`) is restoring the green CI/local verification gate before release metadata changes.
