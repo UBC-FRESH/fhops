@@ -20,7 +20,12 @@ import pandas as pd
 
 from fhops.scenario.contract import Problem
 
-from .adapters import assignments_to_records, shift_hours_resolver
+from .adapters import (
+    DEFAULT_SHIFT_ID,
+    assignments_to_records,
+    normalise_shift_ids,
+    shift_hours_resolver,
+)
 from .core import PlaybackResult, run_playback
 from .events import SamplingConfig
 
@@ -66,7 +71,7 @@ def _row_key(row: pd.Series) -> Key:
         str(row["machine_id"]),
         str(row["block_id"]),
         int(row["day"]),
-        str(row.get("shift_id", "S1")),
+        str(row.get("shift_id", DEFAULT_SHIFT_ID)),
     )
 
 
@@ -76,6 +81,16 @@ def _current_production(row: pd.Series, base_production: dict[Key, float]) -> fl
     if value is not None and pd.notna(value):
         return float(value)
     return float(base_production.get(_row_key(row), 0.0) or 0.0)
+
+
+def _restore_index(df: pd.DataFrame, original: pd.DataFrame) -> pd.DataFrame:
+    """Give ``df`` (a positionally indexed working copy of ``original``) the original index.
+
+    Events work on a ``reset_index(drop=True)`` copy so row updates are positional and duplicate
+    index labels in the caller's frame cannot hit several rows at once.
+    """
+    df.index = original.index
+    return df
 
 
 def _active_mask(df: pd.DataFrame) -> pd.Series:
@@ -106,13 +121,18 @@ class DowntimeEvent:
     3. For each selected row (in selection order) one ``rng.normal(mean_duration_hours,
        std_duration_hours)`` draw gives the duration ``d``, clipped to ``[0, shift_hours]``.
 
-    ``shift_hours`` follows deterministic playback (:func:`shift_hours_resolver`): the
-    matching ``timeline.shifts`` definition, else the machine's ``daily_hours``. With
-    ``0 < d < shift_hours`` the row's production is multiplied by ``1 - d / shift_hours``;
-    with ``d == shift_hours`` (or unknown shift hours) the shift is lost entirely
-    (``assigned = 0``, ``production = 0``); ``d == 0`` leaves the row untouched. Affected rows
-    get ``_downtime = 1`` and ``_downtime_hours = d`` so playback summaries report the sampled
-    downtime hours.
+    ``shift_hours`` follows deterministic playback
+    (:func:`~fhops.evaluation.playback.core.shift_hours_resolver`): the matching
+    ``timeline.shifts`` definition, else the machine's ``daily_hours`` divided by its number of
+    shifts that day. With ``0 < d < shift_hours`` the row's production is multiplied by
+    ``1 - d / shift_hours``; with ``d == shift_hours`` (or unknown shift hours) the shift is lost
+    entirely (``assigned = 0``, ``production = 0``); ``d == 0`` leaves the row untouched.
+    Affected rows get ``_downtime = 1``, ``_downtime_hours = d`` and ``_downtime_lost`` (the
+    proposed volume removed, m³) so playback summaries report the sampled downtime hours and
+    :func:`~fhops.evaluation.metrics.kpis.compute_kpis` the lost volume.
+
+    Row updates are positional: the caller's index (which may contain duplicate labels) is
+    ignored and restored on the returned copy.
     """
 
     def __init__(self, config):
@@ -125,9 +145,9 @@ class DowntimeEvent:
         base_production: dict[Key, float],
     ) -> pd.DataFrame:
         """Return a copy of ``assignments`` with downtime applied (see class notes)."""
-        df = assignments.copy()
+        df = assignments.reset_index(drop=True)
         if df.empty or self.config.probability <= 0:
-            return df
+            return _restore_index(df, assignments)
         scenario = context.problem.scenario
         machine_roles = {
             machine.id: getattr(machine, "role", None) for machine in scenario.machines
@@ -140,7 +160,7 @@ class DowntimeEvent:
         candidates = df[mask]
         df.drop(columns="_target_role", inplace=True)
         if candidates.empty:
-            return df
+            return _restore_index(df, assignments)
 
         hours_for = shift_hours_resolver(scenario)
         mean = float(self.config.mean_duration_hours)
@@ -151,6 +171,8 @@ class DowntimeEvent:
             df["_downtime"] = 0
         if "_downtime_hours" not in df.columns:
             df["_downtime_hours"] = 0.0
+        if "_downtime_lost" not in df.columns:
+            df["_downtime_lost"] = 0.0
         rng = context.rng
         for _day, day_frame in candidates.groupby("day"):
             indices = day_frame.index.tolist()
@@ -162,26 +184,32 @@ class DowntimeEvent:
             else:
                 selected = [idx for idx in indices if rng.random() <= self.config.probability]
             for idx in selected:
-                row_index = cast(int | str, idx)
+                row_index = cast(int, idx)
                 row = cast(pd.Series, df.loc[row_index])
                 sampled = float(rng.normal(mean, std))
                 shift_hours, _source = hours_for(
-                    str(row["machine_id"]), str(row.get("shift_id", "S1"))
+                    str(row["machine_id"]),
+                    str(row.get("shift_id", DEFAULT_SHIFT_ID)),
+                    int(row["day"]),
                 )
                 duration = max(sampled, 0.0)
                 if shift_hours is not None and shift_hours > 0:
                     duration = min(duration, float(shift_hours))
                 if duration <= 0.0:
                     continue
+                current = _current_production(row, base_production)
                 if shift_hours is None or shift_hours <= 0 or duration >= shift_hours:
                     df.loc[row_index, "assigned"] = 0
                     df.loc[row_index, "production"] = 0.0
+                    lost = current
                 else:
-                    current = _current_production(row, base_production)
-                    df.loc[row_index, "production"] = current * (1.0 - duration / shift_hours)
+                    remaining = current * (1.0 - duration / shift_hours)
+                    df.loc[row_index, "production"] = remaining
+                    lost = current - remaining
                 df.loc[row_index, "_downtime"] = 1
                 df.loc[row_index, "_downtime_hours"] = duration
-        return df
+                df.loc[row_index, "_downtime_lost"] = max(lost, 0.0)
+        return _restore_index(df, assignments)
 
 
 class WeatherEvent:
@@ -199,7 +227,9 @@ class WeatherEvent:
     severity level with ``rng.integers``. Each spell covers ``impact_window_days`` consecutive
     days; overlapping spells keep the maximum severity. Affected, still-assigned rows have their
     *current* production multiplied by ``1 - severity`` (so effects compose with earlier
-    events) and record ``_weather_severity``. ``correlated_days`` is deprecated and ignored.
+    events) and record ``_weather_severity`` and ``_weather_lost`` (the proposed volume removed,
+    m³). ``correlated_days`` is deprecated and ignored. Row updates are positional (the caller's
+    index is ignored and restored on the returned copy).
     """
 
     def __init__(self, config):
@@ -212,9 +242,9 @@ class WeatherEvent:
         base_production: dict[Key, float],
     ) -> pd.DataFrame:
         """Return a copy of ``assignments`` with weather impacts applied (see class notes)."""
-        df = assignments.copy()
+        df = assignments.reset_index(drop=True)
         if df.empty or self.config.day_probability <= 0:
-            return df
+            return _restore_index(df, assignments)
         rng = context.rng
         severity_levels = self.config.severity_levels or {"moderate": 0.3}
         level_items = list(severity_levels.items())
@@ -229,25 +259,28 @@ class WeatherEvent:
                     affected[affected_day] = max(affected.get(affected_day, 0.0), severity)
 
         if not affected:
-            return df
+            return _restore_index(df, assignments)
 
         shifts_filter = set(self.config.affected_shifts) if self.config.affected_shifts else None
         active = _active_mask(df)
 
         df["_weather_severity"] = 0.0
+        if "_weather_lost" not in df.columns:
+            df["_weather_lost"] = 0.0
         for idx, row in df[active].iterrows():
             severity = affected.get(int(row["day"]))
             if severity is None:
                 continue
-            shift_id = row.get("shift_id", "S1")
+            shift_id = row.get("shift_id", DEFAULT_SHIFT_ID)
             if shifts_filter and shift_id not in shifts_filter:
                 continue
             current = _current_production(row, base_production)
             adjusted = max(current * (1 - severity), 0.0)
-            row_index = cast(int | str, idx)
+            row_index = cast(int, idx)
             df.loc[row_index, "production"] = adjusted
             df.loc[row_index, "_weather_severity"] = severity
-        return df
+            df.loc[row_index, "_weather_lost"] = max(current - adjusted, 0.0)
+        return _restore_index(df, assignments)
 
 
 class LandingShockEvent:
@@ -270,7 +303,12 @@ class LandingShockEvent:
 
     Every still-assigned row whose block is served by a shocked landing on an affected day has
     its *current* production multiplied by the shock multiplier (so effects compose with earlier
-    events) and records ``_landing_multiplier``.
+    events) and records ``_landing_multiplier``. Row updates are positional (the caller's index is
+    ignored and restored on the returned copy).
+
+    The expected fraction of landing-days under a shock is
+    ``1 - (1 - probability) ** duration_days`` (ignoring the horizon start, where fewer start
+    days can cover a day); see :class:`~fhops.evaluation.playback.events.LandingShockConfig`.
     """
 
     def __init__(self, config):
@@ -313,13 +351,13 @@ class LandingShockEvent:
         base_production: dict[Key, float],
     ) -> pd.DataFrame:
         """Return a copy of ``assignments`` with landing shocks applied (see class notes)."""
-        df = assignments.copy()
+        df = assignments.reset_index(drop=True)
         if df.empty or self.config.probability <= 0:
-            return df
+            return _restore_index(df, assignments)
         scenario = context.problem.scenario
         multipliers = self.sample_multipliers(context)
         if not multipliers:
-            return df
+            return _restore_index(df, assignments)
 
         landing_lookup = {block.id: block.landing_id for block in scenario.blocks}
         active = _active_mask(df)
@@ -333,11 +371,11 @@ class LandingShockEvent:
             if multiplier is None:
                 continue
             current = _current_production(row, base_production)
-            row_index = cast(int | str, idx)
+            row_index = cast(int, idx)
             df.loc[row_index, "production"] = max(current * multiplier, 0.0)
             df.loc[row_index, "_landing_multiplier"] = multiplier
 
-        return df
+        return _restore_index(df, assignments)
 
 
 @dataclass(slots=True)
@@ -368,11 +406,14 @@ def _default_events(config: SamplingConfig) -> list[PlaybackEvent]:
     return events
 
 
-def _ensure_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """Guarantee required columns (shift_id, assigned flag) exist on the assignments frame."""
-    result = df.copy()
-    if "shift_id" not in result.columns:
-        result["shift_id"] = "S1"
+def _ensure_columns(problem: Problem, df: pd.DataFrame) -> pd.DataFrame:
+    """Return a positionally indexed copy with ``shift_id`` and ``assigned`` columns.
+
+    ``shift_id`` follows :func:`~fhops.evaluation.playback.adapters.normalise_shift_ids`
+    (``"S1"`` default for single-shift scenarios, ``ValueError`` for multi-shift scenarios). The
+    caller's index is dropped so duplicate labels cannot affect event updates.
+    """
+    result = normalise_shift_ids(problem, df.reset_index(drop=True))
     if "assigned" not in result.columns:
         result["assigned"] = 1
     return result
@@ -424,7 +465,7 @@ def run_stochastic_playback(
     starts from the deterministic baseline production and events compose multiplicatively.
     """
 
-    base_assignments = _ensure_columns(assignments)
+    base_assignments = _ensure_columns(problem, assignments)
     base_result = run_playback(problem, base_assignments)
 
     base_production = _build_production_map(problem, base_assignments)

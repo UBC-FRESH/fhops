@@ -69,6 +69,10 @@ class OperationalProblem:
         (:func:`fhops.model.milp.data.headstart_buffer_volumes`) for explicit-system blocks. A
         buffered role may only work in a slot when the staged upstream volume at the start of the
         slot is at least this value. Empty when no role has ``buffer_shifts > 0``.
+    multi_shift_days:
+        Days with more than one ``(day, shift_id)`` slot in ``shift_keys``. On these days the
+        heuristic repair only keeps or fills an assignment when the block's landing has room in
+        that shift (when ``landing_surplus`` is weighted 0). Empty for single-shift scenarios.
     """
 
     problem: Problem
@@ -93,6 +97,7 @@ class OperationalProblem:
     initial_role_counts: Mapping[tuple[str, str], int] = field(default_factory=dict)
     initial_machine_block: Mapping[str, str] = field(default_factory=dict)
     role_headstart_volume: Mapping[tuple[str, str], float] = field(default_factory=dict)
+    multi_shift_days: frozenset[int] = frozenset()
 
     def lock_for(self, machine_id: str, day: int, shift_id: str) -> str | None:
         """Return the block locked for ``machine_id`` in slot ``(day, shift_id)`` (or ``None``).
@@ -216,6 +221,10 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
     loader_batch_volume, loader_roles = _build_loader_metadata(bundle)
     shift_keys = ordered_shift_keys(pb)
     shift_index = {key: idx for idx, key in enumerate(shift_keys)}
+    slots_per_day: dict[int, int] = defaultdict(int)
+    for day, _shift_id in shift_keys:
+        slots_per_day[day] += 1
+    multi_shift_days = frozenset(day for day, count in slots_per_day.items() if count > 1)
     return OperationalProblem(
         problem=pb,
         bundle=bundle,
@@ -239,6 +248,7 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         initial_role_counts=initial_role_counts,
         initial_machine_block=dict(bundle.initial_machine_block),
         role_headstart_volume=role_headstart_volume,
+        multi_shift_days=multi_shift_days,
     )
 
 

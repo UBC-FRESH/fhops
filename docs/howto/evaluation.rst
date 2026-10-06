@@ -203,10 +203,12 @@ The current KPI bundle includes:
   the scenario’s shift definition order.
 * ``downtime_hours_total`` / ``downtime_event_count`` / ``downtime_hours_by_machine`` — aggregate downtime
   exposure derived from the sampled downtime durations (zero for deterministic runs).
-* ``downtime_production_loss_est`` — estimated production loss, computed as ``downtime_hours_total`` multiplied by the average production rate observed in the current playback.
+* ``downtime_production_loss_est`` — volume (m³) removed by downtime, summed per record from the volume
+  the downtime event took out of each hit machine-shift (see below).
 * ``weather_severity_total`` / ``weather_severity_by_machine`` — cumulative weather intensity applied during
   stochastic playback, useful for correlating production drops with weather samples.
-* ``weather_hours_est`` / ``weather_production_loss_est`` — estimated hours and production impact attributable to weather, derived from the aggregate severity multiplied by the average shift length and production rate.
+* ``weather_hours_est`` / ``weather_production_loss_est`` — hours (``severity × shift hours``) and volume (m³)
+  removed by weather, summed per record (see below).
 
 Empty and partial plans
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -233,16 +235,35 @@ full scenario volume as delivered for an empty frame (`#108
 Weather & downtime cost assumptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The loss estimates make the following assumptions:
+The loss KPIs are emitted when :func:`~fhops.evaluation.compute_kpis` evaluates an assignment frame that
+carries stochastic event columns (for example a sample frame built by
+:func:`~fhops.evaluation.run_stochastic_playback`). Since 1.0.1 (`#116
+<https://github.com/UBC-FRESH/fhops/issues/116>`_) they are record-level sums:
 
-* ``downtime_hours_total`` sums the recorded downtime hours emitted by stochastic events. Multiplying by the
-  observed average production rate (total production divided by total hours worked) yields an approximate
-  lost-production figure. This is intentionally conservative—it does not try to infer which machines were
-  idle when downtime struck.
-* ``weather_severity_total`` aggregates the per-assignment severity values (0–1). Converting this to hours
-  uses the average shift duration; multiplying by the same average production rate yields a comparable
-  lost-production estimate. If you model multiple shifts per day or heterogeneous shift lengths, consider
-  computing refined per-machine/shift loss metrics downstream.
+* ``downtime_hours_total`` sums the sampled downtime hours of every hit machine-shift (cancelled shifts
+  count their full shift hours).
+* ``downtime_production_loss_est`` sums, over hit machine-shifts, the proposed volume the downtime event
+  removed: the whole proposed volume for a cancelled shift, ``volume × d / shift_hours`` for a partial loss
+  (the event records it in the private ``_downtime_lost`` column). Frames without that column fall back to
+  ``rate(machine, block) × min(downtime_hours / shift_hours, 1)``.
+* ``weather_production_loss_est`` sums the proposed volume removed by weather (``volume × severity``,
+  column ``_weather_lost``; fallback ``production × severity / (1 − severity)``), and ``weather_hours_est``
+  sums ``severity × shift_hours`` over weather-hit machine-shifts.
+
+The losses are measured on each machine-shift's proposed production before sequencing caps, so they
+include upstream (non-terminal) volume and do not equal the drop in ``total_production`` (which also
+includes knock-on sequencing effects and the other events). FHOPS 1.0.0 estimated both losses as hours ×
+(delivered volume ÷ recorded hours of every role), which did not match the volume the events removed.
+
+Shift hours (recorded ``hours_worked``, shift availability used for utilisation, and the downtime
+fraction ``d / shift_hours``) come from the matching ``timeline.shifts`` definition; without one, the
+machine's ``daily_hours`` is divided by the number of shifts the machine has that day in the shift
+calendar (e.g. three shifts → 8 h each for a 24 h machine). Single-shift scenarios use ``daily_hours``
+unchanged. FHOPS 1.0.0 recorded the full ``daily_hours`` for every shift of a multi-shift day.
+
+Assignments must carry ``shift_id`` on scenarios with more than one shift per day; playback, KPIs, and
+``fhops eval-playback`` raise an error instead of replaying every row as ``S1``. Single-shift scenarios
+keep the ``S1`` default.
 
 Upcoming KPI extensions planned for Phase 3 will reuse the same shift/day summaries:
 
@@ -290,20 +311,40 @@ order, so a given seed and configuration always reproduce the same ensemble.
   duration ``d ~ Normal(mean_duration_hours, std_duration_hours)`` clipped to ``[0, shift_hours]`` and
   multiplies the assignment's production by ``1 - d / shift_hours``. A full-shift loss
   (``d == shift_hours``) cancels the assignment (``assigned = 0``, production ``0``). ``shift_hours`` is the
-  matching ``timeline.shifts`` definition, otherwise the machine's ``daily_hours`` — the same hours
-  deterministic playback records. The shift summaries report ``downtime_hours`` (the sampled hours,
+  matching ``timeline.shifts`` definition, otherwise the machine's ``daily_hours`` divided by its number of
+  shifts that day — the same hours deterministic playback records. The shift summaries report ``downtime_hours`` (the sampled hours,
   including cancelled shifts) and ``total_hours = shift_hours - d`` for affected shifts, so
   ``downtime_hours_total`` and utilisation reflect the sampled durations.
 * **Weather** (:class:`~fhops.evaluation.playback.events.WeatherEventConfig`). For each assignment day a
   spell starts with ``day_probability``, picks a severity level, and covers ``impact_window_days``
   consecutive days (overlaps keep the highest severity). Affected production is multiplied by
-  ``1 - severity``. ``correlated_days`` is deprecated since 1.0.1: it never had an effect, and setting it
-  explicitly emits a ``DeprecationWarning``. Use ``impact_window_days`` to model multi-day spells.
+  ``1 - severity``. ``correlated_days`` is deprecated since 1.0.1: it never had an effect, and explicitly
+  setting it to a non-default value (``False``) emits a ``DeprecationWarning`` (the default ``True``, e.g. in
+  older synthetic ``metadata.yaml`` files, does not warn). Use ``impact_window_days`` to model multi-day
+  spells.
 * **Landing shocks** (:class:`~fhops.evaluation.playback.events.LandingShockConfig`). For each landing and
   each calendar day of the horizon a shock starts with ``probability``, draws a multiplier uniformly from
   ``capacity_multiplier_range``, and lasts ``duration_days`` calendar days from its start day. Every
   assignment on a block served by that landing has its production scaled by the multiplier on the
-  affected days; overlapping shocks use the minimum multiplier.
+  affected days; overlapping shocks use the minimum multiplier. The expected fraction of landing-days
+  under a shock is
+
+  .. math::
+
+     f = 1 - (1 - p)^{D}
+
+  with ``p = probability`` and ``D = duration_days`` (days ``d < D`` at the start of the horizon use
+  ``d`` instead of ``D``). The default :class:`~fhops.evaluation.playback.events.SamplingConfig`
+  (``p = 0.1``, ``D = 1``, multipliers uniform on 0.4–0.8) shocks 10 % of landing-days with a mean
+  multiplier of 0.6, i.e. an expected landing throughput loss of about 4 % over the horizon. The synthetic
+  tier presets (:data:`fhops.scenario.synthetic.SAMPLING_PRESETS`) were recalibrated for these semantics in
+  1.0.1: ``medium`` uses ``p = 0.025``, ``D = 2`` (``f ≈ 4.9 %``) and ``large`` uses ``p = 0.035``,
+  ``D = 3`` (``f ≈ 10.1 %``); the 1.0.0 values (``0.18``/``0.25``) would shock 32.8 % / 57.8 % of
+  landing-days. ``metadata.yaml`` files of the shipped ``examples/synthetic`` bundles record the presets
+  in force when they were generated.
+* **Event seeds.** ``seed_offset`` (on every event config) is deprecated since 1.0.1 and ignored — it was
+  never used. All events of sample ``i`` draw from ``default_rng(base_seed + i)`` in the order above;
+  setting a non-zero ``seed_offset`` emits a ``DeprecationWarning``.
 
 .. note::
 

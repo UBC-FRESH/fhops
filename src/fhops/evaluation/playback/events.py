@@ -50,10 +50,37 @@ def _default_landing_config() -> LandingShockConfig:
 
 
 class SamplingEventConfig(BaseModel):
-    """Base configuration shared by all stochastic events."""
+    """Base configuration shared by all stochastic events.
+
+    Parameters
+    ----------
+    enabled : bool, default=True
+        Whether :func:`~fhops.evaluation.playback.stochastic.run_stochastic_playback` applies the
+        event when it builds the default event list.
+    seed_offset : int, default=0
+        **Deprecated** (FHOPS 1.0.1) and ignored: every event of sample ``i`` draws from the
+        shared generator ``numpy.random.default_rng(base_seed + i)`` in the order downtime →
+        weather → landing shocks (FHOPS 1.0.0 also ignored this field). Setting a non-zero value
+        emits a :class:`DeprecationWarning`; ``0`` (e.g. a round trip of a dumped default
+        config) does not.
+    """
 
     enabled: bool = True
-    seed_offset: int = 0
+    seed_offset: int = Field(
+        default=0,
+        description="Deprecated and ignored; events share the per-sample generator.",
+    )
+
+    @model_validator(mode="after")
+    def _warn_seed_offset(self) -> Self:
+        if "seed_offset" in self.model_fields_set and self.seed_offset != 0:
+            warnings.warn(
+                f"{type(self).__name__}.seed_offset is deprecated and ignored; every event of a "
+                "sample draws from the shared generator default_rng(base_seed + sample_id).",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        return self
 
 
 class DowntimeEventConfig(SamplingEventConfig):
@@ -108,8 +135,10 @@ class WeatherEventConfig(SamplingEventConfig):
         Mapping ``label -> severity``; a spell picks one level uniformly at random and scales
         affected production by ``1 - severity`` (severity in ``[0, 1]``).
     correlated_days : bool, default=True
-        **Deprecated** (FHOPS 1.0.1) and ignored. Setting it explicitly emits a
-        :class:`DeprecationWarning`. Use ``impact_window_days`` to model multi-day spells.
+        **Deprecated** (FHOPS 1.0.1) and ignored. Explicitly setting a non-default value
+        (``False``) emits a :class:`DeprecationWarning`; the default ``True`` (e.g. a round trip
+        of a dumped config or an older synthetic ``metadata.yaml``) does not. Use
+        ``impact_window_days`` to model multi-day spells.
     impact_window_days : int, default=1
         Number of consecutive calendar days covered by each spell (``>= 1``); overlapping
         spells keep the highest severity per day.
@@ -132,7 +161,7 @@ class WeatherEventConfig(SamplingEventConfig):
 
     @model_validator(mode="after")
     def _warn_correlated_days(self) -> Self:
-        if "correlated_days" in self.model_fields_set:
+        if "correlated_days" in self.model_fields_set and self.correlated_days is not True:
             warnings.warn(
                 "WeatherEventConfig.correlated_days is deprecated and ignored; use "
                 "impact_window_days to model multi-day weather spells.",
@@ -164,6 +193,12 @@ class LandingShockConfig(SamplingEventConfig):
     Every assignment on a block served by a shocked landing has its production scaled by the
     shock multiplier on each affected day; overlapping shocks use the minimum multiplier. See
     :class:`fhops.evaluation.playback.stochastic.LandingShockEvent`.
+
+    Shocks start independently for each landing and calendar day, so the expected fraction of
+    landing-days under a shock is ``1 - (1 - probability) ** duration_days`` (days
+    ``d < duration_days`` at the start of the horizon use ``d`` instead of ``duration_days``).
+    The defaults (``probability=0.1``, ``duration_days=1``) shock 10 % of landing-days, with a
+    mean multiplier of ``(low + high) / 2 = 0.6`` on those days.
     """
 
     probability: float = Field(0.1, ge=0.0, le=1.0)

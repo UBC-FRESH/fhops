@@ -44,8 +44,9 @@ class SequencingTracker:
       (E7 guard); machines of the same role in one slot draw from that volume in turn.
     * A buffered role (``role_headstart_shifts``) may only work when the upstream volume staged at
       the start of the slot is at least the head-start volume ``B_{r,b}`` (E8;
-      :attr:`OperationalProblem.role_headstart_volume`), unless every upstream role has already
-      output its whole remaining volume (the buffer can no longer grow).
+      :attr:`OperationalProblem.role_headstart_volume`), unless every upstream role had already
+      output its whole remaining volume before the current slot (the buffer can no longer grow;
+      output finished in the same slot does not count, matching the MILP's ``upstream_done``).
     * A loader may only work when the upstream volume staged at the start of the slot covers one
       truckload (``min(loader_batch_volume_m3, remaining block volume)``).
 
@@ -308,10 +309,17 @@ class SequencingTracker:
         )
 
     def _upstream_exhausted(self, block_id: str, prereq_set: frozenset[str]) -> bool:
-        """``True`` when every upstream role has output its whole remaining volume (E8 waiver)."""
+        """``True`` when every upstream role finished its volume before the current slot (E8 waiver).
+
+        Output staged by an upstream role in the current slot (``role_inventory_today``) is added
+        back, so finishing the block in the same slot does not waive the head start: the MILP's
+        ``upstream_done`` indicator uses cumulative output up to the previous slot.
+        """
 
         return all(
-            self.role_remaining.get((block_id, upstream_role), 0.0) <= SEQUENCING_TOLERANCE
+            self.role_remaining.get((block_id, upstream_role), 0.0)
+            + self.role_inventory_today.get((block_id, upstream_role), 0.0)
+            <= SEQUENCING_TOLERANCE
             for upstream_role in prereq_set
         )
 
