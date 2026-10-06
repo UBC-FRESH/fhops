@@ -39,18 +39,21 @@ Each iteration solves a window ``[start, start + sub_days - 1]`` and freezes its
 1. **Replay the stitched locked plan** (all locks so far, base-day coordinates, ``shift_id``
    preserved) against the **base** scenario with the deterministic playback sequencing tracker
    (:func:`fhops.planning.carry_forward_state`). Production follows the playback rule: each locked
-   assignment proposes ``min(rate, block remaining)`` and the tracker caps it by the role's
-   remaining output and the staged upstream inventory (output becomes available downstream from the
-   next day). Solver-planned production (MILP ``prod`` values) is not used, so the carried state is
-   exactly what :func:`fhops.planning.compute_rolling_kpis` reports for the same plan.
+   assignment proposes its planned production when the lock carries one (MILP runs store the MILP
+   ``prod`` value in ``ScheduleLock.production``) and ``min(rate, block remaining)`` otherwise (SA
+   runs, user locks); the tracker caps it by the role's remaining output and the staged upstream
+   inventory (output becomes available downstream from the next shift slot). The carried state is
+   exactly what :func:`fhops.planning.compute_rolling_kpis` reports for the same plan, and for MILP
+   runs it is the state the window MILP planned, so stitched MILP plans replay without sequencing
+   violations.
 2. **Derive the window's boundary state** from the tracker at the end of the last locked day:
 
    - ``Block.work_required`` = remaining terminal volume (finished blocks stay in the window with
      ``work_required = 0``, so their ids remain valid);
    - ``Scenario.initial_state`` (see :ref:`initial-state`): per explicit-system block,
      ``role_remaining``, ``staged_inventory`` (non-terminal roles) and ``role_shift_counts``; per
-     machine, ``last_block_id`` = the block of its last locked assignment ordered by
-     ``(day, shift_id)``. Entries at their contract default (zero, or ``role_remaining`` equal to
+     machine, ``last_block_id`` = the block of its last locked assignment in chronological slot
+     order (day, then the scenario's shift order). Entries at their contract default (zero, or ``role_remaining`` equal to
      the remaining volume) are omitted.
 3. **Slice the base scenario** for the window: machine and shift calendars, timeline blackouts
    (clipped to the window and shifted so the window start is day 1), block windows, production
@@ -412,18 +415,23 @@ Limitations
 -----------
 - **No end-of-window valuation.** Window objectives reward only terminal (delivered) volume, so a
   window shorter than the harvest-system pipeline can see no value in upstream work: e.g. on tiny7
-  (four-role chain) a MILP run with ``master/sub/lock = 7/3/1`` plans no felling at all, while
-  ``7/4/2`` delivers the same volume as the full-horizon solve. Choose ``sub_days`` comfortably longer than
-  the number of roles plus ``lock_days``.
-- **Replay rule vs. MILP plan.** The carried state follows deterministic playback (rate-based
-  production, staged output usable from the next day). The operational MILP lets a downstream role
-  use output from the previous *shift* of the same day, so playback can report sequencing
-  violations for multi-shift MILP plans (rolling or full-horizon alike) and carries the state that
-  playback, not the MILP, says was reached.
+  (four-role chain) a MILP run with ``master/sub/lock = 7/3/1`` plans no felling at all. Since MILP
+  locks replay their planned production (1.0.1, #109), the window MILP's choice of how much
+  upstream work to do on locked days (any amount its own window cannot finish has no value, so
+  equal-objective plans are broken arbitrarily by the solver) carries into the next window: tiny7
+  ``7/4/2`` and ``7/5/3`` deliver about 3.9 of 4.4 thousand m³ (the earlier rate-based replay
+  credited unplanned full-rate upstream work and reported the full volume, together with
+  sequencing violations), ``7/6/3`` about 4.40 and ``7/7/7`` the full volume. Choose ``sub_days``
+  comfortably longer than the number of roles plus ``lock_days``.
+- **Replay rule vs. MILP plan.** Resolved in 1.0.1 (#109): playback, the heuristics, and the MILP
+  share one sequencing semantics (staged output usable from the next shift slot, head-start buffers
+  as staged volume, per-role output capped by the block volume), and MILP rolling locks carry the
+  planned production, so stitched MILP plans replay without sequencing violations and the carried
+  state is the state the window MILP planned.
 - **Blocks outside a window** are dropped from that window. If a machine's carried
   ``last_block_id`` is such a block (its ``latest_finish`` has passed), the position is dropped
   for that window with a warning in ``RollingPlanResult.warnings`` and its next move is not
   charged in the window solve (playback still charges it).
-- **Blackouts in the MILP.** Rebased blackouts are honoured by the heuristics and flagged by
-  playback; the operational MILP does not model ``timeline.blackouts`` (use calendars to remove
-  availability if the MILP must respect them).
+- **Blackouts in the MILP.** Resolved in 1.0.1 (#110): rebased blackouts are honoured by the
+  operational MILP (zero availability in the blocked slots) as well as by the heuristics, and
+  flagged by playback.

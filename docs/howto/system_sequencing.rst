@@ -40,6 +40,41 @@ role mix:
    spec = SyntheticScenarioSpec(num_days=5, num_blocks=6, num_machines=8)
    scenario = generate_with_systems(spec)  # assigns systems round-robin
 
+Sequencing Semantics
+--------------------
+
+The operational MILP (:doc:`optimization_formulation`), the heuristics (SA/ILS/Tabu evaluation and
+repair), and deterministic playback (:class:`fhops.evaluation.sequencing.SequencingTracker`) apply
+the same rules, so a MILP plan replays with zero sequencing violations and playback delivers the
+MILP's terminal production:
+
+* **Staged output moves on at the next shift slot.** Volume a role outputs in slot ``(day,
+  shift)`` is available to its downstream role from the next slot, i.e. the next shift of the same
+  day in multi-shift scenarios (formulation E7: ``I_start(s) = I(prev(s))``). Slots follow the
+  scenario's shift order (``timeline.shifts`` definition order), not the alphabetical order of
+  shift labels.
+* **Production is capped by staged input.** A downstream role cannot output more than the volume
+  its upstream role(s) have staged (minimum over upstream roles); machines of the same role in one
+  slot draw from it in turn.
+* **No role handles more wood than the block holds.** Each role's cumulative output on a block is
+  capped by ``work_required`` (or the carried-in ``initial_state`` ``role_remaining``).
+* **Head starts are staged volume.** ``role_headstart_shifts`` = ``β`` means the downstream role may
+  work only when at least ``β × Σ`` (upstream machines' rates on the block, m³/shift) is staged at
+  the start of the slot. The buffer is waived once every upstream role has output its whole volume
+  (the pipeline is draining). Shift counts (``initial_state.role_shift_counts``) are informational.
+* **Loaders need a truckload staged.** A loader may work only when the volume staged at the start of
+  the slot covers ``loader_batch_volume_m3``, or the remaining block volume when that is smaller
+  (playback and heuristics use the volume still to deliver; the MILP uses the remaining volume at
+  the start of its horizon, which is never less strict).
+* **Blocks without** ``harvest_system_id`` have no role obligations: any machine may work them and
+  every machine's output counts towards ``work_required``.
+
+Playback flags an assignment with ``sequencing_violation = "missing_prereq"`` when its planned
+production exceeds the staged input or a head-start/truckload threshold is not met (volume
+tolerance 1e-6 m³, which absorbs MILP solver feasibility noise). Rolling-horizon MILP runs store
+the planned production in their locks, so stitched plans replay the MILP plan rather than the full
+production rate (:doc:`rolling_horizon`).
+
 Running the Solvers
 -------------------
 

@@ -7,35 +7,36 @@ Given harvest blocks, machine roles, shift calendars, block windows, landing cap
 
 - $m \in \mathcal{M}$: machines.
 - $b \in \mathcal{B}$: blocks.
-- $s=(d,\sigma) \in \mathcal{S}$: shift slots indexed by day $d \in \mathcal{D}$ and shift label $\sigma$.
-- $\mathcal{R}_b$: ordered machine roles required by the harvest system assigned to block $b$.
+- $s=(d,\sigma) \in \mathcal{S}$: shift slots indexed by day $d \in \mathcal{D}$ and shift label $\sigma$, ordered by day and, within a day, by the scenario's shift order; $\operatorname{prev}(s)$ is the preceding slot (the previous shift of the same day when there is one) and $s'\prec s$ means slot $s'$ precedes $s$.
+- $\mathcal{B}^{\text{seq}} \subseteq \mathcal{B}$: blocks with an explicit harvest system (`harvest_system_id`); blocks in $\mathcal{B}\setminus\mathcal{B}^{\text{seq}}$ carry no sequencing obligations.
+- $\mathcal{R}_b$: ordered machine roles required by the harvest system assigned to block $b\in\mathcal{B}^{\text{seq}}$ ($\mathcal{R}_b=\emptyset$ otherwise).
 - $\mathcal{L}$: landings.
 - $\mathcal{P}^{\text{inv}} \subseteq \{(r,b): r \in \mathcal{R}_b\}$: role-block pairs with upstream prerequisites.
 - $\mathcal{P}^{\text{act}} \subseteq \mathcal{P}^{\text{inv}}$: role-block pairs that require positive head-start buffer activation.
+- $\mathcal{P}^{\text{hs}} \subseteq \mathcal{P}^{\text{act}}$: pairs with a head start of $\beta_{r,b}>0$ shifts (`role_headstart_shifts`); loader pairs without a head start are in $\mathcal{P}^{\text{act}}\setminus\mathcal{P}^{\text{hs}}$.
 - $\mathcal{P}^{\text{load}} \subseteq \{(r,b): r \in \mathcal{R}_b\}$: loader role-block pairs.
 - $s_1 \in \mathcal{S}$: first shift slot of the horizon.
 - $\mathcal{M}^{0} \subseteq \mathcal{M}$: machines with a known initial block $b^{0}_m$ (optional initial state; empty by default).
-- $\mathcal{P}^{\text{rem}} \subseteq \{(r,b): r \in \mathcal{R}_b\}$: role-block pairs with a carried-in remaining-output cap (optional initial state; empty by default).
 - $\mathcal{K}$: locked assignments $k=(m_k,b_k,d_k,\sigma_k)$, where $\sigma_k$ is a shift label or empty (whole day); $\mathcal{S}_k = \{s=(d_k,\sigma) \in \mathcal{S} : \sigma_k \text{ empty or } \sigma=\sigma_k\}$ (empty by default).
 
 **Parameters.**
 
 - $\bar{p}_{mb}$: production rate for machine $m$ on block $b$ (units per shift).
 - $W_b$: required total block production volume.
-- $A_{m,s} \in \{0,1\}$: machine availability for shift $s$.
+- $A_{m,s} \in \{0,1\}$: machine availability for shift $s$: $A_{m,s}=0$ when the machine's day or shift calendar marks it unavailable or when $s$ falls in a timeline blackout window, 1 otherwise. Blackouts are fleet-wide: on every day of a blackout window every machine is unavailable in all its shifts (its shift-calendar shifts for that day, otherwise every timeline shift).
 - $\mathbf{1}^{\text{window}}_{b,d} \in \{0,1\}$: block window indicator (1 if day $d$ is within block $b$ window).
 - $\omega^{\text{prod}},\omega^{\text{mob}},\omega^{\text{trans}},\omega^{\text{land}}$: objective weights.
 - $\delta_{m,b',b}$: mobilization cost when machine $m$ transitions from block $b'$ to block $b$.
 - $C_{\ell}$: daily assignment capacity for landing $\ell$.
 - $\ell(b)$: landing associated with block $b$.
 - $\mathcal{U}_{r,b}$: upstream roles that must feed role $r$ on block $b$.
-- $B_{r,b}$: required staged buffer volume before role $r$ may activate on block $b$.
+- $B_{r,b}$: required staged buffer volume before role $r$ may activate on block $b$: $B_{r,b}=\beta_{r,b}\sum_{u\in\mathcal{U}_{r,b}}\sum_{m\in\mathcal{M}(u)}\bar{p}_{mb}$ for a head start of $\beta_{r,b}$ shifts (`role_headstart_shifts`, 0 by default); loader roles use $\max\{\beta_{r,b}\sum_{u\in\mathcal{U}_{r,b}}\sum_{m\in\mathcal{M}(u)}\bar{p}_{mb},\; \min(q^{\text{batch}}_{r,b}, R_{r,b})\}$ (one truckload staged, or the whole remaining block volume when it is smaller).
 - $Q_{r,b}$: role production capacity upper bound per shift (used for activation linearization).
 - $q^{\text{batch}}_{r,b}$: loader batch size for loader role $r$ on block $b$.
 - $\mathcal{T}_b \subseteq \mathcal{R}_b$: terminal roles for block $b$ (roles credited in block completion objective terms).
 - $\bar{I}_{u,b} \ge 0$: initial staged volume output by role $u$ on block $b$ and not yet consumed downstream (optional initial state; 0 by default).
 - $I^{0}_{r,b} = \min_{u\in\mathcal{U}_{r,b}} \bar{I}_{u,b}$: initial input inventory available to downstream role $r$ on block $b$ (0 by default).
-- $R_{r,b} \ge 0$: remaining volume role $r$ may still output on block $b$, for $(r,b)\in\mathcal{P}^{\text{rem}}$.
+- $R_{r,b} \ge 0$: remaining volume role $r$ may still output on block $b$: the carried-in value when the optional initial state supplies one, otherwise $W_b$ (every role handles the same wood).
 - $b^{0}_m$: block machine $m\in\mathcal{M}^{0}$ occupied in its last worked slot before the horizon.
 
 **Decision variables.**
@@ -47,6 +48,7 @@ Given harvest blocks, machine roles, shift calendars, block windows, landing cap
 - $I^{\text{start}}_{r,b,s} \ge 0$: staged inventory available at start of shift $s$ for role $r$ on block $b$.
 - $I_{r,b,s} \ge 0$: staged inventory at end of shift $s$ for role $r$ on block $b$.
 - $g_{r,b,s} \in \{0,1\}$: role activation indicator for buffered downstream roles.
+- $h_{r,b,s} \in \{0,1\}$, $(r,b)\in\mathcal{P}^{\text{hs}}$: 1 only if every upstream role of $r$ on block $b$ has output its whole remaining volume before slot $s$ (the buffer can no longer grow and is waived).
 - $n_{r,b,s} \in \mathbb{Z}_{\ge 0}$: loader batch count for loader role-block pair $(r,b)$.
 - $u_{r,b,s} \ge 0$: loader partial remainder volume.
 - $L_b \ge 0$: leftover unmet block volume slack.
@@ -70,7 +72,7 @@ $$
 
 The last line is the boundary transition from each machine's initial block into the first slot. It is linear in $x$ because $b^{0}_m$ is data; with no initial state ($\mathcal{M}^{0}=\emptyset$) it vanishes and the objective is the v1.0.0 objective.
 
-If a block has no terminal-role metadata, the implementation falls back to machine-level production sums for the production reward term.
+For blocks without terminal roles ($\mathcal{T}_b=\emptyset$, in particular blocks outside $\mathcal{B}^{\text{seq}}$) the production reward and the block balance use the machine-level sum $\sum_{m}\sum_{s} p_{m,b,s}$ in place of $\sum_{r\in\mathcal{T}_b}\sum_s z_{r,b,s}$.
 
 **Constraints.**
 
@@ -84,7 +86,7 @@ $$
 Role compatibility (machines can only work roles allowed by the block's assigned harvest system):
 
 $$
-x_{m,b,s}=0 \quad \text{if role}(m)\notin\mathcal{R}_b.
+x_{m,b,s}=0 \quad \text{if } b\in\mathcal{B}^{\text{seq}} \text{ and role}(m)\notin\mathcal{R}_b.
 $$
 
 Production upper bound per assignment:
@@ -148,8 +150,17 @@ $$
 
 $$
 I_{r,b,\operatorname{prev}(s)} \ge B_{r,b}\,g_{r,b,s}
-\qquad \forall (r,b)\in\mathcal{P}^{\text{act}}, s,
-\qquad \text{with } I_{r,b,\operatorname{prev}(s_1)} := I^{0}_{r,b},
+\qquad \forall (r,b)\in\mathcal{P}^{\text{act}}\setminus\mathcal{P}^{\text{hs}}, s,
+\qquad
+I_{r,b,\operatorname{prev}(s)} \ge B_{r,b}\,\left(g_{r,b,s}-h_{r,b,s}\right)
+\qquad \forall (r,b)\in\mathcal{P}^{\text{hs}}, s,
+$$
+
+with $I_{r,b,\operatorname{prev}(s_1)} := I^{0}_{r,b}$, and
+
+$$
+\sum_{s'\prec s} z_{u,b,s'} \ge R_{u,b}\,h_{r,b,s}
+\qquad \forall (r,b)\in\mathcal{P}^{\text{hs}},\; u\in\mathcal{U}_{r,b},\; s,
 $$
 
 $$
@@ -178,11 +189,11 @@ $$
 \qquad \forall b\in\mathcal{B}.
 $$
 
-Carried-in remaining role output (only for pairs supplied by the initial state):
+Remaining role output (no role can handle more wood than the block still holds):
 
 $$
 \sum_{s\in\mathcal{S}} z_{r,b,s} \le R_{r,b}
-\qquad \forall (r,b)\in\mathcal{P}^{\text{rem}}.
+\qquad \forall b\in\mathcal{B}^{\text{seq}},\; r\in\mathcal{R}_b.
 $$
 
 Locked assignments (a lock without a shift label pins every available shift of its day; a lock with a shift label pins only that slot):
@@ -203,24 +214,26 @@ $$
 Domain restrictions:
 
 $$
-x, y, g \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L,S \ge 0.
+x, y, g, h \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L,S \ge 0.
 $$
 
-**Initial state defaults.** Without `Scenario.initial_state` and `Scenario.locked_assignments` ($\bar{I}\equiv 0$, hence $I^{0}\equiv 0$; $\mathcal{M}^{0}=\mathcal{P}^{\text{rem}}=\mathcal{K}=\emptyset$) every equation above reduces exactly to the FHOPS v1.0.0 formulation.
+**Initial state defaults.** Without `Scenario.initial_state` and `Scenario.locked_assignments` ($\bar{I}\equiv 0$, hence $I^{0}\equiv 0$; $R_{r,b}\equiv W_b$; $\mathcal{M}^{0}=\mathcal{K}=\emptyset$) the initial-state and lock terms vanish.
+
+**Changes from FHOPS v1.0.0 (1.0.1).** Three corrections make every MILP plan physically feasible and replayable by the playback sequencing tracker without violations: (i) the remaining-output cap now applies to every role with $R_{r,b}=W_b$ by default (v1.0.0 let upstream roles output more volume than the block holds and used that volume to meet head-start and loader thresholds); (ii) the head-start constraint of roles with a head start is waived through $h_{r,b,s}$ once every upstream role has output its whole remaining volume, and the loader threshold is $\min(q^{\text{batch}}_{r,b}, R_{r,b})$, so blocks smaller than a buffer or a truckload can still be finished without the excess volume; (iii) blocks without a harvest system ($\mathcal{B}\setminus\mathcal{B}^{\text{seq}}$) have no role obligations, as documented in the data contract (v1.0.0 applied the registry's default system to them). Timeline blackouts, which v1.0.0 enforced only in the heuristics, now set $A_{m,s}=0$ in the MILP as well. Playback, the heuristics, and the rolling-horizon carry-forward apply the same rules: staged output is available from the next shift slot, buffers are staged volume at the start of the slot, and production is capped by $R_{r,b}$.
 
 **Implementation mapping (equation blocks to code).**
 
-- Machine capacity and availability: `model.machine_capacity` (`machine_capacity_rule`)
-- Role compatibility: `model.role_compatibility` (`role_compatibility_rule`)
+- Machine capacity and availability: `model.machine_capacity` (`machine_capacity_rule`; $A_{m,s}$ from the calendars and `bundle.blackout_slots`, built by `build_blackout_slots(...)` and shared with the heuristics)
+- Role compatibility: `model.role_compatibility` (`role_compatibility_rule`; skipped for `bundle.unsequenced_blocks`)
 - Production-assignment coupling: `model.production_cap` (`prod_cap_rule`)
 - Block windows: `model.block_windows` (`window_rule`)
 - Role aggregation: `model.role_prod_balance` (`role_prod_balance_rule`)
 - Transition linkage: `model.transition_prev`, `model.transition_curr`, `model.transition_link`
 - Inventory dynamics and guards: `model.inventory_start_eq` (first slot uses $I^{0}_{r,b}$ from `bundle.initial_staged_inventory`), `model.inventory_balance`, `model.inventory_guard`
-- Head-start activation: `model.activation_prod`, `model.head_start`, `model.role_active_upper`, `model.role_active_lower`
+- Head-start activation: `model.activation_prod`, `model.head_start`, `model.role_active_upper`, `model.role_active_lower`; buffer waiver `model.upstream_done_link` (cumulative upstream output `model.role_cumulative_eq`); $B_{r,b}$ from `headstart_buffer_volumes(...)` in `fhops.model.milp.data`
 - Loader batching: `model.loader_batch`, `model.loader_partial_cap`
 - Block balance with leftovers: `model.block_balance` (`block_balance_rule`) + `model.leftover`
-- Carried-in remaining role output: `model.role_remaining_cap` (from `bundle.initial_role_remaining`)
+- Remaining role output: `model.role_remaining_cap` (from `bundle.initial_role_remaining`, default $W_b$)
 - Locked assignments: `model.locked_assignment` (from `bundle.locked_assignments`)
 - Landing capacity with slack: `model.landing_capacity` (`landing_capacity_rule`) + `model.landing_surplus`
 - Objective assembly: `model.objective` and objective-term construction around `prod_weight`, `landing_weight`, `mobilisation_weight`, `transition_weight`, including the first-slot boundary term from `bundle.initial_machine_block`

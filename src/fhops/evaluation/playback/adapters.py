@@ -169,11 +169,19 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
         role_key = role if role is not None else ""
         return role_order_lookup.get((block_id, role_key), role_priority.get(role_key, 999))
 
+    shift_index = tracker.ctx.shift_index
+    unknown_slot = len(shift_index)
+
+    def _slot_sort_value(row: pd.Series) -> int:
+        return shift_index.get((int(row["day"]), str(row["shift_id"])), unknown_slot)
+
     df["_role_order"] = df.apply(_role_sort_value, axis=1)
-    df = df.sort_values(["day", "shift_id", "_role_order", "machine_id", "block_id"]).reset_index(
-        drop=True
-    )
-    df = df.drop(columns=["_role_order"])
+    df["_slot_order"] = df.apply(_slot_sort_value, axis=1)
+    # Slots replay in the problem's shift order (the operational MILP's prev(s)), not label order.
+    df = df.sort_values(
+        ["day", "_slot_order", "shift_id", "_role_order", "machine_id", "block_id"]
+    ).reset_index(drop=True)
+    df = df.drop(columns=["_role_order", "_slot_order"])
 
     scenario = problem.scenario
     rate = {(r.machine_id, r.block_id): r.rate for r in scenario.production_rates}
@@ -291,7 +299,7 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             if landing_id is not None:
                 metadata["landing_id"] = landing_id
 
-            sequencing = tracker.process(day, machine_id, block_id, production_units)
+            sequencing = tracker.process(day, machine_id, block_id, production_units, shift_id)
             production_units = sequencing.production_units
             role = sequencing.machine_role
             if sequencing.violation_reason:

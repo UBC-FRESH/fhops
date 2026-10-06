@@ -23,10 +23,20 @@ sequencing constraints.
   \(b \in \mathcal{B}\): blocks.
 \item
   \(s=(d,\sigma) \in \mathcal{S}\): shift slots indexed by day
-  \(d \in \mathcal{D}\) and shift label \(\sigma\).
+  \(d \in \mathcal{D}\) and shift label \(\sigma\), ordered by day and,
+  within a day, by the scenario's shift order;
+  \(\operatorname{prev}(s)\) is the preceding slot (the previous shift
+  of the same day when there is one) and \(s'\prec s\) means slot \(s'\)
+  precedes \(s\).
+\item
+  \(\mathcal{B}^{\text{seq}} \subseteq \mathcal{B}\): blocks with an
+  explicit harvest system (\texttt{harvest\_system\_id}); blocks in
+  \(\mathcal{B}\setminus\mathcal{B}^{\text{seq}}\) carry no sequencing
+  obligations.
 \item
   \(\mathcal{R}_b\): ordered machine roles required by the harvest
-  system assigned to block \(b\).
+  system assigned to block \(b\in\mathcal{B}^{\text{seq}}\)
+  (\(\mathcal{R}_b=\emptyset\) otherwise).
 \item
   \(\mathcal{L}\): landings.
 \item
@@ -36,6 +46,11 @@ sequencing constraints.
   \(\mathcal{P}^{\text{act}} \subseteq \mathcal{P}^{\text{inv}}\):
   role-block pairs that require positive head-start buffer activation.
 \item
+  \(\mathcal{P}^{\text{hs}} \subseteq \mathcal{P}^{\text{act}}\): pairs
+  with a head start of \(\beta_{r,b}>0\) shifts
+  (\texttt{role\_headstart\_shifts}); loader pairs without a head start
+  are in \(\mathcal{P}^{\text{act}}\setminus\mathcal{P}^{\text{hs}}\).
+\item
   \(\mathcal{P}^{\text{load}} \subseteq \{(r,b): r \in \mathcal{R}_b\}\):
   loader role-block pairs.
 \item
@@ -43,10 +58,6 @@ sequencing constraints.
 \item
   \(\mathcal{M}^{0} \subseteq \mathcal{M}\): machines with a known
   initial block \(b^{0}_m\) (optional initial state; empty by default).
-\item
-  \(\mathcal{P}^{\text{rem}} \subseteq \{(r,b): r \in \mathcal{R}_b\}\):
-  role-block pairs with a carried-in remaining-output cap (optional
-  initial state; empty by default).
 \item
   \(\mathcal{K}\): locked assignments \(k=(m_k,b_k,d_k,\sigma_k)\),
   where \(\sigma_k\) is a shift label or empty (whole day);
@@ -64,7 +75,12 @@ sequencing constraints.
 \item
   \(W_b\): required total block production volume.
 \item
-  \(A_{m,s} \in \{0,1\}\): machine availability for shift \(s\).
+  \(A_{m,s} \in \{0,1\}\): machine availability for shift \(s\):
+  \(A_{m,s}=0\) when the machine's day or shift calendar marks it
+  unavailable or when \(s\) falls in a timeline blackout window, 1
+  otherwise. Blackouts are fleet-wide: on every day of a blackout window
+  every machine is unavailable in all its shifts (its shift-calendar
+  shifts for that day, otherwise every timeline shift).
 \item
   \(\mathbf{1}^{\text{window}}_{b,d} \in \{0,1\}\): block window
   indicator (1 if day \(d\) is within block \(b\) window).
@@ -83,7 +99,13 @@ sequencing constraints.
   block \(b\).
 \item
   \(B_{r,b}\): required staged buffer volume before role \(r\) may
-  activate on block \(b\).
+  activate on block \(b\):
+  \(B_{r,b}=\beta_{r,b}\sum_{u\in\mathcal{U}_{r,b}}\sum_{m\in\mathcal{M}(u)}\bar{p}_{mb}\)
+  for a head start of \(\beta_{r,b}\) shifts
+  (\texttt{role\_headstart\_shifts}, 0 by default); loader roles use
+  \(\max\{\beta_{r,b}\sum_{u\in\mathcal{U}_{r,b}}\sum_{m\in\mathcal{M}(u)}\bar{p}_{mb},\; \min(q^{\text{batch}}_{r,b}, R_{r,b})\}\)
+  (one truckload staged, or the whole remaining block volume when it is
+  smaller).
 \item
   \(Q_{r,b}\): role production capacity upper bound per shift (used for
   activation linearization).
@@ -103,7 +125,8 @@ sequencing constraints.
   by default).
 \item
   \(R_{r,b} \ge 0\): remaining volume role \(r\) may still output on
-  block \(b\), for \((r,b)\in\mathcal{P}^{\text{rem}}\).
+  block \(b\): the carried-in value when the optional initial state
+  supplies one, otherwise \(W_b\) (every role handles the same wood).
 \item
   \(b^{0}_m\): block machine \(m\in\mathcal{M}^{0}\) occupied in its
   last worked slot before the horizon.
@@ -135,6 +158,11 @@ sequencing constraints.
 \item
   \(g_{r,b,s} \in \{0,1\}\): role activation indicator for buffered
   downstream roles.
+\item
+  \(h_{r,b,s} \in \{0,1\}\), \((r,b)\in\mathcal{P}^{\text{hs}}\): 1 only
+  if every upstream role of \(r\) on block \(b\) has output its whole
+  remaining volume before slot \(s\) (the buffer can no longer grow and
+  is waived).
 \item
   \(n_{r,b,s} \in \mathbb{Z}_{\ge 0}\): loader batch count for loader
   role-block pair \((r,b)\).
@@ -168,8 +196,11 @@ block into the first slot. It is linear in \(x\) because \(b^{0}_m\) is
 data; with no initial state (\(\mathcal{M}^{0}=\emptyset\)) it vanishes
 and the objective is the v1.0.0 objective.
 
-If a block has no terminal-role metadata, the implementation falls back
-to machine-level production sums for the production reward term.
+For blocks without terminal roles (\(\mathcal{T}_b=\emptyset\), in
+particular blocks outside \(\mathcal{B}^{\text{seq}}\)) the production
+reward and the block balance use the machine-level sum
+\(\sum_{m}\sum_{s} p_{m,b,s}\) in place of
+\(\sum_{r\in\mathcal{T}_b}\sum_s z_{r,b,s}\).
 
 \textbf{Constraints.}
 
@@ -184,7 +215,7 @@ Role compatibility (machines can only work roles allowed by the block's
 assigned harvest system):
 
 \[
-x_{m,b,s}=0 \quad \text{if role}(m)\notin\mathcal{R}_b.
+x_{m,b,s}=0 \quad \text{if } b\in\mathcal{B}^{\text{seq}} \text{ and role}(m)\notin\mathcal{R}_b.
 \]
 
 Production upper bound per assignment:
@@ -248,8 +279,17 @@ z_{r,b,s} \le Q_{r,b}\,g_{r,b,s}
 
 \[
 I_{r,b,\operatorname{prev}(s)} \ge B_{r,b}\,g_{r,b,s}
-\qquad \forall (r,b)\in\mathcal{P}^{\text{act}}, s,
-\qquad \text{with } I_{r,b,\operatorname{prev}(s_1)} := I^{0}_{r,b},
+\qquad \forall (r,b)\in\mathcal{P}^{\text{act}}\setminus\mathcal{P}^{\text{hs}}, s,
+\qquad
+I_{r,b,\operatorname{prev}(s)} \ge B_{r,b}\,\left(g_{r,b,s}-h_{r,b,s}\right)
+\qquad \forall (r,b)\in\mathcal{P}^{\text{hs}}, s,
+\]
+
+with \(I_{r,b,\operatorname{prev}(s_1)} := I^{0}_{r,b}\), and
+
+\[
+\sum_{s'\prec s} z_{u,b,s'} \ge R_{u,b}\,h_{r,b,s}
+\qquad \forall (r,b)\in\mathcal{P}^{\text{hs}},\; u\in\mathcal{U}_{r,b},\; s,
 \]
 
 \[
@@ -278,12 +318,12 @@ Block completion balance with leftover slack:
 \qquad \forall b\in\mathcal{B}.
 \]
 
-Carried-in remaining role output (only for pairs supplied by the initial
-state):
+Remaining role output (no role can handle more wood than the block still
+holds):
 
 \[
 \sum_{s\in\mathcal{S}} z_{r,b,s} \le R_{r,b}
-\qquad \forall (r,b)\in\mathcal{P}^{\text{rem}}.
+\qquad \forall b\in\mathcal{B}^{\text{seq}},\; r\in\mathcal{R}_b.
 \]
 
 Locked assignments (a lock without a shift label pins every available
@@ -305,15 +345,35 @@ Landing daily assignment capacity with surplus slack:
 Domain restrictions:
 
 \[
-x, y, g \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L,S \ge 0.
+x, y, g, h \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L,S \ge 0.
 \]
 
 \textbf{Initial state defaults.} Without
 \texttt{Scenario.initial\_state} and
 \texttt{Scenario.locked\_assignments} (\(\bar{I}\equiv 0\), hence
-\(I^{0}\equiv 0\);
-\(\mathcal{M}^{0}=\mathcal{P}^{\text{rem}}=\mathcal{K}=\emptyset\))
-every equation above reduces exactly to the FHOPS v1.0.0 formulation.
+\(I^{0}\equiv 0\); \(R_{r,b}\equiv W_b\);
+\(\mathcal{M}^{0}=\mathcal{K}=\emptyset\)) the initial-state and lock
+terms vanish.
+
+\textbf{Changes from FHOPS v1.0.0 (1.0.1).} Three corrections make every
+MILP plan physically feasible and replayable by the playback sequencing
+tracker without violations: (i) the remaining-output cap now applies to
+every role with \(R_{r,b}=W_b\) by default (v1.0.0 let upstream roles
+output more volume than the block holds and used that volume to meet
+head-start and loader thresholds); (ii) the head-start constraint of
+roles with a head start is waived through \(h_{r,b,s}\) once every
+upstream role has output its whole remaining volume, and the loader
+threshold is \(\min(q^{\text{batch}}_{r,b}, R_{r,b})\), so blocks
+smaller than a buffer or a truckload can still be finished without the
+excess volume; (iii) blocks without a harvest system
+(\(\mathcal{B}\setminus\mathcal{B}^{\text{seq}}\)) have no role
+obligations, as documented in the data contract (v1.0.0 applied the
+registry's default system to them). Timeline blackouts, which v1.0.0
+enforced only in the heuristics, now set \(A_{m,s}=0\) in the MILP as
+well. Playback, the heuristics, and the rolling-horizon carry-forward
+apply the same rules: staged output is available from the next shift
+slot, buffers are staged volume at the start of the slot, and production
+is capped by \(R_{r,b}\).
 
 \textbf{Implementation mapping (equation blocks to code).}
 
@@ -321,10 +381,13 @@ every equation above reduces exactly to the FHOPS v1.0.0 formulation.
 \tightlist
 \item
   Machine capacity and availability: \texttt{model.machine\_capacity}
-  (\texttt{machine\_capacity\_rule})
+  (\texttt{machine\_capacity\_rule}; \(A_{m,s}\) from the calendars and
+  \texttt{bundle.blackout\_slots}, built by
+  \texttt{build\_blackout\_slots(...)} and shared with the heuristics)
 \item
   Role compatibility: \texttt{model.role\_compatibility}
-  (\texttt{role\_compatibility\_rule})
+  (\texttt{role\_compatibility\_rule}; skipped for
+  \texttt{bundle.unsequenced\_blocks})
 \item
   Production-assignment coupling: \texttt{model.production\_cap}
   (\texttt{prod\_cap\_rule})
@@ -344,7 +407,11 @@ every equation above reduces exactly to the FHOPS v1.0.0 formulation.
 \item
   Head-start activation: \texttt{model.activation\_prod},
   \texttt{model.head\_start}, \texttt{model.role\_active\_upper},
-  \texttt{model.role\_active\_lower}
+  \texttt{model.role\_active\_lower}; buffer waiver
+  \texttt{model.upstream\_done\_link} (cumulative upstream output
+  \texttt{model.role\_cumulative\_eq}); \(B_{r,b}\) from
+  \texttt{headstart\_buffer\_volumes(...)} in
+  \texttt{fhops.model.milp.data}
 \item
   Loader batching: \texttt{model.loader\_batch},
   \texttt{model.loader\_partial\_cap}
@@ -352,8 +419,8 @@ every equation above reduces exactly to the FHOPS v1.0.0 formulation.
   Block balance with leftovers: \texttt{model.block\_balance}
   (\texttt{block\_balance\_rule}) + \texttt{model.leftover}
 \item
-  Carried-in remaining role output: \texttt{model.role\_remaining\_cap}
-  (from \texttt{bundle.initial\_role\_remaining})
+  Remaining role output: \texttt{model.role\_remaining\_cap} (from
+  \texttt{bundle.initial\_role\_remaining}, default \(W_b\))
 \item
   Locked assignments: \texttt{model.locked\_assignment} (from
   \texttt{bundle.locked\_assignments})

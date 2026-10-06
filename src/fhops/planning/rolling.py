@@ -271,7 +271,8 @@ def carry_forward_state(
     locked_assignments :
         Stitched locked plan in base-scenario coordinates (e.g.
         :attr:`RollingPlanResult.locked_assignments`). Entries with ``day > through_day`` are
-        ignored. ``shift_id`` is honoured; ``None`` is replayed as ``"S1"`` exactly like playback.
+        ignored. ``shift_id`` and ``production`` are honoured; a missing ``shift_id`` is replayed
+        as ``"S1"`` exactly like playback.
     through_day :
         Last base day (inclusive) to replay. Must be ``>= 0``.
 
@@ -283,12 +284,13 @@ def carry_forward_state(
 
     Notes
     -----
-    Production follows the deterministic playback rule: each assignment proposes
-    ``min(rate, block remaining)`` and the shared
+    Production follows the deterministic playback rule: each assignment proposes its lock's
+    planned ``production`` when set (operational-MILP rolling runs store the MILP ``prod`` value)
+    and ``min(rate, block remaining)`` otherwise (SA runs, user locks); the shared
     :class:`fhops.evaluation.sequencing.SequencingTracker` caps it by the role's remaining output
-    and the staged upstream inventory. Solver-planned production (e.g. the MILP ``prod`` values) is
-    **not** used, so the carried state is exactly the state :func:`compute_rolling_kpis` /
-    :func:`fhops.evaluation.compute_kpis` report for the same locked plan. Role-keyed state is only
+    and the staged upstream inventory. The carried state is therefore exactly the state
+    :func:`compute_rolling_kpis` / :func:`fhops.evaluation.compute_kpis` report for the same locked
+    plan, and for MILP runs it is the state the window MILP planned. Role-keyed state is only
     emitted for blocks with an explicit ``harvest_system_id`` and for roles of that system
     (matching :func:`fhops.scenario.contract.validate_initial_state`).
     """
@@ -345,7 +347,13 @@ def carry_forward_state(
     last_block: dict[str, str] = (
         dict(base.initial_state.last_block_by_machine()) if base.initial_state else {}
     )
-    for lock in sorted(locks, key=lambda item: (item.day, item.shift_id or _DEFAULT_SHIFT_ID)):
+    unknown_slot = len(ctx.shift_index)
+
+    def _lock_order(item: ScheduleLock) -> tuple[int, int, str]:
+        shift_id = item.shift_id or _DEFAULT_SHIFT_ID
+        return (item.day, ctx.shift_index.get((item.day, shift_id), unknown_slot), shift_id)
+
+    for lock in sorted(locks, key=_lock_order):
         last_block[lock.machine_id] = lock.block_id
     machine_states = [
         MachineInitialState(machine_id=machine.id, last_block_id=last_block[machine.id])
@@ -380,7 +388,11 @@ def _replay_tracker(problem: Problem, locks: Sequence[ScheduleLock]) -> Sequenci
 
 
 def _locks_frame(locks: Iterable[ScheduleLock]) -> pd.DataFrame:
-    """Return ``machine_id, block_id, day, shift_id, assigned`` rows for ``locks``."""
+    """Return ``machine_id, block_id, day, shift_id, assigned[, production]`` rows for ``locks``.
+
+    The ``production`` column is added only when at least one lock carries a planned production;
+    locks without one replay with the playback rate rule (``NaN``).
+    """
 
     rows = [
         {
@@ -389,10 +401,14 @@ def _locks_frame(locks: Iterable[ScheduleLock]) -> pd.DataFrame:
             "day": lock.day,
             "shift_id": lock.shift_id,
             "assigned": 1,
+            "production": lock.production,
         }
         for lock in locks
     ]
-    return pd.DataFrame(rows, columns=["machine_id", "block_id", "day", "shift_id", "assigned"])
+    columns = ["machine_id", "block_id", "day", "shift_id", "assigned"]
+    if any(row["production"] is not None for row in rows):
+        columns.append("production")
+    return pd.DataFrame(rows, columns=columns)
 
 
 def slice_scenario_for_window(
@@ -984,6 +1000,7 @@ def _assignment_rows_to_locks(assignments: pd.DataFrame | None) -> list[Schedule
         return locks
     has_assigned = "assigned" in assignments.columns
     has_shift = "shift_id" in assignments.columns
+    has_production = "production" in assignments.columns
     for row in assignments.itertuples(index=False):
         if has_assigned:
             assigned_value = getattr(row, "assigned")
@@ -991,12 +1008,18 @@ def _assignment_rows_to_locks(assignments: pd.DataFrame | None) -> list[Schedule
                 continue
         shift_value = getattr(row, "shift_id") if has_shift else None
         shift_id = None if shift_value is None or pd.isna(shift_value) else str(shift_value)
+        production: float | None = None
+        if has_production:
+            production_value = getattr(row, "production")
+            if production_value is not None and not pd.isna(production_value):
+                production = max(0.0, float(production_value))
         locks.append(
             ScheduleLock(
                 machine_id=str(getattr(row, "machine_id")),
                 block_id=str(getattr(row, "block_id")),
                 day=int(getattr(row, "day")),
                 shift_id=shift_id,
+                production=production,
             )
         )
     return locks
@@ -1086,9 +1109,10 @@ class MILPSolver:
     -----
     The hook merges the ``locked_assignments`` it receives with ``scenario.locked_assignments``
     (the operational MILP enforces them as equality constraints), keeps only rows with
-    ``assigned = 1``, preserves ``shift_id``, and records the wall-clock runtime of model build +
-    solve in ``SolverOutput.runtime_s``. Solver status and termination condition are reported as
-    warnings.
+    ``assigned = 1``, preserves ``shift_id`` and the planned ``production`` (so carry-forward and
+    :func:`compute_rolling_kpis` replay the MILP plan, not the full production rate), and records
+    the wall-clock runtime of model build + solve in ``SolverOutput.runtime_s``. Solver status and
+    termination condition are reported as warnings.
     """
 
     name = "mip"
@@ -1327,7 +1351,8 @@ def rolling_assignments_dataframe(
     -------
     pandas.DataFrame
         Columns ``machine_id``, ``block_id``, ``day``, ``shift_id``, ``assigned`` (always ``1``),
-        and optionally the metadata keys, sorted by ``day``, ``shift_id``, ``machine_id``,
+        ``production`` (only when locks carry planned production, e.g. MILP rolling runs; m³), and
+        optionally the metadata keys, sorted by ``day``, ``shift_id``, ``machine_id``,
         ``block_id``. ``shift_id`` is ``None`` for day-level locks.
 
     Notes
@@ -1355,6 +1380,7 @@ def rolling_assignments_dataframe(
             "block_id": lock.block_id,
             "day": lock.day,
             "shift_id": lock.shift_id,
+            "production": lock.production,
         }
         if include_metadata:
             for key in meta_keys:
@@ -1362,8 +1388,11 @@ def rolling_assignments_dataframe(
                     row[key] = metadata[key]
         rows.append(row)
 
-    columns = ["machine_id", "block_id", "day", "shift_id", "assigned"] + (
-        meta_keys if include_metadata else []
+    has_production = any(lock.production is not None for lock in result.locked_assignments)
+    columns = (
+        ["machine_id", "block_id", "day", "shift_id", "assigned"]
+        + (["production"] if has_production else [])
+        + (meta_keys if include_metadata else [])
     )
     if not rows:
         return pd.DataFrame(columns=columns)

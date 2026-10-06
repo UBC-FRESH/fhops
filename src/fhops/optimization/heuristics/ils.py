@@ -12,6 +12,7 @@ from typing import Any, cast
 import pandas as pd
 
 from fhops.evaluation import compute_kpis
+from fhops.model.milp.data import ordered_shift_keys
 from fhops.optimization.heuristics.common import (
     Schedule,
     build_watch_metadata_from_debug,
@@ -36,10 +37,7 @@ from fhops.telemetry.watch import Snapshot, SnapshotSink
 
 def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule:
     """Convert an assignments DataFrame into the internal Schedule plan structure."""
-    shifts = [
-        (shift.day, shift.shift_id)
-        for shift in sorted(pb.shifts, key=lambda s: (s.day, s.shift_id))
-    ]
+    shifts = list(ordered_shift_keys(pb))
     plan: dict[str, dict[tuple[int, str], str | None]] = {
         machine.id: {(day, shift_id): None for (day, shift_id) in shifts}
         for machine in pb.scenario.machines

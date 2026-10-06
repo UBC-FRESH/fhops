@@ -69,19 +69,24 @@ def test_tracker_role_remaining_caps_upstream() -> None:
     assert tracker.process(2, "F1", "B1", 50.0).production_units == pytest.approx(0.0)
 
 
-def test_tracker_role_shift_counts_seed_headstart() -> None:
-    def make(counts: dict[str, int]):
+def test_tracker_headstart_seeded_by_staged_inventory() -> None:
+    # Head-start buffers are staged volume (MILP E8, #109): 2 shifts x 50 m³ feller rate = 100 m³.
+    # Carried-in shift counts no longer satisfy the buffer; staged inventory does.
+    def make(staged: float, counts: dict[str, int]):
         scenario = chain_scenario(
+            work_b1=200.0,
             initial_state=_block_state(
-                staged_inventory={"feller_buncher": 40.0}, role_shift_counts=counts
-            )
+                staged_inventory={"feller_buncher": staged}, role_shift_counts=counts
+            ),
         ).model_copy(update={"harvest_systems": {"chain": HEADSTART_SYSTEM}})
         return build_sequencing_tracker(Problem.from_scenario(scenario))
 
-    without = make({}).process(1, "S1", "B1", 40.0)
+    without = make(40.0, {}).process(1, "S1", "B1", 40.0)
     assert without.violation_reason == "missing_prereq"
-    with_counts = make({"feller_buncher": 2}).process(1, "S1", "B1", 40.0)
-    assert with_counts.violation_reason is None
+    with_counts = make(40.0, {"feller_buncher": 2}).process(1, "S1", "B1", 40.0)
+    assert with_counts.violation_reason == "missing_prereq"
+    with_volume = make(100.0, {}).process(1, "S1", "B1", 40.0)
+    assert with_volume.violation_reason is None
 
 
 def test_greedy_seed_uses_initial_role_remaining() -> None:
