@@ -1976,12 +1976,18 @@ def evaluate(
     Notes
     -----
     This is a fast wrapper around :func:`fhops.evaluation.compute_kpis` for users who only need
-    aggregated KPIs without the full playback/export pipeline.
+    aggregated KPIs without the full playback/export pipeline. Invalid assignment input (e.g. rows
+    without ``shift_id`` on a scenario with more than one shift per day) is reported as an error
+    message and the command exits with status 1.
     """
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     df = pd.read_csv(str(assignments_csv))
-    kpis = compute_kpis(pb, df)
+    try:
+        kpis = compute_kpis(pb, df)
+    except ValueError as exc:
+        console.print(f"[red]{escape(str(exc))}[/red]")
+        raise typer.Exit(1) from exc
     _print_kpi_summary(kpis, mode=kpi_mode)
 
 

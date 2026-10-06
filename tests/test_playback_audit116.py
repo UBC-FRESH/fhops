@@ -443,7 +443,7 @@ def test_eval_playback_help_keeps_bracketed_text() -> None:
     assert "between 0 and the shift length" in result.stdout
 
 
-def test_eval_playback_rejects_missing_shift_id_on_multi_shift(tmp_path: Path) -> None:
+def _multi_shift_tiny7_without_shift_ids(tmp_path: Path) -> tuple[Path, Path]:
     scenario = load_scenario(TINY7)
     timeline = TimelineConfig(
         shifts=[ShiftDefinition(name=n, hours=8.0, shifts_per_day=3) for n in SHIFTS]
@@ -465,8 +465,17 @@ def test_eval_playback_rejects_missing_shift_id_on_multi_shift(tmp_path: Path) -
     assignments = pd.read_csv(TINY7_ASSIGNMENTS).drop(columns=["shift_id"], errors="ignore")
     csv_path = tmp_path / "assignments.csv"
     assignments.to_csv(csv_path, index=False)
-    result = CliRunner().invoke(
-        app, ["eval-playback", str(scenario_path), "--assignments", str(csv_path)]
-    )
+    return scenario_path, csv_path
+
+
+@pytest.mark.parametrize("command", ["eval-playback", "evaluate"])
+def test_cli_rejects_missing_shift_id_on_multi_shift(tmp_path: Path, command: str) -> None:
+    # ``evaluate`` printed a traceback before #125; both commands exit 1 with the message.
+    scenario_path, csv_path = _multi_shift_tiny7_without_shift_ids(tmp_path)
+    result = CliRunner().invoke(app, [command, str(scenario_path), "--assignments", str(csv_path)])
     assert result.exit_code == 1
-    assert "shift_id" in result.stdout
+    text = " ".join(result.stdout.split())
+    assert "has no shift_id column" in text
+    assert "more than one shift per day" in text
+    assert "Traceback" not in text
+    assert isinstance(result.exception, SystemExit)
