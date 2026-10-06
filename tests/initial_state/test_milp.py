@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import dataclasses
+
 import pandas as pd
 import pyomo.environ as pyo
 import pytest
@@ -101,14 +103,23 @@ def test_role_remaining_caps_upstream_output() -> None:
 
 
 def test_role_remaining_above_work_required_uses_min_r_w() -> None:
-    # role_remaining (90) > work_required (40): the MILP caps the feller at min(R, W) = 40 (#115);
-    # the head-start waiver still compares with the carried-in 90 like the tracker.
-    pb = Problem.from_scenario(
+    # Scenario/Problem validation rejects role_remaining (90) > work_required (40) since #118, so
+    # the inconsistent value is injected into the MILP bundle directly to exercise the defensive
+    # cap: the MILP caps the feller at min(R, W) = 40 (#115).
+    with pytest.raises(ValueError, match="above the block's work_required"):
         chain_scenario(num_days=2, work_b1=40.0, initial_state=_staged(0.0, remaining=90.0))
+    pb = Problem.from_scenario(
+        chain_scenario(num_days=2, work_b1=40.0, initial_state=_staged(0.0, remaining=40.0))
     )
-    model = build_operational_model(build_operational_problem(pb).bundle)
+    bundle = build_operational_problem(pb).bundle
+    bundle = dataclasses.replace(
+        bundle,
+        initial_role_remaining={**bundle.initial_role_remaining, ("B1", "feller_buncher"): 90.0},
+    )
+    model = build_operational_model(bundle)
     assert pyo.value(model.role_remaining_cap["feller_buncher", "B1"].upper) == pytest.approx(40.0)
-    result = _solve(pb.scenario)
+    result = solve_operational_milp(bundle, solver="highs")
+    assert result["termination_condition"].lower() == "optimal"
     frame = result["assignments"]
     assert frame[frame["machine_id"] == "F1"]["production"].sum() <= 40.0 + 1e-6
 
