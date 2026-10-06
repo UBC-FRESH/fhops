@@ -507,3 +507,11 @@ when formulation sources change. Baseline at `v1.0.0`: 511 tests pass; ruff/mypy
   characterises the companion study.
 - The manuscript pins `fhops==1.0.1`, regenerates the playback figure and §3.2 values, updates the
   formulation (E6/E7 initial-state terms), and discloses the fix in the R2 response/cover letters.
+
+## Cross-platform reproducibility note (2026-10-06)
+Seeded SA results are bit-reproducible on a fixed platform (med42, 150 iters, seed 7 gives
+-38434.22731600001 for PYTHONHASHSEED 0–7 locally; Python 3.12.3, numpy 2.5.3). Across platforms,
+float summations differ in the last bits (CI: Python 3.11, numpy 2.4.6 → -38434.227316000004), and
+on one CI run (6e60a36) such a difference flipped an SA acceptance decision (-38703.91). Regression
+tests therefore compare floats to 1e-6 and assignments exactly; published benchmark values are
+reproducible on the documented platform, not guaranteed bit-for-bit across numpy/Python builds.
