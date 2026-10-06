@@ -21,6 +21,19 @@ The replay starts from the base scenario's own ``initial_state`` (when supplied)
 state and the stitched plan compose. User ``Scenario.locked_assignments`` are rebased into every
 window they fall in, and solver hooks merge (never overwrite) the locks they receive.
 
+Windows without a plan (FHOPS 1.0.1, #117)
+------------------------------------------
+A window whose solver returns no solution (MILP time limit before an incumbent, infeasible window,
+solver error) does not abort the run by default: the iteration is recorded with
+``status="no_solution"`` / ``has_solution=False`` and a warning, **no** assignments are locked for
+its lock span (machines idle), the carried state is unchanged across that span, and the next window
+is solved. Windows with nothing to plan (no blocks, no production rates, or no available shift
+slots) are recorded with ``status="skipped"`` and are idle as well. Windows that lock no
+assignments or plan no delivered volume while work remains are flagged as *empty*
+(:attr:`RollingIterationSummary.empty`, ``empty_windows`` in :func:`summarize_plan`). Pass
+``fail_on_empty_window=True`` to raise :class:`RollingInfeasibleError` at the first window without
+a solution instead; the exception carries the partial result (``partial_result``).
+
 Example
 -------
 >>> from fhops.planning.rolling import solve_rolling_plan
@@ -40,6 +53,7 @@ Example
 
 from __future__ import annotations
 
+import contextlib
 import time
 import warnings
 from collections.abc import Iterable, Mapping, Sequence
@@ -243,7 +257,8 @@ class RollingCarryState:
     initial_state :
         :class:`fhops.scenario.contract.ScenarioInitialState` for the next window, or ``None`` when
         every entry is at its default. Per explicit-system block it lists ``role_remaining``
-        (omitted when equal to the block's remaining terminal volume, the contract default),
+        (capped at the block's remaining terminal volume; omitted when equal to it, the contract
+        default),
         ``staged_inventory`` (omitted when zero, and for terminal roles, whose output is delivered
         volume rather than staged input) and ``role_shift_counts`` (omitted when zero); per
         machine it lists ``last_block_id`` (the block of the machine's last locked assignment,
@@ -272,7 +287,8 @@ def carry_forward_state(
         Stitched locked plan in base-scenario coordinates (e.g.
         :attr:`RollingPlanResult.locked_assignments`). Entries with ``day > through_day`` are
         ignored. ``shift_id`` and ``production`` are honoured; a missing ``shift_id`` is replayed
-        as ``"S1"`` exactly like playback.
+        as the day's only shift slot when the day has exactly one (otherwise it is passed to
+        playback unset, which treats it as ``"S1"``).
     through_day :
         Last base day (inclusive) to replay. Must be ``>= 0``.
 
@@ -326,6 +342,9 @@ def carry_forward_state(
             if key in tracker.role_remaining:
                 value = float(tracker.role_remaining[key])
                 value = 0.0 if value <= BLOCK_EPSILON else value
+                # Float noise must not leave a role with more to do than the block's remaining
+                # terminal volume (contract: role_remaining <= work_required).
+                value = min(value, remaining_work[block_id])
                 if abs(value - remaining_work[block_id]) > 1e-9:
                     role_remaining[role] = value
             inventory = float(tracker.role_inventory.get(key, 0.0))
@@ -353,7 +372,7 @@ def carry_forward_state(
         shift_id = item.shift_id or _DEFAULT_SHIFT_ID
         return (item.day, ctx.shift_index.get((item.day, shift_id), unknown_slot), shift_id)
 
-    for lock in sorted(locks, key=_lock_order):
+    for lock in sorted(_fill_shift_ids(problem, locks), key=_lock_order):
         last_block[lock.machine_id] = lock.block_id
     machine_states = [
         MachineInitialState(machine_id=machine.id, last_block_id=last_block[machine.id])
@@ -374,7 +393,7 @@ def carry_forward_state(
 def _replay_tracker(problem: Problem, locks: Sequence[ScheduleLock]) -> SequencingTracker:
     """Replay ``locks`` through deterministic playback and return the finalised tracker."""
 
-    frame = _locks_frame(locks)
+    frame = _locks_frame(_fill_shift_ids(problem, locks))
     if frame.empty:
         return build_sequencing_tracker(problem)
     records = assignments_to_records(problem, frame)
@@ -385,6 +404,30 @@ def _replay_tracker(problem: Problem, locks: Sequence[ScheduleLock]) -> Sequenci
         return build_sequencing_tracker(problem)
     tracker.finalize()
     return tracker
+
+
+def _fill_shift_ids(problem: Problem, locks: Sequence[ScheduleLock]) -> list[ScheduleLock]:
+    """Return ``locks`` with a missing ``shift_id`` set to the day's only shift slot.
+
+    Day-level locks on days with exactly one shift slot are unambiguous, so they are labelled with
+    that slot (e.g. ``"day"`` for a single timeline shift) before they reach playback. Locks on
+    multi-shift days (or days without slots) keep ``shift_id=None``.
+    """
+
+    if all(lock.shift_id is not None for lock in locks):
+        return list(locks)
+    by_day: dict[int, list[str]] = {}
+    for shift in problem.shifts:
+        labels = by_day.setdefault(shift.day, [])
+        if shift.shift_id not in labels:
+            labels.append(shift.shift_id)
+    filled: list[ScheduleLock] = []
+    for lock in locks:
+        labels = by_day.get(lock.day, [])
+        if lock.shift_id is None and len(labels) == 1:
+            lock = lock.model_copy(update={"shift_id": labels[0]})
+        filled.append(lock)
+    return filled
 
 
 def _locks_frame(locks: Iterable[ScheduleLock]) -> pd.DataFrame:
@@ -423,7 +466,11 @@ def slice_scenario_for_window(
     The slice rebases day indices so the window start maps to day 1: machine and shift calendars,
     timeline blackouts, block windows, and locks outside the window are dropped and the rest are
     shifted. Blocks whose ``[earliest_start, latest_finish]`` window does not overlap the
-    sub-horizon are dropped together with their production rates and mobilisation distances.
+    sub-horizon are dropped together with their production rates and mobilisation distances. When the
+    base scenario has a ``shift_calendar`` but none of its entries fall inside the window, the window
+    receives explicit ``available=0`` entries so it has **no** shift slots (machines unavailable),
+    exactly like the same days in a direct solve; an empty calendar would otherwise fall back to the
+    timeline shifts or ``S1`` and invent capacity (FHOPS 1.0.0 behaviour, fixed in #117).
 
     Parameters
     ----------
@@ -453,7 +500,9 @@ def slice_scenario_for_window(
     Raises
     ------
     RollingInfeasibleError
-        If a lock inside the window references a block that is outside the window.
+        If a lock inside the window references a block that is outside the window. This only
+        happens for locks outside their block's ``earliest_start``/``latest_finish`` window, which
+        :func:`run_rolling_horizon` rejects up front.
     ValueError
         (Pydantic ``ValidationError``) if the merged locks conflict.
     """
@@ -483,7 +532,9 @@ def _slice_window(
         updates["start_date"] = copy.start_date + timedelta(days=start - 1)
 
     updates["calendar"] = _rebase_calendar(copy.calendar, start, end)
-    updates["shift_calendar"] = _rebase_shift_calendar(copy.shift_calendar, start, end)
+    updates["shift_calendar"] = _rebase_shift_calendar(
+        copy.shift_calendar, start, end, [machine.id for machine in copy.machines]
+    )
     updates["timeline"] = _rebase_timeline(copy.timeline, start, end)
 
     remaining = carry_state.remaining_work if carry_state is not None else None
@@ -568,15 +619,34 @@ def _rebase_calendar(entries: list[CalendarEntry], start: int, end: int) -> list
 
 
 def _rebase_shift_calendar(
-    entries: list[ShiftCalendarEntry] | None, start: int, end: int
+    entries: list[ShiftCalendarEntry] | None,
+    start: int,
+    end: int,
+    machine_ids: Sequence[str] = (),
 ) -> list[ShiftCalendarEntry] | None:
+    """Clip a shift calendar to ``[start, end]`` and rebase it so ``start`` maps to day 1.
+
+    When the base calendar is non-empty but has no entry inside the window, the window gets
+    explicit ``available=0`` entries (every machine, day, and base shift label) instead of an empty
+    calendar: an empty calendar would make :meth:`Problem.from_scenario` fall back to the timeline
+    shifts (or ``S1``) and invent capacity the base scenario does not have (#117).
+    """
+
     if not entries:
         return entries
     rebased: list[ShiftCalendarEntry] = []
     for entry in entries:
         if start <= entry.day <= end:
             rebased.append(entry.model_copy(update={"day": entry.day - start + 1}))
-    return rebased
+    if rebased:
+        return rebased
+    labels = sorted({entry.shift_id for entry in entries})
+    return [
+        ShiftCalendarEntry(machine_id=machine_id, day=day, shift_id=label, available=0)
+        for machine_id in machine_ids
+        for day in range(1, end - start + 2)
+        for label in labels
+    ]
 
 
 def _rebase_timeline(
@@ -671,15 +741,38 @@ class RollingIterationSummary:
         Count of :class:`fhops.scenario.contract.models.ScheduleLock` entries injected into the
         master plan from this iteration (base-scenario coordinates).
     objective :
-        Solver objective value (units match the chosen solver) or ``None`` when not reported.
+        Solver objective value (units match the chosen solver) or ``None`` when not reported (and
+        always ``None`` for windows without a solution). Window objectives include the leftover
+        penalty on the carried remaining volume, so they are not comparable across windows or with
+        FHOPS 1.0.0 per-window objectives; score runs on the stitched plan instead.
     runtime_s :
         Wall-clock runtime in seconds, if the solver provides it.
     warnings :
-        Optional warnings surfaced by the solver hook (e.g., termination condition).
+        Warnings surfaced by the solver hook (e.g., termination condition) plus the orchestrator's
+        no-solution / skipped / empty-window notices; ``None`` when there are none.
     remaining_work_start :
         Terminal volume (m³) still to deliver across all base blocks at the start of this window,
         from the carried-forward state (the base ``work_required`` total for the first window).
         ``None`` when not computed (e.g. summaries built by hand).
+    status :
+        ``"solved"`` (the hook returned a plan, possibly empty), ``"no_solution"`` (the hook
+        reported no solution: time limit before an incumbent, infeasible window, solver error) or
+        ``"skipped"`` (nothing to plan: no blocks, no production rates, or no available shift
+        slots; the solver is not called). Windows that are not ``"solved"`` lock no assignments.
+    has_solution :
+        ``False`` only for ``status == "no_solution"``.
+    planned_delivered :
+        Terminal volume (m³) the window's **whole** plan delivers when replayed on the window
+        scenario (deterministic playback rule); ``0.0`` for windows that are not ``"solved"``.
+        ``None`` when not computed.
+    locked_delivered :
+        Terminal volume (m³) the locked span of this window delivers in the stitched-plan replay
+        (``remaining_work_start`` minus the remaining volume after the lock span). ``None`` when
+        not computed.
+    empty :
+        ``True`` when the window had remaining work (``> 1e-6`` m³ over its blocks) but locked no
+        assignments or planned no delivered volume (e.g. an all-zero time-limited MILP incumbent,
+        a no-solution or skipped window).
     """
 
     iteration_index: int
@@ -691,6 +784,11 @@ class RollingIterationSummary:
     runtime_s: float | None = None
     warnings: list[str] | None = None
     remaining_work_start: float | None = None
+    status: str = "solved"
+    has_solution: bool = True
+    planned_delivered: float | None = None
+    locked_delivered: float | None = None
+    empty: bool = False
 
 
 @dataclass
@@ -708,13 +806,26 @@ class RollingPlanResult:
         Descriptive metadata such as scenario name, master/sub/lock horizon lengths, start day, and
         solver identifier. Keys are JSON-serialisable so telemetry exporters can persist them.
     warnings :
-        Optional warnings accumulated across the rolling run; empty list when none are present.
+        Optional warnings accumulated across the rolling run (slicer notices plus the
+        no-solution / skipped / empty-window notices); empty list when none are present.
     """
 
     locked_assignments: list[ScheduleLock]
     iteration_summaries: list[RollingIterationSummary]
     metadata: dict[str, object]
     warnings: list[str] | None = None
+
+    @property
+    def empty_windows(self) -> list[int]:
+        """Indices of iterations flagged as empty (:attr:`RollingIterationSummary.empty`)."""
+
+        return [s.iteration_index for s in self.iteration_summaries if s.empty]
+
+    @property
+    def no_solution_windows(self) -> list[int]:
+        """Indices of iterations whose solver returned no solution."""
+
+        return [s.iteration_index for s in self.iteration_summaries if not s.has_solution]
 
 
 @dataclass
@@ -760,12 +871,17 @@ class SolverOutput:
         Wall-clock runtime in seconds, when provided by the solver.
     warnings :
         Optional warnings emitted by the solver (solver status, termination condition, etc.).
+    has_solution :
+        ``False`` when the solver produced no solution (time limit before an incumbent, infeasible
+        window, solver error). The orchestrator then ignores ``assignments`` and applies the
+        no-solution policy (see :func:`run_rolling_horizon`). Defaults to ``True``.
     """
 
     assignments: Sequence[ScheduleLock]
     objective: float | None = None
     runtime_s: float | None = None
     warnings: list[str] | None = None
+    has_solution: bool = True
 
 
 class IterableSolver(Protocol):
@@ -781,7 +897,30 @@ class IterableSolver(Protocol):
 
 
 class RollingInfeasibleError(RuntimeError):
-    """Raised when a sub-horizon is infeasible or when solver configuration is invalid."""
+    """Raised when a sub-horizon is infeasible or when solver configuration is invalid.
+
+    Parameters
+    ----------
+    message :
+        Human-readable reason (names the iteration when raised inside the rolling loop).
+    iteration_index :
+        Zero-based iteration that failed, or ``None`` when the error is not tied to one.
+    partial_result :
+        :class:`RollingPlanResult` with the assignments locked and iterations recorded before the
+        failure (including the failing iteration's record when it was solved), or ``None``. Set by
+        :func:`run_rolling_horizon` so callers (e.g. the CLI) can still export partial outputs.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        iteration_index: int | None = None,
+        partial_result: RollingPlanResult | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.iteration_index = iteration_index
+        self.partial_result = partial_result
 
 
 def run_rolling_horizon(
@@ -790,6 +929,7 @@ def run_rolling_horizon(
     *,
     max_iterations: int | None = None,
     solver_name: str | None = None,
+    fail_on_empty_window: bool = False,
 ) -> RollingPlanResult:
     """Execute the rolling-horizon loop with a user-supplied solver hook.
 
@@ -813,25 +953,50 @@ def run_rolling_horizon(
         (``locked_assignments=``: the base scenario's user locks that fall in the window, rebased to
         window days; identical to ``scenario.locked_assignments``) and returns a
         :class:`SolverOutput` whose ``assignments`` are window-day :class:`ScheduleLock` entries.
-        Hooks should set ``ScheduleLock.shift_id`` on multi-shift scenarios; entries without it are
-        replayed as shift ``"S1"`` by playback.
+        Hooks should set ``ScheduleLock.shift_id``; a missing label is filled with the day's only
+        shift slot when unambiguous (multi-shift days keep ``None``, which playback treats as
+        ``"S1"``). Hooks report a failed solve with ``SolverOutput(has_solution=False)``.
     max_iterations:
         Optional guard to cap the number of iterations (useful for smoke tests).
     solver_name:
         Optional solver label to persist into :class:`RollingPlanResult.metadata`.
+    fail_on_empty_window:
+        When ``True``, raise :class:`RollingInfeasibleError` at the first window whose solver
+        returned no solution instead of applying the no-solution policy (see Notes). Skipped
+        windows and windows solved to an empty plan never raise. Default ``False``.
 
     Returns
     -------
     RollingPlanResult
         Locked assignments in base-scenario coordinates (``shift_id`` preserved) plus
-        per-iteration summaries. ``warnings`` lists slicer notices (e.g. a carried
-        ``last_block_id`` that falls outside a window).
+        per-iteration summaries (``status``, ``has_solution``, ``planned_delivered``,
+        ``locked_delivered``, ``empty``). ``warnings`` lists slicer notices (e.g. a carried
+        ``last_block_id`` that falls outside a window) and the no-solution / skipped /
+        empty-window notices.
 
     Raises
     ------
     RollingInfeasibleError
-        If a sub-horizon is empty, violates basic feasibility checks before solving, or a user lock
-        targets a block outside the window.
+        If a user lock lies outside its block's ``earliest_start``/``latest_finish`` window
+        (checked up front for every lock, independent of the window settings), or, with
+        ``fail_on_empty_window=True``, at the first window without a solution. The exception's
+        ``partial_result`` holds the run up to the failure. Any other exception raised inside the
+        loop (e.g. by a custom hook) propagates unchanged with a best-effort ``partial_result``
+        attribute attached.
+
+    Notes
+    -----
+    No-solution policy (default): when the hook returns ``has_solution=False`` (the MILP hook does
+    so for a time limit before any incumbent, an infeasible window, or a solver exception), the
+    iteration is recorded with ``status="no_solution"``, ``objective=None`` and a warning; **no**
+    assignments are locked for its lock span (machines idle; user locks in that span are not
+    applied either), so the carried state is unchanged across the span, and the next window is
+    solved from it. Windows with nothing to plan (no blocks, no production rates, or no available
+    shift slots, e.g. days outside a partial ``shift_calendar``) are not passed to the solver and
+    are recorded with ``status="skipped"``. A window is flagged ``empty`` (warning, counted in
+    ``summarize_plan()["empty_windows"]``) when its blocks still hold work but it locked no
+    assignments or its plan delivers no volume. Policy warnings are also emitted as
+    :class:`UserWarning`.
     """
 
     iteration_plans = build_iteration_plan(config)
@@ -842,53 +1007,61 @@ def run_rolling_horizon(
     locked_base: list[ScheduleLock] = []
     summaries: list[RollingIterationSummary] = []
     run_warnings: list[str] = []
+    metadata = _run_metadata(config, solver, solver_name, fail_on_empty_window)
 
-    for plan in iteration_plans:
+    def snapshot() -> RollingPlanResult:
+        return RollingPlanResult(
+            locked_assignments=list(locked_base),
+            iteration_summaries=list(summaries),
+            metadata=dict(metadata),
+            warnings=list(run_warnings),
+        )
+
+    try:
+        _validate_user_lock_windows(base)
         carry_state: RollingCarryState | None = None
-        if plan.iteration_index > 0:
-            carry_state = carry_forward_state(base, locked_base, through_day=plan.start_day - 1)
-        sliced, slice_messages = _slice_window(base, plan, carry_state=carry_state)
-        run_warnings.extend(slice_messages)
-
-        _assert_subproblem_feasible(sliced, plan)
-
-        solver_output = solver(
-            sliced,
-            plan,
-            locked_assignments=list(sliced.locked_assignments or []),
-        )
-
-        locked_portion = _lift_locks_to_base(
-            solver_output.assignments, plan.start_day, plan.lock_days
-        )
-        locked_base.extend(locked_portion)
-
-        remaining_start = (
-            sum(carry_state.remaining_work.values())
-            if carry_state is not None
-            else sum(block.work_required for block in base.blocks)
-        )
-        summaries.append(
-            RollingIterationSummary(
-                iteration_index=plan.iteration_index,
-                start_day=plan.start_day,
-                horizon_days=plan.horizon_days,
-                lock_days=plan.lock_days,
-                locked_assignments=len(locked_portion),
-                objective=solver_output.objective,
-                runtime_s=solver_output.runtime_s,
-                warnings=solver_output.warnings or None,
-                remaining_work_start=float(remaining_start),
+        for plan in iteration_plans:
+            summary, carry_state = _run_iteration(
+                base,
+                plan,
+                solver,
+                carry_state=carry_state,
+                locked_base=locked_base,
+                run_warnings=run_warnings,
             )
-        )
+            summaries.append(summary)
+            if fail_on_empty_window and not summary.has_solution:
+                raise RollingInfeasibleError(
+                    f"Iteration {plan.iteration_index} (days {plan.start_day}-{plan.end_day}): "
+                    "the solver returned no solution (fail_on_empty_window=True)",
+                    iteration_index=plan.iteration_index,
+                )
+    except RollingInfeasibleError as exc:
+        if exc.partial_result is None:
+            exc.partial_result = snapshot()
+        raise
+    except Exception as exc:
+        with contextlib.suppress(Exception):
+            exc.partial_result = snapshot()  # type: ignore[attr-defined]
+        raise
 
-    metadata = {
+    return snapshot()
+
+
+def _run_metadata(
+    config: RollingHorizonConfig,
+    solver: IterableSolver,
+    solver_name: str | None,
+    fail_on_empty_window: bool,
+) -> dict[str, object]:
+    metadata: dict[str, object] = {
         "scenario": config.scenario.name,
         "master_days": config.master_days,
         "subproblem_days": config.subproblem_days,
         "lock_days": config.lock_days,
         "start_day": config.start_day,
         "solver": solver_name or getattr(solver, "name", None),
+        "fail_on_empty_window": fail_on_empty_window,
     }
     solver_backend = getattr(solver, "solver", None)
     if solver_backend is not None:
@@ -899,13 +1072,133 @@ def run_rolling_horizon(
     solver_options = getattr(solver, "solver_options", None)
     if solver_options:
         metadata["mip_solver_options"] = dict(solver_options)
+    return metadata
 
-    return RollingPlanResult(
-        locked_assignments=locked_base,
-        iteration_summaries=summaries,
-        metadata=metadata,
-        warnings=run_warnings,
+
+def _run_iteration(
+    base: Scenario,
+    plan: RollingIterationPlan,
+    solver: IterableSolver,
+    *,
+    carry_state: RollingCarryState | None,
+    locked_base: list[ScheduleLock],
+    run_warnings: list[str],
+) -> tuple[RollingIterationSummary, RollingCarryState]:
+    """Solve one window, extend ``locked_base`` in place, and return its summary + end state."""
+
+    label = f"Iteration {plan.iteration_index} (days {plan.start_day}-{plan.end_day})"
+    lock_end = plan.start_day + plan.lock_days - 1
+    sliced, slice_messages = _slice_window(base, plan, carry_state=carry_state)
+    run_warnings.extend(slice_messages)
+    window_problem = Problem.from_scenario(sliced)
+    remaining_start = (
+        sum(carry_state.remaining_work.values())
+        if carry_state is not None
+        else sum(block.work_required for block in base.blocks)
     )
+    window_work = sum(block.work_required for block in sliced.blocks)
+
+    iteration_warnings: list[str] = []
+    policy_messages: list[str] = []
+    objective: float | None = None
+    runtime_s: float | None = None
+    assignments: list[ScheduleLock] = []
+    skip_reason = _window_skip_reason(sliced, window_problem)
+    if skip_reason is not None:
+        status = "skipped"
+        policy_messages.append(
+            f"{label}: window skipped ({skip_reason}); no assignments locked for days "
+            f"{plan.start_day}-{lock_end}"
+        )
+    else:
+        output = solver(sliced, plan, locked_assignments=list(sliced.locked_assignments or []))
+        runtime_s = output.runtime_s
+        iteration_warnings.extend(output.warnings or [])
+        if output.has_solution:
+            status = "solved"
+            objective = output.objective
+            assignments = list(output.assignments)
+        else:
+            status = "no_solution"
+            user_locks = [
+                lock
+                for lock in base.locked_assignments or []
+                if plan.start_day <= lock.day <= lock_end
+            ]
+            message = (
+                f"{label}: the solver returned no solution; no assignments locked for days "
+                f"{plan.start_day}-{lock_end} (machines idle, carried state unchanged)"
+            )
+            if user_locks:
+                message += f"; {len(user_locks)} user lock(s) in that span were not applied"
+            policy_messages.append(message)
+
+    assignments = _fill_shift_ids(window_problem, assignments)
+    locked_portion = _lift_locks_to_base(assignments, plan.start_day, plan.lock_days)
+    locked_base.extend(locked_portion)
+    planned_delivered = 0.0
+    if assignments:
+        planned_delivered = float(_replay_tracker(window_problem, assignments).delivered_total)
+    carry_after = carry_forward_state(base, locked_base, through_day=lock_end)
+    locked_delivered = max(0.0, remaining_start - sum(carry_after.remaining_work.values()))
+
+    empty = window_work > BLOCK_EPSILON and (
+        not locked_portion or planned_delivered <= BLOCK_EPSILON
+    )
+    if empty and status == "solved":
+        policy_messages.append(
+            f"{label}: empty window: locked {len(locked_portion)} assignment(s) and the window "
+            f"plan delivers {planned_delivered:.3f} m³ while {window_work:.3f} m³ remain in the "
+            "window's blocks"
+        )
+    for message in policy_messages:
+        warnings.warn(message, UserWarning, stacklevel=3)
+    iteration_warnings.extend(policy_messages)
+    run_warnings.extend(policy_messages)
+
+    summary = RollingIterationSummary(
+        iteration_index=plan.iteration_index,
+        start_day=plan.start_day,
+        horizon_days=plan.horizon_days,
+        lock_days=plan.lock_days,
+        locked_assignments=len(locked_portion),
+        objective=objective,
+        runtime_s=runtime_s,
+        warnings=iteration_warnings or None,
+        remaining_work_start=float(remaining_start),
+        status=status,
+        has_solution=status != "no_solution",
+        planned_delivered=planned_delivered,
+        locked_delivered=float(locked_delivered),
+        empty=empty,
+    )
+    return summary, carry_after
+
+
+def _validate_user_lock_windows(base: Scenario) -> None:
+    """Reject user locks outside their block's ``earliest_start``/``latest_finish`` window.
+
+    Checked for every lock before any window is solved, so the outcome does not depend on the
+    rolling window settings (FHOPS 1.0.0 failed only when a later window happened not to overlap
+    the block, and a full-horizon MILP window was infeasible instead).
+    """
+
+    windows = {block.id: base.window_for(block.id) for block in base.blocks}
+    offending = []
+    for lock in base.locked_assignments or []:
+        earliest, latest = windows[lock.block_id]
+        if not earliest <= lock.day <= latest:
+            offending.append(
+                f"{lock.machine_id}->{lock.block_id} on day {lock.day} "
+                f"(block window {earliest}-{latest})"
+            )
+    if offending:
+        shown = "; ".join(offending[:5])
+        more = f" (+{len(offending) - 5} more)" if len(offending) > 5 else ""
+        raise RollingInfeasibleError(
+            "Scenario locked_assignments lie outside their block's earliest_start/latest_finish "
+            f"window: {shown}{more}"
+        )
 
 
 def _lift_locks_to_base(
@@ -926,32 +1219,18 @@ def _lift_locks_to_base(
     return lifted
 
 
-def _assert_subproblem_feasible(scenario: Scenario, plan: RollingIterationPlan) -> None:
-    """Best-effort guard against empty or invalid subproblems before solving."""
+def _window_skip_reason(scenario: Scenario, problem: Problem) -> str | None:
+    """Return why a window has nothing to plan (so the solver is not called), else ``None``."""
 
+    if not scenario.machines:
+        return "no machines"
     if not scenario.blocks:
-        raise RollingInfeasibleError(
-            f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) has no blocks"
-        )
+        return "no blocks whose earliest_start/latest_finish window overlaps it"
     if not scenario.production_rates:
-        raise RollingInfeasibleError(
-            f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) "
-            "has no production rates"
-        )
-    machine_ids = {machine.id for machine in scenario.machines}
-    if not machine_ids:
-        raise RollingInfeasibleError(
-            f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) has no machines"
-        )
-
-    # Ensure at least one calendar entry overlaps the sub-horizon.
-    if scenario.calendar:
-        window_has_supply = any(entry.machine_id in machine_ids for entry in scenario.calendar)
-        if not window_has_supply:
-            raise RollingInfeasibleError(
-                f"Iteration {plan.iteration_index} ({plan.start_day}-{plan.end_day}) "
-                "has no machine availability in calendar"
-            )
+        return "no production rates for its blocks"
+    if not problem.shifts:
+        return "no available shift slots in the shift_calendar"
+    return None
 
 
 class StubSolver:
@@ -1113,6 +1392,13 @@ class MILPSolver:
     :func:`compute_rolling_kpis` replay the MILP plan, not the full production rate), and records
     the wall-clock runtime of model build + solve in ``SolverOutput.runtime_s``. Solver status and
     termination condition are reported as warnings.
+
+    A window without a solution returns ``SolverOutput(has_solution=False, assignments=[],
+    objective=None)`` instead of raising: the driver reported no solution (``has_solution`` false,
+    or ``objective is None``: time limit before an incumbent, infeasible model) or raised (e.g.
+    Pyomo's ``NoFeasibleSolutionError`` for infeasible windows); the exception is reported as a
+    ``solver_error=<type>: <message>`` warning. :func:`run_rolling_horizon` then applies its
+    no-solution policy.
     """
 
     name = "mip"
@@ -1139,16 +1425,23 @@ class MILPSolver:
         pb = Problem.from_scenario(_scenario_with_locks(scenario, locked_assignments))
         ctx = build_operational_problem(pb)
 
-        result = solve_operational_milp(
-            ctx.bundle,
-            solver=self.solver,
-            time_limit=self.time_limit,
-            solver_options=self.solver_options,
-            context=ctx,
-        )
+        try:
+            result = solve_operational_milp(
+                ctx.bundle,
+                solver=self.solver,
+                time_limit=self.time_limit,
+                solver_options=self.solver_options,
+                context=ctx,
+            )
+        except Exception as exc:  # noqa: BLE001 - any solver failure is a window without a plan
+            return SolverOutput(
+                assignments=[],
+                objective=None,
+                runtime_s=time.perf_counter() - start,
+                warnings=[f"solver_error={type(exc).__name__}: {exc}"],
+                has_solution=False,
+            )
         runtime = time.perf_counter() - start
-
-        locks = _assignment_rows_to_locks(result.get("assignments"))
 
         messages: list[str] = []
         solver_status = result.get("solver_status")
@@ -1158,9 +1451,22 @@ class MILPSolver:
         if termination_condition:
             messages.append(f"termination_condition={termination_condition}")
 
+        objective = result.get("objective")
+        has_solution = result.get("has_solution")
+        if has_solution is None:
+            has_solution = objective is not None
+        if not has_solution:
+            return SolverOutput(
+                assignments=[],
+                objective=None,
+                runtime_s=runtime,
+                warnings=messages or None,
+                has_solution=False,
+            )
+
         return SolverOutput(
-            assignments=locks,
-            objective=result.get("objective"),
+            assignments=_assignment_rows_to_locks(result.get("assignments")),
+            objective=objective,
             runtime_s=runtime,
             warnings=messages or None,
         )
@@ -1230,6 +1536,7 @@ def solve_rolling_plan(
     mip_time_limit: int = 300,
     mip_solver_options: Mapping[str, object] | None = None,
     max_iterations: int | None = None,
+    fail_on_empty_window: bool = False,
 ) -> RollingPlanResult:
     """Library-facing helper to execute a rolling-horizon plan.
 
@@ -1258,18 +1565,24 @@ def solve_rolling_plan(
         Optional solver-specific parameters forwarded to the MILP backend (e.g., ``{\"Threads\": 64}``).
     max_iterations :
         Optional guard to cap the number of iterations (useful for smoke tests).
+    fail_on_empty_window :
+        Raise :class:`RollingInfeasibleError` at the first window whose solver returned no solution
+        instead of recording it and continuing with idle machines (default ``False``; see
+        :func:`run_rolling_horizon`).
 
     Returns
     -------
     RollingPlanResult
-        Locked assignments, per-iteration summaries, and metadata describing the run.
+        Locked assignments, per-iteration summaries (with ``status`` / ``empty`` flags), and
+        metadata describing the run.
 
     Raises
     ------
     ValueError
         If horizon parameters violate basic bounds (e.g., master horizon exceeds scenario length).
     RollingInfeasibleError
-        If the solver name is unsupported or a subproblem fails basic feasibility checks.
+        If the solver name is unsupported, a user lock lies outside its block's time window, or
+        (with ``fail_on_empty_window=True``) a window has no solution.
     """
 
     config = RollingHorizonConfig(
@@ -1291,6 +1604,7 @@ def solve_rolling_plan(
         solver_hook,
         max_iterations=max_iterations,
         solver_name=solver,
+        fail_on_empty_window=fail_on_empty_window,
     )
 
 
@@ -1305,8 +1619,21 @@ def summarize_plan(result: RollingPlanResult) -> dict[str, object]:
     Returns
     -------
     dict
-        Dictionary containing iteration records, total locked assignments, and warnings. Suitable for
-        emitting as JSON/CSV telemetry in CLI helpers.
+        JSON-serialisable mapping with keys:
+
+        ``iterations``
+            One record per iteration: ``iteration_index``, ``start_day``, ``horizon_days``,
+            ``lock_days``, ``locked_assignments``, ``objective``, ``runtime_s``, ``warnings``,
+            ``remaining_work_start``, ``status``, ``has_solution``, ``planned_delivered``,
+            ``locked_delivered`` and ``empty`` (see :class:`RollingIterationSummary`).
+        ``total_locked_assignments``
+            Number of locked assignments in the stitched plan.
+        ``empty_windows`` / ``no_solution_windows`` / ``skipped_windows``
+            Counts of iterations flagged ``empty``, without a solution, and skipped.
+        ``empty_window_indices`` / ``no_solution_window_indices``
+            The corresponding iteration indices.
+        ``metadata`` / ``warnings``
+            Run metadata and accumulated warnings.
     """
 
     iteration_records = [
@@ -1320,6 +1647,11 @@ def summarize_plan(result: RollingPlanResult) -> dict[str, object]:
             "runtime_s": summary.runtime_s,
             "warnings": summary.warnings or [],
             "remaining_work_start": summary.remaining_work_start,
+            "status": summary.status,
+            "has_solution": summary.has_solution,
+            "planned_delivered": summary.planned_delivered,
+            "locked_delivered": summary.locked_delivered,
+            "empty": summary.empty,
         }
         for summary in result.iteration_summaries
     ]
@@ -1327,6 +1659,13 @@ def summarize_plan(result: RollingPlanResult) -> dict[str, object]:
     return {
         "iterations": iteration_records,
         "total_locked_assignments": len(result.locked_assignments),
+        "empty_windows": len(result.empty_windows),
+        "no_solution_windows": len(result.no_solution_windows),
+        "skipped_windows": sum(
+            1 for summary in result.iteration_summaries if summary.status == "skipped"
+        ),
+        "empty_window_indices": result.empty_windows,
+        "no_solution_window_indices": result.no_solution_windows,
         "metadata": result.metadata,
         "warnings": result.warnings or [],
     }
