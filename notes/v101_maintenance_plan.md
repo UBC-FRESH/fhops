@@ -177,7 +177,7 @@ carry_state=)`), with these decisions/deviations:
    (a zero-work placeholder could not be made unavailable within contract validation). A carried
    `last_block_id` pointing to a dropped block is removed with a warning in
    `RollingPlanResult.warnings`; a user lock targeting a dropped block raises
-   `RollingInfeasibleError`.
+   `RollingInfeasibleError`. (Superseded in §8.14: such locks are rejected up front.)
 5. **Slices are re-validated** (`Scenario.model_validate`), so merged locks get full
    cross-validation; hooks also merge + re-validate and no longer mutate the scenario they receive.
 6. **Telemetry addition.** `RollingIterationSummary.remaining_work_start` (also in
@@ -495,6 +495,55 @@ blackouts (8.2), so window MILPs now honour them too.
 Tests: `tests/model/test_milp_blackouts.py` (slot set = heuristic set, shift-calendar per machine,
 bundle round trip, `machine_capacity` bounds, MILP and SA use exactly the open slots, rolling MILP
 locks no blackout day).
+
+### 8.14 Rolling-horizon robustness (#117, audit)
+Pre-release audit of the 1.0.1 candidate (f31aa65; repros in `/tmp/opencode/audit-1-scratch/`).
+Branch `issue-117-rolling-robustness`.
+
+Findings → fixes:
+1. **MILP windows without a solution crashed the run** (`lockinfeas.py` MILP 2/2:
+   `NoFeasibleSolutionError` from Pyomo). Policy now: `MILPSolver` returns
+   `SolverOutput(has_solution=False)` when the driver raises or reports no solution
+   (`has_solution` false / `objective is None`, so it works before and after #115's driver change);
+   `run_rolling_horizon` records `status="no_solution"`, `objective=None`, a warning (iteration,
+   run, `UserWarning`), locks **nothing** for the lock span (machines idle; user locks there are not
+   applied and are counted in the warning), so the carried state is unchanged across the span, and
+   continues. `fail_on_empty_window=True` / `--fail-on-empty-window` raises
+   `RollingInfeasibleError` (naming the iteration; `iteration_index`, `partial_result`). Windows with
+   nothing to plan (no blocks, no rates, no available shift slots) are `status="skipped"` and the
+   solver is not called (before: `RollingInfeasibleError` for "no blocks"/"no production rates").
+2. **Empty windows were silent** (ka_6 smoke: 30 s MILP windows return an all-zero incumbent with
+   objective = −leftover penalty). New per-iteration `planned_delivered` (window plan replayed on the
+   window scenario), `locked_delivered`, `empty` (window blocks hold work but 0 locks or 0 planned
+   delivery), and run counts `empty_windows` / `no_solution_windows` / `skipped_windows` (+ index
+   lists) in `summarize_plan`, `RollingPlanResult.empty_windows` / `no_solution_windows`, and
+   `evaluate_rolling_plan` metadata.
+3. **Locks outside their block window** behaved differently per window setting (`lockout.py`: SA 6/6
+   silently dropped the lock, MILP 6/6 infeasible, 3/3 `... does not overlap`). Now rejected up front
+   for every lock, before any solve, with one message (also rejected at validation once #118 lands).
+   Valid locks always lie in a window that keeps their block, so the slicer's overlap error is
+   unreachable from `run_rolling_horizon`. Downstream user locks made infeasible by short
+   non-overlapping windows go through policy 1 (documented limitation).
+4. **Partial `shift_calendar`** (`shiftcal.py`): a window with no calendar entries fell back to `S1`
+   (rolling 4/4 delivered 2400 m³ vs 1600 m³ direct). The slicer now emits explicit `available=0`
+   entries for such windows (no shift slots), and the window is skipped: 1600 m³.
+5. **Tests**: the v1.0.0 zero constant in `test_stitched_kpis_bounded_and_close_to_full_horizon` is
+   replaced by: full horizon finishes tiny7; for 7/4/2 and 7/6/3, 0 violations, no empty windows,
+   Σ `locked_delivered` = stitched delivery, SA ≥ 95 % of full, MILP delivery = planned loader
+   production and ≥ 99 % of full for `sub=6`. `_assert_window_matches_replay` sorts by the
+   scenario's slot order (night-before-day test added). `tests/planning/test_rolling_robustness.py`
+   adds a hand-written linear-chain state machine (no `assignments_to_records`) compared with
+   carried state, window scenarios, iteration telemetry and stitched KPIs (2/3 roles, 1/2 shifts,
+   user initial state; SA and MILP), plus tests for 1–4; CLI partial-output tests.
+6. Small hardening: carried `role_remaining` is capped at the block's remaining terminal volume
+   (float noise must not violate #118's `role_remaining <= work_required`); day-level locks get the
+   day's only shift label before playback/exports (playback will reject unlabeled multi-shift rows
+   after #116; multi-shift days keep `None`).
+
+Evidence: audit harness `run_adv.py` (5 scenario variants × SA/MILP × 5 window settings): 50 runs,
+0 state problems, 0 sequencing violations. Jaffray smoke (`--smoke`, ka_6): 10/10 runs ok, SA
+30913.4 m³ in every run, MILP 30 s windows return all-zero incumbents → flagged `empty` (baseline 1,
+14/14 2, 28/14 2, 14/7 3, 28/7 3 empty windows), 0 violations.
 
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,

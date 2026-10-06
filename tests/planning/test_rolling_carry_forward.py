@@ -55,11 +55,6 @@ CHAIN = HarvestSystem(
 )
 SOLO = HarvestSystem(system_id="solo", jobs=[SystemJob("felling", "feller_buncher", [])])
 
-# v1.0.0 stitched-plan KPIs on tiny7 (master 7 / sub 4 / lock 2), recorded on the unfixed rolling
-# loop (commit b52140d) with SA 200 iters seed 42 and HiGHS 10 s: no volume delivered at all,
-# versus 4414.703 m³ for the full-horizon solves.
-V100_TINY7_ROLLING_DELIVERED = {"sa": 0.0, "mip": 0.0}
-
 
 def _mobilisation(machine_ids: Sequence[str], block_ids: Sequence[str]) -> MobilisationConfig:
     return MobilisationConfig(
@@ -258,16 +253,29 @@ def _assert_window_matches_replay(
     for key, count in replay.role_counts_total.items():
         if key in replay.role_remaining:
             assert window_ctx.initial_role_counts.get(key, 0) == count, key
-    # Last block = last locked assignment chronologically by (day, shift).
+    # Last block = last locked assignment in chronological slot order: by day, then the base
+    # scenario's own shift order within the day (timeline definition order, e.g. night before
+    # day), not the label order.
+    slot_order = _slot_order(base)
     last_block: dict[str, str] = {}
     if base.initial_state is not None:
         last_block.update(base.initial_state.last_block_by_machine())
     for lock in sorted(
         (lock for lock in locks if lock.day < start_day),
-        key=lambda item: (item.day, item.shift_id or "S1"),
+        key=lambda item: slot_order[(item.day, item.shift_id or "S1")],
     ):
         last_block[lock.machine_id] = lock.block_id
     assert dict(window_ctx.initial_machine_block) == last_block
+
+
+def _slot_order(scenario: Scenario) -> dict[tuple[int, str], int]:
+    """Chronological slot index: days ascending, shifts in the scenario's within-day order."""
+
+    shifts = sorted(Problem.from_scenario(scenario).shifts, key=lambda shift: shift.day)
+    order: dict[tuple[int, str], int] = {}
+    for shift in shifts:
+        order.setdefault((shift.day, shift.shift_id), len(order))
+    return order
 
 
 # (a) ---------------------------------------------------------------------------------------------
@@ -329,6 +337,22 @@ def test_window_state_equals_fresh_replay_with_user_initial_state_and_shifts(kin
     assert float(kpis["remaining_work_total"]) == pytest.approx(
         sum(final.remaining_work.values()), abs=1e-6
     )
+
+
+@pytest.mark.parametrize("kind", ["sa", "mip"])
+def test_window_state_equals_fresh_replay_with_night_before_day(kind: str) -> None:
+    timeline = TimelineConfig(
+        shifts=[
+            ShiftDefinition(name="night", hours=8.0, shifts_per_day=1),
+            ShiftDefinition(name="day", hours=8.0, shifts_per_day=1),
+        ]
+    )
+    scenario = chain_scenario(num_days=6, timeline=timeline)
+    assert _slot_order(scenario)[(1, "night")] < _slot_order(scenario)[(1, "day")]
+    recorder, locks = _run(scenario, kind, master=6, sub=3, lock=1)
+    assert {lock.shift_id for lock in locks} <= {"night", "day"}
+    for plan, window, _ in recorder.calls[1:]:
+        _assert_window_matches_replay(scenario, window, locks, plan.start_day)
 
 
 def test_carry_forward_state_omits_defaults() -> None:
@@ -415,36 +439,56 @@ def test_stitched_kpis_bounded_and_close_to_full_horizon(kind: str) -> None:
         else {"solver": "mip", "mip_solver": "highs", "mip_time_limit": 10}
     )
     full = solve_rolling_plan(scenario, master_days=7, subproblem_days=7, lock_days=7, **kwargs)  # type: ignore[arg-type]
-    rolling = solve_rolling_plan(scenario, master_days=7, subproblem_days=4, lock_days=2, **kwargs)  # type: ignore[arg-type]
+    full_kpis = compute_rolling_kpis(scenario, full).rolling_kpis
+    full_delivered = float(full_kpis["total_production"])
+    # The full-horizon solves finish tiny7 (no gap to explain away).
+    assert full_delivered == pytest.approx(total, rel=1e-6)
+    roles = {machine.id: machine.role for machine in scenario.machines}
 
-    full_delivered = float(compute_rolling_kpis(scenario, full).rolling_kpis["total_production"])
-    rolling_kpis = compute_rolling_kpis(scenario, rolling).rolling_kpis
-    delivered = float(rolling_kpis["total_production"])
-    assert delivered <= total + 1e-6
-    assert float(rolling_kpis["remaining_work_total"]) == pytest.approx(total - delivered, abs=1e-6)
-    assert delivered >= V100_TINY7_ROLLING_DELIVERED[kind]
-    if kind == "sa":
-        assert delivered >= 0.9 * full_delivered
-    else:
-        # Since #109 MILP locks replay the planned production: the stitched plan replays cleanly
-        # and delivers exactly what the window MILPs planned. Without end-of-window valuation the
-        # windows plan only the upstream work they can finish themselves, so the total depends on
-        # tie-breaking among equal-objective window plans (documented limitation) and is not
-        # held to the full-horizon value.
-        assert int(rolling_kpis["sequencing_violation_count"]) == 0
-        roles = {machine.id: machine.role for machine in scenario.machines}
-        planned = sum(
-            lock.production or 0.0
-            for lock in rolling.locked_assignments
-            if roles[lock.machine_id] == "loader"
+    # tiny7 is a four-role chain; sub_days=4 covers the chain, 6 covers chain + lock span.
+    for sub, lock in ((4, 2), (6, 3)):
+        rolling = solve_rolling_plan(
+            scenario,
+            master_days=7,
+            subproblem_days=sub,
+            lock_days=lock,
+            **kwargs,  # type: ignore[arg-type]
         )
-        assert delivered == pytest.approx(planned, abs=1e-6)
-        assert delivered > 0.5 * full_delivered
-    # Window telemetry reports the carried remaining volume, never above the base total.
-    starts = [summary.remaining_work_start for summary in rolling.iteration_summaries]
-    assert starts[0] == pytest.approx(total)
-    assert all(value is not None and value <= total + 1e-6 for value in starts)
-    assert starts == sorted(starts, reverse=True)
+        rolling_kpis = compute_rolling_kpis(scenario, rolling).rolling_kpis
+        delivered = float(rolling_kpis["total_production"])
+        assert delivered <= total + 1e-6
+        assert float(rolling_kpis["remaining_work_total"]) == pytest.approx(
+            total - delivered, abs=1e-6
+        )
+        assert int(rolling_kpis["sequencing_violation_count"]) == 0
+        assert rolling.empty_windows == [] and rolling.no_solution_windows == []
+        # Per-window locked deliveries add up to the stitched-plan KPI.
+        assert sum(s.locked_delivered or 0.0 for s in rolling.iteration_summaries) == (
+            pytest.approx(delivered, abs=1e-6)
+        )
+        if kind == "sa":
+            # Windows at least as long as the chain: SA rolling stays within 5% of full horizon.
+            assert delivered >= 0.95 * full_delivered, (sub, lock)
+        else:
+            # Since #109 MILP locks carry their planned production: the stitched plan replays
+            # cleanly and delivers exactly what the window MILPs planned on locked days.
+            planned = sum(
+                lock_.production or 0.0
+                for lock_ in rolling.locked_assignments
+                if roles[lock_.machine_id] == "loader"
+            )
+            assert delivered == pytest.approx(planned, abs=1e-6)
+            if sub >= 6:
+                # Windows longer than chain + lock span lose < 1% (no terminal value otherwise;
+                # see the documented short-window limitation for sub_days=4).
+                assert delivered >= 0.99 * full_delivered
+            else:
+                assert delivered > 0.5 * full_delivered
+        # Window telemetry reports the carried remaining volume, never above the base total.
+        starts = [summary.remaining_work_start for summary in rolling.iteration_summaries]
+        assert starts[0] == pytest.approx(total)
+        assert all(value is not None and value <= total + 1e-6 for value in starts)
+        assert starts == sorted(starts, reverse=True)
 
 
 # (e) ---------------------------------------------------------------------------------------------

@@ -69,8 +69,60 @@ replay for later windows starts from it, so user-supplied state and the stitched
 first window otherwise equals the base scenario restricted to ``sub_days``; a single-window run
 (``master_days = sub_days = lock_days``) is identical to a direct solve.
 
-Per-iteration telemetry reports ``remaining_work_start`` (terminal m³ still to deliver at the window
-start), the hook's wall-clock ``runtime_s``, objective, and solver status.
+Per-iteration telemetry (:class:`fhops.planning.RollingIterationSummary`, the ``iterations``
+records of :func:`fhops.planning.summarize_plan` and the CLI exports) reports:
+
+- ``iteration_index``, ``start_day``, ``horizon_days``, ``lock_days``, ``locked_assignments``;
+- ``remaining_work_start`` — terminal m³ still to deliver across all base blocks at the window start;
+- ``status`` — ``solved``, ``no_solution`` or ``skipped`` (see :ref:`rolling-no-plan`), and
+  ``has_solution`` (``False`` only for ``no_solution``);
+- ``planned_delivered`` — m³ the window's whole plan delivers when replayed on the window scenario;
+- ``locked_delivered`` — m³ the locked span delivers in the stitched-plan replay (these add up to the
+  stitched plan's ``total_production``);
+- ``empty`` — the window's blocks still held work but it locked no assignments or its plan delivers
+  nothing;
+- ``objective``, the hook's wall-clock ``runtime_s``, and ``warnings`` (solver status and termination
+  condition, plus the no-solution / skipped / empty-window notices).
+
+The run summary adds ``empty_windows``, ``no_solution_windows`` and ``skipped_windows`` counts and the
+``empty_window_indices`` / ``no_solution_window_indices`` lists.
+
+.. _rolling-no-plan:
+
+Windows without a plan
+----------------------
+A window may end without a usable plan: the MILP hits its time limit before finding an incumbent,
+the window is infeasible (e.g. a user lock that cannot be met inside a short window, see
+`Limitations`_), or the solver raises. FHOPS 1.0.1 (#117) applies one documented policy instead of
+aborting the run:
+
+1. The iteration is recorded with ``status = "no_solution"``, ``has_solution = False``,
+   ``objective = None`` and a warning (also emitted as a Python ``UserWarning`` and collected in
+   ``RollingPlanResult.warnings``). The MILP hook reports driver exceptions as
+   ``solver_error=<type>: <message>`` and keeps the solver status/termination condition.
+2. **No** assignments are locked for its lock span: machines are idle on those days, and user locks
+   in that span are not applied either (the warning counts them).
+3. The carried state is unchanged across the idle span (nothing was replayed), and the next window is
+   solved from it.
+4. The result keeps per-iteration status (``RollingPlanResult.no_solution_windows`` /
+   ``empty_windows``, ``summarize_plan()["no_solution_windows"]``).
+
+Windows with nothing to plan (no blocks whose time window overlaps the window, no production rates,
+or no available shift slots — e.g. days not covered by a partial ``shift_calendar``) are not passed to
+the solver and are recorded with ``status = "skipped"``; they are idle as well.
+
+A **solved** window whose blocks still hold work but which locks no assignments, or whose plan
+delivers no volume (e.g. an all-zero time-limited incumbent), is flagged ``empty`` with a warning.
+No-solution and skipped windows with remaining work are flagged ``empty`` too.
+
+To stop instead, pass ``fail_on_empty_window=True`` (:func:`fhops.planning.solve_rolling_plan`,
+:func:`fhops.planning.run_rolling_horizon`) or ``--fail-on-empty-window`` (CLI): the first window
+without a solution raises :class:`fhops.planning.RollingInfeasibleError` naming the iteration, with the
+run so far in ``partial_result``. Skipped windows and windows solved to an empty plan never raise.
+
+The CLI **always** writes the requested outputs (``--out-json``, ``--out-assignments``, iteration
+JSONL/CSV) — on failure they hold the assignments locked so far and the recorded iterations, and the
+JSON summary gets an ``error`` field — and then exits with code ``1``.
 
 CLI usage
 ---------
@@ -131,16 +183,20 @@ mip`` and set ``--mip-solver highs`` for a small MILP-backed run.
 
 Outputs
 -------
-- JSON summary (``--out-json``) with iteration windows, locked counts, objectives, runtimes,
-  warnings, and metadata (scenario, horizons, solver).
-- CSV of locked assignments (``--out-assignments``) aggregated across all iterations. Columns
-  include ``machine_id``, ``block_id``, ``day``, ``shift_id``, ``assigned``, and run metadata
-  (scenario, solver, master/sub/lock spans, start day) so the file can drop directly into playback
-  or KPI tooling. ``shift_id`` keeps multi-shift plans unambiguous (one row per machine and shift
-  slot).
+- JSON summary (``--out-json``) with the iteration records (see the telemetry fields above),
+  ``total_locked_assignments``, the empty/no-solution/skipped window counts, warnings, metadata
+  (scenario, horizons, solver, MILP backend, ``fail_on_empty_window``), and ``error`` when the run
+  failed part-way.
+- CSV of locked assignments (``--out-assignments``) aggregated across all iterations. Columns:
+  ``machine_id``, ``block_id``, ``day`` (base-scenario day), ``shift_id``, ``assigned`` (always
+  ``1``), ``production`` (MILP runs only: the window MILP's planned m³ for that slot, which playback
+  and :func:`fhops.planning.compute_rolling_kpis` replay instead of the full rate), then the run
+  metadata (``scenario``, ``solver``, ``master_days``, ``subproblem_days``, ``lock_days``,
+  ``start_day``). The file drops directly into playback or KPI tooling. ``shift_id`` keeps
+  multi-shift plans unambiguous (one row per machine and shift slot); keep it when post-processing,
+  because playback needs it to place multi-shift assignments.
 - Optional per-iteration exports: JSONL (``--out-iterations-jsonl``) and CSV
-  (``--out-iterations-csv``) containing objective, runtime, lock span, ``remaining_work_start`` and
-  warnings per iteration.
+  (``--out-iterations-csv``) with one record per iteration (same fields as the JSON ``iterations``).
 
 MILP example with solver options
 --------------------------------
@@ -163,8 +219,19 @@ Evaluating rolling plans
 ------------------------
 Always score a rolling run on its **stitched** locked plan replayed against the base scenario, not on
 the objective of individual windows (window objectives cover overlapping, partly discarded
-sub-horizons). Use :func:`fhops.planning.rolling_assignments_dataframe` to obtain a playback-ready
-DataFrame and :func:`fhops.planning.compute_rolling_kpis` to compare the rolling run against a
+sub-horizons).
+
+.. note::
+
+   **Window objectives are not comparable across versions.** Since 1.0.1 each window solves the
+   carried remaining volume, so its objective includes the leftover (unfinished-volume) penalty on
+   that carried volume. FHOPS 1.0.0 windows re-planned every block's full volume. Neither the last
+   window's objective nor a sum of window objectives measures plan quality, and 1.0.1 window
+   objectives cannot be compared with 1.0.0 ones. Use the stitched-plan KPIs
+   (``total_production``, ``remaining_work_total``, mobilisation cost, sequencing violations)
+   instead.
+
+Use :func:`fhops.planning.rolling_assignments_dataframe` to obtain a playback-ready DataFrame and :func:`fhops.planning.compute_rolling_kpis` to compare the rolling run against a
 monolithic baseline (``master_days = sub_days = lock_days``). The stitched-plan KPIs are computed with
 the same playback rule as the carried state, so ``total_production`` never exceeds the base volume
 and ``remaining_work_total`` equals the remaining volume the next window would have received:
@@ -397,8 +464,9 @@ To feed the locked assignments into playback manually, use
 
 Notes
 -----
-- Locked assignments are treated as immutable across iterations; if a subproblem has no feasible
-  availability, the CLI will fail fast with a clear error.
+- Locked assignments are treated as immutable across iterations. A window without a solution or with
+  nothing to plan leaves its lock span idle and the run continues (see :ref:`rolling-no-plan`);
+  use ``--fail-on-empty-window`` to stop instead.
 - The hooks enforce locks as hard constraints (equality constraints in the operational MILP, the
   lock-aware sanitizer in SA); they do not pass incumbents or warm starts to the solver.
 - Telemetry/reporting layers will evolve; current exports are meant to unblock experimentation.
@@ -406,9 +474,10 @@ Notes
   the master/sub/lock settings to fit within ``Scenario.num_days``.
 - ``--mip-solver`` passes through to Pyomo (use ``highs`` or ``gurobi``; ``auto`` resolves to
   ``highs``); ``--max-iterations`` can cap the rolling loop for smoke tests or partial plans.
-- A user lock that falls in a window but targets a block outside that window's block set (its
-  ``earliest_start``/``latest_finish`` window does not overlap) raises
-  :class:`fhops.planning.RollingInfeasibleError`; conflicting locks are rejected by scenario
+- User locks outside their block's ``earliest_start``/``latest_finish`` window are rejected up front
+  with :class:`fhops.planning.RollingInfeasibleError` (before any window is solved), whatever the
+  master/sub/lock settings; scenario validation rejects them at load time as well (#118). Valid locks
+  always fall in a window that keeps their block. Conflicting locks are rejected by scenario
   validation.
 
 Limitations
@@ -422,7 +491,13 @@ Limitations
   ``7/4/2`` and ``7/5/3`` deliver about 3.9 of 4.4 thousand m³ (the earlier rate-based replay
   credited unplanned full-rate upstream work and reported the full volume, together with
   sequencing violations), ``7/6/3`` about 4.40 and ``7/7/7`` the full volume. Choose ``sub_days``
-  comfortably longer than the number of roles plus ``lock_days``.
+  comfortably longer than the number of roles plus ``lock_days``. Without a terminal value, short
+  windows can also make **user locks on downstream roles** infeasible: e.g. a skidder locked on the
+  first day of a two-day window that cannot fell (and stage) the wood it needs before that shift. Such
+  a window MILP has no solution and is handled by the no-solution policy (idle lock span, warning,
+  ``status = "no_solution"``) rather than aborting the run; SA treats locks as fixed and replays them
+  without the missing input. Lengthen ``sub_days`` or overlap windows (``sub_days > lock_days``) when
+  this happens.
 - **Replay rule vs. MILP plan.** Resolved in 1.0.1 (#109): playback, the heuristics, and the MILP
   share one sequencing semantics (staged output usable from the next shift slot, head-start buffers
   as staged volume, per-role output capped by the block volume), and MILP rolling locks carry the
@@ -432,6 +507,9 @@ Limitations
   ``last_block_id`` is such a block (its ``latest_finish`` has passed), the position is dropped
   for that window with a warning in ``RollingPlanResult.warnings`` and its next move is not
   charged in the window solve (playback still charges it).
+- **Partial shift calendars.** Resolved in 1.0.1 (#117): when the base scenario has a
+  ``shift_calendar``, days without entries have no shift slots in every window too (a window entirely
+  outside the calendar is skipped), so rolling runs no longer invent ``S1`` capacity there.
 - **Blackouts in the MILP.** Resolved in 1.0.1 (#110): rebased blackouts are honoured by the
   operational MILP (zero availability in the blocked slots) as well as by the heuristics, and
   flagged by playback.
