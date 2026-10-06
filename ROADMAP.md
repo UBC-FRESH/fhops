@@ -135,6 +135,7 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
 - [x] #95 SoftwareX playback figure legibility and regenerated playback assets.
 - [ ] #96 Release FHOPS 1.0.1 and forward-port to `main`.
 - [x] #99 Working operational-MILP warm start with HiGHS (`appsi_highs` MIP start, documented per-solver fallback).
+- [x] #100 Validate YAML `locked_assignments` (and other optional sections) against the scenario in `load_scenario`.
 
 ## Detailed Next Steps
 0. **Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**

@@ -843,9 +843,9 @@ class Scenario(BaseModel):
 def validate_initial_state(scenario: Scenario) -> None:
     """Validate ``scenario.initial_state`` against the scenario's blocks, machines, and systems.
 
-    Called automatically by :class:`Scenario` validation and by
-    :func:`fhops.scenario.io.load_scenario` after harvest systems are attached (``model_copy``
-    updates bypass Pydantic validators).
+    Called automatically by :class:`Scenario` validation (including the final re-validation in
+    :func:`fhops.scenario.io.load_scenario`). Call it directly after attaching an
+    ``initial_state`` with ``model_copy(update=...)``, which bypasses Pydantic validators.
 
     Parameters
     ----------

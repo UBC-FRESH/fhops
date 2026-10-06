@@ -127,7 +127,8 @@ Implemented as designed, with these additions/deviations:
 
 Observed pre-existing issues (not changed here): `solve_operational_milp(..., incumbent_assignments=...)`
 with `solver="highs"` raises `TypeError` (`LegacySolverWrapper.solve()` rejects `warmstart`; fixed in 8.7, #99);
-`load_scenario` attaches YAML `locked_assignments` via `model_copy`, so they skip cross-validation.
+`load_scenario` attaches YAML `locked_assignments` via `model_copy`, so they skip cross-validation
+(fixed in 8.8, #100).
 
 ### 8.2 Rolling carry-forward (#92)
 After each iteration locks its leading days:
@@ -327,6 +328,32 @@ Follow-ups (not in this change): the rolling MILP hook does not pass incumbents 
 by #92); ILS "hybrid MIP warm start" calls `solve_mip` without an incumbent; `pyomo.contrib.solver`
 interfaces may gain native warm starts (e.g. Gurobi `warmstart_discrete_vars`), at which point
 the APPSI route can be revisited.
+
+### 8.8 Validate YAML `locked_assignments` (#100)
+Problem: `load_scenario` built the core `Scenario` and then attached every optional YAML/CSV
+section (`locked_assignments`, `timeline`, `mobilisation`, `crew_assignments`, `harvest_systems`,
+`objective_weights`, `geo`, `road_construction`, `initial_state`) with
+`model_copy(update=...)`, which skips Pydantic validators. YAML locks with unknown machines,
+blocks, days or shift labels, duplicate locks, day+shift mixes, and locks inside blackout windows
+were accepted.
+
+Fix (branch `issue-100-yaml-lock-validation`, `src/fhops/scenario/io/loaders.py`): the core tables
+are still validated first (so their errors surface first, unchanged), then the optional sections
+are collected and the scenario is re-validated once with `Scenario.model_validate`, so YAML locks
+go through exactly the same `Scenario._cross_validate` rules as model-constructed locks (including
+the #91 `shift_id` rules and the blackout check), and the other optional sections get the
+cross-checks they previously skipped (mobilisation/crew machine and block references,
+`initial_state`, which replaces the explicit `validate_initial_state` call). Locks are only
+supported inline in YAML (there is no CSV lock table).
+
+Evidence: every repository scenario YAML (17 loadable + 2 intentionally invalid fixtures) and the 9
+Jaffray MASc scenarios load to identical `Scenario` objects / identical errors before and after.
+`tests/test_scenario_loader_locks.py` covers 10 invalid lock cases (all accepted by the old
+loader) plus valid day/shift locks.
+
+Not changed: `Scenario._validate_system_ids` (block `harvest_system_id` vs `harvest_systems`) runs
+as a field validator before `harvest_systems` is available in field order, so it still does not
+fire for YAML or Python construction; behaviour is unchanged.
 
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,

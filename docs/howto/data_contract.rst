@@ -199,7 +199,10 @@ fixed to zero for that machine). Add ``shift_id`` to lock a single slot in multi
 
 ``shift_id`` must be one of the scenario's shift labels (``shift_calendar`` labels, timeline shift
 names, or ``S1`` for day-indexed scenarios). Duplicate ``(machine, day, shift)`` locks and mixing a
-day-level lock with shift-level locks for the same machine/day are rejected.
+day-level lock with shift-level locks for the same machine/day are rejected. Locks must reference
+known machines and blocks, fall within ``1..num_days``, and avoid timeline blackout days.
+``load_scenario`` applies exactly the same checks to YAML ``locked_assignments`` as to locks passed
+to :class:`fhops.scenario.contract.Scenario` in Python (FHOPS 1.0.0 skipped them for YAML input).
 
 .. _initial-state:
 
