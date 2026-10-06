@@ -13,6 +13,12 @@ forest harvesting operations plans. It provides:
 pip install fhops==1.0.1
 ```
 
+FHOPS 1.0.1 requires Python ≥ 3.11 and, among others, `pyomo>=6.9.2` (HiGHS resolution and MILP
+warm starts), `highspy>=1.8.1`, and `typer>=0.12.4` (older Typer releases cannot build the CLI).
+These floors were verified on Python 3.11 and 3.12 (see `CHANGE_LOG.md`, #118). Scenario files
+that use `initial_state` or `locked_assignments[].shift_id` require `fhops>=1.0.1`; see
+`docs/howto/data_contract.rst`.
+
 For local development or release verification, use Hatch to mirror the CI suite:
 
 ```bash
