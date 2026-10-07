@@ -29,3 +29,10 @@ duration_s: 59
 assets_hash: f3785a486c2e8981ccdea727453b0fc783009889048dde6fe4a14297419a66c7
 note: partial regeneration for FHOPS 1.0.1 (#95): only playback assets (run_playback_analysis.py + plot_playback_variability.py) were regenerated; benchmark/tuning/costing/scaling/dataset assets untouched, and SA (tiny7, small21) plus ILS (tiny7) re-solves reproduced the committed benchmark summaries and assignment CSVs exactly
 ----
+run_started: 2026-10-06T22:50:17Z
+commit: a1c8dd8
+fast_mode: 0
+duration_s: 3791
+assets_hash: d75b187f66e127ce3f8a786e453b02b8c2da67d3142e0ae8661eedbaa2dac275
+note: consistency audit for FHOPS 1.0.1 (#119): fhops bench suite re-runs with the committed generate_assets.sh settings (tiny7, small21, med42 split into SA/ILS/Tabu processes, synthetic_small) and run_synthetic_sweep.py into scratch directories reproduced every committed summary row exactly (all columns except scenario_path/runtime) and every assignment CSV byte for byte, except the stale med42 sa_assignments.csv and sa_assignments_diversify.csv, which were replaced by the reproducing run's output; summary.csv/json, telemetry and runtimes untouched; regenerated build_tables.py tables (med42 sense fixed to maximize) and playback assets (run_playback_analysis.py: metrics.json reports delivered volume; med42/sa re-derived) plus plot_playback_variability.py (figure byte-identical); scaling, tuning, costing and dataset assets untouched
+----
