@@ -472,9 +472,11 @@ class BlockInitialState(BaseModel):
     staged_inventory:
         Mapping ``role -> volume`` (m³) output by that role on this block but not yet consumed by
         its downstream role(s) (for example, felled-but-unskidded wood is keyed by the felling
-        role). A downstream role ``r`` starts with ``min`` over its upstream roles' staged volume
-        available as input. Roles omitted here start with zero staged volume. Values must be
-        non-negative.
+        role). Staged volume is kept per upstream role (since 1.0.1): a downstream role consumes
+        its output from the staged volume of **every** one of its upstream roles, so it can
+        process at most the smallest of them, and the downstream roles of an upstream role that
+        feeds several roles share (split) its staged volume. Roles omitted here start with zero
+        staged volume. Values must be non-negative.
     role_shift_counts:
         Mapping ``role -> shifts`` already worked on this block. Informational: it seeds
         :attr:`fhops.evaluation.sequencing.SequencingTracker.role_counts_total` (reported by the

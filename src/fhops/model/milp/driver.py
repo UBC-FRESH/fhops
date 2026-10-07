@@ -30,7 +30,6 @@ from typing import Any
 
 import pandas as pd
 import pyomo.environ as pyo
-from pyomo.common.errors import ApplicationError
 from pyomo.opt import SolverFactory
 
 from fhops.evaluation.sequencing import SequencingTracker, build_role_priority
@@ -47,7 +46,10 @@ ASSIGNMENT_COLUMNS = [
     "production",
 ]
 
-__all__ = ["MilpWarmStartWarning", "solve_operational_milp"]
+__all__ = ["MilpSolverFallbackWarning", "MilpWarmStartWarning", "solve_operational_milp"]
+
+#: ``SolverFactory`` names tried in order by ``solver="auto"`` (Gurobi only when available).
+AUTO_SOLVER_CANDIDATES = ("gurobi", "highs")
 
 _HIGHS_SOLVER_NAMES = frozenset({"highs", "appsi_highs"})
 _HIGHS_LOGGER_NAME = "fhops.model.milp.driver.highs"
@@ -87,6 +89,15 @@ class MilpWarmStartWarning(UserWarning):
     Raised (via :func:`warnings.warn`) by :func:`solve_operational_milp` when
     ``incumbent_assignments`` is supplied but the solver interface has no MIP-start support (or the
     APPSI HiGHS interface is unavailable). The solve still runs, just without the warm start.
+    """
+
+
+class MilpSolverFallbackWarning(UserWarning):
+    """Warning emitted when ``solver="auto"`` falls back from Gurobi to HiGHS.
+
+    Raised (via :func:`warnings.warn`) by :func:`solve_operational_milp` when the Gurobi solve
+    fails (``solver_error``: e.g. a missing or size-limited licence) and the model is solved again
+    with HiGHS. The same message is prepended to the result's ``warnings``.
     """
 
 
@@ -132,7 +143,9 @@ def solve_operational_milp(
         Operational bundle emitted by :func:`fhops.model.milp.operational.build_operational_model`.
     solver :
         Solver name understood by ``pyomo.opt.SolverFactory`` (``highs`` by default, ``gurobi`` for
-        large ladders).
+        large ladders), or ``"auto"``: Gurobi when ``SolverFactory("gurobi")`` is available,
+        otherwise HiGHS; a Gurobi run that fails (``solver_error``, e.g. a missing or size-limited
+        licence) is retried with HiGHS and a :class:`MilpSolverFallbackWarning` is emitted (#139).
     time_limit :
         Optional second budget forwarded to the solver (``None`` leaves the solver default).
     gap :
@@ -160,7 +173,9 @@ def solve_operational_milp(
     -------
     dict
         The function never raises because a model is infeasible, a limit was hit without an
-        incumbent, or the solver failed (#115); it reports these cases instead. Keys:
+        incumbent, or the solver failed (#115): exceptions raised by the solver interface (e.g.
+        ``gurobipy.GurobiError`` for a missing or size-limited licence, #139) are reported as
+        ``outcome="error"`` with ``solver_error`` set. Keys:
 
         ``objective`` (float | None)
             Objective of the loaded solution; ``None`` without a feasible solution. A solve
@@ -189,6 +204,9 @@ def solve_operational_milp(
             :func:`fhops.model.milp.data.resolve_locked_slots`).
         ``warm_start`` (dict)
             Warm-start report (below).
+        ``solver`` (str)
+            ``SolverFactory`` name that produced the result (the selected candidate for
+            ``solver="auto"``).
 
         ``warm_start`` keys:
 
@@ -221,6 +239,8 @@ def solve_operational_milp(
     MilpWarmStartWarning
         When an incumbent was supplied but the solver interface cannot take a MIP start (the solve
         continues without it).
+    MilpSolverFallbackWarning
+        When ``solver="auto"`` falls back from a failed Gurobi run to HiGHS.
 
     Notes
     -----
@@ -249,6 +269,17 @@ def solve_operational_milp(
     ignore the seed and rely on Gurobi/HiGHS built-in heuristics.
     """
 
+    if solver.strip().lower() == "auto":
+        return _solve_auto(
+            bundle,
+            time_limit=time_limit,
+            gap=gap,
+            tee=tee,
+            solver_options=solver_options,
+            incumbent_assignments=incumbent_assignments,
+            context=context,
+        )
+
     model = build_operational_model(bundle)
     meta = getattr(model, "_warm_start_meta", None)
     if meta is not None and context is not None:
@@ -259,31 +290,41 @@ def solve_operational_milp(
         seeded = _apply_incumbent_start(model, incumbent_assignments)
     seed_snapshot = _snapshot_seed(model) if seeded > 0 else None
 
-    opt, solver_used, method = _create_solver(solver, warm_start=seeded > 0)
     warm_info: dict[str, Any] = {
         "requested": incumbent_assignments is not None and not incumbent_assignments.empty,
         "seeded_slots": seeded,
-        "method": method,
-        "solver": solver_used,
+        "method": None,
+        "solver": None,
         "accepted": None,
         "acceptance": None,
         "solver_messages": [],
     }
-    if time_limit is not None:
-        opt.options["time_limit"] = time_limit
-    if gap is not None:
-        # Different solvers expect different gap parameter names.
-        opt.options["mipgap"] = gap  # Gurobi/CPLEX-style
-        if solver.lower() not in {"gurobi", "cplex"}:
-            opt.options["mip_rel_gap"] = gap  # HiGHS-style
-    if solver_options:
-        for key, value in solver_options.items():
-            opt.options[str(key)] = value
-    solve_kwargs: dict[str, object] = {"tee": tee, "load_solutions": False}
-    if method is not None:
-        solve_kwargs["warmstart"] = True
-
-    run = _run_solver(opt, model, solve_kwargs, appsi=method == "appsi_highs")
+    opt, solver_used, method = _create_solver(solver, warm_start=seeded > 0)
+    warm_info["method"] = method
+    warm_info["solver"] = solver_used
+    try:
+        if time_limit is not None:
+            opt.options["time_limit"] = time_limit
+        if gap is not None:
+            # Different solvers expect different gap parameter names.
+            opt.options["mipgap"] = gap  # Gurobi/CPLEX-style
+            if not any(name in solver.lower() for name in ("gurobi", "cplex")):
+                opt.options["mip_rel_gap"] = gap  # HiGHS-style
+        if solver_options:
+            for key, value in solver_options.items():
+                opt.options[str(key)] = value
+        solve_kwargs: dict[str, object] = {"tee": tee, "load_solutions": False}
+        if method is not None:
+            solve_kwargs["warmstart"] = True
+        run = _run_solver(opt, model, solve_kwargs, appsi=method == "appsi_highs")
+    except Exception as exc:  # solver creation/configuration failures are reported, not raised
+        run = _SolveRun(
+            status="error",
+            termination="error",
+            has_solution=False,
+            log_lines=[],
+            error=f"{type(exc).__name__}: {exc}",
+        )
     status = run.status
     termination = run.termination
     has_solution = run.has_solution
@@ -333,7 +374,37 @@ def solve_operational_milp(
         "solver_error": solver_error,
         "warnings": model_warnings,
         "warm_start": warm_info,
+        "solver": solver,
     }
+
+
+def _solve_auto(bundle: OperationalMilpBundle, **kwargs: Any) -> dict[str, Any]:
+    """Solve with Gurobi when available, falling back to HiGHS on a Gurobi failure.
+
+    Every candidate of :data:`AUTO_SOLVER_CANDIDATES` except HiGHS is skipped when
+    ``SolverFactory(name).available()`` is false. A candidate whose result reports
+    ``solver_error`` (missing or size-limited licence, solver exception, ...) is followed by the
+    next one; the failure is emitted as :class:`MilpSolverFallbackWarning` and prepended to the
+    returned ``warnings``. The result's ``solver`` names the solver that produced it.
+    """
+
+    candidates = [
+        name for name in AUTO_SOLVER_CANDIDATES if name == "highs" or _named_solver_available(name)
+    ]
+    notes: list[str] = []
+    result: dict[str, Any] = {}
+    for index, name in enumerate(candidates):
+        result = solve_operational_milp(bundle, solver=name, **kwargs)
+        if result.get("solver_error") is None or index == len(candidates) - 1:
+            break
+        message = (
+            f"{name} failed ({result['solver_error']}); falling back to "
+            f"{candidates[index + 1]} (solver=auto)."
+        )
+        warnings.warn(message, MilpSolverFallbackWarning, stacklevel=3)
+        notes.append(message)
+    result["warnings"] = notes + list(result.get("warnings") or [])
+    return result
 
 
 def _create_solver(solver: str, *, warm_start: bool) -> tuple[Any, str, str | None]:
@@ -380,6 +451,13 @@ def _create_solver(solver: str, *, warm_start: bool) -> tuple[Any, str, str | No
         stacklevel=3,
     )
     return opt, solver, None
+
+
+def _named_solver_available(name: str) -> bool:
+    try:
+        return _solver_available(SolverFactory(name))
+    except Exception:
+        return False
 
 
 def _solver_available(opt: Any) -> bool:
@@ -435,8 +513,10 @@ def _run_solver(
       feasible, or a limit was hit while a finite incumbent objective is reported.
 
     The HiGHS log is captured (and still streamed to stdout when ``tee=True``) so callers can
-    report ``ERROR`` lines and MIP-start messages. Solver exceptions raised during ``solve`` (e.g.
-    :class:`pyomo.common.errors.ApplicationError`, ``RuntimeError``) are returned as ``error``.
+    report ``ERROR`` lines and MIP-start messages. Every exception raised by the solver interface
+    during ``solve`` (e.g. :class:`pyomo.common.errors.ApplicationError`, ``RuntimeError``, or
+    ``gurobipy.GurobiError`` for a missing or size-limited Gurobi licence) is returned as
+    ``error`` (#139).
     """
 
     if appsi:
@@ -450,7 +530,7 @@ def _run_solver(
         kwargs["tee"] = [stream, sys.stdout] if solve_kwargs.get("tee") else [stream]
     try:
         result = opt.solve(model, **kwargs)
-    except (ApplicationError, RuntimeError) as exc:
+    except Exception as exc:  # any solver failure (e.g. gurobipy.GurobiError) is reported
         return _SolveRun(
             status="error",
             termination="error",
@@ -539,7 +619,7 @@ def _solve_appsi_highs(
         has_solution = bool(solution is not None and len(solution) > 0)
         if has_solution:
             opt.load_vars()
-    except (ApplicationError, RuntimeError) as exc:
+    except Exception as exc:  # any solver failure (e.g. gurobipy.GurobiError) is reported
         error = f"{type(exc).__name__}: {exc}"
         has_solution = False
     finally:
@@ -1084,6 +1164,65 @@ def _apply_bundle_locks(
             assignment_lookup.pop(key, None)
 
 
+def _seed_moves(
+    model: pyo.ConcreteModel, bundle: OperationalMilpBundle, shift_list: tuple[ShiftKey, ...]
+) -> None:
+    """Seed the position-network variables (``stay``, ``depart``, ``arrive``, ``y``, ``first``,
+    ``unplaced``) from the seeded ``x``.
+
+    A machine's position is the block of its last worked slot (or its carried-in block); it moves
+    when it works another block, as in
+    :func:`fhops.optimization.heuristics.common._recompute_mobilisation_for`.
+    """
+
+    if not hasattr(model, "stay"):
+        return
+    worked: dict[tuple[str, ShiftKey], str] = {}
+    for (machine_id, block_id, day, shift_id), var in model.x.items():
+        if (var.value or 0.0) > 0.5:
+            worked[(machine_id, (int(day), str(shift_id)))] = block_id
+    before: dict[tuple[str, ShiftKey], str | None] = {}
+    after: dict[tuple[str, ShiftKey], str | None] = {}
+    for machine_id in model.M:
+        position = bundle.initial_machine_block.get(machine_id)
+        for slot in shift_list:
+            before[(machine_id, slot)] = position
+            block_id = worked.get((machine_id, slot))
+            if block_id is not None:
+                position = block_id
+            after[(machine_id, slot)] = position
+
+    def _moved(machine_id: str, slot: ShiftKey) -> tuple[str | None, str | None]:
+        """``(from, to)`` when the machine changes position in ``slot``, else ``(None, None)``."""
+
+        prev_block = before[(machine_id, slot)]
+        block_id = worked.get((machine_id, slot))
+        if block_id is None or prev_block == block_id:
+            return None, None
+        return prev_block, block_id
+
+    def _set(var: Any, value: bool) -> None:
+        var.set_value(1.0 if value else 0.0)
+        var.stale = False
+
+    for (machine_id, block_id, day, shift_id), var in model.stay.items():
+        slot = (day, shift_id)
+        _set(var, before[(machine_id, slot)] == block_id and _moved(machine_id, slot)[1] is None)
+    for (machine_id, block_id, day, shift_id), var in model.depart.items():
+        source, target = _moved(machine_id, (day, shift_id))
+        _set(var, target is not None and source == block_id)
+    for (machine_id, block_id, day, shift_id), var in model.arrive.items():
+        source, target = _moved(machine_id, (day, shift_id))
+        _set(var, source is not None and target == block_id)
+    for (machine_id, prev_blk, block_id, day, shift_id), var in model.y.items():
+        _set(var, _moved(machine_id, (day, shift_id)) == (prev_blk, block_id))
+    for (machine_id, block_id, day, shift_id), var in model.first.items():
+        source, target = _moved(machine_id, (day, shift_id))
+        _set(var, source is None and target == block_id)
+    for (machine_id, day, shift_id), var in model.unplaced.items():
+        _set(var, after[(machine_id, (day, shift_id))] is None)
+
+
 def _seed_model_from_state(
     model: pyo.ConcreteModel, meta: Mapping[str, Any], state: _IncumbentState
 ) -> None:
@@ -1093,10 +1232,8 @@ def _seed_model_from_state(
     role_prod_lookup = state.role_prod_lookup
     landing_usage = state.landing_usage
     shift_list: tuple[ShiftKey, ...] = meta.get("shift_list") or tuple(model.S)
-    prev_shift_map: Mapping[ShiftKey, ShiftKey | None] = meta.get("prev_shift_map", {})
     inventory_pairs: tuple[tuple[str, str], ...] = tuple(meta.get("inventory_pairs", ()))
     role_upstream: Mapping[tuple[str, str], tuple[str, ...]] = meta.get("role_upstream", {})
-    loader_batch_volume: Mapping[tuple[str, str], float] = meta.get("loader_batch_volume", {})
     block_terminal_roles: Mapping[str, tuple[str, ...]] = meta.get("block_terminal_roles", {})
 
     def _slot_key(day: int, shift_id: str) -> ShiftKey:
@@ -1120,18 +1257,7 @@ def _seed_model_from_state(
         var.set_value(role_prod_lookup.get(key, 0.0))
         var.stale = False
 
-    if hasattr(model, "y"):
-        for (machine_id, prev_blk, curr_blk, day, shift_id), var in model.y.items():
-            shift = _slot_key(day, shift_id)
-            prev_slot = prev_shift_map.get(shift)
-            value = 0.0
-            if prev_slot is not None:
-                prev_block = assignment_lookup.get((machine_id, prev_slot))
-                curr_block = assignment_lookup.get((machine_id, shift))
-                if prev_block == prev_blk and curr_block == curr_blk:
-                    value = 1.0
-            var.set_value(value)
-            var.stale = False
+    _seed_moves(model, bundle, shift_list)
 
     if hasattr(model, "role_active"):
         role_to_machines: Mapping[str, tuple[str, ...]] = meta.get("role_to_machines", {})
@@ -1177,26 +1303,6 @@ def _seed_model_from_state(
             )
             var.set_value(1.0 if done else 0.0)
             var.stale = False
-
-    if hasattr(model, "loads") and hasattr(model, "loader_partial"):
-        for (role, block_id, day, shift_id), load_var in model.loads.items():
-            shift = _slot_key(day, shift_id)
-            batch = loader_batch_volume.get((role, block_id), 0.0)
-            prod_value = role_prod_lookup.get((role, block_id, shift), 0.0)
-            if batch > 0:
-                full_loads = int(prod_value // batch)
-                remainder = prod_value - full_loads * batch
-                if remainder >= batch - 1e-6:
-                    full_loads += 1
-                    remainder = 0.0
-            else:
-                full_loads = 0
-                remainder = prod_value
-            load_var.set_value(full_loads)
-            load_var.stale = False
-            loader_partial = model.loader_partial[role, block_id, day, shift_id]
-            loader_partial.set_value(remainder)
-            loader_partial.stale = False
 
     if hasattr(model, "landing_surplus") and hasattr(model, "LandingSurplusIndex"):
         # Unit slack pieces: the first (usage - capacity) pieces of a slot are 1.

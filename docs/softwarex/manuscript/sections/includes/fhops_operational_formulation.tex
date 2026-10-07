@@ -82,7 +82,9 @@ sequencing constraints.
   \(s_1 \in \mathcal{S}\): first shift slot of the horizon.
 \item
   \(\mathcal{M}^{0} \subseteq \mathcal{M}\): machines with a known
-  initial block \(b^{0}_m\) (optional initial state; empty by default).
+  initial block \(b^{0}_m\) (optional initial state; empty by default);
+  machines in \(\mathcal{M}\setminus\mathcal{M}^{0}\) start
+  \emph{unplaced}.
 \item
   \(\mathcal{K}\): locked assignments \(k=(m_k,b_k,d_k,\sigma_k)\),
   where \(\sigma_k\) is a shift label or empty (whole day);
@@ -116,8 +118,10 @@ sequencing constraints.
   \(\omega^{\text{prod}},\omega^{\text{mob}},\omega^{\text{trans}},\omega^{\text{land}}\):
   objective weights.
 \item
-  \(\delta_{m,b',b}\): mobilization cost when machine \(m\) transitions
-  from block \(b'\) to block \(b\).
+  \(\delta_{m,b',b} \ge 0\): mobilization cost when machine \(m\) moves
+  from block \(b'\) to block \(b \ne b'\);
+  \(c_{m,b',b} = \omega^{\text{mob}}\delta_{m,b',b} + \omega^{\text{trans}}\)
+  is the weighted cost of the move.
 \item
   \(C_{\ell}\): assignment capacity of landing \(\ell\), the number of
   machines that may work its blocks concurrently in one shift slot
@@ -136,7 +140,11 @@ sequencing constraints.
   for a head start of \(\beta_{r,b}\) shifts
   (\texttt{role\_headstart\_shifts}, 0 by default). When no machine of
   an upstream role has a positive rate on \(b\), the role's own capacity
-  is used instead, \(B_{r,b}=\beta_{r,b}\,Q_{r,b}\).
+  is used instead, \(B_{r,b}=\beta_{r,b}\,Q_{r,b}\). For a join the
+  buffer, computed from the summed rates of all upstream roles, is
+  required of each upstream role (head-start constraint below), so a
+  slower upstream role needs more than \(\beta_{r,b}\) shifts to stage
+  it.
 \item
   \(Q_{r,b}=\sum_{m\in\mathcal{M}(r)}\bar{p}_{mb}\): role production
   capacity per shift (1 when the role has no machine with a positive
@@ -144,8 +152,7 @@ sequencing constraints.
 \item
   \(q^{\text{batch}}_{b}\): truckload (loader batch) volume of block
   \(b\)'s harvest system (\texttt{loader\_batch\_volume\_m3}, 30 m³ by
-  default); \(q^{\text{batch}}_{r,b}=q^{\text{batch}}_b\) for loader
-  pairs.
+  default).
 \item
   \(\mathcal{T}_b \subseteq \mathcal{R}_b\): terminal roles for block
   \(b\) (roles credited in block completion objective terms).
@@ -180,9 +187,24 @@ sequencing constraints.
   \(z_{r,b,s} \ge 0\): aggregated role-level production for role \(r\)
   on block \(b\) in shift \(s\).
 \item
-  \(y_{m,b',b,s} \in \{0,1\}\): transition indicator for machine \(m\)
-  from previous-shift block \(b'\) to current block \(b\) (defined for
-  non-initial shifts).
+  \(y_{m,b',b,s} \ge 0\), \(b' \ne b\): machine \(m\) moves in slot
+  \(s\) from its \emph{position} \(b'\) (the block of its last worked
+  slot before \(s\), or \(b^{0}_m\)) to block \(b\), which it works in
+  \(s\).
+\item
+  \(\eta_{m,b,s} \ge 0\): machine \(m\) keeps position \(b\) through
+  slot \(s\) (it is idle or works \(b\) again).
+\item
+  \(\phi_{m,b,s} \ge 0\), \(m\notin\mathcal{M}^{0}\): the first worked
+  slot of machine \(m\) is \(s\), on block \(b\); \(\nu_{m,s} \ge 0\),
+  \(m\notin\mathcal{M}^{0}\): machine \(m\) has not worked up to and
+  including \(s\) (both \(\equiv 0\) for \(m\in\mathcal{M}^{0}\)).
+\item
+  \(\pi_{m,b,s} = \eta_{m,b,s} + \sum_{b'\ne b} y_{m,b',b,s} + \phi_{m,b,s}\):
+  machine \(m\) holds position \(b\) after slot \(s\) (notation);
+  \(\pi_{m,b,\operatorname{prev}(s_1)} := \mathbf{1}[m\in\mathcal{M}^{0},\, b=b^{0}_m]\)
+  and
+  \(\nu_{m,\operatorname{prev}(s_1)} := \mathbf{1}[m\notin\mathcal{M}^{0}]\).
 \item
   \(I^{\text{start}}_{u,b,s} \ge 0\),
   \((u,b)\in\mathcal{P}^{\text{stg}}\): output of upstream role \(u\) on
@@ -208,11 +230,6 @@ sequencing constraints.
   \(s\) (notation for a cumulative sum;
   \(D_{b,\operatorname{prev}(s_1)} := 0\)).
 \item
-  \(n_{r,b,s} \in \mathbb{Z}_{\ge 0}\): loader batch count for loader
-  role-block pair \((r,b)\).
-\item
-  \(u_{r,b,s} \ge 0\): loader partial remainder volume.
-\item
   \(L_b \ge 0\): leftover unmet block volume slack.
 \item
   \(S_{\ell,s,k} \in [0,1]\), \(k = 1,\dots,K_{\ell}\): unit landing
@@ -230,19 +247,16 @@ terms:
 \max\; &\omega^{\text{prod}}\!\sum_{b\in\mathcal{B}}\sum_{r\in\mathcal{T}_b}\sum_{s\in\mathcal{S}} z_{r,b,s}
 - \omega^{\text{prod}}\!\sum_{b\in\mathcal{B}} L_b \\
 &- \omega^{\text{land}}\!\sum_{\ell\in\mathcal{L}}\sum_{s\in\mathcal{S}}\sum_{k=1}^{K_{\ell}} k\, S_{\ell,s,k} \\
-&- \omega^{\text{mob}}\!\sum_{m,b',b,s} \delta_{m,b',b}\, y_{m,b',b,s}
-- \omega^{\text{trans}}\!\sum_{m,b',b,s} y_{m,b',b,s} \\
-&- \sum_{m\in\mathcal{M}^{0}}\sum_{b\in\mathcal{B}\setminus\{b^{0}_m\}}
-\left(\omega^{\text{mob}}\,\delta_{m,b^{0}_m,b} + \omega^{\text{trans}}\right) x_{m,b,s_1}.
+&- \sum_{m\in\mathcal{M}}\sum_{s\in\mathcal{S}}\sum_{b'\ne b}
+\left(\omega^{\text{mob}}\,\delta_{m,b',b} + \omega^{\text{trans}}\right) y_{m,b',b,s}.
 \end{aligned}
 \]
 
-The last line is the boundary transition from each machine's initial
-block into the first slot. It is linear in \(x\) because \(b^{0}_m\) is
-data; with no initial state (\(\mathcal{M}^{0}=\emptyset\)) it vanishes
-and the objective is the v1.0.0 objective, apart from the landing term,
-which is now indexed by shift slot and priced per surplus machine
-(change (viii) below).
+The last line charges every move of a machine: working a block other
+than its position, including the move from \(b^{0}_m\) into the
+machine's first worked slot. Staying on a block costs nothing, and a
+machine without initial block (\(m\notin\mathcal{M}^{0}\)) moves for
+free into its first worked slot.
 
 For blocks without terminal roles (\(\mathcal{T}_b=\emptyset\), in
 particular blocks outside \(\mathcal{B}^{\text{seq}}\)) the production
@@ -286,15 +300,39 @@ z_{r,b,s} = \sum_{m\in\mathcal{M}(r)} p_{m,b,s}
 \qquad \forall (r,b), s.
 \]
 
-Transition linking (for non-initial shifts only):
+Machine positions and moves (each machine's position is a unit flow
+through one layer per slot; idle slots keep the position):
 
 \[
-y_{m,b',b,s} \le x_{m,b',\operatorname{prev}(s)},
-\qquad
-y_{m,b',b,s} \le x_{m,b,s},
-\] \[
-y_{m,b',b,s} \ge x_{m,b',\operatorname{prev}(s)} + x_{m,b,s} - 1.
+\pi_{m,b,\operatorname{prev}(s)} = \eta_{m,b,s} + \sum_{b''\ne b} y_{m,b,b'',s}
+\qquad \forall m\in\mathcal{M},\; b\in\mathcal{B},\; s\in\mathcal{S},
 \]
+
+\[
+\nu_{m,\operatorname{prev}(s)} = \nu_{m,s} + \sum_{b\in\mathcal{B}} \phi_{m,b,s}
+\qquad \forall m\in\mathcal{M}\setminus\mathcal{M}^{0},\; s\in\mathcal{S},
+\]
+
+\[
+\sum_{b'\ne b} y_{m,b',b,s} + \phi_{m,b,s} \;\le\; x_{m,b,s} \;\le\; \pi_{m,b,s}
+\qquad \forall m\in\mathcal{M},\; b\in\mathcal{B},\; s\in\mathcal{S}.
+\]
+
+A position changes only into a worked block, and working block \(b\)
+puts the whole unit of flow at \(b\). For binary \(x\), every path of a
+decomposition of the flow therefore follows the machine's true position
+sequence, so \(y_{m,b',b,s}=1\) exactly when machine \(m\) works \(b\)
+in slot \(s\) and its last worked block before \(s\) (or \(b^{0}_m\)) is
+\(b'\ne b\), also when idle slots lie in between; all other \(y\) are 0.
+The move term of the objective is thus exact and equals the mobilization
+and transition accounting of the heuristics and of the playback KPIs.
+The implementation builds the network only for machines that can incur a
+positive move cost and only for the slots in which the machine can work
+(other slots keep its position), starting arcs only at positions
+reachable before the slot; when all move costs \(c_{m,b',b}\) of a
+machine are equal, the arcs \(y_{m,b',b,s}\) are replaced by arcs to and
+from one hub node per slot, an equivalent network with
+\(O(|\mathcal{B}|)\) instead of \(O(|\mathcal{B}|^2)\) arcs.
 
 Staged inventory start and balance per upstream role (each downstream
 role consumes its own output from the staged output of \textbf{every}
@@ -321,7 +359,13 @@ I_{u,b,s}=I^{\text{start}}_{u,b,s}+z_{u,b,s}-\sum_{r\in\mathcal{N}_{u,b}} z_{r,b
 \]
 
 For a linear chain (\(|\mathcal{U}_{r,b}|=|\mathcal{N}_{u,b}|=1\)) these
-are the v1.0.0 inventory equations of the downstream role.
+are the v1.0.0 inventory equations of the downstream role. The
+downstream roles of a fork (\(|\mathcal{N}_{u,b}|>1\)) split the staged
+output of \(u\): each unit is consumed by one of them. A join
+(\(|\mathcal{U}_{r,b}|>1\)) consumes each unit of its output from the
+pool of every upstream role. Hence, without carried-in staged volume, a
+fork that joins again (a diamond \(u\to\{r_1,r_2\}\to t\)) delivers at
+most half of the output of \(u\), i.e.~at most \(W_b/2\).
 
 Activation (production gating):
 
@@ -386,18 +430,6 @@ it then relaxes the threshold to the remaining volume. Outside
 \(\mathcal{S}^{\text{tail}}_b\) the remaining volume provably exceeds a
 truckload, so no binary is needed there.
 
-Loader batching:
-
-\[
-z_{r,b,s}=q^{\text{batch}}_{r,b}\,n_{r,b,s}+u_{r,b,s}
-\qquad \forall (r,b)\in\mathcal{P}^{\text{load}}, s,
-\]
-
-\[
-0 \le u_{r,b,s} \le q^{\text{batch}}_{r,b}
-\qquad \forall (r,b)\in\mathcal{P}^{\text{load}}, s.
-\]
-
 Block completion balance with leftover slack:
 
 \[
@@ -459,7 +491,7 @@ the \(k\)-th machine beyond capacity in a slot costs
 Domain restrictions:
 
 \[
-x, y, g, h, \lambda \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L \ge 0,\quad S \in [0,1].
+x, g, h, \lambda \in \{0,1\},\quad p,z,y,\eta,\phi,\nu,I^{\text{start}},I,L \ge 0,\quad S \in [0,1].
 \]
 
 \textbf{Initial state defaults.} Without
@@ -502,15 +534,28 @@ machine-shifts per day,
 \(\sum_{\sigma} x_{m,b,(d,\sigma)} \le C_{\ell} + S_{\ell,d}\), with a
 slack that was free at the default \(\omega^{\text{land}}=0\), so the
 capacity did not bind; on single-shift scenarios the per-slot and
-per-day counts coincide). Playback, the heuristics, and the
-rolling-horizon carry-forward apply the same rules: staged output is
-available from the next shift slot, buffers and truckload thresholds are
-staged volume at the start of the slot, and production is capped by
-\(R_{r,b}\) and by the volume the block still holds. For linear harvest
-systems without loaders, without locks, and with no (or a consistent)
-initial state, (iii)--(v) leave the equations unchanged apart from
-indexing the staged inventory by the upstream instead of the downstream
-role.
+per-day counts coincide); (ix) a move is charged when a machine works a
+block other than its position, its last worked block or \(b^{0}_m\),
+through the position network above: staying on a block costs nothing
+(v1.0.0 also charged \(\omega^{\text{trans}}\) for consecutive slots on
+the same block), and a move across idle slots, or from \(b^{0}_m\) into
+a first worked slot after \(s_1\), is charged (v1.0.0 linked only
+consecutive slots through binaries
+\(y_{m,b',b,s}\ge x_{m,b',\operatorname{prev}(s)}+x_{m,b,s}-1\), so
+idling one slot avoided the move cost that the heuristics and the KPIs
+charge); (x) the loader batching variables of v1.0.0
+(\(z_{r,b,s}=q^{\text{batch}}_{b}n_{r,b,s}+u_{r,b,s}\) with
+\(n_{r,b,s}\in\mathbb{Z}_{\ge0}\),
+\(0\le u_{r,b,s}\le q^{\text{batch}}_{b}\)) were removed because every
+\(z_{r,b,s}\ge 0\) satisfies them; the truckload rule is the loader
+threshold above. Playback, the heuristics, and the rolling-horizon
+carry-forward apply the same rules: staged output is available from the
+next shift slot, buffers and truckload thresholds are staged volume at
+the start of the slot, and production is capped by \(R_{r,b}\) and by
+the volume the block still holds. For linear harvest systems without
+loaders, without locks, and with no (or a consistent) initial state,
+(iii)--(v) leave the equations unchanged apart from indexing the staged
+inventory by the upstream instead of the downstream role.
 
 \textbf{Implementation mapping (equation blocks to code).}
 
@@ -534,8 +579,14 @@ role.
   Role aggregation: \texttt{model.role\_prod\_balance}
   (\texttt{role\_prod\_balance\_rule})
 \item
-  Transition linkage: \texttt{model.transition\_prev},
-  \texttt{model.transition\_curr}, \texttt{model.transition\_link}
+  Machine positions and moves: \texttt{model.position\_balance}
+  (\(\eta\) = \texttt{model.stay}, \(y\) = \texttt{model.y} or the hub
+  arcs \texttt{model.depart}/\texttt{model.arrive} with
+  \texttt{model.hub\_balance} for machines with equal move costs),
+  \texttt{model.unplaced\_balance} (\(\phi\) = \texttt{model.first},
+  \(\nu\) = \texttt{model.unplaced}),
+  \texttt{model.move\_requires\_work},
+  \texttt{model.work\_sets\_position}
 \item
   Inventory dynamics and guards: \texttt{model.inventory\_start\_eq}
   (indexed by upstream role-block pairs \texttt{model.InventoryPairs};
@@ -559,9 +610,6 @@ role.
   \texttt{model.loader\_tail}; \(D_{b,s}\) from
   \texttt{model.role\_cumulative} of the terminal roles)
 \item
-  Loader batching: \texttt{model.loader\_batch},
-  \texttt{model.loader\_partial\_cap}
-\item
   Block balance with leftovers: \texttt{model.block\_balance}
   (\texttt{block\_balance\_rule}) + \texttt{model.leftover}
 \item
@@ -583,9 +631,9 @@ role.
 \item
   Objective assembly: \texttt{model.objective} and objective-term
   construction around \texttt{prod\_weight}, \texttt{landing\_weight},
-  \texttt{mobilisation\_weight}, \texttt{transition\_weight}, including
-  the first-slot boundary term from
-  \texttt{bundle.initial\_machine\_block}
+  \texttt{mobilisation\_weight}, \texttt{transition\_weight} (move costs
+  \(c_{m,b',b}\); \(b^{0}_m\) from
+  \texttt{bundle.initial\_machine\_block})
 \item
   Data/parameter normalization: \texttt{build\_operational\_bundle(...)}
   in \texttt{fhops.model.milp.data} (flattens

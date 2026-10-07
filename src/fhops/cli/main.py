@@ -456,7 +456,13 @@ def validate(scenario: Path):
 
 @app.command()
 def build_mip(scenario: Path):
-    """Build the MIP model without solving and print component counts.
+    """Deprecated: build the operational MILP without solving and print its size.
+
+    Since FHOPS 1.0.1 (#139, consistent with the ``solve-mip`` delegation of #127) this command
+    builds the operational MILP (the formulation documented in the FHOPS paper and solved by
+    ``fhops solve-mip-operational``) instead of the legacy day-level MIP, which is infeasible for
+    every scenario with a loader role. It prints a one-line deprecation notice and will be removed
+    in a future release.
 
     Parameters
     ----------
@@ -465,24 +471,42 @@ def build_mip(scenario: Path):
 
     Notes
     -----
-    This helper is useful for verifying that Pyomo/HiGHS dependencies are correctly installed and
-    for inspecting the size of the generated model (sets/variables/constraints) before committing to
-    a full solve.  It invokes :func:`fhops.optimization.mip.builder.build_model` and never calls a
-    solver.
+    Builds :func:`fhops.model.milp.operational.build_operational_model` from
+    :func:`fhops.optimization.operational_problem.build_operational_problem` and prints
+    ``Operational MILP built with |M|=… |B|=… |S|=… slots; variables=… (binary=…, integer=…,
+    continuous=…); constraints=…``. No solver is called. Exit code ``1`` when the scenario cannot
+    be loaded or the model cannot be built.
     """
-    sc = load_scenario(str(scenario))
-    pb = Problem.from_scenario(sc)
-    try:
-        from fhops.model.pyomo_builder import build_model
+    import pyomo.environ as pyo
 
-        m = build_model(pb)
-        console.print(
-            f"Model built with |M|={len(m.M)} |B|={len(m.B)} |D|={len(m.D)}; "
-            f"components={len(list(m.component_objects()))}"
-        )
+    from fhops.model.milp.operational import build_operational_model
+
+    console.print(
+        "[yellow]Deprecated:[/] `fhops build-mip` builds the operational MILP (the model solved by "
+        "`fhops solve-mip-operational`) and will be removed in a future release; the legacy "
+        "day-level MIP is no longer built."
+    )
+    try:
+        sc = load_scenario(str(scenario))
+        ctx = build_operational_problem(Problem.from_scenario(sc))
+        m = build_operational_model(ctx.bundle)
     except Exception as e:
         console.print(f"[red]Build failed:[/red] {e}")
         raise typer.Exit(1)
+    binary = integer = continuous = 0
+    for var in m.component_data_objects(pyo.Var):
+        if var.is_binary():
+            binary += 1
+        elif var.is_integer():
+            integer += 1
+        else:
+            continuous += 1
+    constraints = sum(1 for _ in m.component_data_objects(pyo.Constraint, active=True))
+    console.print(
+        f"Operational MILP built with |M|={len(m.M)} |B|={len(m.B)} |S|={len(m.S)} slots; "
+        f"variables={binary + integer + continuous} (binary={binary}, integer={integer}, "
+        f"continuous={continuous}); constraints={constraints}"
+    )
 
 
 @app.command("solve-mip")

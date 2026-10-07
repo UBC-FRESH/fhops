@@ -112,8 +112,13 @@ def test_apply_incumbent_start_populates_auxiliary_state():
     role_key = ("feller_buncher", "B01", (1, "S1"))
     assert model.role_prod[role_key].value == pytest.approx(400.0)
 
-    transition_var = model.y["H1", "B01", "B02", (2, "S1")]
-    assert transition_var.value == 1.0
+    # H1 moves B01 -> B02 on day 2 (tiny7 move costs are uniform per machine: hub arcs).
+    assert model.depart["H1", "B01", 2, "S1"].value == 1.0
+    assert model.arrive["H1", "B02", 2, "S1"].value == 1.0
+    assert model.first["H1", "B01", 1, "S1"].value == 1.0
+    assert model.stay["H1", "B02", 3, "S1"].value == 1.0
+    assert model.unplaced["H1", 1, "S1"].value == 0.0
+    assert model.unplaced["H3", 2, "S1"].value == 1.0
 
     leftover_b01 = model.leftover["B01"].value
     system_id = bundle.block_system["B01"]

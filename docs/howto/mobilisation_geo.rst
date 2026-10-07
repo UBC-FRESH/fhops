@@ -93,9 +93,10 @@ Troubleshooting & Diagnostics
      fhops solve-heur examples/med42/scenario.yaml --out tmp/med42_sa.csv --iters 2000
      fhops evaluate examples/med42/scenario.yaml --assignments tmp/med42_sa.csv | grep mobilisation_cost
 
-  The operational MILP (``fhops solve-mip-operational``) needs long time limits or Gurobi on med42
-  and large84; with HiGHS and a 600 s limit it typically stops at an incumbent that assigns no
-  machines, so the heuristic schedule is used here.
+  The operational MILP (``fhops solve-mip-operational``) needs long time limits or Gurobi to prove
+  optimality on med42 and large84; with HiGHS and a 600 s limit it stops at a feasible incumbent on
+  med42 (since 1.0.1, #139; before it typically assigned no machines), so the heuristic schedule is
+  used here.
 
   Expect mobilisation spend to rise sharply when block pairs exceed the 1 km walk threshold; the KPI
   output lists per-machine costs (``kpi_mobilisation_cost_by_machine``) so you can pinpoint which

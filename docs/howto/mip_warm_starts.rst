@@ -23,7 +23,7 @@ Workflow
          --incumbent tmp/med42_greedy_incumbent.csv \
          --out tmp/med42_mip_seeded.csv
 
-   The CLI rebuilds the :class:`fhops.optimization.operational_problem.OperationalProblem` context, derives the implied transitions, activation binaries, per-role inventories, landing surplus, and leftovers, and then hands the seeded values to the solver as a MIP start (see :ref:`mip-warm-start-solvers`).
+   The CLI rebuilds the :class:`fhops.optimization.operational_problem.OperationalProblem` context, derives the implied machine positions and moves, activation binaries, per-role inventories, landing surplus, and leftovers, and then hands the seeded values to the solver as a MIP start (see :ref:`mip-warm-start-solvers`).
 
    With the default open-source solver the same workflow is::
 
@@ -82,8 +82,11 @@ The driver never raises because a model is infeasible, a time limit was reached 
 
 - ``has_solution`` / ``objective``: ``objective`` is ``None`` and ``assignments`` is an empty table with the usual columns when no feasible solution was loaded.
 - ``outcome``: ``optimal``, ``feasible`` (incumbent at a limit), ``infeasible``, ``no_solution`` (limit without incumbent), or ``error``.
-- ``solver_error``: set for genuine solver failures rather than infeasibility, e.g. HiGHS refusing ``threads=1`` after its global scheduler was initialised with another thread count in the same process (``ERROR: Option 'threads' is set to 1 but global scheduler has already been initialized …``). The CLI prints it and exits with status 1.
-- ``warnings``: locks the model dropped or pinned to idle instead of becoming infeasible.
+- ``solver_error``: set for genuine solver failures rather than infeasibility, e.g. HiGHS refusing ``threads=1`` after its global scheduler was initialised with another thread count in the same process (``ERROR: Option 'threads' is set to 1 but global scheduler has already been initialized …``), or any exception the solver interface raises — since 1.0.1 (#139) also ``gurobipy.GurobiError`` for a missing licence or a model too large for the size-limited licence that ships with ``pip install gurobipy`` (``GurobiError: Model too large for size-limited license; …``). The CLI prints it and exits with status 1.
+- ``warnings``: locks the model dropped or pinned to idle instead of becoming infeasible, and solver fall-backs (below).
+- ``solver``: the ``SolverFactory`` name that produced the result.
+
+``--solver auto`` (``solver="auto"``) uses Gurobi when ``SolverFactory("gurobi")`` is available and HiGHS otherwise. When the Gurobi run fails (``solver_error``, e.g. the size-limited licence on small21), the model is solved again with HiGHS, a :class:`fhops.model.milp.driver.MilpSolverFallbackWarning` is emitted and ``warnings`` starts with ``gurobi failed (…); falling back to highs (solver=auto).``. The deprecated ``solve_mip`` / ``fhops solve-mip --driver auto`` follow the same rule. Solver-specific ``--solver-option`` values are forwarded to every solver tried.
 
 Every solver path calls Pyomo with ``load_solutions=False`` and loads a solution only when the solver holds one (APPSI ``load_vars()``, otherwise ``model.solutions.load_from(results)``). Exported ``production`` values are clamped at 0 (no ``-0.0``).
 
@@ -91,7 +94,7 @@ Current limitations
 -------------------
 
 - The plumbing works end-to-end—tiny7/small21 reuse the incumbent immediately—but med42 and large84 still reject greedy or short SA seeds. Those incumbents complete all blocks in ≈23–47 days, while the MILP needs high-quality assignments that respect every loader/landing constraint; the solver therefore finds its own incumbent faster than it can repair the provided schedule.
-- Gurobi and HiGHS require every binary implied by the incumbent (assignment, transition, mobilisation activation, loader buffer) to be populated. The CLI handles this automatically, but if you call :func:`fhops.model.milp.driver.solve_operational_milp` directly you must pass the ``OperationalProblem`` context so the helper can rebuild sequencing state.
+- Gurobi and HiGHS require every binary implied by the incumbent (assignment, activation, head-start waiver, loader tail) to be populated, and the continuous position/move variables should match it. The CLI handles this automatically, but if you call :func:`fhops.model.milp.driver.solve_operational_milp` directly you must pass the ``OperationalProblem`` context so the helper can rebuild sequencing state.
 - Warm starts are best-effort. Providing an incumbent is always safe, yet you should not expect runtime improvements unless the seed is near-feasible for the operational MILP. Until we develop stronger heuristics (e.g., 60 s SA runs with repairs or rolling-horizon MILPs), treat ``--incumbent`` as a diagnostic tool rather than a guaranteed accelerator.
 
 Practical guidance

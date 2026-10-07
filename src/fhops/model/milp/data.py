@@ -470,15 +470,22 @@ def headstart_buffer_volumes(bundle: OperationalMilpBundle) -> dict[BlockRole, f
     -------
     dict[tuple[str, str], float]
         ``(block_id, role) -> m³`` for roles with ``buffer_shifts > 0`` and at least one upstream
-        role. ``B = buffer_shifts × Σ`` rates (m³ per shift) of every machine of the upstream roles
-        on the block; when no upstream machine has a positive rate, the role's own fleet rate (or
-        1.0) is used instead. Loader batch thresholds are **not** included (the MILP takes
-        ``max(B, q_batch)`` for loaders; see :mod:`fhops.model.milp.operational`).
+        role. ``B = buffer_shifts × Σ`` rates (m³ per shift) of every machine of **all** upstream
+        roles on the block; when no upstream machine has a positive rate, the role's own fleet rate
+        (or 1.0) is used instead. Loader truckload thresholds are **not** included: a buffered
+        loader must satisfy the head-start constraint and the separate truckload threshold
+        (``loader_threshold``), i.e. the larger of ``B`` and ``min(q_batch, remaining volume)``.
 
     Notes
     -----
     The operational MILP (head-start constraint E8) and the sequencing tracker / heuristics share
-    this helper, so a MILP plan and its playback apply the same buffer volume.
+    this helper, so a MILP plan and its playback apply the same buffer volume. For a role with
+    several upstream roles (a join) the single value ``B`` -- computed from the *summed* upstream
+    rates -- must be staged by **each** upstream role (the MILP has one ``head_start`` row per
+    upstream role; the tracker compares the minimum staged volume with ``B``). A slower upstream
+    role therefore needs more than ``buffer_shifts`` shifts to build its share of the buffer
+    (e.g. rates 10 and 30 m³/shift with one head-start shift: each must stage 40 m³, four shifts
+    of the slower role); see ``docs/howto/system_sequencing.rst``.
     """
 
     role_to_machines: dict[str, list[str]] = {}

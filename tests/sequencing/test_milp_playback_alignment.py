@@ -369,7 +369,9 @@ def test_shift_order_follows_timeline_definition() -> None:
     assert build_operational_bundle(pb).shifts == ((1, "night"), (1, "day"))
     assignments, terminal = _assert_clean(scenario)
     assert terminal == pytest.approx(40.0)
-    feller = assignments[assignments["machine_id"] == "FE1"]
+    # The feller produces in the first slot of the timeline ("night"); an idle assignment in the
+    # "day" slot is free (no move), so only producing rows are compared.
+    feller = assignments[(assignments["machine_id"] == "FE1") & (assignments["production"] > 1e-9)]
     assert list(feller["shift_id"]) == ["night"]
 
 
