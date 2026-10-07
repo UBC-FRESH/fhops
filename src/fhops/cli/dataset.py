@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Any, Literal, TypeVar, cast
 
 import typer
-from click.core import ParameterSource
 from rich import box
 from rich.console import Console
 from rich.table import Table
@@ -2572,14 +2571,23 @@ def _render_grapple_yarder_result(
 
 
 def _parameter_supplied(ctx: typer.Context, name: str) -> bool:
-    """Return True when a Typer option/argument was provided explicitly by the user."""
+    """Return True when a Typer option/argument was provided explicitly by the user.
+
+    Notes
+    -----
+    Typer >= 0.26 vendors Click (``typer._click``), so ``ctx.get_parameter_source`` returns a
+    ``ParameterSource`` member from that copy rather than from the standalone ``click`` package.
+    The source is therefore compared by member name, which works with both layouts. An identity
+    check against ``click.core.ParameterSource.DEFAULT`` reports every option as user-supplied
+    under Typer >= 0.26 and blocks harvest-system defaults (#103).
+    """
     if ctx is None:
         return False
     try:
         source = ctx.get_parameter_source(name)
     except AttributeError:  # pragma: no cover - defensive
         return False
-    return source is not None and source is not ParameterSource.DEFAULT
+    return source is not None and getattr(source, "name", None) != "DEFAULT"
 
 
 def _apply_skidder_system_defaults(

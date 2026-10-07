@@ -16,10 +16,10 @@ import time
 from collections.abc import Mapping, Sequence
 from contextlib import nullcontext
 from datetime import UTC, datetime
+from enum import StrEnum
 from pathlib import Path
 from typing import Any, cast
 
-import click
 import optuna
 import pandas as pd
 import typer
@@ -87,7 +87,14 @@ app.add_typer(telemetry_app, name="telemetry")
 app.add_typer(dataset_app, name="dataset")
 app.add_typer(plan_app, name="plan")
 console = Console()
-KPI_MODE: click.ParamType = click.Choice(["basic", "extended"], case_sensitive=False)
+
+
+class KpiMode(StrEnum):
+    """Verbosity levels accepted by ``--kpi-mode`` on the solver/evaluation commands."""
+
+    BASIC = "basic"
+    EXTENDED = "extended"
+
 
 TUNING_BUNDLE_ALIASES: dict[str, list[tuple[str, Path]]] = {
     "baseline": [
@@ -977,12 +984,12 @@ def solve_heur_cmd(
         "--sequencing-debug/--no-sequencing-debug",
         help="Print sequencing diagnostics (first violation details) after KPIs.",
     ),
-    kpi_mode: str = typer.Option(
-        "extended",
+    kpi_mode: KpiMode = typer.Option(
+        KpiMode.EXTENDED,
         "--kpi-mode",
+        case_sensitive=False,
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=cast(Any, KPI_MODE),
     ),
     batch_neighbours: int = typer.Option(
         1,
@@ -1032,7 +1039,7 @@ def solve_heur_cmd(
         Cooling rate multiplier (higher = slower cooling).
     restart_interval : int, default=0
         Non-accepting-iteration interval before restarts (0 auto-scales with ``iters``).
-    kpi_mode : str, default="extended"
+    kpi_mode : KpiMode, default="extended"
         Controls verbosity of KPI summaries (``basic`` omits diagnostics).
     batch_neighbours : int, default=1
         Number of neighbour candidates sampled per iteration.
@@ -1383,12 +1390,12 @@ def solve_ils_cmd(
         "--watch-debug/--no-watch-debug",
         help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
     ),
-    kpi_mode: str = typer.Option(
-        "extended",
+    kpi_mode: KpiMode = typer.Option(
+        KpiMode.EXTENDED,
         "--kpi-mode",
+        case_sensitive=False,
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=cast(Any, KPI_MODE),
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
@@ -1425,7 +1432,7 @@ def solve_ils_cmd(
         Optional telemetry logging location plus a label to group runs in the dashboard.
     watch / watch_refresh :
         Enable and configure the live Rich dashboard for solver progress.
-    kpi_mode : str, default="extended"
+    kpi_mode : KpiMode, default="extended"
         Toggle KPI verbosity (``basic`` omits detailed breakdowns).
     show_operator_stats : bool
         When ``True`` print proposal/acceptance metrics emitted by ``solve_ils``.
@@ -1711,12 +1718,12 @@ def solve_tabu_cmd(
         "--watch-debug/--no-watch-debug",
         help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
     ),
-    kpi_mode: str = typer.Option(
-        "extended",
+    kpi_mode: KpiMode = typer.Option(
+        KpiMode.EXTENDED,
         "--kpi-mode",
+        case_sensitive=False,
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=cast(Any, KPI_MODE),
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats."
@@ -1754,7 +1761,7 @@ def solve_tabu_cmd(
         Optional telemetry logging destination and label for grouping experiments.
     watch / watch_refresh :
         Enable and configure the live Rich dashboard during Tabu runs.
-    kpi_mode : str, default="extended"
+    kpi_mode : KpiMode, default="extended"
         KPI verbosity switch (``basic`` or ``extended``).
     watch / watch_refresh :
         Enable and configure the live Rich dashboard for Tabu runs.
@@ -1954,12 +1961,12 @@ def evaluate(
     assignments_csv: Path = typer.Option(
         ..., "--assignments", help="Assignments CSV (machine_id, block_id, day, shift_id)."
     ),
-    kpi_mode: str = typer.Option(
-        "extended",
+    kpi_mode: KpiMode = typer.Option(
+        KpiMode.EXTENDED,
         "--kpi-mode",
+        case_sensitive=False,
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=cast(Any, KPI_MODE),
     ),
 ):
     """Compute KPI summaries for a schedule CSV and print them to the console.
@@ -1970,7 +1977,7 @@ def evaluate(
         Scenario YAML bundle to load.
     assignments_csv : pathlib.Path
         CSV containing ``machine_id, block_id, day, shift_id`` rows produced by a solver.
-    kpi_mode : str, default="extended"
+    kpi_mode : KpiMode, default="extended"
         Verbosity toggle for the KPI printer (``basic`` omits deep breakdowns).
 
     Notes
