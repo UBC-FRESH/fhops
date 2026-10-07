@@ -1,4 +1,4 @@
-"""Regression: without ``initial_state`` or locks, results match FHOPS v1.0.0 exactly (#91).
+"""Regression: without ``initial_state`` or locks, results match FHOPS v1.0.0 (#91) or 1.0.1 pins.
 
 Baselines in ``tests/fixtures/v100_regression`` were captured on the unmodified ``v1.0.0`` code
 (branch ``feature/phase8-v101-maintenance`` before #91) with:
@@ -6,6 +6,10 @@ Baselines in ``tests/fixtures/v100_regression`` were captured on the unmodified 
 * ``solve_sa(tiny7, iters=300, seed=123)`` and ``solve_sa(med42, iters=150, seed=7)``;
 * ``solve_operational_milp(tiny7 bundle, solver="highs")`` (optimal);
 * ``compute_kpis`` on the saved SA and MILP assignment tables.
+
+Since #131 (exact heuristic objective) the SA runs no longer reproduce v1.0.0: they are pinned to
+the 1.0.1 results (``*_v101.csv``, ``sa_objective_v101``, ``kpis_v101``), while the v1.0.0 SA
+tables remain KPI fixtures and document the overstated v1.0.0 objective.
 """
 
 from __future__ import annotations
@@ -20,7 +24,15 @@ import pytest
 from fhops.evaluation import compute_kpis
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import solve_sa
-from fhops.optimization.operational_problem import build_operational_problem
+from fhops.optimization.heuristics.common import (
+    evaluate_schedule,
+    resolve_objective_weight_overrides,
+)
+from fhops.optimization.heuristics.ils import _assignments_to_schedule
+from fhops.optimization.operational_problem import (
+    build_operational_problem,
+    override_objective_weights,
+)
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 
@@ -39,6 +51,14 @@ def _sorted(frame: pd.DataFrame) -> pd.DataFrame:
     return frame.sort_values(["machine_id", "day", "shift_id"]).reset_index(drop=True)
 
 
+def _fresh_objective(pb: Problem, assignments: pd.DataFrame) -> float:
+    ctx = build_operational_problem(pb)
+    overrides = resolve_objective_weight_overrides(pb, None)
+    if overrides:
+        ctx = override_objective_weights(ctx, overrides)
+    return evaluate_schedule(pb, _assignments_to_schedule(pb, assignments), ctx)
+
+
 def _assert_kpis_equal(actual: dict, expected: dict) -> None:
     assert set(actual) == set(expected)
     for key, value in expected.items():
@@ -51,15 +71,27 @@ def _assert_kpis_equal(actual: dict, expected: dict) -> None:
 @pytest.mark.parametrize(
     ("name", "iters", "seed", "fixture"),
     [
-        ("tiny7", 300, 123, "tiny7_sa_seed123_iters300.csv"),
-        ("med42", 150, 7, "med42_sa_seed7_iters150.csv"),
+        ("tiny7", 300, 123, "tiny7_sa_seed123_iters300_v101.csv"),
+        ("med42", 150, 7, "med42_sa_seed7_iters150_v101.csv"),
     ],
 )
-def test_sa_matches_v100(name: str, iters: int, seed: int, fixture: str) -> None:
+def test_sa_matches_pinned_baseline(name: str, iters: int, seed: int, fixture: str) -> None:
+    """Pinned 1.0.1 SA results (``*_v101.csv``, ``sa_objective_v101``).
+
+    Until #131 these runs reproduced v1.0.0 exactly. The v1.0.0 search scored candidates with a
+    mobilisation cache that could omit machines, so it optimised (and reported) an overstated
+    objective; with the exact objective the SA trajectory and result differ from v1.0.0 (see
+    :func:`test_v100_sa_objective_was_overstated`). The reported objective is a fresh evaluation
+    of the exported schedule.
+    """
+
     baseline = BASELINE[f"{name}_sa"]
-    result = solve_sa(_problem(name), iters=iters, seed=seed)
+    pb = _problem(name)
+    result = solve_sa(pb, iters=iters, seed=seed)
     # Objective to 1e-6 (last-bit float differences across platforms); assignments exactly.
-    assert result["objective"] == pytest.approx(baseline["sa_objective"], rel=0, abs=1e-6)
+    assert result["objective"] == pytest.approx(baseline["sa_objective_v101"], rel=0, abs=1e-6)
+    assert result["objective"] == _fresh_objective(pb, result["assignments"])
+    assert result["objective"] > baseline["v100_fresh_objective"]
     expected = pd.read_csv(FIXTURES / fixture)
     actual = _sorted(result["assignments"])[list(expected.columns)]
     pd.testing.assert_frame_equal(actual, expected, check_dtype=False)
@@ -86,3 +118,27 @@ def test_playback_kpis_match_v100(name: str, fixture: str, key: tuple[str, str])
     assignments = pd.read_csv(FIXTURES / fixture)
     actual = compute_kpis(_problem(name), assignments).to_dict()
     _assert_kpis_equal(actual, BASELINE[key[0]][key[1]])
+
+
+@pytest.mark.parametrize(
+    ("name", "fixture"),
+    [("tiny7", "tiny7_sa_seed123_iters300.csv"), ("med42", "med42_sa_seed7_iters150.csv")],
+)
+def test_v100_sa_objective_was_overstated(name: str, fixture: str) -> None:
+    """v1.0.0 reported more than a fresh evaluation of its own SA schedule (#131)."""
+
+    baseline = BASELINE[f"{name}_sa"]
+    fresh = _fresh_objective(_problem(name), pd.read_csv(FIXTURES / fixture))
+    assert fresh == pytest.approx(baseline["v100_fresh_objective"], rel=0, abs=1e-6)
+    assert baseline["sa_objective"] - fresh > 10.0
+
+
+@pytest.mark.parametrize("name", ["tiny7", "med42"])
+def test_pinned_sa_kpis(name: str) -> None:
+    fixture = {
+        "tiny7": "tiny7_sa_seed123_iters300_v101.csv",
+        "med42": "med42_sa_seed7_iters150_v101.csv",
+    }
+    assignments = pd.read_csv(FIXTURES / fixture[name])
+    actual = compute_kpis(_problem(name), assignments).to_dict()
+    _assert_kpis_equal(actual, BASELINE[f"{name}_sa"]["kpis_v101"])

@@ -1,5 +1,7 @@
 sa_expected:
-  objective: -999.5
+  # Since #131 the heuristic objective charges every machine's mobilisation: the same plan scored
+  # -999.5 before because F1's B1->B2 move (setup 1 + flat 5 = 6) was missing from the cache.
+  objective: -1005.5
   total_production: 8.0
   mobilisation_cost: 13.5
 reference_assignments:

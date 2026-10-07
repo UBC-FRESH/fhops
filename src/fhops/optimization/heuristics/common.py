@@ -213,12 +213,26 @@ def _recompute_mobilisation_for(
 
 
 def _ensure_mobilisation_stats(schedule: Schedule, ctx: OperationalProblem) -> None:
-    """Ensure mobilisation cache entries exist for all machines (recomputing dirty ones)."""
+    """Ensure the mobilisation cache holds exactly one up-to-date entry per planned machine.
 
-    if not schedule.mobilisation_cache and not schedule.dirty_machines:
-        schedule.dirty_machines = set(schedule.plan.keys())
-    for machine_id in list(schedule.dirty_machines):
-        _recompute_mobilisation_for(schedule, machine_id, ctx)
+    Machines marked dirty *and* machines without a cache entry are recomputed; entries for
+    machines that are no longer in the plan are dropped. Candidates built by the operator
+    sanitizer start with an empty cache while the repair pass marks only the machines it changed
+    as dirty, so recomputing dirty machines alone would leave the unchanged machines out of the
+    mobilisation and transition totals (#131).
+    """
+
+    cache = schedule.mobilisation_cache
+    plan = schedule.plan
+    for machine_id in [m for m in cache if m not in plan]:
+        del cache[machine_id]
+    stale = set(schedule.dirty_machines)
+    stale.update(machine_id for machine_id in plan if machine_id not in cache)
+    for machine_id in stale:
+        if machine_id in plan:
+            _recompute_mobilisation_for(schedule, machine_id, ctx)
+        else:
+            schedule.dirty_machines.discard(machine_id)
 
 
 def _release_slot_production(
@@ -390,6 +404,8 @@ def _repair_schedule_cover_blocks(
     landing_guard_days = (
         ctx.multi_shift_days if bundle.objective_weights.landing_surplus == 0.0 else frozenset()
     )
+    # Machines of the current slot that the repair has not reached yet.
+    pending_in_slot: set[str] = set()
 
     def is_terminal(block_id: str, role: str | None) -> bool:
         if block_id not in explicit_blocks:
@@ -443,11 +459,13 @@ def _repair_schedule_cover_blocks(
         return True
 
     def landing_has_room(machine_id: str, day: int, shift_id: str, block_id: str) -> bool:
-        # True when fewer than ``capacity`` *other* machines are planned on the block's landing
-        # in this slot. Every other machine counts with its current plan (machines placed earlier
-        # in the slot with their repaired block, later ones with the block they hold before the
-        # repair reaches them), so existing assignments keep their landing position and the
-        # machine being kept or placed yields when the landing is full.
+        # True when fewer than ``capacity`` *other* machines are on the block's landing in this
+        # slot. Machines the repair has already handled in this slot (or does not revisit) count
+        # with their final block; machines it has not reached yet count only through their
+        # locks (which they cannot leave). Ignoring the blocks those later machines hold before
+        # the repair reaches them keeps the repair idempotent: repairing a repaired plan leaves
+        # it unchanged, so the search score equals a fresh evaluation of the plan (#131). Before
+        # 1.0.1 (#116) the later machines' pre-repair blocks were counted too.
         landing_id = landing_of.get(block_id)
         if landing_id is None or landing_id not in landing_cap:
             return True
@@ -457,7 +475,10 @@ def _repair_schedule_cover_blocks(
         for other in sc.machines:
             if other.id == machine_id:
                 continue
-            other_block = plan[other.id].get(slot)
+            if other.id in pending_in_slot:
+                other_block = lock_for(other.id, day, shift_id)
+            else:
+                other_block = plan[other.id].get(slot)
             if other_block is not None and landing_of.get(other_block) == landing_id:
                 others += 1
                 if others >= capacity:
@@ -579,7 +600,7 @@ def _repair_schedule_cover_blocks(
         # shift. Output staged in a shift is usable from the next shift (E7), so without this
         # guard the repair stacks every role of a block on its landing in the same shift and the
         # schedule pays a landing-capacity penalty per extra machine (#116). Locked slots are
-        # exempt (``enforce_prereq=False``).
+        # exempt (the repair does not validate them).
         if (
             enforce_prereq
             and day in landing_guard_days
@@ -639,7 +660,9 @@ def _repair_schedule_cover_blocks(
                 continue
         else:
             machine_iter = ordered_machines
+        pending_in_slot = {machine.id for machine in machine_iter}
         for machine in machine_iter:
+            pending_in_slot.discard(machine.id)
             slots_visited += 1
             role = machine_roles.get(machine.id)
             slot_key = (day, shift_id)
@@ -669,14 +692,16 @@ def _repair_schedule_cover_blocks(
                 continue
             if slot_block is not None and slot_block not in dirty_blocks and not locked_slot:
                 continue
-            if slot_block is not None:
+            # A locked slot keeps its block even when the block has no demand left (an idle
+            # locked slot): ``evaluate_schedule`` scores the locked block in any case, so
+            # replacing it would only add a lock-violation penalty (#131).
+            if slot_block is not None and not locked_slot:
                 if not slot_is_valid(
                     machine.id,
                     day,
                     shift_id,
                     slot_block,
                     role,
-                    enforce_prereq=not locked_slot,
                 ):
                     slot_block = None
                     set_assignment(machine.id, day, shift_id, None)
@@ -964,8 +989,10 @@ def evaluate_schedule(
     weights = bundle.objective_weights
 
     _ensure_mobilisation_stats(sched, ctx)
-    mobilisation_total = sum(stats.cost for stats in sched.mobilisation_cache.values())
-    transition_count = sum(stats.transitions for stats in sched.mobilisation_cache.values())
+    # Sum in scenario machine order so the total does not depend on cache insertion order.
+    mobilisation_stats = [sched.mobilisation_cache[machine.id] for machine in sc.machines]
+    mobilisation_total = sum(stats.cost for stats in mobilisation_stats)
+    transition_count = sum(stats.transitions for stats in mobilisation_stats)
     landing_surplus_total = 0.0
     penalty = 0.0
 
@@ -1093,6 +1120,49 @@ def evaluate_schedule_with_debug(
         limit_repairs_to_dirty=limit_repairs_to_dirty,
     )
     return score, debug_map
+
+
+def fresh_schedule_copy(sched: Schedule) -> Schedule:
+    """Return a cache-free copy of ``sched`` holding only its plan.
+
+    The copy has no mobilisation, demand, slot or dirty-set caches, so evaluating it is the same as
+    evaluating a schedule rebuilt from exported assignments.
+    """
+
+    return Schedule(plan={machine: dict(slots) for machine, slots in sched.plan.items()})
+
+
+def rescore_fresh(
+    pb: Problem,
+    sched: Schedule,
+    ctx: OperationalProblem,
+    capture_debug: bool = False,
+) -> tuple[Schedule, float, dict[str, Any] | None]:
+    """Evaluate a cache-free copy of a schedule with a full repair pass.
+
+    Parameters
+    ----------
+    pb:
+        Problem being solved.
+    sched:
+        Schedule to re-score; it is not modified.
+    ctx:
+        Shared operational context (including any objective-weight overrides).
+    capture_debug:
+        When ``True`` also return sequencing debug statistics.
+
+    Returns
+    -------
+    tuple[Schedule, float, dict | None]
+        ``(schedule, score, debug)``: the repaired copy (the plan the solvers export), its
+        :func:`evaluate_schedule` score, and the debug statistics (``None`` unless requested).
+        SA, ILS and Tabu report this score as ``objective``, so it equals a fresh
+        ``evaluate_schedule`` of the exported assignments (#131).
+    """
+
+    fresh = fresh_schedule_copy(sched)
+    score, debug = evaluate_schedule_with_debug(pb, fresh, ctx, capture_debug)
+    return fresh, score, debug
 
 
 def build_watch_metadata_from_debug(stats: Mapping[str, Any] | None) -> dict[str, str]:

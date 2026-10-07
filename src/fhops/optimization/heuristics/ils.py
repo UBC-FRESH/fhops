@@ -27,6 +27,7 @@ from fhops.optimization.heuristics.common import (
     evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
+    rescore_fresh,
     resolve_objective_weight_overrides,
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
@@ -251,8 +252,9 @@ def solve_ils(
     watch_debug : bool, default=False
         When ``True`` capture sequencing debug stats for watch snapshots (minor overhead).
     use_local_repairs : bool, default=False
-        Limit repairs to dirty slots while scoring candidates. Final schedules are always
-        re-scored with a full repair before returning results.
+        Limit repairs to dirty slots while scoring candidates. Approximate mode (see
+        :func:`solve_sa`): search scores can differ from a full evaluation of the same plan. Final
+        schedules are always re-scored with a full repair before returning results.
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
         ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
@@ -264,7 +266,8 @@ def solve_ils(
     Returns
     -------
     dict
-        Dictionary mirroring :func:`solve_sa` with ``objective``, ``assignments`` DataFrame, and a
+        Dictionary mirroring :func:`solve_sa` with ``objective`` (fresh full evaluation of the
+        returned schedule), ``assignments`` DataFrame, and a
         ``meta`` payload describing operator stats, iterations, and telemetry identifiers. With
         ``hybrid_use_mip`` the ``meta`` also holds ``hybrid_mip``: one record per hybrid solve with
         ``iteration``, ``seed_score`` (heuristic score of the seeded ILS best), ``outcome``,
@@ -581,17 +584,11 @@ def solve_ils(
                 rolling_scores.append(float(current_score))
                 improvement_window.append(0)
 
+        # Report a fresh full evaluation of the returned schedule (#131).
+        best, best_score, final_debug_stats = rescore_fresh(pb, best, ctx, debug_capture)
+        if debug_capture:
+            best_debug_stats = final_debug_stats
         if local_repairs:
-            if debug_capture:
-                best_score, best_debug_stats = evaluate_schedule_with_debug(
-                    pb,
-                    best,
-                    ctx,
-                    capture_debug=True,
-                    limit_repairs_to_dirty=False,
-                )
-            else:
-                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
             current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
         rows = []
