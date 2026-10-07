@@ -9,12 +9,19 @@ solvers across these datasets, captures objectives/KPIs, and stores results for 
 Quick Start
 -----------
 
+These runs are long-running (budget minutes to hours): without ``--scenario`` the suite solves every
+default scenario with the default budgets (MILP ``--time-limit 1800`` s per scenario; the time limit
+covers the solve only, and the large84 operational MILP run did not finish within 13 minutes and used
+~10 GB of memory even with ``--time-limit 5``). For a quick check, pass
+``--scenario examples/tiny7/scenario.yaml`` or ``--no-include-mip`` with small ``--sa-iters`` /
+``--ils-iters`` / ``--tabu-iters`` values.
+
 .. code-block:: bash
 
    fhops bench suite --out-dir tmp/benchmarks
    fhops bench suite --scenario examples/tiny7/scenario.yaml --scenario examples/med42/scenario.yaml --out-dir tmp/benchmarks_med
-   fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_large --time-limit 180 --include-sa False
-   fhops bench suite --scenario examples/synthetic/small/scenario.yaml --out-dir tmp/benchmarks_synth --sa-iters 200 --include-mip False
+   fhops bench suite --scenario examples/large84/scenario.yaml --out-dir tmp/benchmarks_large --time-limit 180 --no-include-sa
+   fhops bench suite --scenario examples/synthetic/small/scenario.yaml --out-dir tmp/benchmarks_synth --sa-iters 200 --no-include-mip
    fhops bench suite --include-ils --include-tabu --out-dir tmp/benchmarks_compare
 
 This command:
@@ -48,15 +55,16 @@ All heuristic entry points (``fhops solve-heur``, ``fhops solve-ils``, ``fhops s
 metrics (scenario, solver, iteration, best/current/rolling objective, runtime, restarts/workers) and
 a solver-specific detail row (SA temperature/acceptance, ILS perturbations, Tabu tenure).
 
-Example:
+Example (long-running: 200 000 SA iterations on med42 take several minutes):
 
 .. code-block:: bash
 
-   fhops solve-heur examples/med42/scenario.yaml \\
-     --iters 200000 \\
-     --cooling-rate 0.99999 \\
-     --restart-interval 500 \\
-     --watch \\
+   fhops solve-heur examples/med42/scenario.yaml \
+     --out tmp/med42_sa_watch.csv \
+     --iters 200000 \
+     --cooling-rate 0.99999 \
+     --restart-interval 500 \
+     --watch \
      --watch-refresh 0.5
 
 The dashboard refreshes only when stdout is an interactive terminal. CI runs or redirected output
@@ -81,7 +89,7 @@ FAQ – Watch Mode
 
 * **How do I capture a screenshot/GIF?**
   Run a short watch-enabled command (e.g.,
-  ``fhops solve-heur examples/tiny7/scenario.yaml --watch --iters 500``) and use a terminal
+  ``fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa.csv --watch --iters 500``) and use a terminal
   recorder such as ``asciinema`` or ``ttystudio``. The sparkline now renders below the main table so
   column widths stay stable while recording.
 
@@ -199,7 +207,8 @@ Visual Comparisons
 ------------------
 
 The helper script ``scripts/render_benchmark_plots.py`` consumes a benchmark summary and renders
-comparison charts for documentation. For example:
+comparison charts for documentation. For example (long-running: heuristics on all default
+scenarios with default budgets):
 
 .. code-block:: bash
 

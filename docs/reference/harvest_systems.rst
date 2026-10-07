@@ -541,23 +541,24 @@ Med42 / Large84 cost overlays
   ``data/blocks.csv`` whenever you want deterministic system assignments. The IDs listed earlier in this guide align
   with the CLI help surfaced by :func:`fhops.cli.dataset.inspect_machine`, so you can paste the table output directly
   into a thesis appendix.
-- Run ``fhops dataset inspect-machine examples/med42/scenario.yaml --machine loader_1 --show-costs`` to print the CPI-adjusted
+- Run ``fhops dataset inspect-machine --dataset med42 --system ground_fb_skid --machine H7 --show-costs`` to print the CPI-adjusted
   owning/operating/repair breakdown for any machine in the scenario. This command uses
   :func:`fhops.telemetry.machine_costs.build_machine_cost_snapshots`, so solver telemetry and CLI output stay in sync.
-- Need a $/m³ estimate with local utilisation? ``fhops dataset estimate-cost --dataset examples/med42 --machine loader_1
-  --utilisation 0.85`` invokes :func:`fhops.cli.dataset.estimate_cost_cmd` to blend the rental-rate components with
-  utilisation (and optional Lahrsen inputs). Add ``--road-machine cat_d8h --road-length-m 250`` to include a TR-28
-  subgrade surcharge (see the road-construction recipe below).
+- Need a $/m³ estimate with local utilisation? ``fhops dataset estimate-cost --dataset examples/med42 --machine H7
+  --utilisation 0.85 --productivity 30`` invokes :func:`fhops.cli.dataset.estimate_cost_cmd` to blend the rental-rate
+  components with utilisation (pass ``--productivity`` or the four stand metrics for the Lahrsen inputs). Add
+  ``--road-machine caterpillar_d8h_bulldozer --road-length-m 250`` to include a TR-28 subgrade surcharge (see the
+  road-construction recipe below).
 
 Partial-cut / mixed system assignments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Partial-cut profiles live in :mod:`fhops.productivity.partial_cut_profiles` and can be referenced by adding a
   ``partial_cut_profile`` column to ``data/blocks.csv``. The CLI echoes the chosen profile whenever you pass
-  ``--partial-cut-profile`` to :func:`fhops.cli.dataset.estimate_productivity_cmd`, making it easy to cite SR-109/SR-54
-  penalties in a report.
+  ``--partial-cut-profile`` to :func:`fhops.cli.dataset.estimate_skyline_productivity_cmd`, making it easy to cite
+  SR-109/SR-54 penalties in a report.
 - To reproduce the Block 5 patch-cut scenario from TR-127, call
-  ``fhops dataset estimate-productivity --machine-role grapple_yarder --model tr127-block5 --partial-cut-profile sr109_green``.
+  ``fhops dataset estimate-skyline-productivity --model tr127-block5 --slope-distance-m 300 --lateral-distance-m 15 --num-logs 3 --partial-cut-profile sr109_patch_cut``.
   The helper prints the calibration warnings, dual lateral distances, and CPI-adjusted cost references described earlier.
 - Micro-yarders from TN173 follow the same pattern: set ``harvest_system_id=cable_micro_ecologger`` (or the other
   micro presets) in your dataset and the CLI auto-selects the matching preset when running ``fhops dataset estimate-productivity``.
@@ -565,14 +566,14 @@ Partial-cut / mixed system assignments
 Road construction add-ons
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- ``fhops dataset tr28-subgrade`` lists the Caterpillar/Poclain/American machines digitised from TR-28. Use
-  ``fhops dataset tr28-subgrade --detail`` to view cycle times, unit costs, and soil profile IDs before wiring them
-  into a scenario.
+- ``fhops dataset tr28-subgrade`` lists the Caterpillar/Poclain/American machines digitised from TR-28 (unit costs,
+  stations per shift, hourly rates, movement costs). Use ``--role``, ``--sort-by`` and ``--limit`` to filter the table
+  (e.g. ``fhops dataset tr28-subgrade --sort-by unit_cost --limit 3``) before wiring a machine into a scenario.
 - ``fhops dataset estimate-cost`` supports TR-28 surcharges through ``--road-machine`` / ``--road-length-m`` and the optional
   ``--road-soil-profile`` flags. The command calls :func:`fhops.cli.dataset.estimate_cost_cmd`, which dispatches to
   :func:`fhops.cli.dataset.estimate_tr28_road_cost` and prints the ADV4N7 compaction warnings so the full cost per cubic metre
   stays transparent.
-- Scenarios can embed a ``road_construction`` table (see ``tests/fixtures/regression/road_construction.yaml``). When you pair
+- Scenarios can embed a ``road_construction`` table (see ``examples/synthetic/small/data/road_construction.csv``). When you pair
   ``--dataset``/``--machine`` with ``fhops dataset estimate-cost``, the CLI automatically loads the matching road entry, applies
   the correct machine slug, and surfaces the CPI-adjusted totals—ideal for med42/large84 experiments where you want to toggle
   spur-road budgets without editing the CLI command each time.

@@ -29,14 +29,16 @@ pytestmark = pytest.mark.filterwarnings(
 REGRESSION = "tests/fixtures/regression/regression.yaml"
 TINY7 = "examples/tiny7/scenario.yaml"
 HIGHS_DRIVERS = ["auto", "highs-appsi", "highs-exec"]
-# Assignments returned by FHOPS 1.0.0 and by b73376d (before #124) for the regression fixture.
+# Assignments returned by FHOPS 1.0.0 for the regression fixture with its ``ground_sequence``
+# system registered in the YAML (#129; before, the system was unregistered and 1.0.0/b73376d
+# returned F1-B1-d1, F1-B2-d4, P1-B2-d4 with production 4/0/4).
 REGRESSION_ASSIGNMENTS = {
-    "machine_id": ["F1", "F1", "P1"],
-    "block_id": ["B1", "B2", "B2"],
-    "day": [1, 4, 4],
-    "shift_id": ["S1", "S1", "S1"],
-    "assigned": [1, 1, 1],
-    "production": [4.0, 0.0, 4.0],
+    "machine_id": ["F1", "F1", "P1", "F1", "P1", "F1", "P1"],
+    "block_id": ["B1", "B1", "B1", "B1", "B1", "B2", "B2"],
+    "day": [1, 2, 2, 3, 3, 4, 4],
+    "shift_id": ["S1"] * 7,
+    "assigned": [1] * 7,
+    "production": [4.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0],
 }
 
 

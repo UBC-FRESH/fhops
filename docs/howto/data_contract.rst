@@ -75,7 +75,11 @@ Cross References & Validators
 
 The Pydantic models enforce consistency:
 
-- Blocks reference known landings; harvest-system IDs must exist (see :doc:`../reference/harvest_systems` for defaults).
+- Blocks reference known landings. A block's ``harvest_system_id`` must be a key of the scenario's
+  ``harvest_systems`` section or of the default registry
+  (:func:`fhops.scheduling.systems.default_system_registry`; see :doc:`../reference/harvest_systems`);
+  scenario systems are overlaid on the defaults, so a scenario that defines its own systems can still
+  use default ones. Enforced since 1.0.1 (FHOPS 1.0.0 never ran this check, see below).
 - Calendar and production rates must reference defined machines/blocks and lie within the
   scenario horizon.
 - Mobilisation distances must reference known blocks; mobilisation parameters must reference
@@ -219,9 +223,8 @@ machines and blocks, fall within ``1..num_days`` and within the block's
 ``[earliest_start, latest_finish]`` window (``latest_finish`` defaults to ``num_days``), and avoid
 timeline blackout days. On a block with ``harvest_system_id`` the locked machine must have a role
 of that harvest system (a machine without a role is rejected too, because the operational MILP
-cannot assign it to such a block); blocks without ``harvest_system_id`` accept any machine, and
-blocks whose system is not found in ``harvest_systems`` or the default registry skip the role
-check. ``load_scenario`` applies exactly the same checks to YAML ``locked_assignments`` as to locks
+cannot assign it to such a block); blocks without ``harvest_system_id`` accept any machine.
+``load_scenario`` applies exactly the same checks to YAML ``locked_assignments`` as to locks
 passed to :class:`fhops.scenario.contract.Scenario` in Python (FHOPS 1.0.0 skipped them for YAML
 input).
 
@@ -332,10 +335,20 @@ not interchangeable in both directions:
   * crew assignments or mobilisation ``machine_params`` that reference unknown machines, and
     duplicate crew ids;
   * invalid ``initial_state`` entries (unknown ids, roles outside the block's harvest system,
-    ``role_remaining`` above ``work_required``).
+    ``role_remaining`` above ``work_required``);
+  * blocks whose ``harvest_system_id`` is neither in the scenario's ``harvest_systems`` nor in the
+    default registry (also rejected in Python). FHOPS 1.0.0 had this check, but it never ran
+    (Pydantic validated ``blocks`` before ``harvest_systems`` was available), so such blocks loaded
+    and the solvers treated them inconsistently: the operational MILP gave the unknown system no
+    roles and could not harvest the block, while the heuristics and playback did not sequence it.
+    Register the system under ``harvest_systems`` (inline mapping or a ``data.harvest_systems``
+    YAML file) or use a registry id.
 
   The 1.0.1 release was checked against every scenario in this repository and the companion BC case
-  study scenarios: all load to the same validated ``Scenario`` as under 1.0.0.
+  study scenarios: all load to the same validated ``Scenario`` as under 1.0.0, except the repository's
+  own regression fixture (``tests/fixtures/regression/regression.yaml``), whose custom
+  ``ground_sequence`` system (feller → processor) was never registered; it is now defined in the
+  fixture's ``harvest_systems`` section.
 
 GeoJSON Ingestion & Distances
 -----------------------------
@@ -355,7 +368,7 @@ To generate mobilisation distances from geometries, run:
 
 .. code-block:: bash
 
-   fhops geo distances --blocks blocks.geojson --out mobilisation_distances.csv
+   fhops geo distances blocks.geojson --out mobilisation_distances.csv
 
 The command computes centroid-to-centroid distances (in metres) respecting the CRS. The
 resulting CSV aligns with the ``MobilisationConfig`` distance format and can be referenced

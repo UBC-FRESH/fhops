@@ -370,27 +370,29 @@ def test_milp_hook_forwards_driver_solver_error_and_warnings(
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
 def test_milp_hook_forwards_real_highs_lock_warning() -> None:
-    """A real driver warning that scenario validation (#118) still allows.
+    """A real driver warning that scenario validation still allows.
 
-    A block whose ``harvest_system_id`` is not in the registry (no custom ``harvest_systems``)
-    passes validation, and the role check on its locks is skipped; the operational MILP knows no
-    roles for that system and pins the lock to ``x = 0`` with a warning.
+    A day lock on a day without any slot in the shift grid (the only ``shift_calendar`` entry of
+    that day is unavailable) passes validation; the operational MILP ignores it with a warning.
+    (Until #129 this test used a block with an unregistered ``harvest_system_id``, which scenario
+    validation now rejects.)
     """
 
     scenario = Scenario(
-        name="unknown-system-lock",
+        name="no-slot-lock",
         num_days=4,
-        blocks=[Block(id="B1", landing_id="L1", work_required=200.0, harvest_system_id="mystery")],
+        blocks=[Block(id="B1", landing_id="L1", work_required=200.0)],
         machines=[Machine(id="F1", role="feller_buncher")],
         landings=[Landing(id="L1", daily_capacity=2)],
         calendar=[CalendarEntry(machine_id="F1", day=day, available=1) for day in range(1, 5)],
+        shift_calendar=[
+            ShiftCalendarEntry(machine_id="F1", day=day, shift_id="S1", available=int(day != 1))
+            for day in range(1, 5)
+        ],
         production_rates=[ProductionRate(machine_id="F1", block_id="B1", rate=100.0)],
         locked_assignments=[ScheduleLock(machine_id="F1", block_id="B1", day=1)],
     )
-    expected = (
-        "lock (F1, B1, day 1, shift *) pinned to x=0: machine role 'feller_buncher' is not part "
-        "of the block's harvest system 'mystery'"
-    )
+    expected = "lock (F1, B1, day 1, shift *) ignored: no matching slot in the shift grid"
     plan = RollingIterationPlan(iteration_index=0, start_day=1, horizon_days=4, lock_days=2)
     output = MILPSolver(solver="highs", time_limit=30)(scenario, plan, locked_assignments=[])
     assert output.has_solution is True
