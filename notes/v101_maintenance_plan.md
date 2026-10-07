@@ -1622,8 +1622,10 @@ Branch `issue-139-milp-objective-semantics`; scratch `/tmp/opencode/wt139/` (`fu
    violation, and that seeding the plan back gives a feasible point with the same objective. Random
    mobilisation parameters/distances on top of the audit's `fuzz2.random_scenario` (forks, joins,
    loaders, head starts, 1–3 shifts, initial state, locks, blackouts, hard/soft landings). 400/400
-   pass (seeds 1000–1399; three reached the 120 s limit and were checked on their incumbent, two
-   re-solved to optimality within 900 s); on the base commit 17/40 fail (both directions).
+   pass (seeds 1000–1399; three reached the 120 s limit and were checked on their incumbent; with
+   900 s, 1236 and 1395 are optimal, 1079 stays at a 0.6 % gap: incumbent 57.155, bound 57.501,
+   ω_trans = 0.1 — fractional assignments avoid small transition costs in the LP), and 100/100 on
+   seeds 2000–2099 with the final commit; on the base commit 17/40 fail (both directions).
 4. **Numbers.** See CHANGE_LOG. tiny7 279.796036 unchanged (brute force with heuristic semantics
    gives the same optimum; the MILP plan has one H3 move); tiny7 without binding landings
    4361.462752 (was 4388.082752 = one uncharged idle-gap move). small21/med42 sizes drop 3–6× in
