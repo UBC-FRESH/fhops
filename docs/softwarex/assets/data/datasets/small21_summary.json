@@ -1,7 +1,7 @@
 {
   "slug": "small21",
   "label": "FHOPS Small21 (examples/small21)",
-  "scenario_path": "/home/gep/projects/fhops-wt-131b/examples/small21/scenario.yaml",
+  "scenario_path": "examples/small21/scenario.yaml",
   "name": "FHOPS Small21",
   "num_days": 21,
   "start_date": "2025-01-01",
@@ -12,7 +12,7 @@
   },
   "tables": {
     "blocks": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/small21/data/blocks.csv",
+      "path": "examples/small21/data/blocks.csv",
       "row_count": 6,
       "columns": [
         "id",
@@ -30,7 +30,7 @@
       ]
     },
     "machines": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/small21/data/machines.csv",
+      "path": "examples/small21/data/machines.csv",
       "row_count": 9,
       "columns": [
         "id",
@@ -41,7 +41,7 @@
       ]
     },
     "landings": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/small21/data/landings.csv",
+      "path": "examples/small21/data/landings.csv",
       "row_count": 6,
       "columns": [
         "id",
@@ -49,7 +49,7 @@
       ]
     },
     "calendar": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/small21/data/calendar.csv",
+      "path": "examples/small21/data/calendar.csv",
       "row_count": 189,
       "columns": [
         "machine_id",
@@ -58,7 +58,7 @@
       ]
     },
     "prod_rates": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/small21/data/prod_rates.csv",
+      "path": "examples/small21/data/prod_rates.csv",
       "row_count": 54,
       "columns": [
         "machine_id",

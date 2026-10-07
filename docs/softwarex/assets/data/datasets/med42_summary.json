@@ -1,7 +1,7 @@
 {
   "slug": "med42",
   "label": "FHOPS Med42 (examples/med42)",
-  "scenario_path": "/home/gep/projects/fhops-wt-131b/examples/med42/scenario.yaml",
+  "scenario_path": "examples/med42/scenario.yaml",
   "name": "FHOPS Medium42",
   "num_days": 42,
   "start_date": "2025-01-01",
@@ -12,7 +12,7 @@
   },
   "tables": {
     "blocks": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/med42/data/blocks.csv",
+      "path": "examples/med42/data/blocks.csv",
       "row_count": 12,
       "columns": [
         "id",
@@ -30,7 +30,7 @@
       ]
     },
     "machines": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/med42/data/machines.csv",
+      "path": "examples/med42/data/machines.csv",
       "row_count": 9,
       "columns": [
         "id",
@@ -41,7 +41,7 @@
       ]
     },
     "landings": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/med42/data/landings.csv",
+      "path": "examples/med42/data/landings.csv",
       "row_count": 12,
       "columns": [
         "id",
@@ -49,7 +49,7 @@
       ]
     },
     "calendar": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/med42/data/calendar.csv",
+      "path": "examples/med42/data/calendar.csv",
       "row_count": 378,
       "columns": [
         "machine_id",
@@ -58,7 +58,7 @@
       ]
     },
     "prod_rates": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/med42/data/prod_rates.csv",
+      "path": "examples/med42/data/prod_rates.csv",
       "row_count": 108,
       "columns": [
         "machine_id",

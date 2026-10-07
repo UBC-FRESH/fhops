@@ -10,6 +10,8 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from relativize_asset_paths import relativize_text, repo_relative
+
 MACHINES = ["H1", "H2", "H3", "H4"]
 
 
@@ -44,7 +46,7 @@ def run_estimate(
         "dataset",
         "estimate-cost",
         "--dataset",
-        str(scenario_path),
+        repo_relative(scenario_path, repo_root),
         "--machine",
         machine_id,
         "--telemetry-log",
@@ -155,6 +157,11 @@ def main() -> int:
     for machine_id in MACHINES:
         print(f"[costing] {machine_id}")
         run_estimate(repo_root, scenario_path, machine_id, telemetry, metrics)
+    # `dataset estimate-cost` records the resolved (absolute) scenario path; keep the committed
+    # telemetry checkout-independent (#144).
+    telemetry.write_text(
+        relativize_text(telemetry.read_text(encoding="utf-8"), [str(repo_root)]), encoding="utf-8"
+    )
     entries = load_telemetry(telemetry)
     summarize(entries, out_dir / "cost_summary.csv")
     return 0

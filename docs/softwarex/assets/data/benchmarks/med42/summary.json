@@ -1,7 +1,7 @@
 [
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/med42\/scenario.yaml",
+    "scenario_path":"examples\/med42\/scenario.yaml",
     "solver":"sa",
     "objective":-28662.39978,
     "runtime_s":1182.6793082561,
@@ -56,7 +56,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/med42\/scenario.yaml",
+    "scenario_path":"examples\/med42\/scenario.yaml",
     "solver":"sa",
     "objective":-33965.984494,
     "runtime_s":391.1774839712,
@@ -111,7 +111,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/med42\/scenario.yaml",
+    "scenario_path":"examples\/med42\/scenario.yaml",
     "solver":"sa",
     "objective":-29188.830912,
     "runtime_s":1178.2381075099,
@@ -166,7 +166,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/med42\/scenario.yaml",
+    "scenario_path":"examples\/med42\/scenario.yaml",
     "solver":"ils",
     "objective":-33253.40989,
     "runtime_s":1253.1943961522,
@@ -221,7 +221,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/med42\/scenario.yaml",
+    "scenario_path":"examples\/med42\/scenario.yaml",
     "solver":"tabu",
     "objective":-41009.666394,
     "runtime_s":7109.4196094936,

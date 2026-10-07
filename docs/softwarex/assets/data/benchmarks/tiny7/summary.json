@@ -1,7 +1,7 @@
 [
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/tiny7\/scenario.yaml",
+    "scenario_path":"examples\/tiny7\/scenario.yaml",
     "solver":"sa",
     "objective":4295.774752,
     "runtime_s":33.0737016071,
@@ -56,7 +56,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/tiny7\/scenario.yaml",
+    "scenario_path":"examples\/tiny7\/scenario.yaml",
     "solver":"sa",
     "objective":4295.774752,
     "runtime_s":15.2645056117,
@@ -111,7 +111,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/tiny7\/scenario.yaml",
+    "scenario_path":"examples\/tiny7\/scenario.yaml",
     "solver":"sa",
     "objective":4295.774752,
     "runtime_s":33.2035023225,
@@ -166,7 +166,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/tiny7\/scenario.yaml",
+    "scenario_path":"examples\/tiny7\/scenario.yaml",
     "solver":"ils",
     "objective":4338.516752,
     "runtime_s":35.0621211883,
@@ -221,7 +221,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/examples\/tiny7\/scenario.yaml",
+    "scenario_path":"examples\/tiny7\/scenario.yaml",
     "solver":"tabu",
     "objective":4338.516752,
     "runtime_s":309.4431829453,

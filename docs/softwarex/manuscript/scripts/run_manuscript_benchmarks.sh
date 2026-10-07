@@ -23,20 +23,17 @@ echo "[benchmarks] Beginning asset regeneration (fast=${fast_mode}) at ${start_i
 end_epoch="$(date +%s)"
 duration=$((end_epoch - start_epoch))
 
-assets_hash="$(
-  cd "${repo_root}"
-  find docs/softwarex/assets -type f -print0 \
-    | sort -z \
-    | xargs -0 sha256sum \
-    | sha256sum \
-    | awk '{print $1}'
-)"
+# Hash recipe v2 (#144): SHA-256 over the sha256sum lines (LC_ALL=C path order) of the files under
+# docs/softwarex/assets that git would commit (tracked + untracked-not-ignored), excluding this log.
+# See asset_hash.py and the manuscript README; `asset_hash.py verify` checks the last entry.
+assets_hash="$(python "${script_dir}/asset_hash.py" --repo-root "${repo_root}" compute)"
 
 {
   echo "run_started: ${start_iso}"
   echo "commit: ${commit_hash}"
   echo "fast_mode: ${fast_mode}"
   echo "duration_s: ${duration}"
+  echo "hash_recipe: v2"
   echo "assets_hash: ${assets_hash}"
   if [[ -n "${FHOPS_ASSETS_NOTE:-}" ]]; then
     echo "note: ${FHOPS_ASSETS_NOTE}"

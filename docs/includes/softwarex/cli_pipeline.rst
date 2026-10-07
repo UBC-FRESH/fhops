@@ -15,8 +15,9 @@ pipeline so readers can replay each stage without bespoke tooling:
    heuristics (``--include-ils``, ``--include-tabu``) and iteration
    budgets.
 3. **Run the tuning harness.** Launch
-   ``python docs/softwarex/manuscript/scripts/run_tuning_benchmarks.py``
-   (wrapped by ``scripts/generate_assets.sh``) to produce
+   ``python docs/softwarex/manuscript/scripts/run_tuner.py`` (which
+   calls ``scripts/run_tuning_benchmarks.py``; wrapped by
+   ``docs/softwarex/manuscript/scripts/generate_assets.sh``) to produce
    leaderboard/comparison tables in
    ``docs/softwarex/assets/data/tuning/``.
 4. **Replay schedules.** Call ``fhops eval-playback`` on the best SA/ILS
@@ -31,8 +32,10 @@ pipeline so readers can replay each stage without bespoke tooling:
    to regenerate runtime-vs-size CSV/JSON + plots under
    ``docs/softwarex/assets/data/scaling/``.
 
-Each command appends its parameters, commit hash, runtime, and SHA-256
-digests to ``docs/softwarex/assets/benchmark_runs.log`` (when run
-through ``make manuscript-benchmarks`` or
-``scripts/generate_assets.sh``), providing a single provenance log for
-all artefacts.
+``docs/softwarex/manuscript/scripts/generate_assets.sh`` runs all six
+steps with the published budgets and writes repository-relative paths
+into the assets. Run through ``make manuscript-benchmarks``
+(``run_manuscript_benchmarks.sh``), it appends the commit, asset mode,
+runtime, and an SHA-256 hash of the committed asset files to
+``docs/softwarex/assets/benchmark_runs.log``, a single provenance log
+for all artefacts; ``make verify-assets-hash`` recomputes the hash.

@@ -1,1 +1,1 @@
-/home/gep/projects/fhops-wt-131b/examples/small21/scenario.yaml
+examples/small21/scenario.yaml

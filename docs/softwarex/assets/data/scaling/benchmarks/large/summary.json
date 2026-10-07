@@ -1,7 +1,7 @@
 [
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/docs\/softwarex\/assets\/data\/scaling\/datasets\/synthetic_large\/scenario.yaml",
+    "scenario_path":"docs\/softwarex\/assets\/data\/scaling\/datasets\/synthetic_large\/scenario.yaml",
     "solver":"sa",
     "objective":-24224.711,
     "runtime_s":109.02774298,

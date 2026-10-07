@@ -1,1 +1,1 @@
-/home/gep/projects/fhops-wt-131b/docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml
+docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml

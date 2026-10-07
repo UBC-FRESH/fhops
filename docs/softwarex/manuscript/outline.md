@@ -1,5 +1,8 @@
 # SoftwareX Manuscript Outline (Draft 0)
 
+> **Superseded (#144):** historical planning outline for the in-repo draft. The canonical manuscript
+> is UBC-FRESH/fhops-manuscript; see `README.md`.
+
 This mirrors the canonical SoftwareX structure. Each section lists:
 1. **Purpose** – why the section exists per author instructions.
 2. **FHOPS source material** – where we will pull content from (code, docs, benchmarks, etc.).
