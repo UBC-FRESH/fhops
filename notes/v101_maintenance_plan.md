@@ -1878,6 +1878,70 @@ synthetic_small/scaling rows (13 checks) because #139/#140 changed the evaluatio
 the asset regeneration on the final code resolves this. With the 0463fd5 `src` the audit passes
 (0 failing) on the normalised assets.
 
+### 8.26 Rolling-horizon MILP deferral; `plan rolling` exit codes and flags (#141, audit 1 round 2)
+Second pre-release audit of 0463fd5 (evidence `/tmp/opencode/audit2-1-scratch/`). Branch
+`issue-141-rolling-deferral-cli` from 3d0b852 (includes #139/#143). Scratch `/tmp/opencode/wt141/`
+(`jaf_roll.py`, `defer_cmp.py`, `logs/`, base copy `base/src`).
+
+1. **Deferral (MAJOR 1).** The window objective (production − leftover − landing surplus − moves)
+   does not depend on when work happens, so any shift of production inside the window ties. HiGHS
+   often returned plans with the work at the window end and the lock span idle. On 3d0b852 the
+   machine often stayed *assigned* (`x = 1`, `production = 0`), so the #117 `empty` flag (no locks)
+   missed it: ka_6 112/14/7 locked 557 assignments and worked until day 112 with 59 idle days,
+   0 flagged.
+   *Design.* Lexicographic second stage in the driver: maximise
+   `E = Σ_s w_s Σ_{m,b} p[m,b,s]`, `w_s = (|S| − k_s)/|S|`, subject to every constraint plus
+   `OBJ ≥ z1 − τ`, `τ = 10⁻⁶·max(1, |z1|)`, warm-started from the stage-1 solution (feasible), so
+   the returned plan always satisfies the floor. If stage 2 fails or ends below the floor, the
+   stage-1 plan is kept.
+   *Why not `OBJ + ε·E`.* Production is continuous and data are arbitrary reals, so there is no
+   data-independent lower bound on the smallest positive OBJ difference between plans.
+   Counterexample (`test_earliness_never_trades_the_base_objective`): block A is open only on
+   day 1 (rate 100, W 100), block B only on day 2 (rate 100 + δ, W 100 + δ), and a move costs 1000.
+   OBJ: A only −δ, B only +δ. E: A only 100, B only 50 + δ/2. So `OBJ + εE` picks A whenever
+   δ < 25ε, for every ε > 0. Bounding ε by data precision would be fragile, and an ε that is safe
+   in practice (`εE ≪ 10⁻⁴|z1|`) is below HiGHS's relative gap, so the solver would stop before
+   acting on it.
+   *Defaults.* On in `MILPSolver` (rolling), skipped when `lock_days ≥ horizon_days` (final window,
+   sub == lock, single-window baselines stay direct solves). Off in standalone
+   `solve-mip-operational`/`solve_operational_milp`: their optimum is unchanged either way, and
+   default-off keeps their solve time and plans (assets, benchmarks) unchanged; `--earliness`
+   opts in. Stage-2 time limit `earliness_time_limit` (default = `time_limit`; worst case 2× per
+   window).
+   *Also:* the iteration summary gains `locked_production`, and `empty` now flags a lock span
+   that produces nothing (idle locks included).
+2. **Evidence** (HiGHS 120 s, threads 1; `jaf_roll.py` reports last worked day, idle days ≤ that
+   day, empty windows):
+
+   | run | 3d0b852 | new, earliness off | new (default) |
+   |---|---|---|---|
+   | defer.py 10/6/1 (10 s) | days 8–10, 0 flagged | days 8–10, empty 0–6 | days 1–3, 0 empty |
+   | ka_6 MILP 112/14/7 | day 112, 59 idle, 0 flagged, 304 s | identical plan, empty 8–14 | day 27, 0 idle, 0 empty, 623 s (30 s stage 2: day 27, 354 s) |
+   | ka_6 MILP 112/7/1 | day 38, 0 idle, 0 empty, 1542 s | – | day 27, 0 idle, 0 empty, 2628 s |
+   | ka_6 SA 112/{14/7, 7/1, 28/14} | day 28/27/29, 0 idle | – | identical plans |
+
+   All runs deliver 30913.36 m³ with 0 violations. 112/14/7 stage 2 reached its time limit in
+   windows 0–2 (E 35542 → 45403 in window 1) and was optimal elsewhere. The audit's 75 empty
+   windows for 112/7/1 were measured with 30 s windows on 0463fd5; at 120 s on 3d0b852 that run
+   did not defer. SA has no deferral tendency (construction fills the earliest slots), so #140
+   needs no change. Jaffray smoke (`--smoke`, 30 s): 10/10 ok, 0 empty, 0 no-solution windows
+   (0463fd5: MILP runs had 1–3 empty windows each). The sub28 MILP runs deliver 21667/28791 m³ of
+   30380 (time-limited 28-day windows), and the 28/28/28 MILP baseline delivers 309.94 m³ (one
+   time-limited window, no stage 2; 0 on 0463fd5).
+3. **Exceptions (MINOR 3).** `MILPSolver.__call__` has no `try`: the driver reports solver
+   failures (`outcome="error"`), which become `no_solution` windows with `SolverOutput.error` /
+   `RollingIterationSummary.error`. Anything else is a defect or invalid data and propagates
+   (with `partial_result`). CLI: exit 1 when every window passed to the solver lacks a solution;
+   `--mip-solver` availability is checked up front (`MILPSolver.available()`, exit 2).
+4. **Flags (MINOR 4).** `fail_on_empty_window` stops at no-solution **and** solved-empty windows
+   (skipped windows never stop). New `fail_on_no_solution` keeps the #117 meaning. No published API
+   exists yet, so renaming in place is acceptable; both are recorded in metadata.
+5. **Usage errors (MINOR 6).** `RollingHorizonConfig` `ValueError` → `typer.BadParameter`
+   (exit 2). `--max-iterations` `min=1`, and `run_rolling_horizon` rejects `< 1`. The CLI has no
+   `--start-day`; library `start_day` is validated by the config (≥ 1, within `num_days`).
+6. Noted, not changed: windows may lock assigned-but-idle slots (`x = 1`, production 0; free in
+   the objective) after the work is done, e.g. `defer.py` day 10. Harmless for KPIs/replay.
+
 ## Verification cadence (each child)
 
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
