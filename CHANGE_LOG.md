@@ -1,3 +1,61 @@
+# 2026-10-07 — Phase 8.6: final 1.0.1 release notes and GitHub release text (#96, part of #90)
+- `docs/releases/v1.0.1.md` rewritten from scratch against `git diff v1.0.0 a0b2799` (frozen code):
+  - Structure: Summary, Installation, Upgrade checklist, Changes by area, Deprecations, Known
+    limitations, Verification.
+  - The upgrade checklist covers validation, a re-run table by study type, file compatibility,
+    output parsers and pinning.
+  - Changes by area: contract/validation, operational MILP, heuristics, rolling horizon,
+    playback/KPIs, warm start/solvers, CLI, data corrections, dependencies/packaging,
+    docs/assets.
+  - Every comparison is with v1.0.0; the comparisons with 1.0.1 pre-releases/"candidate" were
+    removed.
+- New `docs/releases/v1.0.1-github-release.md` (GitHub release body, 57 lines).
+- Corrections to the previous notes (second-audit findings; evidence `/tmp/opencode/audit2-{1,2,4}-scratch/`):
+  - Added the missing #115 (MILP no-raise/joins/locks/loader tail) and #117 (rolling
+    no-solution/skipped windows, partial outputs) content.
+  - "Productivity and cost models unchanged" was false: SR-109 green-tree `cost_multiplier`
+    changed 1.10 → 1.09 (#136).
+  - The `solve-mip` output line was not kept vs v1.0.0 (v1.0.0: `Objective: … Saved to …`).
+  - The "reference ladder byte-identical" claims were stale after #131/#140.
+  - Dependency floors, `click` removal and `config/` removal moved to "Dependencies and
+    packaging".
+  - Newly documented:
+    - the `ScheduleLock.production` field;
+    - the rolling CSV `shift_id` column insertion and sort order;
+    - the rolling JSON/iteration/metadata keys;
+    - `Scenario.shift_labels()`;
+    - that 1.1.0a1 lacks every fix (and that `pip install --pre` picks it);
+    - that `fhops plan rolling --solver mip` with the default `--mip-solver auto` failed in
+      v1.0.0;
+    - the `solve-mip-operational` result line;
+    - weight-override transparency;
+    - Gurobi `auto` fallback (#139).
+  - Validation statements made accurate. v1.0.0 `load_scenario` skipped the cross-checks, but
+    the checks v1.0.0 already had (unknown lock ids, horizon, duplicates, blackouts, crew,
+    mobilisation, superset distance CSVs) still ran when a command built a `Problem`. In v1.0.0
+    only `plan rolling` and direct Python use skipped them. The new checks are listed
+    separately.
+- Verified (scratch `/tmp/opencode/w96b/`):
+  - public API diff (`api.py`/`api2.py` on `git archive v1.0.0` vs this tree);
+  - CLI option diff (`cliopts.py`);
+  - v1.0.0 vs 1.0.1 validation stage (`stage.py`, `stage2.py`);
+  - v1.0.0 YAML locks with `shift_id`/`production`;
+  - v1.0.0 `solve-mip` tiny7 (traceback, exit 1) vs 1.0.1 (`MIP outcome=optimal … objective=279.796`,
+    exit 0);
+  - v1.0.0 `solve_rolling_plan(solver="mip")` with `auto` (UnknownSolver);
+  - v1.0.0 vs 1.0.1 operational MILP sizes (`sizes.py`);
+  - `git merge-base --is-ancestor` for 1.1.0a1.
+- Open: `docs/howto/data_contract.rst` "Compatibility with FHOPS 1.0.0" still implies that v1.0.0
+  accepted every listed input. This is true for `load_scenario` only; it is not edited here (out
+  of scope).
+- Commands executed (worktree `fhops-wt-96b`, venv `/tmp/opencode/fhops-v101-venv`, `PYTHONPATH=src`):
+  - `git diff v1.0.0 a0b2799 -- <src areas>`; `git archive v1.0.0 src data | tar -x -C /tmp/opencode/w96b/v100`
+  - `PYTHONPATH={/tmp/opencode/w96b/v100/src,src} python /tmp/opencode/w96b/{api.py,api2.py,cliopts.py,stage.py,stage2.py,sizes.py}`
+  - `python -m fhops.cli.main solve-mip|solve-mip-operational examples/tiny7/scenario.yaml --out … --time-limit 120` (both trees)
+  - `pytest -o addopts="" -q -n 8` (786 passed, 213 skipped) and the targeted suites (201 passed, 1 skipped)
+  - `PATH=/tmp/opencode/pandoc-bin:$PATH pandoc -f gfm docs/releases/v1.0.1*.md` (Markdown sanity; release notes are not part of the Sphinx build)
+  - `pre-commit run --files docs/releases/v1.0.1.md docs/releases/v1.0.1-github-release.md CHANGE_LOG.md`
+
 # 2026-10-07 — Phase 8.27: SoftwareX asset provenance hygiene, in-repo manuscript draft, packaging stray files (#144, part of #90)
 - CI (`.github/workflows/ci.yml`): the workflow-level `concurrency: group: "pages"` with `cancel-in-progress: true` made any push cancel every in-progress CI run on other branches (e.g. PR #145's run was cancelled by #146's push). Concurrency is now per ref (`ci-<workflow>-<PR number or ref>`); only the `deploy-history` Pages job keeps a `pages` group, without cancellation.
 - From the second pre-release audit (audits 3/4; evidence `/tmp/opencode/audit2-{3,4}-scratch/`). No benchmark result regenerated: pipeline, scripts and docs fixed so the final regeneration produces verifiable assets. Details: `notes/v101_maintenance_plan.md` §8.27.
