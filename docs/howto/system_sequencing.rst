@@ -60,14 +60,30 @@ MILP's terminal production:
   machines of the same role in one slot draw from it in turn. The MILP keeps one staged inventory
   per upstream role (formulation E7, 1.0.1 audit #115); before, it pooled the upstream outputs of
   a join.
+* **Forks split, joins require every upstream role.** All roles fed by the same upstream role (a
+  *fork*) draw from that role's single staged pool: a cubic metre the feller has staged is
+  consumed by *either* downstream role, never by both, so the downstream roles of a fork process
+  disjoint shares of the wood. A role with several upstream roles (a *join*) consumes each unit
+  of its output from the pool of **every** upstream role, so it needs the wood to have passed
+  through all of them. Consequently a fork that joins again (a *diamond*, e.g. ``felling →
+  {skidding, processing} → loading``) can deliver at most half of the volume its head role
+  outputs: skidding and processing split the felled wood, and loading needs the same volume from
+  both. With ``role_remaining`` capped at ``work_required`` and no carried-in staged volume, a
+  diamond block can never be completed (at most ``work_required / 2`` is delivered; the rest is
+  leftover). Model parallel
+  operations on the same wood as a linear chain, or split the block into one block per branch.
 * **No role handles more wood than the block holds.** Each role's cumulative output on a block is
   capped by ``min(role_remaining, work_required)`` (``role_remaining`` from ``initial_state``,
   ``work_required`` by default), and no assignment outputs more than the block still has to
   deliver.
 * **Head starts are staged volume.** ``role_headstart_shifts`` = ``β`` means the downstream role may
-  work only when at least ``β × Σ`` (upstream machines' rates on the block, m³/shift) is staged at
-  the start of the slot by every upstream role. When no upstream machine has a positive rate on
-  the block, the role's own fleet rate is used. The buffer is waived once every upstream role has
+  work only when at least ``B = β × Σ`` (upstream machines' rates on the block, m³/shift) is staged
+  at the start of the slot by every upstream role. When no upstream machine has a positive rate on
+  the block, the role's own fleet rate is used. For a join, ``Σ`` sums the rates of the machines of
+  **all** upstream roles, while **each** upstream role must have the whole ``B`` staged: with
+  upstream rates of 10 and 30 m³/shift and ``β = 1``, each upstream role must stage 40 m³, which
+  takes the slower role four shifts. The MILP, the heuristics and playback apply this same rule
+  (one ``B`` per role and block, :func:`fhops.model.milp.data.headstart_buffer_volumes`). The buffer is waived once every upstream role has
   output its whole carried-in remaining volume before the slot (the pipeline is draining); an
   upstream role finishing the block in the same slot does not waive it (MILP ``upstream_done`` uses
   output up to the previous slot; heuristics and playback since 1.0.1, #116). Shift counts
@@ -131,8 +147,9 @@ MIP
    fhops solve-mip-operational examples/tiny7/scenario.yaml --out tmp/tiny7_mip.csv --time-limit 60
 
 (``fhops solve-mip`` is a deprecated alias of this command since FHOPS 1.0.1. On med42 the MILP
-needs long time limits or Gurobi; with HiGHS and a 600 s limit it typically stops at an incumbent
-that assigns no machines.) If sequencing conflicts exist (e.g., machine roles missing), blocks stay unassigned. The
+needs long time limits or Gurobi to prove optimality; with HiGHS and a 600 s limit it stops at a
+feasible incumbent — on a 72-core host 216 assignments, objective 26936.19, since the smaller move
+model of 1.0.1 (#139); before, it typically stopped at an incumbent that assigned no machines.) If sequencing conflicts exist (e.g., machine roles missing), blocks stay unassigned. The
 operational MILP (``fhops solve-mip-operational``) reports an ``outcome`` (``optimal``,
 ``feasible``, ``infeasible``, ``no_solution``, ``error``) and never raises for infeasible models or
 time limits without an incumbent; see :doc:`mip_warm_starts` for the result fields.

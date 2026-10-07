@@ -388,3 +388,25 @@ def test_ils_hybrid_without_solution_keeps_the_ils_schedule(tiny7, monkeypatch) 
     records = hybrid["meta"]["hybrid_mip"]
     assert records and all(r["outcome"] == "infeasible" and not r["adopted"] for r in records)
     assert all(r["hybrid_score"] is None for r in records)
+
+
+def test_cli_build_mip_builds_the_operational_milp_with_a_notice() -> None:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", LegacyMipDeprecationWarning)
+        result = CliRunner().invoke(app, ["build-mip", TINY7])
+    text = cli_text(result)
+    assert result.exit_code == 0, text
+    assert text.count("Deprecated:") == 1
+    assert "builds the operational MILP" in text
+    model = build_operational_model(
+        build_operational_problem(Problem.from_scenario(load_scenario(TINY7))).bundle
+    )
+    constraints = sum(1 for _ in model.component_data_objects(pyo.Constraint, active=True))
+    assert "Operational MILP built with |M|=9 |B|=2 |S|=7 slots" in text
+    assert f"constraints={constraints}" in text
+
+
+def test_cli_build_mip_reports_a_missing_scenario(tmp_path) -> None:
+    result = CliRunner().invoke(app, ["build-mip", str(tmp_path / "missing.yaml")])
+    assert result.exit_code == 1
+    assert "Build failed" in cli_text(result)

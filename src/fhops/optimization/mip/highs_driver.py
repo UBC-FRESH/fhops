@@ -22,7 +22,6 @@ from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 import pyomo.environ as pyo
-from pyomo.common.errors import ApplicationError
 
 from fhops.optimization.mip.builder import build_model
 from fhops.optimization.mip.deprecation import LEGACY_SOLVE_MIP_MESSAGE, LegacyMipDeprecationWarning
@@ -495,7 +494,8 @@ def _run_appsi(solver: Any, model: pyo.ConcreteModel) -> _SolveRun:
     is loaded with ``solver.load_vars()`` only when ``best_feasible_objective`` is set (optimal, or
     a limit with a valid incumbent). The solver log is routed to a private logger (and still
     streamed to stdout when ``config.stream_solver`` is set) so HiGHS ``ERROR`` lines can be
-    reported. Solver exceptions (``ApplicationError``, ``RuntimeError``) are returned as ``error``.
+    reported. Every solver exception (``ApplicationError``, ``RuntimeError``,
+    ``gurobipy.GurobiError``, ...) is returned as ``error``.
     """
 
     milp_driver = _milp_driver()
@@ -528,7 +528,7 @@ def _run_appsi(solver: Any, model: pyo.ConcreteModel) -> _SolveRun:
         if getattr(results, "best_feasible_objective", None) is not None:
             solver.load_vars()
             has_solution = True
-    except (ApplicationError, RuntimeError) as exc:
+    except Exception as exc:  # any solver failure (e.g. gurobipy.GurobiError) is reported
         error = f"{type(exc).__name__}: {exc}"
         status = termination = "error"
         has_solution = False
