@@ -105,8 +105,9 @@ from fhops.scenario.contract.models import (
 from fhops.scheduling.mobilisation.models import BlockDistance, MobilisationConfig
 from fhops.scheduling.timeline.models import BlackoutWindow, TimelineConfig
 
-#: Operational MILP backend used when a rolling MILP hook is configured with ``solver="auto"``
-#: (matches the ``fhops solve-mip-operational`` default).
+#: Operational MILP backend used when a rolling MILP hook is configured with an empty solver name
+#: or ``"default"``. ``"auto"`` is passed through to the operational driver, which tries Gurobi when
+#: available and falls back to HiGHS (same rule as ``fhops solve-mip-operational --solver auto``).
 DEFAULT_OPERATIONAL_MIP_SOLVER = "highs"
 
 #: Playback fills missing shift labels with this value (see
@@ -1429,23 +1430,26 @@ def _assignment_rows_to_locks(assignments: pd.DataFrame | None) -> list[Schedule
 
 
 def resolve_operational_mip_solver(solver: str | None) -> str:
-    """Resolve the rolling MILP backend name (``"auto"``/``"default"``/empty → ``"highs"``).
+    """Resolve the rolling MILP backend name.
 
     Parameters
     ----------
     solver :
-        Requested backend name (case-insensitive). Any other value is passed through to
-        ``pyomo.opt.SolverFactory`` unchanged (lower-cased and stripped).
+        Requested backend name (case-insensitive). ``""``/``None``/``"default"`` select
+        :data:`DEFAULT_OPERATIONAL_MIP_SOLVER` (HiGHS). ``"auto"`` is kept as ``"auto"`` so the
+        operational driver applies its automatic selection (Gurobi when available, otherwise or on
+        a Gurobi failure HiGHS, with :class:`~fhops.model.milp.driver.MilpSolverFallbackWarning`),
+        exactly as ``fhops solve-mip-operational --solver auto`` does. Any other value is passed
+        through to ``pyomo.opt.SolverFactory`` unchanged (lower-cased and stripped).
 
     Returns
     -------
     str
-        Concrete solver name; :data:`DEFAULT_OPERATIONAL_MIP_SOLVER` for automatic selection,
-        matching the ``fhops solve-mip-operational`` default.
+        Concrete solver name, or ``"auto"``.
     """
 
     cleaned = (solver or "").strip().lower()
-    if cleaned in {"", "auto", "default"}:
+    if cleaned in {"", "default"}:
         return DEFAULT_OPERATIONAL_MIP_SOLVER
     return cleaned
 
@@ -1501,7 +1505,8 @@ class MILPSolver:
     ----------
     solver :
         Pyomo backend to invoke (e.g., ``\"highs\"``, ``\"gurobi\"``). ``\"auto\"`` (default)
-        resolves to ``\"highs\"`` (:func:`resolve_operational_mip_solver`); the resolved name is
+        uses the driver's automatic selection, Gurobi when available else HiGHS
+        (:func:`resolve_operational_mip_solver`); the resolved name is
         stored in :attr:`solver` and reported as ``mip_solver`` in the run metadata.
     time_limit :
         Solve time limit in seconds for each subproblem.
@@ -1568,8 +1573,10 @@ class MILPSolver:
         logger = logging.getLogger("pyomo.opt")
         previous = logger.level
         logger.setLevel(logging.CRITICAL)  # unknown names log a traceback before returning False
+        # "auto" always falls back to HiGHS, so it is available whenever HiGHS is.
+        name = DEFAULT_OPERATIONAL_MIP_SOLVER if self.solver == "auto" else self.solver
         try:
-            return bool(SolverFactory(self.solver).available(exception_flag=False))
+            return bool(SolverFactory(name).available(exception_flag=False))
         except Exception:  # noqa: BLE001 - a plugin that cannot even be probed is unavailable
             return False
         finally:
@@ -1746,7 +1753,8 @@ def solve_rolling_plan(
     sa_seed :
         Random seed for SA runs to keep results deterministic across iterations.
     mip_solver :
-        Pyomo MILP driver name when ``solver`` is MILP-backed; ``"auto"`` resolves to ``"highs"``.
+        Pyomo MILP driver name when ``solver`` is MILP-backed; ``"auto"`` uses the driver's automatic
+        selection (Gurobi when available, otherwise HiGHS).
     mip_time_limit :
         Time limit in seconds for each MILP subproblem solve.
     mip_solver_options :

@@ -1,3 +1,7 @@
+# 2026-10-07 — `--mip-solver auto` aligned in rolling horizon; data-contract compatibility wording (#96, part of #90)
+- `fhops plan rolling --mip-solver auto` / `MILPSolver(solver="auto")` now pass `auto` to the operational driver (Gurobi when available, otherwise or on a Gurobi failure HiGHS), the same rule as `solve-mip-operational --solver auto`; empty/`default` still select HiGHS. `MILPSolver.available()` treats `auto` as available whenever HiGHS is. Docs (`rolling_horizon.rst`, CLI help), release notes (known-limitation entry removed), and `tests/planning/test_rolling_carry_forward.py` updated. The Jaffray re-run harness passes `highs` explicitly and is unaffected.
+- `docs/howto/data_contract.rst` "Compatibility with FHOPS 1.0.0": corrected to state that 1.0.0's `load_scenario` accepted these inputs but most commands rejected the invalid locks / duplicate crew ids / superset distance tables when building the `Problem`, while `plan rolling` ran with them.
+
 # 2026-10-07 — Phase 8.6: final 1.0.1 release notes and GitHub release text (#96, part of #90)
 - `docs/releases/v1.0.1.md` rewritten from scratch against `git diff v1.0.0 a0b2799` (frozen code):
   - Structure: Summary, Installation, Upgrade checklist, Changes by area, Deprecations, Known

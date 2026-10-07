@@ -315,11 +315,13 @@ not interchangeable in both directions:
 - **Files that need 1.0.1.** Scenarios that use ``initial_state`` or ``locked_assignments[].shift_id``
   require ``fhops>=1.0.1``. FHOPS 1.0.0 does not reject them: it ignores ``initial_state`` and reads a
   shift lock as a whole-day lock, so it silently plans something else.
-- **Inputs 1.0.1 rejects at load.** FHOPS 1.0.0 attached optional YAML sections without
-  cross-validation and had no window, role, or initial-state checks. ``load_scenario`` (and therefore
-  every CLI command, including ``fhops validate``, the solvers, ``eval-playback``, and
-  ``fhops plan rolling``, which now fails at load instead of during or after the run) raises a
-  ``ValidationError`` for:
+- **Inputs 1.0.1 rejects at load.** FHOPS 1.0.0's ``load_scenario`` attached optional YAML sections
+  without cross-validation, so it accepted these inputs; most 1.0.0 commands then rejected the
+  invalid locks, duplicate crew ids, and superset distance tables later, when they built the
+  internal ``Problem``, while ``fhops plan rolling`` ran to completion with them (it dropped user
+  locks). FHOPS 1.0.0 had no window, role, harvest-system, or initial-state checks at all. In 1.0.1
+  ``load_scenario`` (and therefore every CLI command, including ``fhops validate``, the solvers,
+  ``eval-playback``, and ``fhops plan rolling``) raises a ``ValidationError`` at load for:
 
   * locks on a timeline blackout day;
   * locks that reference an unknown machine or block, or a day outside ``1..num_days``;
