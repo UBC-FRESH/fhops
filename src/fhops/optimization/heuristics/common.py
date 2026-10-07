@@ -532,6 +532,17 @@ def _repair_schedule_cover_blocks(
     landing_guard = bundle.objective_weights.landing_surplus == 0.0
     # Machines of the current slot that the repair has not reached yet.
     pending_in_slot: set[str] = set()
+    # Landing each pending downstream machine is expected to take in the current slot (see
+    # ``reserve_downstream_landings``); only with a hard landing capacity and ``fill_voids``.
+    reserved_landing: dict[str, str] = {}
+    roles_needing_input = frozenset(role for (_block, role) in prereq_roles)
+    # Reservations only matter where a landing can be full: capacity below the fleet size.
+    reservations_active = (
+        landing_guard
+        and fill_voids
+        and bool(roles_needing_input)
+        and any(max(cap, 0) < len(sc.machines) for cap in landing_cap.values())
+    )
 
     def is_terminal(block_id: str, role: str | None) -> bool:
         if block_id not in explicit_blocks:
@@ -601,11 +612,24 @@ def _repair_schedule_cover_blocks(
             return False
         slot = (day, shift_id)
         others = 0
+        own_priority = role_priority.get(machine_roles.get(machine_id) or "", 999)
         for other in sc.machines:
             if other.id == machine_id:
                 continue
             if other.id in pending_in_slot:
                 other_block = lock_for(other.id, day, shift_id)
+                # A later downstream machine whose input is staged holds a place on the landing
+                # it is expected to take (#140): otherwise upstream roles, repaired first, take
+                # every place while upstream work remains and the pipeline never delivers.
+                if (
+                    other_block is None
+                    and reserved_landing.get(other.id) == landing_id
+                    and role_priority.get(machine_roles.get(other.id) or "", 999) > own_priority
+                ):
+                    others += 1
+                    if others >= capacity:
+                        return False
+                    continue
             else:
                 other_block = plan[other.id].get(slot)
             if other_block is not None and landing_of.get(other_block) == landing_id:
@@ -704,6 +728,7 @@ def _repair_schedule_cover_blocks(
         role: str | None,
         *,
         enforce_prereq: bool = True,
+        check_landing: bool = True,
     ) -> bool:
         if block_id is None:
             return False
@@ -733,6 +758,7 @@ def _repair_schedule_cover_blocks(
         # #140). Locked slots are exempt (the repair does not validate them).
         if (
             enforce_prereq
+            and check_landing
             and landing_guard
             and not landing_has_room(machine_id, day, shift_id, block_id)
         ):
@@ -764,11 +790,21 @@ def _repair_schedule_cover_blocks(
         demand.sort(key=lambda item: item[1], reverse=True)
         return [block_id for block_id, _ in demand]
 
-    def select_block(machine_id: str, day: int, shift_id: str, role: str | None) -> str | None:
+    def select_block(
+        machine_id: str,
+        day: int,
+        shift_id: str,
+        role: str | None,
+        *,
+        check_landing: bool = True,
+        candidates: list[str] | None = None,
+    ) -> str | None:
         best_block: str | None = None
         best_rate = 0.0
-        for block_id in pending_blocks_for(role):
-            if not slot_is_valid(machine_id, day, shift_id, block_id, role):
+        for block_id in candidates if candidates is not None else pending_blocks_for(role):
+            if not slot_is_valid(
+                machine_id, day, shift_id, block_id, role, check_landing=check_landing
+            ):
                 continue
             candidate_rate = rate.get((machine_id, block_id), 0.0)
             if candidate_rate <= best_rate:
@@ -776,6 +812,69 @@ def _repair_schedule_cover_blocks(
             best_block = block_id
             best_rate = candidate_rate
         return best_block
+
+    def reserve_downstream_landings(day: int, shift_id: str, machines: list[Any]) -> None:
+        # Hard landing capacity: before repairing a slot, predict for every unlocked, available
+        # machine whose role needs staged upstream input the block it would fill at the start of
+        # the slot (``select_block`` ignoring landing capacity). ``landing_has_room`` lets that
+        # machine's landing place count against machines of earlier (upstream) roles, so a role
+        # whose input is staged is served before its upstream roles add more input ("pull"
+        # allocation). The prediction depends only on the repair state at the start of the
+        # slot, never on the blocks pending machines hold before the repair reaches them, so the
+        # repair stays idempotent (#131).
+        reserved_landing.clear()
+        if not reservations_active:
+            return
+        # Nothing is recorded while predicting, so each role's candidate list is fixed.
+        candidates_by_role: dict[str, list[str]] = {}
+        for machine in machines:
+            machine_id = machine.id
+            role = machine_roles.get(machine_id)
+            if role not in roles_needing_input or lock_for(machine_id, day, shift_id) is not None:
+                continue
+            if (
+                shift_availability.get((machine_id, day, shift_id), 1) == 0
+                or availability.get((machine_id, day), 1) == 0
+                or (machine_id, day, shift_id) in blackout
+            ):
+                continue
+            if role not in candidates_by_role:
+                # Blocks whose upstream roles have staged nothing fail ``has_inventory`` anyway.
+                candidates_by_role[role] = [
+                    block_id
+                    for block_id in pending_blocks_for(role)
+                    if not (
+                        block_id in explicit_blocks
+                        and prereq_roles.get((block_id, role))
+                        and min(
+                            role_inventory_estimate[(block_id, upstream)]
+                            for upstream in prereq_roles[(block_id, role)]
+                        )
+                        <= 0.0
+                    )
+                ]
+            # Same choice as ``select_block`` (highest rate, first in demand order on ties), but
+            # candidates are tried best rate first and the first valid one is taken.
+            ordered = candidates_by_role[role]
+            ranked = sorted(
+                range(len(ordered)),
+                key=lambda index: (-rate.get((machine_id, ordered[index]), 0.0), index),
+            )
+            candidate = next(
+                (
+                    ordered[index]
+                    for index in ranked
+                    if slot_is_valid(
+                        machine_id, day, shift_id, ordered[index], role, check_landing=False
+                    )
+                ),
+                None,
+            )
+            if candidate is None or not prereq_roles.get((candidate, role)):
+                continue
+            landing_id = landing_of.get(candidate)
+            if landing_id is not None and landing_id in landing_cap:
+                reserved_landing[machine_id] = landing_id
 
     for day, shift_id in shift_iteration:
         advance_slot(day, shift_id)
@@ -791,6 +890,7 @@ def _repair_schedule_cover_blocks(
         else:
             machine_iter = ordered_machines
         pending_in_slot = {machine.id for machine in machine_iter}
+        reserve_downstream_landings(day, shift_id, machine_iter)
         for machine in machine_iter:
             pending_in_slot.discard(machine.id)
             slots_visited += 1

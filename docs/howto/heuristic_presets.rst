@@ -261,6 +261,17 @@ published med42 heuristic plan overloaded single-shift landings 49–61 times (p
 forbids). With a positive ``landing_surplus`` weight (soft landings, e.g. the Tiny7/Small21
 overrides) overloads remain a priced choice and the repair is unchanged.
 
+Because the repair visits the machines of a slot in harvest-system role order, a hard capacity
+smaller than the crew used to go to the upstream roles first: while felling work remained anywhere
+on a landing the feller took its only place, downstream roles never worked there and the plan
+delivered nothing (a feller → skidder → loader chain on a capacity-1 landing: SA 0 m³, MILP
+500 m³). Since #140, before repairing a slot the repair predicts the block each unlocked downstream
+machine whose input is already staged would take, and that machine's landing place is held against
+machines of earlier roles ("pull" allocation: staged volume is moved on before more is produced).
+The same chain now delivers 500 m³ (the MILP optimum), with no landing overloads and no sequencing
+violations. The prediction depends only on the state at the start of the slot, so the repair stays
+idempotent and the reported objective remains a fresh evaluation of the plan.
+
 Next Steps
 ----------
 

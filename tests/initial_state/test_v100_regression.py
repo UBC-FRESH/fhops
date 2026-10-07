@@ -12,7 +12,8 @@ Since #131 (exact heuristic objective) the SA runs no longer reproduce v1.0.0: t
 the 1.0.1 results (``*_v101.csv``, ``sa_objective_v101``, ``kpis_v101``), while the v1.0.0 SA
 tables remain KPI fixtures and document the overstated v1.0.0 objective. The med42 pins were
 regenerated in #140 (hard landing guard on single-shift days: the plan no longer overloads
-landings, objective -35524.91 -> 18572.27).
+landings, objective -35524.91 -> 18572.27; 21239.54 once the repair reserves landing places for
+downstream roles whose input is staged).
 """
 
 from __future__ import annotations

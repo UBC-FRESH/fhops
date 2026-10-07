@@ -320,3 +320,106 @@ def test_cli_prints_override_notice_and_scenario_weight_objective(tmp_path: Path
     text = cli_text(result)
     assert result.exit_code == 0, text
     assert "weight overrides" not in text
+
+
+# --- Landing starvation under a hard capacity (audit2-1 #2) -------------------------------------
+
+
+def _pipeline_problem(num_shifts: int = 2, capacity: int = 1) -> Problem:
+    """Feller → skidder → loader on two blocks of one landing (audit ``cap1_min2.py``)."""
+
+    from fhops.scheduling.systems import HarvestSystem, SystemJob
+    from fhops.scheduling.timeline.models import ShiftDefinition, TimelineConfig
+
+    system = HarvestSystem(
+        system_id="c3",
+        jobs=[
+            SystemJob("felling", "feller_buncher", []),
+            SystemJob("primary_transport", "grapple_skidder", ["felling"]),
+            SystemJob("loading", "loader", ["primary_transport"]),
+        ],
+    )
+    machines = [
+        Machine(id="F1", role="feller_buncher"),
+        Machine(id="K1", role="grapple_skidder"),
+        Machine(id="L1M", role="loader"),
+    ]
+    days = 8
+    scenario = Scenario(
+        name="landing-starvation",
+        num_days=days,
+        blocks=[
+            Block(id=b, landing_id="L1", work_required=600.0, harvest_system_id="c3")
+            for b in ("B1", "B2")
+        ],
+        machines=machines,
+        landings=[Landing(id="L1", daily_capacity=capacity)],
+        calendar=[
+            CalendarEntry(machine_id=m.id, day=d, available=1)
+            for m in machines
+            for d in range(1, days + 1)
+        ],
+        production_rates=[
+            ProductionRate(machine_id=m.id, block_id=b, rate=100.0)
+            for m in machines
+            for b in ("B1", "B2")
+        ],
+        harvest_systems={"c3": system},
+        timeline=TimelineConfig(
+            shifts=[
+                ShiftDefinition(name=f"S{i + 1}", hours=10.0, shifts_per_day=1)
+                for i in range(num_shifts)
+            ]
+        ),
+    )
+    return Problem.from_scenario(scenario)
+
+
+# Operational-MILP (HiGHS, optimal) delivered volume of each variant; SA before the fix: 0, 0
+# (1.0.1 pre-release; 600 m³ with 13 landing overloads at 0463fd5 for one shift) and 400 m³.
+@pytest.mark.parametrize(
+    ("num_shifts", "capacity", "milp_delivered"), [(2, 1, 500.0), (1, 1, 200.0), (2, 2, 1000.0)]
+)
+def test_downstream_roles_are_not_starved_by_a_hard_landing_capacity(
+    num_shifts: int, capacity: int, milp_delivered: float
+) -> None:
+    # Before the fix the repair filled each slot in role order, so the feller took the only
+    # landing place while felling work remained and SA delivered 0 m³ (MILP: 500 m³ for 2 shifts).
+    pb = _pipeline_problem(num_shifts, capacity)
+    ctx = build_operational_problem(pb)
+    seed = init_greedy_schedule_and_score(pb, ctx)
+    assert seed > 0.0  # the repaired greedy seed already delivers
+    result = solve_sa(pb, iters=300, seed=1)
+    assignments = result["assignments"]
+    kpis = compute_kpis(pb, assignments)
+    assert float(kpis["total_production"]) >= 0.8 * milp_delivered
+    assert kpis["sequencing_violation_count"] == 0
+    assert _landing_overloads(pb, assignments) == 0
+    assert set(assignments["machine_id"]) == {"F1", "K1", "L1M"}
+    assert evaluate_assignments(pb, assignments, ctx) == pytest.approx(result["objective"], abs=TOL)
+
+
+def init_greedy_schedule_and_score(pb: Problem, ctx) -> float:
+    """Delivered volume of the repaired greedy seed (repair applied twice: idempotent)."""
+
+    from fhops.optimization.heuristics.common import init_greedy_schedule
+
+    schedule = init_greedy_schedule(pb, ctx)
+    debug: dict[str, object] = {}
+    score = evaluate_schedule(pb, schedule, ctx, debug=debug)
+    plan = {m: dict(slots) for m, slots in schedule.plan.items()}
+    again = evaluate_schedule(pb, _assignments_to_schedule(pb, _rows(schedule)), ctx)
+    assert again == pytest.approx(score, abs=TOL)
+    assert plan == schedule.plan
+    return float(debug["delivered_total"])
+
+
+def _rows(schedule) -> pd.DataFrame:
+    return pd.DataFrame(
+        [
+            {"machine_id": m, "block_id": b, "day": d, "shift_id": s, "assigned": 1}
+            for m, slots in schedule.plan.items()
+            for (d, s), b in slots.items()
+            if b is not None
+        ]
+    )

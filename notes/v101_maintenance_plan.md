@@ -1664,6 +1664,8 @@ and logs in `/tmp/opencode/wt140/` (baseline tree: `git archive 0463fd5` in `bas
    |---|---|---|---|---|---|---|
    | med42 SA 20000 s42 (committed asset) | −28662.40 | 31793.02 | 49 | 6 | 10110.44 | 0 |
    | med42 SA 20000 s42 (#140) | 24763.53 | 32973.79 | 0 | 10 | 5981.64 | 0 |
+   | med42 SA 20000 s42 (#140 + 5a) | 24130.32 | 32984.91 | 0 | 10 | 7292.52 | 0 |
+   | med42 SA 2000 s7 / s42 (#140 + 5a) | 23020.86 / 23058.11 | 32861.32 / 32850.20 | 0 / 0 | 9 / 9 | 9017.08 / 8898.12 | 0 / 0 |
    | med42 SA 2000 s7 before → after | −30464.48 → 21177.09 | 32492.06 → 31538.45 | 52 → 0 | 7 → 10 | 10510.72 → 7413.16 | 0 → 0 |
    | med42 SA 2000 s42 before → after | −34576.55 → 23003.28 | 31888.65 → 32487.93 | 55 → 0 | 7 → 10 | 10321.24 → 7558.72 | 0 → 0 |
    | synthetic_small SA 6000 s42 before → after | −53039.79 → −39.79 | 0 → 0 | 53 → 0 | 0 → 0 | 0 | 0 → 0 |
@@ -1672,10 +1674,59 @@ and logs in `/tmp/opencode/wt140/` (baseline tree: `git archive 0463fd5` in `bas
    tiny7 and small21 `bench suite` (committed `generate_assets.sh` full-mode settings): all
    assignment CSVs byte-identical; all pre-existing summary columns identical except
    `runtime_s`/`scenario_path`/runtime ratios. Jaffray ka_6/pg_6 SA 1500 seeds 1–3: identical CSVs,
-   30913.356 / 67923.963, 0 violations, 0 overloads. med42 greedy (`--iters 0`) now accepted as a
+   30913.356 / 67923.963, 0 violations, 0 overloads (before item 5a; after it the same objectives
+   with different plans). med42 greedy (`--iters 0`) now accepted as a
    HiGHS MIP start (`seeded_slots=198`, start objective 13769.68). Test pins: med42 v101 SA
    (150 iterations, seed 7) −35524.91 → 18572.27; `test_v100_sa_objective_was_overstated` keeps
    tiny7 only (the fresh evaluation now repairs the 1.0.0 med42 plan's overloads).
+5a. **Landing starvation under a hard capacity (audit2-1 #2, follow-up on PR #142).** Root cause:
+   the repair visits each slot's machines in role-priority order and fills voids greedily; with a
+   hard capacity smaller than the crew the upstream machine always takes the place first, and the
+   pending downstream machines count only through locks (needed for idempotency, #131), so a
+   downstream role never gets onto a landing while upstream work remains on it. `cap1_min2.py`
+   (F → K → L on 2 blocks of one capacity-1 landing, 2 shifts × 8 days): SA 0 m³ (F1 12 slots, K1
+   4, loader none), MILP 500. Options considered: two-phase keep/fill per slot (changes the
+   record order within a slot, which must match the tracker; non-idempotent for same-role
+   competition), counting pending machines' pre-repair blocks (non-idempotent, removed in #131),
+   marginal-value comparison (needs look-ahead). Chosen: `reserve_downstream_landings` — at the
+   start of each slot (hard capacity, `fill_voids`), every unlocked, available machine whose role
+   has prerequisites on its predicted block reserves the landing of the block it would fill
+   (`select_block` with `check_landing=False`, slot-start state); `landing_has_room` counts the
+   reservation of a pending machine of a *later* role priority against the machine being repaired.
+   Upstream machines therefore leave the place to a downstream role whose input is staged (pull),
+   and fill it otherwise. Idempotent: the prediction uses only slot-start state (never pending
+   machines' current blocks), so repairing a repaired plan repeats every decision; exact-objective
+   tests pass. Reservations may go unused (the downstream machine keeps a valid block elsewhere);
+   the search can move it. Soft mode, `fill_voids=False` (operator sanitizing pass) and locked
+   machines are unaffected. Results:
+
+   | case | before (PR #142 head) | after | MILP |
+   |---|---|---|---|
+   | cap1_min2 2 shifts cap 1, SA 2000/20000 | 0 / 0 | 500 / 500 | 500 |
+   | 1 shift cap 1 | 0 / 0 (0463fd5: 600 with 13 overloads) | 200 / 200 | 200 |
+   | 3 shifts cap 1 | 0 / 0 | 800 / 800 | 800 |
+   | 2 shifts cap 2 | 400 / 400 | 1000 / 1000 | 1000 |
+   | rolling 8/4/2 (2 shifts cap 1) | SA 0 | SA 500 | rolling MILP 400 |
+   | adv2 cap1 (rolling SA 300, 12/12/12) | 0 | 550.0 | 590.6 |
+   | adv2 cap2 | 373.7 | 923.7 | 1145.3 |
+   | adv2 cap2 3-shift | 1283.3 | 1393.3 | 1476.1 |
+   | adv2 cap2 no timeline | 373.7 | 950.0 | 1095.6 |
+   | adv2 cap1 overlock | 0 | 557.0 | 651.9 |
+
+   All delivered m³; 0 sequencing violations and 0 landing overloads except the adv2 overlock
+   variant: its user locks put 2 machines on the capacity-1 landing on day 2 (unavoidable, MILP
+   too) and, in 3 of its 5 rolling configs at 300 iterations, the locked skidder has no felled
+   volume (2 lock-induced violations, charged in the objective; 0 at 2000 iterations). All 25 adv2
+   rolling configs deliver more than before. med42 SA: 2000 iterations seed 7 21177.09 → 23020.86,
+   seed 42 23003.28 → 23058.11; 20000 seed 42 24763.53 → 24130.32 (delivered 32973.79 → 32984.91 m³, completed blocks 10, mobilisation 5981.64 → 7292.52, 0 overloads, 0 violations). tiny7/small21 bench
+   byte-identical; Jaffray ka_6/pg_6 SA 1500 seeds 1–3: same objectives (full delivery), 0
+   violations/overloads, different equal-valued plans. med42 v101 pin (150, seed 7) → 21239.54.
+   Cost: about +30 % SA runtime with binding hard capacities (side by side: ka_6 SA 1500 162.1 →
+   210.4 s, med42 SA 2000 129.2 → 171.6 s), after two result-preserving speed-ups (per-role
+   candidate lists without staged-nothing blocks; best-rate-first scan); soft mode unaffected.
+   med42 SA 20000 is lower than with the guard alone (24763.53 → 24130.32, similar delivery,
+   higher mobilisation) while SA 2000 is higher for both seeds: the pull rule constrains which
+   plans the repair produces; it is a stochastic-search outcome, not a feasibility issue.
 6. **Follow-ups.** Regenerate the med42 and synthetic SoftwareX assets (benchmark, tuning,
    scaling; tiny7/small21 unchanged) and the manuscript values that depend on them. MILP-side
    idle-gap mobilisation (audit `idle_gap.py`) is outside this issue (#139 area); stale "1000 per
