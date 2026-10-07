@@ -5,8 +5,8 @@
     "machines": 2,
     "num_days": 112,
     "assignments": 122.0,
-    "runtime_s": 31.67842185823247,
-    "objective": -75039.791
+    "runtime_s": 32.562727018259466,
+    "objective": -53039.791
   },
   {
     "tier": "medium",
@@ -14,8 +14,8 @@
     "machines": 4,
     "num_days": 112,
     "assignments": 272.0,
-    "runtime_s": 83.58066941611469,
-    "objective": -261097.033
+    "runtime_s": 85.1490780627355,
+    "objective": -128097.033
   },
   {
     "tier": "large",
@@ -23,7 +23,7 @@
     "machines": 6,
     "num_days": 112,
     "assignments": 317.0,
-    "runtime_s": 105.42369785439224,
-    "objective": -359224.711
+    "runtime_s": 109.02774298004806,
+    "objective": -24224.711
   }
 ]

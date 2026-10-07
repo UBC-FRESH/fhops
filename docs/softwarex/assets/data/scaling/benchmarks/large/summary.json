@@ -1,10 +1,10 @@
 [
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops\/docs\/softwarex\/assets\/data\/scaling\/datasets\/synthetic_large\/scenario.yaml",
+    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/docs\/softwarex\/assets\/data\/scaling\/datasets\/synthetic_large\/scenario.yaml",
     "solver":"sa",
-    "objective":-359224.711,
-    "runtime_s":105.4236978544,
+    "objective":-24224.711,
+    "runtime_s":109.02774298,
     "assignments":317,
     "kpi_total_production":0.0,
     "kpi_completed_blocks":0.0,
@@ -25,7 +25,7 @@
     "kpi_makespan_shift":"S1",
     "iters":2000,
     "seed":42,
-    "sa_initial_score":-400224.711,
+    "sa_initial_score":-65224.711,
     "sa_acceptance_rate":0.8428150021,
     "sa_accepted_moves":2000,
     "sa_proposals":2373,
@@ -39,8 +39,8 @@
     "objective_vs_mip_ratio":null,
     "solver_category":"heuristic",
     "best_heuristic_solver":"sa",
-    "best_heuristic_objective":-359224.711,
-    "best_heuristic_runtime_s":105.4236978544,
+    "best_heuristic_objective":-24224.711,
+    "best_heuristic_runtime_s":109.02774298,
     "objective_gap_vs_best_heuristic":0.0,
     "runtime_ratio_vs_best_heuristic":1.0
   }

@@ -1,5 +1,5 @@
 Scenario,Tuner,Best Objective,$\Delta$ vs SA default,Mean Runtime (s),Key Settings
-Tiny7 (ground-based),Ils,4349.26,42.74,1.68,
-Small21 (ground-based),Tabu,15637.80,10.23,18.15,
-Med42 (ground-based),Bayes,-35485.30,-8214.08,5.29,"batch\_size=3; iters=120; operators=(block\_insertion:0.6863560323017388, coverage\_injection:1.4580994147680832, cross\_exchange:0.8771444893592488)"
-Synthetic-small,Bayes,-75039.79,0.00,1.39,"batch\_size=3; iters=120; operators=(block\_insertion:1.1026295381657825, coverage\_injection:1.4389379395711261, cross\_exchange:0.8462129202489219)"
+Tiny7 (ground-based),Bayes,4338.52,42.74,0.43,"batch\_size=3; iters=120; operators=(block\_insertion:1.4448867651404431, coverage\_injection:0.6459178277063564, cross\_exchange:0.7235773112446282)"
+Small21 (ground-based),Ils,15584.30,0.14,5.45,
+Med42 (ground-based),Bayes,-37527.69,-8865.29,5.18,"iters=120; operators=(block\_insertion:0.5009107307930134, coverage\_injection:0.9660685285254087, cross\_exchange:1.97111957122141)"
+Synthetic-small,Bayes,-53039.79,0.00,1.45,"batch\_size=3; iters=120; operators=(block\_insertion:1.1026295381657825, coverage\_injection:1.4389379395711261, cross\_exchange:0.8462129202489219)"

@@ -23,8 +23,14 @@ mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
 echo "[assets] Rendering shared manuscript/doc snippets" >&2
 python "${script_dir}/export_docs_assets.py" --repo-root "${repo_root}"
 
-echo "[assets] Rendering PRISMA workflow diagram" >&2
-python "${script_dir}/render_prisma_diagram.py" --repo-root "${repo_root}"
+# The PRISMA diagram is a static workflow figure (no solver output). It needs latexmk/lualatex;
+# without a TeX installation the committed figure is kept.
+if command -v latexmk >/dev/null 2>&1; then
+  echo "[assets] Rendering PRISMA workflow diagram" >&2
+  python "${script_dir}/render_prisma_diagram.py" --repo-root "${repo_root}"
+else
+  echo "[assets] WARN: latexmk not found; keeping the committed PRISMA figure" >&2
+fi
 
 echo "[assets] Summarizing datasets into ${dataset_dir}" >&2
 python "${script_dir}/run_dataset_inspection.py" --repo-root "${repo_root}" --out-dir "${dataset_dir}"
@@ -66,8 +72,8 @@ scenario_specs=(
   "${synthetic_scenario}|synthetic_small|Synthetic tier (small)"
 )
 
-declare -a bench_pids=()
-
+# Scenarios run one after another (not concurrently) so the recorded runtime_s values are not
+# inflated by the other benchmark processes competing for cores (#131).
 for spec in "${scenario_specs[@]}"; do
   IFS="|" read -r scenario_path slug label <<< "${spec}"
   if [[ ! -f "${scenario_path}" ]]; then
@@ -225,15 +231,7 @@ for spec in "${scenario_specs[@]}"; do
     pushd "${repo_root}" >/dev/null
     python -m fhops.cli.main "${bench_args[@]}"
     popd >/dev/null
-  ) &
-  bench_pids+=("$!")
-done
-
-for pid in "${bench_pids[@]}"; do
-  if ! wait "${pid}"; then
-    echo "[assets] ERROR: benchmark worker ${pid} failed" >&2
-    exit 1
-  fi
+  )
 done
 
 python - <<'PY' "${bench_dir}"
@@ -285,3 +283,6 @@ python "${script_dir}/run_synthetic_sweep.py" --repo-root "${repo_root}" --out-d
 
 echo "[assets] Building solver/tuning tables" >&2
 python "${script_dir}/build_tables.py" --repo-root "${repo_root}"
+
+echo "[assets] Normalising text assets (pre-commit whitespace/end-of-file rules)" >&2
+python "${script_dir}/normalize_text_assets.py" "${assets_root}"

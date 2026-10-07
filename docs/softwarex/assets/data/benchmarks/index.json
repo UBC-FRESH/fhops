@@ -1,0 +1,32 @@
+{
+  "benchmarks": [
+    {
+      "slug": "med42",
+      "label": "Med42 reference scenario",
+      "summary": "med42/summary.json",
+      "telemetry": "med42/telemetry.jsonl",
+      "scenario": "/home/gep/projects/fhops-wt-131b/examples/med42/scenario.yaml"
+    },
+    {
+      "slug": "small21",
+      "label": "Small21 reference scenario",
+      "summary": "small21/summary.json",
+      "telemetry": "small21/telemetry.jsonl",
+      "scenario": "/home/gep/projects/fhops-wt-131b/examples/small21/scenario.yaml"
+    },
+    {
+      "slug": "synthetic_small",
+      "label": "Synthetic tier (small)",
+      "summary": "synthetic_small/summary.json",
+      "telemetry": "synthetic_small/telemetry.jsonl",
+      "scenario": "/home/gep/projects/fhops-wt-131b/docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml"
+    },
+    {
+      "slug": "tiny7",
+      "label": "Tiny7 reference scenario",
+      "summary": "tiny7/summary.json",
+      "telemetry": "tiny7/telemetry.jsonl",
+      "scenario": "/home/gep/projects/fhops-wt-131b/examples/tiny7/scenario.yaml"
+    }
+  ]
+}

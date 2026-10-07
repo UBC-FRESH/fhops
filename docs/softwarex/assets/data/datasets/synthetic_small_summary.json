@@ -1,7 +1,7 @@
 {
   "slug": "synthetic_small",
   "label": "Synthetic tier: small",
-  "scenario_path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml",
+  "scenario_path": "/home/gep/projects/fhops-wt-131b/docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml",
   "name": "synthetic-small",
   "num_days": 112,
   "start_date": null,
@@ -9,7 +9,7 @@
   "objective_weights": {},
   "tables": {
     "blocks": {
-      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/blocks.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/docs/softwarex/assets/data/datasets/synthetic_small/data/blocks.csv",
       "row_count": 4,
       "columns": [
         "id",
@@ -29,7 +29,7 @@
       ]
     },
     "machines": {
-      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/machines.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/docs/softwarex/assets/data/datasets/synthetic_small/data/machines.csv",
       "row_count": 2,
       "columns": [
         "id",
@@ -40,7 +40,7 @@
       ]
     },
     "landings": {
-      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/landings.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/docs/softwarex/assets/data/datasets/synthetic_small/data/landings.csv",
       "row_count": 1,
       "columns": [
         "id",
@@ -48,7 +48,7 @@
       ]
     },
     "calendar": {
-      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/calendar.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/docs/softwarex/assets/data/datasets/synthetic_small/data/calendar.csv",
       "row_count": 224,
       "columns": [
         "machine_id",
@@ -57,7 +57,7 @@
       ]
     },
     "prod_rates": {
-      "path": "/home/gep/projects/fhops/docs/softwarex/assets/data/datasets/synthetic_small/data/prod_rates.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/docs/softwarex/assets/data/datasets/synthetic_small/data/prod_rates.csv",
       "row_count": 8,
       "columns": [
         "machine_id",

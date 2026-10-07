@@ -1,5 +1,5 @@
 scenario,bundle,best_algorithm,best_objective,second_best_delta,mip_objective,mip_gap,algorithms_evaluated
-baseline:med42,baseline,bayes,-35485.30078800001,91.6189699999959,,,5
-baseline:small21,baseline,tabu,15637.796819999996,0.050000000001091394,,,5
-baseline:tiny7,baseline,ils,4349.264752,0.0,,,5
-synthetic-small,standalone,random,-75039.791,0.0,,,5
+baseline:med42,baseline,bayes,-37527.68731600001,2984.774783999994,,,5
+baseline:small21,baseline,ils,15584.296819999996,0.6719999999986612,,,5
+baseline:tiny7,baseline,random,4338.516752,0.0,,,5
+synthetic-small,standalone,random,-53039.791,0.0,,,5

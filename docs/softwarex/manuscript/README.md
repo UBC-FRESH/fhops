@@ -37,12 +37,15 @@ make clean
 `scripts/generate_assets.sh` is the one-stop entry point for reproducible artifacts. It now:
 
 - Runs the shared Markdown/CSV exporter (`export_docs_assets.py`).
-- Invokes `render_prisma_diagram.py`, which compiles the TikZ workflow figure via `latexmk` and drops PDF/PNG assets into `docs/softwarex/assets/figures/`.
-- Executes dataset inspection, benchmark suites (SA/ILS/Tabu), tuning harness, playback robustness, costing demo, and scaling sweeps so every referenced CSV/JSON/PNG is fresh.
+- Invokes `render_prisma_diagram.py`, which compiles the TikZ workflow figure via `latexmk` and drops PDF/PNG assets into `docs/softwarex/assets/figures/` (skipped with a warning when `latexmk` is not installed; the committed figure is kept).
+- Executes dataset inspection, benchmark suites (SA/ILS/Tabu; the four scenarios run one after another so `runtime_s` is not inflated by concurrent runs), tuning harness, playback robustness, costing demo, and scaling sweeps so every referenced CSV/JSON/PNG is fresh.
+- Finishes with `normalize_text_assets.py`, which applies the repository's `trailing-whitespace` / `end-of-file-fixer` rules so the generated files, the logged assets hash and the committed files are byte-identical.
 
 Environment knobs:
 
-- `FHOPS_ASSETS_FAST=1 make assets` trims benchmark budgets (shorter time limits/iterations and `run_tuner.py --tier micro`) so you can sanity-check the pipeline without waiting for the full runs. Use the default (`0`) for submission-quality artifacts.
+- `FHOPS_ASSETS_FAST=1 make assets` trims benchmark budgets (shorter iterations) so you can sanity-check the pipeline without waiting for the full runs. Use the default (`0`) for submission-quality artifacts. The tuning harness uses the published budgets (120 SA iterations per configuration, 8 Bayesian trials, ILS 160 / Tabu 900 iterations) in both modes.
+- `FHOPS_ASSETS_NOTE="…"` (optional) adds a `note:` line to the `benchmark_runs.log` entry written by `run_manuscript_benchmarks.sh`.
+- A full run takes about 3.8 h on an idle host (med42 Tabu alone about 2 h).
 - All scripts respect the current Python interpreter (`python`); set `PYTHONPATH`/virtualenv as usual. `render_prisma_diagram.py` requires `latexmk`, `lualatex`, and either ImageMagick (`magick`) or `pdftoppm` for PNG export (optional `pdf2svg` for SVG).
 
 Manual verification checklist (run after `make assets`):

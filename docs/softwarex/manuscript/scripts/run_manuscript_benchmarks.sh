@@ -38,6 +38,9 @@ assets_hash="$(
   echo "fast_mode: ${fast_mode}"
   echo "duration_s: ${duration}"
   echo "assets_hash: ${assets_hash}"
+  if [[ -n "${FHOPS_ASSETS_NOTE:-}" ]]; then
+    echo "note: ${FHOPS_ASSETS_NOTE}"
+  fi
   echo "----"
 } >> "${log_file}"
 

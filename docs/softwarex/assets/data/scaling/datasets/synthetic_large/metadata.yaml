@@ -149,7 +149,6 @@ sampling_config:
   base_seed: 123
   downtime:
     enabled: true
-    seed_offset: 0
     probability: 0.2
     mean_duration_hours: 5.0
     std_duration_hours: 2.0
@@ -157,19 +156,16 @@ sampling_config:
     target_machine_roles: null
   weather:
     enabled: true
-    seed_offset: 0
     day_probability: 0.35
     severity_levels:
       light: 0.1
       moderate: 0.4
       severe: 0.6
-    correlated_days: true
     impact_window_days: 3
     affected_shifts: null
   landing:
     enabled: true
-    seed_offset: 0
-    probability: 0.25
+    probability: 0.035
     capacity_multiplier_range:
     - 0.35
     - 0.7

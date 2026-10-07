@@ -1,7 +1,7 @@
 {
   "slug": "tiny7",
   "label": "FHOPS Tiny7 (examples/tiny7)",
-  "scenario_path": "/home/gep/projects/fhops/examples/tiny7/scenario.yaml",
+  "scenario_path": "/home/gep/projects/fhops-wt-131b/examples/tiny7/scenario.yaml",
   "name": "FHOPS Tiny7",
   "num_days": 7,
   "start_date": "2025-01-01",
@@ -12,7 +12,7 @@
   },
   "tables": {
     "blocks": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/blocks.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/examples/tiny7/data/blocks.csv",
       "row_count": 2,
       "columns": [
         "id",
@@ -30,7 +30,7 @@
       ]
     },
     "machines": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/machines.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/examples/tiny7/data/machines.csv",
       "row_count": 9,
       "columns": [
         "id",
@@ -41,7 +41,7 @@
       ]
     },
     "landings": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/landings.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/examples/tiny7/data/landings.csv",
       "row_count": 2,
       "columns": [
         "id",
@@ -49,7 +49,7 @@
       ]
     },
     "calendar": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/calendar.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/examples/tiny7/data/calendar.csv",
       "row_count": 63,
       "columns": [
         "machine_id",
@@ -58,7 +58,7 @@
       ]
     },
     "prod_rates": {
-      "path": "/home/gep/projects/fhops/examples/tiny7/data/prod_rates.csv",
+      "path": "/home/gep/projects/fhops-wt-131b/examples/tiny7/data/prod_rates.csv",
       "row_count": 18,
       "columns": [
         "machine_id",
