@@ -10,14 +10,13 @@ other without re-running any solver:
   recomputes production, mobilisation, completed blocks and day-level utilisation, and the
   assignment count is the CSV row count. The schedule is also scored with a fresh heuristic
   evaluation (``evaluate_schedule`` with the objective-weight overrides the SA/ILS/Tabu drivers
-  apply); this is reported as ``full_eval_objective`` / ``objective_gap`` but is **not** a pass/fail
-  check: assets produced before #131 report the score of the solver's internal best schedule,
-  whose cached per-machine mobilisation could omit machines, so their reported objective can
-  exceed the fresh evaluation of the exported schedule, and their objectives include 1000 per idle
-  unavailable machine slot (synthetic tiers), which the evaluator no longer charges (gap −1000 ×
-  slots). Since #131 reported and fresh objectives are equal; make this a check once the assets
-  are regenerated. Whether an objective is reproducible is checked
-  by re-running the benchmark (see ``notes/v101_maintenance_plan.md`` §8.16);
+  apply), reported as ``full_eval_objective`` / ``objective_gap``; the summary objective must equal
+  it within ``TOL`` (1e-6). Since FHOPS 1.0.1 (#131) SA/ILS/Tabu report the fresh evaluation of
+  the exported schedule, so a gap means the objective column does not describe the committed
+  CSV. Assets produced before #131 fail this check (their solvers reported the score of an
+  internal schedule whose cached per-machine mobilisation could omit machines, and charged 1000
+  per idle unavailable machine slot). Whether an objective is reproducible is checked by
+  re-running the benchmark (see ``notes/v101_maintenance_plan.md`` §8.16 and §8.21);
 * the manuscript tables (``data/tables/*.csv``) equal a fresh ``build_tables.py`` rendering of the
   committed summaries (and, optionally, a manuscript ``sections/includes`` copy of the ``.tex``);
 * each deterministic playback export is re-played from the benchmark assignment CSV it claims to
@@ -196,6 +195,7 @@ def audit_summary_rows(
         assign = pd.read_csv(csv_path)
         scored = evaluator.score(scenario, assign)
         checks = {
+            "objective (fresh evaluation)": (row["objective"], scored["objective"]),
             "assignments": (row["assignments"], scored["assignments"]),
             "total_production": (row.get("kpi_total_production"), scored["total_production"]),
             "mobilisation_cost": (

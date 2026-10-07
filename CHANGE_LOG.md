@@ -1,3 +1,6 @@
+# 2026-10-07 — Phase 8.21: SoftwareX assets regenerated on FHOPS 1.0.1 (#131, part of #90)
+- Pipeline fixes before the full regeneration (in progress): benchmarks run sequentially, tuning budgets = the published ones, PRISMA step optional without TeX, text assets normalised to the pre-commit rules, optional `note:` line in `benchmark_runs.log`, asset audit checks reported objective = fresh evaluation.
+
 # 2026-10-07 — Phase 8.23: SR-109 green-tree cost multiplier; dependency floors corrected (#136, part of #90)
 - `data/reference/partial_cut_profiles.json`: `sr109_green_tree.cost_multiplier` 1.10 → 1.09, matching the bundled FERIC SR-109 extract (`data/reference/fpinnovations/sr109_partial_cut_treatments.json`, green_tree `cost_multiplier_vs_clearcut` 1.09 = 7.87/7.19). Patch cut (7.88/7.19 = 1.096 → 1.10) was already correct. `docs/reference/harvest_systems.rst` updated.
 - Removed the unused runtime dependency `click>=8.1.0` (FHOPS no longer imports click since #134; Typer brings its own).
