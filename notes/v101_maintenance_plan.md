@@ -1315,6 +1315,61 @@ SoftwareX asset regeneration follows after all Phase 8 code has merged.
    ILS / Tabu and small21 SA ×3 / ILS / Tabu summary rows identical to the item 8 table in every
    non-runtime column and every assignment CSV byte-identical — the PR table stands.
 
+### 8.22 Dataset CLI validation and gated tests (#103)
+Branch `issue-103-dataset-cli-tests`; scratch in `/tmp/opencode/p103/`.
+
+1. **Reproduction.** `FHOPS_RUN_FULL_CLI_TESTS=1 pytest -o addopts="" -q tests/test_cli_dataset_*.py`
+   on 9b84902 with the v1.0.1 venv (Typer 0.27.2, Click 8.5.0): 53 failed, 92 passed. All 53 were
+   usage errors (exit 2) or missing default-derived output:
+
+   | Tests (count) | CLI error |
+   |---|---|
+   | `skyline.py` (31) | `--fncy12-variant is only valid when --model fncy12-tmy45.` |
+   | `grapple_yarder.py` harvest-system tests (7) | `--grapple-turn-volume-m3, --grapple-yard-distance-m required when --machine-role grapple_yarder.` |
+   | `forwarder.py` grapple-skidder/salvage tests (5) | `--skidder-empty-distance, … required when --machine-role grapple_skidder.` |
+   | `forwarder.py::test_cli_forwarder_harvest_system_adv1n12_defaults` (1) | `extraction_distance_m is required for Ghaffariyan models` |
+   | `helicopter.py` (2) | `--helicopter-flight-distance-m is required for helicopter_longline role.` |
+   | `loader.py` (2) | `--loader-piece-size-m3 is required when --loader-model tn261.` |
+   | `processor.py` harvest-system tests (2) | `--processor-piece-size-m3 is required when --processor-model berry2019.` |
+   | `processor.py` Berry (2019) tests (3) | exit 0, but `--processor-delay-multiplier` counted as supplied. So the carrier-profile default delay multiplier (and the skid-area auto-adjustment) was not applied, and the productivity differed from the expected value (e.g. 49.41 m³/PMH absent) |
+
+2. **Root cause (one, CLI bug, environment-triggered).** `_parameter_supplied` in
+   `src/fhops/cli/dataset.py` compared `ctx.get_parameter_source(name)` by identity with
+   `click.core.ParameterSource.DEFAULT`. Typer 0.26.0 (2026-05-26, fastapi/typer#1774) vendors
+   Click as `typer._click`. Contexts now return `typer._click.core.ParameterSource` members, which
+   are never identical to the standalone package's enum. So every option counted as user-supplied:
+   the `--fncy12-variant` guard fired on every skyline call, and every `_apply_*_system_defaults`
+   helper skipped the harvest-system defaults, so the required-input checks failed. The tests were
+   correct; none were changed. History: `_parameter_supplied` dates from e45472d (2025-11-17), the
+   gate from 6354d10 (2025-12-03). `git diff v1.0.0` is empty for `cli/dataset.py`, `productivity/`,
+   `costing/`, and the dataset tests. With Typer 0.25.1 + Click 8.3.1
+   (`pip install --target /tmp/opencode/p103/typer025`), the unmodified tree passes 145/145. v1.0.0
+   (tagged 2026-06-14) was therefore already broken for anyone installing after Typer 0.26.0.
+   CI never noticed because the suites were gated (#118 left them out pending this issue).
+3. **Fix.** `_parameter_supplied` compares the source by member name (`!= "DEFAULT"`), which works
+   with vendored and standalone Click. The `click.core` import is removed.
+   **Same root cause, user-facing:** `--kpi-mode` (`solve-heur`, `solve-ils`, `solve-tabu`, `evaluate`)
+   used `click_type=click.Choice(...)` from standalone Click. Under Typer ≥ 0.26 an invalid value
+   raised an uncaught `click.BadParameter` (traceback, not a usage error), and `--help` showed the
+   metavar `<function>`. It is now a `KpiMode(StrEnum)` option with `case_sensitive=False` (values
+   are still `str`, so `_print_kpi_summary` is unchanged). `fhops` no longer imports `click`. The
+   `click>=8.1.0` runtime dependency is left in place (harmless; drop in a later dependency pass).
+4. **Numbers.** No productivity or costing code changed. The tests derive their expected values
+   from the library helpers (e.g., Lee et al. 2018 Eq. 1, TR-125 Eq. 1, FNCY12, Berry 2019).
+   Checked:
+   - Captured CLI output for all 145 dataset tests (`/tmp/opencode/p103/dumpall.py`). Old code +
+     Typer 0.25.1 and new code + Typer 0.27.2 are byte-identical (2839 lines).
+   - Spot check: the hard-coded `sr109_shelterwood` multipliers (0.495 volume, 1.38 cost) match the
+     bundled FERIC SR-109 extract (forwarding 22.4/45.3 m³/h = 0.4945; cost ratio 1.38).
+   - Observation, not asserted by any test and not changed here: `sr109_green_tree.cost_multiplier`
+     is 1.10 in `partial_cut_profiles.json`, but the SR-109 extract reports 1.09 (7.87/7.19 = 1.0946).
+     Left for a data review.
+5. **CI.** `tests/test_cli_dataset_*.py` was added to the existing `FHOPS_RUN_FULL_CLI_TESTS=1` step.
+   Locally: 15 tests / 11.5 s before, 160 tests / 15.5 s after (+145 tests, ≈ +4 s). Ungated
+   regression tests in `tests/cli/test_typer_vendored_click.py` cover `_parameter_supplied`
+   defaults vs command-line values, a default skyline call, harvest-system defaults for a
+   grapple yarder, and the `--kpi-mode` usage error.
+
 ## Verification cadence (each child)
 
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
