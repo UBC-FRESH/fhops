@@ -21,6 +21,7 @@ from fhops.optimization.heuristics.common import (
     evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
+    rescore_fresh,
     resolve_objective_weight_overrides,
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
@@ -148,8 +149,10 @@ def solve_sa(
     watch_debug : bool, default=False
         When ``True`` capture sequencing debug stats for watch snapshots (adds overhead).
     use_local_repairs : bool, default=False
-        When ``True`` repairs only the slots touched by a candidate before scoring. The
-        final schedule is always re-scored with a full repair before reporting.
+        When ``True`` repairs only the slots touched by a candidate before scoring. This is an
+        approximate mode: the dirty-slot repair does not refill every idle slot, so a candidate's
+        search score can differ from a full evaluation of the same plan. The final schedule is
+        always re-scored with a full repair before reporting.
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
         ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 scenarios auto-apply
@@ -164,7 +167,8 @@ def solve_sa(
         Dictionary with the following keys:
 
         ``objective`` (float)
-            Best objective value achieved during the run (higher is better).
+            Fresh :func:`~fhops.optimization.heuristics.common.evaluate_schedule` score of the
+            returned schedule (higher is better); it equals a re-evaluation of ``assignments``.
         ``assignments`` (pandas.DataFrame)
             Assignment matrix with columns ``machine_id, block_id, day, shift_id, assigned``.
         ``meta`` (dict[str, Any])
@@ -465,18 +469,11 @@ def solve_sa(
                     )
                 )
 
-        # Re-score the best schedule with a full repair pass for final reporting.
+        # Report a fresh full evaluation of the returned schedule (#131).
+        best, best_score, final_debug_stats = rescore_fresh(pb, best, ctx, debug_capture)
+        if debug_capture:
+            best_debug_stats = final_debug_stats
         if local_repairs:
-            if debug_capture:
-                best_score, best_debug_stats = evaluate_schedule_with_debug(
-                    pb,
-                    best,
-                    ctx,
-                    capture_debug=True,
-                    limit_repairs_to_dirty=False,
-                )
-            else:
-                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
             current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
         rows: list[dict[str, str | int]] = []

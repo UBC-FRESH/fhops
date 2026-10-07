@@ -1151,9 +1151,172 @@ playback assets (`run_playback_analysis.py`): all 48 generated files byte-identi
 
 Hand-off (not changed, pre-existing): `evaluate_schedule` charges 1000 for every unavailable
 machine slot whether or not it is assigned (a constant offset in heuristic objectives of scenarios
-with `available = 0` calendar entries; none in the shipped or Jaffray scenarios).
+with `available = 0` calendar entries; none in the shipped or Jaffray scenarios) — the shipped
+synthetic tiers do have such slots: 22/133/335). Fixed in #131 (§8.21 item 10).
+
+### 8.21 Exact heuristic objective (stale mobilisation cache) (#131)
+Follow-up to the §8.16 finding (SA/ILS/Tabu report more than a fresh `evaluate_schedule` of their
+exported schedule). Branch `issue-131-heuristic-objective-cache`; scratch in `/tmp/opencode/w131/`
+(`repro.py`, `check_all.py`, `idem.py`, `evalbench.py`, `prof.py`, `bench/`). Code part only; the
+SoftwareX asset regeneration follows after all Phase 8 code has merged.
+
+1. **Root cause (cache).** Every operator returns `context.sanitizer(candidate)`, and the sanitizer
+   (`OperationalProblem.build_sanitizer`) builds a *new* `Schedule(plan=…)`: the copied
+   per-machine mobilisation cache and dirty set of `_clone_schedule` are discarded. The repair
+   passes (`generate_neighbors` → `fill_voids=False`, then `evaluate_schedule`) call
+   `_set_assignment`, which adds only the machines whose slots they **change** to
+   `dirty_machines`. `_ensure_mobilisation_stats` filled the whole cache only when the cache *and*
+   the dirty set were both empty; otherwise it recomputed just the dirty machines. Every machine
+   the repair left untouched therefore had no cache entry, and `evaluate_schedule` summed
+   mobilisation cost and transitions over the cache only → those machines' moves were free in the
+   score. The greedy seed (`init_greedy_schedule` computes all machines) and plans rebuilt from
+   assignments (`_assignments_to_schedule`, empty cache and dirty set) were scored correctly,
+   which is why fresh evaluations of the exported CSVs were lower and why runs whose best schedule
+   was the seed show no gap (synthetic_small: SA never improves on the seed). Minimal reproduction:
+   a plan-only `Schedule` with one machine dirty →
+   `_ensure_mobilisation_stats` → one cache entry (`tests/heuristics/test_objective_exact.py::
+   test_mobilisation_cache_covers_machines_missing_from_cache`); end to end, tiny7 SA 100 iters
+   seed 42 reported 4306.522752 vs fresh 4295.774752 (`repro.py`), and the regression fixture
+   (`tests/fixtures/regression`) scored −999.5 instead of −1005.5 (F1's B1→B2 move, 1 + 5, missing).
+2. **Tabu was not immune.** It was affected on tiny7 (+10.748) and small21 (+151.144). med42
+   showed 0 because Tabu scored its *initial* schedule with dirty-slot repairs regardless of
+   `use_local_repairs` (that pass only revisits assigned slots, so idle slots stay empty:
+   med42 seed score −38624.19 vs −55619.93 with the full repair SA/ILS use). No neighbour beat
+   that inflated seed score, so Tabu never improved (`improvements = 0`, 1 restart, verified on the
+   old code for 50/400 iterations with batch 6) and its reported result was simply the full
+   re-score of the greedy seed (complete cache) → −46063.73, gap 0.
+3. **Second source: repair not idempotent on multi-shift days.** "Fresh evaluation" repairs the
+   plan again. On single-shift days the full repair is idempotent (by induction over slots: each
+   kept/selected block was valid in the same state). The #116 landing guard broke this on
+   multi-shift days with `landing_surplus = 0`: `landing_has_room` counted the machines the repair
+   had not reached yet in that slot with their *pre-repair* blocks, so re-repairing a repaired plan
+   changed it (three-shift test scenario: 23 slots changed by the second pass, score −22439.0 →
+   −22827.5; `idem.py`). Machines not yet reached now count only through their locks (fixed for
+   every pass), so the repair reaches a fixpoint in one pass (second pass: 0 changes) and the score
+   of a repaired plan equals its fresh evaluation.
+4. **Third source: idle locked slots.** The repair validated locked slots (`enforce_prereq=False`)
+   and replaced a lock whose block had no remaining demand (e.g. a rolling user lock on a block an
+   earlier window finished) with another block; `evaluate_schedule` then charged a 1000 lock
+   penalty. With the exact objective the SA trajectory in
+   `tests/planning/test_rolling_carry_forward.py::test_user_locks_survive_all_iterations[sa]`
+   finishes B1 before its day-5 lock and the lock was lost. Locked slots are now kept as planned
+   (an idle locked slot produces nothing; `evaluate_schedule` scores the locked block anyway).
+5. **Fix** (`heuristics/common.py`, `sa.py`, `ils.py`, `tabu.py`):
+   - `_ensure_mobilisation_stats` recomputes dirty machines **and** machines without a cache entry
+     and drops entries for machines not in the plan; `evaluate_schedule` sums mobilisation in
+     scenario machine order (independent of cache insertion order / string hashing).
+   - `landing_has_room` ignores the pre-repair blocks of machines not yet reached (locks count);
+     locked slots are not re-validated by the repair.
+   - Tabu scores its initial schedule with `use_local_repairs` (full repair by default), like SA/ILS.
+   - SA/ILS/Tabu report `objective` = `rescore_fresh(...)`: a full evaluation of a cache-free copy
+     of the best plan, and export that copy (`meta["best_score"]`, telemetry, watch and the SA
+     `schedule` use it). With items 1–4 this equals the score the search held.
+   - `use_local_repairs=True` (Python API only, not used by the CLI or any asset) stays an
+     approximate mode: its dirty-slot repair does not refill idle slots, so a candidate's score is
+     exact for the plan it holds but a full repair could still change that plan; the reported
+     objective is exact. Documented in the three docstrings.
+6. **Tests.** `tests/heuristics/test_objective_exact.py`: minimal reproduction; hypothesis
+   property test (seeded random operator sequences of up to 12 moves with random accept/reject on
+   tiny7, tiny7 + lock + `initial_state`, small21 and a 3-shift scenario with mobilisation for every
+   machine, day- and shift-level locks, block/machine `initial_state`, a blackout day and an
+   unavailable shift): after every move the candidate's score equals a fresh evaluation of a
+   cache-free copy (and that copy's plan is unchanged by the repair), every cache entry equals a
+   recompute, and the kept schedule re-scores to its cached value; a `_ScoreAudit` that wraps
+   `evaluate_schedule` and checks **every** score SA (sequential and batched), ILS (incl. a real
+   HiGHS hybrid step) and Tabu compute; reported objective = `evaluate_schedule` of the exported
+   assignments (also with `watch_debug` and `use_local_repairs`); Tabu initial score = SA's; idle
+   locked slot kept. Locally run with `max_examples=60` (committed: 8). Updated pins:
+   `tests/initial_state/test_v100_regression.py` (SA tiny7 300/123 and med42 150/7 no longer
+   reproduce v1.0.0 → new `*_v101.csv` + `sa_objective_v101`/`kpis_v101` in `baseline.json`, with
+   reported = fresh and new fresh > v1.0.0 fresh asserted; the v1.0.0 CSVs stay as KPI fixtures
+   and a new test pins their fresh objective below the v1.0.0 report: tiny7 4295.774752 vs
+   4306.522752, med42 −39268.927316 vs −38434.227316); `tests/fixtures/regression/baseline.yaml`
+   objective −999.5 → −1005.5 (same plan; the test now also asserts reported = fresh), then −5.5 with item 10.
+7. **Performance.** Recomputing every machine per candidate is O(machines × slots), the same
+   order as the tracker pass; the repair dominates. cProfile, SA 500 iters (tiny7) / 100 iters
+   (med42), seed 42: `_recompute_mobilisation_for` 14266 → 18026 calls on tiny7 (3466 → 4526 on
+   med42), 1.0 → 1.1 % (tiny7) and 0.7 → 0.4 % (med42) of runtime;
+   `_repair_schedule_cover_blocks` ≈ 63 % before and after. Fixed workload (`evalbench.py`: neighbours of the greedy seed generated
+   and evaluated, same RNG, best of 3, two rounds each, machine load ≈ 170 on 72 cores so ±25 %
+   noise): tiny7 700/796 → 926/904 candidates/s, small21 158/188 → 239/202, med42 85/84 → 77/74.
+   No measurable change; no incremental shortcut was needed.
+8. **Old vs new** (committed `generate_assets.sh` settings, `fhops bench suite` into
+   `/tmp/opencode/w131/bench/new/<scenario>_<sa|ils|tabu>`; "old" = committed assets, reproduced
+   exactly on 1.0.1 in §8.16; "old fresh" = `evaluate_schedule` of the committed CSV). New reported
+   = new fresh for every row (checked to 1e-9).
+
+   | scenario | solver | preset | old reported | old fresh | new reported = fresh | Δ fresh | production old → new | mobilisation old → new | assignments old → new | penalty old → new | runtime s old → new | same plan |
+   |---|---|---|---|---|---|---|---|---|---|---|---|---|
+   | tiny7 | sa | default | 4306.523 | 4295.775 | 4295.775 | +0.000 | 4414.70 → 4414.70 | 585.64 → 585.64 | 23 → 23 | 0 → 0 | 33 → 36 | yes |
+   | tiny7 | sa | diversify | 4306.523 | 4295.775 | 4295.775 | +0.000 | 4414.70 → 4414.70 | 585.64 → 585.64 | 23 → 23 | 0 → 0 | 15 → 16 | yes |
+   | tiny7 | sa | mobilisation | 4306.523 | 4295.775 | 4295.775 | +0.000 | 4414.70 → 4414.70 | 585.64 → 585.64 | 23 → 23 | 0 → 0 | 32 → 46 | yes |
+   | tiny7 | ils | - | 4349.265 | 4338.517 | 4338.517 | +0.000 | 4414.70 → 4414.70 | 372.68 → 372.68 | 23 → 23 | 0 → 0 | 46 → 33 | yes |
+   | tiny7 | tabu | - | 4349.265 | 4338.517 | 4338.517 | +0.000 | 4414.70 → 4414.70 | 372.68 → 372.68 | 23 → 23 | 0 → 0 | 293 → 204 | yes |
+   | small21 | sa | default | 15627.571 | 15562.603 | 15584.157 | +21.554 | 15966.97 → 15966.97 | 1977.32 → 1871.80 | 90 → 90 | 0 → 0 | 78 → 97 | no |
+   | small21 | sa | diversify | 15616.925 | 15562.945 | 15562.945 | +0.000 | 15966.97 → 15966.97 | 1976.36 → 1976.36 | 90 → 90 | 0 → 0 | 28 → 41 | no |
+   | small21 | sa | mobilisation | 15627.781 | 15573.753 | 15593.845 | +20.092 | 15966.97 → 15966.97 | 1924.32 → 1823.36 | 90 → 90 | 0 → 0 | 78 → 113 | no |
+   | small21 | ils | - | 15638.083 | 15573.355 | 15605.943 | +32.588 | 15966.97 → 15966.97 | 1924.56 → 1764.12 | 90 → 90 | 0 → 0 | 86 → 71 | no |
+   | small21 | tabu | - | 15660.009 | 15508.865 | 15595.283 | +86.418 | 15966.97 → 15966.97 | 2243.76 → 1815.92 | 90 → 90 | 0 → 0 | 415 → 280 | no |
+   | med42 | sa | default | -27271.221 | -30331.841 | -28662.400 | +1669.442 | 32071.86 → 31793.02 | 10564.68 → 10110.44 | 211 → 209 | 51000 → 49000 | 1245 → 1625 | no |
+   | med42 | sa | diversify | -30977.726 | -31815.426 | -33965.984 | -2150.559 | 32297.03 → 32119.53 | 10432.52 → 10023.64 | 210 → 212 | 53000 → 55000 | 419 → 483 | no |
+   | med42 | sa | mobilisation | -26565.270 | -29654.070 | -29188.831 | +465.239 | 32426.04 → 32028.43 | 10625.84 → 10104.92 | 210 → 210 | 51000 → 50000 | 1242 → 1664 | no |
+   | med42 | ils | - | -33452.282 | -35484.182 | -33253.410 | +2230.772 | 33025.19 → 31538.89 | 10682.68 → 10275.92 | 213 → 209 | 58000 → 53000 | 1792 → 831 | no |
+   | med42 | tabu | - | -46063.733 | -46063.733 | -41009.666 | +5054.066 | 30026.28 → 31556.20 | 9846.12 → 9857.68 | 212 → 208 | 63000 → 61000 | 7391 → 3596 | no |
+
+   tiny7: the committed plans were already optimal for the exact objective (byte-identical CSVs);
+   only the reported objective drops to the plans' fresh value (−10.748). small21: equal delivery,
+   lower mobilisation, fresh objective +20…+86 (SA diversify ends on an equivalent plan). med42:
+   fresh objective better for SA default/mobilisation, ILS and Tabu (Tabu now searches at all:
+   −46063.73 → −41009.67); SA diversify ends 2150.56 lower (a different stochastic trajectory under
+   the diversify preset, not a scoring error: its reported value equals its fresh value). "penalty"
+   = 1000-point penalties of the plan (`evaluate_schedule` debug `penalty_total`). Runtimes are
+   not comparable (the machine ran ~170 load on 72 cores during the new runs).
+
+   Jaffray scenarios (read-only, three shifts, no mobilisation config, transitions not weighted),
+   SA 1500 iterations, seeds 1–3, old → new: ka_6 30913.355595 ×3 → 30913.355595 ×3 (277
+   assignments, delivered 30913.36 m³, 0 sequencing violations, reported = fresh before and after);
+   pg_6 67923.9629 ×3 → 67923.9629 ×3 (427 assignments). Only the last floating-point bit changes
+   (summation order). These objectives have no mobilisation/transition term, so the cache defect
+   never applied, and the landing-guard change does not change the SA objective here.
+9. **Merge with #132 (6597a7a).** `optimization/heuristics/` was not touched by #132 (its landing
+   alignment is MILP-side: per-slot E11, hard at `landing_surplus = 0`, `k·ω` pieces matching the
+   heuristics' `e(e+1)/2`; day locks expanded in rolling/MILP; tracker idle slots), so the merge was
+   conflict-free in code; CHANGE_LOG, ROADMAP and release notes had add/add conflicts (both entries
+   kept). Semantics combine as follows: the heuristic `lock_for` already returns a day lock for every
+   slot of its day and the repair clears unavailable slots (§8.18 item 2), which is what the MILP's
+   expansion does; locked slots are still kept on their block (#131) and landing capacity counts
+   machines not yet reached in the slot only through their locks (#131). Re-checks on the merge:
+   `test_objective_exact.py`, `test_milp_landing_capacity.py`, `test_rolling_day_locks.py`,
+   `test_idle_locked_slot.py`, `test_rolling_robustness.py`, `test_rolling_carry_forward.py` pass;
+   #132's MILP plans (`/tmp/opencode/w125/post.py`, `evaluate_schedule` without repair) score
+   identically on 6597a7a and on this branch with 0 landing penalties (tiny7 60 s −3746.82,
+   small21 120 s −19191.58 / 600 s −5450.91, ka_6 / pg_6 SA-seeded 30913.36 / 67923.96), and a
+   fresh tiny7 MILP solve on the merge (optimal 279.796036) also has 0 landing penalties;
+   `audit_asset_consistency.py` pass/fail results unchanged (all OK on 6597a7a and here; only the
+   informational synthetic/scaling `full_eval_objective` columns move, see item 10).
+10. **Unavailable-slot offset (hand-off from §8.18).** `evaluate_schedule` added 1000 for every
+   machine slot that is unavailable in the shift or day calendar or blacked out, *before* checking
+   whether anything was assigned, so every such slot cost 1000 even when idle: a constant offset (no
+   effect on search decisions, since the SA start temperature `max(1, score/10)` is 1 for these
+   negative objectives either way). Now only an *assigned* unavailable slot is penalised (the repair
+   clears those before scoring, so repaired plans pay nothing). Affected scenarios
+   (`/tmp/opencode/w131/unav.py`, unavailable machine-slots): synthetic small 22 / 224, medium
+   133 / 448, large 335 / 672, the regression fixture 1 / 8; tiny7, small21, med42, large84 and all
+   Jaffray scenarios (ka/ni/pg × 6/18/40) have none, so their results are unaffected.
+   Synthetic-small −75039.791 → −53039.791 (+22000; re-run with committed settings into
+   `/tmp/opencode/w131/bench/new2/`: SA ×3, ILS and Tabu assignment CSVs byte-identical to the
+   committed ones; SA initial score +22000; Tabu's operator counts differ because its seed is now
+   scored with the full repair, item 2, but it ends on the same plan); the scaling
+   sweep's committed objectives −75039.79 / −261097.03 / −359224.71 re-evaluate to −53039.79 /
+   −128097.03 / −24224.71 (they change on regeneration). Regression fixture −1005.5 → −5.5. Test:
+   `test_idle_unavailable_slots_are_not_penalised` (calendar day + blackout day idle → penalty 0,
+   objective 20, SA reports 20; v1.0.0: −1980).
+11. **Re-run after the merge and item 10** (`bench/new2/`, same commands as item 8): tiny7 SA ×3 /
+   ILS / Tabu and small21 SA ×3 / ILS / Tabu summary rows identical to the item 8 table in every
+   non-runtime column and every assignment CSV byte-identical — the PR table stands.
 
 ## Verification cadence (each child)
+
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
 `sphinx-build -b html docs _build/html -W`, and `python scripts/check_formulation_assets.py`
 when formulation sources change. Baseline at `v1.0.0`: 511 tests pass; ruff/mypy clean.

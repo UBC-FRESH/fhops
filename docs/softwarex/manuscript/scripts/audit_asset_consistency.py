@@ -11,9 +11,12 @@ other without re-running any solver:
   assignment count is the CSV row count. The schedule is also scored with a fresh heuristic
   evaluation (``evaluate_schedule`` with the objective-weight overrides the SA/ILS/Tabu drivers
   apply); this is reported as ``full_eval_objective`` / ``objective_gap`` but is **not** a pass/fail
-  check: the solvers report the score of their internal best schedule, whose cached per-machine
-  mobilisation can omit machines (FHOPS 1.0.1 heuristics), so the reported objective can exceed
-  the fresh evaluation of the exported schedule. Whether an objective is reproducible is checked
+  check: assets produced before #131 report the score of the solver's internal best schedule,
+  whose cached per-machine mobilisation could omit machines, so their reported objective can
+  exceed the fresh evaluation of the exported schedule, and their objectives include 1000 per idle
+  unavailable machine slot (synthetic tiers), which the evaluator no longer charges (gap −1000 ×
+  slots). Since #131 reported and fresh objectives are equal; make this a check once the assets
+  are regenerated. Whether an objective is reproducible is checked
   by re-running the benchmark (see ``notes/v101_maintenance_plan.md`` §8.16);
 * the manuscript tables (``data/tables/*.csv``) equal a fresh ``build_tables.py`` rendering of the
   committed summaries (and, optionally, a manuscript ``sections/includes`` copy of the ``.tex``);

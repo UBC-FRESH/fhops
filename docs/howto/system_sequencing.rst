@@ -93,7 +93,10 @@ Because
 staged output moves on at the next shift, a multi-shift heuristic repair could put every role of a
 block on its landing in the same shift; on days with more than one shift the heuristic repair
 therefore only keeps or fills an assignment when the block's landing has room in that shift
-(scenarios that weight ``landing_surplus`` at 0, the default). Single-shift days are unchanged.
+(scenarios that weight ``landing_surplus`` at 0, the default). Machines the repair has not reached
+yet in that shift count only through their locks, so repairing an already repaired plan leaves it
+unchanged and the heuristic score equals a fresh evaluation of the exported plan (1.0.1, #131).
+Single-shift days are unchanged.
 
 Playback flags an assignment with ``sequencing_violation = "missing_prereq"`` when its planned
 production exceeds the staged input or a head-start/truckload threshold is not met (volume

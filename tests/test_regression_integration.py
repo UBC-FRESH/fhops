@@ -7,7 +7,10 @@ import yaml
 from fhops.cli._utils import resolve_operator_presets
 from fhops.evaluation.metrics.kpis import compute_kpis
 from fhops.optimization.heuristics import solve_sa, solve_tabu
+from fhops.optimization.heuristics.common import evaluate_schedule
+from fhops.optimization.heuristics.ils import _assignments_to_schedule
 from fhops.optimization.mip.builder import build_model
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract.models import Problem
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.mobilisation import (
@@ -110,6 +113,9 @@ def test_regression_sa_mobilisation_and_sequencing():
     assert kpis["sequencing_violation_breakdown"] == "none"
     assert kpis["mobilisation_cost"] == pytest.approx(BASELINE["sa_expected"]["mobilisation_cost"])
     assert res["objective"] == pytest.approx(BASELINE["sa_expected"]["objective"])
+    # The reported objective is a fresh evaluation of the exported schedule (#131).
+    ctx = build_operational_problem(pb)
+    assert res["objective"] == evaluate_schedule(pb, _assignments_to_schedule(pb, assignments), ctx)
     expected_total = BASELINE["sa_expected"]["total_production"]
     delivered = kpis["total_production"]
     staged = float(kpis.get("staged_production", 0.0))
