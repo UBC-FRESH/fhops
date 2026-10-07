@@ -1052,6 +1052,106 @@ Branch `issue-127-legacy-mip-retirement`; scratch in `/tmp/opencode/t127/`.
    ran in a temp copy (results in CHANGE_LOG); pre-existing, not changed here:
    `system_sequencing.rst` `fhops solve-ils … --include-mip False` (no such option, exit 2) and its
    default-scenario `bench suite` (hours; not run) — that page's non-MIP parts belong to #125.
+### 8.18 Solver consistency: landing capacity, day locks, idle locked slots, `fhops evaluate` (#125)
+Hand-offs from #116 (§8.13 items 1 and 3) and #115 (§8.12 hand-offs). Branch
+`issue-125-landing-locks-alignment`; scripts in `/tmp/opencode/w125/`.
+
+1. **Landing capacity (E11).** Heuristics (v1.0.0 behaviour, unchanged): per `(day, shift)` slot,
+   every machine assigned to a block of landing `ℓ` counts; at `landing_surplus = 0` each machine
+   beyond `daily_capacity` costs 1000 (the assignment's landing slot is still counted); otherwise
+   `landing_surplus_total` grows by `used − C` for each machine beyond capacity, i.e. the `k`-th
+   machine beyond capacity adds `k` (`e` surplus machines → `e(e+1)/2`). The MILP counted
+   machine-shifts per **day** (`Σ_σ x ≤ C + S_{ℓ,d}`) and `S` was free at weight 0, so landings never
+   bound. Now `landing_capacity[ℓ, d, s]`: `Σ_{b∈ℓ} Σ_m x_{m,b,s} ≤ C_ℓ` at weight 0 (no slack
+   variable), else `≤ C_ℓ + Σ_{k=1}^{|M|−C_ℓ} S_{ℓ,s,k}` with `S ∈ [0, 1]` and objective
+   `−ω Σ k·S_{ℓ,s,k}` (increasing marginal price ⇒ the LP fills pieces in order, exactly the
+   heuristics' triangular accounting; a single linear slack would have priced `e` instead of
+   `e(e+1)/2`, so soft-mode objectives of the same plan would differ between SA and MILP). The
+   legacy day-level `solve-mip` builder (other owner, #124) already uses a per-slot linear slack.
+   - **Locks.** With a hard capacity, locks alone can exceed it (scenario validation does not reject
+     this; with a soft weight it is a priced choice). Decision: that slot's limit becomes the number
+     of machines locked to the landing (`_landing_slot_capacities`, effective locks only, i.e.
+     after `resolve_locked_slots`), so the locks hold, no other machine may join, and a warning is
+     returned in `result["warnings"]`. The heuristics charge the same unavoidable overload (1000 per
+     locked machine beyond capacity), so both solvers still agree. Rejected: pinning surplus locked
+     machines to idle (silently breaks user locks) and making the model infeasible (contradicts
+     §8.12 item 4).
+   - Warm start: `landing_usage` is per slot; the pieces `1..(usage − C)` are seeded with 1. A
+     heuristic incumbent that overloads a landing (single-shift repair is not landing-aware) is now
+     infeasible and rejected (`med42` greedy, `--iters 0`, 60 s: rejected; accepted at 86cd4d9 with
+     objective 22812.11). Documented in `docs/howto/mip_warm_starts.rst`.
+   - Docs: formulation (`C_ℓ`, `K_ℓ`, `S_{ℓ,s,k}`, objective, constraint with `N^lock`, domain,
+     change (viii), mapping; TeX/RST regenerated with pandoc 3.6, which reproduced the committed
+     files byte-for-byte first), `Landing.daily_capacity` / `ObjectiveWeights.landing_surplus`
+     docstrings, `system_sequencing.rst`, `data_contract.rst`, release notes.
+2. **Day-level locks.** MILP (`resolve_locked_slots`): a lock without `shift_id` pins every grid
+   slot of its day where the machine is available. Heuristics: `lock_for` returns the day lock for
+   every slot, the repair clears unavailable slots — same plan (new tests: SA and MILP rolling, and
+   a direct SA solve with one unavailable shift, place the machine in exactly the available shifts).
+   Rolling: `_fill_shift_ids` (label only single-slot days, keep `None` otherwise → playback
+   rejected the rows on multi-shift scenarios since #116, and `S1` before) is replaced by
+   `_expand_day_locks`: one shift lock per available slot (grid order; slots already covered by a
+   shift lock of the machine are skipped; no available slot → dropped, the MILP pins it idle). A day
+   lock with a planned `production` covering > 1 slot raises `ValueError` (split ambiguous).
+   Applied in `carry_forward_state` (replay and `last_block_id` order), `_run_iteration` (hook
+   output, so `RollingPlanResult.locked_assignments` is always shift-level),
+   `rolling_assignments_dataframe(..., scenario=...)` (new optional keyword for hand-built results)
+   and `compute_rolling_kpis` (results and `ScheduleLock` sequences; DataFrames are passed to
+   playback as given). Single-slot days: the label is filled as before, but a day lock on an
+   unavailable single slot is now dropped (previously replayed; MILP semantics).
+3. **Idle locked slots.** `SequencingTracker.process`: a proposal `≤ SEQUENCING_TOLERANCE` is an idle
+   slot; head-start and truckload checks are skipped (they bind a producing role, the MILP's
+   `role_active`); role violations still apply. Heuristics always propose the machine's rate
+   (> 0), so they are unaffected; playback of rate-based rows is unchanged. The strict xfail on
+   `test_downstream_user_lock_in_short_windows_does_not_crash[2-2]` is removed; the test now also
+   asserts that the MILP idles the locked skidder (`production == 0`). A producing row without
+   staged input is still flagged (`tests/sequencing/test_idle_locked_slot.py`).
+4. **`fhops evaluate`** catches `ValueError` from `compute_kpis` (missing `shift_id` and other input
+   errors) → red message, exit 1 (test parametrised with `eval-playback`).
+
+Evidence (`milp_cmp.py`: HiGHS, scenario weights, both versions side by side at equal time limits;
+"landing penalties" = `evaluate_schedule` without its repair pass on the MILP plan, penalty minus
+the penalty with unbounded landing capacity, /1000; the remaining heuristic penalties are
+sequencing violations from the heuristics' rate-based proposals, not landing):
+
+| Scenario (time limit) | Version | Outcome | Objective | Rows | Playback delivered m³ | Playback violations | Landing overloads (per slot) | Heuristic landing penalties |
+|---|---|---|---|---|---|---|---|---|
+| tiny7 (60 s) | 86cd4d9 | optimal | 4388.08 | 24 | 4414.70 | 0 | 12 | 12 |
+| tiny7 (60 s) | #125 | optimal | 279.80 | 14 | 2360.56 | 0 | 0 | 0 |
+| small21 (120 s) | 86cd4d9 | feasible | -13655.25 | 148 | 1987.56 | 0 | 72 | 72 |
+| small21 (120 s) | #125 | feasible | 2610.62 | 54 | 9288.79 | 0 | 0 | 0 |
+| small21 (600 s) | 86cd4d9 | feasible | 15645.73 | 118 | 15966.97 | 0 | 49 | 49 |
+| small21 (600 s) | #125 | feasible | 11433.31 | 87 | 13940.62 | 0 | 0 | 0 |
+| med42 (120 s) | 86cd4d9 | feasible (empty incumbent) | -38193.23 | 0 | 0 | – | – | – |
+| med42 (120 s) | #125 | feasible (empty incumbent) | -38193.23 | 0 | 0 | – | – | – |
+| med42 (600 s) | 86cd4d9 | feasible (empty incumbent) | -38193.23 | 0 | 0 | – | – | – |
+| med42 (600 s) | #125 | feasible (empty incumbent) | -38193.23 | 0 | 0 | – | – | – |
+| ka_6 (120 s) | 86cd4d9 | feasible (empty incumbent) | -30913.36 | 0 | 0 | – | – | – |
+| ka_6 (120 s) | #125 | feasible (empty incumbent) | -30913.36 | 0 | 0 | – | – | – |
+| ka_6 (600 s) | 86cd4d9 | feasible | 23353.58 | 272 | 27133.47 | 0 | 12 | 12 |
+| ka_6 (600 s) | #125 | feasible (empty incumbent) | -30913.36 | 0 | 0 | – | – | – |
+| ka_6 (1800 s) | 86cd4d9 | optimal | 30913.36 | 473 | 30913.36 | 0 | 27 | 27 |
+| ka_6 (1800 s) | #125 | feasible (empty incumbent) | -30913.36 | 0 | 0 | – | – | – |
+| ka_6 (600 s, SA seed) | 86cd4d9 | optimal | 30913.36 | 277 | 30913.36 | 0 | 0 | 0 |
+| ka_6 (600 s, SA seed) | #125 | optimal | 30913.36 | 277 | 30913.36 | 0 | 0 | 0 |
+| pg_6 (120 s) | 86cd4d9 | feasible (empty incumbent) | -67923.96 | 0 | 0 | – | – | – |
+| pg_6 (120 s) | #125 | feasible (empty incumbent) | -67923.96 | 0 | 0 | – | – | – |
+| pg_6 (600 s) | 86cd4d9 | feasible (empty incumbent) | -67923.96 | 0 | 0 | – | – | – |
+| pg_6 (600 s) | #125 | feasible (empty incumbent) | -67923.96 | 0 | 0 | – | – | – |
+| pg_6 (1800 s) | 86cd4d9 | feasible (empty incumbent) | -67923.96 | 0 | 0 | – | – | – |
+| pg_6 (1800 s) | #125 | feasible (empty incumbent) | -67923.96 | 0 | 0 | – | – | – |
+| pg_6 (600 s, SA seed) | 86cd4d9 | optimal | 67923.96 | 427 | 67923.96 | 0 | 0 | 0 |
+| pg_6 (600 s, SA seed) | #125 | optimal | 67923.96 | 427 | 67923.96 | 0 | 0 | 0 |
+
+Reading: every MILP plan of this branch has 0 landing overloads per slot and 0 landing penalties under the heuristics' `evaluate_schedule`, and still replays with 0 playback sequencing violations; 86cd4d9 plans overloaded landings in every case with a solution (tiny7 12, small21 49–72, ka_6 12–27). Objectives drop where landings bind (tiny7 capacity-1 landings: optimum 4388.082752 → 279.796036, delivered 4414.70 → 2360.56 m³; small21 600 s 15645.73 → 11433.31). On the 3-shift Jaffray scenarios the landing-feasible optimum equals the unconstrained one: seeded with the SA plan (1500 iterations, seed 1: ka_6 30913.36, pg_6 67923.96, 0 overloads, 0 violations) both versions accept the start and prove it optimal in 57–86 s, i.e. SA and MILP now agree on value *and* on landing feasibility. Trade-off: unseeded HiGHS no longer finds a first incumbent on ka_6 within 1800 s (86cd4d9 reached its landing-violating optimum after 1056 s); pg_6 had no unseeded incumbent before either; med42 has none at 120/600 s in either version. The non-landing heuristic penalties of MILP plans (not shown; e.g. tiny7 4, small21 16–21) come from `evaluate_schedule` proposing full rates where the MILP planned partial production; playback, which replays the planned production, reports 0 violations.
+
+Unchanged: reference ladder (`fhops bench suite`, committed flags, into a temp dir) — tiny7 SA ×3 /
+ILS / Tabu and small21 SA ×3 / ILS / Tabu rows and every assignment CSV byte-identical; SoftwareX
+playback assets (`run_playback_analysis.py`): all 48 generated files byte-identical.
+
+Hand-off (not changed, pre-existing): `evaluate_schedule` charges 1000 for every unavailable
+machine slot whether or not it is assigned (a constant offset in heuristic objectives of scenarios
+with `available = 0` calendar entries; none in the shipped or Jaffray scenarios).
 
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,

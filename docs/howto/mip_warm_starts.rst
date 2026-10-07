@@ -69,6 +69,9 @@ repair only avoids them on multi-shift days), so a heuristic incumbent that over
 infeasible for the MILP and HiGHS rejects it (e.g. the ``med42`` greedy incumbent above: ``seeded_slots=212
 (rejected)``; it was accepted before 1.0.1, when the MILP's landing slack was free at weight 0). Seed
 the MILP with a plan that respects landing capacity, or give ``landing_surplus`` a positive weight.
+On multi-shift scenarios the heuristic repair keeps landing capacity, and seeding pays off: on the
+3-shift BC case study ``ka_6`` HiGHS finds no incumbent of its own within 30 minutes, while the SA
+plan (1500 iterations) is accepted and proven optimal in about a minute.
 
 HiGHS does not always log a verdict about the MIP start (e.g. on large models stopped by a time limit). ``accepted`` then defaults to ``None`` unless acceptance can be inferred, in which case ``accepted=True`` and ``acceptance="inferred"`` (``"log"`` when the verdict comes from the HiGHS log). The rule: a solution was returned and either (a) its assignment variables ``x`` equal the seeded ones, or (b) the seeded point satisfied every model constraint (FHOPS records the seeded values and checks them after the solve, only when needed; tolerance 1e-6), so HiGHS could adopt it as its first incumbent, and the returned objective is at least the seed objective. The CLI prints a note when acceptance was inferred.
 

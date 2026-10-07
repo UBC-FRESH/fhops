@@ -81,11 +81,15 @@ MILP's terminal production:
 * **Blocks without** ``harvest_system_id`` have no role obligations: any machine may work them and
   every machine's output counts towards ``work_required``.
 
-Landing capacity is not a sequencing rule and is modelled differently by the solvers: the MILP
-limits machine-shifts per landing and day to ``Landing.daily_capacity`` plus a slack priced by the
-``landing_surplus`` weight (free at weight 0), while the heuristics count machines per landing in
-each shift and charge 1000 per machine beyond ``daily_capacity`` when ``landing_surplus`` is 0
-(otherwise the weighted surplus). Because
+Landing capacity is not a sequencing rule, but both solvers apply it identically (since 1.0.1,
+#125): ``Landing.daily_capacity`` is the number of machines that may work a landing's blocks
+concurrently in one shift slot. With ``landing_surplus`` weighted 0 (the default) it is a hard limit
+(the heuristics charge 1000 per extra machine, the MILP enforces it as a constraint); with a positive
+weight an overload is allowed and the ``k``-th machine beyond capacity in a slot costs
+``k × landing_surplus``. In a slot where locks alone exceed a hard capacity, the MILP keeps the locked
+machines, admits no other machine there and reports a warning. (Before 1.0.1 the MILP counted
+machine-shifts per day with a slack that was free at weight 0, so the capacity did not bind.)
+Because
 staged output moves on at the next shift, a multi-shift heuristic repair could put every role of a
 block on its landing in the same shift; on days with more than one shift the heuristic repair
 therefore only keeps or fills an assignment when the block's landing has room in that shift
@@ -93,7 +97,9 @@ therefore only keeps or fills an assignment when the block's landing has room in
 
 Playback flags an assignment with ``sequencing_violation = "missing_prereq"`` when its planned
 production exceeds the staged input or a head-start/truckload threshold is not met (volume
-tolerance 1e-6 m³, which absorbs MILP solver feasibility noise). Rolling-horizon MILP runs store
+tolerance 1e-6 m³, which absorbs MILP solver feasibility noise). An assignment with a planned
+production of 0 (``production`` column) is an idle slot and is never a ``missing_prereq``
+violation: the thresholds apply to a role that produces (since 1.0.1, #125). Rolling-horizon MILP runs store
 the planned production in their locks, so stitched plans replay the MILP plan rather than the full
 production rate (:doc:`rolling_horizon`).
 
@@ -103,9 +109,10 @@ Locks and the operational MILP
 A locked machine is always assigned to its block, but it does not have to produce: when its role
 has nothing to process (a loader before a truckload is staged, a head-start role before its buffer)
 the MILP keeps it idle (``assigned = 1``, ``production = 0``) instead of becoming infeasible. Only
-unlocked assigned machines force the role's head-start/truckload checks. Playback still reports a
-locked idle machine of a buffered role as ``missing_prereq`` (the lock places it there before the
-buffer exists). Locks that contradict the model (a day outside the block window, a machine whose
+unlocked assigned machines force the role's head-start/truckload checks. Playback replays such a
+locked idle slot without a violation. A lock without ``shift_id`` covers every shift of its day in
+which the machine is available; the heuristics, rolling-horizon replay and exports
+(:doc:`rolling_horizon`) expand it the same way. Locks that contradict the model (a day outside the block window, a machine whose
 role is not part of the block's harvest system) are rejected by scenario validation; if such a lock
 reaches the MILP anyway (e.g. a hand-edited bundle) it is pinned to idle and listed in the solve
 result's ``warnings``.

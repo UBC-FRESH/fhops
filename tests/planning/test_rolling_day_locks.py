@@ -182,3 +182,22 @@ def test_heuristic_plan_matches_milp_day_lock_slots() -> None:
     day1 = assignments[(assignments.machine_id == "F1") & (assignments.day == 1)]
     assert sorted(zip(day1.shift_id, day1.block_id, strict=True)) == [("S1", "B2"), ("S3", "B2")]
     assert isinstance(assignments, pd.DataFrame)
+
+
+def test_day_lock_on_unavailable_single_shift_day_is_idle() -> None:
+    # Single-shift scenario, F1 unavailable on day 1: the MILP pins the lock to idle, so the
+    # replay must not credit the feller's output (it did before #125).
+    scenario = chain_scenario()
+    calendar = [
+        entry.model_copy(update={"available": 0})
+        if (entry.machine_id, entry.day) == ("F1", 1)
+        else entry
+        for entry in scenario.calendar
+    ]
+    payload = {name: getattr(scenario, name) for name in Scenario.model_fields}
+    payload["calendar"] = calendar
+    scenario = Scenario.model_validate(payload)
+    lock = ScheduleLock(machine_id="F1", block_id="B1", day=1)
+    state = carry_forward_state(scenario, [lock], through_day=1)
+    assert state.initial_state is None
+    assert state.remaining_work == {"B1": 400.0, "B2": 400.0}
