@@ -20,6 +20,7 @@ from typing import Any, Literal, cast
 import pandas as pd
 import typer
 from rich.console import Console
+from rich.markup import escape
 from rich.table import Table
 
 from fhops.cli._utils import (
@@ -39,6 +40,10 @@ from fhops.cli.watch_dashboard import LiveWatch
 from fhops.evaluation import compute_kpis
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
+from fhops.optimization.heuristics.common import (
+    evaluate_assignments,
+    objective_weight_override_notice,
+)
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
@@ -136,6 +141,59 @@ def _record_metrics(
     if machine_costs_summary:
         payload["machine_costs_summary"] = machine_costs_summary
     return payload
+
+
+WEIGHT_COLUMNS = (
+    "objective_weights_source",
+    "objective_weight_overrides",
+    "objective_scenario_weights",
+    "objective_scenario_weights_vs_mip_gap",
+)
+"""Summary columns added in #140, appended after the pre-1.0.1 columns (which keep their order)."""
+
+
+def _weight_columns(
+    pb: Problem,
+    meta: Mapping[str, Any],
+    assignments: pd.DataFrame,
+    objective: float,
+) -> dict[str, object]:
+    """Return the objective-weight transparency columns for one heuristic summary row (#140).
+
+    ``objective_weights_source`` is ``scenario`` (no override), ``auto``
+    (:data:`~fhops.optimization.heuristics.common.AUTO_OBJECTIVE_WEIGHT_OVERRIDES`) or
+    ``explicit`` (``--objective-weight``); ``objective_weight_overrides`` is the applied mapping as
+    JSON (empty without overrides); ``objective_scenario_weights`` scores the plan as planned under
+    the scenario's own weights (the MILP's) with
+    :func:`~fhops.optimization.heuristics.common.evaluate_assignments` and equals ``objective``
+    when no override applied.
+    """
+
+    overrides = meta.get("objective_weight_overrides")
+    if not overrides:
+        return {
+            "objective_weights_source": "scenario",
+            "objective_weight_overrides": "",
+            "objective_scenario_weights": float(objective),
+        }
+    return {
+        "objective_weights_source": str(
+            meta.get("objective_weight_overrides_source") or "explicit"
+        ),
+        "objective_weight_overrides": json.dumps(dict(sorted(overrides.items()))),
+        "objective_scenario_weights": float(evaluate_assignments(pb, assignments)),
+    }
+
+
+def _print_override_notice_once(
+    meta: Mapping[str, Any], scenario_label: str, printed: set[str]
+) -> None:
+    """Print the objective-weight override notice once per scenario."""
+
+    notice = objective_weight_override_notice(meta, scenario_label)
+    if notice and scenario_label not in printed:
+        printed.add(scenario_label)
+        console.print(f"[yellow]Note:[/] {escape(notice)}")
 
 
 def run_benchmark_suite(
@@ -267,7 +325,15 @@ def run_benchmark_suite(
     -----
     The function writes the following assets inside ``out_dir``:
 
-    * ``summary.csv`` and ``summary.json``: aggregated KPI/objective/runtime metrics.
+    * ``summary.csv`` and ``summary.json``: aggregated KPI/objective/runtime metrics. The last
+      columns (#140, :data:`WEIGHT_COLUMNS`) make MIP-vs-heuristic comparisons like-for-like:
+      ``objective_weights_source`` (``scenario``/``auto``/``explicit``),
+      ``objective_weight_overrides`` (JSON), ``objective_scenario_weights`` (the plan scored as
+      planned under the scenario's own weights, which the MILP uses; equals ``objective`` without
+      overrides) and ``objective_scenario_weights_vs_mip_gap`` (MIP objective minus
+      ``objective_scenario_weights``; empty without a MIP row). The existing ``objective`` and
+      ``objective_vs_mip_*`` columns are unchanged (``objective`` is under the weights the solver
+      optimised).
     * ``<scenario>/<solver>_assignments.csv``: per-solver assignment matrices.
     * Optional telemetry JSONL entries (when ``telemetry_log`` is provided).
     """
@@ -302,6 +368,8 @@ def run_benchmark_suite(
             watch_runner.start()
         else:
             console.print("[yellow]Watch mode disabled: not running in an interactive terminal.[/]")
+
+    notices_printed: set[str] = set()
 
     def _run_benchmark_scenarios() -> None:
         for bench in scenarios:
@@ -372,6 +440,13 @@ def run_benchmark_suite(
                 mip_kpis = compute_kpis(pb, mip_assign)
                 extra_payload: dict[str, object] = {
                     "build_time_s": build_time,
+                    "objective_weights_source": "scenario",
+                    "objective_weight_overrides": "",
+                    "objective_scenario_weights": (
+                        scenario_mip_objective
+                        if scenario_mip_objective is not None
+                        else float("nan")
+                    ),
                 }
                 if chosen_solver:
                     extra_payload["mip_solver"] = chosen_solver
@@ -485,6 +560,11 @@ def run_benchmark_suite(
                         "sa_restarts": sa_meta.get("restarts"),
                         "preset_label": preset_label,
                     }
+                    sa_weight_columns = _weight_columns(
+                        pb, sa_meta, sa_assign, cast(float, sa_res.get("objective", 0.0))
+                    )
+                    extra.update(sa_weight_columns)
+                    _print_override_notice_once(sa_meta, sc_name, notices_printed)
                     if profile:
                         extra["profile"] = profile.name
                         extra["profile_version"] = profile.version
@@ -524,6 +604,7 @@ def run_benchmark_suite(
                             "operators_stats": operator_stats,
                             "preset_label": preset_label,
                             "machine_costs": machine_cost_dicts,
+                            **sa_weight_columns,
                         }
                         if scenario_mip_objective is not None:
                             log_record["milp_objective"] = float(scenario_mip_objective)
@@ -616,6 +697,11 @@ def run_benchmark_suite(
                     "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
                     "improvement_steps": ils_meta.get("improvement_steps"),
                 }
+                ils_weight_columns = _weight_columns(
+                    pb, ils_meta, ils_assign, cast(float, ils_res.get("objective", 0.0))
+                )
+                extra_ils.update(ils_weight_columns)
+                _print_override_notice_once(ils_meta, sc_name, notices_printed)
                 if profile:
                     extra_ils["profile"] = profile.name
                     extra_ils["profile_version"] = profile.version
@@ -651,6 +737,7 @@ def run_benchmark_suite(
                         "hybrid_use_mip": hybrid_use_mip_val,
                         "hybrid_mip_time_limit": hybrid_mip_time_limit_val,
                         "machine_costs": machine_cost_dicts,
+                        **ils_weight_columns,
                     }
                     if scenario_mip_objective is not None:
                         record["milp_objective"] = float(scenario_mip_objective)
@@ -729,6 +816,11 @@ def run_benchmark_suite(
                     "tabu_tenure": tabu_meta.get("tabu_tenure", tabu_tenure_val),
                     "tabu_stall_limit": tabu_stall_limit_val,
                 }
+                tabu_weight_columns = _weight_columns(
+                    pb, tabu_meta, tabu_assign, cast(float, tabu_res.get("objective", 0.0))
+                )
+                extra_tabu.update(tabu_weight_columns)
+                _print_override_notice_once(tabu_meta, sc_name, notices_printed)
                 if profile:
                     extra_tabu["profile"] = profile.name
                     extra_tabu["profile_version"] = profile.version
@@ -762,6 +854,7 @@ def run_benchmark_suite(
                         "tabu_tenure": tabu_meta.get("tabu_tenure", tabu_tenure_val),
                         "tabu_stall_limit": tabu_stall_limit_val,
                         "machine_costs": machine_cost_dicts,
+                        **tabu_weight_columns,
                     }
                     if scenario_mip_objective is not None:
                         record["milp_objective"] = float(scenario_mip_objective)
@@ -887,6 +980,24 @@ def run_benchmark_suite(
             summary["best_heuristic_runtime_s"] = pd.NA
             summary["objective_gap_vs_best_heuristic"] = pd.NA
             summary["runtime_ratio_vs_best_heuristic"] = pd.NA
+
+        if "objective_scenario_weights" in summary.columns:
+
+            def _scenario_weights_gap(row: pd.Series) -> object:
+                mip_value = mip_objectives.get(str(row.get("scenario_key", "")))
+                value = _coerce_float(row.get("objective_scenario_weights"))
+                if mip_value is None or value is None:
+                    return pd.NA
+                return mip_value - value
+
+            summary["objective_scenario_weights_vs_mip_gap"] = pd.Series(
+                (_scenario_weights_gap(row) for _, row in summary.iterrows()),
+                index=summary.index,
+            )
+            trailing = [column for column in WEIGHT_COLUMNS if column in summary.columns]
+            summary = summary[
+                [column for column in summary.columns if column not in trailing] + trailing
+            ]
 
     summary_csv = out_dir / "summary.csv"
     summary_json = out_dir / "summary.json"

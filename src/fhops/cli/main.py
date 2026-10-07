@@ -69,6 +69,10 @@ from fhops.optimization.heuristics import (
     solve_sa,
     solve_tabu,
 )
+from fhops.optimization.heuristics.common import (
+    evaluate_assignments,
+    objective_weight_override_notice,
+)
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
 from fhops.optimization.operational_problem import build_operational_problem
@@ -238,6 +242,14 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
         console.print(
             f"[red]Repair Usage Alert:[/red] non-default FPInnovations usage bucket for {alert}"
         )
+
+
+def _print_weight_override_notice(meta: Mapping[str, Any], scenario_label: str | None) -> None:
+    """Print a one-line notice when a heuristic ran with objective-weight overrides (#140)."""
+
+    notice = objective_weight_override_notice(meta, scenario_label)
+    if notice:
+        console.print(f"[yellow]Note:[/] {escape(notice)}")
 
 
 def _print_warm_start_summary(info: Mapping[str, Any]) -> None:
@@ -1277,6 +1289,7 @@ def solve_heur_cmd(
     out.parent.mkdir(parents=True, exist_ok=True)
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (heuristic): {objective:.3f}. Saved to {out}")
+    _print_weight_override_notice(meta, sc.name)
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
     if sequencing_debug:
@@ -1316,6 +1329,11 @@ def solve_heur_cmd(
             "max_workers": parallel_workers,
             "machine_costs": machine_costs,
         }
+        if meta.get("objective_weight_overrides"):
+            record["objective_weight_overrides"] = meta["objective_weight_overrides"]
+            record["objective_weight_overrides_source"] = meta.get(
+                "objective_weight_overrides_source"
+            )
         if tier_label:
             record["tier"] = tier_label
         if selected_profile:
@@ -1632,6 +1650,7 @@ def solve_ils_cmd(
     out.parent.mkdir(parents=True, exist_ok=True)
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (ils): {objective:.3f}. Saved to {out}")
+    _print_weight_override_notice(cast(dict[str, Any], res.get("meta", {})), sc.name)
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
     if sequencing_debug:
@@ -1952,6 +1971,7 @@ def solve_tabu_cmd(
     out.parent.mkdir(parents=True, exist_ok=True)
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (tabu): {objective:.3f}. Saved to {out}")
+    _print_weight_override_notice(cast(dict[str, Any], res.get("meta", {})), sc.name)
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
     if sequencing_debug:
@@ -2513,6 +2533,14 @@ def benchmark(
     error) ``mip_solution.csv`` is an empty assignment table, ``MIP obj=n/a (outcome=…)`` is printed
     and the MIP metrics are skipped; SA still runs. Exit codes as for ``fhops solve-mip``: ``1``
     when the MIP solver failed (after the SA results are printed) or is unavailable.
+
+    When SA applies objective-weight overrides (explicitly or through
+    :data:`fhops.optimization.heuristics.common.AUTO_OBJECTIVE_WEIGHT_OVERRIDES`, e.g. FHOPS
+    Tiny7/Small21), the SA objective is not on the MILP's scale. The command then prints
+    ``SA obj (override weights)`` (the objective SA optimised) and ``SA obj (scenario weights)``
+    (the SA plan scored as planned under the scenario's own weights, which the MILP uses, with
+    :func:`fhops.optimization.heuristics.common.evaluate_assignments`) next to ``MIP obj``, plus a
+    one-line notice (#140).
     """
     from fhops.optimization.mip.highs_driver import SolverUnavailable, solve_with_operational_milp
 
@@ -2553,7 +2581,19 @@ def benchmark(
         if mip_has_solution and mip_objective is not None
         else f"n/a (outcome={res_mip.get('outcome')})"
     )
-    console.print(f"MIP obj={mip_text}, SA obj={cast(float, res_sa['objective']):.3f}")
+    sa_meta = cast(dict[str, Any], res_sa.get("meta", {}))
+    sa_objective = cast(float, res_sa["objective"])
+    if sa_meta.get("objective_weight_overrides"):
+        # SA searched with objective-weight overrides; the MILP uses the scenario weights. Score
+        # the SA plan as planned under the scenario weights for a like-for-like comparison (#140).
+        sa_scenario_objective = evaluate_assignments(pb, sa_assignments)
+        console.print(
+            f"MIP obj={mip_text}, SA obj (override weights)={sa_objective:.3f}, "
+            f"SA obj (scenario weights)={sa_scenario_objective:.3f}"
+        )
+        _print_weight_override_notice(sa_meta, sc.name)
+    else:
+        console.print(f"MIP obj={mip_text}, SA obj={sa_objective:.3f}")
     if mip_solver_error:
         console.print(f"[red]MIP solver error:[/] {mip_solver_error}")
     console.print(f"Saved: {mip_csv}, {sa_csv}")
