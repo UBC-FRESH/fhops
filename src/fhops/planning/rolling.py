@@ -28,11 +28,21 @@ solver error) does not abort the run by default: the iteration is recorded with
 ``status="no_solution"`` / ``has_solution=False`` and a warning, **no** assignments are locked for
 its lock span (machines idle), the carried state is unchanged across that span, and the next window
 is solved. Windows with nothing to plan (no blocks, no production rates, or no available shift
-slots) are recorded with ``status="skipped"`` and are idle as well. Windows that lock no
-assignments or plan no delivered volume while work remains are flagged as *empty*
+slots) are recorded with ``status="skipped"`` and are idle as well. Windows whose locked span
+produces nothing or whose plan delivers nothing while work remains are flagged as *empty*
 (:attr:`RollingIterationSummary.empty`, ``empty_windows`` in :func:`summarize_plan`). Pass
-``fail_on_empty_window=True`` to raise :class:`RollingInfeasibleError` at the first window without
-a solution instead; the exception carries the partial result (``partial_result``).
+``fail_on_no_solution=True`` to raise :class:`RollingInfeasibleError` at the first window without
+a solution, or ``fail_on_empty_window=True`` to raise at the first window without a solution or
+solved to an empty plan (#141); the exception carries the partial result (``partial_result``).
+
+MILP windows: earliness tie-break (FHOPS 1.0.1, #141)
+-----------------------------------------------------
+The operational MILP objective does not depend on *when* work is done inside a window, so a window
+could plan its work after its lock span and lock idle days (the next window then defers again).
+:class:`MILPSolver` therefore runs the driver's lexicographic earliness stage by default
+(``earliness=True``): among plans whose base objective is at least the base optimum found (minus a
+relative ``10⁻⁶``), it returns the one that produces earliest. Window objectives remain the base
+objective.
 
 Example
 -------
@@ -54,6 +64,7 @@ Example
 from __future__ import annotations
 
 import contextlib
+import logging
 import time
 import warnings
 from collections.abc import Iterable, Mapping, Sequence
@@ -63,6 +74,7 @@ from numbers import Number
 from typing import Protocol
 
 import pandas as pd
+from pyomo.opt import SolverFactory
 
 from fhops.evaluation import KPIResult, compute_kpis
 from fhops.evaluation.playback import assignments_to_records
@@ -407,17 +419,28 @@ def carry_forward_state(
 def _replay_tracker(problem: Problem, locks: Sequence[ScheduleLock]) -> SequencingTracker:
     """Replay ``locks`` through deterministic playback and return the finalised tracker."""
 
+    return _replay(problem, locks)[0]
+
+
+def _replay(
+    problem: Problem, locks: Sequence[ScheduleLock]
+) -> tuple[SequencingTracker, dict[int, float]]:
+    """Replay ``locks``; return the finalised tracker and the machine production (m³) per day."""
+
+    production_by_day: dict[int, float] = {}
     frame = _locks_frame(_expand_day_locks(problem, locks))
     if frame.empty:
-        return build_sequencing_tracker(problem)
+        return build_sequencing_tracker(problem), production_by_day
     records = assignments_to_records(problem, frame)
-    for _ in records:
-        pass
+    for record in records:
+        production_by_day[record.day] = production_by_day.get(record.day, 0.0) + float(
+            record.production_units or 0.0
+        )
     tracker = getattr(records, "sequencing_tracker", None)
     if tracker is None:  # pragma: no cover - defensive (empty frames handled above)
-        return build_sequencing_tracker(problem)
+        return build_sequencing_tracker(problem), production_by_day
     tracker.finalize()
-    return tracker
+    return tracker, production_by_day
 
 
 def _expand_day_locks(problem: Problem, locks: Sequence[ScheduleLock]) -> list[ScheduleLock]:
@@ -811,9 +834,18 @@ class RollingIterationSummary:
         (``remaining_work_start`` minus the remaining volume after the lock span). ``None`` when
         not computed.
     empty :
-        ``True`` when the window had remaining work (``> 1e-6`` m³ over its blocks) but locked no
-        assignments or planned no delivered volume (e.g. an all-zero time-limited MILP incumbent,
-        a no-solution or skipped window).
+        ``True`` when the window had remaining work (``> 1e-6`` m³ over its blocks) but its locked
+        span produces nothing (no locks, or only locks without production: ``locked_production``
+        ``<= 1e-6``) or its plan delivers nothing (e.g. an all-zero time-limited MILP incumbent,
+        a plan that defers all work beyond the lock span, a no-solution or skipped window). A
+        lock span whose blocks only open later in the window is flagged too.
+    locked_production :
+        Machine production (m³, every role) of the window plan's locked span in the window replay
+        (FHOPS 1.0.1, #141); ``0.0`` for windows that are not ``"solved"``. ``None`` when not
+        computed.
+    error :
+        Solver failure text of a ``"no_solution"`` window whose solver failed
+        (:attr:`SolverOutput.error`), else ``None`` (#141).
     """
 
     iteration_index: int
@@ -830,6 +862,8 @@ class RollingIterationSummary:
     planned_delivered: float | None = None
     locked_delivered: float | None = None
     empty: bool = False
+    locked_production: float | None = None
+    error: str | None = None
 
 
 @dataclass
@@ -916,6 +950,9 @@ class SolverOutput:
         ``False`` when the solver produced no solution (time limit before an incumbent, infeasible
         window, solver error). The orchestrator then ignores ``assignments`` and applies the
         no-solution policy (see :func:`run_rolling_horizon`). Defaults to ``True``.
+    error :
+        Solver failure text (e.g. unknown or unlicensed solver) for a window without a solution;
+        ``None`` otherwise (FHOPS 1.0.1, #141). Copied to :attr:`RollingIterationSummary.error`.
     """
 
     assignments: Sequence[ScheduleLock]
@@ -923,6 +960,7 @@ class SolverOutput:
     runtime_s: float | None = None
     warnings: list[str] | None = None
     has_solution: bool = True
+    error: str | None = None
 
 
 class IterableSolver(Protocol):
@@ -971,6 +1009,7 @@ def run_rolling_horizon(
     max_iterations: int | None = None,
     solver_name: str | None = None,
     fail_on_empty_window: bool = False,
+    fail_on_no_solution: bool = False,
 ) -> RollingPlanResult:
     """Execute the rolling-horizon loop with a user-supplied solver hook.
 
@@ -1000,13 +1039,21 @@ def run_rolling_horizon(
         on a day with several such slots raises ``ValueError``. Hooks report a failed solve with
         ``SolverOutput(has_solution=False)``.
     max_iterations:
-        Optional guard to cap the number of iterations (useful for smoke tests).
+        Optional guard to cap the number of iterations (useful for smoke tests); ``None`` runs
+        every window. Must be ``>= 1`` when given.
     solver_name:
         Optional solver label to persist into :class:`RollingPlanResult.metadata`.
     fail_on_empty_window:
         When ``True``, raise :class:`RollingInfeasibleError` at the first window whose solver
-        returned no solution instead of applying the no-solution policy (see Notes). Skipped
-        windows and windows solved to an empty plan never raise. Default ``False``.
+        returned no solution **or** that was solved to an empty plan
+        (:attr:`RollingIterationSummary.empty`: its lock span produces nothing or its plan
+        delivers nothing while its blocks hold work), instead of recording it and continuing
+        (FHOPS 1.0.1, #141; before, only windows without a solution raised). Skipped windows
+        never raise. Default ``False``.
+    fail_on_no_solution:
+        When ``True``, raise :class:`RollingInfeasibleError` at the first window whose solver
+        returned no solution (the pre-#141 meaning of ``fail_on_empty_window``). Default
+        ``False``.
 
     Returns
     -------
@@ -1023,7 +1070,8 @@ def run_rolling_horizon(
     RollingInfeasibleError
         If a user lock lies outside its block's ``earliest_start``/``latest_finish`` window
         (checked up front for every lock, independent of the window settings), or, with
-        ``fail_on_empty_window=True``, at the first window without a solution. The exception's
+        ``fail_on_empty_window=True`` / ``fail_on_no_solution=True``, at the first window that
+        triggers it. The exception's
         ``partial_result`` holds the run up to the failure. Any other exception raised inside the
         loop (e.g. by a custom hook) propagates unchanged with a best-effort ``partial_result``
         attribute attached.
@@ -1043,6 +1091,8 @@ def run_rolling_horizon(
     :class:`UserWarning`.
     """
 
+    if max_iterations is not None and max_iterations < 1:
+        raise ValueError(f"max_iterations must be >= 1 or None (got {max_iterations})")
     iteration_plans = build_iteration_plan(config)
     if max_iterations is not None:
         iteration_plans = iteration_plans[:max_iterations]
@@ -1051,7 +1101,7 @@ def run_rolling_horizon(
     locked_base: list[ScheduleLock] = []
     summaries: list[RollingIterationSummary] = []
     run_warnings: list[str] = []
-    metadata = _run_metadata(config, solver, solver_name, fail_on_empty_window)
+    metadata = _run_metadata(config, solver, solver_name, fail_on_empty_window, fail_on_no_solution)
 
     def snapshot() -> RollingPlanResult:
         return RollingPlanResult(
@@ -1074,10 +1124,24 @@ def run_rolling_horizon(
                 run_warnings=run_warnings,
             )
             summaries.append(summary)
-            if fail_on_empty_window and not summary.has_solution:
+            label = f"Iteration {plan.iteration_index} (days {plan.start_day}-{plan.end_day})"
+            if not summary.has_solution and (fail_on_empty_window or fail_on_no_solution):
+                flag = "fail_on_no_solution" if fail_on_no_solution else "fail_on_empty_window"
+                reason = (
+                    f"the solver failed ({summary.error})"
+                    if summary.error
+                    else "the solver returned no solution"
+                )
                 raise RollingInfeasibleError(
-                    f"Iteration {plan.iteration_index} (days {plan.start_day}-{plan.end_day}): "
-                    "the solver returned no solution (fail_on_empty_window=True)",
+                    f"{label}: {reason} ({flag}=True)",
+                    iteration_index=plan.iteration_index,
+                )
+            if fail_on_empty_window and summary.status == "solved" and summary.empty:
+                raise RollingInfeasibleError(
+                    f"{label}: empty window: the locked span produces "
+                    f"{summary.locked_production or 0.0:.3f} m³ and the window plan delivers "
+                    f"{summary.planned_delivered or 0.0:.3f} m³ while work remains "
+                    "(fail_on_empty_window=True)",
                     iteration_index=plan.iteration_index,
                 )
     except RollingInfeasibleError as exc:
@@ -1097,6 +1161,7 @@ def _run_metadata(
     solver: IterableSolver,
     solver_name: str | None,
     fail_on_empty_window: bool,
+    fail_on_no_solution: bool = False,
 ) -> dict[str, object]:
     metadata: dict[str, object] = {
         "scenario": config.scenario.name,
@@ -1106,6 +1171,7 @@ def _run_metadata(
         "start_day": config.start_day,
         "solver": solver_name or getattr(solver, "name", None),
         "fail_on_empty_window": fail_on_empty_window,
+        "fail_on_no_solution": fail_on_no_solution,
     }
     solver_backend = getattr(solver, "solver", None)
     if solver_backend is not None:
@@ -1116,6 +1182,10 @@ def _run_metadata(
     solver_options = getattr(solver, "solver_options", None)
     if solver_options:
         metadata["mip_solver_options"] = dict(solver_options)
+    if isinstance(solver, MILPSolver):
+        metadata["mip_earliness"] = solver.earliness
+        if solver.earliness_time_limit is not None:
+            metadata["mip_earliness_time_limit"] = solver.earliness_time_limit
     return metadata
 
 
@@ -1146,6 +1216,7 @@ def _run_iteration(
     policy_messages: list[str] = []
     objective: float | None = None
     runtime_s: float | None = None
+    error: str | None = None
     assignments: list[ScheduleLock] = []
     skip_reason = _window_skip_reason(sliced, window_problem)
     if skip_reason is not None:
@@ -1164,13 +1235,15 @@ def _run_iteration(
             assignments = list(output.assignments)
         else:
             status = "no_solution"
+            error = output.error
             user_locks = [
                 lock
                 for lock in base.locked_assignments or []
                 if plan.start_day <= lock.day <= lock_end
             ]
+            reason = f"the solver failed ({error})" if error else "the solver returned no solution"
             message = (
-                f"{label}: the solver returned no solution; no assignments locked for days "
+                f"{label}: {reason}; no assignments locked for days "
                 f"{plan.start_day}-{lock_end} (machines idle, carried state unchanged)"
             )
             if user_locks:
@@ -1181,19 +1254,24 @@ def _run_iteration(
     locked_portion = _lift_locks_to_base(assignments, plan.start_day, plan.lock_days)
     locked_base.extend(locked_portion)
     planned_delivered = 0.0
+    locked_production = 0.0
     if assignments:
-        planned_delivered = float(_replay_tracker(window_problem, assignments).delivered_total)
+        window_tracker, production_by_day = _replay(window_problem, assignments)
+        planned_delivered = float(window_tracker.delivered_total)
+        locked_production = sum(
+            volume for day, volume in production_by_day.items() if day <= plan.lock_days
+        )
     carry_after = carry_forward_state(base, locked_base, through_day=lock_end)
     locked_delivered = max(0.0, remaining_start - sum(carry_after.remaining_work.values()))
 
     empty = window_work > BLOCK_EPSILON and (
-        not locked_portion or planned_delivered <= BLOCK_EPSILON
+        locked_production <= BLOCK_EPSILON or planned_delivered <= BLOCK_EPSILON
     )
     if empty and status == "solved":
         policy_messages.append(
-            f"{label}: empty window: locked {len(locked_portion)} assignment(s) and the window "
-            f"plan delivers {planned_delivered:.3f} m³ while {window_work:.3f} m³ remain in the "
-            "window's blocks"
+            f"{label}: empty window: locked {len(locked_portion)} assignment(s) producing "
+            f"{locked_production:.3f} m³ and the window plan delivers {planned_delivered:.3f} m³ "
+            f"while {window_work:.3f} m³ remain in the window's blocks"
         )
     for message in policy_messages:
         warnings.warn(message, UserWarning, stacklevel=3)
@@ -1215,6 +1293,8 @@ def _run_iteration(
         planned_delivered=planned_delivered,
         locked_delivered=float(locked_delivered),
         empty=empty,
+        locked_production=float(locked_production),
+        error=error,
     )
     return summary, carry_after
 
@@ -1427,6 +1507,17 @@ class MILPSolver:
         Solve time limit in seconds for each subproblem.
     solver_options :
         Optional solver-specific options forwarded to Pyomo (e.g., ``{\"Threads\": 64}`` for Gurobi).
+    earliness :
+        Break ties of the window objective in favour of early production (default ``True``;
+        FHOPS 1.0.1, #141): the driver's lexicographic earliness stage
+        (:func:`fhops.model.milp.driver.solve_operational_milp`, ``earliness=True``) runs after the
+        base solve, so the window's base objective is unchanged (up to a relative ``10⁻⁶``) while
+        work is not deferred past the lock span. Not applied to windows whose lock span covers the
+        whole window (e.g. the final window, or ``sub == lock``), where timing inside the window
+        does not affect what is locked; a single-window run therefore stays a direct solve.
+    earliness_time_limit :
+        Time limit (seconds) of the earliness stage; ``None`` (default) uses ``time_limit``, so a
+        window may take up to twice ``time_limit``.
 
     Notes
     -----
@@ -1442,11 +1533,16 @@ class MILPSolver:
     iteration warnings.
 
     A window without a solution returns ``SolverOutput(has_solution=False, assignments=[],
-    objective=None)`` instead of raising: the driver reported no solution (``has_solution`` false,
-    or ``objective is None``: time limit before an incumbent, infeasible model) or raised (e.g.
-    Pyomo's ``NoFeasibleSolutionError`` for infeasible windows); the exception is reported as a
-    ``solver_error=<type>: <message>`` warning. :func:`run_rolling_horizon` then applies its
-    no-solution policy.
+    objective=None)``: the driver reported no solution (``has_solution`` false, or ``objective is
+    None``: time limit before an incumbent, infeasible model) or a solver failure
+    (``outcome="error"``, e.g. an unknown or unlicensed solver; the driver reports these instead of
+    raising since #139), whose text is copied to ``SolverOutput.error``.
+    :func:`run_rolling_horizon` then applies its no-solution policy. Exceptions raised while
+    building the window problem or model (FHOPS defects, invalid data) are not caught (FHOPS
+    1.0.1, #141; before, every exception became a no-solution window).
+
+    The window objective (``SolverOutput.objective``) is always the base objective; the earliness
+    stage is reported as an ``earliness=<status> value=<E> ...`` warning.
     """
 
     name = "mip"
@@ -1456,11 +1552,28 @@ class MILPSolver:
         solver: str = "auto",
         time_limit: int = 300,
         solver_options: Mapping[str, object] | None = None,
+        earliness: bool = True,
+        earliness_time_limit: int | None = None,
     ) -> None:
         self.requested_solver = solver
         self.solver = resolve_operational_mip_solver(solver)
         self.time_limit = time_limit
         self.solver_options = solver_options
+        self.earliness = earliness
+        self.earliness_time_limit = earliness_time_limit
+
+    def available(self) -> bool:
+        """Return ``True`` when ``SolverFactory(self.solver)`` reports the backend as available."""
+
+        logger = logging.getLogger("pyomo.opt")
+        previous = logger.level
+        logger.setLevel(logging.CRITICAL)  # unknown names log a traceback before returning False
+        try:
+            return bool(SolverFactory(self.solver).available(exception_flag=False))
+        except Exception:  # noqa: BLE001 - a plugin that cannot even be probed is unavailable
+            return False
+        finally:
+            logger.setLevel(previous)
 
     def __call__(
         self,
@@ -1473,22 +1586,15 @@ class MILPSolver:
         pb = Problem.from_scenario(_scenario_with_locks(scenario, locked_assignments))
         ctx = build_operational_problem(pb)
 
-        try:
-            result = solve_operational_milp(
-                ctx.bundle,
-                solver=self.solver,
-                time_limit=self.time_limit,
-                solver_options=self.solver_options,
-                context=ctx,
-            )
-        except Exception as exc:  # noqa: BLE001 - any solver failure is a window without a plan
-            return SolverOutput(
-                assignments=[],
-                objective=None,
-                runtime_s=time.perf_counter() - start,
-                warnings=[f"solver_error={type(exc).__name__}: {exc}"],
-                has_solution=False,
-            )
+        result = solve_operational_milp(
+            ctx.bundle,
+            solver=self.solver,
+            time_limit=self.time_limit,
+            solver_options=self.solver_options,
+            context=ctx,
+            earliness=self.earliness and plan.lock_days < plan.horizon_days,
+            earliness_time_limit=self.earliness_time_limit,
+        )
         runtime = time.perf_counter() - start
 
         messages: list[str] = []
@@ -1505,18 +1611,32 @@ class MILPSolver:
             text = str(message)
             if text not in messages:
                 messages.append(text)
+        earliness_info = result.get("earliness")
+        if isinstance(earliness_info, Mapping) and earliness_info.get("status") != "skipped":
+            text = (
+                f"earliness={earliness_info.get('status')} value={earliness_info.get('value')} "
+                f"stage1_value={earliness_info.get('stage1_value')} "
+                f"termination_condition={earliness_info.get('termination_condition')}"
+            )
+            if earliness_info.get("solver_error"):
+                text += f" solver_error={earliness_info.get('solver_error')}"
+            messages.append(text)
 
         objective = result.get("objective")
         has_solution = result.get("has_solution")
         if has_solution is None:
             has_solution = objective is not None
-        if not has_solution:
+        error = str(solver_error) if solver_error else None
+        if result.get("outcome") == "error" and error is None:
+            error = "solver failed (outcome=error)"
+        if not has_solution or error is not None:
             return SolverOutput(
                 assignments=[],
                 objective=None,
                 runtime_s=runtime,
                 warnings=messages or None,
                 has_solution=False,
+                error=error,
             )
 
         return SolverOutput(
@@ -1535,6 +1655,8 @@ def get_solver_hook(
     mip_solver: str = "auto",
     mip_time_limit: int = 300,
     mip_solver_options: Mapping[str, object] | None = None,
+    mip_earliness: bool = True,
+    mip_earliness_time_limit: int | None = None,
 ) -> IterableSolver:
     """Resolve a solver hook by name.
 
@@ -1553,6 +1675,10 @@ def get_solver_hook(
         Solve time limit in seconds for the MILP hook.
     mip_solver_options :
         Optional solver-specific parameters forwarded to the MILP backend (e.g., ``{\"Threads\": 64}``).
+    mip_earliness :
+        Earliness tie-break in MILP windows (default ``True``; see :class:`MILPSolver`).
+    mip_earliness_time_limit :
+        Time limit of the earliness stage (``None``: ``mip_time_limit``).
 
     Returns
     -------
@@ -1571,7 +1697,11 @@ def get_solver_hook(
         return SASolver(iters=sa_iters, seed=sa_seed)
     if name.lower() in {"mip", "milp"}:
         return MILPSolver(
-            solver=mip_solver, time_limit=mip_time_limit, solver_options=mip_solver_options
+            solver=mip_solver,
+            time_limit=mip_time_limit,
+            solver_options=mip_solver_options,
+            earliness=mip_earliness,
+            earliness_time_limit=mip_earliness_time_limit,
         )
     raise RollingInfeasibleError(
         f"Unsupported solver '{name}'. Use 'sa', 'mip', or 'stub' until additional hooks land."
@@ -1592,6 +1722,9 @@ def solve_rolling_plan(
     mip_solver_options: Mapping[str, object] | None = None,
     max_iterations: int | None = None,
     fail_on_empty_window: bool = False,
+    fail_on_no_solution: bool = False,
+    mip_earliness: bool = True,
+    mip_earliness_time_limit: int | None = None,
 ) -> RollingPlanResult:
     """Library-facing helper to execute a rolling-horizon plan.
 
@@ -1619,11 +1752,18 @@ def solve_rolling_plan(
     mip_solver_options :
         Optional solver-specific parameters forwarded to the MILP backend (e.g., ``{\"Threads\": 64}``).
     max_iterations :
-        Optional guard to cap the number of iterations (useful for smoke tests).
+        Optional guard to cap the number of iterations (``>= 1``; useful for smoke tests).
     fail_on_empty_window :
-        Raise :class:`RollingInfeasibleError` at the first window whose solver returned no solution
-        instead of recording it and continuing with idle machines (default ``False``; see
+        Raise :class:`RollingInfeasibleError` at the first window without a solution or solved to
+        an empty plan instead of recording it and continuing (default ``False``; see
         :func:`run_rolling_horizon`).
+    fail_on_no_solution :
+        Raise :class:`RollingInfeasibleError` at the first window without a solution only
+        (default ``False``).
+    mip_earliness :
+        Earliness tie-break in MILP windows (default ``True``; see :class:`MILPSolver`).
+    mip_earliness_time_limit :
+        Time limit of the earliness stage in seconds (``None``: ``mip_time_limit``).
 
     Returns
     -------
@@ -1634,10 +1774,11 @@ def solve_rolling_plan(
     Raises
     ------
     ValueError
-        If horizon parameters violate basic bounds (e.g., master horizon exceeds scenario length).
+        If horizon parameters violate basic bounds (e.g., master horizon exceeds scenario length)
+        or ``max_iterations < 1``.
     RollingInfeasibleError
         If the solver name is unsupported, a user lock lies outside its block's time window, or
-        (with ``fail_on_empty_window=True``) a window has no solution.
+        a window triggers ``fail_on_empty_window`` / ``fail_on_no_solution``.
     """
 
     config = RollingHorizonConfig(
@@ -1653,6 +1794,8 @@ def solve_rolling_plan(
         mip_solver=mip_solver,
         mip_time_limit=mip_time_limit,
         mip_solver_options=mip_solver_options,
+        mip_earliness=mip_earliness,
+        mip_earliness_time_limit=mip_earliness_time_limit,
     )
     return run_rolling_horizon(
         config,
@@ -1660,6 +1803,7 @@ def solve_rolling_plan(
         max_iterations=max_iterations,
         solver_name=solver,
         fail_on_empty_window=fail_on_empty_window,
+        fail_on_no_solution=fail_on_no_solution,
     )
 
 
@@ -1680,7 +1824,8 @@ def summarize_plan(result: RollingPlanResult) -> dict[str, object]:
             One record per iteration: ``iteration_index``, ``start_day``, ``horizon_days``,
             ``lock_days``, ``locked_assignments``, ``objective``, ``runtime_s``, ``warnings``,
             ``remaining_work_start``, ``status``, ``has_solution``, ``planned_delivered``,
-            ``locked_delivered`` and ``empty`` (see :class:`RollingIterationSummary`).
+            ``locked_delivered``, ``locked_production``, ``empty`` and ``error`` (see
+            :class:`RollingIterationSummary`).
         ``total_locked_assignments``
             Number of locked assignments in the stitched plan.
         ``empty_windows`` / ``no_solution_windows`` / ``skipped_windows``
@@ -1706,7 +1851,9 @@ def summarize_plan(result: RollingPlanResult) -> dict[str, object]:
             "has_solution": summary.has_solution,
             "planned_delivered": summary.planned_delivered,
             "locked_delivered": summary.locked_delivered,
+            "locked_production": summary.locked_production,
             "empty": summary.empty,
+            "error": summary.error,
         }
         for summary in result.iteration_summaries
     ]

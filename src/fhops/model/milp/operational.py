@@ -22,7 +22,7 @@ from fhops.model.milp.data import (
     resolve_locked_slots,
 )
 
-__all__ = ["build_operational_model"]
+__all__ = ["build_operational_model", "earliness_expression"]
 
 _REDUNDANCY_TOLERANCE = 1e-6
 
@@ -1096,6 +1096,27 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     }
 
     return model
+
+
+def earliness_expression(model: pyo.ConcreteModel):
+    """Return the earliness score ``E = Σ_s w_s Σ_{m,b} prod[m, b, s]`` of a built model.
+
+    ``w_s = (|S| − k_s) / |S|`` for the ``k_s``-th slot (0-based) of the bundle's slot order, so
+    production in the first slot weighs 1 and in the last ``1/|S|``. ``E`` is the secondary
+    objective of the lexicographic earliness tie-break in
+    :func:`fhops.model.milp.driver.solve_operational_milp` (``earliness=True``, #141); it is not
+    part of the model's ``objective``.
+    """
+
+    shift_list = list(model._warm_start_meta["shift_list"])
+    count = len(shift_list)
+    weights = {slot: (count - index) / count for index, slot in enumerate(shift_list)}
+    return sum(
+        weights[slot] * model.prod[mach, blk, slot]
+        for mach in model.M
+        for blk in model.B
+        for slot in shift_list
+    )
 
 
 def _landing_slot_capacities(

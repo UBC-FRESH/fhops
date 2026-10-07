@@ -84,13 +84,60 @@ records of :func:`fhops.planning.summarize_plan` and the CLI exports) reports:
 - ``planned_delivered`` — m³ the window's whole plan delivers when replayed on the window scenario;
 - ``locked_delivered`` — m³ the locked span delivers in the stitched-plan replay (these add up to the
   stitched plan's ``total_production``);
-- ``empty`` — the window's blocks still held work but it locked no assignments or its plan delivers
-  nothing;
-- ``objective``, the hook's wall-clock ``runtime_s``, and ``warnings`` (solver status and termination
-  condition, plus the no-solution / skipped / empty-window notices).
+- ``locked_production`` — machine m³ (every role) the window plan produces in its lock span (window
+  replay);
+- ``empty`` — the window's blocks still held work but its lock span produces nothing (no locks, or
+  only locks without production) or its plan delivers nothing;
+- ``error`` — the solver failure text of a ``no_solution`` window whose solver failed (e.g. an
+  unknown or unlicensed solver), else ``null``;
+- ``objective`` (the base objective; see :ref:`rolling-earliness`), the hook's wall-clock
+  ``runtime_s``, and ``warnings`` (solver status and termination condition, the MILP earliness
+  stage ``earliness=<status> value=<E> …``, plus the no-solution / skipped / empty-window notices).
 
 The run summary adds ``empty_windows``, ``no_solution_windows`` and ``skipped_windows`` counts and the
 ``empty_window_indices`` / ``no_solution_window_indices`` lists.
+
+.. _rolling-earliness:
+
+MILP windows: earliness tie-break
+---------------------------------
+The operational MILP objective rewards delivered volume and charges leftovers, landing surplus and
+moves; it does not depend on *when* inside the window the work is done. Many window plans are
+therefore tied, and the solver may return one that does the work at the end of the window. Only the
+lock span is kept, so such a window locks idle days and the next window defers again. In the FHOPS
+1.0.1 audit (#141), one machine with 300 m³ at 100 m³/day (``master/sub/lock = 10/6/1``) worked days
+8–10 instead of 1–3. On the Jaffray ``ka_6`` scenario (``112/14/7``, HiGHS, 120 s windows), windows
+7–14 locked no production while work remained.
+
+Since 1.0.1 the MILP hook (:class:`fhops.planning.MILPSolver`) breaks these ties lexicographically
+(``earliness=True``, default):
+
+1. Solve the window's base objective (stage 1, value ``z1``).
+2. Re-solve with the production-weighted earliness ``E = Σ_s w_s Σ_{m,b} p[m,b,s]`` as the objective
+   (``w_s`` falls linearly from 1 in the first slot to ``1/|S|`` in the last), subject to
+   ``objective ≥ z1 − 10⁻⁶·max(1, |z1|)``. This solve is warm-started from the stage-1 plan.
+
+The window's base objective is unchanged (within a relative ``10⁻⁶``, 100× tighter than HiGHS's
+default MIP gap), and work moves into the lock span whenever the base objective allows it. The reported window
+``objective`` is the base objective. The earliness stage is reported as an
+``earliness=<status> value=<E> stage1_value=<E1> termination_condition=<…>`` warning: ``applied``,
+or ``kept_stage1`` when stage 2 returned no usable solution and the stage-1 plan is kept. A single
+weighted objective ``OBJ + ε·E`` is not used, because no data-independent ``ε`` can be guaranteed
+safe, and an ``ε`` small enough to be safe in practice is below the solver's relative gap (see the
+formulation's *Earliness tie-break* paragraph in :doc:`optimization_formulation`).
+
+Cost: a second solve per window, limited by ``--mip-earliness-time-limit`` (default
+``--mip-time-limit``), so a window can take up to twice the time limit. The stage is skipped for
+windows whose lock span covers the whole window (the final window, ``sub_days == lock_days``),
+where timing inside the window does not change what is locked. A single-window run therefore stays
+a direct solve. Disable the stage with ``--no-mip-earliness`` (``mip_earliness=False`` in
+:func:`fhops.planning.solve_rolling_plan` / :func:`fhops.planning.get_solver_hook`). Standalone
+``fhops solve-mip-operational`` does not use it by default (``--earliness`` enables it), so the
+published single-horizon optimum and its solve time stay unchanged.
+
+The SA hook does not show this deferral: its construction fills the earliest available slots, and
+on ``ka_6`` (``112/14/7``, ``112/7/1``, ``112/28/14``, 500 iterations) its windows never lock idle
+days while work remains.
 
 .. _rolling-no-plan:
 
@@ -98,13 +145,16 @@ Windows without a plan
 ----------------------
 A window may end without a usable plan: the MILP hits its time limit before finding an incumbent,
 the window is infeasible (e.g. a user lock that cannot be met inside a short window, see
-`Limitations`_), or the solver raises. FHOPS 1.0.1 (#117) applies one documented policy instead of
-aborting the run:
+`Limitations`_), or the solver fails (unknown or unlicensed solver, solver crash). FHOPS 1.0.1
+(#117) applies one documented policy instead of aborting the run:
 
 1. The iteration is recorded with ``status = "no_solution"``, ``has_solution = False``,
    ``objective = None`` and a warning (also emitted as a Python ``UserWarning`` and collected in
-   ``RollingPlanResult.warnings``). The MILP hook reports driver exceptions as
-   ``solver_error=<type>: <message>`` and keeps the solver status/termination condition.
+   ``RollingPlanResult.warnings``). The MILP hook reports solver failures (driver
+   ``outcome = "error"``) as ``solver_error=<text>`` and in the iteration's ``error`` field, and keeps
+   the solver status/termination condition. Exceptions raised while building the window problem or
+   model are FHOPS defects or invalid data: since #141 they propagate (with the run so far attached
+   as ``partial_result``) instead of being recorded as a window without a solution.
 2. **No** assignments are locked for its lock span: machines are idle on those days, and user locks
    in that span are not applied either (the warning counts them).
 3. The carried state is unchanged across the idle span (nothing was replayed), and the next window is
@@ -116,18 +166,37 @@ Windows with nothing to plan (no blocks whose time window overlaps the window, n
 or no available shift slots — e.g. days not covered by a partial ``shift_calendar``) are not passed to
 the solver and are recorded with ``status = "skipped"``; they are idle as well.
 
-A **solved** window whose blocks still hold work but which locks no assignments, or whose plan
-delivers no volume (e.g. an all-zero time-limited incumbent), is flagged ``empty`` with a warning.
-No-solution and skipped windows with remaining work are flagged ``empty`` too.
+A **solved** window whose blocks still hold work is flagged ``empty`` with a warning if its lock span
+produces nothing (no locks, or only locks without production, ``locked_production = 0``) or its
+plan delivers no volume (e.g. an all-zero time-limited incumbent, or a plan that defers all work past
+the lock span). No-solution and skipped windows with remaining work are flagged ``empty`` too. A
+lock span whose blocks only open later in the window is flagged as well. Before #141 only windows
+without any lock counted, so locks that kept a machine assigned but idle hid deferred windows.
 
-To stop instead, pass ``fail_on_empty_window=True`` (:func:`fhops.planning.solve_rolling_plan`,
-:func:`fhops.planning.run_rolling_horizon`) or ``--fail-on-empty-window`` (CLI): the first window
-without a solution raises :class:`fhops.planning.RollingInfeasibleError` naming the iteration, with the
-run so far in ``partial_result``. Skipped windows and windows solved to an empty plan never raise.
+To stop instead of continuing (:func:`fhops.planning.solve_rolling_plan`,
+:func:`fhops.planning.run_rolling_horizon`, CLI):
+
+- ``fail_on_no_solution=True`` / ``--fail-on-no-solution`` stops at the first window without a
+  solution;
+- ``fail_on_empty_window=True`` / ``--fail-on-empty-window`` stops at the first window without a
+  solution **or** solved to an empty plan (since #141; before, it stopped only at windows without a
+  solution, which is now ``--fail-on-no-solution``).
+
+Both raise :class:`fhops.planning.RollingInfeasibleError` naming the iteration, with the run so far
+in ``partial_result``. Skipped windows never raise.
 
 The CLI **always** writes the requested outputs (``--out-json``, ``--out-assignments``, iteration
-JSONL/CSV) — on failure they hold the assignments locked so far and the recorded iterations, and the
-JSON summary gets an ``error`` field — and then exits with code ``1``.
+JSONL/CSV). On failure they hold the assignments locked so far and the recorded iterations, and the
+JSON summary gets an ``error`` field. Exit codes of ``fhops plan rolling``:
+
+- ``0`` — the run completed and at least one window passed to the solver returned a solution;
+- ``1`` — a ``--fail-on-*`` flag stopped the run, the run raised, or **no** window returned a
+  solution (e.g. every window failed with a solver error; ``error`` is
+  ``"no window returned a solution"``);
+- ``2`` — usage error, printed without a traceback: invalid horizon arguments (``--master-days``
+  ``< 1`` or beyond the scenario's ``num_days``, ``--lock-days < 1``,
+  ``--sub-days < --lock-days``), ``--max-iterations < 1``, an unknown ``--solver``, or a
+  ``--mip-solver`` that Pyomo reports as unavailable (e.g. a typo or a missing Gurobi install).
 
 CLI usage
 ---------
@@ -191,8 +260,9 @@ Outputs
 -------
 - JSON summary (``--out-json``) with the iteration records (see the telemetry fields above),
   ``total_locked_assignments``, the empty/no-solution/skipped window counts, warnings, metadata
-  (scenario, horizons, solver, MILP backend, ``fail_on_empty_window``), and ``error`` when the run
-  failed part-way.
+  (scenario, horizons, solver, MILP backend, ``mip_earliness``, ``fail_on_empty_window``,
+  ``fail_on_no_solution``), and ``error`` when the run failed part-way or no window returned a
+  solution.
 - CSV of locked assignments (``--out-assignments``) aggregated across all iterations. Columns:
   ``machine_id``, ``block_id``, ``day`` (base-scenario day), ``shift_id``, ``assigned`` (always
   ``1``), ``production`` (MILP runs only: the window MILP's planned m³ for that slot, which playback
@@ -464,7 +534,8 @@ Then stitch the KPI deltas and plots:
 
 Gotchas
 -------
-- Ensure ``master_days + start_day - 1 <= Scenario.num_days``; otherwise the CLI fails fast.
+- Ensure ``master_days + start_day - 1 <= Scenario.num_days``; otherwise the CLI fails fast with a
+  usage error (exit code 2).
 - MILP runs can be slow—set sensible ``--mip-time-limit``/``mip_solver_options`` and use a Gurobi
   licence when available. HiGHS is the default (``--mip-solver auto`` resolves to ``highs``).
 - Gurobi threads can be set via ``mip_solver_options`` (``{\"Threads\": 32}``) or ``GRB_THREADS``.
@@ -487,14 +558,15 @@ Notes
 -----
 - Locked assignments are treated as immutable across iterations. A window without a solution or with
   nothing to plan leaves its lock span idle and the run continues (see :ref:`rolling-no-plan`);
-  use ``--fail-on-empty-window`` to stop instead.
+  use ``--fail-on-no-solution`` or ``--fail-on-empty-window`` to stop instead.
 - The hooks enforce locks as hard constraints (equality constraints in the operational MILP, the
   lock-aware sanitizer in SA); they do not pass incumbents or warm starts to the solver.
 - Telemetry/reporting layers will evolve; current exports are meant to unblock experimentation.
 - ``master_days`` must not exceed the base scenario horizon. Use a scenario with enough days or lower
   the master/sub/lock settings to fit within ``Scenario.num_days``.
 - ``--mip-solver`` passes through to Pyomo (use ``highs`` or ``gurobi``; ``auto`` resolves to
-  ``highs``); ``--max-iterations`` can cap the rolling loop for smoke tests or partial plans.
+  ``highs``); ``--max-iterations N`` (``N >= 1``) caps the rolling loop for smoke tests or partial
+  plans.
 - User locks outside their block's ``earliest_start``/``latest_finish`` window are rejected up front
   with :class:`fhops.planning.RollingInfeasibleError` (before any window is solved), whatever the
   master/sub/lock settings; scenario validation rejects them at load time as well (#118). Valid locks

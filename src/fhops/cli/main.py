@@ -713,6 +713,15 @@ def solve_mip_operational_cmd(
         "--sequencing-debug/--no-sequencing-debug",
         help="Print sequencing diagnostics (first violation, backlog deficits).",
     ),
+    earliness: bool = typer.Option(
+        False,
+        "--earliness/--no-earliness",
+        help=(
+            "Break ties in favour of early production with a second, lexicographic solve (the "
+            "reported objective is unchanged; up to one extra --time-limit). Off by default; "
+            "fhops plan rolling enables it in MILP windows."
+        ),
+    ),
 ):
     """Solve the operational (day×shift) MILP prototype and emit assignments.
 
@@ -784,6 +793,7 @@ def solve_mip_operational_cmd(
                 "time_limit": time_limit,
                 "gap": gap,
                 "solver_options": parsed_solver_options or None,
+                "earliness": earliness,
             },
             context=context_snapshot,
             step_interval=None,
@@ -832,6 +842,7 @@ def solve_mip_operational_cmd(
                     solver_options=parsed_solver_options or None,
                     incumbent_assignments=incumbent_assignments,
                     context=ctx,
+                    **({"earliness": True} if earliness else {}),
                 )
             except ValueError as exc:
                 raise typer.BadParameter(str(exc)) from exc
@@ -857,6 +868,13 @@ def solve_mip_operational_cmd(
             if solver_error:
                 solver_failed = True
                 console.print(f"[red]Solver error:[/] {solver_error}")
+            earliness_info = result.get("earliness")
+            if isinstance(earliness_info, Mapping):
+                console.print(
+                    f"Earliness tie-break: status={earliness_info.get('status')} "
+                    f"E={earliness_info.get('value')} (stage 1: "
+                    f"{earliness_info.get('stage1_value')})"
+                )
             for message in result.get("warnings") or []:
                 console.print(f"[yellow]Warning:[/] {message}")
             warm_start_info = result.get("warm_start")
