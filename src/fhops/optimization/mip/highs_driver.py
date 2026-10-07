@@ -1,18 +1,21 @@
-"""Legacy day-level MIP solver driver (HiGHS by default, optional Gurobi).
+"""Deprecated ``solve_mip`` entry point (delegates to the operational MILP since 1.0.1, #127).
 
 This module backs :func:`solve_mip` and the ``fhops solve-mip`` / ``fhops benchmark`` CLI
-commands. It builds the legacy MIP (:func:`fhops.optimization.mip.builder.build_model`), dispatches
-it to HiGHS (APPSI or Pyomo's ``highs`` interface) or Gurobi, and converts the solution into an
-assignment table.
+commands. Since FHOPS 1.0.1 (#127) they solve the operational MILP
+(:func:`fhops.model.milp.driver.solve_operational_milp`, the formulation documented in the
+SoftwareX paper) through :func:`solve_with_operational_milp`; the legacy ``--driver`` names are
+mapped to operational solver names by :func:`operational_solver_for_driver`.
 
-Since FHOPS 1.0.1 (#124) the driver follows the same result policy as the operational MILP driver
-(:func:`fhops.model.milp.driver.solve_operational_milp`, #115): infeasible models, limits reached
-without an incumbent and solver failures are reported in the result instead of raising.
+The legacy day-level MIP (:func:`fhops.optimization.mip.builder.build_model`) is infeasible for
+every scenario with a loader role (see :mod:`fhops.optimization.mip.deprecation`). Its 1.0.1 (#124)
+solve path is kept as the private ``_solve_legacy_mip`` to reproduce that finding; no public entry
+point uses it.
 """
 
 from __future__ import annotations
 
 import logging
+import warnings
 from collections.abc import Mapping
 from types import ModuleType
 from typing import TYPE_CHECKING, Any
@@ -22,12 +25,20 @@ import pyomo.environ as pyo
 from pyomo.common.errors import ApplicationError
 
 from fhops.optimization.mip.builder import build_model
+from fhops.optimization.mip.deprecation import LEGACY_SOLVE_MIP_MESSAGE, LegacyMipDeprecationWarning
+from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 
 if TYPE_CHECKING:
     from fhops.model.milp.driver import _SolveRun
 
-__all__ = ["ASSIGNMENT_COLUMNS", "SolverUnavailable", "solve_mip"]
+__all__ = [
+    "ASSIGNMENT_COLUMNS",
+    "SolverUnavailable",
+    "operational_solver_for_driver",
+    "solve_mip",
+    "solve_with_operational_milp",
+]
 
 ASSIGNMENT_COLUMNS = ["machine_id", "block_id", "day", "shift_id", "assigned", "production"]
 _APPSI_LOGGER_NAME = "fhops.optimization.mip.highs_driver.appsi"
@@ -44,6 +55,17 @@ _KNOWN_DRIVERS = frozenset(
         "gurobi-direct",
     }
 )
+# Legacy ``--driver`` value -> operational MILP solver name (``auto`` is handled separately).
+_OPERATIONAL_SOLVER_BY_DRIVER = {
+    "highs": "highs",
+    "appsi": "highs",
+    "highs-appsi": "highs",
+    "exec": "highs",
+    "highs-exec": "highs",
+    "gurobi": "gurobi",
+    "gurobi-appsi": "appsi_gurobi",
+    "gurobi-direct": "gurobi_direct",
+}
 
 
 try:
@@ -125,10 +147,134 @@ def _set_appsi_controls(solver, time_limit: int, debug: bool) -> bool:
     return False
 
 
+def operational_solver_for_driver(driver: str) -> tuple[str, ...]:
+    """Map a legacy MIP ``driver`` name to the operational MILP solver name(s) to try.
+
+    Parameters
+    ----------
+    driver :
+        Legacy driver name (case-insensitive): ``auto``, ``highs``, ``appsi``, ``highs-appsi``,
+        ``exec``, ``highs-exec``, ``gurobi``, ``gurobi-appsi`` or ``gurobi-direct``.
+
+    Returns
+    -------
+    tuple[str, ...]
+        ``SolverFactory`` names in the order they are tried: ``("gurobi", "highs")`` for ``auto``
+        (Gurobi when installed, otherwise or after a Gurobi failure HiGHS — the 1.0.0 ``auto``
+        rule); ``("highs",)`` for every HiGHS driver (seeded solves still go through
+        ``appsi_highs``, see :func:`fhops.model.milp.driver.solve_operational_milp`);
+        ``("gurobi",)``, ``("appsi_gurobi",)`` or ``("gurobi_direct",)`` for the Gurobi drivers.
+
+    Raises
+    ------
+    ValueError
+        For an unknown driver name.
+    """
+
+    key = driver.strip().lower()
+    if key == "auto":
+        return ("gurobi", "highs")
+    if key not in _OPERATIONAL_SOLVER_BY_DRIVER:
+        raise ValueError(
+            f"Unknown MIP driver '{driver}'. "
+            "Supported values: auto, highs, highs-appsi, highs-exec, gurobi, gurobi-appsi, "
+            "gurobi-direct."
+        )
+    return (_OPERATIONAL_SOLVER_BY_DRIVER[key],)
+
+
+def _operational_solver_available(name: str) -> bool:
+    """Return ``True`` when ``SolverFactory(name)`` reports an available solver."""
+
+    try:
+        return bool(pyo.SolverFactory(name).available(exception_flag=False))
+    except Exception:
+        return False
+
+
+def solve_with_operational_milp(
+    pb: Problem, time_limit: int | None = 60, driver: str = "auto", debug: bool = False
+) -> dict[str, Any]:
+    """Solve the operational MILP for ``pb`` using a legacy ``driver`` name (no deprecation).
+
+    This is the implementation behind :func:`solve_mip`, ``fhops solve-mip`` and the MIP step of
+    ``fhops benchmark``. It builds the operational problem
+    (:func:`fhops.optimization.operational_problem.build_operational_problem`) and calls
+    :func:`fhops.model.milp.driver.solve_operational_milp` with ``solver`` from
+    :func:`operational_solver_for_driver`, ``time_limit``, ``tee=debug`` and the operational
+    context. Equivalent to ``fhops solve-mip-operational SCENARIO --solver <solver>
+    --time-limit <time_limit>``.
+
+    Parameters
+    ----------
+    pb :
+        :class:`fhops.scenario.contract.Problem` built with ``Problem.from_scenario``.
+    time_limit :
+        Solver wall-clock limit in seconds (default 60; ``None`` leaves the solver default).
+    driver :
+        Legacy driver name (see :func:`operational_solver_for_driver`).
+    debug :
+        Stream the solver log to stdout and print the selected solver.
+
+    Returns
+    -------
+    dict
+        The :func:`fhops.model.milp.driver.solve_operational_milp` result (``objective``,
+        ``production``, ``assignments``, ``has_solution``, ``outcome``, ``solver_status``,
+        ``termination_condition``, ``solver_error``, ``warnings``, ``warm_start``) plus
+        ``solver`` (the ``SolverFactory`` name that produced it). Under ``driver="auto"`` a Gurobi
+        run that reports ``solver_error`` is retried with HiGHS and the failure is prepended to
+        ``warnings``.
+
+    Raises
+    ------
+    SolverUnavailable
+        When no candidate solver is available.
+    ValueError
+        For an unknown ``driver`` name (raised before the model is built).
+    """
+
+    candidates = operational_solver_for_driver(driver)
+    available = [name for name in candidates if _operational_solver_available(name)]
+    if not available:
+        raise SolverUnavailable(
+            f"No operational MILP solver available for driver={driver!r} "
+            f"(tried: {', '.join(candidates)})."
+        )
+    ctx = build_operational_problem(pb)
+    solve_operational_milp = _milp_driver().solve_operational_milp
+    notes: list[str] = []
+    result: dict[str, Any] = {}
+    for index, name in enumerate(available):
+        if debug:
+            console.print(f"[bold cyan]FHOPS[/]: operational MILP solver [bold]{name}[/].")
+        result = dict(
+            solve_operational_milp(
+                ctx.bundle, solver=name, time_limit=time_limit, tee=bool(debug), context=ctx
+            )
+        )
+        result["solver"] = name
+        if result.get("solver_error") is None or index == len(available) - 1:
+            break
+        notes.append(
+            f"{name} failed ({result['solver_error']}); falling back to {available[index + 1]} "
+            f"(driver={driver})."
+        )
+    result["warnings"] = notes + list(result.get("warnings") or [])
+    return result
+
+
 def solve_mip(
     pb: Problem, time_limit: int = 60, driver: str = "auto", debug: bool = False
 ) -> Mapping[str, object]:
-    """Build and solve the legacy FHOPS MIP.
+    """Solve ``pb`` with the operational MILP (deprecated legacy entry point).
+
+    .. deprecated:: 1.0.1
+       Emits :class:`fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning` and delegates
+       to :func:`solve_with_operational_milp` (i.e.
+       :func:`fhops.model.milp.driver.solve_operational_milp`). Until 1.0.1 this function solved the
+       legacy day-level MIP, which is infeasible for every scenario with a loader role (#124,
+       #127). Call :func:`fhops.model.milp.driver.solve_operational_milp` directly.
 
     Parameters
     ----------
@@ -137,43 +283,42 @@ def solve_mip(
     time_limit :
         Solver wall-clock limit in seconds (default 60).
     driver :
-        ``"auto"`` (Gurobi when installed and licensed, otherwise HiGHS), ``"highs"`` /
-        ``"highs-appsi"`` / ``"appsi"`` (HiGHS through Pyomo's APPSI interface, falling back to
-        the ``highs`` interface for ``"highs"`` when APPSI is missing), ``"highs-exec"`` /
-        ``"exec"`` (Pyomo's ``highs`` interface), ``"gurobi"``, ``"gurobi-appsi"`` or
-        ``"gurobi-direct"``.
+        Legacy driver name, mapped by :func:`operational_solver_for_driver`: ``"auto"`` (Gurobi
+        when installed, otherwise — or after a Gurobi solver error — HiGHS), ``"highs"`` /
+        ``"highs-appsi"`` / ``"appsi"`` / ``"highs-exec"`` / ``"exec"`` (HiGHS), ``"gurobi"``,
+        ``"gurobi-appsi"`` (``appsi_gurobi``) or ``"gurobi-direct"`` (``gurobi_direct``).
     debug :
-        Stream the solver log to stdout and print the selected driver.
+        Stream the solver log to stdout and print the selected solver.
 
     Returns
     -------
     dict
-        The function never raises because a model is infeasible, a limit was reached without an
-        incumbent, or an available solver failed (#124, same policy as
-        :func:`fhops.model.milp.driver.solve_operational_milp`). Keys:
+        Same contract as in 1.0.1 (#124); the function never raises because a model is
+        infeasible, a limit was reached without an incumbent, or an available solver failed.
+        Keys:
 
         ``objective`` (float | None)
-            Objective of the loaded solution; ``None`` without a feasible solution. A solve
-            stopped by a limit that holds a feasible incumbent reports that incumbent.
+            Operational MILP objective of the loaded solution (not comparable with 1.0.0 legacy
+            objectives); ``None`` without a feasible solution. A solve stopped by a limit that
+            holds a feasible incumbent reports that incumbent.
         ``assignments`` (DataFrame)
             Columns ``machine_id, block_id, day, shift_id, assigned, production``; one row per
-            assigned slot or slot with production > 1e-6, sorted by ``day, shift_id, machine_id,
-            block_id``. Empty (same columns) without a solution.
+            assigned slot or slot with production > 1e-6. Empty (same columns) without a
+            solution.
         ``has_solution`` (bool)
             ``True`` when a feasible solution was loaded into the model.
         ``outcome`` (str)
             ``"optimal"``, ``"feasible"`` (incumbent at a limit), ``"infeasible"``,
             ``"no_solution"`` (limit reached without an incumbent) or ``"error"``.
         ``solver_status``, ``termination_condition`` (str)
-            Solver status and termination condition (APPSI interfaces report ``"ok"`` /
-            ``"error"`` as status and the APPSI termination name, e.g. ``"maxTimeLimit"``).
+            Pyomo solver status and termination condition.
         ``solver_error`` (str | None)
-            Set when the solver failed rather than proving infeasibility: HiGHS ``ERROR`` log
-            lines (only when no solution was returned), a solver exception raised during
-            ``solve``, or an error/unknown termination without a solution.
+            Set when the solver failed rather than proving infeasibility.
         ``warnings`` (list[str])
-            Driver notes, e.g. a Gurobi interface that failed under ``driver="auto"`` before the
-            driver fell back to the next interface or to HiGHS.
+            Driver notes (e.g. a Gurobi failure under ``driver="auto"`` before the HiGHS retry)
+            followed by the operational driver's lock warnings.
+        ``production`` (float), ``warm_start`` (dict), ``solver`` (str)
+            Added by the delegation (see :func:`solve_with_operational_milp`).
 
     Raises
     ------
@@ -183,20 +328,35 @@ def solve_mip(
     ValueError
         For an unknown ``driver`` name.
 
-    Notes
+    Warns
     -----
-    Every interface is called without automatic solution loading (APPSI
-    ``config.load_solution = False``; ``solve(..., load_solutions=False)`` otherwise), and a
-    solution is loaded only when the solver holds one. The legacy MIP does not model
-    ``Scenario.initial_state`` (see :func:`fhops.optimization.mip.builder.build_model`).
+    LegacyMipDeprecationWarning
+        On every call.
 
     Examples
     --------
     >>> res = solve_mip(pb, time_limit=60)  # doctest: +SKIP
-    >>> if res["has_solution"]:  # doctest: +SKIP
-    ...     print(res["outcome"], res["objective"], len(res["assignments"]))
-    ... elif res["solver_error"]:
-    ...     print("solver failed:", res["solver_error"])
+    >>> # preferred:
+    >>> from fhops.model.milp.driver import solve_operational_milp  # doctest: +SKIP
+    >>> from fhops.optimization.operational_problem import build_operational_problem  # doctest: +SKIP
+    >>> ctx = build_operational_problem(pb)  # doctest: +SKIP
+    >>> res = solve_operational_milp(ctx.bundle, time_limit=60, context=ctx)  # doctest: +SKIP
+    """
+
+    warnings.warn(LEGACY_SOLVE_MIP_MESSAGE, LegacyMipDeprecationWarning, stacklevel=2)
+    return solve_with_operational_milp(pb, time_limit=time_limit, driver=driver, debug=debug)
+
+
+def _solve_legacy_mip(
+    pb: Problem, time_limit: int = 60, driver: str = "auto", debug: bool = False
+) -> dict[str, Any]:
+    """Build and solve the legacy day-level MIP (private; kept to reproduce the #124 finding).
+
+    This is the FHOPS 1.0.0 – 1.0.1 (#124) implementation of ``solve_mip``. It returns the result
+    mapping documented in :func:`solve_mip` (without ``production``/``warm_start``), raises
+    :class:`SolverUnavailable` for a missing solver and ``ValueError`` for an unknown ``driver``.
+    The legacy model is infeasible for scenarios with loader roles (see
+    :mod:`fhops.optimization.mip.deprecation`); no public entry point calls this function.
     """
     driver_clean = driver.lower()
     if driver_clean not in _KNOWN_DRIVERS:
@@ -205,7 +365,9 @@ def solve_mip(
             "Supported values: auto, highs, highs-appsi, highs-exec, gurobi, gurobi-appsi, "
             "gurobi-direct."
         )
-    model = build_model(pb)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", LegacyMipDeprecationWarning)
+        model = build_model(pb)
 
     if driver_clean == "auto":
         notes: list[str] = []

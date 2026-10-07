@@ -485,7 +485,11 @@ def solve_mip_cmd(
     time_limit: int = 60,
     driver: str = typer.Option(
         "auto",
-        help="MIP driver: auto|highs-appsi|highs-exec|gurobi|gurobi-appsi|gurobi-direct",
+        help=(
+            "Solver for the operational MILP, given as a legacy driver name: auto (Gurobi when "
+            "installed, else HiGHS) | highs-appsi | highs-exec (HiGHS) | gurobi | gurobi-appsi | "
+            "gurobi-direct."
+        ),
     ),
     debug: bool = typer.Option(False, "--debug", help="Verbose tracebacks & solver logs"),
     sequencing_debug: bool = typer.Option(
@@ -494,29 +498,46 @@ def solve_mip_cmd(
         help="Print sequencing diagnostics (first violation, backlog deficits).",
     ),
 ):
-    """Solve the scenario with the exact MIP and write assignments/KPIs.
+    """Deprecated alias: solve the operational MILP and write assignments/KPIs.
+
+    Since FHOPS 1.0.1 (#127) this command runs the operational MILP (the formulation documented in
+    the FHOPS paper, ``fhops solve-mip-operational``) instead of the legacy day-level MIP, which is
+    infeasible for every scenario with a loader role. It prints a one-line deprecation notice;
+    use ``fhops solve-mip-operational`` instead.
 
     Parameters
     ----------
     scenario : pathlib.Path
         Scenario YAML path to load.
     out : pathlib.Path
-        CSV destination for the assignment matrix (``machine_id, block_id, day, shift_id``).
+        CSV destination for the assignment table
+        (``machine_id, block_id, day, shift_id, assigned, production``).
     time_limit : int, default=60
-        Solver wall-clock time limit in seconds.
+        Solver wall-clock time limit in seconds (``solve-mip-operational --time-limit``).
     driver : str, default="auto"
-        HiGHS driver backend (`auto`, `highs-appsi`, `highs-exec`, or Gurobi variants when licensed).
+        Legacy driver name mapped to the operational solver
+        (:func:`fhops.optimization.mip.highs_driver.operational_solver_for_driver`): ``auto`` →
+        Gurobi when installed (HiGHS after a Gurobi solver error), otherwise HiGHS;
+        ``highs``/``highs-appsi``/``highs-exec`` → ``highs``; ``gurobi`` → ``gurobi``;
+        ``gurobi-appsi`` → ``appsi_gurobi``; ``gurobi-direct`` → ``gurobi_direct``.
     debug : bool, default=False
-        Enable verbose solver logging and rich tracebacks.
+        Stream the solver log (``tee``) and enable rich tracebacks.
+    sequencing_debug : bool, default=False
+        Print sequencing diagnostics after the KPI summary.
 
     Notes
     -----
+    Equivalent to ``fhops solve-mip-operational SCENARIO --out OUT --solver <solver> --time-limit
+    TIME_LIMIT``; options without a legacy counterpart (``--gap``, ``--solver-option``,
+    ``--incumbent``, ``--telemetry-log``, ``--bundle-json``, ``--watch``) are only available on
+    ``solve-mip-operational``.
+
     Prints ``MIP outcome=<outcome> solver_status=… termination=… objective=…`` where ``outcome``
     is ``optimal``, ``feasible`` (incumbent at the time limit), ``infeasible``, ``no_solution``
-    (time limit without an incumbent) or ``error`` (see
-    :func:`fhops.optimization.mip.solve_mip`); the objective is ``n/a`` without a solution. With a
-    solution the KPI summary follows (:func:`fhops.evaluation.compute_kpis`); without one an empty
-    assignment table (same columns) is written and the KPI summary is skipped.
+    (time limit without an incumbent) or ``error`` (see :func:`fhops.optimization.mip.solve_mip`);
+    the objective is ``n/a`` without a solution. With a solution that assigns machines the KPI
+    summary follows (:func:`fhops.evaluation.compute_kpis`); otherwise the (possibly empty)
+    assignment table is written and the KPI summary is skipped.
 
     Exit codes: ``0`` when the solver ran (including infeasible models and time limits without an
     incumbent), ``1`` on a solver error or when the requested solver is unavailable, ``2`` for
@@ -529,6 +550,10 @@ def solve_mip_cmd(
         console.print(
             f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]"
         )
+    console.print(
+        "[yellow]Deprecated:[/] `fhops solve-mip` is an alias that runs the operational MILP; "
+        "use `fhops solve-mip-operational` instead."
+    )
 
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
@@ -572,6 +597,11 @@ def solve_mip_cmd(
         console.print(
             f"[yellow]No feasible solution: {reason}; wrote an empty assignment table and "
             "skipped the KPI summary.[/]"
+        )
+    elif assignments.empty:
+        console.print(
+            "[yellow]The incumbent assigns no machines (all work is left over); skipping the KPI "
+            "summary.[/]"
         )
     else:
         metrics = compute_kpis(pb, assignments)
@@ -2396,7 +2426,7 @@ def benchmark(
     driver: str = "auto",
     debug: bool = False,
 ):
-    """Run both MIP and simulated annealing to compare objective quality.
+    """Run the operational MILP and simulated annealing to compare objective quality.
 
     Parameters
     ----------
@@ -2409,7 +2439,9 @@ def benchmark(
     iters : int, default=5000
         Simulated annealing iteration budget.
     driver : str, default="auto"
-        MIP driver selection.
+        Legacy driver name mapped to the operational MILP solver (same mapping as
+        ``fhops solve-mip``; see
+        :func:`fhops.optimization.mip.highs_driver.operational_solver_for_driver`).
     debug : bool, default=False
         Enable verbose logging and rich tracebacks.
 
@@ -2417,14 +2449,17 @@ def benchmark(
     -----
     This helper predates the richer ``fhops bench`` app but remains handy for quick smoke tests.  It
     writes ``mip_solution.csv`` and ``sa_solution.csv`` under ``out_dir`` and prints KPI summaries
-    for both solvers.
+    for both solvers. Since 1.0.1 (#127) the MIP step solves the operational MILP
+    (:func:`fhops.optimization.mip.highs_driver.solve_with_operational_milp`) instead of the
+    legacy day-level MIP (infeasible for scenarios with loader roles); the printed ``MIP obj`` is
+    the operational MILP objective.
 
     When the MIP returns no solution (infeasible model, time limit without an incumbent, solver
     error) ``mip_solution.csv`` is an empty assignment table, ``MIP obj=n/a (outcome=…)`` is printed
     and the MIP metrics are skipped; SA still runs. Exit codes as for ``fhops solve-mip``: ``1``
     when the MIP solver failed (after the SA results are printed) or is unavailable.
     """
-    from fhops.optimization.mip.highs_driver import SolverUnavailable
+    from fhops.optimization.mip.highs_driver import SolverUnavailable, solve_with_operational_milp
 
     if debug:
         _enable_rich_tracebacks()
@@ -2433,7 +2468,7 @@ def benchmark(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     try:
-        res_mip = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
+        res_mip = solve_with_operational_milp(pb, time_limit=time_limit, driver=driver, debug=debug)
     except SolverUnavailable as exc:
         console.print(f"[red]Solver unavailable:[/] {exc}")
         raise typer.Exit(1) from exc
@@ -2451,7 +2486,11 @@ def benchmark(
     sa_assignments = cast(pd.DataFrame, res_sa["assignments"])
     sa_assignments.to_csv(str(sa_csv), index=False)
 
-    mip_metrics = compute_kpis(pb, mip_assignments) if mip_has_solution else None
+    mip_metrics = (
+        compute_kpis(pb, mip_assignments)
+        if mip_has_solution and not mip_assignments.empty
+        else None
+    )
     sa_metrics = compute_kpis(pb, sa_assignments)
 
     mip_text = (
@@ -2469,6 +2508,8 @@ def benchmark(
             console.print(
                 f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}"
             )
+    elif mip_has_solution:
+        console.print("[yellow]MIP incumbent assigns no machines; MIP metrics skipped.[/]")
     else:
         console.print("[yellow]MIP returned no feasible solution; MIP metrics skipped.[/]")
     console.print("SA metrics:")

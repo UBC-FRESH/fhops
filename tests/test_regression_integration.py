@@ -17,6 +17,11 @@ from fhops.scheduling.mobilisation import (
 )
 from fhops.scheduling.systems import HarvestSystem, SystemJob
 
+# These tests exercise the deprecated legacy builder on purpose (#127).
+pytestmark = pytest.mark.filterwarnings(
+    "ignore::fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning"
+)
+
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "regression"
 SCENARIO_PATH = FIXTURE_DIR / "regression.yaml"
 BASELINE_PATH = FIXTURE_DIR / "baseline.yaml"

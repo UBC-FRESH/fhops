@@ -1,4 +1,11 @@
-"""Pyomo builder for FHOPS MIP."""
+"""Pyomo builder for the legacy FHOPS day-level MIP (deprecated since 1.0.1, #127).
+
+The builder is kept importable for API compatibility only. It is infeasible for every scenario
+whose harvest system has a loader role with machines (see
+:mod:`fhops.optimization.mip.deprecation`), and no FHOPS solver uses it any more: ``solve_mip``,
+``fhops solve-mip``, ``fhops benchmark`` and the ILS hybrid step all run the operational MILP
+(:mod:`fhops.model.milp`).
+"""
 
 from __future__ import annotations
 
@@ -8,6 +15,7 @@ from collections import defaultdict
 import pyomo.environ as pyo
 
 from fhops.optimization.mip.constraints.system_sequencing import apply_system_sequencing_constraints
+from fhops.optimization.mip.deprecation import LEGACY_BUILDER_MESSAGE, LegacyMipDeprecationWarning
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
@@ -16,7 +24,15 @@ __all__ = ["build_model"]
 
 
 def build_model(pb: Problem) -> pyo.ConcreteModel:
-    """Build the core FHOPS MIP model.
+    """Build the legacy FHOPS day-level MIP model (deprecated).
+
+    .. deprecated:: 1.0.1
+       Emits :class:`fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning`. The model is
+       infeasible whenever a block's harvest system has a loader role with machines (the
+       ``system_loader_buffer`` rows demand ``−batch`` m³ of buffer in the first shift), which
+       includes the bundled tiny7, small21 and med42 examples. Use the operational MILP
+       (:func:`fhops.model.milp.operational.build_operational_model`,
+       :func:`fhops.model.milp.driver.solve_operational_milp`).
 
     Parameters
     ----------
@@ -53,6 +69,7 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     ``fhops solve-mip-operational``) when carrying state into a horizon.
     """
 
+    warnings.warn(LEGACY_BUILDER_MESSAGE, LegacyMipDeprecationWarning, stacklevel=2)
     sc = pb.scenario
     if sc.initial_state is not None:
         warnings.warn(

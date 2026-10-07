@@ -325,7 +325,7 @@ Evidence (tiny7): cold HiGHS solve optimal `4388.082751999992`; warm re-solve lo
 with `time_limit=1e-6` the warm solve still returns the seed (`4388.08…`, `maxTimeLimit`).
 
 Follow-ups (not in this change): the rolling MILP hook does not pass incumbents (rolling.py owned
-by #92); ILS "hybrid MIP warm start" calls `solve_mip` without an incumbent; `pyomo.contrib.solver`
+by #92); ILS "hybrid MIP warm start" calls `solve_mip` without an incumbent (resolved by #127, §8.19); `pyomo.contrib.solver`
 interfaces may gain native warm starts (e.g. Gurobi `warmstart_discrete_vars`), at which point
 the APPSI route can be revisited.
 
@@ -988,7 +988,7 @@ scripts in `/tmp/opencode/t124/`.
    issue's files): README quickstart (tiny7), `docs/howto/thesis_eval.rst`,
    `docs/howto/mobilisation_geo.rst`, `docs/howto/system_sequencing.rst` (med42),
    `docs/api/fhops.evaluation.rst` (tiny7 example). Fixing the constraint (`− batch · active`)
-   changes the legacy model and is not in scope for 1.0.1.
+   changes the legacy model and is not in scope for 1.0.1. (Resolved by retirement in #127, §8.19.)
 4. **Rolling hook** (`MILPSolver`): appends `solver_error=<text>` and each driver `warnings` entry
    to `SolverOutput.warnings` after the status lines, skipping duplicates;
    `run_rolling_horizon` already copies them into the iteration warnings. Real driver warning
@@ -1002,6 +1002,56 @@ scripts in `/tmp/opencode/t124/`.
    documented platform, and that the playback assets were regenerated with 1.0.1 (§8.5).
    `software_description.tex`: scipy removed (not a dependency, not imported); dependency lists
    now match `pyproject.toml` (highspy, Click, PyYAML for scenario files, pyarrow for Parquet).
+
+### 8.19 Retire the legacy MIP builder; ILS hybrid warm start (#127, #104)
+Follow-up to the §8.17 finding (legacy MIP infeasible for every scenario with a loader role).
+Branch `issue-127-legacy-mip-retirement`; scratch in `/tmp/opencode/t127/`.
+
+1. **Delegation** (`optimization/mip/highs_driver.py`). New `solve_with_operational_milp(pb,
+   time_limit, driver, debug)` builds the operational problem and calls
+   `solve_operational_milp(bundle, solver, time_limit, tee=debug, context=ctx)`; legacy driver
+   names map via `operational_solver_for_driver`: `auto` → `("gurobi", "highs")` (only available
+   solvers; a Gurobi `solver_error` is retried with HiGHS and noted in `warnings`, as in 1.0.0/#124),
+   HiGHS drivers → `highs`, `gurobi`/`gurobi-appsi`/`gurobi-direct` → `gurobi`/`appsi_gurobi`/
+   `gurobi_direct`. Unknown driver → `ValueError`; no available candidate → `SolverUnavailable`.
+   Result = operational result (#124 keys + `production`, `warm_start`) + `solver`.
+   `solve_mip` warns (`LegacyMipDeprecationWarning`, a `DeprecationWarning`, `stacklevel=2`, new
+   module `optimization/mip/deprecation.py`) and delegates. `build_model` warns; the #124 legacy
+   solve path is kept as private `_solve_legacy_mip` (suppresses the builder warning) so the
+   infeasibility finding stays reproducible (`tests/test_legacy_mip_driver.py`). DeprecationWarning
+   rather than FutureWarning: shown for calls from scripts/notebooks and under pytest, hidden when
+   triggered inside the CLI, which prints its own one-line notice.
+2. **CLI.** `solve-mip`: one `Deprecated: …` line, then the #124 output and exit codes (0/1/2)
+   unchanged; an incumbent without machine assignments skips the KPI summary (as in
+   `solve-mip-operational`). `benchmark`: MIP step via `solve_with_operational_milp` (no notice).
+   Only these two functions in `cli/main.py` changed. `bench suite --driver auto --include-mip`:
+   since #115 an unavailable Gurobi is a `solver_error` instead of an exception, so the candidate
+   loop never fell back and the MIP row was empty (tiny7: objective NaN, 0 assignments); the loop
+   now continues on `solver_error` while candidates remain (`cli/benchmarks.py`).
+   `scripts/ingest_mip_baselines.py` uses `solve_with_operational_milp` and skips runs without a
+   solution (it crashed on `objective=None` since #124).
+3. **ILS hybrid** (`heuristics/ils.py`): at each stall the operational MILP (HiGHS,
+   `hybrid_mip_time_limit`) is solved on the ILS run's own bundle (same objective-weight overrides)
+   with `incumbent_assignments` = best ILS schedule (APPSI HiGHS MIP start, #99). The MILP schedule
+   (rows with `assigned=1`) is re-scored by the heuristic evaluator and adopted only if better; no
+   solution → ILS schedule kept. `meta["hybrid_mip"]` (only when enabled) records each solve. tiny7
+   (iters 3, seed 1, stall 1): seeded 23 slots, HiGHS log "MIP start solution is feasible",
+   MILP 4402.80 (ILS weight overrides) ≥ seed MILP objective; heuristic score 4306.52 → 4360.01
+   (adopted). Before: legacy MIP infeasible → exception swallowed → no-op.
+4. **Reference ladder unchanged.** Committed SoftwareX benchmark/tuning telemetry has
+   `hybrid_use_mip: false` everywhere (`generate_assets.sh` never passes `--ils-hybrid-use-mip`;
+   `run_tuner.py` uses the `short` tier; only `run_tuning_benchmarks.py`'s `long` tier enables the
+   hybrid). Re-runs with committed flags: tiny7 SA×3/ILS/Tabu and small21 ILS/Tabu summary rows
+   identical in every non-runtime column (raw CSV text) and all 7 assignment CSVs byte-identical.
+5. **Docs** (README, quickstart, thesis_eval, mobilisation_geo, system_sequencing MIP example,
+   ils, benchmarks, data_contract note, CLI reference, API pages, release notes): examples use
+   `solve-mip-operational`; `solve-mip` documented as deprecated alias with the option mapping.
+   med42 MILP examples moved to tiny7 (HiGHS 600 s on med42 ends at the empty incumbent,
+   objective −38193.23); the regression-fixture MIP line dropped (its `ground_sequence` system is not
+   in the registry, so the operational MILP cannot harvest it). Every command on the touched pages
+   ran in a temp copy (results in CHANGE_LOG); pre-existing, not changed here:
+   `system_sequencing.rst` `fhops solve-ils … --include-mip False` (no such option, exit 2) and its
+   default-scenario `bench suite` (hours; not run) — that page's non-MIP parts belong to #125.
 
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,

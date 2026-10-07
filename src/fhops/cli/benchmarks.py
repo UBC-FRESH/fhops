@@ -340,6 +340,16 @@ def run_benchmark_suite(
                         )
                         mip_runtime = time.perf_counter() - start
                         chosen_solver = solver_name
+                        # The driver reports solver failures (e.g. Gurobi not installed) instead
+                        # of raising since 1.0.1 (#115); keep falling back for driver=auto (#127).
+                        solver_error = mip_res.get("solver_error")
+                        if solver_error and solver_name != solver_candidates[-1]:
+                            if debug:
+                                console.print(
+                                    f"[yellow]Operational MILP solver '{solver_name}' failed: "
+                                    f"{solver_error}[/]"
+                                )
+                            continue
                         break
                     except Exception as exc:  # pragma: no cover - exercised via fallback
                         mip_runtime = time.perf_counter() - start
