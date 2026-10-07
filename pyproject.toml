@@ -11,11 +11,11 @@ requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [{name="UBC FRESH Lab"}]
 # Floors verified empirically on Python 3.11/3.12 (#118): pyomo<6.9.2 cannot create the "highs"
-# solver (<=6.9.0 cannot warm-start it either); typer<0.12.4 cannot build the CLI (`X | None`);
+# solver (<=6.9.0 cannot warm-start it either); typer<0.15.4 cannot build the CLI with current Click (typer<0.12.4: `X | None`; 0.12.4–0.15.3 do
+# not cap Click and crash on Click>=8.2 with 'Secondary flag is not valid for non-boolean flag');
 # highspy<1.8.1 does not report rejected MIP starts; PyYAML 6.0 has no 3.12 wheel.
 dependencies = [
-  "click>=8.1.0",
-  "typer>=0.12.4",
+  "typer>=0.15.4",
   "rich>=13.7.0",
   "pydantic>=2.6.0",
   "pandas>=2.2.0",

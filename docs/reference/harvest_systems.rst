@@ -123,7 +123,7 @@ Default Systems
    * - ``cable_partial_tr127_block5``
      - cable-standing skyline partial cut
      - hand/mech faller → standing skyline (TR127 Block 5) → landing processor → loader
-     - Sets 16 m lateral, 3 logs/turn, 1.6 m³ payload, and wires in the SR109 green-tree penalty (volume ×0.715, cost ×1.10) so telemetry logs the added cost/range limits automatically.
+     - Sets 16 m lateral, 3 logs/turn, 1.6 m³ payload, and wires in the SR109 green-tree penalty (volume ×0.715, cost ×1.09) so telemetry logs the added cost/range limits automatically.
    * - ``helicopter``
      - helicopter
      - hand faller → helicopter longline → hand buck/processor → loader/water

@@ -12,7 +12,7 @@
       "id": "sr109_green_tree",
       "label": "SR109 green-tree retention (25%)",
       "volume_multiplier": 0.715,
-      "cost_multiplier": 1.10,
+      "cost_multiplier": 1.09,
       "retention_summary": "Dispersed green-tree retention with serpentine forwarding; tracked skidder cleanup where stems misaligned.",
       "citation": "data/reference/fpinnovations/sr109_partial_cut_treatments.json#green_tree"
     },
