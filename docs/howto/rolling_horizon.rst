@@ -537,7 +537,8 @@ Gotchas
 - Ensure ``master_days + start_day - 1 <= Scenario.num_days``; otherwise the CLI fails fast with a
   usage error (exit code 2).
 - MILP runs can be slow—set sensible ``--mip-time-limit``/``mip_solver_options`` and use a Gurobi
-  licence when available. HiGHS is the default (``--mip-solver auto`` resolves to ``highs``).
+  licence when available. ``--mip-solver auto`` (the default) uses Gurobi when available and
+  falls back to HiGHS, as ``solve-mip-operational --solver auto`` does.
 - Gurobi threads can be set via ``mip_solver_options`` (``{\"Threads\": 32}``) or ``GRB_THREADS``.
 - When the solver aborts but returns a solution, treat results as heuristics; rerun with larger caps
   if you need high-quality gaps.
@@ -564,8 +565,8 @@ Notes
 - Telemetry/reporting layers will evolve; current exports are meant to unblock experimentation.
 - ``master_days`` must not exceed the base scenario horizon. Use a scenario with enough days or lower
   the master/sub/lock settings to fit within ``Scenario.num_days``.
-- ``--mip-solver`` passes through to Pyomo (use ``highs`` or ``gurobi``; ``auto`` resolves to
-  ``highs``); ``--max-iterations N`` (``N >= 1``) caps the rolling loop for smoke tests or partial
+- ``--mip-solver`` passes through to Pyomo (use ``highs`` or ``gurobi``; ``auto`` tries Gurobi and
+  falls back to HiGHS); ``--max-iterations N`` (``N >= 1``) caps the rolling loop for smoke tests or partial
   plans.
 - User locks outside their block's ``earliest_start``/``latest_finish`` window are rejected up front
   with :class:`fhops.planning.RollingInfeasibleError` (before any window is solved), whatever the

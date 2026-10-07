@@ -614,19 +614,23 @@ def test_multi_shift_locks_keep_shift_id_without_duplicates(kind: str) -> None:
 
 
 # (h) ---------------------------------------------------------------------------------------------
-def test_hook_runtime_recorded_and_auto_resolves_to_highs() -> None:
-    assert resolve_operational_mip_solver("auto") == "highs"
-    assert resolve_operational_mip_solver("AUTO") == "highs"
+def test_hook_runtime_recorded_and_auto_uses_driver_selection() -> None:
+    assert resolve_operational_mip_solver("auto") == "auto"
+    assert resolve_operational_mip_solver("AUTO") == "auto"
+    assert resolve_operational_mip_solver("") == "highs"
+    assert resolve_operational_mip_solver("default") == "highs"
+    assert MILPSolver(solver="auto").available()
     assert resolve_operational_mip_solver("gurobi") == "gurobi"
     hook = MILPSolver(solver="auto", time_limit=10)
-    assert hook.solver == "highs"
+    # "auto" is passed to the operational driver (Gurobi when available, otherwise HiGHS).
+    assert hook.solver == "auto"
     assert hook.requested_solver == "auto"
 
     scenario = solo_scenario(num_days=4)
     mip = solve_rolling_plan(
         scenario, master_days=4, subproblem_days=2, lock_days=2, solver="mip", mip_time_limit=10
     )
-    assert mip.metadata["mip_solver"] == "highs"
+    assert mip.metadata["mip_solver"] == "auto"
     sa = solve_rolling_plan(
         scenario, master_days=4, subproblem_days=2, lock_days=2, solver="sa", sa_iters=50
     )

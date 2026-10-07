@@ -61,7 +61,7 @@ def rolling_plan(
         str,
         typer.Option(
             "--mip-solver",
-            help="MILP solver name (e.g., highs, gurobi) when --solver mip; auto resolves to highs.",
+            help="MILP solver name (e.g., highs, gurobi) when --solver mip; auto tries Gurobi when available and falls back to HiGHS (same as solve-mip-operational).",
         ),
     ] = "auto",
     mip_time_limit: Annotated[
