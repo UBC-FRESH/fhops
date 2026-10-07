@@ -12,6 +12,7 @@ from fhops.planning.reporting import (
     rolling_assignments_dataframe,
 )
 from fhops.planning.rolling import (
+    MILPSolver,
     RollingCarryState,
     RollingHorizonConfig,
     RollingInfeasibleError,
@@ -39,6 +40,7 @@ __all__ = [
     "RollingKPIComparison",
     "RollingInfeasibleError",
     "SolverOutput",
+    "MILPSolver",
     "solve_rolling_plan",
     "get_solver_hook",
     "run_rolling_horizon",

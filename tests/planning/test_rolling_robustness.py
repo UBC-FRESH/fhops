@@ -15,6 +15,7 @@ from fhops.planning import (
     RollingHorizonConfig,
     RollingInfeasibleError,
     RollingIterationPlan,
+    RollingPlanResult,
     SolverOutput,
     carry_forward_state,
     compute_rolling_kpis,
@@ -266,15 +267,13 @@ def test_fail_on_empty_window_raises_with_partial_result() -> None:
     assert partial.metadata["fail_on_empty_window"] is True
 
 
-@pytest.mark.parametrize("shape", ["raise", "future_no_solution", "objective_none"])
+@pytest.mark.parametrize("shape", ["error", "future_no_solution", "objective_none"])
 def test_milp_hook_reports_no_solution_instead_of_raising(
     monkeypatch: pytest.MonkeyPatch, shape: str
 ) -> None:
-    """Covers the current driver (raises on infeasible/time-limited solves) and #115's result."""
+    """Driver results without a solution (incl. ``outcome="error"``, #141) are no_solution windows."""
 
     def fake_driver(*args: object, **kwargs: object) -> dict[str, object]:
-        if shape == "raise":
-            raise RuntimeError("A feasible solution was not found")
         result: dict[str, object] = {
             "objective": None,
             "production": 0.0,
@@ -286,6 +285,14 @@ def test_milp_hook_reports_no_solution_instead_of_raising(
         }
         if shape == "future_no_solution":
             result["has_solution"] = False
+        if shape == "error":
+            result.update(
+                has_solution=False,
+                outcome="error",
+                solver_status="error",
+                termination_condition="error",
+                solver_error="RuntimeError: A feasible solution was not found",
+            )
         return result
 
     monkeypatch.setattr(rolling_module, "solve_operational_milp", fake_driver)
@@ -295,18 +302,42 @@ def test_milp_hook_reports_no_solution_instead_of_raising(
     assert output.has_solution is False
     assert list(output.assignments) == [] and output.objective is None
     assert output.warnings
-    if shape == "raise":
-        assert output.warnings == ["solver_error=RuntimeError: A feasible solution was not found"]
+    if shape == "error":
+        assert "solver_error=RuntimeError: A feasible solution was not found" in output.warnings
+        assert output.error == "RuntimeError: A feasible solution was not found"
     else:
         assert "termination_condition=maxTimeLimit" in output.warnings
+        assert output.error is None
 
-    with pytest.warns(UserWarning, match="no solution"):
+    with pytest.warns(UserWarning, match="no solution|solver failed"):
         result = run_rolling_horizon(
             _config(scenario, 4, 2, 2), MILPSolver(solver="highs", time_limit=1)
         )
     assert result.locked_assignments == []
     assert result.no_solution_windows == [0, 1]
     assert result.empty_windows == [0, 1]
+    errors = [summary.error for summary in result.iteration_summaries]
+    if shape == "error":
+        assert errors == ["RuntimeError: A feasible solution was not found"] * 2
+        assert "the solver failed (RuntimeError" in (result.warnings or [""])[0]
+        assert summarize_plan(result)["iterations"][0]["error"] == errors[0]
+    else:
+        assert errors == [None, None]
+
+
+def test_milp_hook_propagates_unexpected_exceptions(monkeypatch: pytest.MonkeyPatch) -> None:
+    """#141: exceptions from the driver/model build are FHOPS defects and are not swallowed."""
+
+    def fake_driver(*args: object, **kwargs: object) -> dict[str, object]:
+        raise KeyError("bug in the model build")
+
+    monkeypatch.setattr(rolling_module, "solve_operational_milp", fake_driver)
+    scenario = chain_scenario(num_days=4)
+    with pytest.raises(KeyError, match="bug in the model build") as excinfo:
+        run_rolling_horizon(_config(scenario, 4, 2, 2), MILPSolver(solver="highs", time_limit=1))
+    partial = getattr(excinfo.value, "partial_result", None)
+    assert isinstance(partial, RollingPlanResult)
+    assert partial.iteration_summaries == []
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")

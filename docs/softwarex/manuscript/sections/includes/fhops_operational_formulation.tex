@@ -264,6 +264,42 @@ reward and the block balance use the machine-level sum
 \(\sum_{m}\sum_{s} p_{m,b,s}\) in place of
 \(\sum_{r\in\mathcal{T}_b}\sum_s z_{r,b,s}\).
 
+\textbf{Earliness tie-break (optional; default in rolling-horizon
+windows).} OBJ does not depend on when work is done inside the horizon,
+so plans that shift production between slots tie. In a rolling-horizon
+window, a tied optimum may defer work past the lock span and lock idle
+days. With the earliness option, a second stage maximizes the
+production-weighted earliness
+
+\[
+E=\sum_{s\in\mathcal{S}} w_s \sum_{m\in\mathcal{M}}\sum_{b\in\mathcal{B}} p_{m,b,s},
+\qquad w_s=\frac{|\mathcal{S}|-k_s}{|\mathcal{S}|},
+\]
+
+where \(k_s\in\{0,\dots,|\mathcal{S}|-1\}\) is the position of slot
+\(s\) in the slot order. This stage keeps every constraint above and
+adds \(\text{OBJ}\ge z_1-\tau\), where \(z_1\) is the OBJ value of the
+stage-1 solution and \(\tau=10^{-6}\max(1,|z_1|)\). Stage 2 is
+warm-started from the stage-1 solution, so its returned plan has
+\(\text{OBJ}\ge z_1-\tau\). If stage 1 is optimal, the returned plan is
+therefore optimal for OBJ within \(\tau\), which is 100 times tighter
+than HiGHS's default relative MIP gap (\(10^{-4}\)). The reported
+objective is OBJ; \(E\) is reported separately. A single weighted
+objective \(\text{OBJ}+\varepsilon E\) is not used, for two reasons.
+First, production is continuous and the data are arbitrary reals, so no
+data-independent \(\varepsilon>0\) is guaranteed to stay below the
+smallest positive OBJ difference between plans: for any \(\varepsilon\)
+there are data for which the weighted optimum is not OBJ-optimal.
+Second, an \(\varepsilon\) small enough to be harmless in practice
+(\(\varepsilon E\ll 10^{-4}|z_1|\)) is below the solver's relative gap,
+so the solver would stop before it acts on the tie-break. The cost is a
+second solve. Rolling-horizon MILP windows enable the option by default,
+except windows whose lock span covers the whole window. Standalone
+solves (\texttt{fhops\ solve-mip-operational},
+\texttt{solve\_operational\_milp}) do not enable it by default, because
+the published single-horizon optimum and its solve time stay unchanged;
+\texttt{-\/-earliness} or \texttt{earliness=True} turns it on.
+
 \textbf{Constraints.}
 
 Machine assignment feasibility:
@@ -634,6 +670,14 @@ inventory by the upstream instead of the downstream role.
   \texttt{mobilisation\_weight}, \texttt{transition\_weight} (move costs
   \(c_{m,b',b}\); \(b^{0}_m\) from
   \texttt{bundle.initial\_machine\_block})
+\item
+  Earliness tie-break: \texttt{earliness\_expression(...)} in
+  \texttt{fhops.model.milp.operational} (\(E\)); second stage
+  \texttt{\_solve\_earliness\_stage(...)} in
+  \texttt{fhops.model.milp.driver} (\texttt{model.earliness\_floor},
+  \texttt{model.earliness\_objective};
+  \texttt{solve\_operational\_milp(...,\ earliness=True)}, result key
+  \texttt{earliness})
 \item
   Data/parameter normalization: \texttt{build\_operational\_bundle(...)}
   in \texttt{fhops.model.milp.data} (flattens

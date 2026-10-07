@@ -78,6 +78,15 @@ The last line charges every move of a machine: working a block other than its po
 
 For blocks without terminal roles ($\mathcal{T}_b=\emptyset$, in particular blocks outside $\mathcal{B}^{\text{seq}}$) the production reward and the block balance use the machine-level sum $\sum_{m}\sum_{s} p_{m,b,s}$ in place of $\sum_{r\in\mathcal{T}_b}\sum_s z_{r,b,s}$.
 
+**Earliness tie-break (optional; default in rolling-horizon windows).** OBJ does not depend on when work is done inside the horizon, so plans that shift production between slots tie. In a rolling-horizon window, a tied optimum may defer work past the lock span and lock idle days. With the earliness option, a second stage maximizes the production-weighted earliness
+
+$$
+E=\sum_{s\in\mathcal{S}} w_s \sum_{m\in\mathcal{M}}\sum_{b\in\mathcal{B}} p_{m,b,s},
+\qquad w_s=\frac{|\mathcal{S}|-k_s}{|\mathcal{S}|},
+$$
+
+where $k_s\in\{0,\dots,|\mathcal{S}|-1\}$ is the position of slot $s$ in the slot order. This stage keeps every constraint above and adds $\text{OBJ}\ge z_1-\tau$, where $z_1$ is the OBJ value of the stage-1 solution and $\tau=10^{-6}\max(1,|z_1|)$. Stage 2 is warm-started from the stage-1 solution, so its returned plan has $\text{OBJ}\ge z_1-\tau$. If stage 1 is optimal, the returned plan is therefore optimal for OBJ within $\tau$, which is 100 times tighter than HiGHS's default relative MIP gap ($10^{-4}$). The reported objective is OBJ; $E$ is reported separately. A single weighted objective $\text{OBJ}+\varepsilon E$ is not used, for two reasons. First, production is continuous and the data are arbitrary reals, so no data-independent $\varepsilon>0$ is guaranteed to stay below the smallest positive OBJ difference between plans: for any $\varepsilon$ there are data for which the weighted optimum is not OBJ-optimal. Second, an $\varepsilon$ small enough to be harmless in practice ($\varepsilon E\ll 10^{-4}|z_1|$) is below the solver's relative gap, so the solver would stop before it acts on the tie-break. The cost is a second solve. Rolling-horizon MILP windows enable the option by default, except windows whose lock span covers the whole window. Standalone solves (`fhops solve-mip-operational`, `solve_operational_milp`) do not enable it by default, because the published single-horizon optimum and its solve time stay unchanged; `--earliness` or `earliness=True` turns it on.
+
 **Constraints.**
 
 Machine assignment feasibility:
@@ -275,6 +284,7 @@ $$
 - Locked assignments: `model.locked_assignment` (from `bundle.locked_assignments`, resolved by `resolve_locked_slots(...)` in `fhops.model.milp.data`; warnings in the solve result)
 - Landing capacity per shift slot: `model.landing_capacity` (`landing_capacity_rule`, indexed by landing and slot; locked overloads from `_landing_slot_capacities`) + `model.landing_surplus` (unit pieces `model.LandingSurplusIndex`, only when $\omega^{\text{land}}>0$)
 - Objective assembly: `model.objective` and objective-term construction around `prod_weight`, `landing_weight`, `mobilisation_weight`, `transition_weight` (move costs $c_{m,b',b}$; $b^{0}_m$ from `bundle.initial_machine_block`)
+- Earliness tie-break: `earliness_expression(...)` in `fhops.model.milp.operational` ($E$); second stage `_solve_earliness_stage(...)` in `fhops.model.milp.driver` (`model.earliness_floor`, `model.earliness_objective`; `solve_operational_milp(..., earliness=True)`, result key `earliness`)
 - Data/parameter normalization: `build_operational_bundle(...)` in `fhops.model.milp.data` (flattens `Scenario.initial_state` and `Scenario.locked_assignments` into the bundle)
 
 This formulation is the canonical mathematical reference for FHOPS operational MILP documentation and thesis-level reporting.

@@ -22,6 +22,7 @@ import logging
 import math
 import re
 import sys
+import time
 import warnings
 from collections import defaultdict
 from collections.abc import Mapping
@@ -34,7 +35,7 @@ from pyomo.opt import SolverFactory
 
 from fhops.evaluation.sequencing import SequencingTracker, build_role_priority
 from fhops.model.milp.data import OperationalMilpBundle, ShiftKey, resolve_locked_slots
-from fhops.model.milp.operational import build_operational_model
+from fhops.model.milp.operational import build_operational_model, earliness_expression
 from fhops.optimization.operational_problem import OperationalProblem
 
 ASSIGNMENT_COLUMNS = [
@@ -81,6 +82,8 @@ _ERROR_TERMINATIONS = frozenset(
     }
 )
 _SEED_FEASIBILITY_TOLERANCE = 1e-6
+#: Relative slack ``τ/max(1, |z1|)`` of the earliness stage's base-objective floor (#141).
+EARLINESS_OBJECTIVE_TOLERANCE = 1e-6
 
 
 class MilpWarmStartWarning(UserWarning):
@@ -133,6 +136,8 @@ def solve_operational_milp(
     solver_options: Mapping[str, object] | None = None,
     incumbent_assignments: pd.DataFrame | None = None,
     context: OperationalProblem | None = None,
+    earliness: bool = False,
+    earliness_time_limit: int | None = None,
 ) -> dict[str, Any]:
     """
     Solve the operational MILP given a prepared bundle.
@@ -168,6 +173,12 @@ def solve_operational_milp(
         :class:`fhops.optimization.operational_problem.OperationalProblem` describing the scenario.
         Required if the incumbent needs to be expanded into loader and landing state (the CLI and
         benchmark harness populate this automatically).
+    earliness :
+        When ``True``, break ties in favour of early production with a lexicographic second
+        stage (#141; see *Notes*). Default ``False``: a single solve of the base objective.
+        Rolling-horizon MILP windows enable it (:class:`fhops.planning.MILPSolver`).
+    earliness_time_limit :
+        Time limit (seconds) of the earliness stage; ``None`` uses ``time_limit``.
 
     Returns
     -------
@@ -180,7 +191,7 @@ def solve_operational_milp(
         ``objective`` (float | None)
             Objective of the loaded solution; ``None`` without a feasible solution. A solve
             stopped by a limit (time, iterations, objective) that holds a feasible incumbent
-            reports that incumbent.
+            reports that incumbent. Always the base objective (OBJ), also with ``earliness=True``.
         ``production`` (float)
             Total machine production of the solution (0.0 without one).
         ``assignments`` (DataFrame)
@@ -207,6 +218,15 @@ def solve_operational_milp(
         ``solver`` (str)
             ``SolverFactory`` name that produced the result (the selected candidate for
             ``solver="auto"``).
+        ``earliness`` (dict | None)
+            ``None`` unless ``earliness=True``. Keys: ``status`` (``"applied"``: the returned
+            plan comes from the earliness stage; ``"kept_stage1"``: the stage returned no usable
+            solution and the base-stage plan is returned; ``"skipped"``: the base stage had no
+            solution or failed), ``stage1_objective`` (base objective of the base stage),
+            ``objective_floor`` (lower bound imposed on the base objective in the earliness
+            stage), ``value`` (earliness score ``E`` of the returned plan),
+            ``stage1_value`` (``E`` of the base-stage plan), ``termination_condition``,
+            ``solver_error`` and ``runtime_s`` of the earliness stage.
 
         ``warm_start`` keys:
 
@@ -267,6 +287,23 @@ def solve_operational_milp(
     it only accelerates a solve if the incumbent is close to feasible for the operational MILP.
     Today that means tiny7/small21 runs reuse the incumbent immediately, while med42/large84 usually
     ignore the seed and rely on Gurobi/HiGHS built-in heuristics.
+
+    Earliness tie-break (``earliness=True``, #141). The base objective does not depend on *when*
+    work is done inside the horizon, so many plans tie; a rolling-horizon window may then plan its
+    work after its locked span. With ``earliness=True`` the base solve (stage 1, objective
+    ``z1``) is followed by stage 2, which maximises the earliness score
+    :func:`fhops.model.milp.operational.earliness_expression`
+    (``E = Σ_s w_s Σ_{m,b} p_{m,b,s}``, ``w_s = (|S| − k_s)/|S|``) subject to
+    ``OBJ ≥ z1 − τ`` with ``τ = 10⁻⁶·max(1, |z1|)`` (100× tighter than HiGHS's default relative
+    MIP gap ``10⁻⁴``). Stage 2 is warm-started from the stage-1 plan (feasible for it), so it
+    always holds a solution at least as good as stage 1 under the base objective; if it returns
+    none (e.g. a solver without MIP starts), the stage-1 plan is kept. A single weighted
+    objective ``OBJ + ε·E`` is not used: with continuous production and arbitrary data there is
+    no data-independent ``ε`` below the smallest objective difference between plans, and an
+    ``ε`` small enough to be safe in practice falls below the solver's relative gap, so the
+    solver would ignore the tie-break. ``outcome``, ``solver_status`` and
+    ``termination_condition`` describe stage 1; ``objective`` is the base objective of the
+    returned plan. The cost is a second solve (at most ``earliness_time_limit``).
     """
 
     if solver.strip().lower() == "auto":
@@ -278,6 +315,8 @@ def solve_operational_milp(
             solver_options=solver_options,
             incumbent_assignments=incumbent_assignments,
             context=context,
+            earliness=earliness,
+            earliness_time_limit=earliness_time_limit,
         )
 
     model = build_operational_model(bundle)
@@ -355,6 +394,25 @@ def solve_operational_milp(
     else:
         assignments = pd.DataFrame(columns=ASSIGNMENT_COLUMNS)
         prod = 0.0
+    earliness_info: dict[str, Any] | None = None
+    if earliness:
+        if has_solution and solver_error is None and objective_value is not None:
+            stage2 = _solve_earliness_stage(
+                model,
+                solver,
+                objective_value,
+                time_limit=earliness_time_limit if earliness_time_limit is not None else time_limit,
+                gap=gap,
+                tee=tee,
+                solver_options=solver_options,
+            )
+            earliness_info = stage2.info
+            if stage2.applied:
+                assignments = _extract_assignments(model)
+                prod = float(sum(max(0.0, pyo.value(model.prod[idx])) for idx in model.prod))
+                objective_value = float(pyo.value(model.objective))
+        else:
+            earliness_info = {"status": "skipped"}
     if solver_error is not None:
         outcome = "error"
     elif has_solution:
@@ -375,7 +433,85 @@ def solve_operational_milp(
         "warnings": model_warnings,
         "warm_start": warm_info,
         "solver": solver,
+        "earliness": earliness_info,
     }
+
+
+@dataclass(slots=True)
+class _EarlinessStage:
+    applied: bool
+    info: dict[str, Any]
+
+
+def _solve_earliness_stage(
+    model: pyo.ConcreteModel,
+    solver: str,
+    stage1_objective: float,
+    *,
+    time_limit: int | None,
+    gap: float | None,
+    tee: bool,
+    solver_options: Mapping[str, object] | None,
+) -> _EarlinessStage:
+    """Stage 2 of the earliness tie-break: max ``E`` subject to ``OBJ ≥ z1 − τ`` (#141).
+
+    ``model`` holds the stage-1 solution, which seeds the stage as a MIP start. On success the
+    stage-2 solution is left loaded in ``model``; otherwise the caller keeps its stage-1 results.
+    """
+
+    floor = stage1_objective - EARLINESS_OBJECTIVE_TOLERANCE * max(1.0, abs(stage1_objective))
+    model.earliness_score = pyo.Expression(expr=earliness_expression(model))
+    stage1_value = float(pyo.value(model.earliness_score))
+    info: dict[str, Any] = {
+        "status": "kept_stage1",
+        "stage1_objective": stage1_objective,
+        "objective_floor": floor,
+        "value": stage1_value,
+        "stage1_value": stage1_value,
+        "termination_condition": None,
+        "solver_error": None,
+        "runtime_s": None,
+    }
+    model.earliness_floor = pyo.Constraint(expr=model.objective.expr >= floor)
+    model.objective.deactivate()
+    model.earliness_objective = pyo.Objective(expr=model.earliness_score, sense=pyo.maximize)
+    started = time.perf_counter()
+    try:
+        with warnings.catch_warnings():
+            # Solvers without MIP starts still run the stage (stage 1 is kept if it fails).
+            warnings.simplefilter("ignore", MilpWarmStartWarning)
+            opt, _solver_used, method = _create_solver(solver, warm_start=True)
+        if time_limit is not None:
+            opt.options["time_limit"] = time_limit
+        if gap is not None:
+            opt.options["mipgap"] = gap
+            if not any(name in solver.lower() for name in ("gurobi", "cplex")):
+                opt.options["mip_rel_gap"] = gap
+        for key, value in (solver_options or {}).items():
+            opt.options[str(key)] = value
+        solve_kwargs: dict[str, object] = {"tee": tee, "load_solutions": False}
+        if method is not None:
+            solve_kwargs["warmstart"] = True
+        run = _run_solver(opt, model, solve_kwargs, appsi=method == "appsi_highs")
+    except Exception as exc:  # solver creation/configuration failures keep stage 1
+        run = _SolveRun("error", "error", False, [], f"{type(exc).__name__}: {exc}")
+    finally:
+        model.earliness_objective.deactivate()
+        model.objective.activate()
+        model.earliness_floor.deactivate()
+    info["runtime_s"] = time.perf_counter() - started
+    info["termination_condition"] = run.termination
+    info["solver_error"] = run.error
+    if run.has_solution and run.error is None:
+        objective = float(pyo.value(model.objective))
+        if objective >= floor - _SEED_FEASIBILITY_TOLERANCE * max(1.0, abs(floor)):
+            info["status"] = "applied"
+            info["value"] = float(pyo.value(model.earliness_score))
+            return _EarlinessStage(applied=True, info=info)
+        info["solver_error"] = (
+            f"earliness stage returned objective {objective} below the floor {floor}"
+        )
+    return _EarlinessStage(applied=False, info=info)
 
 
 def _solve_auto(bundle: OperationalMilpBundle, **kwargs: Any) -> dict[str, Any]:
