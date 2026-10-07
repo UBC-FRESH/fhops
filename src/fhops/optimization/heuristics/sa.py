@@ -21,6 +21,8 @@ from fhops.optimization.heuristics.common import (
     evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
+    objective_weight_override_source,
+    record_objective_weight_overrides,
     rescore_fresh,
     resolve_objective_weight_overrides,
 )
@@ -155,8 +157,10 @@ def solve_sa(
         always re-scored with a full repair before reporting.
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
-        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 scenarios auto-apply
-        a reduced mobilisation weight to encourage exploration.
+        ``landing_surplus``). ``None`` keeps the scenario weights, except for the scenarios listed in
+        :data:`~fhops.optimization.heuristics.common.AUTO_OBJECTIVE_WEIGHT_OVERRIDES` (FHOPS
+        Tiny7/Small21: production 1.0, mobilisation 0.2, transitions 0.1, soft landing capacity
+        0.05), which are applied automatically and recorded in ``meta`` (#140).
     milp_objective : float | None, optional
         Reference MILP objective used for gap reporting (best - MILP) in watch/telemetry output.
         ``None`` skips gap metrics.
@@ -238,6 +242,9 @@ def solve_sa(
         config_snapshot["milp_objective"] = float(milp_objective)
     if resolved_weight_overrides:
         config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
+        config_snapshot["objective_weight_overrides_source"] = objective_weight_override_source(
+            pb, objective_weight_overrides
+        )
     if auto_profile_applied:
         config_snapshot["auto_profile"] = "mobilisation"
     if auto_batch_applied:
@@ -565,8 +572,9 @@ def solve_sa(
         if milp_objective is not None:
             meta["milp_objective"] = float(milp_objective)
             meta["milp_gap"] = float(best_score - milp_objective)
-        if resolved_weight_overrides:
-            meta["objective_weight_overrides"] = resolved_weight_overrides
+        record_objective_weight_overrides(
+            meta, pb, objective_weight_overrides, resolved_weight_overrides
+        )
         meta["objective_weights"] = objective_weights_snapshot
         meta.update(
             {

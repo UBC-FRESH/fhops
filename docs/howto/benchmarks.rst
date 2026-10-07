@@ -147,6 +147,40 @@ The summary CSV/JSON records, per scenario/solver pair:
   - ``objective_gap_vs_best_heuristic`` shows how far each solver trails the top heuristic (negative values mean the solver beats the best heuristic, e.g., MIP).
   - ``runtime_ratio_vs_best_heuristic`` reports runtime multiples relative to the quickest heuristic winner.
 
+* Objective-weight columns (appended after all other columns since 1.0.1, #140):
+
+  - ``objective_weights_source`` — ``scenario`` (scenario weights), ``auto`` (built-in
+    ``AUTO_OBJECTIVE_WEIGHT_OVERRIDES``: FHOPS Tiny7/Small21) or ``explicit``
+    (``--objective-weight``); MIP rows are always ``scenario``.
+  - ``objective_weight_overrides`` — the applied overrides as JSON (empty without overrides).
+  - ``objective_scenario_weights`` — the exported plan scored as planned under the scenario's own
+    weights (the MILP's), via ``evaluate_assignments``; equal to ``objective`` without overrides.
+  - ``objective_scenario_weights_vs_mip_gap`` — MIP objective minus
+    ``objective_scenario_weights`` (empty without a MIP row).
+
+Comparing MIP and heuristic objectives
+--------------------------------------
+
+``objective`` is the objective each solver optimised. For FHOPS Tiny7 and Small21 the heuristics
+apply built-in weight overrides (soft landing capacity, lower mobilisation weight; see
+:ref:`heuristic-objective-weights`), while the MILP uses the scenario weights, so
+``objective_vs_mip_gap`` / ``objective_vs_mip_ratio`` compare different objectives for those rows.
+Use ``objective_scenario_weights`` and ``objective_scenario_weights_vs_mip_gap`` for a like-for-like
+comparison; a heuristic plan that overloads a landing which is hard under the scenario weights is
+charged the hard-violation penalty there. The bench suite and ``fhops benchmark`` print a
+one-line notice whenever overrides apply. ``fhops benchmark examples/tiny7/scenario.yaml`` (defaults)
+prints:
+
+.. code-block:: text
+
+   MIP obj=279.796, SA obj (override weights)=4295.775, SA obj (scenario weights)=-30498.228
+   Note: Heuristic objective uses built-in weight overrides for FHOPS Tiny7 (production=1, mobilisation=0.2, transitions=0.1, landing_surplus=0.05; scenario weights production=1, mobilisation=0.5, transitions=0, landing_surplus=0); not comparable with MILP objectives.
+
+The SA plan delivers all 4414.70 m³ but puts two machines on a capacity-1 landing in 11 slots: priced at
+0.05 per extra machine under its soft-landing override weights, it is infeasible under the scenario's hard
+landing capacity (11 × 3147.28 penalty; mobilisation 585.64 at weight 0.5), while the MILP plan
+respects it.
+
 Shared KPI roll-up
 ------------------
 

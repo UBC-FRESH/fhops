@@ -28,6 +28,9 @@ else:  # pragma: no cover - runtime placeholder
 
     Sanitizer = Callable[[object], object]
 
+HARD_VIOLATION_PENALTY_FLOOR = 1000.0
+"""Minimum heuristic penalty per hard violation (the v1.0.0 flat penalty)."""
+
 
 @dataclass(frozen=True)
 class OperationalProblem:
@@ -70,9 +73,18 @@ class OperationalProblem:
         buffered role may only work in a slot when the staged upstream volume at the start of the
         slot is at least this value. Empty when no role has ``buffer_shifts > 0``.
     multi_shift_days:
-        Days with more than one ``(day, shift_id)`` slot in ``shift_keys``. On these days the
-        heuristic repair only keeps or fills an assignment when the block's landing has room in
-        that shift (when ``landing_surplus`` is weighted 0). Empty for single-shift scenarios.
+        Days with more than one ``(day, shift_id)`` slot in ``shift_keys``. Empty for
+        single-shift scenarios. Informational since 1.0.1 (#140): the heuristic landing guard
+        applies on every day when ``landing_surplus`` is weighted 0 (1.0.1 pre-releases applied
+        it on these days only, #116).
+    max_production_rate:
+        Largest ``production_rates`` entry (m³ per shift), used by
+        :meth:`hard_violation_penalty`. ``0.0`` when no rate is positive.
+    max_move_cost:
+        Upper bound on the cost of one machine move (``setup_cost + max(walk_cost_per_meter ·
+        walk_threshold_m, move_cost_flat)`` maximised over the machines' mobilisation
+        parameters), used by :meth:`hard_violation_penalty`. ``0.0`` without mobilisation
+        parameters.
     """
 
     problem: Problem
@@ -98,6 +110,43 @@ class OperationalProblem:
     initial_machine_block: Mapping[str, str] = field(default_factory=dict)
     role_headstart_volume: Mapping[tuple[str, str], float] = field(default_factory=dict)
     multi_shift_days: frozenset[int] = frozenset()
+    max_production_rate: float = 0.0
+    max_move_cost: float = 0.0
+
+    def hard_violation_penalty(self) -> float:
+        """Return the heuristic penalty charged per hard violation (objective units).
+
+        The heuristic evaluator charges this amount for every assignment that breaks a hard rule
+        (unavailable or blacked-out slot, broken lock, forbidden role, harvest window, zero rate,
+        sequencing violation, and a landing overload when ``landing_surplus`` is weighted 0).
+
+        Returns
+        -------
+        float
+            ``max(1000, 2 · ω_prod · r_max + ω_mob · c_max + 1)`` with the bundle's (possibly
+            overridden) weights, ``r_max`` =
+            :attr:`max_production_rate` and ``c_max`` = :attr:`max_move_cost`.
+
+        Notes
+        -----
+        One assignment can raise the heuristic objective directly by at most
+        ``2 · ω_prod · r_max`` (its output counts as delivered and is no longer charged as
+        leftover) plus ``ω_mob · c_max`` (with non-metric move costs, an extra stop can replace a
+        flat-rate move by two walks); it cannot reduce the transition count. The penalty strictly
+        exceeds that bound, so a plan never scores higher by keeping a violating assignment for its
+        own production or mobilisation effect (audit MINOR-E, #140: with a flat 1000 an SA plan
+        overloading a landing whose extra machine-shift was worth more than 1000 beat the MILP's
+        hard optimum). Indirect effects through downstream sequencing are not bounded; avoidable
+        violations are removed by the repair pass in any case. Scenarios whose largest rate is
+        below about 500 m³ per shift keep the v1.0.0 penalty of 1000.
+        """
+
+        weights = self.bundle.objective_weights
+        bound = (
+            2.0 * max(weights.production, 0.0) * self.max_production_rate
+            + max(weights.mobilisation, 0.0) * self.max_move_cost
+        )
+        return max(HARD_VIOLATION_PENALTY_FLOOR, bound + 1.0)
 
     def lock_for(self, machine_id: str, day: int, shift_id: str) -> str | None:
         """Return the block locked for ``machine_id`` in slot ``(day, shift_id)`` (or ``None``).
@@ -113,7 +162,14 @@ class OperationalProblem:
         return self.locked_assignments.get((machine_id, day))
 
     def build_sanitizer(self, schedule_cls: type[Schedule]) -> Sanitizer:
-        """Return a schedule sanitizer enforcing locks, availability, and landing caps."""
+        """Return a schedule sanitizer enforcing locks, availability, and landing caps.
+
+        The sanitizer drops unlocked assignments to unavailable or blacked-out slots, forbidden
+        roles, and landings already at capacity in that slot. A landing with capacity 0 admits no
+        unlocked machine when ``landing_surplus`` is weighted 0 (hard capacity, as in the MILP);
+        with a soft capacity it is not capped here (pre-#140 behaviour, kept so soft-mode results
+        do not change).
+        """
 
         bundle = self.bundle
         machine_roles = bundle.machine_roles
@@ -124,6 +180,7 @@ class OperationalProblem:
         blackout = self.blackout_shifts
         landing_of = bundle.landing_for_block
         landing_cap = bundle.landing_capacity
+        hard_landing = bundle.objective_weights.landing_surplus == 0.0
 
         def sanitizer(schedule: Schedule) -> Schedule:
             landing_usage: dict[tuple[int, str, str], int] = {}
@@ -158,7 +215,7 @@ class OperationalProblem:
                         cap = landing_cap.get(landing_id, 0)
                         key = (day, shift_id, landing_id)
                         used = landing_usage.get(key, 0)
-                        if cap > 0 and used >= cap:
+                        if (cap > 0 or hard_landing) and used >= cap:
                             plan[machine_id][(day, shift_id)] = None
                             continue
                         landing_usage[key] = used + 1
@@ -225,6 +282,20 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
     for day, _shift_id in shift_keys:
         slots_per_day[day] += 1
     multi_shift_days = frozenset(day for day, count in slots_per_day.items() if count > 1)
+    max_production_rate = max(
+        (float(value) for value in bundle.production_rates.values() if value > 0.0), default=0.0
+    )
+    max_move_cost = max(
+        (
+            float(params.setup_cost)
+            + max(
+                float(params.walk_cost_per_meter) * float(params.walk_threshold_m),
+                float(params.move_cost_flat),
+            )
+            for params in mobilisation_params.values()
+        ),
+        default=0.0,
+    )
     return OperationalProblem(
         problem=pb,
         bundle=bundle,
@@ -249,6 +320,8 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         initial_machine_block=dict(bundle.initial_machine_block),
         role_headstart_volume=role_headstart_volume,
         multi_shift_days=multi_shift_days,
+        max_production_rate=max_production_rate,
+        max_move_cost=max(max_move_cost, 0.0),
     )
 
 

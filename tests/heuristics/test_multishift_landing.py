@@ -5,6 +5,8 @@ E7). On multi-shift days that let the repair stack every role of a block on its 
 same shift, so greedy seeds and SA plans on the Jaffray three-shift scenarios paid more 1000-point
 landing-capacity penalties than FHOPS 1.0.0. On multi-shift days the repair now keeps/fills an
 assignment only when the block's landing has room in that shift (hard landing penalties only).
+Since #140 the guard applies on every day (single-shift days included) and a capacity-0 landing
+admits no machine.
 """
 
 from __future__ import annotations
@@ -141,16 +143,60 @@ def test_landing_guard_inactive_with_soft_landing_surplus() -> None:
     assert debug["landing_surplus_total"] > 0.0
 
 
-def test_landing_guard_not_applied_on_single_shift_days() -> None:
-    # Single-shift days keep the pre-#116 repair (reference-ladder results are unchanged): the
-    # greedy seed still overloads the landings and pays the penalty.
+def test_landing_guard_applied_on_single_shift_days() -> None:
+    # Since #140 the guard applies on every day: before, single-shift days kept the pre-#116
+    # repair and the greedy seed overloaded the landings (all med42 heuristic plans carried
+    # 49-61 overloads that the MILP forbids).
     pb = Problem.from_scenario(_scenario(shifts=None, num_days=12))
     ctx = build_operational_problem(pb)
     schedule = init_greedy_schedule(pb, ctx)
     debug: dict[str, object] = {}
     evaluate_schedule(pb, schedule, ctx, debug=debug)
-    assert _landing_excess(pb, _schedule_rows(schedule)) > 0
-    assert debug["penalty_total"] > 0.0
+    assert _landing_excess(pb, _schedule_rows(schedule)) == 0
+    assert debug["penalty_total"] == 0.0
+    assert debug["sequencing_violation_count"] == 0
+    assert debug["delivered_total"] > 0.0
+
+
+@pytest.mark.parametrize("shifts", [None, ("S1", "S2", "S3")])
+def test_zero_capacity_landing_admits_no_machine(shifts: tuple[str, ...] | None) -> None:
+    # A capacity-0 landing admitted one machine per slot before #140 (the repair's room check
+    # only tripped once another machine was counted, and the sanitizer treated 0 as unlimited).
+    scenario = _scenario(shifts=shifts)
+    landings = [
+        Landing(id="L1", daily_capacity=2),
+        Landing(id="L2", daily_capacity=0),
+        Landing(id="L3", daily_capacity=2),
+    ]
+    pb = Problem.from_scenario(scenario.model_copy(update={"landings": landings}))
+    ctx = build_operational_problem(pb)
+    schedule = init_greedy_schedule(pb, ctx)
+    debug: dict[str, object] = {}
+    score = evaluate_schedule(pb, schedule, ctx, debug=debug)
+    assert all(block != "B2" for _m, block, _d, _s in _schedule_rows(schedule))
+    assert debug["penalty_total"] == 0.0
+    # Search plans keep the landing empty, and their objective is the fresh evaluation.
+    result = solve_sa(pb, iters=200, seed=1)
+    assert "B2" not in set(result["assignments"]["block_id"])
+    assert score <= result["objective"] + 1e-6
+
+
+def test_sanitizer_drops_zero_capacity_landing_only_when_hard() -> None:
+    from fhops.optimization.heuristics.common import Schedule
+
+    landings = [
+        Landing(id="L1", daily_capacity=2),
+        Landing(id="L2", daily_capacity=0),
+        Landing(id="L3", daily_capacity=2),
+    ]
+    for surplus, expected in ((None, None), (0.05, "B2")):
+        scenario = _scenario(shifts=None, landing_surplus=surplus)
+        pb = Problem.from_scenario(scenario.model_copy(update={"landings": landings}))
+        ctx = build_operational_problem(pb)
+        plan = {m: {key: None for key in ctx.shift_keys} for m in FLEET}
+        plan["FB1"][ctx.shift_keys[0]] = "B2"
+        sanitized = ctx.build_sanitizer(Schedule)(Schedule(plan=plan))
+        assert sanitized.plan["FB1"][ctx.shift_keys[0]] == expected
 
 
 @pytest.mark.parametrize("seed", [1, 2, 3])

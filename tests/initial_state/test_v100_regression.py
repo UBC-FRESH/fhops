@@ -10,7 +10,10 @@ Baselines in ``tests/fixtures/v100_regression`` were captured on the unmodified 
 
 Since #131 (exact heuristic objective) the SA runs no longer reproduce v1.0.0: they are pinned to
 the 1.0.1 results (``*_v101.csv``, ``sa_objective_v101``, ``kpis_v101``), while the v1.0.0 SA
-tables remain KPI fixtures and document the overstated v1.0.0 objective.
+tables remain KPI fixtures and document the overstated v1.0.0 objective. The med42 pins were
+regenerated in #140 (hard landing guard on single-shift days: the plan no longer overloads
+landings, objective -35524.91 -> 18572.27; 21239.54 once the repair reserves landing places for
+downstream roles whose input is staged).
 """
 
 from __future__ import annotations
@@ -143,12 +146,14 @@ def test_playback_kpis_match_v100(name: str, fixture: str, key: tuple[str, str])
     _assert_kpis_equal(actual, BASELINE[key[0]][key[1]])
 
 
-@pytest.mark.parametrize(
-    ("name", "fixture"),
-    [("tiny7", "tiny7_sa_seed123_iters300.csv"), ("med42", "med42_sa_seed7_iters150.csv")],
-)
+@pytest.mark.parametrize(("name", "fixture"), [("tiny7", "tiny7_sa_seed123_iters300.csv")])
 def test_v100_sa_objective_was_overstated(name: str, fixture: str) -> None:
-    """v1.0.0 reported more than a fresh evaluation of its own SA schedule (#131)."""
+    """v1.0.0 reported more than a fresh evaluation of its own SA schedule (#131).
+
+    med42 is no longer checked: since #140 the fresh evaluation repairs the 1.0.0 schedule's
+    single-shift landing overloads (hard landing guard on every day), so it no longer isolates the
+    #131 mobilisation-cache overstatement (``v100_fresh_objective`` pins the repaired score).
+    """
 
     baseline = BASELINE[f"{name}_sa"]
     fresh = _fresh_objective(_problem(name), pd.read_csv(FIXTURES / fixture))
