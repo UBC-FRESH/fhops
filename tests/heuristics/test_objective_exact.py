@@ -404,3 +404,38 @@ def test_repair_keeps_idle_locked_slot() -> None:
     for shift_id in ("S1", "S2", "S3"):
         assert sched.plan["FB1"][(5, shift_id)] == "B1"
     assert abs(score - _fresh_score(pb, ctx, sched)) <= TOL
+
+
+def test_idle_unavailable_slots_are_not_penalised() -> None:
+    """Calendar-unavailable and blackout slots cost nothing when nothing is assigned (#131).
+
+    v1.0.0 charged 1000 for every unavailable machine slot, assigned or not (here −1980).
+    """
+
+    scenario = Scenario(
+        name="unavailable-slots",
+        num_days=3,
+        blocks=[Block(id="B1", landing_id="L1", work_required=100.0)],
+        machines=[Machine(id="F1", role="feller_buncher")],
+        landings=[Landing(id="L1", daily_capacity=1)],
+        calendar=[
+            CalendarEntry(machine_id="F1", day=day, available=0 if day == 2 else 1)
+            for day in (1, 2, 3)
+        ],
+        production_rates=[ProductionRate(machine_id="F1", block_id="B1", rate=60.0)],
+        timeline=TimelineConfig(
+            shifts=[ShiftDefinition(name="S1", hours=10.0, shifts_per_day=1)],
+            blackouts=[BlackoutWindow(start_day=3, end_day=3)],
+        ),
+    )
+    pb = Problem.from_scenario(scenario)
+    ctx = build_operational_problem(pb)
+    sched = init_greedy_schedule(pb, ctx)
+    debug: dict[str, Any] = {}
+    score = evaluate_schedule(pb, sched, ctx, debug=debug)
+    assert sched.plan["F1"] == {(1, "S1"): "B1", (2, "S1"): None, (3, "S1"): None}
+    assert debug["penalty_total"] == 0.0
+    assert score == pytest.approx(60.0 - 40.0)
+    assert abs(score - _fresh_score(pb, ctx, sched)) <= TOL
+    result = sa.solve_sa(pb, iters=20, seed=1)
+    assert result["objective"] == pytest.approx(20.0)

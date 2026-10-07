@@ -13,8 +13,10 @@ other without re-running any solver:
   apply); this is reported as ``full_eval_objective`` / ``objective_gap`` but is **not** a pass/fail
   check: assets produced before #131 report the score of the solver's internal best schedule,
   whose cached per-machine mobilisation could omit machines, so their reported objective can
-  exceed the fresh evaluation of the exported schedule (since #131 the two are equal; make this a
-  check once the assets are regenerated). Whether an objective is reproducible is checked
+  exceed the fresh evaluation of the exported schedule, and their objectives include 1000 per idle
+  unavailable machine slot (synthetic tiers), which the evaluator no longer charges (gap −1000 ×
+  slots). Since #131 reported and fresh objectives are equal; make this a check once the assets
+  are regenerated. Whether an objective is reproducible is checked
   by re-running the benchmark (see ``notes/v101_maintenance_plan.md`` §8.16);
 * the manuscript tables (``data/tables/*.csv``) equal a fresh ``build_tables.py`` rendering of the
   committed summaries (and, optionally, a manuscript ``sections/includes`` copy of the ``.tex``);

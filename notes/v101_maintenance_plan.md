@@ -1151,7 +1151,8 @@ playback assets (`run_playback_analysis.py`): all 48 generated files byte-identi
 
 Hand-off (not changed, pre-existing): `evaluate_schedule` charges 1000 for every unavailable
 machine slot whether or not it is assigned (a constant offset in heuristic objectives of scenarios
-with `available = 0` calendar entries; none in the shipped or Jaffray scenarios).
+with `available = 0` calendar entries; none in the shipped or Jaffray scenarios) — the shipped
+synthetic tiers do have such slots: 22/133/335). Fixed in #131 (§8.21 item 10).
 
 ### 8.21 Exact heuristic objective (stale mobilisation cache) (#131)
 Follow-up to the §8.16 finding (SA/ILS/Tabu report more than a fresh `evaluate_schedule` of their
@@ -1230,7 +1231,7 @@ SoftwareX asset regeneration follows after all Phase 8 code has merged.
    reported = fresh and new fresh > v1.0.0 fresh asserted; the v1.0.0 CSVs stay as KPI fixtures
    and a new test pins their fresh objective below the v1.0.0 report: tiny7 4295.774752 vs
    4306.522752, med42 −39268.927316 vs −38434.227316); `tests/fixtures/regression/baseline.yaml`
-   objective −999.5 → −1005.5 (same plan; the test now also asserts reported = fresh).
+   objective −999.5 → −1005.5 (same plan; the test now also asserts reported = fresh), then −5.5 with item 10.
 7. **Performance.** Recomputing every machine per candidate is O(machines × slots), the same
    order as the tracker pass; the repair dominates. cProfile, SA 500 iters (tiny7) / 100 iters
    (med42), seed 42: `_recompute_mobilisation_for` 14266 → 18026 calls on tiny7 (3466 → 4526 on
@@ -1277,6 +1278,42 @@ SoftwareX asset regeneration follows after all Phase 8 code has merged.
    pg_6 67923.9629 ×3 → 67923.9629 ×3 (427 assignments). Only the last floating-point bit changes
    (summation order). These objectives have no mobilisation/transition term, so the cache defect
    never applied, and the landing-guard change does not change the SA objective here.
+9. **Merge with #132 (6597a7a).** `optimization/heuristics/` was not touched by #132 (its landing
+   alignment is MILP-side: per-slot E11, hard at `landing_surplus = 0`, `k·ω` pieces matching the
+   heuristics' `e(e+1)/2`; day locks expanded in rolling/MILP; tracker idle slots), so the merge was
+   conflict-free in code; CHANGE_LOG, ROADMAP and release notes had add/add conflicts (both entries
+   kept). Semantics combine as follows: the heuristic `lock_for` already returns a day lock for every
+   slot of its day and the repair clears unavailable slots (§8.18 item 2), which is what the MILP's
+   expansion does; locked slots are still kept on their block (#131) and landing capacity counts
+   machines not yet reached in the slot only through their locks (#131). Re-checks on the merge:
+   `test_objective_exact.py`, `test_milp_landing_capacity.py`, `test_rolling_day_locks.py`,
+   `test_idle_locked_slot.py`, `test_rolling_robustness.py`, `test_rolling_carry_forward.py` pass;
+   #132's MILP plans (`/tmp/opencode/w125/post.py`, `evaluate_schedule` without repair) score
+   identically on 6597a7a and on this branch with 0 landing penalties (tiny7 60 s −3746.82,
+   small21 120 s −19191.58 / 600 s −5450.91, ka_6 / pg_6 SA-seeded 30913.36 / 67923.96), and a
+   fresh tiny7 MILP solve on the merge (optimal 279.796036) also has 0 landing penalties;
+   `audit_asset_consistency.py` pass/fail results unchanged (all OK on 6597a7a and here; only the
+   informational synthetic/scaling `full_eval_objective` columns move, see item 10).
+10. **Unavailable-slot offset (hand-off from §8.18).** `evaluate_schedule` added 1000 for every
+   machine slot that is unavailable in the shift or day calendar or blacked out, *before* checking
+   whether anything was assigned, so every such slot cost 1000 even when idle: a constant offset (no
+   effect on search decisions, since the SA start temperature `max(1, score/10)` is 1 for these
+   negative objectives either way). Now only an *assigned* unavailable slot is penalised (the repair
+   clears those before scoring, so repaired plans pay nothing). Affected scenarios
+   (`/tmp/opencode/w131/unav.py`, unavailable machine-slots): synthetic small 22 / 224, medium
+   133 / 448, large 335 / 672, the regression fixture 1 / 8; tiny7, small21, med42, large84 and all
+   Jaffray scenarios (ka/ni/pg × 6/18/40) have none, so their results are unaffected.
+   Synthetic-small −75039.791 → −53039.791 (+22000; re-run with committed settings into
+   `/tmp/opencode/w131/bench/new2/`: SA ×3, ILS and Tabu assignment CSVs byte-identical to the
+   committed ones; SA initial score +22000; Tabu's operator counts differ because its seed is now
+   scored with the full repair, item 2, but it ends on the same plan); the scaling
+   sweep's committed objectives −75039.79 / −261097.03 / −359224.71 re-evaluate to −53039.79 /
+   −128097.03 / −24224.71 (they change on regeneration). Regression fixture −1005.5 → −5.5. Test:
+   `test_idle_unavailable_slots_are_not_penalised` (calendar day + blackout day idle → penalty 0,
+   objective 20, SA reports 20; v1.0.0: −1980).
+11. **Re-run after the merge and item 10** (`bench/new2/`, same commands as item 8): tiny7 SA ×3 /
+   ILS / Tabu and small21 SA ×3 / ILS / Tabu summary rows identical to the item 8 table in every
+   non-runtime column and every assignment CSV byte-identical — the PR table stands.
 
 ## Verification cadence (each child)
 

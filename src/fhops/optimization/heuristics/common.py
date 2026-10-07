@@ -963,7 +963,10 @@ def evaluate_schedule(
     -------
     float
         ``ω_prod·(delivered − leftover) − ω_mob·mobilisation − ω_trans·transitions −
-        ω_land·landing_surplus − penalties``.
+        ω_land·landing_surplus − penalties``. ``penalties`` adds 1000 per assigned slot that is
+        unavailable (calendar or blackout), violates a lock, role, window or rate, breaks
+        sequencing, or (with ``landing_surplus`` weighted 0) overloads a landing. Idle unavailable
+        slots cost nothing (since 1.0.1; v1.0.0 charged every unavailable slot).
     """
 
     repair_stats: dict[str, float] | None = {} if limit_repairs_to_dirty else None
@@ -1012,15 +1015,16 @@ def evaluate_schedule(
         for machine in ordered_machines:
             block_id = sched.plan[machine.id][(day, shift_id)]
 
+            # Unavailable slots (shift/day calendar, blackout) are penalised only when a block is
+            # assigned there; before 1.0.1 every unavailable slot cost 1000 even when idle (a
+            # constant offset in the objective, #131).
             if (
                 shift_availability.get((machine.id, day, shift_id), 1) == 0
                 or availability.get((machine.id, day), 1) == 0
+                or (machine.id, day, shift_id) in blackout
             ):
-                penalty += 1000.0
-                previous_block[machine.id] = None
-                continue
-            if (machine.id, day, shift_id) in blackout:
-                penalty += 1000.0
+                if block_id is not None:
+                    penalty += 1000.0
                 previous_block[machine.id] = None
                 continue
 
