@@ -4,7 +4,8 @@ Baselines in ``tests/fixtures/v100_regression`` were captured on the unmodified 
 (branch ``feature/phase8-v101-maintenance`` before #91) with:
 
 * ``solve_sa(tiny7, iters=300, seed=123)`` and ``solve_sa(med42, iters=150, seed=7)``;
-* ``solve_operational_milp(tiny7 bundle, solver="highs")`` (optimal);
+* ``solve_operational_milp(tiny7 bundle, solver="highs")`` (optimal; since #125 reproduced only
+  with non-binding landing capacities);
 * ``compute_kpis`` on the saved SA and MILP assignment tables.
 
 Since #131 (exact heuristic objective) the SA runs no longer reproduce v1.0.0: they are pinned to
@@ -97,8 +98,23 @@ def test_sa_matches_pinned_baseline(name: str, iters: int, seed: int, fixture: s
     pd.testing.assert_frame_equal(actual, expected, check_dtype=False)
 
 
-def test_operational_milp_matches_v100() -> None:
+def test_operational_milp_matches_v100_without_binding_landings() -> None:
+    """v1.0.0 objective once landing capacity cannot bind.
+
+    Since #125 the MILP limits machines per landing and shift slot, hard at
+    ``landing_surplus = 0`` (v1.0.0: machine-shifts per day with a slack that was free at weight
+    0, i.e. no limit). tiny7's capacity-1 landings therefore bind (objective 279.796036, see
+    ``tests/model/test_milp_driver_robustness.py``); with capacities no plan can exceed, the model
+    is the v1.0.0 model and reproduces its objective.
+    """
+
     pb = _problem("tiny7")
+    scenario = pb.scenario
+    landings = [
+        landing.model_copy(update={"daily_capacity": len(scenario.machines)})
+        for landing in scenario.landings
+    ]
+    pb = Problem.from_scenario(scenario.model_copy(update={"landings": landings}))
     ctx = build_operational_problem(pb)
     assert not ctx.bundle.has_initial_state()
     result = solve_operational_milp(ctx.bundle, solver="highs", context=ctx)

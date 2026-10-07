@@ -107,7 +107,7 @@ class _IncumbentState:
     production_lookup: dict[tuple[str, str, ShiftKey], float]
     role_prod_lookup: dict[tuple[str, str, ShiftKey], float]
     role_assignment_counts: dict[tuple[str, str, ShiftKey], int]
-    landing_usage: dict[tuple[str, int], int]
+    landing_usage: dict[tuple[str, ShiftKey], int]
     leftover_by_block: dict[str, float]
     block_terminal_total: dict[str, float] | None = None
     block_generic_total: dict[str, float] | None = None
@@ -838,7 +838,7 @@ def _derive_state_with_tracker(
     production_lookup: dict[tuple[str, str, ShiftKey], float] = {}
     role_prod_lookup: defaultdict[tuple[str, str, ShiftKey], float] = defaultdict(float)
     role_assignment_counts: defaultdict[tuple[str, str, ShiftKey], int] = defaultdict(int)
-    landing_usage: defaultdict[tuple[str, int], int] = defaultdict(int)
+    landing_usage: defaultdict[tuple[str, ShiftKey], int] = defaultdict(int)
 
     for day, shift_id in shift_keys:
         for machine in ordered_machines:
@@ -884,7 +884,7 @@ def _derive_state_with_tracker(
 
             landing_id = landing_of.get(assigned_block)
             if landing_id is not None:
-                landing_usage[(landing_id, day)] += 1
+                landing_usage[(landing_id, (day, shift_id))] += 1
 
     tracker.finalize()
     leftover_by_block = {
@@ -911,7 +911,7 @@ def _derive_state_with_rates(
     production_lookup: dict[tuple[str, str, ShiftKey], float] = {}
     role_prod_lookup: defaultdict[tuple[str, str, ShiftKey], float] = defaultdict(float)
     role_assignment_counts: defaultdict[tuple[str, str, ShiftKey], int] = defaultdict(int)
-    landing_usage: defaultdict[tuple[str, int], int] = defaultdict(int)
+    landing_usage: defaultdict[tuple[str, ShiftKey], int] = defaultdict(int)
     block_terminal_total: defaultdict[str, float] = defaultdict(float)
     block_generic_total: defaultdict[str, float] = defaultdict(float)
 
@@ -932,7 +932,7 @@ def _derive_state_with_rates(
                 block_terminal_total[block_id] += prod_val
         landing_id = landing_for_block.get(block_id)
         if landing_id is not None:
-            landing_usage[(landing_id, shift[0])] += 1
+            landing_usage[(landing_id, shift)] += 1
 
     leftover_by_block = {
         blk: max(0.0, bundle.work_required.get(blk, 0.0) - block_generic_total.get(blk, 0.0))
@@ -1198,15 +1198,14 @@ def _seed_model_from_state(
             loader_partial.set_value(remainder)
             loader_partial.stale = False
 
-    if hasattr(model, "landing_surplus") and hasattr(model, "Landing"):
-        for landing_id in model.Landing:
-            cap = bundle.landing_capacity.get(landing_id, 0)
-            for day in model.D:
-                usage = landing_usage.get((landing_id, day), 0)
-                surplus = max(0.0, float(usage - cap))
-                var = model.landing_surplus[landing_id, day]
-                var.set_value(surplus)
-                var.stale = False
+    if hasattr(model, "landing_surplus") and hasattr(model, "LandingSurplusIndex"):
+        # Unit slack pieces: the first (usage - capacity) pieces of a slot are 1.
+        for landing_id, day, shift_id, piece in model.LandingSurplusIndex:
+            cap = max(int(bundle.landing_capacity.get(landing_id, 0)), 0)
+            usage = landing_usage.get((landing_id, _slot_key(day, shift_id)), 0)
+            var = model.landing_surplus[landing_id, day, shift_id, piece]
+            var.set_value(1.0 if piece <= usage - cap else 0.0)
+            var.stale = False
 
     if hasattr(model, "loader_tail"):
         loader_block_batch: Mapping[str, float] = meta.get("loader_block_batch", {})

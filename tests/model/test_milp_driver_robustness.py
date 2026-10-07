@@ -22,7 +22,9 @@ from fhops.scenario.io import load_scenario
 from tests.cli import CliRunner, cli_text
 
 TINY7 = "examples/tiny7/scenario.yaml"
-TINY7_OBJECTIVE = 4388.082751999992
+# Since #125 the tiny7 landings (capacity 1) are a hard per-slot limit (ω_land = 0); the
+# objective before was 4388.082752 with the per-day, free landing slack.
+TINY7_OBJECTIVE = 279.79603600008943
 
 
 @pytest.fixture(scope="module")

@@ -86,6 +86,16 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     (timeline blackouts, #110): ``machine_capacity`` forces ``Σ_b x[m,b,s] = 0`` in unavailable
     slots.
 
+    Landing capacity (E11, per shift slot since 1.0.1, #125): ``landing_capacity[l, d, s]``
+    limits the machines assigned to the blocks of landing ``l`` in slot ``(d, s)`` to
+    ``Landing.daily_capacity`` (machines working the landing concurrently), exactly as the
+    heuristics count it. With ``objective_weights.landing_surplus == 0`` the limit is hard (the
+    heuristics charge 1000 per extra machine); a slot in which locks alone exceed the capacity has
+    its limit raised to the locked count, with a warning. With a positive weight the overload is
+    covered by unit slack pieces ``landing_surplus[l, d, s, k] ∈ [0, 1]`` priced ``k·ω_land``, so
+    ``e`` surplus machines cost ``ω_land·e(e+1)/2`` — the heuristics' surplus accounting, in
+    which the ``k``-th machine beyond capacity adds ``k``.
+
     Initial state and locks (no-ops for default bundles):
 
     * ``bundle.initial_staged_inventory`` sets the first-slot ``inventory_start[u, b]`` of each
@@ -802,39 +812,57 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
         model.locked_assignment = pyo.Constraint(model.LockedSlots, rule=locked_assignment_rule)
 
-    # Landing capacity with slack
-    landing_ids = sorted(
-        {
-            landing
-            for landing in bundle.landing_for_block.values()
-            if landing in bundle.landing_capacity
-        }
-    )
-    if landing_ids:
-        model.Landing = pyo.Set(initialize=landing_ids)
-        model.landing_surplus = pyo.Var(model.Landing, model.D, domain=pyo.NonNegativeReals)
-
-        def landing_capacity_rule(mdl, landing_id, day):
-            capacity = bundle.landing_capacity.get(landing_id)
-            if capacity is None:
-                return pyo.Constraint.Skip
-            related_blocks = [
-                blk for blk, landing in bundle.landing_for_block.items() if landing == landing_id
-            ]
-            if not related_blocks:
-                return pyo.Constraint.Skip
-            expr = 0
-            for blk in related_blocks:
-                for mach in mdl.M:
-                    for shift_day, shift_label in model.S:
-                        if shift_day == day:
-                            expr += mdl.x[mach, blk, (shift_day, shift_label)]
-            return expr <= capacity + mdl.landing_surplus[landing_id, day]
-
-        model.landing_capacity = pyo.Constraint(model.Landing, model.D, rule=landing_capacity_rule)
-
+    # Landing capacity per shift slot (E11): machines working the landing's blocks in a slot.
+    # Hard when the landing_surplus weight is 0; otherwise the k-th machine beyond capacity is
+    # priced k·ω_land (unit slack pieces), the heuristics' surplus accounting.
     prod_weight = bundle.objective_weights.production
     landing_weight = bundle.objective_weights.landing_surplus
+    landing_blocks: dict[str, list[str]] = defaultdict(list)
+    for blk in blocks:
+        landing = bundle.landing_for_block.get(blk)
+        if landing is not None and landing in bundle.landing_capacity:
+            landing_blocks[landing].append(blk)
+    landing_ids = sorted(landing_blocks)
+    landing_cap_eff, landing_warnings = _landing_slot_capacities(
+        bundle, landing_blocks, lock_slot_targets, hard=not landing_weight
+    )
+    lock_warnings = tuple(lock_warnings) + landing_warnings
+    if landing_ids:
+        model.Landing = pyo.Set(initialize=landing_ids)
+        if landing_weight:
+            piece_index = [
+                (landing_id, day, shift_id, piece)
+                for landing_id in landing_ids
+                for day, shift_id in shift_list
+                for piece in range(
+                    1, len(machines) - max(int(bundle.landing_capacity[landing_id]), 0) + 1
+                )
+            ]
+            model.LandingSurplusIndex = pyo.Set(initialize=piece_index, dimen=4)
+            model.landing_surplus = pyo.Var(
+                model.LandingSurplusIndex, domain=pyo.NonNegativeReals, bounds=(0.0, 1.0)
+            )
+            surplus_pieces: dict[tuple[str, tuple[int, str]], list[int]] = defaultdict(list)
+            for landing_id, day, shift_id, piece in piece_index:
+                surplus_pieces[(landing_id, (day, shift_id))].append(piece)
+
+        def landing_capacity_rule(mdl, landing_id, day, shift_id):
+            slot = (day, shift_id)
+            capacity = max(int(bundle.landing_capacity[landing_id]), 0)
+            assigned = [
+                mdl.x[mach, blk, slot] for blk in landing_blocks[landing_id] for mach in machines
+            ]
+            if len(machines) <= capacity:
+                return pyo.Constraint.Skip  # each machine works at most one block per slot
+            if landing_weight:
+                pieces = surplus_pieces.get((landing_id, slot), [])
+                return sum(assigned) <= capacity + sum(
+                    mdl.landing_surplus[landing_id, day, shift_id, piece] for piece in pieces
+                )
+            return sum(assigned) <= landing_cap_eff.get((landing_id, slot), capacity)
+
+        model.landing_capacity = pyo.Constraint(model.Landing, model.S, rule=landing_capacity_rule)
+
     mobilisation_weight = bundle.objective_weights.mobilisation
     transition_weight = bundle.objective_weights.transitions
     leftover_penalty = prod_weight
@@ -857,11 +885,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         )
     if leftover_penalty:
         obj_expr -= leftover_penalty * sum(model.leftover[blk] for blk in model.B)
-    if landing_weight:
+    if landing_weight and hasattr(model, "landing_surplus"):
         obj_expr -= landing_weight * sum(
-            model.landing_surplus[landing_id, day]
-            for landing_id in model.Landing
-            for day in model.D
+            piece * model.landing_surplus[landing_id, day, shift_id, piece]
+            for landing_id, day, shift_id, piece in model.LandingSurplusIndex
         )
     if mobilisation_expr is not None and mobilisation_weight:
         obj_expr -= mobilisation_weight * mobilisation_expr
@@ -922,3 +949,41 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     }
 
     return model
+
+
+def _landing_slot_capacities(
+    bundle: OperationalMilpBundle,
+    landing_blocks: dict[str, list[str]],
+    lock_slot_targets: dict[tuple[str, tuple[int, str]], str | None],
+    *,
+    hard: bool,
+) -> tuple[dict[tuple[str, tuple[int, str]], int], tuple[str, ...]]:
+    """Return per-slot landing capacities raised to the number of machines locked there.
+
+    With a hard landing capacity (``landing_surplus`` weight 0), locks that place more machines on
+    a landing in one slot than ``Landing.daily_capacity`` would make the model infeasible. The
+    capacity of such a slot is raised to the locked count (so no unlocked machine may join) and a
+    warning is returned; the heuristics charge the same unavoidable overload as penalties. With a
+    soft capacity the surplus slack absorbs the overload and nothing is returned.
+    """
+
+    if not hard or not lock_slot_targets:
+        return {}, ()
+    block_landing = {blk: lnd for lnd, blks in landing_blocks.items() for blk in blks}
+    locked_count: dict[tuple[str, tuple[int, str]], int] = defaultdict(int)
+    for (_machine, slot), blk in lock_slot_targets.items():
+        landing = block_landing.get(blk) if blk is not None else None
+        if landing is not None:
+            locked_count[(landing, slot)] += 1
+    raised: dict[tuple[str, tuple[int, str]], int] = {}
+    messages: list[str] = []
+    for (landing, slot), count in sorted(locked_count.items()):
+        capacity = max(int(bundle.landing_capacity[landing]), 0)
+        if count > capacity:
+            raised[(landing, slot)] = count
+            messages.append(
+                f"landing {landing} slot (day {slot[0]}, shift {slot[1]}): {count} locked "
+                f"machines exceed its capacity {capacity}; capacity raised to the locked count "
+                "for this slot (no other machine may work the landing)"
+            )
+    return raised, tuple(messages)

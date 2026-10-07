@@ -58,7 +58,8 @@ Each scenario references a set of CSV files. Required columns and notes:
 
    * - ``landings.csv``
      - ``id``
-     - ``daily_capacity`` defaults to 2, must be ≥ 0
+     - ``daily_capacity`` defaults to 2, must be ≥ 0; machines working the landing's blocks
+       concurrently per shift slot (hard limit unless ``objective_weights.landing_surplus`` > 0)
 
    * - ``calendar.csv``
      - ``machine_id``, ``day``

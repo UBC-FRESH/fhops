@@ -78,7 +78,9 @@ class ObjectiveWeights(BaseModel):
     transitions:
         Optional penalty on the count of machine transitions irrespective of mobilisation spend.
     landing_surplus:
-        Penalty on soft landing-capacity slack variables when `landing_capacity` is exceeded.
+        Weight of landing-capacity overloads. 0 (default) makes ``Landing.daily_capacity`` a hard
+        per-shift-slot limit; a positive weight allows overloads, the ``k``-th machine beyond
+        capacity in a slot costing ``k × landing_surplus`` (heuristics and operational MILP).
     """
 
     production: float = 1.0
@@ -298,14 +300,20 @@ class RoadConstruction(BaseModel):
 
 
 class Landing(BaseModel):
-    """Landing metadata including per-day assignment capacity.
+    """Landing metadata including its machine capacity.
 
     Attributes
     ----------
     id:
         Landing identifier referenced by blocks and mobilisation logic.
     daily_capacity:
-        Maximum number of machines that can work on the landing concurrently per day.
+        Maximum number of machines that can work the landing's blocks concurrently, counted per
+        shift slot ``(day, shift_id)`` (on single-shift scenarios: per day). The name is kept for
+        compatibility. The heuristics and the operational MILP apply the same rule: when
+        ``ObjectiveWeights.landing_surplus`` is 0 (default) the capacity is hard (heuristics:
+        1000 penalty per extra machine; MILP: constraint), otherwise each slot's ``k``-th machine
+        beyond capacity costs ``k × landing_surplus``. Before FHOPS 1.0.1 the operational MILP
+        counted machine-shifts per day with a slack that was free at weight 0 (#125).
     """
 
     id: str

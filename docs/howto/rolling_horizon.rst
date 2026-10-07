@@ -45,7 +45,12 @@ Each iteration solves a window ``[start, start + sub_days - 1]`` and freezes its
    inventory (output becomes available downstream from the next shift slot). The carried state is
    exactly what :func:`fhops.planning.compute_rolling_kpis` reports for the same plan, and for MILP
    runs it is the state the window MILP planned, so stitched MILP plans replay without sequencing
-   violations.
+   violations. A lock without ``shift_id`` (day-level lock, e.g. from a custom solver hook) is
+   replayed in every shift slot of its day in which the machine is available, which is how the
+   operational MILP and the heuristics apply it (since 1.0.1, #125); a day-level lock that carries a
+   planned ``production`` on a day with several such slots is rejected (``ValueError``), because the
+   split of that volume over the shifts is ambiguous. The stitched plan stores such locks expanded
+   to one lock per shift slot.
 2. **Derive the window's boundary state** from the tracker at the end of the last locked day:
 
    - ``Block.work_required`` = remaining terminal volume (finished blocks stay in the window with
