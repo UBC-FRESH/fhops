@@ -17,18 +17,21 @@ from typing import Any, cast
 import pandas as pd
 
 from fhops.evaluation import compute_kpis
-from fhops.model.milp.data import ordered_shift_keys
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics.common import (
     Schedule,
     build_watch_metadata_from_debug,
+    evaluate_assignments,
     evaluate_candidates,
     evaluate_schedule,
     evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
+    objective_weight_override_source,
+    record_objective_weight_overrides,
     rescore_fresh,
     resolve_objective_weight_overrides,
+    schedule_from_assignments,
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.operational_problem import (
@@ -66,41 +69,19 @@ def _schedule_to_incumbent(schedule: Schedule) -> pd.DataFrame | None:
 def _assignments_to_schedule(pb: Problem, assignments: pd.DataFrame) -> Schedule:
     """Convert an assignments DataFrame into the internal Schedule plan structure.
 
-    Rows with ``assigned`` equal to 0 (when the column exists) are ignored.
+    Rows with ``assigned`` equal to 0 (when the column exists) are ignored; see
+    :func:`fhops.optimization.heuristics.common.schedule_from_assignments`.
     """
-    shifts = list(ordered_shift_keys(pb))
-    plan: dict[str, dict[tuple[int, str], str | None]] = {
-        machine.id: {(day, shift_id): None for (day, shift_id) in shifts}
-        for machine in pb.scenario.machines
-    }
-    if "assigned" in assignments.columns:
-        assignments = assignments[pd.to_numeric(assignments["assigned"]) > 0.5]
-    for record in assignments.to_dict(orient="records"):
-        machine_raw = record.get("machine_id")
-        day_raw = record.get("day")
-        shift_raw = record.get("shift_id")
-        block_raw = record.get("block_id")
-        if machine_raw is None or day_raw is None or shift_raw is None:
-            continue
-        machine_id = str(machine_raw)
-        day_value: int
-        if isinstance(day_raw, int | float):
-            day_value = int(day_raw)
-        elif isinstance(day_raw, str):
-            try:
-                day_value = int(day_raw)
-            except ValueError:
-                continue
-        else:
-            continue
-        shift_id = str(shift_raw)
-        block_id = cast(str | None, block_raw if block_raw is not None else None)
-        if machine_id in plan:
-            plan[machine_id][(day_value, shift_id)] = block_id
-    matrix = {
-        machine.id: [plan[machine.id][key] for key in shifts] for machine in pb.scenario.machines
-    }
-    return Schedule(plan=plan, matrix=matrix)
+    return schedule_from_assignments(pb, assignments)[0]
+
+
+def _active_assignments(assignments: pd.DataFrame) -> pd.DataFrame:
+    """Return the rows of an assignment table with ``assigned > 0.5`` (all rows without it)."""
+
+    if "assigned" not in assignments.columns:
+        return assignments.reset_index(drop=True)
+    mask = pd.to_numeric(assignments["assigned"], errors="coerce").fillna(0.0) > 0.5
+    return assignments[mask].reset_index(drop=True)
 
 
 def _perturb_schedule(
@@ -231,11 +212,16 @@ def solve_ils(
         When ``True``, each time ``stall_limit`` is reached the operational MILP
         (:func:`fhops.model.milp.driver.solve_operational_milp`, HiGHS) is solved with the best ILS
         schedule as its incumbent (a genuine MIP start through the APPSI HiGHS interface; the
-        bundle carries the same objective weights as the ILS run). The MILP schedule replaces the
-        ILS best only when it scores higher under the heuristic evaluator; a solve without a
+        bundle carries the same objective weights as the ILS run). The MILP plan replaces the ILS
+        best only when it scores higher under the heuristic objective, scored as planned with
+        :func:`~fhops.optimization.heuristics.common.evaluate_assignments` (its ``production``
+        column and idle locked slots, as playback does; before #140 it was repaired and scored at
+        full rates, which charged spurious ``missing_prereq`` penalties). A solve without a
         solution (infeasible, time limit without an incumbent, solver error) keeps the ILS
-        schedule. Before 1.0.1 this step solved the legacy day-level MIP without an incumbent
-        (#104, #127).
+        schedule. When an adopted MILP plan is still the best schedule at the end, it is returned
+        as planned (assignments include its ``production`` column) and ``objective`` is its
+        planned-production score. Before 1.0.1 this step solved the legacy day-level MIP without
+        an incumbent (#104, #127).
     hybrid_mip_time_limit : int, default=60
         Time limit (seconds) for each hybrid operational MILP solve.
     telemetry_log : str | pathlib.Path | None
@@ -257,8 +243,10 @@ def solve_ils(
         schedules are always re-scored with a full repair before returning results.
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
-        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
-        mobilisation weight while we debug heuristic acceptance.
+        ``landing_surplus``). ``None`` keeps the scenario weights, except for the scenarios listed in
+        :data:`~fhops.optimization.heuristics.common.AUTO_OBJECTIVE_WEIGHT_OVERRIDES` (FHOPS
+        Tiny7/Small21: production 1.0, mobilisation 0.2, transitions 0.1, soft landing capacity
+        0.05), which are applied automatically and recorded in ``meta`` (#140).
     milp_objective : float | None, optional
         Reference MILP objective used to report the current gap (best - MILP) in watch/telemetry
         output. ``None`` skips gap reporting.
@@ -267,13 +255,17 @@ def solve_ils(
     -------
     dict
         Dictionary mirroring :func:`solve_sa` with ``objective`` (fresh full evaluation of the
-        returned schedule), ``assignments`` DataFrame, and a
+        returned schedule; equal to
+        :func:`~fhops.optimization.heuristics.common.evaluate_assignments` of the returned
+        ``assignments`` under the run's weights), ``assignments`` DataFrame, and a
         ``meta`` payload describing operator stats, iterations, and telemetry identifiers. With
         ``hybrid_use_mip`` the ``meta`` also holds ``hybrid_mip``: one record per hybrid solve with
         ``iteration``, ``seed_score`` (heuristic score of the seeded ILS best), ``outcome``,
         ``objective`` (MILP objective or ``None``), ``solver_error``, ``warm_start_accepted``,
-        ``warm_start_seeded_slots``, ``hybrid_score`` (heuristic score of the MILP schedule or
-        ``None``) and ``adopted`` (whether it replaced the ILS best).
+        ``warm_start_seeded_slots``, ``hybrid_score`` (planned-production heuristic score of the
+        MILP plan, used for adoption), ``hybrid_rate_score`` (pre-#140 score: repaired plan at
+        full rates; diagnostic only) and ``adopted`` (whether it replaced the ILS best);
+        ``hybrid_mip_adopted_final`` tells whether the returned plan is an adopted MILP plan.
     """
 
     rng = _random.Random(seed)
@@ -317,6 +309,9 @@ def solve_ils(
         config_snapshot["milp_objective"] = float(milp_objective)
     if resolved_weight_overrides:
         config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
+        config_snapshot["objective_weight_overrides_source"] = objective_weight_override_source(
+            pb, objective_weight_overrides
+        )
     context_payload = dict(telemetry_context or {})
     scenario = pb.scenario
     timeline = getattr(scenario, "timeline", None)
@@ -406,6 +401,8 @@ def solve_ils(
         improvement_steps = 0
         operator_stats: dict[str, dict[str, float]] = {}
         hybrid_calls: list[dict[str, Any]] = []
+        # Assignment table of an adopted hybrid MILP plan while it is the best schedule.
+        best_mip_table: pd.DataFrame | None = None
         run_start = time.perf_counter()
 
         def emit_snapshot(iteration: int) -> None:
@@ -481,6 +478,7 @@ def solve_ils(
             best_improved = False
             if current_score > best_score:
                 best, best_score = current, current_score
+                best_mip_table = None
                 best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
                 stalls = 0
                 best_improved = True
@@ -522,6 +520,7 @@ def solve_ils(
                         "warm_start_accepted": None,
                         "warm_start_seeded_slots": 0,
                         "hybrid_score": None,
+                        "hybrid_rate_score": None,
                         "adopted": False,
                     }
                     hybrid_calls.append(hybrid_record)
@@ -530,7 +529,11 @@ def solve_ils(
                             ctx.bundle,
                             solver="highs",
                             time_limit=hybrid_mip_time_limit,
-                            incumbent_assignments=_schedule_to_incumbent(best),
+                            incumbent_assignments=(
+                                best_mip_table
+                                if best_mip_table is not None
+                                else _schedule_to_incumbent(best)
+                            ),
                             context=ctx,
                         )
                     except Exception as exc:  # pragma: no cover - defensive path
@@ -550,17 +553,22 @@ def solve_ils(
                     if mip_res is not None and mip_res.get(
                         "has_solution", mip_res.get("objective") is not None
                     ):
-                        assignments = cast(pd.DataFrame, mip_res["assignments"]).copy()
-                        hybrid_schedule = _assignments_to_schedule(pb, assignments)
-                        hybrid_score, hybrid_debug = _score_schedule(
-                            hybrid_schedule, capture=debug_capture
-                        )
+                        mip_table = _active_assignments(cast(pd.DataFrame, mip_res["assignments"]))
+                        # Score the MILP plan as planned (its production column, idle locked
+                        # slots), not at full rates after a repair (audit MINOR-F, #140).
+                        hybrid_debug: dict[str, Any] | None = {} if debug_capture else None
+                        hybrid_score = evaluate_assignments(pb, mip_table, ctx, debug=hybrid_debug)
                         hybrid_record["hybrid_score"] = float(hybrid_score)
+                        hybrid_record["hybrid_rate_score"] = float(
+                            evaluate_schedule(pb, _assignments_to_schedule(pb, mip_table), ctx)
+                        )
                         if hybrid_score > best_score:
                             hybrid_record["adopted"] = True
-                            best, best_score = hybrid_schedule, hybrid_score
+                            best_score = hybrid_score
+                            best = _assignments_to_schedule(pb, mip_table)
+                            best_mip_table = mip_table
                             best_debug_stats = dict(hybrid_debug) if hybrid_debug else None
-                            current = best
+                            current = _assignments_to_schedule(pb, mip_table)
                             current_score = best_score
                             current_debug_stats = (
                                 dict(best_debug_stats) if best_debug_stats else None
@@ -584,27 +592,40 @@ def solve_ils(
                 rolling_scores.append(float(current_score))
                 improvement_window.append(0)
 
-        # Report a fresh full evaluation of the returned schedule (#131).
-        best, best_score, final_debug_stats = rescore_fresh(pb, best, ctx, debug_capture)
-        if debug_capture:
-            best_debug_stats = final_debug_stats
+        if best_mip_table is not None:
+            # The best schedule is an adopted hybrid MILP plan: return it as planned (with its
+            # production column) and report its planned-production score (#140).
+            final_debug: dict[str, Any] | None = {} if debug_capture else None
+            best_score = evaluate_assignments(pb, best_mip_table, ctx, debug=final_debug)
+            if debug_capture:
+                best_debug_stats = final_debug
+            assignments = best_mip_table.sort_values(
+                ["day", "shift_id", "machine_id", "block_id"]
+            ).reset_index(drop=True)
+        else:
+            # Report a fresh full evaluation of the returned schedule (#131).
+            best, best_score, final_debug_stats = rescore_fresh(pb, best, ctx, debug_capture)
+            if debug_capture:
+                best_debug_stats = final_debug_stats
+            rows = []
+            for machine_id, plan in best.plan.items():
+                for (day, shift_id), block_id in plan.items():
+                    if block_id is not None:
+                        rows.append(
+                            {
+                                "machine_id": machine_id,
+                                "block_id": block_id,
+                                "day": int(day),
+                                "shift_id": shift_id,
+                                "assigned": 1,
+                            }
+                        )
+            assignments = pd.DataFrame(rows).sort_values(
+                ["day", "shift_id", "machine_id", "block_id"]
+            )
         if local_repairs:
             current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
-        rows = []
-        for machine_id, plan in best.plan.items():
-            for (day, shift_id), block_id in plan.items():
-                if block_id is not None:
-                    rows.append(
-                        {
-                            "machine_id": machine_id,
-                            "block_id": block_id,
-                            "day": int(day),
-                            "shift_id": shift_id,
-                            "assigned": 1,
-                        }
-                    )
-        assignments = pd.DataFrame(rows).sort_values(["day", "shift_id", "machine_id", "block_id"])
         meta = {
             "initial_score": float(initial_score),
             "best_score": float(best_score),
@@ -615,6 +636,7 @@ def solve_ils(
             "perturbation_strength": perturbation_strength,
             "hybrid_used": hybrid_use_mip,
             "algorithm": "ils",
+            "hybrid_mip_adopted_final": best_mip_table is not None,
             "operators": registry.weights(),
             "improvement_steps": improvement_steps,
         }
@@ -623,8 +645,9 @@ def solve_ils(
         if milp_objective is not None:
             meta["milp_objective"] = float(milp_objective)
             meta["milp_gap"] = float(best_score - milp_objective)
-        if resolved_weight_overrides:
-            meta["objective_weight_overrides"] = resolved_weight_overrides
+        record_objective_weight_overrides(
+            meta, pb, objective_weight_overrides, resolved_weight_overrides
+        )
         meta["objective_weights"] = objective_weights_snapshot
         if operator_stats:
             meta["operators_stats"] = {

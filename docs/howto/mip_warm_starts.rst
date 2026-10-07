@@ -64,12 +64,16 @@ Solver support
 From Python, :func:`fhops.model.milp.driver.solve_operational_milp` returns the same information in ``result["warm_start"]`` (``method``, ``solver``, ``seeded_slots``, ``accepted``, ``acceptance``, ``solver_messages``). A solve stopped by its time limit still returns the best incumbent it holds—which, for an accepted warm start, is at least as good as the seed.
 
 Landing capacity is a hard per-shift-slot constraint of the MILP when ``landing_surplus`` is
-weighted 0 (1.0.1, #125). The heuristics accept landing overloads at a 1000-point penalty (their
-repair only avoids them on multi-shift days), so a heuristic incumbent that overloads a landing is
-infeasible for the MILP and HiGHS rejects it (e.g. the ``med42`` greedy incumbent above: ``seeded_slots=212
-(rejected)``; it was accepted before 1.0.1, when the MILP's landing slack was free at weight 0). Seed
-the MILP with a plan that respects landing capacity, or give ``landing_surplus`` a positive weight.
-On multi-shift scenarios the heuristic repair keeps landing capacity, and seeding pays off: on the
+weighted 0 (1.0.1, #125). Since #140 the heuristics' repair also keeps every slot within a hard
+landing capacity, on single-shift days too, so their schedules are landing-feasible MILP starts:
+the ``med42`` greedy incumbent above (``--iters 0``) is accepted by HiGHS (``seeded_slots=198
+(accepted)``, MIP start objective 13769.68; the heuristic objective of the same plan is 13392.56
+because the heuristics also charge mobilisation for moves across idle slots). Before #140 the repair
+guarded landings on multi-shift days only, the med42 greedy incumbent overloaded single-shift
+landings and HiGHS rejected it (``seeded_slots=212 (rejected)``). Heuristic plans searched with a
+positive ``landing_surplus`` weight (e.g. the Tiny7/Small21 automatic overrides, see
+:ref:`heuristic-objective-weights`) can still overload landings and are rejected by a MILP with a
+hard capacity. Seeding pays off: on the
 3-shift BC case study ``ka_6`` HiGHS finds no incumbent of its own within 30 minutes, while the SA
 plan (1500 iterations) is accepted and proven optimal in about a minute.
 

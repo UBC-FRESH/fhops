@@ -82,7 +82,11 @@ codes:
 
 ``fhops benchmark`` solves the operational MILP with the same ``--driver`` mapping (no deprecation
 notice). It prints ``MIP obj=n/a (outcome=…)`` and skips the MIP metrics when the MILP has no
-solution; SA still runs, and a MIP solver error exits ``1`` after the SA results.
+solution; SA still runs, and a MIP solver error exits ``1`` after the SA results. When SA applies
+objective-weight overrides (FHOPS Tiny7/Small21 built-ins or ``--objective-weight``) it prints
+``SA obj (override weights)`` and ``SA obj (scenario weights)`` (the SA plan scored under the
+MILP's weights) plus a one-line notice; ``solve-heur``/``solve-ils``/``solve-tabu`` and
+``bench suite`` print the same notice (#140, :ref:`heuristic-objective-weights`).
 
 Heuristic configuration reference
 ----------------------------------

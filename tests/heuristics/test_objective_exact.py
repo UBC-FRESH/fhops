@@ -29,6 +29,7 @@ from fhops.optimization.heuristics.common import (
     Schedule,
     _ensure_mobilisation_stats,
     _recompute_mobilisation_for,
+    evaluate_assignments,
     evaluate_schedule,
     generate_neighbors,
     init_greedy_schedule,
@@ -317,7 +318,13 @@ class _ScoreAudit:
 
 
 def _exported_score(pb: Problem, ctx: OperationalProblem, assignments: pd.DataFrame) -> float:
-    return evaluate_schedule(pb, _assignments_to_schedule(pb, assignments), ctx)
+    """Score an exported table as planned; heuristic exports also match a repaired evaluation."""
+
+    planned = evaluate_assignments(pb, assignments, ctx)
+    if "production" not in assignments.columns:
+        repaired = evaluate_schedule(pb, _assignments_to_schedule(pb, assignments), ctx)
+        assert abs(planned - repaired) <= TOL
+    return planned
 
 
 SOLVER_CASES = [

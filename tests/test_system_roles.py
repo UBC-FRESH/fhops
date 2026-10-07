@@ -265,7 +265,9 @@ def test_sa_evaluator_penalises_out_of_order_assignments():
             Machine(id="F1", role="feller"),
             Machine(id="P1", role="processor"),
         ],
-        landings=[Landing(id="L1", daily_capacity=1)],
+        # Capacity 2: since #140 the repair enforces a hard landing capacity on single-shift days
+        # too, and this test is about role order only.
+        landings=[Landing(id="L1", daily_capacity=2)],
         calendar=[
             CalendarEntry(machine_id="F1", day=1, available=1),
             CalendarEntry(machine_id="P1", day=1, available=1),

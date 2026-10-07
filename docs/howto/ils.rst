@@ -30,9 +30,14 @@ Key options:
     ``--hybrid-mip-time-limit`` seconds, same objective weights as the ILS run) is solved with the
     best ILS schedule as its incumbent — a genuine MIP start through Pyomo's ``appsi_highs``
     interface (see :doc:`mip_warm_starts`). The MILP schedule replaces the ILS best only when it
-    scores higher under the heuristic evaluator; a MILP solve without a solution keeps the ILS
-    schedule. (Before FHOPS 1.0.1 this step solved the legacy day-level MIP without an incumbent,
-    which is infeasible for scenarios with loader roles; #104, #127.)
+    scores higher under the heuristic objective, scored as planned (its ``production`` column and
+    idle locked slots, as playback does, via
+    :func:`fhops.optimization.heuristics.common.evaluate_assignments`; before #140 it was repaired
+    and scored at full rates, which charged spurious ``missing_prereq`` penalties); a MILP solve
+    without a solution keeps the ILS schedule. When an adopted MILP plan is still the best at the
+    end it is returned as planned (assignments include ``production``). (Before FHOPS 1.0.1 this
+    step solved the legacy day-level MIP without an incumbent, which is infeasible for scenarios
+    with loader roles; #104, #127.)
 
 ``--batch-neighbours`` / ``--parallel-workers``
     Reuse the batched neighbour generation/evaluation infrastructure from SA. Defaults keep the
@@ -49,7 +54,10 @@ ILS telemetry mirrors SA metadata (initial/best score, operator weights/stats) a
 * ``hybrid_use_mip`` / ``hybrid_mip_time_limit`` – hybrid configuration echoed for diagnostics.
 * ``hybrid_mip`` (result ``meta`` only, when the hybrid step is enabled) – one record per hybrid
   MILP solve: ``iteration``, ``seed_score``, ``outcome``, ``objective``, ``solver_error``,
-  ``warm_start_accepted``, ``warm_start_seeded_slots``, ``hybrid_score`` and ``adopted``.
+  ``warm_start_accepted``, ``warm_start_seeded_slots``, ``hybrid_score`` (planned-production
+  score of the MILP plan, used for adoption), ``hybrid_rate_score`` (repaired plan at full rates,
+  the pre-#140 score; diagnostic) and ``adopted``; ``hybrid_mip_adopted_final`` tells whether the
+  returned plan is an adopted MILP plan.
 
 Benchmarks
 ----------

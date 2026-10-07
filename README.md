@@ -81,6 +81,14 @@ fhops evaluate examples/tiny7/scenario.yaml --assignments examples/tiny7/out/mip
 (`fhops solve-mip` is a deprecated alias of it since 1.0.1; the legacy day-level MIP it used to run
 is infeasible for scenarios with loader roles).
 
+Heuristic objectives for `examples/tiny7` and `examples/small21` use built-in objective-weight
+overrides (soft landing capacity, lower mobilisation weight; `AUTO_OBJECTIVE_WEIGHT_OVERRIDES`), so
+they are not on the MILP objective's scale: the heuristic commands print a notice, and
+`fhops benchmark` / `fhops bench suite` also report the heuristic plan scored under the scenario's own
+weights. With a hard landing capacity (`landing_surplus` weight 0, the default) heuristic plans never
+overload a landing. See `docs/howto/heuristic_presets.rst` ("Objective Weights, Automatic Overrides,
+and Hard Violations").
+
 ```bash
 fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
 fhops evaluate tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv

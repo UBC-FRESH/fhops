@@ -84,7 +84,9 @@ MILP's terminal production:
 Landing capacity is not a sequencing rule, but both solvers apply it identically (since 1.0.1,
 #125): ``Landing.daily_capacity`` is the number of machines that may work a landing's blocks
 concurrently in one shift slot. With ``landing_surplus`` weighted 0 (the default) it is a hard limit
-(the heuristics charge 1000 per extra machine, the MILP enforces it as a constraint); with a positive
+(the heuristics' repair keeps every slot within capacity and charge the hard-violation penalty,
+at least 1000, for any extra machine that remains, e.g. through locks; the MILP enforces it as a
+constraint); with a positive
 weight an overload is allowed and the ``k``-th machine beyond capacity in a slot costs
 ``k × landing_surplus``. In a slot where locks alone exceed a hard capacity, the MILP keeps the locked
 machines, admits no other machine there and reports a warning. (Before 1.0.1 the MILP counted

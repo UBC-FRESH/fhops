@@ -313,9 +313,10 @@ class Landing(BaseModel):
         shift slot ``(day, shift_id)`` (on single-shift scenarios: per day). The name is kept for
         compatibility. The heuristics and the operational MILP apply the same rule: when
         ``ObjectiveWeights.landing_surplus`` is 0 (default) the capacity is hard (heuristics:
-        1000 penalty per extra machine; MILP: constraint), otherwise each slot's ``k``-th machine
-        beyond capacity costs ``k × landing_surplus``. Before FHOPS 1.0.1 the operational MILP
-        counted machine-shifts per day with a slack that was free at weight 0 (#125).
+        the repair keeps landings within capacity and any remaining extra machine costs the hard
+        violation penalty, at least 1000, #140; MILP: constraint), otherwise each slot's ``k``-th
+        machine beyond capacity costs ``k × landing_surplus``. Before FHOPS 1.0.1 the operational
+        MILP counted machine-shifts per day with a slack that was free at weight 0 (#125).
     """
 
     id: str

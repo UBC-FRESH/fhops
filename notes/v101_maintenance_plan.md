@@ -1592,6 +1592,95 @@ logs in `/tmp/opencode/w129/`.
    operational MILP after 13 min CPU (~10 GB RSS) and was killed; tiny7+med42 with `--time-limit 10`
    took 444 s (host under load from other runs). `fhops bench suite` defaults are therefore hours.
 
+### 8.25 Heuristic landing guard on all days; MILP-plan scoring; weight-override transparency (#140)
+Second pre-release audit of 0463fd5 (audits 2–4). Branch `issue-140-landing-guard-scoring`; scripts
+and logs in `/tmp/opencode/wt140/` (baseline tree: `git archive 0463fd5` in `base/`).
+
+1. **Landing guard on every day (audit 3, MAJOR).** `_repair_schedule_cover_blocks` applied
+   `landing_has_room` only on `ctx.multi_shift_days` (#116). On single-shift days it ignored hard
+   landing capacity, so every committed med42 heuristic plan overloads landings (SA default/
+   diversify/mobilisation 49/55/50, ILS 53, Tabu 61; synthetic_small SA 53) — plans the MILP forbids,
+   each paying a 1000 penalty. The guard now runs on every day when `landing_surplus == 0`; soft
+   mode is untouched. Capacity 0: `landing_has_room` only failed once another machine had been
+   counted (`others >= capacity` inside the loop), so a capacity-0 landing admitted one machine
+   per slot; it now returns `False` up front. The operator sanitizer treated capacity 0 as
+   unlimited (`cap > 0 and used >= cap`); it now caps capacity-0 landings when the capacity is hard
+   (soft unchanged, to keep soft-mode results). Idempotency/exactness (#131) unchanged: the guard
+   uses the same pending-machine rule; `test_objective_exact.py` passes (exported score now via
+   `evaluate_assignments`, asserted equal to the repaired score). `multi_shift_days` stays on the
+   context (informational).
+2. **Hard-violation penalty (audit 2, MINOR-E).** Flat 1000 per hard violation was weaker than the
+   MILP's hard cap whenever a machine-shift is worth > 1000 (`land_hard.py`: two 2000 m³ machines,
+   capacity 1 → SA 3000 vs MILP 0). Options: per-assignment bound vs lexicographic (range of the
+   whole objective). Lexicographic would make lock-induced unavoidable penalties ~10⁶ per
+   violation and distort reported objectives for lock scenarios; chosen: `P = max(1000,
+   2·ω_prod·r_max + ω_mob·c_max + 1)` (`OperationalProblem.hard_violation_penalty()`, weights after
+   overrides; `r_max` = largest rate, `c_max` = `setup + max(walk·threshold, flat)` over machines).
+   Bound reasoning: one assignment adds ≤ `r_max` delivered and removes ≤ `r_max` leftover
+   (`LEFTOVER_PENALTY_FACTOR = 1`), cannot reduce the transition count, and with non-metric move
+   costs can save at most one move. Not bounded: indirect sequencing effects (e.g. unlocking a
+   loader's truckload threshold); documented. Applied to all hard violations (uniform rule). After
+   (1) avoidable violations are repaired away, so P matters for unrepaired tables
+   (`evaluate_assignments`) and lock-induced violations. Values: med42 3156.31, tiny7 3147.28
+   (3036.28 under the soft override weights), Jaffray ka_6 2671.05 / pg_6 2977.67; scenarios with
+   r_max ≲ 500 (most unit-test scenarios) 1000.
+   `land_hard.py`: SA 3000 → 0 (1 row), overloaded plan scored as planned −1 (< MILP 0).
+   tiny7/small21 bench and Jaffray ka_6/pg_6 SA are byte-identical despite P > 1000 there.
+3. **MILP-plan scoring (audit 2, MINOR-F).** `evaluate_schedule` repairs and proposes full rates, so
+   a MILP plan that plans partial/zero production is charged `missing_prereq` (tiny7 optimum: 4
+   violations as-is; −4441.32 after repair which also rewrites slots). New
+   `evaluate_assignments(pb, table, ctx=None, debug=None)` (no repair; `production` column →
+   planned production per row, NaN → rate, idle locked slot → 0, like playback) on a shared
+   `_score_plan`; `evaluate_schedule` = repair + `_score_plan`. tiny7 MILP optimum (scenario
+   weights): 253.18, 0 violations; residual vs MILP 279.80 = one idle-gap move (MILP charges moves
+   between consecutive slots only; the med42 greedy MIP start differs by 377.12 = 0.5 × 754.24
+   idle-gap moves, verified). ILS hybrid: adoption by `hybrid_score` (planned), `hybrid_rate_score`
+   diagnostic; an adopted plan is kept as its table (`best_mip_table`) and returned with
+   `production` when still best, objective = `evaluate_assignments` of the returned table (so the
+   "objective = fresh score of the export" invariant holds with this scorer); later heuristic
+   improvements replace it as before; the next hybrid solve is seeded from the table.
+   `hybrid_probe.py tiny7` (override weights): MILP 4402.50, planned 4317.02 (adopted over seed
+   4295.77), old repaired score 4338.52 belonged to a rewritten plan (14 slots changed).
+4. **Weight overrides (audit 4, MAJOR 4).** `AUTO_OBJECTIVE_WEIGHT_OVERRIDES` (Tiny7/Small21 →
+   production 1.0, mobilisation 0.2, transitions 0.1, landing_surplus 0.05) documented (module,
+   solver docstrings, heuristic how-to, README). `record_objective_weight_overrides` adds
+   `objective_weight_overrides`, `objective_weight_overrides_source`, `scenario_objective_weights`
+   to SA/ILS/Tabu meta; telemetry config adds the source; `objective_weight_override_notice` is
+   printed by `solve-heur/-ils/-tabu`, `benchmark`, `bench suite` (once per scenario).
+   `fhops benchmark` prints `SA obj (override weights)` and `SA obj (scenario weights)`
+   (`evaluate_assignments` with the scenario's weights, no repair, so soft-mode overloads are
+   charged as hard violations: tiny7 defaults 4295.775 vs −30498.228, 11 overloaded slots ×
+   3147.28). `bench suite` appends `objective_weights_source`, `objective_weight_overrides`,
+   `objective_scenario_weights`, `objective_scenario_weights_vs_mip_gap` after every existing
+   column (reordered last, `WEIGHT_COLUMNS`). `build_tables.py` reads `objective`/`solver`/
+   `preset_label`/`runtime_s`… by name and `audit_asset_consistency.py` reads `objective`,
+   `runtime_s`, `assignments`, KPI columns by name → no change needed. Suggested follow-up for the
+   asset audit (not done, read-only here): score with `evaluate_assignments` (identical for current
+   assets; needed if an ILS-hybrid asset with a `production` column is ever committed) and report
+   `objective_scenario_weights` for Tiny7/Small21.
+5. **Results.**
+
+   | run | objective | delivered m³ | overloads | completed | mobilisation | seq. viol. |
+   |---|---|---|---|---|---|---|
+   | med42 SA 20000 s42 (committed asset) | −28662.40 | 31793.02 | 49 | 6 | 10110.44 | 0 |
+   | med42 SA 20000 s42 (#140) | 24763.53 | 32973.79 | 0 | 10 | 5981.64 | 0 |
+   | med42 SA 2000 s7 before → after | −30464.48 → 21177.09 | 32492.06 → 31538.45 | 52 → 0 | 7 → 10 | 10510.72 → 7413.16 | 0 → 0 |
+   | med42 SA 2000 s42 before → after | −34576.55 → 23003.28 | 31888.65 → 32487.93 | 55 → 0 | 7 → 10 | 10321.24 → 7558.72 | 0 → 0 |
+   | synthetic_small SA 6000 s42 before → after | −53039.79 → −39.79 | 0 → 0 | 53 → 0 | 0 → 0 | 0 | 0 → 0 |
+
+   (2000-iteration "after" = the audit's `guard_all_days.py` prediction to the last digit.)
+   tiny7 and small21 `bench suite` (committed `generate_assets.sh` full-mode settings): all
+   assignment CSVs byte-identical; all pre-existing summary columns identical except
+   `runtime_s`/`scenario_path`/runtime ratios. Jaffray ka_6/pg_6 SA 1500 seeds 1–3: identical CSVs,
+   30913.356 / 67923.963, 0 violations, 0 overloads. med42 greedy (`--iters 0`) now accepted as a
+   HiGHS MIP start (`seeded_slots=198`, start objective 13769.68). Test pins: med42 v101 SA
+   (150 iterations, seed 7) −35524.91 → 18572.27; `test_v100_sa_objective_was_overstated` keeps
+   tiny7 only (the fresh evaluation now repairs the 1.0.0 med42 plan's overloads).
+6. **Follow-ups.** Regenerate the med42 and synthetic SoftwareX assets (benchmark, tuning,
+   scaling; tiny7/small21 unchanged) and the manuscript values that depend on them. MILP-side
+   idle-gap mobilisation (audit `idle_gap.py`) is outside this issue (#139 area); stale "1000 per
+   extra machine" wording remains in `model/milp/operational.py` (owned by #139).
+
 ## Verification cadence (each child)
 
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,

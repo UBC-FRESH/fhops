@@ -11,14 +11,20 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Any
 
+import pandas as pd
+
 from fhops.evaluation.sequencing import (
     SEQUENCING_TOLERANCE,
     SequencingTracker,
     build_role_priority,
 )
 from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
-from fhops.optimization.operational_problem import OperationalProblem
+from fhops.optimization.operational_problem import (
+    OperationalProblem,
+    build_operational_problem,
+)
 from fhops.scenario.contract import Problem
+from fhops.scenario.contract.models import ObjectiveWeights
 
 BLOCK_COMPLETION_EPS = 1e-6
 LEFTOVER_PENALTY_FACTOR = 1.0
@@ -38,11 +44,43 @@ AUTO_OBJECTIVE_WEIGHT_OVERRIDES: dict[str, dict[str, float]] = {
 }
 
 
+"""Objective weights the heuristics (SA, ILS, Tabu) apply automatically, keyed by scenario name.
+
+When ``objective_weight_overrides`` is not passed, :func:`resolve_objective_weight_overrides`
+returns the entry for ``Scenario.name``: the shipped Tiny7 and Small21 references
+(``examples/tiny7``, ``examples/small21``) are searched with ``production=1.0``,
+``mobilisation=0.2``, ``transitions=0.1`` and a **soft** landing capacity
+(``landing_surplus=0.05`` per extra machine) instead of their scenario weights
+(``production=1.0``, ``mobilisation=0.5``, ``transitions=0.0``, hard landing capacity). The entries
+date from the v0.x heuristic tuning work (a lower mobilisation weight and soft landings let the
+search move machines between the one-machine landings of these small scenarios); the published
+Tiny7/Small21 heuristic results use them. Heuristic objectives for these scenarios are therefore
+**not** on the scale of the operational MILP objective, which always uses the scenario weights:
+compare plans with :func:`evaluate_assignments` under one set of weights. Since #140 the solvers
+record the applied overrides and their source in ``meta`` (``objective_weight_overrides``,
+``objective_weight_overrides_source``, ``scenario_objective_weights``) and telemetry, and the CLI
+prints a notice (:func:`objective_weight_override_notice`)."""
+
+
 def resolve_objective_weight_overrides(
     pb: Problem,
     overrides: dict[str, float] | None,
 ) -> dict[str, float] | None:
-    """Return explicit overrides or scenario-specific defaults for objective weights."""
+    """Return explicit overrides or scenario-specific defaults for objective weights.
+
+    Parameters
+    ----------
+    pb:
+        Problem being solved; ``pb.scenario.name`` selects an
+        :data:`AUTO_OBJECTIVE_WEIGHT_OVERRIDES` entry.
+    overrides:
+        Explicit overrides (returned unchanged when not ``None``).
+
+    Returns
+    -------
+    dict[str, float] | None
+        ``overrides`` when given, else the automatic entry for the scenario name, else ``None``.
+    """
 
     if overrides is not None:
         return overrides
@@ -50,6 +88,95 @@ def resolve_objective_weight_overrides(
     if scenario_name:
         return AUTO_OBJECTIVE_WEIGHT_OVERRIDES.get(scenario_name)
     return None
+
+
+def objective_weight_override_source(
+    pb: Problem,
+    overrides: Mapping[str, float] | None,
+) -> str | None:
+    """Return where the heuristics' objective-weight overrides come from.
+
+    Parameters
+    ----------
+    pb:
+        Problem being solved.
+    overrides:
+        The ``objective_weight_overrides`` argument passed to the solver.
+
+    Returns
+    -------
+    str | None
+        ``"explicit"`` for non-empty caller overrides, ``"auto"`` when an
+        :data:`AUTO_OBJECTIVE_WEIGHT_OVERRIDES` entry applies, ``None`` when the scenario weights
+        are used unchanged.
+    """
+
+    if overrides is not None:
+        return "explicit" if overrides else None
+    return "auto" if resolve_objective_weight_overrides(pb, None) else None
+
+
+def record_objective_weight_overrides(
+    meta: dict[str, Any],
+    pb: Problem,
+    requested: Mapping[str, float] | None,
+    resolved: Mapping[str, float] | None,
+) -> None:
+    """Record the applied objective-weight overrides in a solver ``meta`` payload (in place).
+
+    Adds ``objective_weight_overrides`` (the applied mapping), ``objective_weight_overrides_source``
+    (see :func:`objective_weight_override_source`) and ``scenario_objective_weights`` (the
+    scenario's own weights, which the operational MILP uses) when overrides apply; leaves ``meta``
+    unchanged otherwise.
+    """
+
+    if not resolved:
+        return
+    meta["objective_weight_overrides"] = dict(resolved)
+    meta["objective_weight_overrides_source"] = objective_weight_override_source(pb, requested)
+    meta["scenario_objective_weights"] = (
+        pb.scenario.objective_weights or ObjectiveWeights()
+    ).model_dump()
+
+
+def objective_weight_override_notice(
+    meta: Mapping[str, Any],
+    scenario_name: str | None = None,
+) -> str | None:
+    """Return a one-line notice describing applied objective-weight overrides (or ``None``).
+
+    Parameters
+    ----------
+    meta:
+        Solver ``meta`` payload (SA/ILS/Tabu) after :func:`record_objective_weight_overrides`.
+    scenario_name:
+        Label used in the notice (defaults to "this scenario").
+
+    Returns
+    -------
+    str | None
+        For example ``"Heuristic objective uses built-in weight overrides for FHOPS Tiny7
+        (production=1.0, mobilisation=0.2, transitions=0.1, landing_surplus=0.05; scenario
+        weights production=1.0, mobilisation=0.5, transitions=0.0, landing_surplus=0.0); not
+        comparable with MILP objectives."``; ``None`` when no override applied.
+    """
+
+    overrides = meta.get("objective_weight_overrides")
+    if not overrides:
+        return None
+    source = meta.get("objective_weight_overrides_source")
+    label = scenario_name or "this scenario"
+    kind = "built-in" if source == "auto" else "user-supplied"
+
+    def _fmt(weights: Mapping[str, Any]) -> str:
+        return ", ".join(f"{key}={float(value):g}" for key, value in weights.items())
+
+    scenario_weights = meta.get("scenario_objective_weights")
+    tail = f"; scenario weights {_fmt(scenario_weights)}" if scenario_weights else ""
+    return (
+        f"Heuristic objective uses {kind} weight overrides for {label} "
+        f"({_fmt(overrides)}{tail}); not comparable with MILP objectives."
+    )
 
 
 @dataclass(slots=True)
@@ -397,13 +524,12 @@ def _repair_schedule_cover_blocks(
     role_inventory_today: defaultdict[tuple[str, str], float] = defaultdict(float)
     current_slot: tuple[int, str] | None = None
     role_consumed_slot: defaultdict[tuple[str, str], float] = defaultdict(float)
-    # Landing capacity on multi-shift days (see ``landing_has_room``): only when landing
-    # overloads are hard penalties (``landing_surplus`` weight 0).
+    # Landing capacity guard (see ``landing_has_room``): only when landing overloads are hard
+    # violations (``landing_surplus`` weight 0), on every day (#140; #116 guarded multi-shift
+    # days only).
     landing_of = bundle.landing_for_block
     landing_cap = bundle.landing_capacity
-    landing_guard_days = (
-        ctx.multi_shift_days if bundle.objective_weights.landing_surplus == 0.0 else frozenset()
-    )
+    landing_guard = bundle.objective_weights.landing_surplus == 0.0
     # Machines of the current slot that the repair has not reached yet.
     pending_in_slot: set[str] = set()
 
@@ -465,11 +591,14 @@ def _repair_schedule_cover_blocks(
         # locks (which they cannot leave). Ignoring the blocks those later machines hold before
         # the repair reaches them keeps the repair idempotent: repairing a repaired plan leaves
         # it unchanged, so the search score equals a fresh evaluation of the plan (#131). Before
-        # 1.0.1 (#116) the later machines' pre-repair blocks were counted too.
+        # 1.0.1 (#116) the later machines' pre-repair blocks were counted too. A landing with
+        # capacity 0 admits no machine (#140).
         landing_id = landing_of.get(block_id)
         if landing_id is None or landing_id not in landing_cap:
             return True
         capacity = max(landing_cap.get(landing_id, 0), 0)
+        if capacity == 0:
+            return False
         slot = (day, shift_id)
         others = 0
         for other in sc.machines:
@@ -596,14 +725,15 @@ def _repair_schedule_cover_blocks(
             not has_inventory(block_id, role, production) or not meets_headstart(block_id, role)
         ):
             return False
-        # Multi-shift days: keep/fill a slot only when the block's landing has room in that
-        # shift. Output staged in a shift is usable from the next shift (E7), so without this
-        # guard the repair stacks every role of a block on its landing in the same shift and the
-        # schedule pays a landing-capacity penalty per extra machine (#116). Locked slots are
-        # exempt (the repair does not validate them).
+        # Hard landing capacity: keep/fill a slot only when the block's landing has room in that
+        # shift, as the MILP's hard landing constraint (E11) requires. Without this guard the
+        # repair stacks roles of a block on its landing and the plan pays a hard-violation
+        # penalty per extra machine: on multi-shift days since #109 (#116), and on single-shift
+        # days in every 1.0.x pre-release (all med42 heuristic plans carried 49–61 overloads,
+        # #140). Locked slots are exempt (the repair does not validate them).
         if (
             enforce_prereq
-            and day in landing_guard_days
+            and landing_guard
             and not landing_has_room(machine_id, day, shift_id, block_id)
         ):
             return False
@@ -963,10 +1093,14 @@ def evaluate_schedule(
     -------
     float
         ``ω_prod·(delivered − leftover) − ω_mob·mobilisation − ω_trans·transitions −
-        ω_land·landing_surplus − penalties``. ``penalties`` adds 1000 per assigned slot that is
-        unavailable (calendar or blackout), violates a lock, role, window or rate, breaks
-        sequencing, or (with ``landing_surplus`` weighted 0) overloads a landing. Idle unavailable
-        slots cost nothing (since 1.0.1; v1.0.0 charged every unavailable slot).
+        ω_land·landing_surplus − penalties``. ``penalties`` adds
+        :meth:`~fhops.optimization.operational_problem.OperationalProblem.hard_violation_penalty`
+        (``max(1000, 2·ω_prod·r_max + ω_mob·c_max + 1)``; a flat 1000 before #140) per assigned
+        slot that is unavailable (calendar or blackout), violates a lock, role, window or rate,
+        breaks sequencing, or (with ``landing_surplus`` weighted 0) overloads a landing. Idle
+        unavailable slots cost nothing (since 1.0.1; v1.0.0 charged every unavailable slot). Each
+        assigned slot proposes the machine's full rate (capped by the sequencing tracker); use
+        :func:`evaluate_assignments` to score a plan with planned production (MILP plans).
     """
 
     repair_stats: dict[str, float] | None = {} if limit_repairs_to_dirty else None
@@ -977,6 +1111,26 @@ def evaluate_schedule(
         limit_to_dirty_slots=limit_repairs_to_dirty,
         repair_stats=repair_stats,
     )
+    return _score_plan(pb, sched, ctx, debug, repair_stats=repair_stats)
+
+
+def _score_plan(
+    pb: Problem,
+    sched: Schedule,
+    ctx: OperationalProblem,
+    debug: dict[str, Any] | None,
+    *,
+    repair_stats: dict[str, float] | None = None,
+    planned_production: Mapping[tuple[str, int, str], float | None] | None = None,
+) -> float:
+    """Score ``sched`` as planned (no repair); see :func:`evaluate_schedule`.
+
+    ``planned_production`` switches to planned-production scoring (:func:`evaluate_assignments`):
+    ``(machine_id, day, shift_id) -> m³`` proposed to the sequencing tracker for each listed slot
+    (``None`` proposes the machine's rate, as playback does for a missing value); a locked slot
+    without an entry is an idle locked slot (proposes 0). Without it every assigned or locked slot
+    proposes the machine's rate.
+    """
 
     sc = pb.scenario
     bundle = ctx.bundle
@@ -990,6 +1144,7 @@ def evaluate_schedule(
     availability = bundle.availability_day
 
     weights = bundle.objective_weights
+    hard_penalty = ctx.hard_violation_penalty()
 
     _ensure_mobilisation_stats(sched, ctx)
     # Sum in scenario machine order so the total does not depend on cache insertion order.
@@ -998,10 +1153,8 @@ def evaluate_schedule(
     transition_count = sum(stats.transitions for stats in mobilisation_stats)
     landing_surplus_total = 0.0
     penalty = 0.0
+    hard_violations = 0
 
-    previous_block: dict[str, str | None] = {
-        machine.id: ctx.initial_machine_block.get(machine.id) for machine in sc.machines
-    }
     tracker = SequencingTracker(ctx, debug=bool(debug))
 
     role_priority = build_role_priority(ctx)
@@ -1016,7 +1169,7 @@ def evaluate_schedule(
             block_id = sched.plan[machine.id][(day, shift_id)]
 
             # Unavailable slots (shift/day calendar, blackout) are penalised only when a block is
-            # assigned there; before 1.0.1 every unavailable slot cost 1000 even when idle (a
+            # assigned there; before 1.0.1 every unavailable slot was penalised even when idle (a
             # constant offset in the objective, #131).
             if (
                 shift_availability.get((machine.id, day, shift_id), 1) == 0
@@ -1024,14 +1177,18 @@ def evaluate_schedule(
                 or (machine.id, day, shift_id) in blackout
             ):
                 if block_id is not None:
-                    penalty += 1000.0
-                previous_block[machine.id] = None
+                    penalty += hard_penalty
+                    hard_violations += 1
                 continue
 
             locked_block = ctx.lock_for(machine.id, day, shift_id)
+            planned_key: tuple[str, int, str] | None = (machine.id, day, shift_id)
             if locked_block is not None:
                 if block_id is not None and block_id != locked_block:
-                    penalty += 1000.0
+                    penalty += hard_penalty
+                    hard_violations += 1
+                if planned_production is not None and block_id != locked_block:
+                    planned_key = None  # idle locked slot: no planned production
                 block_id = locked_block
 
             if block_id is None:
@@ -1040,22 +1197,34 @@ def evaluate_schedule(
             role = bundle.machine_roles.get(machine.id)
             allowed = allowed_roles.get(block_id)
             if allowed is not None and role is not None and role not in allowed:
-                penalty += 1000.0
+                penalty += hard_penalty
+                hard_violations += 1
                 continue
 
             earliest, latest = windows[block_id]
             if day < earliest or day > latest:
-                penalty += 1000.0
+                penalty += hard_penalty
+                hard_violations += 1
                 continue
 
             rate_value = rate.get((machine.id, block_id), 0.0)
             if rate_value <= 0.0:
-                penalty += 1000.0
+                penalty += hard_penalty
+                hard_violations += 1
                 continue
 
-            sequencing = tracker.process(day, machine.id, block_id, rate_value, shift_id)
+            proposed = rate_value
+            if planned_production is not None:
+                if planned_key is not None and planned_key in planned_production:
+                    planned = planned_production[planned_key]
+                    if planned is not None:
+                        proposed = planned
+                else:
+                    proposed = 0.0  # slot without a planned row: idle locked slot
+            sequencing = tracker.process(day, machine.id, block_id, proposed, shift_id)
             if sequencing.violation_reason:
-                penalty += 1000.0
+                penalty += hard_penalty
+                hard_violations += 1
 
             landing_id = landing_of.get(block_id)
             if landing_id is not None and landing_id in used:
@@ -1064,15 +1233,10 @@ def evaluate_schedule(
                 excess = max(0, used[landing_id] - capacity)
                 if excess > 0:
                     if weights.landing_surplus == 0.0:
-                        penalty += 1000.0
+                        penalty += hard_penalty
+                        hard_violations += 1
                         continue
                     landing_surplus_total += excess
-
-            if sequencing.production_units <= BLOCK_COMPLETION_EPS:
-                previous_block[machine.id] = block_id
-                continue
-
-            previous_block[machine.id] = block_id
 
     tracker.finalize()
     delivered_total = tracker.delivered_total
@@ -1091,6 +1255,10 @@ def evaluate_schedule(
         "leftover_total": leftover_total,
         "landing_surplus_total": landing_surplus_total,
         "penalty_total": penalty,
+        "hard_violation_count": hard_violations,
+        "hard_violation_penalty": hard_penalty,
+        "mobilisation_total": mobilisation_total,
+        "transition_count": transition_count,
     }
     if repair_stats:
         watch_stats.setdefault("repair_slots_processed", repair_stats.get("slots_processed", 0.0))
@@ -1167,6 +1335,138 @@ def rescore_fresh(
     fresh = fresh_schedule_copy(sched)
     score, debug = evaluate_schedule_with_debug(pb, fresh, ctx, capture_debug)
     return fresh, score, debug
+
+
+def schedule_from_assignments(
+    pb: Problem,
+    assignments: pd.DataFrame,
+    ctx: OperationalProblem | None = None,
+) -> tuple[Schedule, dict[tuple[str, int, str], float | None] | None]:
+    """Convert an assignment table into a :class:`Schedule` and its planned production.
+
+    Parameters
+    ----------
+    pb:
+        Problem the table belongs to; machines not in the scenario are ignored.
+    assignments:
+        Table with ``machine_id``, ``block_id``, ``day`` and ``shift_id`` columns. Rows whose
+        ``assigned`` value (when the column exists) is ``<= 0.5`` or whose ``block_id`` is missing
+        are ignored; a later row for the same machine slot replaces an earlier one. An optional
+        ``production`` column (m³, e.g. operational-MILP plans) is returned as planned production.
+    ctx:
+        Operational context supplying the ordered shift slots (built from ``pb`` when ``None``).
+
+    Returns
+    -------
+    tuple[Schedule, dict | None]
+        The schedule (every scenario machine has an entry for every slot, ``None`` when idle) and
+        ``(machine_id, day, shift_id) -> m³`` planned production for the kept rows (``None`` for a
+        missing value), or ``None`` when the table has no ``production`` column.
+    """
+
+    shift_keys = ctx.shift_keys if ctx is not None else build_operational_problem(pb).shift_keys
+    plan: dict[str, dict[tuple[int, str], str | None]] = {
+        machine.id: {key: None for key in shift_keys} for machine in pb.scenario.machines
+    }
+    frame = assignments
+    if "assigned" in frame.columns:
+        frame = frame[pd.to_numeric(frame["assigned"], errors="coerce").fillna(0.0) > 0.5]
+    has_production = "production" in frame.columns
+    planned: dict[tuple[str, int, str], float | None] | None = {} if has_production else None
+    for record in frame.to_dict(orient="records"):
+        machine_raw = record.get("machine_id")
+        day_raw = record.get("day")
+        shift_raw = record.get("shift_id")
+        block_raw = record.get("block_id")
+        if machine_raw is None or day_raw is None or shift_raw is None:
+            continue
+        if block_raw is None or (isinstance(block_raw, float) and math.isnan(block_raw)):
+            continue
+        try:
+            day_value = int(day_raw)
+        except (TypeError, ValueError):
+            continue
+        machine_id = str(machine_raw)
+        shift_id = str(shift_raw)
+        if machine_id not in plan or (day_value, shift_id) not in plan[machine_id]:
+            continue
+        plan[machine_id][(day_value, shift_id)] = str(block_raw)
+        if planned is not None:
+            value = record.get("production")
+            try:
+                production = float(value) if value is not None else math.nan
+            except (TypeError, ValueError):
+                production = math.nan
+            planned[(machine_id, day_value, shift_id)] = (
+                None if math.isnan(production) else max(production, 0.0)
+            )
+    return Schedule(plan=plan), planned
+
+
+def evaluate_assignments(
+    pb: Problem,
+    assignments: pd.DataFrame,
+    ctx: OperationalProblem | None = None,
+    debug: dict[str, Any] | None = None,
+) -> float:
+    """Score an assignment table as planned, with the heuristic objective (no repair).
+
+    Use this to compare plans from different sources (heuristic exports, operational-MILP plans,
+    user CSVs) on the heuristic objective. Unlike :func:`evaluate_schedule` the plan is not
+    repaired first: every assignment is scored as given, so infeasible rows are charged the hard
+    violation penalty instead of being dropped.
+
+    Parameters
+    ----------
+    pb:
+        Problem the table belongs to.
+    assignments:
+        Assignment table (see :func:`schedule_from_assignments`). With a ``production`` column
+        each row proposes its planned production (m³) to the sequencing tracker, as
+        :func:`fhops.evaluation.playback.run_playback` does: a row planning no production is an
+        idle slot (no head-start/truckload check, #125) and a locked slot without a row is an
+        idle locked slot. Without the column every assigned or locked slot proposes the machine's
+        rate, as :func:`evaluate_schedule` does.
+    ctx:
+        Operational context fixing the objective weights. ``None`` builds one from ``pb`` with the
+        **scenario's own** weights (no ``AUTO_OBJECTIVE_WEIGHT_OVERRIDES``); pass a context from
+        :func:`fhops.optimization.operational_problem.override_objective_weights` to score under
+        overridden weights.
+    debug:
+        Optional dict receiving the same statistics as :func:`evaluate_schedule`.
+
+    Returns
+    -------
+    float
+        The :func:`evaluate_schedule` objective of the plan as given.
+
+    Notes
+    -----
+    For a schedule exported by SA, ILS or Tabu (no ``production`` column) scored with the context
+    the solver used, the result equals the solver's ``objective`` (the repair pass is idempotent
+    on its own output, #131). For an operational-MILP plan (``production`` column) it avoids the
+    ``missing_prereq`` penalties :func:`evaluate_schedule` charges when it proposes full rates
+    for slots the MILP plans at partial or zero production (audit MINOR-F, #140; on the
+    proven-optimal Tiny7 MILP plan: 253.18 instead of -4441.32 after a repair at full rates). It
+    can still differ from the MILP objective where the two objectives differ: the heuristics
+    (and KPIs) charge mobilisation and transitions for a move across idle slots, which the MILP
+    charges only between consecutive slots (Tiny7: MILP objective 279.80, one move of 53.24 at
+    weight 0.5), and any slot the MILP plans differently from the playback rules is penalised.
+
+    Examples
+    --------
+    >>> from fhops.scenario.io import load_scenario
+    >>> from fhops.scenario.contract import Problem
+    >>> from fhops.optimization.heuristics import solve_sa
+    >>> pb = Problem.from_scenario(load_scenario("examples/minitoy/scenario.yaml"))  # doctest: +SKIP
+    >>> res = solve_sa(pb, iters=200, seed=1)  # doctest: +SKIP
+    >>> evaluate_assignments(pb, res["assignments"])  # scenario weights  # doctest: +SKIP
+    """
+
+    if ctx is None:
+        ctx = build_operational_problem(pb)
+    sched, planned = schedule_from_assignments(pb, assignments, ctx)
+    return _score_plan(pb, sched, ctx, debug, planned_production=planned)
 
 
 def build_watch_metadata_from_debug(stats: Mapping[str, Any] | None) -> dict[str, str]:
