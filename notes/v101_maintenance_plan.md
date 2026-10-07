@@ -1732,6 +1732,60 @@ and logs in `/tmp/opencode/wt140/` (baseline tree: `git archive 0463fd5` in `bas
    idle-gap mobilisation (audit `idle_gap.py`) is outside this issue (#139 area); stale "1000 per
    extra machine" wording remains in `model/milp/operational.py` (owned by #139).
 
+### 8.24 Operational MILP objective and semantics (audit 2) (#139)
+Second pre-release audit of candidate 0463fd5 (evidence `/tmp/opencode/audit2-{2,4}-scratch/`).
+Branch `issue-139-milp-objective-semantics`; scratch `/tmp/opencode/wt139/` (`fuzz_exact.py`,
+`time_cases.py`, `lpbound.py`, `grb_probe.py`, `tiny7_nocap.py`, `depr_script.py`, base copy
+`base/`).
+
+1. **Transitions (MAJOR-A).** `transition_expr` summed every `y[m,b',b,s]`, the diagonal included;
+   `trans_diag.py` (one machine, one block, ω_trans = 20) returned 0 working every other day.
+2. **Idle gaps and boundary (MAJOR-B).** `y` linked consecutive slots only, and the first-slot
+   boundary term covered `last_block_id` → slot 1 only; idling a slot hid a move (`idle_gap.py`:
+   MILP 60, heuristics/KPIs −940). Design alternatives measured on random cases (40 + 100 seeds),
+   tiny7 and small21 (120/300 s):
+   (a) position lower bounds `pos ≥ x`, `pos ≥ pos_prev − Σx` with continuous move variables
+   (exact because costs are non-negative and the bounds are monotone; smallest model) — small21
+   9799 at 300 s, but random cases 110 s vs 50 s (base); (b) the same with binary positions —
+   random 38 s, but small21 found no incumbent; (c) **per-machine network flow** (positions as a
+   unit flow; hub arcs for equal costs) — random 33 s, small21 11750 at 300 s. (c) was chosen: it
+   is exact for any feasible point (path decomposition; no reliance on the objective sense), its LP
+   is the convex hull of each machine's position sequence, and it needs fewer constraints than (a)
+   because pair arcs only appear in sums. The LP bound itself is not stronger than v1.0.1's
+   (fractional assignments split machines without moving; case 13: LP 323.373 in both, new optimum
+   273.613), so some small instances are harder: the true problem has costs the old model let the
+   solver avoid.
+3. **Exactness.** `fuzz_exact.py` compares the MILP objective with an independent evaluation of the
+   MILP plan (production − leftover − landing surplus `e(e+1)/2` − ω_mob·mobilisation −
+   ω_trans·transitions; transitions/mobilisation by the heuristics' rule, mobilisation also equal to
+   `compute_kpis`), checks playback (0 violations, delivered == planned), the model's max
+   violation, and that seeding the plan back gives a feasible point with the same objective. Random
+   mobilisation parameters/distances on top of the audit's `fuzz2.random_scenario` (forks, joins,
+   loaders, head starts, 1–3 shifts, initial state, locks, blackouts, hard/soft landings). 400/400
+   pass (seeds 1000–1399; three reached the 120 s limit and were checked on their incumbent; with
+   900 s, 1236 and 1395 are optimal, 1079 stays at a 0.6 % gap: incumbent 57.155, bound 57.501,
+   ω_trans = 0.1 — fractional assignments avoid small transition costs in the LP), and 100/100 on
+   seeds 2000–2099 with the final commit; on the base commit 17/40 fail (both directions).
+4. **Numbers.** See CHANGE_LOG. tiny7 279.796036 unchanged (brute force with heuristic semantics
+   gives the same optimum; the MILP plan has one H3 move); tiny7 without binding landings
+   4361.462752 (was 4388.082752 = one uncharged idle-gap move). small21/med42 sizes drop 3–6× in
+   constraints and 6–11× in integer variables; HiGHS at 600 s: small21 11720.75, med42 26936.19 (216
+   rows; base: empty plan). ka_6 seeded: optimal in 8.9 s. Random cases: 553 s → 751 s in total.
+5. **Loader batching (MINOR-G)** removed (`loads`, `loader_partial`, `LoaderPairs`, the
+   `loader_batch_volume`/`loader_pairs` warm-start metadata and seeding).
+6. **Forks/joins/head start (MINOR-D).** Documented, not changed. A per-upstream buffer
+   (`B_{r,u,b} = β·rate(u)`) would be more natural for joins, but it changes the tracker
+   (`OperationalProblem.role_headstart_volume` keyed by role) as well; no harvest system used by
+   the examples or the nine Jaffray scenarios has a join at all (`joinhs.py`), so 1.0.1 keeps the
+   shared rule (MILP and tracker identical) and documents it. Candidate for 1.1.
+7. **Solver failures (audit 4).** `_run_solver`, `_solve_appsi_highs`, the legacy `_run_appsi`,
+   and option assignment catch `Exception`; `solver="auto"` implemented in the operational driver
+   (`AUTO_SOLVER_CANDIDATES`, `MilpSolverFallbackWarning`). Real size-limited licence verified on
+   small21 (`gurobipy` 13.0.3 in a scratch `--target`).
+8. **`build-mip`** delegates to the operational model (deprecation notice), like `solve-mip` (#127).
+9. **Deprecation warnings.** `_warn_deprecated_field` computes the stack level past `events.py`
+   and the pydantic/pydantic-core packages.
+
 ## Verification cadence (each child)
 
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,

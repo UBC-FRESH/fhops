@@ -8,7 +8,11 @@ Python, YAML/JSON payloads, or the ``fhops eval-playback`` CLI flags.
 
 from __future__ import annotations
 
+import importlib.util
+import os
+import sys
 import warnings
+from types import FrameType
 from typing import Self
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -49,6 +53,38 @@ def _default_landing_config() -> LandingShockConfig:
     )
 
 
+def _package_dirs(*names: str) -> tuple[str, ...]:
+    dirs = []
+    for name in names:
+        spec = importlib.util.find_spec(name)
+        if spec is not None and spec.origin:
+            dirs.append(os.path.dirname(os.path.abspath(spec.origin)) + os.sep)
+    return tuple(dirs)
+
+
+_INTERNAL_PREFIXES = _package_dirs("pydantic", "pydantic_core")
+
+
+def _warn_deprecated_field(message: str) -> None:
+    """Emit a :class:`DeprecationWarning` attributed to the code that built the config.
+
+    Validators run inside pydantic, so a fixed ``stacklevel`` points at pydantic's ``__init__`` /
+    ``model_validate`` and the default warning filters hide the warning (#139). The stack is
+    walked past this module and the pydantic packages to the first outside frame, so the warning
+    is reported at (and shown for) the user's own call, e.g. a script run as ``__main__``.
+    """
+
+    frame: FrameType | None = sys._getframe(1)
+    level = 2
+    while frame is not None:
+        filename = os.path.abspath(frame.f_code.co_filename)
+        if filename != os.path.abspath(__file__) and not filename.startswith(_INTERNAL_PREFIXES):
+            break
+        frame = frame.f_back
+        level += 1
+    warnings.warn(message, DeprecationWarning, stacklevel=level)
+
+
 class SamplingEventConfig(BaseModel):
     """Base configuration shared by all stochastic events.
 
@@ -74,11 +110,9 @@ class SamplingEventConfig(BaseModel):
     @model_validator(mode="after")
     def _warn_seed_offset(self) -> Self:
         if "seed_offset" in self.model_fields_set and self.seed_offset != 0:
-            warnings.warn(
+            _warn_deprecated_field(
                 f"{type(self).__name__}.seed_offset is deprecated and ignored; every event of a "
-                "sample draws from the shared generator default_rng(base_seed + sample_id).",
-                DeprecationWarning,
-                stacklevel=2,
+                "sample draws from the shared generator default_rng(base_seed + sample_id)."
             )
         return self
 
@@ -162,11 +196,9 @@ class WeatherEventConfig(SamplingEventConfig):
     @model_validator(mode="after")
     def _warn_correlated_days(self) -> Self:
         if "correlated_days" in self.model_fields_set and self.correlated_days is not True:
-            warnings.warn(
+            _warn_deprecated_field(
                 "WeatherEventConfig.correlated_days is deprecated and ignored; use "
-                "impact_window_days to model multi-day weather spells.",
-                DeprecationWarning,
-                stacklevel=2,
+                "impact_window_days to model multi-day weather spells."
             )
         return self
 

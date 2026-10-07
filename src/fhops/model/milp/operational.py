@@ -11,6 +11,7 @@ violations.
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import dataclass
 
 import pyomo.environ as pyo
 
@@ -24,6 +25,29 @@ from fhops.model.milp.data import (
 __all__ = ["build_operational_model"]
 
 _REDUNDANCY_TOLERANCE = 1e-6
+
+SlotKey = tuple[str, int, str]
+#: Position flow entering a layer: a constant (1.0 for the carried-in block or the unplaced
+#: state at the start) or the ``(machine, day, shift_id)`` key of the previous layer.
+_FlowSource = float | SlotKey
+
+
+@dataclass(frozen=True, slots=True)
+class _MoveLayer:
+    """One slot of a machine's position network (a slot in which the machine can work).
+
+    ``reach`` maps each position the machine can hold before the slot to its flow source;
+    ``cost`` is the common move cost of a machine whose move costs are all equal (hub arcs
+    ``depart``/``arrive``), ``None`` when pair arcs ``y`` carry block-specific costs;
+    ``unplaced`` is the source of the not-yet-worked state (``None`` with a carried-in block).
+    """
+
+    mach: str
+    slot: tuple[int, str]
+    cost: float | None
+    reach: dict[str, _FlowSource]
+    open_blocks: tuple[str, ...]
+    unplaced: _FlowSource | None
 
 
 def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
@@ -55,8 +79,11 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
       ``u`` consumes its own output ``z_r`` from it, and ``inventory_guard`` requires
       ``Σ_{r downstream of u} z_r ≤ inventory_start[u]`` for **every** upstream role, so a role
       with several upstream roles (a join) can only process what each of them has staged — the
-      tracker's minimum rule. For linear chains this is the v1.0.0/1.0.0 model with the inventory
-      indexed by the upstream instead of the downstream role.
+      tracker's minimum rule — and the downstream roles of a fork share (split) the pool of their
+      upstream role. In a fork that joins again (a diamond ``u → {r1, r2} → t``) the terminal
+      role can therefore deliver at most half of what ``u`` outputs (see
+      ``docs/howto/system_sequencing.rst``). For linear chains this is the v1.0.0 model with the
+      inventory indexed by the upstream instead of the downstream role.
     * ``role_remaining_cap`` limits every role's total output on a block to
       ``R_{r,b} = min(role_remaining, W_b)`` (``role_remaining`` defaults to ``W_b``).
     * ``head_start`` requires the staged volume of every upstream role at the end of the previous
@@ -86,7 +113,21 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     (timeline blackouts, #110): ``machine_capacity`` forces ``Σ_b x[m,b,s] = 0`` in unavailable
     slots.
 
-    Landing capacity (E11, per shift slot since 1.0.1, #125): ``landing_capacity[l, d, s]``
+    Machine moves (#139): a machine moves when it works a block other than its *position*, the
+    block of its last worked slot (idle slots keep it) or its carried-in ``last_block_id``. Each
+    move costs ``ω_mob·δ(m, b', b) + ω_trans`` -- staying on a block costs nothing -- exactly as
+    in the heuristics (``_recompute_mobilisation_for``) and the KPIs. The position of each machine
+    is a unit flow through one network layer per slot in which it can work: ``stay`` keeps the
+    position, ``y[m, b', b, s]`` moves it (``depart``/``arrive`` through a hub when all move
+    costs of the machine are equal), ``first`` places a machine without carried-in block at its
+    first worked block (``unplaced`` until then); ``position_balance``, ``hub_balance`` and
+    ``unplaced_balance`` conserve the flow, ``move_requires_work`` allows a position change only
+    into a worked block and ``work_sets_position`` puts the whole unit on a worked block. For
+    binary ``x`` every path of a flow decomposition follows the true position sequence, so the
+    move cost is exact. Machines that can never be charged (zero weights, a single workable
+    block) have no network.
+
+    Landing capacity (per shift slot since 1.0.1, #125): ``landing_capacity[l, d, s]``
     limits the machines assigned to the blocks of landing ``l`` in slot ``(d, s)`` to
     ``Landing.daily_capacity`` (machines working the landing concurrently), exactly as the
     heuristics count it. With ``objective_weights.landing_surplus == 0`` the limit is hard (the
@@ -103,8 +144,8 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
       slot use the same value.
     * ``bundle.initial_role_remaining`` sets ``R_{r,b}`` (capped at ``W_b``) and the head-start
       waiver threshold.
-    * ``bundle.initial_machine_block`` adds a linear boundary term on the first slot:
-      ``-(ω_mob·δ(m,b0,b) + ω_trans)·x[m,b,first]`` for ``b ≠ b0``.
+    * ``bundle.initial_machine_block`` is the machine's position before the first slot: its
+      first worked slot (not necessarily the first slot) is charged a move to any other block.
     * ``bundle.locked_assignments`` adds ``locked_assignment`` equality constraints resolved by
       :func:`fhops.model.milp.data.resolve_locked_slots`: a day lock pins every available shift of
       the day to its block (other blocks 0); a shift lock pins only its slot. Unavailable slots and
@@ -140,12 +181,10 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
     block_roles: dict[str, tuple[str, ...]] = {}
     role_block_pairs: list[tuple[str, str]] = []
     activation_pairs: list[tuple[str, str]] = []
-    loader_pairs: list[tuple[str, str]] = []
     loader_gate_pairs: list[tuple[str, str]] = []
     role_upstream: dict[tuple[str, str], tuple[str, ...]] = {}
     role_buffer_volume: dict[tuple[str, str], float] = {}
     role_capacity: dict[tuple[str, str], float] = {}
-    loader_batch_volume: dict[tuple[str, str], float] = {}
     block_terminal_roles: dict[str, tuple[str, ...]] = {}
     terminal_pairs: list[tuple[str, str]] = []
     # Staged inventories are indexed by the *upstream* role: (u, b) -> downstream roles of u.
@@ -233,9 +272,6 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
                         stage_downstream[stage].append(role_name)
                 if (buffer_volume > 0) or loader_gate:
                     activation_pairs.append(pair)
-            loader_batch_volume[pair] = system_cfg.loader_batch_volume_m3
-            if role_cfg.is_loader:
-                loader_pairs.append(pair)
 
         block_roles[block] = tuple(roles_for_block)
         terminal_for_block = tuple(
@@ -256,7 +292,7 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         # A_{m,s}: calendars, and 0 in timeline blackout slots (same slots the heuristics skip).
         return machine_slot_available(bundle, machine_id, day, shift_id, blackout_slots)
 
-    # Locks are resolved first: the activation coupling needs to know which machines are locked.
+    # Locks are resolved before the activation coupling and the move tracking, which need them.
     lock_slot_targets, lock_warnings = resolve_locked_slots(bundle)
     locked_on_block: set[tuple[str, str, tuple[int, str]]] = {
         (mach, blk, slot) for (mach, slot), blk in lock_slot_targets.items() if blk is not None
@@ -329,67 +365,235 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             cost += params["move_cost_flat"]
         return cost
 
-    # Transition tracking for mobilisation penalties
-    transition_slots = [slot for slot in model.S if prev_shift_map.get(slot) is not None]
-    needs_transitions = bool(transition_slots)
+    # Machine moves (mobilisation and transitions, #139). A machine moves when it works block b in
+    # slot s while its *position* -- the block of its last worked slot, or the carried-in block
+    # b0 -- is another block b'. Idle slots keep the position, so moves across idle slots and from
+    # b0 into the first worked slot are charged exactly as by the heuristics
+    # (_recompute_mobilisation_for) and the KPIs. Each machine's position is a unit flow through a
+    # layered network (one layer per slot in which the machine can work): `stay` keeps the
+    # position, `y` (or `depart` -> hub -> `arrive` when all move costs of the machine are equal)
+    # moves it, `first` places a machine without b0 at its first worked block (`unplaced` before).
+    # `move_requires_work` (no position change without working the new block) and
+    # `work_sets_position` (working b puts the whole unit at b) force every path of a flow
+    # decomposition along the true position sequence when x is binary, so the move cost is exact.
+    mobilisation_weight = bundle.objective_weights.mobilisation
+    transition_weight = bundle.objective_weights.transitions
+    moves_priced = bool(mobilisation_weight > 0 or transition_weight > 0)
+
+    def _move_cost(mach: str, prev_blk: str, curr_blk: str) -> float:
+        return mobilisation_weight * _mobil_cost(mach, prev_blk, curr_blk) + transition_weight
+
+    def _open_blocks(mach: str, slot: tuple[int, str], candidates: list[str]) -> list[str]:
+        """Blocks the machine may be assigned to in ``slot`` (``x`` not fixed to 0)."""
+
+        if not _is_available(mach, slot[0], slot[1]):
+            return []
+        open_blocks = [blk for blk in candidates if _within_window(blk, slot[0])]
+        if (mach, slot) in lock_slot_targets:
+            target = lock_slot_targets[(mach, slot)]
+            open_blocks = [blk for blk in open_blocks if blk == target]
+        return open_blocks
+
+    stay_index: list[tuple[str, str, int, str]] = []
+    depart_index: list[tuple[str, str, int, str]] = []
+    arrive_index: list[tuple[str, str, int, str]] = []
+    pair_index: list[tuple[str, str, str, int, str]] = []
+    pair_cost: dict[tuple[str, str, str, int, str], float] = {}
+    first_index: list[tuple[str, str, int, str]] = []
+    unplaced_index: list[SlotKey] = []
+    # One layer per machine and slot in which the machine can work (see _MoveLayer).
+    layers: list[_MoveLayer] = []
+    for mach in machines if moves_priced else ():
+        role = machine_roles.get(mach)
+        eligible = [
+            blk
+            for blk in blocks
+            if blk in unsequenced or (role is not None and role in block_roles.get(blk, ()))
+        ]
+        open_by_slot = {slot: _open_blocks(mach, slot, eligible) for slot in shift_list}
+        workable = [blk for blk in eligible if any(blk in open_by_slot[s] for s in shift_list)]
+        start_block = bundle.initial_machine_block.get(mach)
+        if start_block not in blocks:
+            start_block = None
+        tracked = list(workable)
+        if start_block is not None and start_block not in tracked:
+            tracked.append(start_block)
+        costs = {
+            (prev_blk, blk): _move_cost(mach, prev_blk, blk)
+            for prev_blk in tracked
+            for blk in workable
+            if prev_blk != blk
+        }
+        if not costs or max(costs.values()) <= 0:
+            continue  # the machine can never be charged a move
+        uniform = max(costs.values()) - min(costs.values()) <= 1e-12
+        # reach[b]: position b before the slot -- 1.0 (b0 at the start), or the previous layer.
+        reach: dict[str, _FlowSource] = {start_block: 1.0} if start_block is not None else {}
+        unplaced: _FlowSource | None = None if start_block is not None else 1.0
+        for slot in shift_list:
+            open_here = open_by_slot[slot]
+            if not open_here:
+                continue  # the machine cannot work: its position carries over
+            day, shift_id = slot
+            for blk in reach:
+                stay_index.append((mach, blk, day, shift_id))
+                if uniform:
+                    depart_index.append((mach, blk, day, shift_id))
+                else:
+                    for curr_blk in open_here:
+                        if curr_blk != blk:
+                            key = (mach, blk, curr_blk, day, shift_id)
+                            pair_index.append(key)
+                            pair_cost[key] = costs[(blk, curr_blk)]
+            if uniform and reach:
+                arrive_index.extend((mach, blk, day, shift_id) for blk in open_here)
+            if unplaced is not None:
+                unplaced_index.append((mach, day, shift_id))
+                first_index.extend((mach, blk, day, shift_id) for blk in open_here)
+            layers.append(
+                _MoveLayer(
+                    mach=mach,
+                    slot=slot,
+                    cost=max(costs.values()) if uniform else None,
+                    reach=dict(reach),
+                    open_blocks=tuple(open_here),
+                    unplaced=unplaced,
+                )
+            )
+            reach = {
+                blk: (mach, day, shift_id) for blk in tracked if blk in reach or blk in open_here
+            }
+            if unplaced is not None:
+                unplaced = (mach, day, shift_id)
+
     mobilisation_expr = None
-    transition_expr = None
-    if needs_transitions:
-        model.S_transition = pyo.Set(initialize=transition_slots, dimen=2)
-        model.y = pyo.Var(model.M, model.B, model.B, model.S_transition, domain=pyo.Binary)
+    if layers:
+        model.StayIndex = pyo.Set(initialize=stay_index, dimen=4)
+        model.stay = pyo.Var(model.StayIndex, domain=pyo.NonNegativeReals)
+        model.DepartIndex = pyo.Set(initialize=depart_index, dimen=4)
+        model.depart = pyo.Var(model.DepartIndex, domain=pyo.NonNegativeReals)
+        model.ArriveIndex = pyo.Set(initialize=arrive_index, dimen=4)
+        model.arrive = pyo.Var(model.ArriveIndex, domain=pyo.NonNegativeReals)
+        model.TransitionIndex = pyo.Set(initialize=pair_index, dimen=5)
+        model.y = pyo.Var(model.TransitionIndex, domain=pyo.NonNegativeReals)
+        model.FirstIndex = pyo.Set(initialize=first_index, dimen=4)
+        model.first = pyo.Var(model.FirstIndex, domain=pyo.NonNegativeReals)
+        model.UnplacedIndex = pyo.Set(initialize=unplaced_index, dimen=3)
+        model.unplaced = pyo.Var(model.UnplacedIndex, domain=pyo.NonNegativeReals)
+        stay_set = frozenset(stay_index)
+        arrive_set = frozenset(arrive_index)
+        first_set = frozenset(first_index)
+        moves_in: dict[tuple[str, str, int, str], list] = defaultdict(list)
+        moves_out: dict[tuple[str, str, int, str], list] = defaultdict(list)
+        for mach, prev_blk, blk, day, shift_id in pair_index:
+            var = model.y[mach, prev_blk, blk, day, shift_id]
+            moves_in[(mach, blk, day, shift_id)].append(var)
+            moves_out[(mach, prev_blk, day, shift_id)].append(var)
 
-        def _prev_match_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
-            prev_index = prev_shift_map[(day, shift_id)]
-            if prev_index is None:
+        def _arrivals(mach: str, blk: str, day: int, shift_id: str):
+            key = (mach, blk, day, shift_id)
+            total = sum(moves_in.get(key, []))
+            if key in arrive_set:
+                total = total + model.arrive[key]
+            return total
+
+        def _placed(mach: str, blk: str, day: int, shift_id: str):
+            key = (mach, blk, day, shift_id)
+            return model.first[key] if key in first_set else 0.0
+
+        def _position_after(mach: str, blk: str, day: int, shift_id: str):
+            """Flow at position ``blk`` after the slot (0 when the block is unreachable)."""
+
+            total = _arrivals(mach, blk, day, shift_id) + _placed(mach, blk, day, shift_id)
+            if (mach, blk, day, shift_id) in stay_set:
+                total = total + model.stay[mach, blk, day, shift_id]
+            return total
+
+        balance_rows: list[tuple[str, str, int, str]] = []
+        balance_source: dict[tuple[str, str, int, str], _FlowSource] = {}
+        hub_rows: list[SlotKey] = []
+        link_rows: list[tuple[str, str, int, str]] = []
+        unplaced_source: dict[SlotKey, _FlowSource] = {}
+        move_terms: list = []
+        for layer in layers:
+            mach = layer.mach
+            day, shift_id = layer.slot
+            for blk, source in layer.reach.items():
+                balance_rows.append((mach, blk, day, shift_id))
+                balance_source[(mach, blk, day, shift_id)] = source
+            if layer.cost is not None and layer.reach:
+                hub_rows.append((mach, day, shift_id))
+                move_terms.extend(
+                    layer.cost * model.arrive[mach, blk, day, shift_id] for blk in layer.open_blocks
+                )
+            if layer.unplaced is not None:
+                unplaced_source[(mach, day, shift_id)] = layer.unplaced
+            link_rows.extend((mach, blk, day, shift_id) for blk in layer.open_blocks)
+        move_terms.extend(cost * model.y[key] for key, cost in pair_cost.items() if cost > 0)
+
+        def _source_value(source: _FlowSource, blk: str | None):
+            if isinstance(source, float):
+                return source
+            mach, day, shift_id = source
+            if blk is None:
+                return model.unplaced[mach, day, shift_id]
+            return _position_after(mach, blk, day, shift_id)
+
+        model.PositionBalanceIndex = pyo.Set(initialize=balance_rows, dimen=4)
+
+        def position_balance_rule(mdl, mach, blk, day, shift_id):
+            key = (mach, blk, day, shift_id)
+            leaving = sum(moves_out.get(key, []))
+            if key in mdl.DepartIndex:
+                leaving = leaving + mdl.depart[key]
+            return _source_value(balance_source[key], blk) == mdl.stay[key] + leaving
+
+        model.position_balance = pyo.Constraint(
+            model.PositionBalanceIndex, rule=position_balance_rule
+        )
+        if hub_rows:
+            model.HubIndex = pyo.Set(initialize=hub_rows, dimen=3)
+            depart_by_slot: dict[SlotKey, list[str]] = defaultdict(list)
+            arrive_by_slot: dict[SlotKey, list[str]] = defaultdict(list)
+            for mach, blk, day, shift_id in depart_index:
+                depart_by_slot[(mach, day, shift_id)].append(blk)
+            for mach, blk, day, shift_id in arrive_index:
+                arrive_by_slot[(mach, day, shift_id)].append(blk)
+
+            def hub_balance_rule(mdl, mach, day, shift_id):
+                key = (mach, day, shift_id)
+                return sum(mdl.depart[mach, blk, day, shift_id] for blk in depart_by_slot[key]) == (
+                    sum(mdl.arrive[mach, blk, day, shift_id] for blk in arrive_by_slot[key])
+                )
+
+            model.hub_balance = pyo.Constraint(model.HubIndex, rule=hub_balance_rule)
+        if unplaced_index:
+            first_by_slot: dict[SlotKey, list[str]] = defaultdict(list)
+            for mach, blk, day, shift_id in first_index:
+                first_by_slot[(mach, day, shift_id)].append(blk)
+
+            def unplaced_balance_rule(mdl, mach, day, shift_id):
+                key = (mach, day, shift_id)
+                return _source_value(unplaced_source[key], None) == mdl.unplaced[key] + sum(
+                    mdl.first[mach, blk, day, shift_id] for blk in first_by_slot[key]
+                )
+
+            model.unplaced_balance = pyo.Constraint(model.UnplacedIndex, rule=unplaced_balance_rule)
+        model.MoveLinkIndex = pyo.Set(initialize=link_rows, dimen=4)
+
+        def move_requires_work_rule(mdl, mach, blk, day, shift_id):
+            moved_in = _arrivals(mach, blk, day, shift_id) + _placed(mach, blk, day, shift_id)
+            if isinstance(moved_in, float):
                 return pyo.Constraint.Skip
-            prev_day, prev_shift = prev_index
-            return (
-                mdl.y[mach, prev_blk, curr_blk, (day, shift_id)]
-                <= mdl.x[mach, prev_blk, (prev_day, prev_shift)]
-            )
+            return moved_in <= mdl.x[mach, blk, (day, shift_id)]
 
-        def _curr_match_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
-            return (
-                mdl.y[mach, prev_blk, curr_blk, (day, shift_id)]
-                <= mdl.x[mach, curr_blk, (day, shift_id)]
-            )
+        def work_sets_position_rule(mdl, mach, blk, day, shift_id):
+            return mdl.x[mach, blk, (day, shift_id)] <= _position_after(mach, blk, day, shift_id)
 
-        def _link_rule(mdl, mach, prev_blk, curr_blk, day, shift_id):
-            prev_index = prev_shift_map[(day, shift_id)]
-            if prev_index is None:
-                return pyo.Constraint.Skip
-            prev_day, prev_shift = prev_index
-            return mdl.y[mach, prev_blk, curr_blk, (day, shift_id)] >= (
-                mdl.x[mach, prev_blk, (prev_day, prev_shift)]
-                + mdl.x[mach, curr_blk, (day, shift_id)]
-                - 1
-            )
-
-        model.transition_prev = pyo.Constraint(
-            model.M, model.B, model.B, model.S_transition, rule=_prev_match_rule
-        )
-        model.transition_curr = pyo.Constraint(
-            model.M, model.B, model.B, model.S_transition, rule=_curr_match_rule
-        )
-        model.transition_link = pyo.Constraint(
-            model.M, model.B, model.B, model.S_transition, rule=_link_rule
-        )
-
-        mobilisation_expr = sum(
-            _mobil_cost(mach, prev_blk, curr_blk)
-            * model.y[mach, prev_blk, curr_blk, (day, shift_id)]
-            for mach in model.M
-            for prev_blk in model.B
-            for curr_blk in model.B
-            for day, shift_id in model.S_transition
-        )
-        transition_expr = sum(
-            model.y[mach, prev_blk, curr_blk, (day, shift_id)]
-            for mach in model.M
-            for prev_blk in model.B
-            for curr_blk in model.B
-            for day, shift_id in model.S_transition
-        )
+        model.move_requires_work = pyo.Constraint(model.MoveLinkIndex, rule=move_requires_work_rule)
+        model.work_sets_position = pyo.Constraint(model.MoveLinkIndex, rule=work_sets_position_rule)
+        if move_terms:
+            mobilisation_expr = sum(move_terms)
 
     # Initial staged inventory of each upstream role at the first slot (E7): the carried-in
     # output of u not yet consumed downstream (0.0 without an initial state, as in v1.0.0).
@@ -618,28 +822,6 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             model.ActivationPairs, model.S, rule=activation_assignment_lower_rule
         )
 
-    # Loader batching constraints
-    model.LoaderPairs = pyo.Set(initialize=loader_pairs, dimen=2)
-    if loader_pairs:
-        model.loads = pyo.Var(model.LoaderPairs, model.S, domain=pyo.NonNegativeIntegers)
-        model.loader_partial = pyo.Var(model.LoaderPairs, model.S, domain=pyo.NonNegativeReals)
-
-        def loader_batch_rule(mdl, role, blk, day, shift_id):
-            batch = loader_batch_volume[(role, blk)]
-            return mdl.role_prod[role, blk, (day, shift_id)] == (
-                batch * mdl.loads[role, blk, (day, shift_id)]
-                + mdl.loader_partial[role, blk, (day, shift_id)]
-            )
-
-        def loader_partial_cap_rule(mdl, role, blk, day, shift_id):
-            batch = loader_batch_volume[(role, blk)]
-            return mdl.loader_partial[role, blk, (day, shift_id)] <= batch
-
-        model.loader_batch = pyo.Constraint(model.LoaderPairs, model.S, rule=loader_batch_rule)
-        model.loader_partial_cap = pyo.Constraint(
-            model.LoaderPairs, model.S, rule=loader_partial_cap_rule
-        )
-
     # Dynamic loader threshold (E8): a producing loader needs min(q, W_b - D_b(<s)) staged by
     # every upstream role at the start of the slot.
     loader_slot_mode: dict[tuple[str, tuple[int, str]], str] = {}
@@ -863,8 +1045,6 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
 
         model.landing_capacity = pyo.Constraint(model.Landing, model.S, rule=landing_capacity_rule)
 
-    mobilisation_weight = bundle.objective_weights.mobilisation
-    transition_weight = bundle.objective_weights.transitions
     leftover_penalty = prod_weight
 
     if terminal_pairs:
@@ -890,37 +1070,9 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
             piece * model.landing_surplus[landing_id, day, shift_id, piece]
             for landing_id, day, shift_id, piece in model.LandingSurplusIndex
         )
-    if mobilisation_expr is not None and mobilisation_weight:
-        obj_expr -= mobilisation_weight * mobilisation_expr
-    if transition_expr is not None and transition_weight:
-        obj_expr -= transition_weight * transition_expr
-
-    # Boundary transition from each machine's carried-in block into the first slot (E6). Only
-    # added when the initial state names a last block, so default models are unchanged.
-    boundary_mobilisation: dict[tuple[str, str], float] = {}
-    boundary_transitions: list[tuple[str, str]] = []
-    if bundle.initial_machine_block and shift_list:
-        for mach, prev_blk in bundle.initial_machine_block.items():
-            if mach not in machines or prev_blk not in blocks:
-                continue
-            for blk in blocks:
-                if blk == prev_blk:
-                    continue
-                boundary_transitions.append((mach, blk))
-                cost = _mobil_cost(mach, prev_blk, blk)
-                if cost:
-                    boundary_mobilisation[(mach, blk)] = cost
-    if boundary_transitions:
-        first_slot = shift_list[0]
-        if mobilisation_weight and boundary_mobilisation:
-            obj_expr -= mobilisation_weight * sum(
-                cost * model.x[mach, blk, first_slot]
-                for (mach, blk), cost in boundary_mobilisation.items()
-            )
-        if transition_weight:
-            obj_expr -= transition_weight * sum(
-                model.x[mach, blk, first_slot] for mach, blk in boundary_transitions
-            )
+    if mobilisation_expr is not None:
+        # ω_mob·δ + ω_trans per move, including moves from the carried-in block b0.
+        obj_expr -= mobilisation_expr
 
     model.objective = pyo.Objective(expr=obj_expr, sense=pyo.maximize)
 
@@ -932,16 +1084,11 @@ def build_operational_model(bundle: OperationalMilpBundle) -> pyo.ConcreteModel:
         "role_upstream": role_upstream,
         "role_to_machines": {role: tuple(machines) for role, machines in role_to_machines.items()},
         "block_terminal_roles": block_terminal_roles,
-        "loader_batch_volume": loader_batch_volume,
         "inventory_pairs": tuple(stage_pairs),
         "stage_downstream": {pair: tuple(roles) for pair, roles in stage_downstream.items()},
         "activation_pairs": tuple(activation_pairs),
-        "loader_pairs": tuple(loader_pairs),
         "terminal_pairs": tuple(terminal_pairs),
-        "needs_transitions": needs_transitions,
         "initial_inventory_start": dict(initial_inventory_start),
-        "boundary_mobilisation": dict(boundary_mobilisation),
-        "boundary_transitions": tuple(boundary_transitions),
         "locked_on_block": frozenset(locked_on_block),
         "lock_slot_targets": dict(lock_slot_targets),
         "loader_block_batch": dict(loader_block_batch),
