@@ -124,7 +124,10 @@ Interpreting Outputs
 
 The summary CSV/JSON records, per scenario/solver pair:
 
-* objective value (incorporating any objective weights),
+* objective value (incorporating any objective weights); for SA/ILS/Tabu this is the heuristic
+  evaluator's score of the exported schedule (re-scoring the assignment CSV gives the same value;
+  before 1.0.1 the heuristics could report a higher score than their exported schedule earned,
+  #131),
 * runtime (wall-clock seconds),
 * number of assignments in the exported schedule,
 * key KPIs: total production, mobilisation cost, sequencing violation counts, etc.
