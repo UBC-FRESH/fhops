@@ -34,8 +34,8 @@ Workflow
 
    and the CLI reports how the start was used::
 
-       Warm start: method=appsi_highs solver=appsi_highs seeded_slots=25 (accepted)
-         MIP start solution is feasible, objective value is 4388.082752
+       Warm start: method=appsi_highs solver=appsi_highs seeded_slots=14 (accepted)
+         MIP start solution is feasible, objective value is 279.796036
 
 #. **Inspect the solver log.** Successful warm starts show the candidate objective up-front. HiGHS prints ``MIP start solution is feasible, objective value is …``; when it instead reports ``Attempting to find feasible solution by solving LP for user-supplied values of discrete variables`` followed by ``Model status : Infeasible`` the seed was rejected. With Gurobi, ``User MIP start did not produce a new incumbent solution`` means the solver ignored the seed (usually because it can find a better incumbent through its own heuristics). Add ``--debug`` to stream the full solver log.
 
@@ -62,6 +62,16 @@ Solver support
      - ``Warm start not used`` in the CLI output.
 
 From Python, :func:`fhops.model.milp.driver.solve_operational_milp` returns the same information in ``result["warm_start"]`` (``method``, ``solver``, ``seeded_slots``, ``accepted``, ``acceptance``, ``solver_messages``). A solve stopped by its time limit still returns the best incumbent it holds—which, for an accepted warm start, is at least as good as the seed.
+
+Landing capacity is a hard per-shift-slot constraint of the MILP when ``landing_surplus`` is
+weighted 0 (1.0.1, #125). The heuristics accept landing overloads at a 1000-point penalty (their
+repair only avoids them on multi-shift days), so a heuristic incumbent that overloads a landing is
+infeasible for the MILP and HiGHS rejects it (e.g. the ``med42`` greedy incumbent above: ``seeded_slots=212
+(rejected)``; it was accepted before 1.0.1, when the MILP's landing slack was free at weight 0). Seed
+the MILP with a plan that respects landing capacity, or give ``landing_surplus`` a positive weight.
+On multi-shift scenarios the heuristic repair keeps landing capacity, and seeding pays off: on the
+3-shift BC case study ``ka_6`` HiGHS finds no incumbent of its own within 30 minutes, while the SA
+plan (1500 iterations) is accepted and proven optimal in about a minute.
 
 HiGHS does not always log a verdict about the MIP start (e.g. on large models stopped by a time limit). ``accepted`` then defaults to ``None`` unless acceptance can be inferred, in which case ``accepted=True`` and ``acceptance="inferred"`` (``"log"`` when the verdict comes from the HiGHS log). The rule: a solution was returned and either (a) its assignment variables ``x`` equal the seeded ones, or (b) the seeded point satisfied every model constraint (FHOPS records the seeded values and checks them after the solve, only when needed; tolerance 1e-6), so HiGHS could adopt it as its first incumbent, and the returned objective is at least the seed objective. The CLI prints a note when acceptance was inferred.
 

@@ -49,6 +49,12 @@ class SequencingTracker:
       output finished in the same slot does not count, matching the MILP's ``upstream_done``).
     * A loader may only work when the upstream volume staged at the start of the slot covers one
       truckload (``min(loader_batch_volume_m3, remaining block volume)``).
+    * An assignment proposing no production (``proposed_production <= SEQUENCING_TOLERANCE``) is
+      an idle slot: the head-start and truckload thresholds only apply to a role that produces
+      (the MILP's ``role_active``), so it is never a ``missing_prereq`` violation (#125; e.g. a
+      machine locked to a block that the MILP leaves idle because nothing is staged yet). Role
+      violations (``unknown_role`` / ``forbidden_role``) are still reported. The heuristics always
+      propose the machine's rate, so they are unaffected.
 
     Calls without ``shift_id`` treat each day as one slot (v1.0.0 behaviour).
 
@@ -156,6 +162,7 @@ class SequencingTracker:
             Assigned machine and block.
         proposed_production:
             Planned production (m³); capped by remaining volume and staged upstream inventory.
+            A value ``<= SEQUENCING_TOLERANCE`` is an idle slot: no head-start/truckload check.
         shift_id:
             Shift label. Staged output is released when ``(day, shift_id)`` changes; omit it to
             treat the whole day as one slot.
@@ -184,8 +191,10 @@ class SequencingTracker:
                 violation_reason = "forbidden_role"
 
         prereq_set = prereq_roles.get((block_id, role)) if role is not None else None
+        # Idle slot (no planned production): thresholds only bind a producing role (#125).
+        idle = proposed_production <= SEQUENCING_TOLERANCE
 
-        if prereq_set:
+        if prereq_set and not idle:
             assert role is not None
             buffer_volume = self.ctx.role_headstart_volume.get((block_id, role), 0.0)
             if buffer_volume > 0.0 and not self._upstream_exhausted(block_id, prereq_set):
@@ -220,7 +229,7 @@ class SequencingTracker:
                 self.role_inventory[(block_id, upstream_role)] for upstream_role in prereq_set
             )
             loader_requirement = 0.0
-            if (block_id, role) in self.ctx.loader_roles:
+            if (block_id, role) in self.ctx.loader_roles and not idle:
                 loader_requirement = min(
                     self.ctx.loader_batch_volume.get(block_id, 0.0),
                     self.remaining_work.get(block_id, 0.0),

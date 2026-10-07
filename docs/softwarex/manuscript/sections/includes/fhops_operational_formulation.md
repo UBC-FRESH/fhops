@@ -30,7 +30,7 @@ Given harvest blocks, machine roles, shift calendars, block windows, landing cap
 - $\mathbf{1}^{\text{window}}_{b,d} \in \{0,1\}$: block window indicator (1 if day $d$ is within block $b$ window).
 - $\omega^{\text{prod}},\omega^{\text{mob}},\omega^{\text{trans}},\omega^{\text{land}}$: objective weights.
 - $\delta_{m,b',b}$: mobilization cost when machine $m$ transitions from block $b'$ to block $b$.
-- $C_{\ell}$: daily assignment capacity for landing $\ell$.
+- $C_{\ell}$: assignment capacity of landing $\ell$, the number of machines that may work its blocks concurrently in one shift slot (`Landing.daily_capacity`); $K_{\ell} = |\mathcal{M}| - C_{\ell}$ bounds the machines beyond capacity in a slot.
 - $\ell(b)$: landing associated with block $b$.
 - $\mathcal{U}_{r,b}$: upstream roles that must feed role $r$ on block $b$.
 - $B_{r,b}$: head-start buffer volume that every upstream role of $r$ must have staged before $r$ may produce on block $b$: $B_{r,b}=\beta_{r,b}\sum_{u\in\mathcal{U}_{r,b}}\sum_{m\in\mathcal{M}(u)}\bar{p}_{mb}$ for a head start of $\beta_{r,b}$ shifts (`role_headstart_shifts`, 0 by default). When no machine of an upstream role has a positive rate on $b$, the role's own capacity is used instead, $B_{r,b}=\beta_{r,b}\,Q_{r,b}$.
@@ -57,7 +57,7 @@ Given harvest blocks, machine roles, shift calendars, block windows, landing cap
 - $n_{r,b,s} \in \mathbb{Z}_{\ge 0}$: loader batch count for loader role-block pair $(r,b)$.
 - $u_{r,b,s} \ge 0$: loader partial remainder volume.
 - $L_b \ge 0$: leftover unmet block volume slack.
-- $S_{\ell,d} \ge 0$: landing daily surplus slack.
+- $S_{\ell,s,k} \in [0,1]$, $k = 1,\dots,K_{\ell}$: unit landing surplus slack for the $k$-th machine beyond capacity on landing $\ell$ in slot $s$ (only when $\omega^{\text{land}} > 0$).
 
 **Objective.**
 
@@ -67,7 +67,7 @@ $$
 \begin{aligned}
 \max\; &\omega^{\text{prod}}\!\sum_{b\in\mathcal{B}}\sum_{r\in\mathcal{T}_b}\sum_{s\in\mathcal{S}} z_{r,b,s}
 - \omega^{\text{prod}}\!\sum_{b\in\mathcal{B}} L_b \\
-&- \omega^{\text{land}}\!\sum_{\ell\in\mathcal{L}}\sum_{d\in\mathcal{D}} S_{\ell,d} \\
+&- \omega^{\text{land}}\!\sum_{\ell\in\mathcal{L}}\sum_{s\in\mathcal{S}}\sum_{k=1}^{K_{\ell}} k\, S_{\ell,s,k} \\
 &- \omega^{\text{mob}}\!\sum_{m,b',b,s} \delta_{m,b',b}\, y_{m,b',b,s}
 - \omega^{\text{trans}}\!\sum_{m,b',b,s} y_{m,b',b,s} \\
 &- \sum_{m\in\mathcal{M}^{0}}\sum_{b\in\mathcal{B}\setminus\{b^{0}_m\}}
@@ -75,7 +75,7 @@ $$
 \end{aligned}
 $$
 
-The last line is the boundary transition from each machine's initial block into the first slot. It is linear in $x$ because $b^{0}_m$ is data; with no initial state ($\mathcal{M}^{0}=\emptyset$) it vanishes and the objective is the v1.0.0 objective.
+The last line is the boundary transition from each machine's initial block into the first slot. It is linear in $x$ because $b^{0}_m$ is data; with no initial state ($\mathcal{M}^{0}=\emptyset$) it vanishes and the objective is the v1.0.0 objective, apart from the landing term, which is now indexed by shift slot and priced per surplus machine (change (viii) below).
 
 For blocks without terminal roles ($\mathcal{T}_b=\emptyset$, in particular blocks outside $\mathcal{B}^{\text{seq}}$) the production reward and the block balance use the machine-level sum $\sum_{m}\sum_{s} p_{m,b,s}$ in place of $\sum_{r\in\mathcal{T}_b}\sum_s z_{r,b,s}$.
 
@@ -240,23 +240,29 @@ x_{m_k,b,s} = \chi_k\,A_{m_k,s}\,\mathbf{1}[b=b_k]
 $$
 
 where $\chi_k=0$ when the lock contradicts the model (day outside the block window, or a machine whose role is not in the block's harvest system) and $\chi_k=1$ otherwise. Such locks are rejected by scenario validation; a lock that still reaches the model pins the machine to idle and is reported as a warning instead of making the model infeasible. A second lock on an already locked machine slot is ignored with a warning.
-Landing daily assignment capacity with surplus slack:
+Landing capacity per shift slot, the machines working a landing's blocks concurrently:
 
 $$
-\sum_{b:\,\ell(b)=\ell}\sum_{m\in\mathcal{M}}\sum_{\sigma:(d,\sigma)\in\mathcal{S}} x_{m,b,(d,\sigma)}
-\le C_{\ell} + S_{\ell,d}
-\qquad \forall \ell\in\mathcal{L},\; d\in\mathcal{D}.
+\sum_{b:\,\ell(b)=\ell}\sum_{m\in\mathcal{M}} x_{m,b,s}
+\le
+\begin{cases}
+\max\{C_{\ell},\, N^{\text{lock}}_{\ell,s}\} & \text{if } \omega^{\text{land}} = 0,\\
+C_{\ell} + \sum_{k=1}^{K_{\ell}} S_{\ell,s,k} & \text{if } \omega^{\text{land}} > 0,
+\end{cases}
+\qquad \forall \ell\in\mathcal{L},\; s\in\mathcal{S},
 $$
+
+where $N^{\text{lock}}_{\ell,s} = \sum_{b:\,\ell(b)=\ell}|\mathcal{K}_{b,s}|$ is the number of machines locked to the landing's blocks in slot $s$. With $\omega^{\text{land}}=0$ the capacity is hard; a slot in which locks alone exceed it keeps the locked machines, admits no other machine, and is reported as a warning (the heuristics charge the same unavoidable overload). With $\omega^{\text{land}}>0$ the marginal price $k\,\omega^{\text{land}}$ of the slack pieces increases, so an optimal solution uses $S_{\ell,s,1},\dots,S_{\ell,s,e}$ for $e$ machines beyond capacity and pays $\omega^{\text{land}}\,e(e+1)/2$: the $k$-th machine beyond capacity in a slot costs $k\,\omega^{\text{land}}$, as in the heuristics' evaluation.
 
 Domain restrictions:
 
 $$
-x, y, g, h, \lambda \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L,S \ge 0.
+x, y, g, h, \lambda \in \{0,1\},\quad n \in \mathbb{Z}_{\ge 0},\quad p,z,I^{\text{start}},I,u,L \ge 0,\quad S \in [0,1].
 $$
 
 **Initial state defaults.** Without `Scenario.initial_state` and `Scenario.locked_assignments` ($\bar{I}\equiv 0$; $R^{0}_{r,b}= R_{r,b}= W_b$; $\mathcal{M}^{0}=\mathcal{K}=\emptyset$) the initial-state and lock terms vanish.
 
-**Changes from FHOPS v1.0.0 (1.0.1).** The following corrections make every MILP plan physically feasible and replayable by the playback sequencing tracker without violations: (i) the remaining-output cap applies to every role with $R_{r,b}=\min(R^{0}_{r,b},W_b)$ ($W_b$ by default), complemented by the per-slot cap $z_{r,b,s}+D_{b,s}\le W_b$ where the flow balances do not imply it (v1.0.0 let upstream roles output more volume than the block holds and used that volume to meet head-start and loader thresholds); (ii) the head-start constraint is waived through $h_{r,b,s}$ once every upstream role has output its carried-in remaining volume, so blocks smaller than a buffer can still be finished; (iii) the loader threshold is $\min(q^{\text{batch}}_b, W_b - D_{b,\operatorname{prev}(s)})$, the volume still to deliver at the start of the slot (v1.0.0 always required a full truckload), so the last partial truckload of a block can be loaded; (iv) staged inventories are kept per upstream role, $I_{u,b,s}$ (v1.0.0 kept one inventory per downstream role fed by the sum of its upstream roles' outputs, so a role with several upstream roles could process wood that only one of them had handled); (v) the activation binary $g_{r,b,s}$ gates production only and machines locked to a block may stay idle, so locks (new in 1.0.1) never make the model infeasible; contradictory locks are pinned to idle and reported; (vi) blocks without a harvest system ($\mathcal{B}\setminus\mathcal{B}^{\text{seq}}$) have no role obligations, as documented in the data contract (v1.0.0 applied the registry's default system to them); (vii) timeline blackouts, which v1.0.0 enforced only in the heuristics, set $A_{m,s}=0$ in every slot of a blackout day for every machine. Playback, the heuristics, and the rolling-horizon carry-forward apply the same rules: staged output is available from the next shift slot, buffers and truckload thresholds are staged volume at the start of the slot, and production is capped by $R_{r,b}$ and by the volume the block still holds. For linear harvest systems without loaders, without locks, and with no (or a consistent) initial state, (iii)–(v) leave the equations unchanged apart from indexing the staged inventory by the upstream instead of the downstream role.
+**Changes from FHOPS v1.0.0 (1.0.1).** The following corrections make every MILP plan physically feasible and replayable by the playback sequencing tracker without violations: (i) the remaining-output cap applies to every role with $R_{r,b}=\min(R^{0}_{r,b},W_b)$ ($W_b$ by default), complemented by the per-slot cap $z_{r,b,s}+D_{b,s}\le W_b$ where the flow balances do not imply it (v1.0.0 let upstream roles output more volume than the block holds and used that volume to meet head-start and loader thresholds); (ii) the head-start constraint is waived through $h_{r,b,s}$ once every upstream role has output its carried-in remaining volume, so blocks smaller than a buffer can still be finished; (iii) the loader threshold is $\min(q^{\text{batch}}_b, W_b - D_{b,\operatorname{prev}(s)})$, the volume still to deliver at the start of the slot (v1.0.0 always required a full truckload), so the last partial truckload of a block can be loaded; (iv) staged inventories are kept per upstream role, $I_{u,b,s}$ (v1.0.0 kept one inventory per downstream role fed by the sum of its upstream roles' outputs, so a role with several upstream roles could process wood that only one of them had handled); (v) the activation binary $g_{r,b,s}$ gates production only and machines locked to a block may stay idle, so locks (new in 1.0.1) never make the model infeasible; contradictory locks are pinned to idle and reported; (vi) blocks without a harvest system ($\mathcal{B}\setminus\mathcal{B}^{\text{seq}}$) have no role obligations, as documented in the data contract (v1.0.0 applied the registry's default system to them); (vii) timeline blackouts, which v1.0.0 enforced only in the heuristics, set $A_{m,s}=0$ in every slot of a blackout day for every machine; (viii) landing capacity counts the machines on a landing per shift slot and is hard when $\omega^{\text{land}}=0$, as in the heuristics (v1.0.0 counted machine-shifts per day, $\sum_{\sigma} x_{m,b,(d,\sigma)} \le C_{\ell} + S_{\ell,d}$, with a slack that was free at the default $\omega^{\text{land}}=0$, so the capacity did not bind; on single-shift scenarios the per-slot and per-day counts coincide). Playback, the heuristics, and the rolling-horizon carry-forward apply the same rules: staged output is available from the next shift slot, buffers and truckload thresholds are staged volume at the start of the slot, and production is capped by $R_{r,b}$ and by the volume the block still holds. For linear harvest systems without loaders, without locks, and with no (or a consistent) initial state, (iii)–(v) leave the equations unchanged apart from indexing the staged inventory by the upstream instead of the downstream role.
 
 **Implementation mapping (equation blocks to code).**
 
@@ -273,7 +279,7 @@ $$
 - Block balance with leftovers: `model.block_balance` (`block_balance_rule`) + `model.leftover`
 - Remaining role output: `model.role_remaining_cap` (from `bundle.initial_role_remaining`, capped at $W_b$), per-slot cap `model.role_slot_remaining`
 - Locked assignments: `model.locked_assignment` (from `bundle.locked_assignments`, resolved by `resolve_locked_slots(...)` in `fhops.model.milp.data`; warnings in the solve result)
-- Landing capacity with slack: `model.landing_capacity` (`landing_capacity_rule`) + `model.landing_surplus`
+- Landing capacity per shift slot: `model.landing_capacity` (`landing_capacity_rule`, indexed by landing and slot; locked overloads from `_landing_slot_capacities`) + `model.landing_surplus` (unit pieces `model.LandingSurplusIndex`, only when $\omega^{\text{land}}>0$)
 - Objective assembly: `model.objective` and objective-term construction around `prod_weight`, `landing_weight`, `mobilisation_weight`, `transition_weight`, including the first-slot boundary term from `bundle.initial_machine_block`
 - Data/parameter normalization: `build_operational_bundle(...)` in `fhops.model.milp.data` (flattens `Scenario.initial_state` and `Scenario.locked_assignments` into the bundle)
 

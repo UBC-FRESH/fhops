@@ -432,6 +432,19 @@ def test_single_window_rolling_matches_direct_milp() -> None:
 @pytest.mark.parametrize("kind", ["sa", "mip"])
 def test_stitched_kpis_bounded_and_close_to_full_horizon(kind: str) -> None:
     scenario = load_scenario(TINY7)
+    if kind == "mip":
+        # tiny7's capacity-1 landings are a hard per-slot limit for the MILP since #125
+        # (landing_surplus weight 0; SA auto-applies a soft 0.05 weight to tiny7), which stops
+        # it from finishing the blocks. This test is about the rolling mechanics, so the
+        # landings are made non-binding.
+        scenario = scenario.model_copy(
+            update={
+                "landings": [
+                    landing.model_copy(update={"daily_capacity": len(scenario.machines)})
+                    for landing in scenario.landings
+                ]
+            }
+        )
     total = sum(block.work_required for block in scenario.blocks)
     kwargs: dict[str, object] = (
         {"solver": "sa", "sa_iters": 200, "sa_seed": 42}
