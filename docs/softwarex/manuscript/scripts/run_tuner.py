@@ -117,8 +117,10 @@ def main() -> int:
         tabu_iters,
     ]
 
+    # Repo-relative scenario arguments (cwd = repo root): the tuning telemetry records them as
+    # given, so the committed runs.jsonl/runs.sqlite carry no checkout-specific paths (#144).
     for scenario_path in scenarios:
-        cmd.extend(["--scenario", str(scenario_path)])
+        cmd.extend(["--scenario", scenario_path.relative_to(repo_root).as_posix()])
 
     print(f"[tuning] Running condensed studies into {out_dir}")
     subprocess.run(cmd, cwd=repo_root, check=True)

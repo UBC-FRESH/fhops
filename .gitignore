@@ -214,7 +214,8 @@ __marimo__/
 examples/tiny7/out/
 
 .vscode
-.continue
+# Continue editor state (was tracked by mistake; untracked and excluded from sdists in #144)
+.continue/
 tmp/
 notes/coding-agent-conversation-log.txt
 

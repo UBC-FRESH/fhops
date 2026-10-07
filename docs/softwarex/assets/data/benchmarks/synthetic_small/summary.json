@@ -1,7 +1,7 @@
 [
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
+    "scenario_path":"docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"sa",
     "objective":-53039.791,
     "runtime_s":98.5010530716,
@@ -53,7 +53,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
+    "scenario_path":"docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"sa",
     "objective":-53039.791,
     "runtime_s":27.5285574133,
@@ -105,7 +105,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
+    "scenario_path":"docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"sa",
     "objective":-53039.791,
     "runtime_s":98.473061786,
@@ -157,7 +157,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
+    "scenario_path":"docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"ils",
     "objective":-53039.791,
     "runtime_s":66.8517544987,
@@ -209,7 +209,7 @@
   },
   {
     "scenario":"user-1",
-    "scenario_path":"\/home\/gep\/projects\/fhops-wt-131b\/docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
+    "scenario_path":"docs\/softwarex\/assets\/data\/datasets\/synthetic_small\/scenario.yaml",
     "solver":"tabu",
     "objective":-53039.791,
     "runtime_s":611.3082248103,

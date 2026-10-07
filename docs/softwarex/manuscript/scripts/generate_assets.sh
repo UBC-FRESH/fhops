@@ -20,6 +20,11 @@ scaling_dir="${data_dir}/scaling"
 
 mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
 
+# Every path FHOPS records in the assets (scenario paths in summaries, telemetry, index files) is
+# written as given on the command line, so the pipeline runs from the repository root with
+# repo-relative scenario paths (#144). relativize_asset_paths.py at the end is the safety net.
+cd "${repo_root}"
+
 echo "[assets] Rendering shared manuscript/doc snippets" >&2
 python "${script_dir}/export_docs_assets.py" --repo-root "${repo_root}"
 
@@ -35,7 +40,7 @@ fi
 echo "[assets] Summarizing datasets into ${dataset_dir}" >&2
 python "${script_dir}/run_dataset_inspection.py" --repo-root "${repo_root}" --out-dir "${dataset_dir}"
 
-synthetic_scenario="${dataset_dir}/synthetic_small/scenario.yaml"
+synthetic_scenario="docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml"
 if [[ ! -f "${synthetic_scenario}" ]]; then
   echo "[assets] ERROR: synthetic scenario not found at ${synthetic_scenario}" >&2
   exit 1
@@ -66,9 +71,9 @@ echo "[assets] Regenerating FHOPS benchmark summaries into ${bench_dir}" >&2
 rm -rf "${bench_dir}" && mkdir -p "${bench_dir}"
 
 scenario_specs=(
-  "${repo_root}/examples/tiny7/scenario.yaml|tiny7|Tiny7 reference scenario"
-  "${repo_root}/examples/small21/scenario.yaml|small21|Small21 reference scenario"
-  "${repo_root}/examples/med42/scenario.yaml|med42|Med42 reference scenario"
+  "examples/tiny7/scenario.yaml|tiny7|Tiny7 reference scenario"
+  "examples/small21/scenario.yaml|small21|Small21 reference scenario"
+  "examples/med42/scenario.yaml|med42|Med42 reference scenario"
   "${synthetic_scenario}|synthetic_small|Synthetic tier (small)"
 )
 
@@ -283,6 +288,9 @@ python "${script_dir}/run_synthetic_sweep.py" --repo-root "${repo_root}" --out-d
 
 echo "[assets] Building solver/tuning tables" >&2
 python "${script_dir}/build_tables.py" --repo-root "${repo_root}"
+
+echo "[assets] Rewriting recorded paths to repo-relative form" >&2
+python "${script_dir}/relativize_asset_paths.py" --repo-root "${repo_root}" "${assets_root}"
 
 echo "[assets] Normalising text assets (pre-commit whitespace/end-of-file rules)" >&2
 python "${script_dir}/normalize_text_assets.py" "${assets_root}"

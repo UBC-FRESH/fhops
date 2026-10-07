@@ -1786,6 +1786,98 @@ Branch `issue-139-milp-objective-semantics`; scratch `/tmp/opencode/wt139/` (`fu
 9. **Deprecation warnings.** `_warn_deprecated_field` computes the stack level past `events.py`
    and the pydantic/pydantic-core packages.
 
+### 8.27 Asset provenance hygiene, in-repo manuscript draft, packaging stray files (#144)
+Second pre-release audit (audits 3/4; evidence `/tmp/opencode/audit2-3-scratch/`,
+`/tmp/opencode/audit2-4-scratch/`). Branch `issue-144-asset-hygiene` from a26660f; scratch
+`/tmp/opencode/w144/`. No solver re-runs of committed assets: the pipeline, scripts and docs are
+fixed so the final regeneration produces verifiable assets.
+
+1. **Assets hash (recipe v2).** The v1 hash (`find docs/softwarex/assets -type f | sort -z |
+   xargs sha256sum | sha256sum`, before appending the entry) covered the git-ignored
+   `tuning/telemetry/steps/*.jsonl` and the log itself and used the locale's sort, so it could not
+   be recomputed from the repository or the sdist. v2 (`scripts/asset_hash.py`, called by
+   `run_manuscript_benchmarks.sh`, which now writes `hash_recipe: v2`): files =
+   `git ls-files --cached --others --exclude-standard -- docs/softwarex/assets` (tracked + new
+   not-ignored files, so a regeneration is hashed before it is committed) minus files deleted from
+   the working tree minus `benchmark_runs.log`; without `.git` (sdist) every file under the
+   directory except the log; `sha256sum` lines sorted by path bytes (`LC_ALL=C`); SHA-256 of the
+   lines. `asset_hash.py verify` / `make verify-assets-hash` checks the last log entry carrying
+   `assets_hash` (fails for v1 entries). Python and the documented shell pipelines agree (tests:
+   git repo with ignored, untracked and deleted files; no-git tree).
+   For the 0463fd5 entry (`run_started 2026-10-07T06:53:41Z`, logged
+   `bcf65f3126ce329267e48aa1cb3ae332a5ee5a2e88ffe03ea44953aa93fe223f`), recomputed from
+   `git archive 0463fd5 docs/softwarex/assets` with the log truncated before that entry: v1 recipe
+   with `LC_ALL=C` = `16a4def731b7f560b29f4229904b1e5315d20d8f321055822cab523643e4d96a` (the value
+   quoted in §8.21), with `en_US.UTF-8` ordering = `66b49529677ad20a8a463a921d9f715db25ff283664bc42b434d9dc8069362f6`.
+   History is not rewritten: a new `audit_note:` entry (fields `commit`, `fast_mode: n/a`,
+   `hash_recipe: v2`, `assets_hash`, `note`) records the correction and the v2 hash of the current
+   assets, `49e7b74787abc50a56812c6f466e5a88ff1c58352c4b6365af88ceb44f91c214` (197 files);
+   `verify` passes on this branch. Recipe documented in `docs/softwarex/manuscript/README.md`.
+2. **Recorded paths.** 32 asset files recorded `/home/gep/projects/fhops-wt-131b/…` (benchmark
+   `summary.csv/json`, `telemetry.jsonl`, `scenario_path.txt`, `benchmarks/index.json`, dataset
+   `*_summary.json`/`index.json` incl. table paths, costing `telemetry.jsonl`, scaling
+   summaries, tuning `runs.jsonl` and `runs.sqlite`). Rule: paths recorded in the assets are
+   POSIX paths relative to the repository root. FHOPS records paths as given (`bench suite`,
+   tuning, `synth generate`) except `dataset estimate-cost`, which resolves them, so no `src`
+   change: `generate_assets.sh` `cd`s to the repo root and passes `examples/…` /
+   `docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml`; `run_tuner.py`,
+   `run_synthetic_sweep.py`, `run_dataset_inspection.py` pass/record repo-relative paths
+   (`relativize_asset_paths.repo_relative`); `run_costing_demo.py` strips the repo root from the
+   costing telemetry; new `relativize_asset_paths.py` (text, JSON-escaped `\/`, SQLite text
+   columns; `--check` lists remaining absolute paths) runs at the end of `generate_assets.sh` and
+   fails the pipeline if one remains; `audit_asset_consistency.py` gained a "Recorded paths are
+   repo-relative" section. Current assets normalised with
+   `relativize_asset_paths.py docs/softwarex/assets --prefix /home/gep/projects/fhops-wt-131b`:
+   32 files changed and every changed file equals the old one with the prefix removed (SQLite:
+   `iterdump` identical after removing the prefix, `integrity_check` ok); all 33 distinct recorded
+   paths exist in the checkout. Writers verified by running them into the ignored `tmp/w144check/`
+   with this branch's code: dataset inspection and costing reproduce the normalised committed
+   files byte for byte (cost values identical); tuner (`runs.jsonl`/`runs.sqlite`), scaling sweep
+   and a `bench suite` smoke run record only repo-relative paths (`--check` clean).
+   `build_tables.py` output was unchanged by the normalisation.
+3. **Table 5.** `build_tuning_leaderboard_table` reads `tuner_meta.budget` from
+   `tuning/telemetry/runs.jsonl` for the best tuner (Budget column for every row: Bayes
+   `8 trials × 120 iters`, ILS `1 run × 160 iters`, Tabu `1 run × 900 iters`, grid
+   `4 configs × 120 iters`, random `2 runs × 120 iters`); Key settings drop `iters=` and round
+   operator weights to two decimals (`operator weights a=w, …`), and ILS/Tabu rows (absent from
+   `tuner_report.csv`) show their tuner settings (`perturbation_strength=3; stall_limit=10`;
+   `stall_limit=150`); tuner names ILS/Tabu instead of Ils. The `.tex` gets two-line numeric
+   headers, ragged-right paragraph columns (`array`) and a note row: Δ = best tuned objective −
+   SA default benchmark objective, SA default budgets 8000/4000/20000/6000 iterations
+   (`default_sa_iterations` from the benchmark summaries), ties named (Tiny7 and Synthetic-small:
+   5 tuners). Values unchanged. Rendered with tectonic in elsarticle `preprint,review,12pt`:
+   ≈ 25 pt wider than `\linewidth` at `\tabcolsep` 4 pt (the canonical manuscript wraps it in
+   `\resizebox{\linewidth}`); the old table was ≈ 180 pt too wide.
+4. **In-repo manuscript draft.** Marked superseded by UBC-FRESH/fhops-manuscript (README banner,
+   header comment in `fhops-softx.tex` and every `sections/*.tex`, `outline.md`). Decision: stale
+   numbers in `illustrative_example.tex` were replaced by references to the generated
+   tables/figures rather than updated, because they change with the pending regeneration and the
+   canonical manuscript quotes them from the assets. Fixed false statements: "reproduced exactly
+   under FHOPS 1.0.1" and the hardware/library versions (now a pointer to
+   `notes/softwarex_assets_v101_env.txt`), "lower objective is better for Med42" (all maximised),
+   the tuning paragraph (budgets and what Δ compares), the `scenario_path.txt` provenance claim
+   (now repo-relative and true), the log-entry contents, `fhops playback` → `fhops eval-playback`
+   (`software_description.tex`, `introduction.tex`, `illustrative_example.tex`), the fast-mode
+   tuner statement (FAST only shortens benchmark budgets), `--include-sa`,
+   `--telemetry-s3-prefix`, `fhops.cli.playback`, `fhops dataset validate` (→ `fhops validate`),
+   `run_tuning_benchmarks.py` path (also in `includes/cli_pipeline.md`, re-exported to `.tex`/
+   `docs/includes/softwarex/cli_pipeline.rst`; its claim that every command logs to
+   `benchmark_runs.log` corrected). Metadata (`metadata/*.tex`, shared with the canonical
+   manuscript): CI is GitHub Actions `ubuntu-latest`, Python 3.11 only (was linux/macos/windows);
+   OS line states Linux-tested, macOS/Windows untested; SciPy removed; dependency floors from
+   `pyproject.toml` (typer 0.15.4, rich 13.7.0, pydantic 2.6.0, pandas 2.2.0, numpy 1.26.0, Pyomo
+   6.9.2, highspy 1.8.1, pyarrow 15.0.0, PyYAML 6.0.1, Optuna 3.5.0; optional geopandas 0.14.0,
+   gurobipy 11.0.0); Python ≥ 3.11 (was "3.11–3.12"); removed the non-existent
+   `hatch run dev:suite` and "CUDA GPU for playback".
+5. **`.continue/`.** `.continue/prompts/new-prompt.yaml` untracked (`git rm --cached`), `.continue/`
+   in `.gitignore`, `/.continue/**` in `[tool.hatch.build] exclude`; a clean-clone `hatch build`
+   sdist no longer contains it.
+
+Open (not changed here): at a26660f the audit's objective check fails for med42 and
+synthetic_small/scaling rows (13 checks) because #139/#140 changed the evaluation after 0463fd5;
+the asset regeneration on the final code resolves this. With the 0463fd5 `src` the audit passes
+(0 failing) on the normalised assets.
+
 ## Verification cadence (each child)
 
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,

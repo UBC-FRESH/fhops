@@ -1,7 +1,7 @@
 {
   "slug": "large84",
   "label": "FHOPS Large84 (examples/large84)",
-  "scenario_path": "/home/gep/projects/fhops-wt-131b/examples/large84/scenario.yaml",
+  "scenario_path": "examples/large84/scenario.yaml",
   "name": "FHOPS Large84",
   "num_days": 84,
   "start_date": "2025-01-01",
@@ -12,7 +12,7 @@
   },
   "tables": {
     "blocks": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/large84/data/blocks.csv",
+      "path": "examples/large84/data/blocks.csv",
       "row_count": 48,
       "columns": [
         "id",
@@ -30,7 +30,7 @@
       ]
     },
     "machines": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/large84/data/machines.csv",
+      "path": "examples/large84/data/machines.csv",
       "row_count": 18,
       "columns": [
         "id",
@@ -41,7 +41,7 @@
       ]
     },
     "landings": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/large84/data/landings.csv",
+      "path": "examples/large84/data/landings.csv",
       "row_count": 48,
       "columns": [
         "id",
@@ -49,7 +49,7 @@
       ]
     },
     "calendar": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/large84/data/calendar.csv",
+      "path": "examples/large84/data/calendar.csv",
       "row_count": 1512,
       "columns": [
         "machine_id",
@@ -58,7 +58,7 @@
       ]
     },
     "prod_rates": {
-      "path": "/home/gep/projects/fhops-wt-131b/examples/large84/data/prod_rates.csv",
+      "path": "examples/large84/data/prod_rates.csv",
       "row_count": 864,
       "columns": [
         "machine_id",

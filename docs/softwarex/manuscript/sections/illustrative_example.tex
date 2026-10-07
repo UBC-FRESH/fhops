@@ -1,3 +1,6 @@
+% SUPERSEDED DRAFT (#144): the canonical SoftwareX manuscript is UBC-FRESH/fhops-manuscript.
+% This in-repo copy is kept for reference only and is not maintained; do not quote it.
+% Numbers come from docs/softwarex/assets (see docs/softwarex/manuscript/README.md).
 % Section 3: Illustrative example
 \section{Illustrative example}
 \label{sec:illustrative-example}
@@ -6,7 +9,7 @@ To demonstrate how FHOPS’ ingest/solver/evaluation layers fit together we run 
 
 \begin{itemize}
   \item Three published reference scenarios (\texttt{examples/tiny7}, \texttt{examples/small21}, \texttt{examples/med42}) that cover increasing horizons, machine fleets, and mobilisation footprints while sharing the same ground-based archetype.
-  \item A synthetic three-tier scaling set generated via \texttt{fhops synth generate out/synthetic\_\{small,medium,large\}} so readers can inspect runtime vs. problem size without relying on proprietary data.
+  \item A synthetic three-tier scaling set generated via \texttt{fhops synth generate} (tiers small/medium/large, seeds 101/202/303; \texttt{run\_synthetic\_sweep.py}) so readers can inspect runtime vs. problem size without relying on proprietary data.
   \item Companion tuning, playback, costing, and robustness analyses that mirror the automation pipeline described in Section~\ref{sec:software-description}.
 \end{itemize}
 
@@ -17,20 +20,14 @@ We execute \texttt{fhops bench suite} across tiny7, small21, and med42 with SA, 
 \begin{itemize}
   \item \texttt{summary.(csv|json)} – objective, runtime, assignment count, solver metadata.
   \item \texttt{telemetry.jsonl} – per-iteration objective traces and operator weights.
-  \item \texttt{label.txt} / \texttt{scenario\_path.txt} – provenance for reproducibility.
+  \item \texttt{label.txt} / \texttt{scenario\_path.txt} – the scenario label and the scenario file the run used, recorded as a repository-relative path (e.g. \texttt{examples/med42/scenario.yaml}).
 \end{itemize}
 
-The resulting manuscript table (Table~\ref{tab:benchmarks}) summarises solver performance and runtime. Highlights include:
-\begin{itemize}
-  \item \textbf{Tiny7}: SA’s default preset reaches 4306.5 objective units in $32.7\,$s with 23 assignments, while ILS squeezes out a slightly better 4349.3 objective in $46.1\,$s (same 23 assignments). Tabu matches the ILS objective but requires $292\,$s, underscoring how diversification presets trade runtime for marginal improvements.
-  \item \textbf{Small21}: Serves as the middle rung—SA lands at 15627.6 in $77.9\,$s with 90 assignments, ILS climbs to 15638.1 in $86.0\,$s, and Tabu tops the ladder at 15660.0 in $414.8\,$s. The identical assignment counts highlight that the ladder scales horizon length rather than changing the harvest system archetype.
-  \item \textbf{Med42}: ILS delivers the best objective ($-41581.7$) in roughly $182\,$s by completing 213 assignments. SA remains a faster but weaker baseline ($-28271.2$ in $124\,$s), while Tabu’s long-run stress test hits $-46063.7$ in $177\,$s, matching the operational budgets we target for future MIP comparisons.
-  \item \textbf{Synthetic-small}: Serves as the deterministic scaling anchor (objective 39.79 across all heuristics) with runtimes between $0.7$ and $12\,$s, providing readers a fully shareable benchmark to validate solver behaviour.
-\end{itemize}
+The resulting manuscript table (Table~\ref{tab:benchmarks}) summarises objective, runtime, assignments, delivered production and mobilisation cost per scenario and solver. This draft deliberately quotes no values: they change with every asset regeneration, and the generated table is the source of record. Objectives are compared within a scenario only (all FHOPS heuristics maximise; signs and scales differ between scenarios).
 
 \begin{table}[t]
   \centering
-  \caption{Solver performance across the reference scenarios (lower objective is better for Med42).}
+  \caption{Solver performance across the reference scenarios (all objectives are maximised; compare within a scenario).}
   \label{tab:benchmarks}
   \input{../../assets/data/tables/solver_performance.tex}
 \end{table}
@@ -44,11 +41,11 @@ The tuning harness runs random/grid/Bayesian/ILS/Tabu studies on the same scenar
   \item \texttt{telemetry/runs.jsonl} – raw per-trial metrics for reproducibility.
 \end{itemize}
 
-Table~\ref{tab:tuning} reports the salient numbers. On Tiny7 the ILS tuner edges SA’s default by $+42.7$ objective units with $1.7\,$s mean runtime. Small21’s Tabu tuner gains $+10.2$ units in $18.2\,$s, while Med42’s current leader is the random-search configuration (objective $-39725.9$, $+11454.7$ versus SA default) built around a batch size of three and emphasising mobilisation-shake operators. We surface those operator weights because the warm-start MIP plumbing—though fully wired—has yet to yield runtime wins on med42; until rolling-horizon experiments land, the heuristics remain the practical workhorses.
+Table~\ref{tab:tuning} lists the best tuner per scenario with its tuning budget (trials/runs $\times$ iterations, read from the tuning telemetry) and key settings. The tuning budgets are short (120 SA iterations per configuration, 8 Bayesian trials, ILS 160 / Tabu 900 iterations, in every asset mode), whereas the SA default benchmark row uses the full benchmark budget, so $\Delta$ compares a short tuning run against a much longer SA run; the table note states both budgets.
 
 \begin{table}[t]
   \centering
-  \caption{Best-performing tuner per scenario (delta measured against SA’s default preset).}
+  \caption{Best-performing tuner per scenario. $\Delta$ = best tuned objective minus the SA default benchmark objective; the tuner's budget (Budget column) is far smaller than the SA default benchmark budget given in the table note.}
   \label{tab:tuning}
   \input{../../assets/data/tables/tuning_leaderboard.tex}
 \end{table}
@@ -57,9 +54,9 @@ Like the previous table, Table~\ref{tab:tuning} is sourced from \texttt{docs/sof
 Both tables reference runs driven by the same solver plumbing described in Section~\ref{sec:software-description}: warm-start MIP hooks are wired into every med42 solve even though they have yet to deliver material wall-clock savings, and the heuristics rely on incremental “move diff” scoring with parallel multi-start execution (batched neighbour evaluation exists but remains GIL-bound for now). These caveats are noted inline so reviewers know which features are production-ready versus actively evolving.
 
 \subsection{Playback robustness and costing}
-For each scenario we replay the best SA/ILS assignments deterministically and across 50 stochastic samples (seed 123; per-shift downtime probability 0.05 with Normal(4\,h, 1.5\,h) durations clipped to the shift, weather probability 0.1, and per-landing-day landing-shock probability 0.05) using \texttt{fhops eval-playback}. Outputs (shift/day CSVs, markdown summaries, metrics JSON) quantify utilisation, downtime, and mobilisation spend so we can, for example, show Tiny7’s deterministic SA replay averaging 0.37 mean day-level utilisation with \$586 mobilisation cost (\texttt{docs/softwarex/assets/data/playback/tiny7/sa/deterministic/summary.md}) while Med42’s deterministic SA replay sits at 0.56 utilisation with \$10.7k mobilisation spend and the stochastic replay averages 0.55 (standard deviation 0.001 across samples; \texttt{docs/softwarex/assets/data/playback/med42/sa/(deterministic|stochastic)/summary.md}). Figure~\ref{fig:playback} visualises these utilisation deltas so readers can quickly see which solver/scenario pairs are most sensitive to shocks.
+For each scenario we replay the best SA/ILS assignments deterministically and across 50 stochastic samples (seed 123; per-shift downtime probability 0.05 with Normal(4\,h, 1.5\,h) durations clipped to the shift, weather probability 0.1, and per-landing-day landing-shock probability 0.05) using \texttt{fhops eval-playback}. Outputs (shift/day CSVs, markdown summaries, metrics JSON) quantify utilisation, downtime, and mobilisation spend per scenario, solver and mode (\texttt{docs/softwarex/assets/data/playback/<scenario>/<solver>/<mode>/}). Figure~\ref{fig:playback} visualises these utilisation deltas so readers can quickly see which solver/scenario pairs are most sensitive to shocks.
 
-Costing summaries generated via \texttt{fhops dataset estimate-cost} complement the playback metrics by reporting owning/operating/repair rates per machine role. For example, the Med42 feller-buncher carries a \$246.94/SMH rental rate (\$6.65 per m$^3$ at 41.3 m$^3$/PMH) while the grapple skidder runs \$173.70/SMH (\$4.67/m$^3$) according to \texttt{docs/softwarex/assets/data/costing/cost\_summary.(csv|json)}. These numbers let readers tie KPI swings back to financial impacts with the exact CSV rows we ship.
+Costing summaries generated via \texttt{fhops dataset estimate-cost} complement the playback metrics by reporting owning/operating/repair rates per machine role. The per-machine rates and costs per m$^3$ are in \texttt{docs/softwarex/assets/data/costing/cost\_summary.(csv|json)}.
 All of these artefacts are regenerated into \texttt{docs/softwarex/assets/data/playback/} and \texttt{docs/softwarex/assets/data/costing/}, so readers can open the CSV/Markdown files directly. The current release keeps all monetary values in CAD (aligned with the datasets we ship); adding other currencies amounts to supplying alternative machine-rate JSON files rather than changing solver code.
 
 \begin{figure}[t]
@@ -70,7 +67,7 @@ All of these artefacts are regenerated into \texttt{docs/softwarex/assets/data/p
 \end{figure}
 
 \subsection{Scaling sweep}
-Finally, the synthetic sweep utility generates small/medium/large tiers with fixed seeds, benchmarks SA with consistent iteration counts, and plots runtime vs. number of blocks. The accompanying CSV/JSON summarise blocks, machines, assignments, objectives, and runtime for each tier: small (4 blocks, objective $-75{,}040$, runtime $31.7\,$s), medium (8 blocks, objective $-261{,}097$, runtime $83.6\,$s), large (16 blocks, objective $-359{,}225$, runtime $105.4\,$s). Figure~\ref{fig:scaling} reproduces this curve, providing the same ``runtime vs. size'' perspective seen in other reproducible optimisation exemplars such as GROMACS and showing that the synthetic tiers share the ladder’s solver budgets.
+Finally, the synthetic sweep utility generates small/medium/large tiers with fixed seeds, benchmarks SA with consistent iteration counts, and plots runtime vs. number of blocks. The accompanying CSV/JSON (\texttt{scaling\_summary.(csv|json)}) summarise blocks, machines, assignments, objectives, and runtime for each tier. Figure~\ref{fig:scaling} reproduces this curve, providing the same ``runtime vs. size'' perspective seen in other reproducible optimisation exemplars such as GROMACS and showing that the synthetic tiers share the ladder’s solver budgets.
 
 \begin{figure}[t]
   \centering
@@ -84,15 +81,15 @@ Finally, the synthetic sweep utility generates small/medium/large tiers with fix
   \item \textbf{Table~1} – Solver performance summary for tiny7, small21, med42, and synthetic-small (direct export of \texttt{fhops bench suite} outputs).
   \item \textbf{Table~2} – Tuning leaderboard highlighting the best configuration per scenario (Tiny7, Small21, Med42, Synthetic-small).
   \item \textbf{Figure~1} – PRISMA workflow (Section~\ref{sec:software-description}) for pipeline overview.
-  \item \textbf{Figure~2} – Playback robustness plot (deterministic vs. stochastic utilisation deltas) generated from \texttt{fhops playback}.
+  \item \textbf{Figure~2} – Playback robustness plot (deterministic vs. stochastic utilisation deltas) generated from \texttt{fhops eval-playback}.
   \item \textbf{Figure~3} – Runtime vs. blocks curve from the synthetic sweep, illustrating how SA cost scales with tier size.
 \end{itemize}
 
 Each of these artifacts can be regenerated by rerunning the FHOPS CLI sequence described above, satisfying the reproducibility requirements and allowing readers to inspect the underlying CSV/JSON files bundled with the release.
 
 \subsection{Reproducibility log and environment}
-All manuscript assets trace back to scripted runs logged in \texttt{docs/softwarex/assets/benchmark\_runs.log}. Each log entry captures the exact CLI command (typically \texttt{scripts/generate\_assets.sh} with explicit solver budgets), FHOPS commit, start/finish time, wall-clock runtime, host metadata, and SHA-256 digests of the generated artefacts. The dataset summaries referenced throughout this section live under \texttt{docs/softwarex/assets/data/datasets/} (\texttt{index.json}, per-scenario summaries, and the synthetic-tier \texttt{scenario.yaml}/\texttt{metadata.yaml} with fixed RNG seeds). Scenario-level benchmark outputs (\texttt{summary.csv/json}, telemetry traces, and assignment CSVs) remain in \texttt{docs/softwarex/assets/data/benchmarks/<slug>/}, while tuning/playback/costing/scaling folders store their respective configurations and CSV/Markdown reports.
+All manuscript assets trace back to scripted runs logged in \texttt{docs/softwarex/assets/benchmark\_runs.log}. Each log entry written by \texttt{run\_manuscript\_benchmarks.sh} records the run start time (UTC), FHOPS commit, asset mode, wall-clock duration, and an SHA-256 hash over the committed asset files (recipe documented in \texttt{docs/softwarex/manuscript/README.md}; \texttt{make verify-assets-hash} recomputes it); the solver budgets are those in \texttt{generate\_assets.sh}. The dataset summaries referenced throughout this section live under \texttt{docs/softwarex/assets/data/datasets/} (\texttt{index.json}, per-scenario summaries, and the synthetic-tier \texttt{scenario.yaml}/\texttt{metadata.yaml} with fixed RNG seeds). Scenario-level benchmark outputs (\texttt{summary.csv/json}, telemetry traces, and assignment CSVs) remain in \texttt{docs/softwarex/assets/data/benchmarks/<slug>/}, while tuning/playback/costing/scaling folders store their respective configurations and CSV/Markdown reports.
 
-Hardware and software context is likewise captured: the current benchmarks run on a dual-socket Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} Gold~6254 system (72 logical cores, 768\,GB RAM) with Ubuntu~24.04, Python~3.12.3, Pyomo~6.9.4, and HiGHS~1.11.0. The benchmark results were generated with FHOPS~1.0.0, and the deterministic results are reproduced exactly under FHOPS~1.0.1 on this platform; the playback assets (Figure~\ref{fig:playback}) were regenerated with FHOPS~1.0.1. Parallel heuristics/tuners inherit their worker counts from \texttt{scripts/generate\_assets.sh} (e.g., \texttt{--ils-workers 24} on med42) so readers can match runtimes to the published budgets. The auxiliary scripts in \texttt{docs/softwarex/manuscript/scripts/} (\texttt{run\_dataset\_inspection.py}, \texttt{run\_tuning\_benchmarks.py}, \texttt{run\_playback\_analysis.py}, \texttt{run\_costing\_demo.py}, \texttt{run\_synthetic\_sweep.py}) define every preprocessing or analysis step cited in the text, ensuring the repository alone suffices to reproduce the figures and tables without hidden notebooks or ad hoc tooling.
+The host and software environment of the regeneration are recorded in \texttt{notes/softwarex\_assets\_v101\_env.txt}. Parallel heuristics/tuners inherit their worker counts from \texttt{scripts/generate\_assets.sh} (e.g., \texttt{--ils-workers 24} on med42) so readers can match runtimes to the published budgets. The auxiliary scripts in \texttt{docs/softwarex/manuscript/scripts/} (\texttt{run\_dataset\_inspection.py}, \texttt{run\_tuner.py} (wrapping \texttt{scripts/run\_tuning\_benchmarks.py}), \texttt{run\_playback\_analysis.py}, \texttt{run\_costing\_demo.py}, \texttt{run\_synthetic\_sweep.py}) define every preprocessing or analysis step cited in the text, ensuring the repository alone suffices to reproduce the figures and tables without hidden notebooks or ad hoc tooling.
 
 Near-term work (captured in the FHOPS roadmap and aligned with the Jaffray et~al. systematic review) targets rolling-horizon re-solving so the large84 stress case can be included in future revisions, along with real-world BC deployments that will demonstrate the framework on active tenures. Those forthcoming results will plug into the same asset pipeline, ensuring any new datasets or solver traces inherit the reproducibility guarantees shown here.

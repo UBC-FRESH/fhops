@@ -23,7 +23,8 @@ other without re-running any solver:
   come from (day-level production/hours/mobilisation must match) and its ``metrics.json`` agrees
   with the benchmark KPIs (delivered volume, mobilisation, utilisation);
 * ``scaling_summary.csv`` agrees with the per-tier scaling summaries and their assignment CSVs;
-* the tuning comparison/report tables agree with the run telemetry (``runs.jsonl``).
+* the tuning comparison/report tables agree with the run telemetry (``runs.jsonl``);
+* no asset records an absolute (checkout-specific) path (``relativize_asset_paths.py --check``).
 
 Exit status is 1 when any check fails. Use ``--json-out`` to keep the full matrix.
 """
@@ -115,7 +116,11 @@ def _close(a: Any, b: Any, tol: float = TOL) -> bool:
 
 
 def resolve_scenario(repo_root: Path, raw: str) -> Path:
-    """Map a recorded (possibly absolute, other-checkout) scenario path into ``repo_root``."""
+    """Map a recorded scenario path into ``repo_root``.
+
+    Recorded paths are repo-relative since #144; absolute paths from another checkout (assets
+    written by older pipelines) are mapped by their ``examples/`` or ``docs/softwarex/`` part.
+    """
     for anchor in ("examples/", "docs/softwarex/"):
         idx = raw.find(anchor)
         if idx >= 0:
@@ -243,6 +248,7 @@ def audit_tables(repo_root: Path, assets: Path, includes: Path | None) -> list[d
             assets / "data/tuning/tuner_report.csv",
             default_sa,
             tmp_dir,
+            sa_default_iters=build_tables.default_sa_iterations(assets / "data/benchmarks"),
         )
         for name in (
             "solver_performance.csv",
@@ -412,6 +418,24 @@ def audit_tuning(assets: Path) -> list[dict[str, Any]]:
     return out
 
 
+def audit_paths(assets: Path) -> list[dict[str, Any]]:
+    """Recorded paths must be repo-relative (``relativize_asset_paths.py --check``, #144)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import relativize_asset_paths  # noqa: PLC0415
+
+    findings = relativize_asset_paths.check(assets)
+    if not findings:
+        return [{"files": "all asset files", "status": "OK", "mismatches": []}]
+    return [
+        {
+            "files": str(path.relative_to(assets)),
+            "status": "ABSOLUTE",
+            "mismatches": sorted(set(hits))[:3],
+        }
+        for path, hits in findings.items()
+    ]
+
+
 def _print_section(title: str, rows: list[dict[str, Any]], columns: list[str]) -> None:
     print(f"\n## {title}\n")
     print("| " + " | ".join(columns) + " |")
@@ -447,6 +471,7 @@ def main() -> int:
         "playback": audit_playback(evaluator, repo_root, assets),
         "scaling": audit_scaling(evaluator, repo_root, assets),
         "tuning": audit_tuning(assets),
+        "paths": audit_paths(assets),
     }
 
     _print_section(
@@ -485,6 +510,9 @@ def main() -> int:
     )
     _print_section(
         "Tuning tables vs telemetry", result["tuning"], ["tuning", "runs", "status", "mismatches"]
+    )
+    _print_section(
+        "Recorded paths are repo-relative", result["paths"], ["files", "status", "mismatches"]
     )
 
     if args.json_out:

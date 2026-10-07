@@ -22,9 +22,10 @@ pipeline so readers can replay each stage without bespoke tooling:
   \texttt{-\/-include-tabu}) and iteration budgets.
 \item
   \textbf{Run the tuning harness.} Launch
-  \texttt{python\ docs/softwarex/manuscript/scripts/run\_tuning\_benchmarks.py}
-  (wrapped by \texttt{scripts/generate\_assets.sh}) to produce
-  leaderboard/comparison tables in
+  \texttt{python\ docs/softwarex/manuscript/scripts/run\_tuner.py}
+  (which calls \texttt{scripts/run\_tuning\_benchmarks.py}; wrapped by
+  \texttt{docs/softwarex/manuscript/scripts/generate\_assets.sh}) to
+  produce leaderboard/comparison tables in
   \texttt{docs/softwarex/assets/data/tuning/}.
 \item
   \textbf{Replay schedules.} Call \texttt{fhops\ eval-playback} on the
@@ -43,8 +44,11 @@ pipeline so readers can replay each stage without bespoke tooling:
   \texttt{docs/softwarex/assets/data/scaling/}.
 \end{enumerate}
 
-Each command appends its parameters, commit hash, runtime, and SHA-256
-digests to \texttt{docs/softwarex/assets/benchmark\_runs.log} (when run
-through \texttt{make\ manuscript-benchmarks} or
-\texttt{scripts/generate\_assets.sh}), providing a single provenance log
-for all artefacts.
+\texttt{docs/softwarex/manuscript/scripts/generate\_assets.sh} runs all
+six steps with the published budgets and writes repository-relative
+paths into the assets. Run through \texttt{make\ manuscript-benchmarks}
+(\texttt{run\_manuscript\_benchmarks.sh}), it appends the commit, asset
+mode, runtime, and an SHA-256 hash of the committed asset files to
+\texttt{docs/softwarex/assets/benchmark\_runs.log}, a single provenance
+log for all artefacts; \texttt{make\ verify-assets-hash} recomputes the
+hash.

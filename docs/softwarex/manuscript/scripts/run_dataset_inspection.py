@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from relativize_asset_paths import repo_relative
 
 
 @dataclass
@@ -51,19 +52,19 @@ def load_yaml(path: Path) -> dict[str, Any]:
         return yaml.safe_load(fh)
 
 
-def inspect_table(csv_path: Path) -> dict[str, Any]:
+def inspect_table(csv_path: Path, repo_root: Path) -> dict[str, Any]:
     with csv_path.open("r", encoding="utf-8") as fh:
         reader = csv.DictReader(fh)
         rows = list(reader)
         fieldnames = reader.fieldnames or []
     return {
-        "path": str(csv_path),
+        "path": repo_relative(csv_path, repo_root),
         "row_count": len(rows),
         "columns": fieldnames,
     }
 
 
-def summarize_dataset(target: DatasetTarget) -> dict[str, Any]:
+def summarize_dataset(target: DatasetTarget, repo_root: Path) -> dict[str, Any]:
     data = load_yaml(target.scenario_path)
     base_dir = target.scenario_path.parent
     tables = {}
@@ -81,7 +82,7 @@ def summarize_dataset(target: DatasetTarget) -> dict[str, Any]:
         rel = data.get("data", {}).get(csv_key)
         if rel:
             table_path = (base_dir / rel).resolve()
-            tables[key] = inspect_table(table_path)
+            tables[key] = inspect_table(table_path, repo_root)
             if key == "machines":
                 with table_path.open("r", encoding="utf-8") as fh:
                     reader = csv.DictReader(fh)
@@ -98,7 +99,7 @@ def summarize_dataset(target: DatasetTarget) -> dict[str, Any]:
     summary = {
         "slug": target.slug,
         "label": target.label,
-        "scenario_path": str(target.scenario_path),
+        "scenario_path": repo_relative(target.scenario_path, repo_root),
         "name": data.get("name"),
         "num_days": data.get("num_days"),
         "start_date": start_date,
@@ -119,7 +120,7 @@ def run_synth_bundle(repo_root: Path, tier: str, dest_dir: Path) -> Path:
         "fhops.cli.main",
         "synth",
         "generate",
-        str(dest_dir),
+        repo_relative(dest_dir, repo_root),
         "--tier",
         tier,
         "--overwrite",
@@ -176,7 +177,7 @@ def main() -> int:
 
     summaries = []
     for target in targets:
-        summary = summarize_dataset(target)
+        summary = summarize_dataset(target, repo_root)
         summary_path = datasets_dir / f"{target.slug}_summary.json"
         with summary_path.open("w", encoding="utf-8") as fh:
             json.dump(summary, fh, indent=2)
