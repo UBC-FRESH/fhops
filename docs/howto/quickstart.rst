@@ -95,7 +95,7 @@ runs quickly with either SA or HiGHS; swap in med42 when you want a realistic la
    # 3) Evaluate KPI deltas in Python
    python - <<'PY'
    import pandas as pd
-   from fhops.planning import comparison_dataframe, compute_rolling_kpis
+   from fhops.planning import compute_rolling_kpis
    from fhops.scenario.io import load_scenario
 
    scenario = load_scenario("examples/tiny7/scenario.yaml")
@@ -107,9 +107,16 @@ runs quickly with either SA or HiGHS; swap in med42 when you want a realistic la
        rolling_df,  # assignments exported from fhops plan rolling
        baseline_assignments=baseline,
    )
-   plot_df = comparison_dataframe(
-       comparison,
-       metrics=["total_production", "mobilisation_cost"],
+   deltas = comparison.delta_totals or {}
+   plot_df = pd.DataFrame(
+       {
+           "metric": metric,
+           "rolling": comparison.rolling_kpis.get(metric),
+           "baseline": comparison.baseline_kpis.get(metric),
+           "delta": deltas.get(f"{metric}_delta"),
+           "pct_delta": deltas.get(f"{metric}_pct_delta"),
+       }
+       for metric in ["total_production", "mobilisation_cost"]
    )
    print(plot_df[["metric", "delta", "pct_delta"]])
    PY
@@ -124,15 +131,15 @@ schedule CSVs and use the playback CLI to validate both shift-level and day-leve
 
 .. code-block:: bash
 
-   # Example snippet inside your scenario YAML
+   # Example snippet inside your scenario YAML (shift labels D and N)
    # timeline:
-   #   horizon_days: 10
    #   shifts:
-   #     - id: D
-   #       label: Day
-   #     - id: N
-   #       label: Night
-   #   shifts_per_day: 2
+   #     - name: D
+   #       hours: 10
+   #       shifts_per_day: 2
+   #     - name: N
+   #       hours: 10
+   #       shifts_per_day: 2
    # data:
    #   shift_calendar: data/shift_calendar.csv  # columns: machine_id,day,shift_id,available
 

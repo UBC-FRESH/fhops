@@ -19,8 +19,9 @@ Preset Overview
 Operator presets provide named weight profiles for the heuristic registry. Each preset targets a
 specific behaviour:
 
-``default``
-    Balanced swap/move operators with advanced moves disabled (baseline behaviour).
+``balanced``
+    Default mix: swap/move plus block insertion and cross exchange (0.6) with a moderate
+    mobilisation shake (0.2).
 ``explore``
     Enables advanced neighbourhoods (block insertion, cross exchange, mobilisation shake) with
     moderate weights to diversify search.
@@ -33,7 +34,11 @@ List presets with:
 
 .. code-block:: bash
 
-    fhops solve-heur ... --list-operator-presets
+    fhops bench suite --list-operator-presets
+
+``fhops solve-heur``/``solve-ils``/``solve-tabu`` accept the same flag, but still require the
+scenario argument and ``--out`` (nothing is solved or written), e.g.
+``fhops solve-heur examples/tiny7/scenario.yaml --out tmp/unused.csv --list-operator-presets``.
 
 Applying Presets
 ----------------
@@ -45,7 +50,7 @@ merged in order; later presets overwrite weights from earlier ones.
 
     # Balanced baseline
     fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa.csv \
-        --operator-preset default
+        --operator-preset balanced
 
     # Diversification-heavy profile
     fhops solve-heur examples/med42/scenario.yaml --out tmp/med42_explore.csv \
@@ -55,7 +60,8 @@ Explicit Overrides
 ------------------
 
 Presets can be combined with ``--operator`` (to restrict the enabled set) and
-``--operator-weight name=value`` overrides. Overrides apply after presets.
+``--operator-weight name=value`` overrides. Overrides apply after presets. (Long-running: the default
+2000 SA iterations on large84 take tens of minutes; add ``--iters 200`` for a quick check.)
 
 .. code-block:: bash
 
@@ -111,9 +117,10 @@ The registry-backed operators work across all heuristics. Opt-in features share 
 * **Iterated Local Search**: ``fhops solve-ils`` reuses presets/weights. Parallel knobs mirror SA.
 * **Tabu Search**: ``fhops solve-tabu`` accepts the same preset/weight flags while adding
   Tabu-specific parameters (tenure, stall limit).
-* **Profiles**: ``fhops solve-heur --profile explore`` applies a bundled configuration (operator
-  presets, batching, multi-start). List options via ``fhops solve-heur --list-profiles``; explicit CLI
-  flags still override profile defaults.
+* **Profiles**: ``fhops solve-heur ... --profile explore`` applies a bundled configuration (operator
+  presets, batching, multi-start). List options via ``fhops bench suite --list-profiles`` (``fhops
+  solve-heur`` also accepts ``--list-profiles`` but still requires a scenario argument and ``--out``);
+  explicit CLI flags still override profile defaults.
 
 Reference the dedicated how-tos for ILS and Tabu when tuning those solvers.
 * :doc:`parallel_heuristics` details the opt-in parallel execution pathways shared across heuristics.
@@ -148,7 +155,7 @@ overrides with telemetry logs to spot under-performing operators:
     fhops solve-heur ... --telemetry-log tmp/heuristics.jsonl --show-operator-stats
 
 Benchmark summaries include comparison columns (best heuristic solver, objective gaps, runtime
-ratios). Generate visualisations with:
+ratios). Generate visualisations with (long-running: all default scenarios, default budgets):
 
 .. code-block:: bash
 
@@ -163,7 +170,8 @@ labels and records the results in ``preset_label``. The summary also embeds two 
 ``operators_stats``
     Per-operator telemetry (``proposals``, ``accepted``, ``skipped``, ``weight``, ``acceptance_rate``).
 
-Inspect them directly with ``jq`` or load them into Pandas for analysis:
+Inspect them directly with ``jq`` or load them into Pandas for analysis (long-running: all default
+scenarios, including the MILP; add ``--no-include-mip`` or ``--scenario`` for a quick run):
 
 .. code-block:: bash
 

@@ -151,8 +151,9 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
       ``locked_assignments`` (machine/block/day/``shift_id`` checks, duplicates, day+shift mixes,
       blackout clashes), mobilisation, crew assignments, and ``initial_state`` get the same
       :class:`fhops.scenario.contract.Scenario` cross-validation as Python-constructed scenarios.
-      Core tables are validated first, so their errors are reported before optional-section
-      errors.
+      Core tables (and the ``harvest_systems`` section, which block ``harvest_system_id``
+      values are checked against together with the default registry) are validated first, so
+      their errors are reported before optional-section errors.
 
     Examples
     --------
@@ -170,8 +171,10 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     Raises
     ------
     ValueError
-        (Pydantic ``ValidationError``) when any table, the ``locked_assignments`` or
-        ``initial_state`` section, or the scenario cross-validation fails.
+        (Pydantic ``ValidationError``) when any table, the ``harvest_systems``,
+        ``locked_assignments`` or ``initial_state`` section, or the scenario cross-validation
+        fails (including a block ``harvest_system_id`` that is neither in ``harvest_systems`` nor
+        in :func:`fhops.scheduling.systems.default_system_registry`).
     """
     base_path = Path(yaml_path).resolve()
     with base_path.open("r", encoding="utf-8") as handle:
@@ -240,12 +243,18 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         "shift_calendar": shift_calendar,
         "production_rates": rates,
     }
+    # Harvest systems are validated with the core tables: block ``harvest_system_id`` values are
+    # checked against them (plus the default registry).
+    if harvest_systems_payload is not None:
+        base_fields["harvest_systems"] = TypeAdapter(dict[str, HarvestSystem]).validate_python(
+            harvest_systems_payload
+        )
     # Validate the core tables first so their errors surface before optional-section errors.
     base_scenario = Scenario.model_validate(base_fields)
 
     # Optional sections are collected and the Scenario is re-validated with all of them at once, so
     # YAML locks (incl. ``shift_id`` rules and blackout clashes), timeline, mobilisation, crew
-    # maps, harvest systems, and the initial state go through ``Scenario`` cross-validation.
+    # maps, and the initial state go through ``Scenario`` cross-validation.
     # (Attaching them with ``model_copy(update=...)`` would skip validation, as FHOPS <= 1.0.0 did.)
     extras: dict[str, object] = {}
     if road_construction is not None:
@@ -304,11 +313,6 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     if "objective_weights" in meta:
         extras["objective_weights"] = TypeAdapter(ObjectiveWeights).validate_python(
             meta["objective_weights"]
-        )
-
-    if harvest_systems_payload is not None:
-        extras["harvest_systems"] = TypeAdapter(dict[str, HarvestSystem]).validate_python(
-            harvest_systems_payload
         )
 
     if meta.get("initial_state") is not None:

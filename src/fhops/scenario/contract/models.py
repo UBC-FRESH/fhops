@@ -125,7 +125,9 @@ class Block(BaseModel):
     latest_finish:
         Optional latest day (inclusive) when the block must finish.
     harvest_system_id:
-        Optional harvest system definition that restricts machine roles per block.
+        Optional harvest system definition that restricts machine roles per block. Scenario
+        validation requires the id to be a key of ``Scenario.harvest_systems`` or of
+        :func:`fhops.scheduling.systems.default_system_registry`.
     avg_stem_size_m3 / volume_per_ha_m3 / volume_per_ha_m3_sigma:
         Stand descriptors (cubic metres) surfaced in analytics and productivity lookups.
     stem_density_per_ha / stem_density_per_ha_sigma:
@@ -629,6 +631,9 @@ class Scenario(BaseModel):
         Optional :class:`~fhops.scheduling.mobilisation.MobilisationConfig` describing distances and per-machine parameters.
     harvest_systems:
         Optional registry mapping harvest-system IDs to :class:`~fhops.scheduling.systems.HarvestSystem` definitions.
+        Entries are overlaid on :func:`fhops.scheduling.systems.default_system_registry`; every
+        ``Block.harvest_system_id`` must name a system of that combined registry (unknown ids are
+        rejected since 1.0.1; 1.0.0 accepted them).
     geo:
         Optional :class:`GeoMetadata` with GeoJSON lookups.
     crew_assignments:
@@ -718,31 +723,27 @@ class Scenario(BaseModel):
         latest = block.latest_finish if block.latest_finish is not None else self.num_days
         return earliest, latest
 
-    @field_validator("blocks")
-    @classmethod
-    def _validate_system_ids(cls, value: list[Block], info: ValidationInfo) -> list[Block]:
-        systems: dict[str, HarvestSystem] | None = info.data.get("harvest_systems")
-        if systems:
-            known = set(systems.keys())
-            for block in value:
-                if block.harvest_system_id and block.harvest_system_id not in known:
-                    raise ValueError(
-                        f"Block {block.id} references unknown harvest_system_id="
-                        f"{block.harvest_system_id}"
-                    )
-        return value
-
     @model_validator(mode="after")
     def _cross_validate(self) -> Scenario:
         block_ids = {block.id for block in self.blocks}
         landing_ids = {landing.id for landing in self.landings}
         machine_ids = {machine.id for machine in self.machines}
+        known_system_ids: set[str] | None = None
 
         for block in self.blocks:
             if block.landing_id not in landing_ids:
                 raise ValueError(
                     f"Block {block.id} references unknown landing_id={block.landing_id}"
                 )
+            if block.harvest_system_id:
+                if known_system_ids is None:
+                    known_system_ids = set(_harvest_system_registry(self))
+                if block.harvest_system_id not in known_system_ids:
+                    raise ValueError(
+                        f"Block {block.id} references unknown harvest_system_id="
+                        f"{block.harvest_system_id}; define it under harvest_systems or use a "
+                        "system from fhops.scheduling.systems.default_system_registry()"
+                    )
             if block.earliest_start is not None and block.earliest_start > self.num_days:
                 raise ValueError(
                     f"Block {block.id} earliest_start exceeds num_days={self.num_days}"
@@ -917,8 +918,9 @@ def _validate_lock_windows_and_roles(scenario: Scenario) -> None:
         (``latest_finish`` defaults to ``num_days``), or if the block declares
         ``harvest_system_id`` and the locked machine's ``role`` is missing or is not a role of that
         harvest system. Blocks without ``harvest_system_id`` accept any machine (unsequenced
-        blocks), and blocks whose harvest system cannot be found in ``scenario.harvest_systems`` or
-        the default registry skip the role check.
+        blocks). Blocks whose harvest system cannot be found in ``scenario.harvest_systems`` or
+        the default registry are rejected earlier by :class:`Scenario` validation; when this helper
+        is reached without that check (e.g. after ``model_copy``) they skip the role check.
     """
 
     locks = scenario.locked_assignments

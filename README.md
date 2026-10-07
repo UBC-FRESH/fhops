@@ -156,10 +156,11 @@ python scripts/run_tuning_benchmarks.py \
 ## Watching heuristics (live dashboard)
 
 Most solver commands accept a `--watch/--no-watch` flag that renders a Rich dashboard while the run
-is in progress:
+is in progress (long-running example: 200 000 SA iterations on med42 take several minutes):
 
 ```bash
 fhops solve-heur examples/med42/scenario.yaml \
+  --out tmp/med42_sa_watch.csv \
   --iters 200000 \
   --cooling-rate 0.99999 \
   --restart-interval 500 \
@@ -198,6 +199,6 @@ for real multi-core use prefer `--parallel-multistart` or process-level orchestr
   The TTY sees the dashboard, while the log captures the standard CLI output after the run.
 
 - **How can I record a screenshot/GIF?**
-  Run a short command (e.g., `fhops solve-heur examples/tiny7/scenario.yaml --watch --iters 500`)
+  Run a short command (e.g., `fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa.csv --watch --iters 500`)
   and use your preferred terminal recorder (`asciinema`, `ttystudio`, etc.). The sparkline now renders
   below the main table so column widths stay stable while recording.

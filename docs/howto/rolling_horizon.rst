@@ -145,7 +145,8 @@ Run the rolling planner with either the heuristic or MILP backend:
      --out-json tmp/med42_rolling.json \
      --out-assignments tmp/med42_rolling_assignments.csv
 
-Switch to the operational MILP for each subproblem:
+Switch to the operational MILP for each subproblem (long-running: up to ``--mip-time-limit`` seconds
+per window; HiGHS typically uses the full limit on med42):
 
 .. code-block:: bash
 
@@ -159,7 +160,7 @@ Switch to the operational MILP for each subproblem:
      --out-json tmp/med42_mip_rolling.json
 
 Pass solver-specific options directly to the MILP backend using ``--mip-solver-option`` (repeatable)
-or environment variables such as ``GRB_THREADS``:
+or environment variables such as ``GRB_THREADS`` (requires a Gurobi licence; long-running):
 
 .. code-block:: bash
 
@@ -330,13 +331,16 @@ keeps MASc experiments reproducible without wiring ad-hoc notebooks.
 MASc experiments & plots
 ------------------------
 Use :func:`fhops.planning.comparison_dataframe` to gather rolling vs. baseline KPIs into a tidy
-DataFrame for plotting suboptimality across horizon/lock settings. Example skeleton:
+DataFrame for plotting suboptimality across horizon/lock settings. It takes the result of
+:func:`fhops.planning.evaluate_rolling_plan` (not the :class:`~fhops.planning.RollingKPIComparison`
+returned by :func:`~fhops.planning.compute_rolling_kpis`, which has ``delta_totals`` instead).
+Example skeleton:
 
 .. code-block:: python
 
    import matplotlib.pyplot as plt
    import pandas as pd
-   from fhops.planning import comparison_dataframe, compute_rolling_kpis, solve_rolling_plan
+   from fhops.planning import comparison_dataframe, evaluate_rolling_plan, solve_rolling_plan
    from fhops.scenario.io import load_scenario
 
    scenario = load_scenario("examples/med42/scenario.yaml")
@@ -356,9 +360,9 @@ DataFrame for plotting suboptimality across horizon/lock settings. Example skele
            solver=cfg["solver"],
            sa_iters=400,
        )
-       comparison = compute_rolling_kpis(
-           scenario,
+       comparison = evaluate_rolling_plan(
            result,
+           scenario,
            baseline_assignments=baseline,
        )
        df = comparison_dataframe(
@@ -427,8 +431,10 @@ Then stitch the KPI deltas and plots:
 .. code-block:: python
 
    import pandas as pd
-   from fhops.planning import comparison_dataframe, compute_rolling_kpis
+   from fhops.planning import compute_rolling_kpis
    from fhops.scenario.io import load_scenario
+
+   METRICS = ["total_production", "mobilisation_cost"]
 
    scenario = load_scenario("examples/med42/scenario.yaml")
    baseline = pd.read_csv("tmp/med42_baseline.csv")
@@ -439,7 +445,17 @@ Then stitch the KPI deltas and plots:
    frames = []
    for label, df in configs.items():
        comp = compute_rolling_kpis(scenario, df, baseline_assignments=baseline)
-       frame = comparison_dataframe(comp, metrics=["total_production", "mobilisation_cost"])
+       deltas = comp.delta_totals or {}
+       frame = pd.DataFrame(
+           {
+               "metric": metric,
+               "rolling": comp.rolling_kpis.get(metric),
+               "baseline": comp.baseline_kpis.get(metric),
+               "delta": deltas.get(f"{metric}_delta"),
+               "pct_delta": deltas.get(f"{metric}_pct_delta"),
+           }
+           for metric in METRICS
+       )
        frame["config"] = label
        frames.append(frame)
    plot_df = pd.concat(frames, ignore_index=True)

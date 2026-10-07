@@ -1153,6 +1153,84 @@ Hand-off (not changed, pre-existing): `evaluate_schedule` charges 1000 for every
 machine slot whether or not it is assigned (a constant offset in heuristic objectives of scenarios
 with `available = 0` calendar entries; none in the shipped or Jaffray scenarios).
 
+### 8.20 Validate `Block.harvest_system_id`; fix documented commands (#129)
+Found in #127 (§8.19) and the §8.8 note. Branch `issue-129-harvest-system-validation-docs`; scripts and
+logs in `/tmp/opencode/w129/`.
+
+1. **Validation.** `Scenario._validate_system_ids` was a `blocks` field validator reading
+   `info.data["harvest_systems"]`; `harvest_systems` is declared after `blocks`, so it was never
+   available and the check never ran (YAML or Python). Replaced by a check in the model validator
+   `_cross_validate` (per block, right after the landing check): a non-empty `harvest_system_id`
+   must be a key of `_harvest_system_registry(scenario)` = default registry overlaid with
+   `scenario.harvest_systems` — the same lookup the operational MILP (`model/milp/data.py`), lock-role
+   and `initial_state` checks use, so a scenario with custom systems may still reference default ids
+   (the dead field validator would have rejected that). Error:
+   `Block B1 references unknown harvest_system_id=X; define it under harvest_systems or use a system
+   from fhops.scheduling.systems.default_system_registry()`. `load_scenario` now passes the parsed
+   `harvest_systems` section with the core tables (it used to attach it only in the final
+   re-validation, so the base validation would have rejected every custom system); a malformed
+   `harvest_systems` payload therefore errors before core cross-validation errors. `Problem(...)`
+   re-validates its scenario, so even a `model_copy` bypass is rejected once a `Problem` is built.
+2. **Affected inputs.** Load scan of every scenario YAML in the repo (examples, SoftwareX
+   `assets/data/**`, `tests/data`, `tests/fixtures`; 17 scenarios + 2 intentionally invalid + 3
+   non-scenario YAMLs) and the 9 Jaffray scenarios, before/after (`scan.py`, model-dump hashes):
+   identical except `tests/fixtures/regression/regression.yaml`, whose `ground_sequence` system
+   (feller → processor) was never registered — the Python tests (`test_regression_integration.py`,
+   `test_playback.py`) injected it with `model_copy`, the CLI/legacy-MIP tests ran without it. The
+   system is now defined inline in the fixture (preferred: the fixture exists to exercise
+   sequencing; no registry system has these two roles). Effect on the fixture (HiGHS 60 s, SA 2000
+   iters seed 123): before, the operational MILP harvested nothing (objective −8.0, 0 rows) while
+   SA delivered 8 m³ with 2 feller-only rows; after, MILP delivers 8 m³ (4 rows, 0 violations), SA
+   8 m³ (4 rows, objective −992.0 unchanged). Legacy MIP (`_solve_legacy_mip`) on the registered
+   fixture returns the same 7 rows / objective 8.0 as FHOPS 1.0.0 (v1.0.0 checkout) →
+   `tests/test_legacy_mip_driver.py::REGRESSION_ASSIGNMENTS` updated. Two tests relied on the
+   unchecked path: `test_unknown_harvest_system_skips_role_check` (now asserts the rejection and the
+   helper's skip after a `model_copy` bypass) and
+   `test_milp_hook_forwards_real_highs_lock_warning` (now uses a validation-allowed driver warning:
+   a day lock on a day without a grid slot → `ignored: no matching slot in the shift grid`). New
+   `tests/test_contract_harvest_system_ids.py` (11 tests).
+3. **Docs sweep.** `extract.py` pulls every `fhops …` command (code blocks incl. `\`/`\\`
+   continuations, inline literals incl. multi-line) from README and `docs/**` (`docs/releases`
+   except v1.0.1 skipped): 295 occurrences. `parse_all.py` parses each with the Click parser
+   (options, types, path existence, required args; `...` fragments filled with minimal args).
+   `runner.py` + `plan.py` executed 120 commands in a sandbox copy of the repo (87 as documented,
+   `/tmp/` remapped into the sandbox; 33 with substitutions for long-running/Gurobi/placeholder
+   commands: tiny heuristic budgets, HiGHS with
+   10–30 s limits, `case_study/` = copy of tiny7, a tiny7 D/N shift-calendar scenario for
+   `my_shift_scenario.yaml`) and parsed one more without running (`bench suite` on large84 with
+   the MILP); all exit 0 except two dataset commands hit by the typer finding below (both exit 0
+   with typer 0.15.1). The rest are mentions (bare subcommands, flag fragments; all exist).
+   `pyrunner.py` ran all 17 Python snippets (+ README one-liner; the Gurobi fragment compiled only).
+   Fixed: non-existent options (`solve-ils --include-mip False`, `bench suite --include-sa/-mip
+   False`, `geo distances --blocks`, `tr28-subgrade --detail`, `--partial-cut-profile` on
+   `estimate-productivity`), missing required `--out` (4 watch examples, cli.rst tiny ladder),
+   `solve-heur --list-profiles/--list-operator-presets` without scenario (now `bench suite …`,
+   which needs none), preset `default` → `balanced`, literal `\\` continuations (3 blocks), wrong
+   ids (`loader_1`, `cat_d8h`, `sr109_green`, `plans/synthetic.yaml`,
+   `tests/fixtures/regression/road_construction.yaml`), `/tmp` vs `tmp` path mix in cli.rst,
+   invalid shift-timeline YAML snippet in quickstart, flag names `--batch-size/--max-workers` →
+   `--batch-neighbours/--parallel-workers`, SoftwareX CLI-pipeline snippet (`fhops dataset
+   validate` → `fhops validate`, `fhops playback` → `fhops eval-playback`, brace-expanded synth
+   output dirs; `.md` source edited, `.rst`/`.tex` regenerated with `export_docs_assets.py` and
+   pandoc 3.9 after verifying byte-identical regeneration first — **manuscript authors: the
+   in-repo `cli_pipeline.tex` changed**), Python snippets (`evaluation.rst` missing pandas import
+   and `string.Template` never substituting `{{ key }}`; `fhops.planning` `master_days=14` on
+   tiny7; `comparison_dataframe` applied to `compute_rolling_kpis` results in quickstart and
+   rolling_horizon ×2 — it needs `evaluate_rolling_plan` output). Long-running examples marked
+   (default `bench suite` runs, med42 rolling MILP, large84 SA, Gurobi rolling).
+4. **Finding (not fixed, outside this issue):** with typer 0.27.2 (installed by `typer>=0.12.4`
+   today; typer vendors click as `typer._click`), `cli/dataset.py`'s
+   `from click.core import ParameterSource` no longer matches the source objects Typer returns, so
+   `_parameter_supplied` reports every option as supplied: `estimate-skyline-productivity` always
+   fails (`--fncy12-variant is only valid when --model fncy12-tmy45`), helicopter presets do not
+   seed distances, etc. `FHOPS_RUN_FULL_CLI_TESTS=1 pytest tests/test_cli_dataset_*.py`: 53 failed /
+   92 passed with typer 0.27.2, 145 passed with typer 0.15.1 + click 8.1.8. Same import in v1.0.0.
+   Dataset CLI tests are excluded from CI (#103), which hid it. Needs a fix (compare by
+   `ParameterSource` name / import from Typer) or an upper bound before 1.0.1 ships.
+   Also noted: `fhops bench suite` on large84 with `--time-limit 5` was still building/solving the
+   operational MILP after 13 min CPU (~10 GB RSS) and was killed; tiny7+med42 with `--time-limit 10`
+   took 444 s (host under load from other runs). `fhops bench suite` defaults are therefore hours.
+
 ## Verification cadence (each child)
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
 `sphinx-build -b html docs _build/html -W`, and `python scripts/check_formulation_assets.py`

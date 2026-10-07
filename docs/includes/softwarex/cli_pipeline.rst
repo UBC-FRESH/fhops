@@ -4,11 +4,11 @@ All experiments cited in the manuscript follow the same FHOPS CLI
 pipeline so readers can replay each stage without bespoke tooling:
 
 1. **Validate or snapshot scenarios.** Run
-   ``fhops dataset validate <scenario.yaml>`` for each bundle (e.g.,
+   ``fhops validate <scenario.yaml>`` for each bundle (e.g.,
    ``examples/tiny7`` and ``examples/med42``) and, when needed, snapshot
    synthetic tiers via
-   ``fhops synth generate out/synthetic_{small,medium,large}`` with
-   fixed RNG seeds.
+   ``fhops synth generate out/synthetic_<tier> --tier <tier> --seed <seed>``
+   (one call per tier, fixed RNG seeds).
 2. **Benchmark solvers.** Invoke ``fhops bench suite`` with explicit
    ``--scenario`` and ``--out-dir`` arguments (for the manuscript:
    ``docs/softwarex/assets/data/benchmarks/<slug>/``) plus the desired
@@ -19,7 +19,7 @@ pipeline so readers can replay each stage without bespoke tooling:
    (wrapped by ``scripts/generate_assets.sh``) to produce
    leaderboard/comparison tables in
    ``docs/softwarex/assets/data/tuning/``.
-4. **Replay schedules.** Call ``fhops playback`` on the best SA/ILS
+4. **Replay schedules.** Call ``fhops eval-playback`` on the best SA/ILS
    assignments (deterministic and stochastic modes) so utilisation and
    downtime metrics land under
    ``docs/softwarex/assets/data/playback/<scenario>/<solver>/<mode>/``.

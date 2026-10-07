@@ -146,7 +146,7 @@ Iterated Local Search and Tabu Search reuse the same registry metadata:
 
 .. code-block:: bash
 
-   fhops solve-ils examples/med42/scenario.yaml --out tmp/med42_ils.csv --profile explore --include-mip False
+   fhops solve-ils examples/med42/scenario.yaml --out tmp/med42_ils.csv --profile explore
    fhops solve-tabu examples/med42/scenario.yaml --out tmp/med42_tabu.csv --profile explore --tabu-tenure 30
 
 Inspection & KPIs
@@ -167,7 +167,8 @@ Key metrics:
 Benchmarking with Sequencing
 ----------------------------
 
-The benchmarking harness respects system sequences automatically. Generate comparison reports with:
+The benchmarking harness respects system sequences automatically. Generate comparison reports with
+(long-running: all default scenarios, including the MILP with ``--time-limit 1800``):
 
 .. code-block:: bash
 

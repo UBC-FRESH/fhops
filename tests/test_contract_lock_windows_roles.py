@@ -19,7 +19,11 @@ from fhops.scenario.contract import (
     Scenario,
     validate_initial_state,
 )
-from fhops.scenario.contract.models import ROLE_REMAINING_TOLERANCE
+from fhops.scenario.contract.models import (
+    ROLE_REMAINING_TOLERANCE,
+    ScheduleLock,
+    _validate_lock_windows_and_roles,
+)
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import HarvestSystem, SystemJob
 
@@ -112,11 +116,27 @@ def test_invalid_locks_rejected(lock: dict, message: str) -> None:
     assert message in str(excinfo.value)
 
 
-def test_unknown_harvest_system_skips_role_check() -> None:
+def test_unknown_harvest_system_rejected_before_role_check() -> None:
+    # Unregistered systems are rejected by scenario validation since #129; the lock role helper
+    # still skips them when reached without that check (``model_copy`` bypasses validators).
     payload = _scenario(locked_assignments=[_lock("P1", "B1", 3)])
     payload["blocks"][0]["harvest_system_id"] = "not_registered"
-    scenario = Scenario.model_validate(payload)
-    assert scenario.locked_assignments is not None
+    with pytest.raises(ValidationError, match="unknown harvest_system_id=not_registered"):
+        Scenario.model_validate(payload)
+    scenario = Scenario.model_validate(_scenario())
+    blocks = [
+        block.model_copy(update={"harvest_system_id": "not_registered"})
+        if block.id == "B1"
+        else block
+        for block in scenario.blocks
+    ]
+    bypassed = scenario.model_copy(
+        update={
+            "blocks": blocks,
+            "locked_assignments": [ScheduleLock.model_validate(_lock("P1", "B1", 3))],
+        }
+    )
+    _validate_lock_windows_and_roles(bypassed)
 
 
 def test_default_registry_system_roles_are_used() -> None:

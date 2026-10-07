@@ -95,18 +95,19 @@ Use the bundles anywhere a normal scenario is accepted. Typical entry points:
 
   .. code-block:: bash
 
-     fhops eval-playback examples/synthetic/medium/scenario.yaml \\
-                         --assignments /tmp/medium_sa.csv \\
-                         --shift-out /tmp/medium_shift.csv \\
-                         --day-out /tmp/medium_day.csv \\
+     fhops eval-playback examples/synthetic/medium/scenario.yaml \
+                         --assignments /tmp/medium_sa.csv \
+                         --shift-out /tmp/medium_shift.csv \
+                         --day-out /tmp/medium_day.csv \
                          --summary-md /tmp/medium_playback.md
 
-* Benchmark solver presets across the reference datasets:
+* Benchmark solver presets across the reference datasets (long-running: includes a 1800 s MILP
+  solve; add ``--no-include-mip`` for heuristics only):
 
   .. code-block:: bash
 
-     fhops bench suite --scenario examples/synthetic/large/scenario.yaml \\
-                       --operator-preset explore \\
+     fhops bench suite --scenario examples/synthetic/large/scenario.yaml \
+                       --operator-preset explore \
                        --out-dir tmp/bench_synth_large
 
 * Generate a fresh bundle (preview or write to disk):
