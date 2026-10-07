@@ -12,8 +12,10 @@ permissions:
   pages: write
   id-token: write
 
+# One CI run per branch/PR: a newer push cancels the older run of the SAME ref only. (A single
+# global "pages" group used to make any push cancel every in-progress run on other branches.)
 concurrency:
-  group: "pages"
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -183,6 +185,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+    # Pages deployments are serialised separately and never cancelled mid-deploy.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     steps:
       - name: Deploy history to GitHub Pages
         id: deployment
