@@ -35,8 +35,9 @@ from tests.cli import CliRunner, cli_text
 
 TINY7 = "examples/tiny7/scenario.yaml"
 REGRESSION = "tests/fixtures/regression/regression.yaml"
-# Operational MILP optimum for tiny7 (HiGHS; unchanged since v1.0.0, see §8.7 / §8.12).
-TINY7_OPERATIONAL_OBJECTIVE = 4388.082752
+# Operational MILP optimum for tiny7 (HiGHS). 4388.082752 up to #125, when the capacity-1 landings
+# became a hard per-shift-slot limit (landing_surplus weight 0), see §8.18.
+TINY7_OPERATIONAL_OBJECTIVE = 279.796036
 
 
 @pytest.fixture(scope="module")
