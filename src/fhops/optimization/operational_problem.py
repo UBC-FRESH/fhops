@@ -85,6 +85,17 @@ class OperationalProblem:
         walk_threshold_m, move_cost_flat)`` maximised over the machines' mobilisation
         parameters), used by :meth:`hard_violation_penalty`. ``0.0`` without mobilisation
         parameters.
+    locked_production, locked_shift_production:
+        ``ScheduleLock.production`` values (m³ per slot) of day-level and shift-level locks that
+        carry one; query them with :meth:`lock_production_for`. Empty by default.
+
+    Notes
+    -----
+    ``allowed_roles`` maps each explicit-system block to the roles of its harvest system that the
+    fleet provides. When the fleet provides none of them the set is **empty** and no machine may
+    work the block (since 1.0.1, #158; it used to be ``None``, which let any machine work the
+    block and produce volume that was never delivered). ``None`` means unrestricted (blocks
+    without a harvest system).
     """
 
     problem: Problem
@@ -112,6 +123,8 @@ class OperationalProblem:
     multi_shift_days: frozenset[int] = frozenset()
     max_production_rate: float = 0.0
     max_move_cost: float = 0.0
+    locked_production: Mapping[tuple[str, int], float] = field(default_factory=dict)
+    locked_shift_production: Mapping[tuple[str, int, str], float] = field(default_factory=dict)
 
     def hard_violation_penalty(self) -> float:
         """Return the heuristic penalty charged per hard violation (objective units).
@@ -160,6 +173,22 @@ class OperationalProblem:
             if block_id is not None:
                 return block_id
         return self.locked_assignments.get((machine_id, day))
+
+    def lock_production_for(self, machine_id: str, day: int, shift_id: str) -> float | None:
+        """Return the ``ScheduleLock.production`` cap (m³) of a locked slot, if one is given.
+
+        ``None`` when the slot is not locked or its lock carries no planned production. A
+        day-level lock's value applies to each of its slots. The heuristics and playback use it
+        as an upper bound on the locked slot's production (``0`` keeps the locked slot idle).
+        """
+
+        if self.locked_shift_production:
+            value = self.locked_shift_production.get((machine_id, day, shift_id))
+            if value is not None:
+                return value
+            if (machine_id, day, shift_id) in self.locked_shift_assignments:
+                return None
+        return self.locked_production.get((machine_id, day))
 
     def build_sanitizer(self, schedule_cls: type[Schedule]) -> Sanitizer:
         """Return a schedule sanitizer enforcing locks, availability, and landing caps.
@@ -404,7 +433,7 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         if key[0] in explicit_blocks and key in headstarts
     }
     blackout = frozenset(bundle.blackout_slots)
-    locked, locked_shift = _build_locked_assignments(pb)
+    locked, locked_shift, locked_production, locked_shift_production = _build_lock_maps(pb)
     mobilisation_params = _build_mobilisation_params(pb)
     distance_lookup = bundle.mobilisation_distances or build_distance_lookup(
         pb.scenario.mobilisation
@@ -456,7 +485,54 @@ def build_operational_problem(pb: Problem) -> OperationalProblem:
         multi_shift_days=multi_shift_days,
         max_production_rate=max_production_rate,
         max_move_cost=max(max_move_cost, 0.0),
+        locked_production=locked_production,
+        locked_shift_production=locked_shift_production,
     )
+
+
+def blocks_without_fleet_roles(ctx: OperationalProblem) -> dict[str, str]:
+    """Return blocks whose harvest system the fleet cannot work or cannot deliver.
+
+    Parameters
+    ----------
+    ctx:
+        Operational context of the scenario.
+
+    Returns
+    -------
+    dict[str, str]
+        ``block_id -> reason`` for blocks with an explicit harvest system where (a) no machine
+        has any role of the system (``allowed_roles`` is empty: no machine may work the block,
+        #158), or (b) no machine has a terminal role of the system (upstream roles may work but
+        nothing is delivered). ``fhops validate`` prints these as warnings.
+    """
+
+    bundle = ctx.bundle
+    fleet_roles = {role for role in bundle.machine_roles.values() if role}
+    issues: dict[str, str] = {}
+    for block_id in bundle.blocks:
+        if block_id not in ctx.blocks_with_explicit_system:
+            continue
+        system_id = bundle.block_system.get(block_id)
+        system = bundle.systems.get(system_id) if system_id else None
+        if system is None:
+            continue
+        system_roles = sorted({cfg.role for cfg in system.roles if cfg.role})
+        if not system_roles:
+            continue
+        if ctx.allowed_roles.get(block_id) == frozenset():
+            issues[block_id] = (
+                f"harvest system {system_id!r} needs roles {', '.join(system_roles)}; no machine "
+                "has any of them, so no machine may work the block"
+            )
+            continue
+        terminal = sorted(ctx.terminal_roles.get(system.system_id, frozenset()))
+        if terminal and not fleet_roles.intersection(terminal):
+            issues[block_id] = (
+                f"harvest system {system_id!r}: no machine has its terminal role(s) "
+                f"{', '.join(terminal)}, so the block's volume cannot be delivered"
+            )
+    return issues
 
 
 def override_objective_weights(
@@ -505,9 +581,14 @@ def _derive_role_metadata(
         if block_id not in explicit_blocks:
             allowed_roles[block_id] = None
             continue
+        if not role_names:
+            allowed_roles[block_id] = None
+            continue
         if available_roles:
             role_names = [role for role in role_names if role in available_roles]
-        allowed_roles[block_id] = frozenset(role_names) if role_names else None
+        # A system none of whose roles is in the fleet admits no machine (empty set, #158; it
+        # was ``None``, i.e. any role, before, so machines produced volume nobody delivered).
+        allowed_roles[block_id] = frozenset(role_names)
         if not available_roles:
             continue
         for role_cfg in system.roles:
@@ -570,21 +651,35 @@ def _build_loader_metadata(
     return loader_batch, frozenset(loader_roles)
 
 
-def _build_locked_assignments(
+def _build_lock_maps(
     pb: Problem,
-) -> tuple[dict[tuple[str, int], str], dict[tuple[str, int, str], str]]:
+) -> tuple[
+    dict[tuple[str, int], str],
+    dict[tuple[str, int, str], str],
+    dict[tuple[str, int], float],
+    dict[tuple[str, int, str], float],
+]:
+    """Return day/shift lock maps and the ``ScheduleLock.production`` values they carry."""
+
     locks = getattr(pb.scenario, "locked_assignments", None)
     if not locks:
-        return {}, {}
+        return {}, {}, {}, {}
     day_locks: dict[tuple[str, int], str] = {}
     shift_locks: dict[tuple[str, int, str], str] = {}
+    day_production: dict[tuple[str, int], float] = {}
+    shift_production: dict[tuple[str, int, str], float] = {}
     for lock in locks:
         shift_id = getattr(lock, "shift_id", None)
+        production = getattr(lock, "production", None)
         if shift_id is None:
             day_locks[(lock.machine_id, lock.day)] = lock.block_id
+            if production is not None:
+                day_production[(lock.machine_id, lock.day)] = float(production)
         else:
             shift_locks[(lock.machine_id, lock.day, shift_id)] = lock.block_id
-    return day_locks, shift_locks
+            if production is not None:
+                shift_production[(lock.machine_id, lock.day, shift_id)] = float(production)
+    return day_locks, shift_locks, day_production, shift_production
 
 
 def _build_mobilisation_params(pb: Problem) -> dict[str, MachineMobilisation]:

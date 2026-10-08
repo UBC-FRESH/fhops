@@ -30,11 +30,15 @@ class ScheduleLock(BaseModel):
         the label must belong to the scenario's shift grid (``shift_calendar`` labels, timeline
         shift names, or ``S1`` for day-indexed scenarios).
     production:
-        Optional planned production (m³, ``>= 0``) of the locked slot. Solvers ignore it; it is
-        used when a lock table is *replayed* (rolling-horizon carry-forward and
+        Optional planned production (m³, ``>= 0``) of the locked slot. It is used when a lock
+        table is *replayed* (rolling-horizon carry-forward and
         :func:`fhops.planning.compute_rolling_kpis`), so a stitched operational-MILP plan is
         evaluated with the production the MILP planned rather than the full production rate.
-        ``None`` (default) replays with ``min(rate, remaining)``.
+        ``None`` (default) replays with ``min(rate, remaining)``. The heuristics (SA, ILS, Tabu)
+        and playback of plans without a ``production`` column use it as an upper bound on the
+        locked slot's production (``0`` = idle; since #158); a locked slot never produces more
+        than its staged input allows and idles without a violation when it has none. The
+        operational MILP ignores it.
 
     Notes
     -----

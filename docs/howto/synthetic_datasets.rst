@@ -23,29 +23,53 @@ shift calendars).
      - Machines
      - Landings
      - Days
-     - Shifts/day
+     - Shift slots/day
      - Seed / Notes
    * - ``small``
      - 4
      - 2
      - 1
-     - 6
+     - 112
      - 1
-     - Seed ``101`` — single-shift schedule without blackouts.
+     - Seed ``101`` — no blackouts; fleet ``cable_micro_hi_skid`` (hand faller → Hi-Skid yarder).
    * - ``medium``
      - 8
      - 4
      - 2
-     - 12
+     - 112
      - 1
-     - Seed ``202`` — includes short blackout windows for downtime realism.
+     - Seed ``202`` — short blackout windows; fleet ``steep_tethered`` (tethered harvester →
+       tethered shovel/skidder → processor → loader).
    * - ``large``
      - 16
      - 6
      - 3
-     - 18
-     - 2
-     - Seed ``303`` — two-shift calendar with extended blackout periods.
+     - 112
+     - 1
+     - Seed ``303`` — extended blackout periods; fleet of nine cable systems sharing six roles
+       (faller, grapple yarder, processor, loader, hand faller, Hi-Skid yarder).
+
+The bundles are written by ``fhops synth generate --tier <tier> --overwrite`` (tier presets in
+``fhops.cli.synthetic.TIER_PRESETS``: 112 days, one ``S1`` slot per day). The same commands, with
+the seeds above, produce the SoftwareX synthetic tiers under ``docs/softwarex/assets/data/``.
+
+Fleet roles and harvest systems
+-------------------------------
+
+When harvest systems are supplied (``fhops synth`` passes the default registry),
+:func:`~fhops.scenario.synthetic.generate_random_dataset` builds the fleet from them (since 1.0.1,
+#158): the systems of the tier's ``system_mix`` are visited in a weighted random order and kept
+while the distinct roles of the kept systems fit in the sampled machine count; machines take those
+roles round-robin (upstream roles first) and each block draws its harvest system from the kept
+systems by mix weight. Every block can therefore be worked and delivered (block windows can still
+be too short for a long role chain). ``metadata.yaml`` records the choice as ``fleet_systems`` and
+``fleet_roles``. Before #158 the machines kept the ``role_pool`` roles (``harvester`` /
+``forwarder``), which no system of the tier mixes uses, so the synthetic tiers delivered no volume.
+Without ``systems`` the generator keeps ``role_pool`` roles and blocks have no harvest system.
+:func:`~fhops.scenario.synthetic.generate_with_systems` (the deterministic spec helper) still
+assigns every registry system round-robin and gives machines roles from all registry systems, so
+most of its blocks have no machine of their system's roles (``fhops validate`` warns about them);
+use ``generate_random_dataset`` for deliverable system-aware datasets.
 
 The example README (``examples/synthetic/README.md``) gives a short overview and links back to the
 metadata file if you need exact counts or blackout windows for reproducibility.

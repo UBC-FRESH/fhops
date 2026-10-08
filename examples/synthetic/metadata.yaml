@@ -134,6 +134,23 @@ large:
     cable_standing_tr125_strip: 0.01652892561983471
     cable_partial_tr127_block1: 0.008264462809917356
     cable_partial_tr127_block5: 0.008264462809917356
+  fleet_systems:
+  - cable_running_adv5n28_shelterwood
+  - cable_micro_hi_skid
+  - cable_running_tr122_clearcut
+  - cable_running_tr122_extended
+  - cable_highlead_tn147
+  - cable_running
+  - cable_running_tr122_shelterwood
+  - cable_running_adv5n28_clearcut
+  - cable_running_tr75_handfelled
+  fleet_roles:
+  - hand_or_mech_faller
+  - grapple_yarder
+  - processor
+  - loader
+  - hand_faller
+  - skyline_hi_skid
   blackout_biases:
   - start_day: 5
     end_day: 7
@@ -150,7 +167,6 @@ large:
     base_seed: 123
     downtime:
       enabled: true
-      seed_offset: 0
       probability: 0.2
       mean_duration_hours: 5.0
       std_duration_hours: 2.0
@@ -158,19 +174,16 @@ large:
       target_machine_roles: null
     weather:
       enabled: true
-      seed_offset: 0
       day_probability: 0.35
       severity_levels:
         light: 0.1
         moderate: 0.4
         severe: 0.6
-      correlated_days: true
       impact_window_days: 3
       affected_shifts: null
     landing:
       enabled: true
-      seed_offset: 0
-      probability: 0.25
+      probability: 0.035
       capacity_multiplier_range:
       - 0.35
       - 0.7
@@ -293,6 +306,13 @@ medium:
     cable_standing_tr125_strip: 0.015873015873015872
     cable_partial_tr127_block1: 0.015873015873015872
     cable_partial_tr127_block5: 0.015873015873015872
+  fleet_systems:
+  - steep_tethered
+  fleet_roles:
+  - tethered_harvester
+  - tethered_shovel_or_skidder
+  - processor
+  - loader
   blackout_biases:
   - start_day: 8
     end_day: 10
@@ -305,7 +325,6 @@ medium:
     base_seed: 123
     downtime:
       enabled: true
-      seed_offset: 0
       probability: 0.12
       mean_duration_hours: 3.0
       std_duration_hours: 1.0
@@ -313,19 +332,16 @@ medium:
       target_machine_roles: null
     weather:
       enabled: true
-      seed_offset: 0
       day_probability: 0.25
       severity_levels:
         light: 0.1
         moderate: 0.6
         severe: 0.4
-      correlated_days: true
       impact_window_days: 2
       affected_shifts: null
     landing:
       enabled: true
-      seed_offset: 0
-      probability: 0.18
+      probability: 0.025
       capacity_multiplier_range:
       - 0.45
       - 0.75
@@ -381,13 +397,17 @@ small:
     cable_micro_hi_skid: 0.08695652173913045
     cable_running_sr54: 0.04347826086956522
     cable_running_tr75_bunched: 0.04347826086956522
+  fleet_systems:
+  - cable_micro_hi_skid
+  fleet_roles:
+  - hand_faller
+  - skyline_hi_skid
   blackout_biases: []
   sampling_config:
     samples: 6
     base_seed: 123
     downtime:
       enabled: false
-      seed_offset: 0
       probability: 0.0
       mean_duration_hours: 4.0
       std_duration_hours: 1.5
@@ -395,18 +415,15 @@ small:
       target_machine_roles: null
     weather:
       enabled: false
-      seed_offset: 0
       day_probability: 0.0
       severity_levels:
         light: 0.1
         moderate: 0.3
         severe: 0.6
-      correlated_days: true
       impact_window_days: 1
       affected_shifts: null
     landing:
       enabled: false
-      seed_offset: 0
       probability: 0.0
       capacity_multiplier_range:
       - 0.4

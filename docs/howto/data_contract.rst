@@ -95,6 +95,17 @@ The Pydantic models enforce consistency:
 
 See :ref:`contract-compatibility` for the inputs FHOPS 1.0.1 rejects that 1.0.0 accepted.
 
+.. note::
+
+   **Harvest systems the fleet cannot staff.** A block with ``harvest_system_id`` can only be
+   worked by machines whose role is one of that system's roles, and its volume is delivered only by
+   a machine with a terminal role (e.g. the loader). If no machine has any of the system's roles,
+   no solver assigns a machine to the block (since 1.0.1, #158; earlier 1.0.1 pre-releases let
+   any machine work it in the heuristics); if no machine has a terminal role, upstream roles may
+   work but nothing is delivered. Both are valid scenarios, not errors: ``fhops validate`` prints a
+   ``Warning: block …`` line for each such block and exits 0, and the block's volume counts as
+   leftover. Add machines with the missing roles or assign another harvest system.
+
 Optional Extras
 ---------------
 

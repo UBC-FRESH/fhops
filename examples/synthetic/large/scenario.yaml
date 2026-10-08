@@ -110,6 +110,9 @@ harvest_systems:
         loader_delay_multiplier: 0.95
     environment: ground-based
     notes: "Feller-buncher \u2192 grapple skidder \u2192 processor \u2192 loader/trucks."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   ground_fb_loader_liveheel:
     system_id: ground_fb_loader_liveheel
     jobs:
@@ -146,6 +149,9 @@ harvest_systems:
     environment: ground-based
     notes: "Feller-buncher \u2192 grapple skidder \u2192 processor \u2192 Barko live-heel\
       \ loader (TN-46)."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   ground_hand_shovel:
     system_id: ground_hand_shovel
     jobs:
@@ -185,6 +191,9 @@ harvest_systems:
         loader_utilisation: 0.93
     environment: ground-based
     notes: "Hand fall \u2192 shovel logger \u2192 processor \u2192 loader/trucks."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   ground_fb_shovel:
     system_id: ground_fb_shovel
     jobs:
@@ -219,6 +228,9 @@ harvest_systems:
       productivity_overrides: null
     environment: ground-based
     notes: "Feller-buncher \u2192 shovel logger \u2192 processor \u2192 loader/trucks."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   ground_salvage_grapple:
     system_id: ground_salvage_grapple
     jobs:
@@ -259,6 +271,9 @@ harvest_systems:
     environment: ground-based salvage
     notes: ADV1N5 salvage chain (buck/burn sorting, double-ring debarkers, charcoal
       dust controls) with grapple skidding feeding roadside processing.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   thinning_adv1n12_forwarder:
     system_id: thinning_adv1n12_forwarder
     jobs:
@@ -283,6 +298,9 @@ harvest_systems:
     environment: commercial thinning
     notes: Valmet 901C + 646 shortwood thinning (ADV1N12) with extended forwarding
       distances.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   thinning_adv1n12_fulltree:
     system_id: thinning_adv1n12_fulltree
     jobs:
@@ -311,6 +329,9 @@ harvest_systems:
     environment: commercial thinning
     notes: Semi-mechanized lop-and-scatter thinning (ADV1N12) with Timberjack 240
       cable skidder.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   ctl:
     system_id: ctl
     jobs:
@@ -337,6 +358,9 @@ harvest_systems:
       productivity_overrides: null
     environment: cut-to-length
     notes: Harvester processes at stump, forwarder hauls shortwood direct to trucks.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   steep_tethered:
     system_id: steep_tethered
     jobs:
@@ -367,6 +391,9 @@ harvest_systems:
     environment: steep-slope mechanised
     notes: "Winch-assist harvester/feller \u2192 tethered shovel/skidder \u2192 processor\
       \ \u2192 loader."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_standing:
     system_id: cable_standing
     jobs:
@@ -401,6 +428,9 @@ harvest_systems:
     environment: cable-standing skyline
     notes: "Hand/mech fall \u2192 skyline yarder with chokers \u2192 landing processor/hand\
       \ buck \u2192 loader."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_standing_tr125_single:
     system_id: cable_standing_tr125_single
     jobs:
@@ -431,6 +461,9 @@ harvest_systems:
       productivity_overrides: null
     environment: cable-standing skyline
     notes: TR125 single-span standing skyline (Skylead C40) for clearcut corridors.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_standing_tr125_strip:
     system_id: cable_standing_tr125_strip
     jobs:
@@ -463,6 +496,9 @@ harvest_systems:
     environment: cable-standing skyline
     notes: TR125 multi-span standing skyline with intermediate supports for strip
       cuts (TR119).
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running:
     system_id: cable_running
     jobs:
@@ -503,6 +539,9 @@ harvest_systems:
     environment: cable-running skyline
     notes: TN-157 combined (Cypress 7280B + UH14 backspar) defaults for running skyline
       corridors.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_tn157_combined:
     system_id: cable_running_tn157_combined
     jobs:
@@ -543,6 +582,9 @@ harvest_systems:
     environment: cable-running skyline
     notes: Explicit TN-157 combined preset (alias of cable_running) so datasets can
       reference the case directly.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_highlead_tn147:
     system_id: cable_highlead_tn147
     jobs:
@@ -578,6 +620,9 @@ harvest_systems:
     environment: cable-highlead skyline
     notes: "TN-147 Madill 009 highlead cases (hand fall \u2192 highlead grapple \u2192\
       \ landing processor \u2192 loader)."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_tr122_extended:
     system_id: cable_running_tr122_extended
     jobs:
@@ -609,6 +654,9 @@ harvest_systems:
       productivity_overrides: null
     environment: cable-running skyline
     notes: TR-122 Roberts Creek extended-rotation treatment (SLH 78 running skyline).
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_tr122_shelterwood:
     system_id: cable_running_tr122_shelterwood
     jobs:
@@ -641,6 +689,9 @@ harvest_systems:
       productivity_overrides: null
     environment: cable-running skyline
     notes: TR-122 Roberts Creek uniform shelterwood running skyline defaults.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_tr122_clearcut:
     system_id: cable_running_tr122_clearcut
     jobs:
@@ -672,6 +723,9 @@ harvest_systems:
       productivity_overrides: null
     environment: cable-running skyline
     notes: "TR-122 Roberts Creek clearcut (short 106 m spans, 1.45 m\xB3 cycle volume)."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_partial_tr127_block1:
     system_id: cable_partial_tr127_block1
     jobs:
@@ -704,6 +758,9 @@ harvest_systems:
     environment: cable-standing skyline
     notes: TR127 Block 1 standing skyline (two lateral distances) representing 65%
       retention trials.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_partial_tr127_block5:
     system_id: cable_partial_tr127_block5
     jobs:
@@ -737,6 +794,9 @@ harvest_systems:
     environment: cable-standing skyline
     notes: TR127 Block 5 (partial cut) with 70% retention defaults and TN-258 lateral
       guidance.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_adv5n28_clearcut:
     system_id: cable_running_adv5n28_clearcut
     jobs:
@@ -776,6 +836,9 @@ harvest_systems:
     environment: cable-running skyline
     notes: ADV5N28 clearcut conversion (Madill 071 + motorized carriage replacing
       helicopter layout).
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_adv5n28_shelterwood:
     system_id: cable_running_adv5n28_shelterwood
     jobs:
@@ -815,6 +878,9 @@ harvest_systems:
     environment: cable-running skyline
     notes: ADV5N28 irregular-shelterwood conversion (long downhill spans through riparian
       corridors).
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_sr54:
     system_id: cable_running_sr54
     jobs:
@@ -845,6 +911,9 @@ harvest_systems:
       productivity_overrides: null
     environment: cable-running skyline
     notes: SR-54 Washington 118A grapple yarder on mechanically bunched coastal second-growth.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_tr75_bunched:
     system_id: cable_running_tr75_bunched
     jobs:
@@ -875,6 +944,9 @@ harvest_systems:
       productivity_overrides: null
     environment: cable-running skyline
     notes: TR-75 System 1 (mechanically felled/bunched Madill 084 + Hitachi UH14 backspar).
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_tr75_handfelled:
     system_id: cable_running_tr75_handfelled
     jobs:
@@ -908,6 +980,9 @@ harvest_systems:
       productivity_overrides: null
     environment: cable-running skyline
     notes: TR-75 System 2 (hand-felled second-growth yarded by Madill 084).
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_running_fncy12:
     system_id: cable_running_fncy12
     jobs:
@@ -942,6 +1017,9 @@ harvest_systems:
     environment: cable-running skyline
     notes: Thunderbird TMY45 + Mini-Mak II (FNCY12/TN258) intermediate-support skyline
       corridors.
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_micro_ecologger:
     system_id: cable_micro_ecologger
     jobs:
@@ -974,6 +1052,9 @@ harvest_systems:
     environment: cable-short-span skyline
     notes: "TN173 RMS Ecologger uphill skyline (\u22480.34 m\xB3 pieces, 2.9 logs/turn,\
       \ four-person crew)."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_micro_gabriel:
     system_id: cable_micro_gabriel
     jobs:
@@ -1005,6 +1086,9 @@ harvest_systems:
       productivity_overrides: null
     environment: cable-short-span skyline
     notes: "TN173 Gabriel truck yarder (0.16 m\xB3 pieces, skid-pan highlead, road-portable)."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_micro_christie:
     system_id: cable_micro_christie
     jobs:
@@ -1037,6 +1121,9 @@ harvest_systems:
     environment: cable-short-span skyline
     notes: "TN173 Christie tower yarder hot-yarding (0.49 m\xB3 pieces, two-person\
       \ crew)."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_micro_teletransporteur:
     system_id: cable_micro_teletransporteur
     jobs:
@@ -1069,6 +1156,9 @@ harvest_systems:
     environment: cable-short-span skyline
     notes: "TN173 T\xE9l\xE9transporteur self-propelled carriage (0.21 m\xB3 pieces,\
       \ two-person chaser/faller crew)."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_micro_timbermaster:
     system_id: cable_micro_timbermaster
     jobs:
@@ -1101,6 +1191,9 @@ harvest_systems:
     environment: cable-short-span skyline
     notes: "TN173 Smith Timbermaster downhill skyline (0.54 m\xB3 pieces, trailer\
       \ tower)."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_micro_hi_skid:
     system_id: cable_micro_hi_skid
     jobs:
@@ -1122,6 +1215,9 @@ harvest_systems:
         skyline_crew_size: 1.0
     environment: cable-short-span skyline
     notes: FERIC FNG73 Hi-Skid truck (100 m reach, self-loading/hauling).
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   cable_salvage_grapple:
     system_id: cable_salvage_grapple
     jobs:
@@ -1162,6 +1258,9 @@ harvest_systems:
     environment: cable-running salvage
     notes: ADV1N5 salvage workflow for burned slopes (parallel bunching + grapple
       yarding, charcoal handling, portable mill prep).
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null
   helicopter:
     system_id: helicopter
     jobs:
@@ -1195,3 +1294,6 @@ harvest_systems:
     environment: helicopter
     notes: "Hand fallers \u2192 helicopter longline \u2192 landing/hand buck (or direct\
       \ to water)."
+    role_counts: null
+    role_headstart_shifts: null
+    loader_batch_volume_m3: null

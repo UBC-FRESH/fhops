@@ -75,7 +75,10 @@ from fhops.optimization.heuristics.common import (
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
-from fhops.optimization.operational_problem import build_operational_problem
+from fhops.optimization.operational_problem import (
+    blocks_without_fleet_roles,
+    build_operational_problem,
+)
 from fhops.scenario.contract import Problem
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import RunTelemetryLogger, append_jsonl
@@ -453,6 +456,13 @@ def validate(scenario: Path):
     The command loads the scenario via :func:`fhops.scenario.io.load_scenario`, instantiates a
     :class:`fhops.scenario.contract.Problem`, and prints counts of days/blocks/machines/landings so
     users can verify that parsing succeeded before attempting solver runs.
+
+    It then prints a ``Warning:`` line for every block whose harvest system the fleet cannot
+    work (no machine has any of the system's roles, so no solver assigns a machine to the block)
+    or cannot deliver (no machine has a terminal role of the system); see
+    :func:`fhops.optimization.operational_problem.blocks_without_fleet_roles`. These are
+    warnings, not errors (exit code 0): such a scenario is valid, but those blocks stay
+    unharvested and count as leftover volume (since 1.0.1, #158).
     """
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
@@ -464,6 +474,9 @@ def validate(scenario: Path):
     t.add_row("Machines", str(len(sc.machines)))
     t.add_row("Landings", str(len(sc.landings)))
     console.print(t)
+    if sc.harvest_systems:
+        for block_id, reason in blocks_without_fleet_roles(build_operational_problem(pb)).items():
+            console.print(f"[yellow]Warning:[/] block {block_id}: {reason}.", soft_wrap=True)
 
 
 @app.command()

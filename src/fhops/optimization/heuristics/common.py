@@ -437,6 +437,7 @@ def _repair_schedule_cover_blocks(
     lock_for = (
         ctx.lock_for if (ctx.locked_assignments or ctx.locked_shift_assignments) else _no_lock
     )
+    lock_production_for = ctx.lock_production_for
     if limit_to_dirty_slots:
         block_remaining = sched.block_remaining_cache
         if block_remaining is None:
@@ -667,7 +668,61 @@ def _repair_schedule_cover_blocks(
 
     slot_production = sched.slot_production
 
-    def record_assignment(machine_id: str, day: int, shift_id: str, block_id: str) -> None:
+    def locked_slot_production(
+        machine_id: str, day: int, shift_id: str, block_id: str, role: str | None, base: float
+    ) -> float:
+        # Production of a locked slot as ``SequencingTracker.process(locked=True)`` replays it
+        # (#158): capped by ``ScheduleLock.production``, zero where ``_score_plan`` skips the slot
+        # (forbidden role, window), zero when the head-start or truckload threshold is not met,
+        # and otherwise capped by the staged upstream input. ``base`` is already capped by the
+        # remaining volume.
+        lock_cap = lock_production_for(machine_id, day, shift_id)
+        if lock_cap is not None and lock_cap < base:
+            base = lock_cap
+        allowed = allowed_roles.get(block_id)
+        if allowed is not None and role is not None and role not in allowed:
+            return 0.0
+        earliest, latest = windows[block_id]
+        if day < earliest or day > latest:
+            return 0.0
+        if base <= SEQUENCING_TOLERANCE or role is None or block_id not in explicit_blocks:
+            return base
+        upstream_keys = prereq_keys.get((block_id, role))
+        if not upstream_keys:
+            return base
+        start_volume = min(
+            [
+                role_inventory_estimate[key] + role_consumed_slot.get(key, 0.0)
+                for key in upstream_keys
+            ]
+        )
+        buffer_volume = role_headstart_volume.get((block_id, role), 0.0)
+        if (
+            buffer_volume > 0.0
+            and not all(
+                role_remaining.get(key, 0.0) + role_inventory_today.get(key, 0.0)
+                <= SEQUENCING_TOLERANCE
+                for key in upstream_keys
+            )
+            and start_volume + SEQUENCING_TOLERANCE < buffer_volume
+        ):
+            return 0.0
+        if (block_id, role) in loader_roles:
+            loader_requirement = min(
+                loader_batch_volume.get(block_id, 0.0), block_remaining.get(block_id, 0.0)
+            )
+            if (
+                loader_requirement > 0.0
+                and start_volume + SEQUENCING_TOLERANCE < loader_requirement
+            ):
+                return 0.0
+        available = min([role_inventory_estimate[key] for key in upstream_keys])
+        production = base if base < available else available
+        return production if production > SEQUENCING_TOLERANCE else 0.0
+
+    def record_assignment(
+        machine_id: str, day: int, shift_id: str, block_id: str, locked: bool = False
+    ) -> None:
         # ``compute_production`` and ``_store_slot_production`` inlined (hot path, #151).
         role = machine_roles.get(machine_id)
         slot_key = (machine_id, day, shift_id)
@@ -676,9 +731,17 @@ def _repair_schedule_cover_blocks(
         if base_rate <= 0.0:
             production = 0.0
         elif explicit and (block_id, role) in role_remaining_lookup:
-            production = min(base_rate, role_remaining_lookup[(block_id, role)])
+            production = min(
+                base_rate,
+                role_remaining_lookup[(block_id, role)],
+                block_remaining.get(block_id, 0.0),
+            )
         else:
             production = min(base_rate, block_remaining.get(block_id, base_rate))
+        if locked and production > BLOCK_COMPLETION_EPS:
+            production = locked_slot_production(
+                machine_id, day, shift_id, block_id, role, production
+            )
         if production <= BLOCK_COMPLETION_EPS:
             slot_production.pop(slot_key, None)
             return
@@ -735,11 +798,16 @@ def _repair_schedule_cover_blocks(
         if rate_value <= 0.0:
             return False
         allowed = allowed_roles.get(block_id)
-        if allowed is not None and role is not None and role not in allowed:
+        if allowed is not None and (role is None or role not in allowed):
             return False
         explicit = role is not None and block_id in explicit_blocks
         role_left = role_remaining_lookup.get((block_id, role)) if explicit else None
-        remaining = role_left if role_left is not None else block_remaining.get(block_id, 0.0)
+        remaining = block_remaining.get(block_id, 0.0)
+        if role_left is not None and role_left < remaining:
+            # Capped by the block's remaining volume too, as ``SequencingTracker.process`` caps
+            # it (#158; differs only for harvest systems with several terminal roles or an
+            # initial state).
+            remaining = role_left
         if remaining <= BLOCK_COMPLETION_EPS:
             return False
         production = rate_value if rate_value < remaining else remaining
@@ -1051,9 +1119,10 @@ def _repair_schedule_cover_blocks(
                 continue
             if slot_block is not None and slot_block not in dirty_blocks and not locked_slot:
                 continue
-            # A locked slot keeps its block even when the block has no demand left (an idle
-            # locked slot): ``evaluate_schedule`` scores the locked block in any case, so
-            # replacing it would only add a lock-violation penalty (#131).
+            # A locked slot keeps its block even when the block has no demand left or its role
+            # has no staged input (an idle locked slot): ``evaluate_schedule`` scores the locked
+            # block in any case, so replacing it would only add a lock-violation penalty (#131).
+            # It produces what its input allows and never a sequencing violation (#158).
             if slot_block is not None and not locked_slot:
                 if not slot_is_valid(
                     machine_id,
@@ -1073,7 +1142,7 @@ def _repair_schedule_cover_blocks(
                 slot_block = candidate
                 machines_touched.add(machine_id)
             if slot_block is not None:
-                record_assignment(machine_id, day, shift_id, slot_block)
+                record_assignment(machine_id, day, shift_id, slot_block, locked_slot)
                 machines_touched.add(machine_id)
             if limit_to_dirty_slots:
                 processed_slots.add((machine_id, day, shift_id))
@@ -1200,7 +1269,7 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
         allowed = allowed_roles.get(block_id)
         for machine in sc.machines:
             role = machine_roles.get(machine.id)
-            if allowed is not None and role is not None and role not in allowed:
+            if allowed is not None and (role is None or role not in allowed):
                 continue
             if _role_demand(block_id, role) <= BLOCK_COMPLETION_EPS:
                 continue
@@ -1275,7 +1344,7 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
                 if day < earliest or day > latest:
                     continue
                 allowed = allowed_roles.get(block.id)
-                if allowed is not None and role is not None and role not in allowed:
+                if allowed is not None and (role is None or role not in allowed):
                     continue
                 r = rate.get((machine.id, block.id), 0.0)
                 if r > 0:
@@ -1328,7 +1397,9 @@ def evaluate_schedule(
         slot that is unavailable (calendar or blackout), violates a lock, role, window or rate,
         breaks sequencing, or (with ``landing_surplus`` weighted 0) overloads a landing. Idle
         unavailable slots cost nothing (since 1.0.1; v1.0.0 charged every unavailable slot). Each
-        assigned slot proposes the machine's full rate (capped by the sequencing tracker); use
+        assigned slot proposes the machine's full rate (capped by the sequencing tracker); a locked
+        slot proposes it capped by ``ScheduleLock.production`` and produces what its staged input
+        allows, idling without a violation when it has none (#158). Use
         :func:`evaluate_assignments` to score a plan with planned production (MILP plans).
     """
 
@@ -1395,6 +1466,7 @@ def _score_plan(
     lock_for = (
         ctx.lock_for if (ctx.locked_assignments or ctx.locked_shift_assignments) else _no_lock
     )
+    lock_production_for = ctx.lock_production_for
     machine_roles = bundle.machine_roles
     plan = sched.plan
     process = tracker.process
@@ -1420,6 +1492,7 @@ def _score_plan(
 
             locked_block = lock_for(machine_id, day, shift_id)
             planned_key: tuple[str, int, str] | None = (machine_id, day, shift_id)
+            locked_slot = locked_block is not None
             if locked_block is not None:
                 if block_id is not None and block_id != locked_block:
                     penalty += hard_penalty
@@ -1451,14 +1524,24 @@ def _score_plan(
                 continue
 
             proposed = rate_value
+            # A locked slot without planned production produces what its staged input allows
+            # (up to ``ScheduleLock.production``) and may idle without a violation (#158).
+            lenient = locked_slot
             if planned_production is not None:
                 if planned_key is not None and planned_key in planned_production:
                     planned = planned_production[planned_key]
                     if planned is not None:
                         proposed = planned
+                        lenient = False
                 else:
                     proposed = 0.0  # slot without a planned row: idle locked slot
-            sequencing = process(day, machine_id, block_id, proposed, shift_id)
+            if lenient:
+                lock_cap = lock_production_for(machine_id, day, shift_id)
+                if lock_cap is not None and lock_cap < proposed:
+                    proposed = lock_cap
+                sequencing = process(day, machine_id, block_id, proposed, shift_id, locked=True)
+            else:
+                sequencing = process(day, machine_id, block_id, proposed, shift_id)
             if sequencing.violation_reason:
                 penalty += hard_penalty
                 hard_violations += 1
@@ -1662,8 +1745,9 @@ def evaluate_assignments(
         each row proposes its planned production (m³) to the sequencing tracker, as
         :func:`fhops.evaluation.playback.run_playback` does: a row planning no production is an
         idle slot (no head-start/truckload check, #125) and a locked slot without a row is an
-        idle locked slot. Without the column every assigned or locked slot proposes the machine's
-        rate, as :func:`evaluate_schedule` does.
+        idle locked slot. Without the column every assigned slot proposes the machine's rate and
+        every locked slot is scored as a locked slot (see :func:`evaluate_schedule`); a locked
+        slot whose ``production`` value is missing is scored the same way.
     ctx:
         Operational context fixing the objective weights. ``None`` builds one from ``pb`` with the
         **scenario's own** weights (no ``AUTO_OBJECTIVE_WEIGHT_OVERRIDES``); pass a context from
