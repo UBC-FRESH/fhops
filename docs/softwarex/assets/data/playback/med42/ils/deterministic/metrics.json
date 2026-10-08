@@ -1,10 +1,10 @@
 {
   "samples": 1,
-  "total_production": 31538.889755999997,
+  "total_production": 33361.75033399999,
   "total_production_std": 0.0,
-  "remaining_work": 6654.339646000003,
-  "all_roles_production_units": 138254.88869000002,
-  "total_hours": 5016.0,
-  "mobilisation_cost": 10275.920000000002,
-  "average_utilisation": 0.552910052910053
+  "remaining_work": 4831.479068000001,
+  "all_roles_production_units": 142101.71711,
+  "total_hours": 5136.0,
+  "mobilisation_cost": 8402.199999999999,
+  "average_utilisation": 0.5661375661375663
 }

@@ -1,20 +1,21 @@
-# Environment of the SoftwareX asset regeneration on FHOPS 1.0.1 (#131, notes/v101_maintenance_plan.md §8.21)
-# Regeneration run: commit 35c38d9, started 2026-10-07T06:53:41Z, duration_s 13686
+# Environment of the final SoftwareX asset regeneration on FHOPS 1.0.1 (#147, notes/v101_maintenance_plan.md §8.28)
+# Regeneration run: commit 50e6f9b (fhops 1.0.1, final code incl. the #151 performance fix), started 2026-10-08T12:31:05Z, duration_s 10615, assets_hash (recipe v2) 5e069c58370c91f30d2dc4e2e8ad8c93d885e8a653b1fb2a8d4dfe5c7e3a4669
+# Host load during the run (host-wide /proc/stat every 30 s, 353 samples): mean 1.35 busy logical CPUs, max 3.2; regeneration process tree mean 0.98 CPUs, other processes mean 0.36, max 2.8
 host: jupyterhub03
 Linux jupyterhub03 7.0.0-28-generic #28~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Wed Jul  1 15:50:57 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
 Ubuntu 24.04.3 LTS
 python: Python 3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]
-fhops 1.0.1 /home/gep/projects/fhops-wt-131b/src/fhops/__init__.py
+fhops 1.0.1 /home/gep/projects/fhops-wt-147c/src/fhops/__init__.py
 CPU(s):                                  72
 Model name:                              Intel(R) Xeon(R) Gold 6254 CPU @ 3.10GHz
 Thread(s) per core:                      2
 Core(s) per socket:                      18
 Socket(s):                               2
                total        used        free      shared  buff/cache   available
-Mem:             754           2         747           0           4         751
-pandoc: pandoc 3.9
+Mem:             754           2         750           0           2         752
+pandoc: pandoc 3.6
 
-# pip freeze (venv /tmp/opencode/fhops-assets-venv; fhops installed editable from the worktree)
+# pip freeze (venv /tmp/opencode/fhops-assets3-venv, created fresh; fhops installed editable from the worktree at 50e6f9b)
 aiohappyeyeballs==2.7.1
 aiohttp==3.14.4
 aiosignal==1.4.0
@@ -55,7 +56,7 @@ entrypoints==0.4
 execnet==2.1.2
 executing==2.2.1
 fastjsonschema==2.22.2
--e fhops (editable, worktree at 0c9b618; run commit 35c38d9 differs from it only in docs/softwarex/manuscript/scripts and CHANGE_LOG.md)
+-e fhops (editable, worktree at 50e6f9b = run commit)
 filelock==4.0.12
 fonttools==4.66.1
 fqdn==1.6.0
@@ -76,8 +77,8 @@ ipywidgets==8.1.9
 isoduration==20.11.0
 jedi==0.20.0
 Jinja2==3.1.6
-json5==0.15.0
-jsonpointer==3.1.1
+json5==0.16.0
+jsonpointer==3.2.0
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 jupyter==1.1.1
@@ -111,7 +112,7 @@ nbclient==0.11.0
 nbconvert==7.17.1
 nbformat==5.11.1
 nbsphinx==0.9.8
-nest-asyncio2==1.7.3
+nest-asyncio2==1.7.4
 nodeenv==1.11.0
 notebook==7.6.3
 notebook_shim==0.2.4
@@ -128,7 +129,7 @@ pdfminer.six==20260107
 pdfplumber==0.11.10
 pexpect==4.9.0
 pillow==12.3.0
-platformdirs==4.12.3
+platformdirs==4.12.4
 pluggy==1.6.0
 pre_commit==4.6.2
 prometheus_client==0.26.0
@@ -138,7 +139,7 @@ psutil==7.2.2
 ptyprocess==0.7.0
 pure_eval==0.2.4
 pyarrow==25.0.1
-pycparser==3.0
+pycparser==3.1
 pydantic==2.13.5
 pydantic_core==2.46.5
 Pygments==2.21.0
@@ -181,11 +182,11 @@ sphinxcontrib-jquery==4.1
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==2.0.0
 sphinxcontrib-serializinghtml==2.0.0
-SQLAlchemy==2.1.3
+SQLAlchemy==2.1.4
 stack-data==0.6.3
 starlette==1.7.0
 tabulate==0.10.0
-tenacity==9.1.4
+tenacity==9.2.1
 terminado==0.18.1
 tinycss2==1.5.1
 tornado==6.5.10
