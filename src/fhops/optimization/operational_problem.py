@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from dataclasses import replace as dc_replace
 from typing import TYPE_CHECKING
@@ -171,9 +171,56 @@ class OperationalProblem:
         do not change).
         """
 
+        sanitize_cell = self._sanitizer_cell_rule()
+
+        def sanitizer(schedule: Schedule) -> Schedule:
+            landing_usage: dict[tuple[int, str, str], int] = {}
+            plan: dict[str, dict[tuple[int, str], str | None]] = {}
+            for machine_id, assignments in schedule.plan.items():
+                plan[machine_id] = {
+                    slot: sanitize_cell(machine_id, slot, block_id, landing_usage)
+                    for slot, block_id in assignments.items()
+                }
+            return schedule_cls(plan=plan)
+
+        return sanitizer
+
+    def build_sanitizer_preview(
+        self, plan: Mapping[str, Mapping[tuple[int, str], str | None]]
+    ) -> SanitizerPreview:
+        """Return a :class:`SanitizerPreview` of the :meth:`build_sanitizer` rules for ``plan``.
+
+        Parameters
+        ----------
+        plan:
+            Base machine → ``(day, shift_id)`` → block plan (an operator's current schedule). It
+            must not be mutated while the preview is in use.
+
+        Returns
+        -------
+        SanitizerPreview
+            Predicts, for a few edited cells of ``plan``, what the sanitizer would return without
+            copying or sanitizing the whole plan (#151).
+        """
+
+        return SanitizerPreview(plan, self._sanitizer_cell_rule())
+
+    def _sanitizer_cell_rule(
+        self,
+    ) -> Callable[[str, tuple[int, str], str | None, dict[tuple[int, str, str], int]], str | None]:
+        """Return the per-cell rule shared by :meth:`build_sanitizer` and the preview.
+
+        The returned function maps ``(machine_id, (day, shift_id), block_id, landing_usage)`` to
+        the sanitized block and updates ``landing_usage`` (``(day, shift_id, landing_id)`` →
+        machines admitted so far) in place. Cells of one slot must be passed in plan machine
+        order: the sanitizer admits machines to a landing in that order. Decisions depend only on
+        the cell itself and the earlier cells of the same slot.
+        """
+
         bundle = self.bundle
         machine_roles = bundle.machine_roles
         allowed_roles = self.allowed_roles
+        has_locks = bool(self.locked_assignments or self.locked_shift_assignments)
         lock_for = self.lock_for
         shift_availability = bundle.availability_shift
         day_availability = bundle.availability_day
@@ -182,47 +229,132 @@ class OperationalProblem:
         landing_cap = bundle.landing_capacity
         hard_landing = bundle.objective_weights.landing_surplus == 0.0
 
-        def sanitizer(schedule: Schedule) -> Schedule:
-            landing_usage: dict[tuple[int, str, str], int] = {}
-            plan: dict[str, dict[tuple[int, str], str | None]] = {}
-            for machine_id, assignments in schedule.plan.items():
-                role = machine_roles.get(machine_id)
-                plan[machine_id] = {}
-                for (day, shift_id), block_id in assignments.items():
-                    locked_block = lock_for(machine_id, day, shift_id)
-                    if locked_block is not None:
-                        plan[machine_id][(day, shift_id)] = locked_block
-                        continue
-                    shift_available = shift_availability.get((machine_id, day, shift_id), 1)
-                    day_available = day_availability.get((machine_id, day), 1)
-                    if block_id is None:
-                        if shift_available == 0 or day_available == 0:
-                            plan[machine_id][(day, shift_id)] = None
-                        else:
-                            plan[machine_id][(day, shift_id)] = None
-                        continue
-                    allowed = allowed_roles.get(block_id)
-                    if (
-                        shift_available == 0
-                        or day_available == 0
-                        or (machine_id, day, shift_id) in blackout
-                        or (allowed is not None and role not in allowed)
-                    ):
-                        plan[machine_id][(day, shift_id)] = None
-                        continue
-                    landing_id = landing_of.get(block_id)
-                    if landing_id is not None:
-                        cap = landing_cap.get(landing_id, 0)
-                        key = (day, shift_id, landing_id)
-                        used = landing_usage.get(key, 0)
-                        if (cap > 0 or hard_landing) and used >= cap:
-                            plan[machine_id][(day, shift_id)] = None
-                            continue
-                        landing_usage[key] = used + 1
-                    plan[machine_id][(day, shift_id)] = block_id
-            return schedule_cls(plan=plan)
+        def sanitize_cell(
+            machine_id: str,
+            slot: tuple[int, str],
+            block_id: str | None,
+            landing_usage: dict[tuple[int, str, str], int],
+        ) -> str | None:
+            day, shift_id = slot
+            if has_locks:
+                locked_block = lock_for(machine_id, day, shift_id)
+                if locked_block is not None:
+                    return locked_block
+            if block_id is None:
+                return None
+            allowed = allowed_roles.get(block_id)
+            if (
+                shift_availability.get((machine_id, day, shift_id), 1) == 0
+                or day_availability.get((machine_id, day), 1) == 0
+                or (machine_id, day, shift_id) in blackout
+                or (allowed is not None and machine_roles.get(machine_id) not in allowed)
+            ):
+                return None
+            landing_id = landing_of.get(block_id)
+            if landing_id is not None:
+                cap = landing_cap.get(landing_id, 0)
+                key = (day, shift_id, landing_id)
+                used = landing_usage.get(key, 0)
+                if (cap > 0 or hard_landing) and used >= cap:
+                    return None
+                landing_usage[key] = used + 1
+            return block_id
 
-        return sanitizer
+        return sanitize_cell
+
+
+class SanitizerPreview:
+    """Predict the operator sanitizer's output for small edits of one base plan (#151).
+
+    Operators such as block insertion, cross exchange and mobilisation shake try candidate moves
+    until the sanitized candidate differs from the current plan and keeps the moved assignment.
+    Under a binding hard landing capacity most tries are rejected, and building and sanitizing a
+    full candidate per try made these operators (and the heuristics) several times slower after
+    #140. The sanitizer decides every slot independently (locks, calendar, blackouts, roles, and
+    landing capacity admitted in plan machine order), so the outcome of a try only depends on
+    the edited slots and on whether the base plan itself is a sanitizer fixed point elsewhere.
+
+    Parameters
+    ----------
+    plan:
+        Base plan (machine → ``(day, shift_id)`` → block or ``None``), not copied.
+    sanitize_cell:
+        Per-cell rule from :meth:`OperationalProblem._sanitizer_cell_rule`.
+    """
+
+    __slots__ = ("_plan", "_machines", "_cell", "_changed_slots")
+
+    def __init__(
+        self,
+        plan: Mapping[str, Mapping[tuple[int, str], str | None]],
+        sanitize_cell: Callable[
+            [str, tuple[int, str], str | None, dict[tuple[int, str, str], int]], str | None
+        ],
+    ) -> None:
+        self._plan = plan
+        self._machines = list(plan)
+        self._cell = sanitize_cell
+        self._changed_slots: set[tuple[int, str]] | None = None
+
+    def _base_changed_slots(self) -> set[tuple[int, str]]:
+        # Slots in which the sanitizer would change the base plan itself (computed once).
+        if self._changed_slots is None:
+            usage: dict[tuple[int, str, str], int] = {}
+            cell = self._cell
+            changed: set[tuple[int, str]] = set()
+            for machine_id in self._machines:
+                for slot, block_id in self._plan[machine_id].items():
+                    if cell(machine_id, slot, block_id, usage) != block_id:
+                        changed.add(slot)
+            self._changed_slots = changed
+        return self._changed_slots
+
+    def outcome(
+        self, edits: Sequence[tuple[str, tuple[int, str], str | None]]
+    ) -> tuple[bool, dict[tuple[str, tuple[int, str]], str | None]] | None:
+        """Return what sanitizing the edited base plan would produce.
+
+        Parameters
+        ----------
+        edits:
+            ``(machine_id, (day, shift_id), block_id)`` cell assignments applied to a copy of the
+            base plan in order (a later edit of the same cell wins).
+
+        Returns
+        -------
+        tuple[bool, dict] | None
+            ``(unchanged, values)``: ``unchanged`` is ``True`` when the sanitized edited plan
+            equals the base plan (as compared by the operators), ``values`` maps each edited cell
+            to its sanitized block. ``None`` when an edit addresses a machine or slot missing from
+            the base plan (the caller then builds and sanitizes the candidate itself).
+        """
+
+        plan = self._plan
+        overrides: dict[tuple[str, tuple[int, str]], str | None] = {}
+        for machine_id, slot, block_id in edits:
+            machine_plan = plan.get(machine_id)
+            if machine_plan is None or slot not in machine_plan:
+                return None
+            overrides[(machine_id, slot)] = block_id
+        slots = {slot for _machine_id, slot in overrides}
+        unchanged = self._base_changed_slots() <= slots
+        values: dict[tuple[str, tuple[int, str]], str | None] = {}
+        cell = self._cell
+        for slot in slots:
+            usage: dict[tuple[int, str, str], int] = {}
+            for machine_id in self._machines:
+                machine_plan = plan[machine_id]
+                if slot not in machine_plan:
+                    continue
+                base_block = machine_plan[slot]
+                key = (machine_id, slot)
+                edited = key in overrides
+                value = cell(machine_id, slot, overrides[key] if edited else base_block, usage)
+                if edited:
+                    values[key] = value
+                if unchanged and value != base_block:
+                    unchanged = False
+        return unchanged, values
 
 
 def build_operational_problem(pb: Problem) -> OperationalProblem:

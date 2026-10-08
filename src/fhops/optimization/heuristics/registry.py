@@ -14,6 +14,7 @@ from fhops.scenario.contract import Problem
 
 if TYPE_CHECKING:
     from fhops.optimization.heuristics.sa import Schedule
+    from fhops.optimization.operational_problem import SanitizerPreview
 else:  # pragma: no cover - runtime placeholder to keep annotations happy
 
     class Schedule:  # type: ignore[too-many-ancestors]
@@ -39,6 +40,7 @@ class OperatorContext:
     landing_of: Mapping[str, str] | None = None
     mobilisation_budget: Mapping[str, float] | None = None
     cooldown_tracker: Mapping[str, Any] | None = None
+    sanitizer_preview: SanitizerPreview | None = None
 
 
 class Operator(Protocol):
@@ -283,6 +285,32 @@ def _plan_equals(
     return True
 
 
+def _preview_rejects(
+    context: OperatorContext,
+    edits: Sequence[tuple[str, tuple[int, str], str | None]],
+    required: Sequence[tuple[str, tuple[int, str], str | None]],
+) -> bool:
+    """Return ``True`` when sanitizing ``edits`` of the current plan is known to be rejected.
+
+    A try is rejected when the sanitized candidate equals the current plan or drops one of the
+    ``required`` cells. Uses ``context.sanitizer_preview`` (#151) so that rejected tries cost
+    neither a schedule copy nor a full sanitizer pass; returns ``False`` (build the candidate)
+    when no preview is available. The decision is exactly the one the operators take on the
+    sanitized candidate, so search results do not change.
+    """
+
+    preview = context.sanitizer_preview
+    if preview is None:
+        return False
+    outcome = preview.outcome(edits)
+    if outcome is None:
+        return False
+    unchanged, values = outcome
+    if unchanged:
+        return True
+    return any(values[(machine_id, slot)] != block_id for machine_id, slot, block_id in required)
+
+
 class SwapOperator:
     """Swap the assignments of two machines on a random shift."""
 
@@ -392,6 +420,12 @@ class BlockInsertionOperator:
                     candidate_targets.append((machine_tgt, (shift_day, shift_id)))
             rng.shuffle(candidate_targets)
             for machine_tgt, shift_tgt in candidate_targets:
+                if _preview_rejects(
+                    context,
+                    ((machine_src, shift_src, None), (machine_tgt, shift_tgt, block_id)),
+                    ((machine_tgt, shift_tgt, block_id),),
+                ):
+                    continue
                 candidate = _clone_schedule(context, {machine_src, machine_tgt})
                 _set_slot(context, candidate, machine_src, shift_src, None)
                 _set_slot(context, candidate, machine_tgt, shift_tgt, block_id)
@@ -472,6 +506,9 @@ class CoverageInjectionOperator:
         rng.shuffle(candidate_slots)
         candidate_slots.sort(key=lambda item: item[0], reverse=True)
         _, machine_id, shift_key = candidate_slots[0]
+        edit = ((machine_id, shift_key, target_block),)
+        if _preview_rejects(context, edit, edit):
+            return None
         candidate = _clone_schedule(context, {machine_id})
         _set_slot(context, candidate, machine_id, shift_key, target_block)
         candidate = context.sanitizer(candidate)
@@ -522,6 +559,12 @@ class CrossExchangeOperator:
             if not _window_allows(shift_a[0], block_b, context):
                 continue
             if not _window_allows(shift_b[0], block_a, context):
+                continue
+            if _preview_rejects(
+                context,
+                ((machine_a, shift_a, block_b), (machine_b, shift_b, block_a)),
+                ((machine_a, shift_a, block_b), (machine_b, shift_b, block_a)),
+            ):
                 continue
             candidate = _clone_schedule(context, {machine_a, machine_b})
             _set_slot(context, candidate, machine_a, shift_a, block_b)
@@ -594,6 +637,12 @@ class MobilisationShakeOperator:
             rng.shuffle(candidate_targets)
             candidate_targets.sort(key=lambda item: (item[0], item[1]), reverse=True)
             for _, _, machine_tgt, shift_tgt in candidate_targets:
+                if _preview_rejects(
+                    context,
+                    ((machine_src, shift_src, None), (machine_tgt, shift_tgt, block_id)),
+                    ((machine_tgt, shift_tgt, block_id),),
+                ):
+                    continue
                 candidate = _clone_schedule(context, {machine_src, machine_tgt})
                 _set_slot(context, candidate, machine_src, shift_src, None)
                 _set_slot(context, candidate, machine_tgt, shift_tgt, block_id)
