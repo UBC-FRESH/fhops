@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from bisect import insort
+from bisect import bisect_right, insort
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from itertools import combinations
 from random import Random
 from typing import TYPE_CHECKING, Any, Protocol
 
@@ -14,6 +13,7 @@ from fhops.scenario.contract import Problem
 
 if TYPE_CHECKING:
     from fhops.optimization.heuristics.sa import Schedule
+    from fhops.optimization.operational_problem import SanitizerPreview
 else:  # pragma: no cover - runtime placeholder to keep annotations happy
 
     class Schedule:  # type: ignore[too-many-ancestors]
@@ -39,6 +39,7 @@ class OperatorContext:
     landing_of: Mapping[str, str] | None = None
     mobilisation_budget: Mapping[str, float] | None = None
     cooldown_tracker: Mapping[str, Any] | None = None
+    sanitizer_preview: SanitizerPreview | None = None
 
 
 class Operator(Protocol):
@@ -283,6 +284,91 @@ def _plan_equals(
     return True
 
 
+def _shuffle_with_getrandbits(rng: Random, items: list[Any]) -> None:
+    """Shuffle ``items`` in place exactly as CPython's ``Random.shuffle`` does.
+
+    ``Random.shuffle`` draws ``j = rng._randbelow(i + 1)`` for ``i = n-1 … 1`` and swaps
+    ``items[i]`` and ``items[j]``; ``_randbelow`` draws ``getrandbits(k)`` with
+    ``k = (i + 1).bit_length()`` until the value is below ``i + 1``. This loop makes the same
+    draws without two Python calls per element, which matters for the cross-exchange operator's
+    pair list (tens of thousands of entries per call on Med42, #151).
+    """
+
+    getrandbits = rng.getrandbits
+    size = len(items)
+    if size < 2:
+        return
+    bits = size.bit_length()
+    lowest = 1 << (bits - 1)
+    for index in range(size - 1, 0, -1):
+        bound = index + 1
+        if bound < lowest:
+            bits -= 1
+            lowest >>= 1
+        pick = getrandbits(bits)
+        while pick >= bound:
+            pick = getrandbits(bits)
+        items[index], items[pick] = items[pick], items[index]
+
+
+def _fast_shuffle_matches_random() -> bool:
+    """Return ``True`` when :func:`_shuffle_with_getrandbits` reproduces ``Random.shuffle``."""
+
+    for seed, size in ((0, 0), (1, 1), (2, 2), (3, 7), (4, 64), (5, 65), (12345, 3001)):
+        expected = list(range(size))
+        actual = list(range(size))
+        reference = Random(seed)
+        fast = Random(seed)
+        reference.shuffle(expected)
+        _shuffle_with_getrandbits(fast, actual)
+        if expected != actual or reference.random() != fast.random():
+            return False
+    return True
+
+
+_FAST_SHUFFLE = _fast_shuffle_matches_random()
+
+
+def _shuffle(rng: Random, items: list[Any]) -> None:
+    """``rng.shuffle(items)`` with the same permutation and random-number consumption.
+
+    Uses :func:`_shuffle_with_getrandbits` for plain :class:`random.Random` generators when an
+    import-time self-check confirms it reproduces ``Random.shuffle`` on this Python version;
+    falls back to ``rng.shuffle`` otherwise (subclasses, other implementations).
+    """
+
+    if _FAST_SHUFFLE and type(rng) is Random:
+        _shuffle_with_getrandbits(rng, items)
+    else:
+        rng.shuffle(items)
+
+
+def _preview_rejects(
+    context: OperatorContext,
+    edits: Sequence[tuple[str, tuple[int, str], str | None]],
+    required: Sequence[tuple[str, tuple[int, str], str | None]],
+) -> bool:
+    """Return ``True`` when sanitizing ``edits`` of the current plan is known to be rejected.
+
+    A try is rejected when the sanitized candidate equals the current plan or drops one of the
+    ``required`` cells. Uses ``context.sanitizer_preview`` (#151) so that rejected tries cost
+    neither a schedule copy nor a full sanitizer pass; returns ``False`` (build the candidate)
+    when no preview is available. The decision is exactly the one the operators take on the
+    sanitized candidate, so search results do not change.
+    """
+
+    preview = context.sanitizer_preview
+    if preview is None:
+        return False
+    outcome = preview.outcome(edits)
+    if outcome is None:
+        return False
+    unchanged, values = outcome
+    if unchanged:
+        return True
+    return any(values[(machine_id, slot)] != block_id for machine_id, slot, block_id in required)
+
+
 class SwapOperator:
     """Swap the assignments of two machines on a random shift."""
 
@@ -371,7 +457,7 @@ class BlockInsertionOperator:
         ]
         if not assignments:
             return None
-        rng.shuffle(assignments)
+        _shuffle(rng, assignments)
         shifts = context.shift_keys
         if not shifts:
             return None
@@ -390,8 +476,14 @@ class BlockInsertionOperator:
                     if production.get((machine_tgt, block_id), 0.0) <= 0.0:
                         continue
                     candidate_targets.append((machine_tgt, (shift_day, shift_id)))
-            rng.shuffle(candidate_targets)
+            _shuffle(rng, candidate_targets)
             for machine_tgt, shift_tgt in candidate_targets:
+                if _preview_rejects(
+                    context,
+                    ((machine_src, shift_src, None), (machine_tgt, shift_tgt, block_id)),
+                    ((machine_tgt, shift_tgt, block_id),),
+                ):
+                    continue
                 candidate = _clone_schedule(context, {machine_src, machine_tgt})
                 _set_slot(context, candidate, machine_src, shift_src, None)
                 _set_slot(context, candidate, machine_tgt, shift_tgt, block_id)
@@ -469,9 +561,12 @@ class CoverageInjectionOperator:
 
         if not candidate_slots:
             return None
-        rng.shuffle(candidate_slots)
+        _shuffle(rng, candidate_slots)
         candidate_slots.sort(key=lambda item: item[0], reverse=True)
         _, machine_id, shift_key = candidate_slots[0]
+        edit = ((machine_id, shift_key, target_block),)
+        if _preview_rejects(context, edit, edit):
+            return None
         candidate = _clone_schedule(context, {machine_id})
         _set_slot(context, candidate, machine_id, shift_key, target_block)
         candidate = context.sanitizer(candidate)
@@ -505,10 +600,18 @@ class CrossExchangeOperator:
         ]
         if len(assignments) < 2:
             return None
-        rng.shuffle(assignments)
-        pairs = list(combinations(assignments, 2))
-        rng.shuffle(pairs)
-        for (machine_a, shift_a, block_a), (machine_b, shift_b, block_b) in pairs:
+        _shuffle(rng, assignments)
+        # Shuffle positions in ``combinations(assignments, 2)`` order instead of the pair tuples:
+        # same permutation and random draws without materialising every pair (#151).
+        count = len(assignments)
+        row_start = [index * count - index * (index + 1) // 2 for index in range(count)]
+        order = list(range(count * (count - 1) // 2))
+        _shuffle(rng, order)
+        for position in order:
+            first = bisect_right(row_start, position) - 1
+            second = position - row_start[first] + first + 1
+            machine_a, shift_a, block_a = assignments[first]
+            machine_b, shift_b, block_b = assignments[second]
             if machine_a == machine_b:
                 continue
             lock_a = locks.get((machine_a, shift_a))
@@ -522,6 +625,12 @@ class CrossExchangeOperator:
             if not _window_allows(shift_a[0], block_b, context):
                 continue
             if not _window_allows(shift_b[0], block_a, context):
+                continue
+            if _preview_rejects(
+                context,
+                ((machine_a, shift_a, block_b), (machine_b, shift_b, block_a)),
+                ((machine_a, shift_a, block_b), (machine_b, shift_b, block_a)),
+            ):
                 continue
             candidate = _clone_schedule(context, {machine_a, machine_b})
             _set_slot(context, candidate, machine_a, shift_a, block_b)
@@ -565,7 +674,7 @@ class MobilisationShakeOperator:
         ]
         if not assignments:
             return None
-        rng.shuffle(assignments)
+        _shuffle(rng, assignments)
         for machine_src, shift_src, block_id in assignments:
             day_src = shift_src[0]
             candidate_targets: list[tuple[float, int, str, tuple[int, str]]] = []
@@ -591,9 +700,15 @@ class MobilisationShakeOperator:
                     candidate_targets.append((distance, day_delta, machine_tgt, shift_tgt))
             if not candidate_targets:
                 continue
-            rng.shuffle(candidate_targets)
+            _shuffle(rng, candidate_targets)
             candidate_targets.sort(key=lambda item: (item[0], item[1]), reverse=True)
             for _, _, machine_tgt, shift_tgt in candidate_targets:
+                if _preview_rejects(
+                    context,
+                    ((machine_src, shift_src, None), (machine_tgt, shift_tgt, block_id)),
+                    ((machine_tgt, shift_tgt, block_id),),
+                ):
+                    continue
                 candidate = _clone_schedule(context, {machine_src, machine_tgt})
                 _set_slot(context, candidate, machine_src, shift_src, None)
                 _set_slot(context, candidate, machine_tgt, shift_tgt, block_id)

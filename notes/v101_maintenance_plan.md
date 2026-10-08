@@ -1942,6 +1942,105 @@ Second pre-release audit of 0463fd5 (evidence `/tmp/opencode/audit2-1-scratch/`)
 6. Noted, not changed: windows may lock assigned-but-idle slots (`x = 1`, production 0; free in
    the objective) after the work is done, e.g. `defer.py` day 10. Harmless for KPIs/replay.
 
+### 8.29 Heuristic performance regression from #140 (#151)
+Found by the final asset regeneration (#147, PR #150, code a0b2799): on the same host and budgets
+synthetic-small SA was 3× slower than on 0463fd5, the scaling tiers were no longer monotonic in size
+(97.48/73.25/115.85 s vs 33.18/85.51/110.99 s) and med42 was 41–82 % slower (SA 1742 vs 1183 s,
+Tabu 10032 vs 7109 s). Branch `issue-151-heuristic-perf`; scratch `/tmp/opencode/w151/` (`prof.py`,
+`count.py`, `fixpt.py`, `equiv.py`/`cmp.py`, `timing.sh`, `summarize.py`, logs); baselines in
+detached worktrees of 0463fd5 and a0b2799.
+
+1. **Root cause (synthetic tiers): operator retries.** Block insertion, cross exchange and
+   mobilisation shake try moves until the sanitized candidate differs from the current plan and
+   keeps the moved assignment; every try copied the schedule (`_clone_schedule`) and ran the full
+   sanitizer (O(machines × slots)). On 0463fd5 the repaired plan overloaded the capacity-1 landing
+   (synthetic-small: 53 overloaded slots), so the sanitizer changed *every* candidate and the
+   first try was accepted. Since #140 the repaired plan respects the hard capacity and is a
+   sanitizer fixed point (`fixpt.py`: 0 cells changed vs 53), so the operators have to find a
+   real change: synthetic-small's plan holds B1 in 57 of 69 assignments, most cross-exchange
+   pairs swap B1 with B1 (no change) and most insertions target a full landing slot. Profile
+   (SA 500 iterations): 138,084 sanitizer calls and 138,084 schedule copies on a0b2799 (about
+   276 per iteration; 51.6 of 75.7 s in the sanitizer) vs 9,052 on 0463fd5.
+2. **Root cause (med42): the repair.** med42 sanitizer calls were not elevated (2,686 vs 2,549 in
+   400 iterations). The extra time is the #140 repair work: `reserve_downstream_landings` (a
+   `select_block`-like scan per downstream machine and slot), `landing_has_room` scanning every
+   machine (and calling `lock_for`) per check, and `select_block` validating every pending block.
+3. **Fix (no change to any search decision).**
+   - `SanitizerPreview` (`OperationalProblem.build_sanitizer_preview`): the sanitizer decides each
+     slot independently (locks, calendar, blackouts, roles, landing capacity admitted in plan
+     machine order; the per-cell rule is now shared with `build_sanitizer`), so a try's outcome
+     depends only on the edited slots plus whether the base plan is a sanitizer fixed point
+     elsewhere (computed once per base plan). The operators call `_preview_rejects` first and build
+     and sanitize a candidate only for the try they return (coverage injection: skips building a
+     candidate it would reject). Unknown machines/slots fall back to the old path.
+   - Repair: `landing_has_room` uses per-slot counts maintained incrementally (machines handled or
+     not revisited by their final block, pending machines by their lock; reservations as before).
+     `select_block` and the reservation scan try a machine's blocks best rate first and stop at
+     the first valid one (same choice as the full scan, which keeps the highest rate and the
+     first in demand order; machines with equal rates keep the full scan). A valid block has
+     demand left, so it is pending exactly when it is a dirty block (no `pending_blocks_for` list
+     per call). Blocks on which a role has staged nothing are skipped for the rest of the slot
+     (upstream inventory only decreases within a slot, and with nothing staged `slot_is_valid`
+     rejects the block because `BLOCK_COMPLETION_EPS == SEQUENCING_TOLERANCE`). `slot_is_valid`
+     and `record_assignment` inline their helpers with precomputed prerequisite keys; scenarios
+     without locks skip `lock_for`; the reservation call is skipped when reservations are off.
+   - Scoring: `_score_plan` skips `lock_for` without locks; `SequencingTracker.process` evaluates
+     the terminal-role test once (it is also the delivery test).
+   - Preview: the base-plan fixed-point pass runs only when an edit leaves its slots unchanged.
+   - Operators: `_shuffle` reproduces `Random.shuffle` (same permutation and draws) without two
+     Python calls per element, enabled only for plain `random.Random` after an import-time
+     self-check; cross exchange shuffles pair positions instead of materialising every pair.
+4. **Result identity.** Every case below returns the same objective, assignments and search
+   statistics (`proposals`, `accepted_moves`, operator stats; `equiv.py` vs a0b2799, 36 cases:
+   tiny7/small21/med42/large84 SA (also batched/threaded, hard weights, local repairs, operator
+   weights), ILS, Tabu; synthetic-small SA/ILS/Tabu; scaling tiers; `examples/synthetic`;
+   cap1_min2-style 1/2/3 shifts, capacity 0/1/2, locks, soft mode; Jaffray ka_6/pg_6). Also
+   identical: tiny7 and small21 `bench suite` with the committed `generate_assets.sh` settings
+   (all 10 assignment CSVs byte-identical with the committed assets); `cap1_min2.py` (200 / 500 /
+   800 / 1000 m³, rolling SA and MILP 500) and `run_adv2.py sa` (25 rolling configs, output
+   identical apart from wall times; 0 overloads except the lock-induced cap1_overlock pair);
+   Jaffray ka_6/pg_6 SA 1500 seeds 1–3 (same CSV hashes, 30913.36 / 67923.96, full delivery); and
+   every timing run below (same objectives and assignment CSVs as a0b2799).
+5. **Timings** (`timing.sh`; per repetition the commits run back to back, 0463fd5 → a0b2799 →
+   fix; 3 repetitions; medians of the recorded `runtime_s`; fix = d1f308a, results identical to
+   the final head). Two streams ran concurrently on the 72-core host (load ≤ 4): med42 SA, and
+   scaled ILS/Tabu followed by fix-only reruns of the scaling sweep and synthetic-small SA
+   (the 0463fd5/a0b2799 values of those two come from the first interleaved round, whose spread
+   was < 3 %).
+
+   | run | 0463fd5 | a0b2799 | fix | fix / 0463fd5 | fix / a0b2799 |
+   |---|---|---|---|---|---|
+   | Scaling sweep small: SA 2000 | 33.2 | 96.4 | 20.5 | 0.62 | 0.21 |
+   | Scaling sweep medium: SA 2000 | 86.4 | 73.8 | 45.1 | 0.52 | 0.61 |
+   | Scaling sweep large: SA 2000 | 112.6 | 115.9 | 69.0 | 0.61 | 0.60 |
+   | synthetic-small bench SA 6000 (default) | 100.9 | 299.2 | 62.5 | 0.62 | 0.21 |
+   | synthetic-small bench SA 6000 (diversify) | 28.3 | 28.1 | 21.6 | 0.76 | 0.77 |
+   | synthetic-small bench SA 6000 (mobilisation) | 100.0 | 323.7 | 62.0 | 0.62 | 0.19 |
+   | med42 ILS 400 (10 %; batch 6, 24 workers) | 128.8 | 218.4 | 118.2 | 0.92 | 0.54 |
+   | med42 Tabu 1000 (2.5 %; batch 6, 24 workers) | 178.0 | 249.1 | 135.2 | 0.76 | 0.54 |
+   | synthetic-small ILS 120 (10 %; batch 4, 12 workers) | 6.5 | 12.1 | 4.4 | 0.68 | 0.36 |
+   | synthetic-small Tabu 1500 (10 %; batch 4, 12 workers) | 60.1 | 86.1 | 44.8 | 0.75 | 0.52 |
+   | med42 SA 20000 (committed budget) | 1204.1 | 1732.8 | 917.5 | 0.76 | 0.53 |
+   | med42 ILS 4000 (committed budget) | 1249.6 | 2292.7 (n=1) | 1215.9 | 0.97 | 0.53 |
+
+   med42 ILS 4000: 0463fd5 and fix interleaved × 3, a0b2799 once (2292.7 s). Every fix
+   objective equals a0b2799's; 171 bench and 54 scaling assignment CSVs are byte-identical.
+   Scaling tiers are monotonic again (20.5 / 45.1 / 69.0 s).
+
+6. **Guard.** `tests/heuristics/test_heuristic_performance.py`: preview == sanitizer + operator
+   checks on random plans/edits (hard/soft, capacity 0/1/2, locks, blackouts, roles); operators
+   return the same candidate and leave the RNG in the same state as the pre-#151 implementations
+   (preview off, `Random.shuffle`, materialised pairs); fast shuffle == `Random.shuffle`; and
+   SA on `examples/synthetic/small` uses at most one full sanitizer pass and one schedule copy per
+   operator application (a0b2799: about 405 per iteration).
+7. **Remaining cost.** The #140 pull reservation still costs some time on few-block multi-shift
+   scenarios (not a published runtime): Jaffray ka_6 SA 300 iterations, back to back × 3, medians
+   31.8 s (0463fd5) / 41.4 s (a0b2799) / 34.7 s (fix); SA 1500 seeds 1–3 a0b2799 ≈ 212 s → fix
+   ≈ 171 s (ka_6), ≈ 279 s → ≈ 218 s (pg_6).
+8. **Follow-ups.** Re-record the heuristic `runtime_s` values and the scaling figure in the
+   SoftwareX assets (#147/#150 measured a0b2799); plans and objectives are unchanged, so only
+   runtimes move. med42 Tabu was timed at 2.5 % of the committed 40000 iterations only.
+
 ### 8.30 Labelled canonical operational formulation (#152)
 Branch `issue-152-labelled-formulation` from 8925899 (docs and one test only; no `src/` change).
 The SoftwareX R2 manuscript (UBC-FRESH/fhops-manuscript, `revision/softx-r2`) replaces its
