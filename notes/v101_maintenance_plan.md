@@ -1942,11 +1942,55 @@ Second pre-release audit of 0463fd5 (evidence `/tmp/opencode/audit2-1-scratch/`)
 6. Noted, not changed: windows may lock assigned-but-idle slots (`x = 1`, production 0; free in
    the objective) after the work is done, e.g. `defer.py` day 10. Harmless for KPIs/replay.
 
+### 8.30 Labelled canonical operational formulation (#152)
+Branch `issue-152-labelled-formulation` from 8925899 (docs and one test only; no `src/` change).
+The SoftwareX R2 manuscript (UBC-FRESH/fhops-manuscript, `revision/softx-r2`) replaces its
+17-page appendix with a compact one and cites the full formulation versioned with FHOPS.
+
+1. **Labels.** `fhops_operational_formulation.md` now tags the objective **OBJ**, the earliness
+   stage **OBJ2**, the constraint blocks **E1**–**E13** (head start split into **E8a** activation,
+   **E8b** buffer, **E8c** waiver), the initial state **INIT**, and the domains **D1**. Persisting
+   1.0.0 blocks keep their 1.0.0 numbers. The constraints are listed in label order (landing
+   capacity **E11** now precedes **E12**/**E13**); the 1.0.1 change list (i)–(x) names the block
+   each item changed; the implementation mapping is a Block → Pyomo table with one row per label.
+2. **Reconciliation with the manuscript's labelled copy**
+   (`manuscript/revisions/softx-r2/fhops_operational_formulation_labelled.md`). The math is
+   identical (E8a, E9 linearization and E12 only re-laid out in `aligned`). Divergences resolved in
+   favour of the 1.0.1 text: the manuscript copy condensed the earliness rationale (two reasons
+   against `OBJ + εE`, why standalone solves default off) and the (i)–(x) change list; both are
+   restored in full. Its mapping table had dropped details (first-slot `initial_staged_inventory`,
+   `role_remaining_cap` capped at `W_b`, lock warnings, `earliness` result key,
+   `Scenario.locked_assignments` in the bundle); restored, and `model.depart`/`model.arrive` added
+   to **D1**. Kept from the manuscript copy (true for 1.0.1): `last_block_id` for `b⁰_m`, "staged
+   output is available downstream from the next shift slot", the **E8c** lead-in, and the
+   expanded **INIT** paragraph. Every `model.<name>` in the table exists in
+   `operational.py`/`driver.py` (now a test).
+3. **Assets.** TeX/RST regenerated with `export_docs_assets.py` (pandoc 3.6; the committed files
+   reproduce byte-for-byte before the change). The table separator sets the label column to 16 %
+   so labels do not wrap in the RST grid table. The in-repo draft compiles with fewer formulation
+   overfull boxes (6, max 43 pt; was 10, max 183 pt).
+4. **Docs page.** `docs/howto/optimization_formulation.rst` retitled "Operational MILP
+   Formulation", anchor `operational-milp-formulation`, with a note on the labels and on citing the
+   Markdown at a release tag. Stable citations: the source at tag `v1.0.1`
+   (`https://github.com/UBC-FRESH/fhops/blob/v1.0.1/docs/softwarex/manuscript/sections/includes/fhops_operational_formulation.md`)
+   and the rendered page `https://ubc-fresh.github.io/fhops/howto/optimization_formulation.html`
+   (deployed from `main`, unversioned). The `v1.0.1` tag does not exist yet; the blob URL resolves
+   once 1.0.1 is tagged from a commit that contains this change.
+5. **Drift test.** `tests/test_docs_formulation_assets.py` (no pandoc needed): every label has a
+   mapping row and appears in the TeX/RST includes, the includes carry the same Pyomo names as the
+   Markdown, and every mapped `model.<name>` is defined in the MILP code. (The verification
+   cadence below cited `scripts/check_formulation_assets.py`, which does not exist; replaced by
+   this test.)
+6. Noted, not changed (src owned by #151): code comments still use pre-split labels
+   (`operational.py` calls the loader threshold "E8"; `test_milp_playback_alignment.py` mentions
+   "E10b"). Align them when `src/` is next edited.
+
 ## Verification cadence (each child)
 
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
-`sphinx-build -b html docs _build/html -W`, and `python scripts/check_formulation_assets.py`
-when formulation sources change. Baseline at `v1.0.0`: 511 tests pass; ruff/mypy clean.
+`sphinx-build -b html docs _build/html -W`, and, when formulation sources change,
+`python docs/softwarex/manuscript/scripts/export_docs_assets.py` (pandoc 3.6) followed by
+`pytest tests/test_docs_formulation_assets.py`. Baseline at `v1.0.0`: 511 tests pass; ruff/mypy clean.
 
 ## Downstream
 - Jaffray MASc Ch. 4 rolling-horizon grid is re-run on 1.0.1 with stitched-plan evaluation
