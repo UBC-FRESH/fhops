@@ -1,3 +1,82 @@
+# 2026-10-08 — Phase 8.29: heuristic performance regression from #140 fixed (#151, part of #90)
+- **Root cause.** Since #140 the repaired heuristic plan respects hard landing capacity and is
+  therefore a fixed point of the operator sanitizer. Block insertion, cross exchange and
+  mobilisation shake retry moves until the sanitized candidate differs from the current plan and
+  keeps the moved assignment, and every try copied the schedule and ran the full sanitizer. On
+  0463fd5 the plan overloaded landings, so the sanitizer changed every candidate and the first try
+  was accepted. synthetic-small SA 500 iterations: 138,084 sanitizer passes and schedule copies
+  on a0b2799 vs 9,052 on 0463fd5. On med42 the extra time was the #140 repair work (downstream
+  reservation scan, landing checks scanning every machine, full pending-block scans).
+- **Fix (no search decision changes).**
+  - `OperationalProblem.build_sanitizer_preview` / `SanitizerPreview` decide a try from the edited
+    slots (the sanitizer is slot-separable; the per-cell rule is shared with `build_sanitizer`), so
+    operators only build and sanitize the candidate they return.
+  - Repair: incremental per-slot landing counts; best-rate-first block choice in `select_block`
+    and the reservation scan (same choice; full scan kept for machines with equal rates);
+    per-slot skip of blocks with nothing staged; inlined validity/recording helpers; no `lock_for`
+    calls without locks.
+  - Exact fast shuffle for plain `random.Random` (import-time self-check, else `rng.shuffle`);
+    cross exchange shuffles pair positions instead of materialised pairs.
+  - Scoring: `_score_plan` without `lock_for` when there are no locks; `SequencingTracker.process`
+    evaluates the terminal-role test once.
+- **Result identity** (vs a0b2799): 36 `equiv.py` cases (objective, assignment hash and search
+  statistics: tiny7/small21/med42/large84 SA/ILS/Tabu incl. batched, threaded, hard-weight,
+  local-repair and operator-weight variants; synthetic-small; scaling tiers; cap1_min2-style
+  capacity 0/1/2, locks, soft mode; Jaffray ka_6/pg_6); tiny7/small21 `bench suite` with the
+  committed settings: all 10 assignment CSVs byte-identical with the committed assets;
+  `cap1_min2.py` and `run_adv2.py sa` outputs identical (0 overloads except the lock-induced
+  cap1_overlock pair, 0 sequencing violations); Jaffray ka_6/pg_6 SA 1500 seeds 1–3 identical
+  CSVs; every timing run below identical to a0b2799 (171 bench assignment CSVs and 54 scaling
+  CSVs compared, 0 differences).
+- **Timings** (`/tmp/opencode/w151/timing*.sh`; per repetition the commits run back to back;
+  medians of 3 unless noted; `runtime_s` from `bench suite` / `run_synthetic_sweep.py`):
+
+| run | 0463fd5 | a0b2799 | fix | fix / 0463fd5 | fix / a0b2799 |
+|---|---|---|---|---|---|
+| Scaling sweep small: SA 2000 | 33.2 | 96.4 | 20.5 | 0.62 | 0.21 |
+| Scaling sweep medium: SA 2000 | 86.4 | 73.8 | 45.1 | 0.52 | 0.61 |
+| Scaling sweep large: SA 2000 | 112.6 | 115.9 | 69.0 | 0.61 | 0.60 |
+| synthetic-small bench SA 6000 (default) | 100.9 | 299.2 | 62.5 | 0.62 | 0.21 |
+| synthetic-small bench SA 6000 (diversify) | 28.3 | 28.1 | 21.6 | 0.76 | 0.77 |
+| synthetic-small bench SA 6000 (mobilisation) | 100.0 | 323.7 | 62.0 | 0.62 | 0.19 |
+| med42 ILS 400 (10 %; batch 6, 24 workers) | 128.8 | 218.4 | 118.2 | 0.92 | 0.54 |
+| med42 Tabu 1000 (2.5 %; batch 6, 24 workers) | 178.0 | 249.1 | 135.2 | 0.76 | 0.54 |
+| synthetic-small ILS 120 (10 %; batch 4, 12 workers) | 6.5 | 12.1 | 4.4 | 0.68 | 0.36 |
+| synthetic-small Tabu 1500 (10 %; batch 4, 12 workers) | 60.1 | 86.1 | 44.8 | 0.75 | 0.52 |
+| med42 SA 20000 (committed budget) | 1204.1 | 1732.8 | 917.5 | 0.76 | 0.53 |
+| med42 ILS 4000 (committed budget) | 1249.6 | 2292.7 (n=1) | 1215.9 | 0.97 | 0.53 |
+
+  Fix = d1f308a. med42 SA and the scaled ILS/Tabu runs: all three commits interleaved; scaling sweep and
+  synthetic-small SA: 0463fd5/a0b2799 from the first interleaved round (spread < 3 %), fix rerun on the
+  final code; med42 ILS 4000: 0463fd5/fix interleaved × 3, a0b2799 once. Two timing streams shared the
+  72-core host (load ≤ 4). Every fix objective equals a0b2799's.
+
+- Guard: `tests/heuristics/test_heuristic_performance.py` (preview == sanitizer on random
+  plans/edits; operators equal the pre-#151 implementations incl. RNG state; fast shuffle ==
+  `Random.shuffle`; ≤ 1 sanitizer pass and schedule copy per operator application on
+  `examples/synthetic/small`, a0b2799 ≈ 405 per iteration).
+- Docs: plan §8.29, ROADMAP, `docs/releases/v1.0.1.md` (Heuristics: runtime bullet).
+- Commands executed (worktree `fhops-wt-151`, venv `/tmp/opencode/fhops-v101-venv`, `PYTHONPATH=src`;
+  baselines in detached worktrees of 0463fd5 and a0b2799 with their own `src`):
+  - Profiles: `python /tmp/opencode/w151/prof.py <synthetic_small|med42> 500|400 <out>`;
+    `count.py`, `fixpt.py`, py-spy on `timeit.py`.
+  - Identity: `python /tmp/opencode/w151/equiv.py <out>.json` (a0b2799 and fix) + `cmp.py`;
+    `bench_t7s21.sh` (tiny7: `bench suite --time-limit 900 --sa-iters 8000 --ils-iters 1500
+    --ils-batch-neighbours 4 --ils-workers 12 --tabu-iters 20000 --tabu-stall-limit 20000
+    --tabu-batch-neighbours 4 --tabu-workers 12 --compare-preset diversify --compare-preset
+    mobilisation --no-include-mip`; small21: SA 4000, ILS 800, Tabu 7000, batch 1, workers 4);
+    `audit2-1-scratch/cap1_min2.py {1 1,2 1,3 1,2 2,2 1 rolling}`, `run_adv2.py sa`; `jaf.sh`.
+  - Timings: `timing.sh scaling|ss_sa|scaled_ils_tabu|m42_sa|m42_ils_full` (synthetic sweep:
+    `run_synthetic_sweep.py --repo-root . --out-dir …`; synthetic-small: `bench suite
+    --time-limit 600 --sa-iters 6000 --no-include-mip --no-include-ils --no-include-tabu
+    --compare-preset diversify --compare-preset mobilisation`; med42 SA: `--time-limit 2400
+    --sa-iters 20000`; med42 ILS/Tabu: `--ils-batch-neighbours 6 --ils-workers 24
+    --tabu-batch-neighbours 6 --tabu-workers 24`).
+  - `ruff format src tests`, `ruff check src tests`, `mypy src`, `pytest -o addopts="" -q`
+    (801 passed, 213 skipped), `FHOPS_RUN_FULL_CLI_TESTS=1 pytest -o addopts="" -q tests/`
+    (1004 passed, 10 skipped), `pre-commit run --all-files`,
+    `PATH=/tmp/opencode/pandoc-bin:$PATH sphinx-build -b html docs /tmp/opencode/sphinx-151 -W`.
+
 # 2026-10-07 — `--mip-solver auto` aligned in rolling horizon; data-contract compatibility wording (#96, part of #90)
 - `fhops plan rolling --mip-solver auto` / `MILPSolver(solver="auto")` now pass `auto` to the operational driver (Gurobi when available, otherwise or on a Gurobi failure HiGHS), the same rule as `solve-mip-operational --solver auto`; empty/`default` still select HiGHS. `MILPSolver.available()` treats `auto` as available whenever HiGHS is. Docs (`rolling_horizon.rst`, CLI help), release notes (known-limitation entry removed), and `tests/planning/test_rolling_carry_forward.py` updated. The Jaffray re-run harness passes `highs` explicitly and is unaffected.
 - `docs/howto/data_contract.rst` "Compatibility with FHOPS 1.0.0": corrected to state that 1.0.0's `load_scenario` accepted these inputs but most commands rejected the invalid locks / duplicate crew ids / superset distance tables when building the `Problem`, while `plan rolling` ran with them.
