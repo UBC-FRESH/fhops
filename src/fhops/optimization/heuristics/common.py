@@ -755,8 +755,9 @@ def _repair_schedule_cover_blocks(
         if production <= BLOCK_COMPLETION_EPS:
             return False
         # Staged upstream input (same rules as SequencingTracker.process, formulation E7/E8).
-        if enforce_prereq and explicit:
-            upstream_keys = prereq_keys.get(role_key)
+        if enforce_prereq and explicit and role is not None:
+            prereq_key = (block_id, role)
+            upstream_keys = prereq_keys.get(prereq_key)
             if upstream_keys:
                 if len(upstream_keys) == 1:
                     available = role_inventory_estimate[upstream_keys[0]]
@@ -764,7 +765,7 @@ def _repair_schedule_cover_blocks(
                     available = min([role_inventory_estimate[key] for key in upstream_keys])
                 if available + SEQUENCING_TOLERANCE < production:
                     return False
-                if role_key in loader_roles:
+                if prereq_key in loader_roles:
                     loader_requirement = min(
                         loader_batch_volume.get(block_id, 0.0),
                         block_remaining.get(block_id, 0.0),
@@ -781,7 +782,7 @@ def _repair_schedule_cover_blocks(
                 # Head-start buffer, waived when every upstream role finished before this slot
                 # (output staged in the current slot is added back), as in
                 # SequencingTracker._upstream_exhausted / MILP upstream_done.
-                buffer_volume = role_headstart_volume.get(role_key, 0.0)
+                buffer_volume = role_headstart_volume.get(prereq_key, 0.0)
                 if buffer_volume > 0.0 and not all(
                     role_remaining.get(key, 0.0) + role_inventory_today.get(key, 0.0)
                     <= SEQUENCING_TOLERANCE
@@ -885,11 +886,9 @@ def _repair_schedule_cover_blocks(
 
     def staged_nothing(block_id: str, role: str) -> bool:
         prereqs = prereq_roles.get((block_id, role))
-        return (
-            block_id in explicit_blocks
-            and bool(prereqs)
-            and min(role_inventory_estimate[(block_id, upstream)] for upstream in prereqs) <= 0.0
-        )
+        if not prereqs or block_id not in explicit_blocks:
+            return False
+        return min(role_inventory_estimate[(block_id, upstream)] for upstream in prereqs) <= 0.0
 
     def reserve_downstream_landings(day: int, shift_id: str, machines: list[Any]) -> None:
         # Hard landing capacity: before repairing a slot, predict for every unlocked, available
