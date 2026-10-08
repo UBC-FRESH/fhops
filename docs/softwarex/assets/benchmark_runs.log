@@ -58,3 +58,11 @@ hash_recipe: v2
 assets_hash: 5e069c58370c91f30d2dc4e2e8ad8c93d885e8a653b1fb2a8d4dfe5c7e3a4669
 note: final regeneration on FHOPS 1.0.1 (Phase 8, code 50e6f9b); runtimes measured sequentially on an idle 72-core host
 ----
+run_started: 2026-10-08T17:47:01Z
+commit: 8318b21
+fast_mode: 0
+duration_s: 861
+hash_recipe: v2
+assets_hash: 5be2f878b6ad8b31a785a2dacf06b222ea6f7e82a1eb4864380c188705e5c141
+note: partial regeneration: synthetic tiers after #158 (deliverable roles); reference ladder unchanged. Same commands and settings as generate_assets.sh, run sequentially on an idle 72-core host: run_dataset_inspection.py (only datasets/synthetic_small and its summary/index entry change), bench suite synthetic_small (SA 6000, ILS 1200 b4 w12, Tabu 15000 b4 w12, presets diversify/mobilisation) + benchmarks/index.json, run_tuner.py (tiny7/med42 tuning objectives and configurations unchanged; only run ids, timestamps and runtimes move), run_playback_analysis.py + plot_playback_variability.py (tiny7/med42 playback byte-identical), run_synthetic_sweep.py, build_tables.py, relativize_asset_paths.py, normalize_text_assets.py; tiny7/small21/med42 benchmark, costing and reference dataset assets untouched
+----

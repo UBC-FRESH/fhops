@@ -113,6 +113,13 @@ system_mix:
   cable_standing_tr125_strip: 0.015873015873015872
   cable_partial_tr127_block1: 0.015873015873015872
   cable_partial_tr127_block5: 0.015873015873015872
+fleet_systems:
+- steep_tethered
+fleet_roles:
+- tethered_harvester
+- tethered_shovel_or_skidder
+- processor
+- loader
 blackout_biases:
 - start_day: 8
   end_day: 10

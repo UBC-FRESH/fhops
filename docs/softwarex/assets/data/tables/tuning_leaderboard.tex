@@ -3,9 +3,9 @@
 Scenario & Tuner & \begin{tabular}[b]{@{}r@{}}Best\\objective\end{tabular} & \begin{tabular}[b]{@{}r@{}}$\Delta$ vs\\SA default\end{tabular} & \begin{tabular}[b]{@{}r@{}}Mean\\runtime (s)\end{tabular} & Budget & Key settings \\
 \midrule
 Tiny7 (ground-based) & Bayes & 4338.52 & 42.74 & 0.33 & 8 trials $\times$ 120 iters & batch\_size=3; operator weights block\_insertion=1.44, coverage\_injection=0.65, cross\_exchange=0.72 \\
-Small21 (ground-based) & ILS & 15584.30 & 0.14 & 3.64 & 1 run $\times$ 160 iters & perturbation\_strength=3; stall\_limit=10 \\
-Med42 (ground-based) & Tabu & 23139.82 & -990.50 & 41.49 & 1 run $\times$ 900 iters & stall\_limit=150 \\
-Synthetic-small & Bayes & -39.79 & 0.00 & 0.97 & 8 trials $\times$ 120 iters & batch\_size=3; operator weights block\_insertion=1.10, coverage\_injection=1.44, cross\_exchange=0.85 \\
+Small21 (ground-based) & ILS & 15584.30 & 0.14 & 3.78 & 1 run $\times$ 160 iters & perturbation\_strength=3; stall\_limit=10 \\
+Med42 (ground-based) & Tabu & 23139.82 & -990.50 & 42.65 & 1 run $\times$ 900 iters & stall\_limit=150 \\
+Synthetic-small & Bayes & 39.79 & 0.00 & 0.65 & 8 trials $\times$ 120 iters & batch\_size=3; operator weights block\_insertion=1.10, coverage\_injection=1.44, cross\_exchange=0.85 \\
 \bottomrule
 \multicolumn{7}{p{0.95\linewidth}}{\footnotesize Budget: tuning runs of the best tuner (SA iterations per Bayesian trial, grid configuration or random run; ILS/Tabu iterations). $\Delta$ = best tuned objective minus the SA default benchmark objective, whose budget is far larger (SA iterations: 8000 (Tiny7), 4000 (Small21), 20000 (Med42), 6000 (Synthetic-small)); objectives are maximised. Ties (same best objective): Tiny7 (5 tuners), Synthetic-small (5 tuners); the first tuner in alphabetical order is listed.} \\
 \end{tabular}
