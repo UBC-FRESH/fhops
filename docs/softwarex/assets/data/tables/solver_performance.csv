@@ -1,13 +1,13 @@
 Scenario,Solver,Objective,Runtime (s),Assignments,Production (m³),Mobilisation Cost (CAD)
-Tiny7 (ground-based),SA,4295.77,33.07,23,4414.70,585.64
-Tiny7 (ground-based),ILS,4338.52,35.06,23,4414.70,372.68
-Tiny7 (ground-based),TABU,4338.52,309.44,23,4414.70,372.68
-Small21 (ground-based),SA,15584.16,78.47,90,15966.97,1871.80
-Small21 (ground-based),ILS,15605.94,74.16,90,15966.97,1764.12
-Small21 (ground-based),TABU,15595.28,425.40,90,15966.97,1815.92
-Med42 (ground-based),SA,-28662.40,1182.68,209,31793.02,10110.44
-Med42 (ground-based),ILS,-33253.41,1253.19,209,31538.89,10275.92
-Med42 (ground-based),TABU,-41009.67,7109.42,208,31556.20,9857.68
-Synthetic-small,SA,-53039.79,98.50,122,0.00,0.00
-Synthetic-small,ILS,-53039.79,66.85,122,0.00,0.00
-Synthetic-small,TABU,-53039.79,611.31,122,0.00,0.00
+Tiny7 (ground-based),SA,4295.77,33.65,23,4414.70,585.64
+Tiny7 (ground-based),ILS,4338.52,35.47,23,4414.70,372.68
+Tiny7 (ground-based),TABU,4338.52,312.20,23,4414.70,372.68
+Small21 (ground-based),SA,15584.16,79.41,90,15966.97,1871.80
+Small21 (ground-based),ILS,15605.94,74.42,90,15966.97,1764.12
+Small21 (ground-based),TABU,15595.28,429.08,90,15966.97,1815.92
+Med42 (ground-based),SA,24130.32,1742.48,214,32984.91,7292.52
+Med42 (ground-based),ILS,24329.17,2275.50,214,33361.75,8402.20
+Med42 (ground-based),TABU,24163.37,10031.80,218,33463.63,9141.32
+Synthetic-small,SA,-39.79,295.66,69,0.00,0.00
+Synthetic-small,ILS,-39.79,124.36,69,0.00,0.00
+Synthetic-small,TABU,-39.79,913.72,69,0.00,0.00

@@ -1,20 +1,21 @@
-# Environment of the SoftwareX asset regeneration on FHOPS 1.0.1 (#131, notes/v101_maintenance_plan.md §8.21)
-# Regeneration run: commit 35c38d9, started 2026-10-07T06:53:41Z, duration_s 13686
+# Environment of the final SoftwareX asset regeneration on FHOPS 1.0.1 (#147, notes/v101_maintenance_plan.md §8.28)
+# Regeneration run: commit a0b2799 (fhops 1.0.1, code frozen), started 2026-10-07T18:52:30Z, duration_s 19904, assets_hash (recipe v2) d609d814ab6d8d07c51a42d787e702e58b6661cc4cb91662abe18445ba771850
+# Host load during the run (host-wide /proc/stat every 30 s, 663 samples): mean 1.86 busy logical CPUs, max 4.1; regeneration process tree mean 0.99 CPUs, other processes mean 0.88, max 3.2
 host: jupyterhub03
 Linux jupyterhub03 7.0.0-28-generic #28~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Wed Jul  1 15:50:57 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
 Ubuntu 24.04.3 LTS
 python: Python 3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]
-fhops 1.0.1 /home/gep/projects/fhops-wt-131b/src/fhops/__init__.py
+fhops 1.0.1 /home/gep/projects/fhops-wt-147b/src/fhops/__init__.py
 CPU(s):                                  72
 Model name:                              Intel(R) Xeon(R) Gold 6254 CPU @ 3.10GHz
 Thread(s) per core:                      2
 Core(s) per socket:                      18
 Socket(s):                               2
                total        used        free      shared  buff/cache   available
-Mem:             754           2         747           0           4         751
+Mem:             754           2         749           0           1         751
 pandoc: pandoc 3.9
 
-# pip freeze (venv /tmp/opencode/fhops-assets-venv; fhops installed editable from the worktree)
+# pip freeze (venv /tmp/opencode/fhops-assets2-venv, created fresh for #147; fhops installed editable from the worktree at a0b2799)
 aiohappyeyeballs==2.7.1
 aiohttp==3.14.4
 aiosignal==1.4.0
@@ -55,7 +56,7 @@ entrypoints==0.4
 execnet==2.1.2
 executing==2.2.1
 fastjsonschema==2.22.2
--e fhops (editable, worktree at 0c9b618; run commit 35c38d9 differs from it only in docs/softwarex/manuscript/scripts and CHANGE_LOG.md)
+-e fhops (editable, worktree at a0b2799 = run commit)
 filelock==4.0.12
 fonttools==4.66.1
 fqdn==1.6.0
@@ -77,7 +78,7 @@ isoduration==20.11.0
 jedi==0.20.0
 Jinja2==3.1.6
 json5==0.15.0
-jsonpointer==3.1.1
+jsonpointer==3.2.0
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 jupyter==1.1.1
@@ -185,7 +186,7 @@ SQLAlchemy==2.1.3
 stack-data==0.6.3
 starlette==1.7.0
 tabulate==0.10.0
-tenacity==9.1.4
+tenacity==9.2.1
 terminado==0.18.1
 tinycss2==1.5.1
 tornado==6.5.10
