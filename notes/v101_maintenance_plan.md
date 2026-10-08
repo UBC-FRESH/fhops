@@ -2275,6 +2275,51 @@ The SoftwareX R2 manuscript (UBC-FRESH/fhops-manuscript, `revision/softx-r2`) re
    (`operational.py` calls the loader threshold "E8"; `test_milp_playback_alignment.py` mentions
    "E10b"). Align them when `src/` is next edited.
 
+### 8.32 Third-audit heuristic fixes and deliverable synthetic tiers (#158)
+Branch `issue-158-audit3-heuristics` from `feature/phase8-v101-maintenance` @ 5fa2bba. Audit
+evidence: `/tmp/opencode/audit3-2-scratch/` (lockpull, fuzz3, phantom).
+
+1. **Locked slots (MAJOR 1, MINOR 4).** A locked slot keeps its block and produces what its staged
+   input allows, capped by `ScheduleLock.production` (`0` = idle); below the input, head-start or
+   truckload threshold it idles without a violation. Implemented once per layer with the same
+   rule: repair (`locked_slot_production`), scoring and playback (`SequencingTracker.process(...,
+   locked=True)`; playback only for rows without a `production` value). This also settles the
+   reservation conflict of MAJOR 1: an unlocked downstream machine that takes the input a later
+   lock needed now leaves the lock idle instead of making it a violation, so no extra
+   lock-aware reservation rule is needed (scenarios without locks keep identical plans).
+   lockpull SA/ILS/Tabu −2200 (2 violations) → −200 (0) = MILP.
+2. **Repair cap.** Production capped by `min(role_remaining, block_remaining)` like the tracker
+   (differs only with several terminal roles or an initial state; fuzz seeds 75/123/138).
+3. **No-compatible-role blocks (MAJOR 2).** Empty `allowed_roles` set; role-less machines are
+   also rejected on role-restricted blocks (sanitizer/MILP rule). `blocks_without_fleet_roles` +
+   `fhops validate` warning (warning, not error: valid scenario, block stays unharvested; also
+   flags systems whose terminal role has no machine). phantom: 0 assignments, 0 production.
+4. **fuzz3 (seeds 0–199).** Heuristic-only hard violations 78 → 0. Residual: 7 scenarios where the
+   heuristic and MILP plans carry the same 1–2 violations, all lock-induced landing overloads
+   (two locked machines on a hard capacity-1 landing) that no plan can avoid.
+5. **Synthetic generator.** Fleet from the `system_mix` systems whose roles fit the machine count
+   (`fleet_systems`/`fleet_roles` metadata). small `cable_micro_hi_skid`, medium
+   `steep_tethered`, large 9 cable systems / 6 roles. The tiers now deliver: synthetic-small all
+   39.79 m³; scaling medium 79.46 of 97.03 m³ (the 2 undelivered blocks have 2-day windows, too
+   short for the 4-role chain at one slot per day), large 144.36 of 224.71 m³ (3 blocks with
+   windows shorter than their chain; others limited by blackouts and the SA budget). Work volumes
+   are small relative to rates and the 112-day horizon, so utilisation is low (~4.5 %).
+6. **Identity.** tiny7/small21 bench (committed settings) byte-identical CSVs and summaries;
+   med42 SA 2000 seed 42 identical to 5fa2bba; Jaffray ka_6/pg_6 SA 1500 seeds 1–3 identical;
+   cap1_min2 500/200/800/1000; `run_adv2.py sa` identical except `cap1_overlock` (violations → 0).
+7. **Assets.** Partial regeneration (synthetic tiers only) on 8318b21 with the
+   `generate_assets.sh` commands; values (manuscript-relevant):
+   - Table 4 synthetic-small SA/ILS/Tabu: objective 39.79 (was −39.79), runtime
+     39.40/39.60/356.55 s (62.53/44.46/460.96), assignments 10 (69), production 39.79 m³ (0.00),
+     mobilisation 0.00.
+   - Table 5 synthetic row: Bayes 39.79 (−39.79), Δ 0.00, 0.65 s (0.97), same settings.
+   - §3.2 synthetic utilisation det → stoch: 0.0450 → 0.0441 (was 0.378 → 0.369 with 0 m³
+     delivered); delivered 39.79 → 34.27 ± 3.88 m³.
+   - Scaling SA runtimes small/medium/large 13.22/39.28/65.10 s (20.69/45.86/69.22), monotonic;
+     objectives 39.79/61.89/64.01; assignments 10/43/75.
+   Manuscript statements that relied on the synthetic tier delivering nothing (e.g. "punishes
+   infeasible schedules", identical negative objectives) must be revisited.
+
 ## Verification cadence (each child)
 
 `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest`,
