@@ -2,7 +2,8 @@
 FHOPS' deterministic operational solver is formulated on a day-shift
 grid and maximizes weighted delivered production while penalizing
 leftovers, landing over-capacity slack, and machine movement costs. The
-equations below mirror the implemented Pyomo model in
+equations below state the FHOPS 1.0.1 model and mirror the implemented
+Pyomo model in
 \texttt{fhops.model.milp.operational.build\_operational\_model} and the
 bundle normalization in
 \texttt{fhops.model.milp.data.build\_operational\_bundle}.
@@ -12,6 +13,18 @@ calendars, block windows, landing capacities, and harvest-system role
 prerequisites, choose machine-block assignments and per-shift production
 quantities to maximize weighted production subject to feasibility and
 sequencing constraints.
+
+\textbf{Labels.} For traceability, the objective is tagged \textbf{OBJ},
+the optional earliness stage \textbf{OBJ2}, the constraint blocks
+\textbf{E1}--\textbf{E13}, the optional initial state \textbf{INIT}, and
+the domain declarations \textbf{D1}. Blocks that persist from FHOPS
+1.0.0 keep their 1.0.0 labels (\textbf{E1}--\textbf{E11}). Of these,
+\textbf{E6} (machine moves), \textbf{E7} (staged inventory), \textbf{E8}
+(activation and head start, now \textbf{E8a}--\textbf{E8c}), \textbf{E9}
+(loader truckload threshold, which replaces the 1.0.0 batching
+variables) and \textbf{E11} (landing capacity per shift slot) were
+reformulated in 1.0.1. \textbf{E12} (remaining output), \textbf{E13}
+(locked assignments), \textbf{INIT}, and \textbf{OBJ2} are new.
 
 \textbf{Sets and indices.}
 
@@ -81,13 +94,14 @@ sequencing constraints.
 \item
   \(s_1 \in \mathcal{S}\): first shift slot of the horizon.
 \item
-  \(\mathcal{M}^{0} \subseteq \mathcal{M}\): machines with a known
-  initial block \(b^{0}_m\) (optional initial state; empty by default);
-  machines in \(\mathcal{M}\setminus\mathcal{M}^{0}\) start
+  \(\mathcal{M}^{0} \subseteq \mathcal{M}\) (\textbf{INIT}): machines
+  with a known initial block \(b^{0}_m\) (optional initial state; empty
+  by default); machines in \(\mathcal{M}\setminus\mathcal{M}^{0}\) start
   \emph{unplaced}.
 \item
-  \(\mathcal{K}\): locked assignments \(k=(m_k,b_k,d_k,\sigma_k)\),
-  where \(\sigma_k\) is a shift label or empty (whole day);
+  \(\mathcal{K}\) (\textbf{E13}): locked assignments
+  \(k=(m_k,b_k,d_k,\sigma_k)\), where \(\sigma_k\) is a shift label or
+  empty (whole day);
   \(\mathcal{S}_k = \{s=(d_k,\sigma) \in \mathcal{S} : \sigma_k \text{ empty or } \sigma=\sigma_k\}\)
   (empty by default).
   \(\mathcal{K}_{b,s} = \{m_k: k\in\mathcal{K},\ b_k=b,\ s\in\mathcal{S}_k,\ \chi_k A_{m_k,s}=1\}\)
@@ -142,9 +156,8 @@ sequencing constraints.
   an upstream role has a positive rate on \(b\), the role's own capacity
   is used instead, \(B_{r,b}=\beta_{r,b}\,Q_{r,b}\). For a join the
   buffer, computed from the summed rates of all upstream roles, is
-  required of each upstream role (head-start constraint below), so a
-  slower upstream role needs more than \(\beta_{r,b}\) shifts to stage
-  it.
+  required of each upstream role (\textbf{E8b}), so a slower upstream
+  role needs more than \(\beta_{r,b}\) shifts to stage it.
 \item
   \(Q_{r,b}=\sum_{m\in\mathcal{M}(r)}\bar{p}_{mb}\): role production
   capacity per shift (1 when the role has no machine with a positive
@@ -157,20 +170,21 @@ sequencing constraints.
   \(\mathcal{T}_b \subseteq \mathcal{R}_b\): terminal roles for block
   \(b\) (roles credited in block completion objective terms).
 \item
-  \(\bar{I}_{u,b} \ge 0\): initial staged volume output by role \(u\) on
-  block \(b\) and not yet consumed downstream (optional initial state
-  \texttt{staged\_inventory}; 0 by default).
+  \(\bar{I}_{u,b} \ge 0\) (\textbf{INIT}): initial staged volume output
+  by role \(u\) on block \(b\) and not yet consumed downstream (optional
+  initial state \texttt{staged\_inventory}; 0 by default).
 \item
-  \(R^{0}_{r,b} \ge 0\): carried-in remaining volume role \(r\) may
-  still output on block \(b\) (optional initial state
+  \(R^{0}_{r,b} \ge 0\) (\textbf{INIT}): carried-in remaining volume
+  role \(r\) may still output on block \(b\) (optional initial state
   \texttt{role\_remaining}; \(W_b\) by default).
 \item
   \(R_{r,b} = \min(R^{0}_{r,b}, W_b)\): remaining volume role \(r\) may
   output on block \(b\) (every role handles the same wood, so no role
   can output more than the block still holds).
 \item
-  \(b^{0}_m\): block machine \(m\in\mathcal{M}^{0}\) occupied in its
-  last worked slot before the horizon.
+  \(b^{0}_m\) (\textbf{INIT}): block machine \(m\in\mathcal{M}^{0}\)
+  occupied in its last worked slot before the horizon (optional initial
+  state \texttt{last\_block\_id}).
 \end{itemize}
 
 \textbf{Decision variables.}
@@ -237,7 +251,7 @@ sequencing constraints.
   \(\ell\) in slot \(s\) (only when \(\omega^{\text{land}} > 0\)).
 \end{itemize}
 
-\textbf{Objective.}
+\textbf{Objective (OBJ).}
 
 FHOPS maximizes weighted terminal production and subtracts penalty
 terms:
@@ -252,9 +266,9 @@ terms:
 \end{aligned}
 \]
 
-The last line charges every move of a machine: working a block other
-than its position, including the move from \(b^{0}_m\) into the
-machine's first worked slot. Staying on a block costs nothing, and a
+The last line charges every move of a machine (\textbf{E6}): working a
+block other than its position, including the move from \(b^{0}_m\) into
+the machine's first worked slot. Staying on a block costs nothing, and a
 machine without initial block (\(m\notin\mathcal{M}^{0}\)) moves for
 free into its first worked slot.
 
@@ -264,7 +278,7 @@ reward and the block balance use the machine-level sum
 \(\sum_{m}\sum_{s} p_{m,b,s}\) in place of
 \(\sum_{r\in\mathcal{T}_b}\sum_s z_{r,b,s}\).
 
-\textbf{Earliness tie-break (optional; default in rolling-horizon
+\textbf{Earliness tie-break (OBJ2; optional, default in rolling-horizon
 windows).} OBJ does not depend on when work is done inside the horizon,
 so plans that shift production between slots tie. In a rolling-horizon
 window, a tied optimum may defer work past the lock span and lock idle
@@ -277,67 +291,68 @@ E=\sum_{s\in\mathcal{S}} w_s \sum_{m\in\mathcal{M}}\sum_{b\in\mathcal{B}} p_{m,b
 \]
 
 where \(k_s\in\{0,\dots,|\mathcal{S}|-1\}\) is the position of slot
-\(s\) in the slot order. This stage keeps every constraint above and
-adds \(\text{OBJ}\ge z_1-\tau\), where \(z_1\) is the OBJ value of the
-stage-1 solution and \(\tau=10^{-6}\max(1,|z_1|)\). Stage 2 is
-warm-started from the stage-1 solution, so its returned plan has
-\(\text{OBJ}\ge z_1-\tau\). If stage 1 is optimal, the returned plan is
-therefore optimal for OBJ within \(\tau\), which is 100 times tighter
-than HiGHS's default relative MIP gap (\(10^{-4}\)). The reported
-objective is OBJ; \(E\) is reported separately. A single weighted
-objective \(\text{OBJ}+\varepsilon E\) is not used, for two reasons.
-First, production is continuous and the data are arbitrary reals, so no
-data-independent \(\varepsilon>0\) is guaranteed to stay below the
-smallest positive OBJ difference between plans: for any \(\varepsilon\)
-there are data for which the weighted optimum is not OBJ-optimal.
-Second, an \(\varepsilon\) small enough to be harmless in practice
-(\(\varepsilon E\ll 10^{-4}|z_1|\)) is below the solver's relative gap,
-so the solver would stop before it acts on the tie-break. The cost is a
-second solve. Rolling-horizon MILP windows enable the option by default,
-except windows whose lock span covers the whole window. Standalone
-solves (\texttt{fhops\ solve-mip-operational},
+\(s\) in the slot order. This stage keeps every constraint of
+\textbf{E1}--\textbf{E13} and adds \(\text{OBJ}\ge z_1-\tau\), where
+\(z_1\) is the OBJ value of the stage-1 solution and
+\(\tau=10^{-6}\max(1,|z_1|)\). Stage 2 is warm-started from the stage-1
+solution, so its returned plan has \(\text{OBJ}\ge z_1-\tau\). If stage
+1 is optimal, the returned plan is therefore optimal for OBJ within
+\(\tau\), which is 100 times tighter than HiGHS's default relative MIP
+gap (\(10^{-4}\)). The reported objective is OBJ; \(E\) is reported
+separately. A single weighted objective \(\text{OBJ}+\varepsilon E\) is
+not used, for two reasons. First, production is continuous and the data
+are arbitrary reals, so no data-independent \(\varepsilon>0\) is
+guaranteed to stay below the smallest positive OBJ difference between
+plans: for any \(\varepsilon\) there are data for which the weighted
+optimum is not OBJ-optimal. Second, an \(\varepsilon\) small enough to
+be harmless in practice (\(\varepsilon E\ll 10^{-4}|z_1|\)) is below the
+solver's relative gap, so the solver would stop before it acts on the
+tie-break. The cost is a second solve. Rolling-horizon MILP windows
+enable the option by default, except windows whose lock span covers the
+whole window. Standalone solves (\texttt{fhops\ solve-mip-operational},
 \texttt{solve\_operational\_milp}) do not enable it by default, because
 the published single-horizon optimum and its solve time stay unchanged;
 \texttt{-\/-earliness} or \texttt{earliness=True} turns it on.
 
 \textbf{Constraints.}
 
-Machine assignment feasibility:
+Machine assignment feasibility, including calendar availability and
+timeline blackouts through \(A_{m,s}\) (\textbf{E1}):
 
 \[
 \sum_{b\in\mathcal{B}} x_{m,b,s} \le A_{m,s}
 \qquad \forall m\in\mathcal{M},\; s\in\mathcal{S}.
 \]
 
-Role compatibility (machines can only work roles allowed by the block's
-assigned harvest system):
+Role compatibility, machines can only work roles allowed by the block's
+assigned harvest system (\textbf{E2}):
 
 \[
 x_{m,b,s}=0 \quad \text{if } b\in\mathcal{B}^{\text{seq}} \text{ and role}(m)\notin\mathcal{R}_b.
 \]
 
-Production upper bound per assignment:
+Production upper bound per assignment (\textbf{E3}):
 
 \[
 p_{m,b,s} \le \bar{p}_{mb}\,x_{m,b,s}
 \qquad \forall m,b,s.
 \]
 
-Block window enforcement:
+Block window enforcement (\textbf{E4}):
 
 \[
 x_{m,b,s}=0 \quad \text{if } \mathbf{1}^{\text{window}}_{b,d}=0 \text{ for } s=(d,\sigma).
 \]
 
-Role-production aggregation:
+Role-production aggregation (\textbf{E5}):
 
 \[
 z_{r,b,s} = \sum_{m\in\mathcal{M}(r)} p_{m,b,s}
 \qquad \forall (r,b), s.
 \]
 
-Machine positions and moves (each machine's position is a unit flow
-through one layer per slot; idle slots keep the position):
+Machine positions and moves (\textbf{E6}; each machine's position is a
+unit flow through one layer per slot; idle slots keep the position):
 
 \[
 \pi_{m,b,\operatorname{prev}(s)} = \eta_{m,b,s} + \sum_{b''\ne b} y_{m,b,b'',s}
@@ -360,9 +375,9 @@ decomposition of the flow therefore follows the machine's true position
 sequence, so \(y_{m,b',b,s}=1\) exactly when machine \(m\) works \(b\)
 in slot \(s\) and its last worked block before \(s\) (or \(b^{0}_m\)) is
 \(b'\ne b\), also when idle slots lie in between; all other \(y\) are 0.
-The move term of the objective is thus exact and equals the mobilization
-and transition accounting of the heuristics and of the playback KPIs.
-The implementation builds the network only for machines that can incur a
+The move term of OBJ is thus exact and equals the mobilization and
+transition accounting of the heuristics and of the playback KPIs. The
+implementation builds the network only for machines that can incur a
 positive move cost and only for the slots in which the machine can work
 (other slots keep its position), starting arcs only at positions
 reachable before the slot; when all move costs \(c_{m,b',b}\) of a
@@ -370,10 +385,10 @@ machine are equal, the arcs \(y_{m,b',b,s}\) are replaced by arcs to and
 from one hub node per slot, an equivalent network with
 \(O(|\mathcal{B}|)\) instead of \(O(|\mathcal{B}|^2)\) arcs.
 
-Staged inventory start and balance per upstream role (each downstream
-role consumes its own output from the staged output of \textbf{every}
-upstream role, so a role with several upstream roles can only process
-what each of them has staged):
+Staged inventory start and balance per upstream role (\textbf{E7}; each
+downstream role consumes its own output from the staged output of
+\textbf{every} upstream role, so a role with several upstream roles can
+only process what each of them has staged):
 
 \[
 I^{\text{start}}_{u,b,s}=
@@ -394,45 +409,52 @@ I_{u,b,s}=I^{\text{start}}_{u,b,s}+z_{u,b,s}-\sum_{r\in\mathcal{N}_{u,b}} z_{r,b
 \qquad \forall (u,b)\in\mathcal{P}^{\text{stg}}, s.
 \]
 
-For a linear chain (\(|\mathcal{U}_{r,b}|=|\mathcal{N}_{u,b}|=1\)) these
-are the v1.0.0 inventory equations of the downstream role. The
-downstream roles of a fork (\(|\mathcal{N}_{u,b}|>1\)) split the staged
-output of \(u\): each unit is consumed by one of them. A join
+Staged output is therefore available downstream from the next shift
+slot. For a linear chain (\(|\mathcal{U}_{r,b}|=|\mathcal{N}_{u,b}|=1\))
+these are the FHOPS 1.0.0 inventory equations of the downstream role.
+The downstream roles of a fork (\(|\mathcal{N}_{u,b}|>1\)) split the
+staged output of \(u\): each unit is consumed by one of them. A join
 (\(|\mathcal{U}_{r,b}|>1\)) consumes each unit of its output from the
 pool of every upstream role. Hence, without carried-in staged volume, a
 fork that joins again (a diamond \(u\to\{r_1,r_2\}\to t\)) delivers at
 most half of the output of \(u\), i.e.~at most \(W_b/2\).
 
-Activation (production gating):
+Activation, production gating (\textbf{E8a}):
 
 \[
-z_{r,b,s} \le Q_{r,b}\,g_{r,b,s},
+\begin{aligned}
+&z_{r,b,s} \le Q_{r,b}\,g_{r,b,s},
 \qquad
-g_{r,b,s} \le \sum_{m\in\mathcal{M}(r)} x_{m,b,s},
-\qquad
-\sum_{m\in\mathcal{M}(r)\setminus\mathcal{K}_{b,s}} x_{m,b,s} \le |\mathcal{M}(r)\setminus\mathcal{K}_{b,s}|\, g_{r,b,s}
+g_{r,b,s} \le \sum_{m\in\mathcal{M}(r)} x_{m,b,s},\\
+&\sum_{m\in\mathcal{M}(r)\setminus\mathcal{K}_{b,s}} x_{m,b,s} \le |\mathcal{M}(r)\setminus\mathcal{K}_{b,s}|\, g_{r,b,s}
 \qquad \forall (r,b)\in\mathcal{P}^{\text{act}}, s.
+\end{aligned}
 \]
 
 An assigned unlocked machine activates its role; a machine locked to the
 block may stay idle (\(x=1\), \(p=0\)) without activating it, so a lock
 never forces production that the staged volumes cannot support.
 
-Head start (with \(I_{u,b,\operatorname{prev}(s_1)} := \bar{I}_{u,b}\)):
+Head-start buffer (\textbf{E8b}; with
+\(I_{u,b,\operatorname{prev}(s_1)} := \bar{I}_{u,b}\)):
 
 \[
 I_{u,b,\operatorname{prev}(s)} \ge B_{r,b}\,\left(g_{r,b,s}-h_{r,b,s}\right)
-\qquad \forall (r,b)\in\mathcal{P}^{\text{hs}},\; u\in\mathcal{U}_{r,b},\; s,
+\qquad \forall (r,b)\in\mathcal{P}^{\text{hs}},\; u\in\mathcal{U}_{r,b},\; s.
 \]
+
+Head-start waiver (\textbf{E8c}; the buffer is waived once every
+upstream role has output its carried-in remaining volume, so blocks
+smaller than a buffer can still be finished):
 
 \[
 \sum_{s'\prec s} z_{u,b,s'} \ge R^{0}_{u,b}\,h_{r,b,s}
 \qquad \forall (r,b)\in\mathcal{P}^{\text{hs}},\; u\in\mathcal{U}_{r,b},\; s.
 \]
 
-Loader truckload threshold: a producing loader needs one truckload, or
-the whole remaining block volume when it is smaller, staged by every
-upstream role at the start of the slot,
+Loader truckload threshold (\textbf{E9}): a producing loader needs one
+truckload, or the whole remaining block volume when it is smaller,
+staged by every upstream role at the start of the slot,
 
 \[
 I_{u,b,\operatorname{prev}(s)} \ge \min\!\left(q^{\text{batch}}_{b},\; W_b - D_{b,\operatorname{prev}(s)}\right) g_{r,b,s}
@@ -444,21 +466,23 @@ linearized exactly as follows (all coefficients are data;
 
 \[
 \begin{aligned}
-&I_{u,b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\, g_{r,b,s}
-&& \text{if } W_b > q^{\text{batch}}_b,\ s\notin\mathcal{S}^{\text{tail}}_b,\\
-&I_{u,b,\operatorname{prev}(s)} + D_{b,\operatorname{prev}(s)} \ge W_b\, g_{r,b,s}
-&& \text{if } W_b \le q^{\text{batch}}_b,\\
-&I_{u,b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\,(g_{r,b,s}-\lambda_{b,s}),\quad
-I_{u,b,\operatorname{prev}(s)} + D_{b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\, g_{r,b,s} + (W_b - q^{\text{batch}}_{b})\,\lambda_{b,s}
-&& \text{if } s\in\mathcal{S}^{\text{tail}}_b,
+&\text{if } W_b > q^{\text{batch}}_b \text{ and } s\notin\mathcal{S}^{\text{tail}}_b:\\
+&\qquad I_{u,b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\, g_{r,b,s},\\
+&\text{if } W_b \le q^{\text{batch}}_b:\\
+&\qquad I_{u,b,\operatorname{prev}(s)} + D_{b,\operatorname{prev}(s)} \ge W_b\, g_{r,b,s},\\
+&\text{if } s\in\mathcal{S}^{\text{tail}}_b:\\
+&\qquad I_{u,b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\,(g_{r,b,s}-\lambda_{b,s}),\\
+&\qquad I_{u,b,\operatorname{prev}(s)} + D_{b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\, g_{r,b,s} + (W_b - q^{\text{batch}}_{b})\,\lambda_{b,s},
 \end{aligned}
 \]
 
 \[
-D_{b,\operatorname{prev}(s)} \ge (W_b - q^{\text{batch}}_{b})\,\lambda_{b,s},
-\qquad
-\lambda_{b,s} \ge \lambda_{b,\operatorname{prev}(s)}
-\qquad \forall s\in\mathcal{S}^{\text{tail}}_b \ (\operatorname{prev}(s)\in\mathcal{S}^{\text{tail}}_b \text{ for the second}).
+\begin{aligned}
+&D_{b,\operatorname{prev}(s)} \ge (W_b - q^{\text{batch}}_{b})\,\lambda_{b,s}
+&& \forall s\in\mathcal{S}^{\text{tail}}_b,\\
+&\lambda_{b,s} \ge \lambda_{b,\operatorname{prev}(s)}
+&& \forall s \text{ with } s,\operatorname{prev}(s)\in\mathcal{S}^{\text{tail}}_b.
+\end{aligned}
 \]
 
 \(\lambda_{b,s}=1\) is only possible once at most one truckload remains;
@@ -466,40 +490,15 @@ it then relaxes the threshold to the remaining volume. Outside
 \(\mathcal{S}^{\text{tail}}_b\) the remaining volume provably exceeds a
 truckload, so no binary is needed there.
 
-Block completion balance with leftover slack:
+Block completion balance with leftover slack (\textbf{E10}):
 
 \[
 \sum_{r\in\mathcal{T}_b}\sum_{s\in\mathcal{S}} z_{r,b,s} + L_b = W_b
 \qquad \forall b\in\mathcal{B}.
 \]
 
-Remaining role output (no role can handle more wood than the block still
-holds):
-
-\[
-\sum_{s\in\mathcal{S}} z_{r,b,s} \le R_{r,b}
-\qquad \forall b\in\mathcal{B}^{\text{seq}},\; r\in\mathcal{R}_b,
-\qquad
-z_{r,b,s} + D_{b,s} \le W_b
-\qquad \forall (r,b)\in\mathcal{P}^{\text{cap}},\; s.
-\]
-
-Locked assignments (a lock without a shift label pins every available
-shift of its day; a lock with a shift label pins only that slot):
-
-\[
-x_{m_k,b,s} = \chi_k\,A_{m_k,s}\,\mathbf{1}[b=b_k]
-\qquad \forall k\in\mathcal{K},\; s\in\mathcal{S}_k,\; b\in\mathcal{B},
-\]
-
-where \(\chi_k=0\) when the lock contradicts the model (day outside the
-block window, or a machine whose role is not in the block's harvest
-system) and \(\chi_k=1\) otherwise. Such locks are rejected by scenario
-validation; a lock that still reaches the model pins the machine to idle
-and is reported as a warning instead of making the model infeasible. A
-second lock on an already locked machine slot is ignored with a warning.
 Landing capacity per shift slot, the machines working a landing's blocks
-concurrently:
+concurrently (\textbf{E11}):
 
 \[
 \sum_{b:\,\ell(b)=\ell}\sum_{m\in\mathcal{M}} x_{m,b,s}
@@ -524,14 +523,46 @@ machines beyond capacity and pays \(\omega^{\text{land}}\,e(e+1)/2\):
 the \(k\)-th machine beyond capacity in a slot costs
 \(k\,\omega^{\text{land}}\), as in the heuristics' evaluation.
 
-Domain restrictions:
+Remaining role output, no role can handle more wood than the block still
+holds (\textbf{E12}):
+
+\[
+\begin{aligned}
+&\sum_{s\in\mathcal{S}} z_{r,b,s} \le R_{r,b}
+&& \forall b\in\mathcal{B}^{\text{seq}},\; r\in\mathcal{R}_b,\\
+&z_{r,b,s} + D_{b,s} \le W_b
+&& \forall (r,b)\in\mathcal{P}^{\text{cap}},\; s.
+\end{aligned}
+\]
+
+Locked assignments (\textbf{E13}; a lock without a shift label pins
+every available shift of its day; a lock with a shift label pins only
+that slot):
+
+\[
+x_{m_k,b,s} = \chi_k\,A_{m_k,s}\,\mathbf{1}[b=b_k]
+\qquad \forall k\in\mathcal{K},\; s\in\mathcal{S}_k,\; b\in\mathcal{B},
+\]
+
+where \(\chi_k=0\) when the lock contradicts the model (day outside the
+block window, or a machine whose role is not in the block's harvest
+system) and \(\chi_k=1\) otherwise. Such locks are rejected by scenario
+validation; a lock that still reaches the model pins the machine to idle
+and is reported as a warning instead of making the model infeasible. A
+second lock on an already locked machine slot is ignored with a warning.
+
+Domain restrictions (\textbf{D1}):
 
 \[
 x, g, h, \lambda \in \{0,1\},\quad p,z,y,\eta,\phi,\nu,I^{\text{start}},I,L \ge 0,\quad S \in [0,1].
 \]
 
-\textbf{Initial state defaults.} Without
-\texttt{Scenario.initial\_state} and
+\textbf{Initial state (INIT).} The optional
+\texttt{Scenario.initial\_state} supplies \(\bar{I}_{u,b}\)
+(\textbf{E7}, \textbf{E8b}), \(R^{0}_{r,b}\) (\textbf{E8c},
+\textbf{E12}), and \(b^{0}_m\) with \(\mathcal{M}^{0}\) (\textbf{E6});
+the rolling-horizon driver uses it to carry state from one planning
+window to the next. Without \texttt{Scenario.initial\_state} and
 \texttt{Scenario.locked\_assignments} (\(\bar{I}\equiv 0\);
 \(R^{0}_{r,b}= R_{r,b}= W_b\);
 \(\mathcal{M}^{0}=\mathcal{K}=\emptyset\)) the initial-state and lock
@@ -539,47 +570,48 @@ terms vanish.
 
 \textbf{Changes from FHOPS v1.0.0 (1.0.1).} The following corrections
 make every MILP plan physically feasible and replayable by the playback
-sequencing tracker without violations: (i) the remaining-output cap
-applies to every role with \(R_{r,b}=\min(R^{0}_{r,b},W_b)\) (\(W_b\) by
-default), complemented by the per-slot cap \(z_{r,b,s}+D_{b,s}\le W_b\)
-where the flow balances do not imply it (v1.0.0 let upstream roles
-output more volume than the block holds and used that volume to meet
-head-start and loader thresholds); (ii) the head-start constraint is
-waived through \(h_{r,b,s}\) once every upstream role has output its
-carried-in remaining volume, so blocks smaller than a buffer can still
-be finished; (iii) the loader threshold is
+sequencing tracker without violations: (i) (\textbf{E12}) the
+remaining-output cap applies to every role with
+\(R_{r,b}=\min(R^{0}_{r,b},W_b)\) (\(W_b\) by default), complemented by
+the per-slot cap \(z_{r,b,s}+D_{b,s}\le W_b\) where the flow balances do
+not imply it (v1.0.0 let upstream roles output more volume than the
+block holds and used that volume to meet head-start and loader
+thresholds); (ii) (\textbf{E8c}) the head-start constraint is waived
+through \(h_{r,b,s}\) once every upstream role has output its carried-in
+remaining volume, so blocks smaller than a buffer can still be finished;
+(iii) (\textbf{E9}) the loader threshold is
 \(\min(q^{\text{batch}}_b, W_b - D_{b,\operatorname{prev}(s)})\), the
 volume still to deliver at the start of the slot (v1.0.0 always required
 a full truckload), so the last partial truckload of a block can be
-loaded; (iv) staged inventories are kept per upstream role,
-\(I_{u,b,s}\) (v1.0.0 kept one inventory per downstream role fed by the
-sum of its upstream roles' outputs, so a role with several upstream
-roles could process wood that only one of them had handled); (v) the
-activation binary \(g_{r,b,s}\) gates production only and machines
-locked to a block may stay idle, so locks (new in 1.0.1) never make the
-model infeasible; contradictory locks are pinned to idle and reported;
-(vi) blocks without a harvest system
-(\(\mathcal{B}\setminus\mathcal{B}^{\text{seq}}\)) have no role
-obligations, as documented in the data contract (v1.0.0 applied the
-registry's default system to them); (vii) timeline blackouts, which
-v1.0.0 enforced only in the heuristics, set \(A_{m,s}=0\) in every slot
-of a blackout day for every machine; (viii) landing capacity counts the
-machines on a landing per shift slot and is hard when
-\(\omega^{\text{land}}=0\), as in the heuristics (v1.0.0 counted
-machine-shifts per day,
+loaded; (iv) (\textbf{E7}) staged inventories are kept per upstream
+role, \(I_{u,b,s}\) (v1.0.0 kept one inventory per downstream role fed
+by the sum of its upstream roles' outputs, so a role with several
+upstream roles could process wood that only one of them had handled);
+(v) (\textbf{E8a}, \textbf{E13}) the activation binary \(g_{r,b,s}\)
+gates production only and machines locked to a block may stay idle, so
+locks (new in 1.0.1) never make the model infeasible; contradictory
+locks are pinned to idle and reported; (vi) (\textbf{E2}) blocks without
+a harvest system (\(\mathcal{B}\setminus\mathcal{B}^{\text{seq}}\)) have
+no role obligations, as documented in the data contract (v1.0.0 applied
+the registry's default system to them); (vii) (\textbf{E1}) timeline
+blackouts, which v1.0.0 enforced only in the heuristics, set
+\(A_{m,s}=0\) in every slot of a blackout day for every machine; (viii)
+(\textbf{E11}) landing capacity counts the machines on a landing per
+shift slot and is hard when \(\omega^{\text{land}}=0\), as in the
+heuristics (v1.0.0 counted machine-shifts per day,
 \(\sum_{\sigma} x_{m,b,(d,\sigma)} \le C_{\ell} + S_{\ell,d}\), with a
 slack that was free at the default \(\omega^{\text{land}}=0\), so the
 capacity did not bind; on single-shift scenarios the per-slot and
-per-day counts coincide); (ix) a move is charged when a machine works a
-block other than its position, its last worked block or \(b^{0}_m\),
-through the position network above: staying on a block costs nothing
-(v1.0.0 also charged \(\omega^{\text{trans}}\) for consecutive slots on
-the same block), and a move across idle slots, or from \(b^{0}_m\) into
-a first worked slot after \(s_1\), is charged (v1.0.0 linked only
-consecutive slots through binaries
+per-day counts coincide); (ix) (\textbf{E6}) a move is charged when a
+machine works a block other than its position, its last worked block or
+\(b^{0}_m\), through the position network above: staying on a block
+costs nothing (v1.0.0 also charged \(\omega^{\text{trans}}\) for
+consecutive slots on the same block), and a move across idle slots, or
+from \(b^{0}_m\) into a first worked slot after \(s_1\), is charged
+(v1.0.0 linked only consecutive slots through binaries
 \(y_{m,b',b,s}\ge x_{m,b',\operatorname{prev}(s)}+x_{m,b,s}-1\), so
 idling one slot avoided the move cost that the heuristics and the KPIs
-charge); (x) the loader batching variables of v1.0.0
+charge); (x) (old \textbf{E9}) the loader batching variables of v1.0.0
 (\(z_{r,b,s}=q^{\text{batch}}_{b}n_{r,b,s}+u_{r,b,s}\) with
 \(n_{r,b,s}\in\mathbb{Z}_{\ge0}\),
 \(0\le u_{r,b,s}\le q^{\text{batch}}_{b}\)) were removed because every
@@ -591,99 +623,111 @@ the start of the slot, and production is capped by \(R_{r,b}\) and by
 the volume the block still holds. For linear harvest systems without
 loaders, without locks, and with no (or a consistent) initial state,
 (iii)--(v) leave the equations unchanged apart from indexing the staged
-inventory by the upstream instead of the downstream role.
+inventory by the upstream instead of the downstream role. The initial
+state (\textbf{INIT}), locked assignments (\textbf{E13}), and the
+earliness stage (\textbf{OBJ2}) are new in 1.0.1 and vanish by default.
 
 \textbf{Implementation mapping (equation blocks to code).}
 
-\begin{itemize}
-\tightlist
-\item
-  Machine capacity and availability: \texttt{model.machine\_capacity}
-  (\texttt{machine\_capacity\_rule}; \(A_{m,s}\) from the calendars and
-  \texttt{bundle.blackout\_slots}, built by
-  \texttt{build\_blackout\_slots(...)} and shared with the heuristics)
-\item
-  Role compatibility: \texttt{model.role\_compatibility}
-  (\texttt{role\_compatibility\_rule}; skipped for
-  \texttt{bundle.unsequenced\_blocks})
-\item
-  Production-assignment coupling: \texttt{model.production\_cap}
-  (\texttt{prod\_cap\_rule})
-\item
-  Block windows: \texttt{model.block\_windows} (\texttt{window\_rule})
-\item
-  Role aggregation: \texttt{model.role\_prod\_balance}
-  (\texttt{role\_prod\_balance\_rule})
-\item
-  Machine positions and moves: \texttt{model.position\_balance}
-  (\(\eta\) = \texttt{model.stay}, \(y\) = \texttt{model.y} or the hub
-  arcs \texttt{model.depart}/\texttt{model.arrive} with
-  \texttt{model.hub\_balance} for machines with equal move costs),
-  \texttt{model.unplaced\_balance} (\(\phi\) = \texttt{model.first},
-  \(\nu\) = \texttt{model.unplaced}),
-  \texttt{model.move\_requires\_work},
-  \texttt{model.work\_sets\_position}
-\item
-  Inventory dynamics and guards: \texttt{model.inventory\_start\_eq}
-  (indexed by upstream role-block pairs \texttt{model.InventoryPairs};
-  first slot uses \(\bar{I}_{u,b}\) from
-  \texttt{bundle.initial\_staged\_inventory}),
-  \texttt{model.inventory\_balance}, \texttt{model.inventory\_guard}
-\item
-  Activation and head start: \texttt{model.activation\_prod},
-  \texttt{model.role\_active\_upper} (locked machines excluded),
-  \texttt{model.role\_active\_lower}, \texttt{model.head\_start} (one
-  row per upstream role); buffer waiver
-  \texttt{model.upstream\_done\_link} (cumulative output
-  \texttt{model.role\_cumulative\_eq}); \(B_{r,b}\) from
-  \texttt{headstart\_buffer\_volumes(...)} in
-  \texttt{fhops.model.milp.data}
-\item
-  Loader threshold: \texttt{model.loader\_threshold},
-  \texttt{model.loader\_threshold\_tail},
-  \texttt{model.loader\_tail\_reached},
-  \texttt{model.loader\_tail\_monotone} (\(\lambda\) =
-  \texttt{model.loader\_tail}; \(D_{b,s}\) from
-  \texttt{model.role\_cumulative} of the terminal roles)
-\item
-  Block balance with leftovers: \texttt{model.block\_balance}
-  (\texttt{block\_balance\_rule}) + \texttt{model.leftover}
-\item
-  Remaining role output: \texttt{model.role\_remaining\_cap} (from
-  \texttt{bundle.initial\_role\_remaining}, capped at \(W_b\)), per-slot
-  cap \texttt{model.role\_slot\_remaining}
-\item
-  Locked assignments: \texttt{model.locked\_assignment} (from
-  \texttt{bundle.locked\_assignments}, resolved by
-  \texttt{resolve\_locked\_slots(...)} in
-  \texttt{fhops.model.milp.data}; warnings in the solve result)
-\item
-  Landing capacity per shift slot: \texttt{model.landing\_capacity}
-  (\texttt{landing\_capacity\_rule}, indexed by landing and slot; locked
-  overloads from \texttt{\_landing\_slot\_capacities}) +
-  \texttt{model.landing\_surplus} (unit pieces
-  \texttt{model.LandingSurplusIndex}, only when
-  \(\omega^{\text{land}}>0\))
-\item
-  Objective assembly: \texttt{model.objective} and objective-term
-  construction around \texttt{prod\_weight}, \texttt{landing\_weight},
-  \texttt{mobilisation\_weight}, \texttt{transition\_weight} (move costs
-  \(c_{m,b',b}\); \(b^{0}_m\) from
-  \texttt{bundle.initial\_machine\_block})
-\item
-  Earliness tie-break: \texttt{earliness\_expression(...)} in
-  \texttt{fhops.model.milp.operational} (\(E\)); second stage
-  \texttt{\_solve\_earliness\_stage(...)} in
-  \texttt{fhops.model.milp.driver} (\texttt{model.earliness\_floor},
-  \texttt{model.earliness\_objective};
-  \texttt{solve\_operational\_milp(...,\ earliness=True)}, result key
-  \texttt{earliness})
-\item
-  Data/parameter normalization: \texttt{build\_operational\_bundle(...)}
-  in \texttt{fhops.model.milp.data} (flattens
-  \texttt{Scenario.initial\_state} and
-  \texttt{Scenario.locked\_assignments} into the bundle)
-\end{itemize}
+Primary modules are \texttt{operational.py}, \texttt{data.py}, and
+\texttt{driver.py} under \texttt{src/fhops/model/milp}. Regression tests
+live under \texttt{tests/model} (builder, moves, landing capacity,
+blackouts, earliness, driver) and cover the MILP builder plus driver
+integration.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1600}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.8400}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Block
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Pyomo objects and rules
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{OBJ} & \texttt{model.objective} and the objective terms around
+\texttt{prod\_weight}, \texttt{landing\_weight},
+\texttt{mobilisation\_weight}, \texttt{transition\_weight} (move costs
+\(c_{m,b',b}\); \(b^{0}_m\) from
+\texttt{bundle.initial\_machine\_block}) \\
+\textbf{OBJ2} & \texttt{earliness\_expression(...)} in
+\texttt{fhops.model.milp.operational} (\(E\)); second stage
+\texttt{\_solve\_earliness\_stage(...)} in
+\texttt{fhops.model.milp.driver} (\texttt{model.earliness\_floor},
+\texttt{model.earliness\_objective};
+\texttt{solve\_operational\_milp(...,\ earliness=True)}, result key
+\texttt{earliness}) \\
+\textbf{INIT} & \texttt{build\_operational\_bundle(...)} in
+\texttt{fhops.model.milp.data} flattens \texttt{Scenario.initial\_state}
+and \texttt{Scenario.locked\_assignments} into the bundle
+(\texttt{bundle.initial\_staged\_inventory},
+\texttt{bundle.initial\_role\_remaining},
+\texttt{bundle.initial\_machine\_block},
+\texttt{bundle.locked\_assignments}) \\
+\textbf{E1} & \texttt{model.machine\_capacity}
+(\texttt{machine\_capacity\_rule}; \(A_{m,s}\) from the calendars and
+\texttt{bundle.blackout\_slots}, built by
+\texttt{build\_blackout\_slots(...)} and shared with the heuristics) \\
+\textbf{E2} & \texttt{model.role\_compatibility}
+(\texttt{role\_compatibility\_rule}; skipped for
+\texttt{bundle.unsequenced\_blocks}) \\
+\textbf{E3} & \texttt{model.production\_cap}
+(\texttt{prod\_cap\_rule}) \\
+\textbf{E4} & \texttt{model.block\_windows} (\texttt{window\_rule}) \\
+\textbf{E5} & \texttt{model.role\_prod\_balance}
+(\texttt{role\_prod\_balance\_rule}) \\
+\textbf{E6} & \texttt{model.position\_balance} (\(\eta\) =
+\texttt{model.stay}, \(y\) = \texttt{model.y} or the hub arcs
+\texttt{model.depart}/\texttt{model.arrive} with
+\texttt{model.hub\_balance} for machines with equal move costs),
+\texttt{model.unplaced\_balance} (\(\phi\) = \texttt{model.first},
+\(\nu\) = \texttt{model.unplaced}), \texttt{model.move\_requires\_work},
+\texttt{model.work\_sets\_position} \\
+\textbf{E7} & \texttt{model.inventory\_start\_eq} (indexed by upstream
+role-block pairs \texttt{model.InventoryPairs}; first slot uses
+\(\bar{I}_{u,b}\) from \texttt{bundle.initial\_staged\_inventory}),
+\texttt{model.inventory\_balance}, \texttt{model.inventory\_guard} \\
+\textbf{E8a} & \texttt{model.activation\_prod},
+\texttt{model.role\_active\_upper} (locked machines excluded),
+\texttt{model.role\_active\_lower} \\
+\textbf{E8b} & \texttt{model.head\_start} (one row per upstream role);
+\(B_{r,b}\) from \texttt{headstart\_buffer\_volumes(...)} in
+\texttt{fhops.model.milp.data} \\
+\textbf{E8c} & \texttt{model.upstream\_done\_link} (cumulative output
+\texttt{model.role\_cumulative\_eq}) \\
+\textbf{E9} & \texttt{model.loader\_threshold},
+\texttt{model.loader\_threshold\_tail},
+\texttt{model.loader\_tail\_reached},
+\texttt{model.loader\_tail\_monotone} (\(\lambda\) =
+\texttt{model.loader\_tail}; \(D_{b,s}\) from
+\texttt{model.role\_cumulative} of the terminal roles) \\
+\textbf{E10} & \texttt{model.block\_balance}
+(\texttt{block\_balance\_rule}) + \texttt{model.leftover} \\
+\textbf{E11} & \texttt{model.landing\_capacity}
+(\texttt{landing\_capacity\_rule}, indexed by landing and slot; locked
+overloads from \texttt{\_landing\_slot\_capacities}) +
+\texttt{model.landing\_surplus} (unit pieces
+\texttt{model.LandingSurplusIndex}, only when
+\(\omega^{\text{land}}>0\)) \\
+\textbf{E12} & \texttt{model.role\_remaining\_cap} (from
+\texttt{bundle.initial\_role\_remaining}, capped at \(W_b\)), per-slot
+cap \texttt{model.role\_slot\_remaining} \\
+\textbf{E13} & \texttt{model.locked\_assignment} (from
+\texttt{bundle.locked\_assignments}, resolved by
+\texttt{resolve\_locked\_slots(...)} in \texttt{fhops.model.milp.data};
+warnings in the solve result) \\
+\textbf{D1} & Domains of \texttt{model.x}, \texttt{model.prod},
+\texttt{model.role\_prod}, \texttt{model.y}, \texttt{model.stay},
+\texttt{model.depart}, \texttt{model.arrive}, \texttt{model.first},
+\texttt{model.unplaced}, \texttt{model.inventory\_start},
+\texttt{model.inventory}, \texttt{model.role\_cumulative},
+\texttt{model.role\_active}, \texttt{model.upstream\_done},
+\texttt{model.loader\_tail}, \texttt{model.leftover},
+\texttt{model.landing\_surplus} \\
+\end{longtable}
 
 This formulation is the canonical mathematical reference for FHOPS
 operational MILP documentation and thesis-level reporting.
