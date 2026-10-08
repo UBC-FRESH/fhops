@@ -1,10 +1,10 @@
 {
   "samples": 50,
-  "total_production": 27999.842845333536,
-  "total_production_std": 880.977918628663,
-  "remaining_work": 10193.38655666646,
-  "all_roles_production_units": 126251.58223806473,
-  "total_hours": 4975.940609478379,
-  "mobilisation_cost": 10110.44,
-  "average_utilisation": 0.5484943352599625
+  "total_production": 28945.478426863992,
+  "total_production_std": 939.9651821414034,
+  "remaining_work": 9247.750975136008,
+  "all_roles_production_units": 126178.43912274596,
+  "total_hours": 5094.248662272573,
+  "mobilisation_cost": 7292.52,
+  "average_utilisation": 0.5615353463704337
 }

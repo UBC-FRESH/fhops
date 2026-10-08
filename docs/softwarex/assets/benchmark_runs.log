@@ -50,3 +50,11 @@ hash_recipe: v2
 assets_hash: 49e7b74787abc50a56812c6f466e5a88ff1c58352c4b6365af88ceb44f91c214
 note: provenance hygiene (#144), no solver run and no result changed: recorded absolute paths (prefix of the removed worktree fhops-wt-131b) rewritten to repo-relative paths in 32 files (relativize_asset_paths.py; every other byte identical, runs.sqlite rows identical apart from the prefix); tuning_leaderboard.csv/.tex rebuilt by build_tables.py with Budget column, ILS/Tabu key settings and Delta/SA-budget note (values unchanged). Hash recipe v2 from now on: SHA-256 of the LC_ALL=C-sorted sha256sum lines of the 197 committed files under docs/softwarex/assets (git ls-files --cached --others --exclude-standard), excluding this log; see docs/softwarex/manuscript/README.md. Correction to the entry run_started 2026-10-07T06:53:41Z (35c38d9, merged as 0463fd5): its v1 assets_hash bcf65f3126ce329267e48aa1cb3ae332a5ee5a2e88ffe03ea44953aa93fe223f also hashed the git-ignored data/tuning/telemetry/steps/*.jsonl (and the log before that entry) and cannot be recomputed from the repository; over the files committed in 0463fd5 the same v1 recipe (LC_ALL=C, log without that entry) gives 16a4def731b7f560b29f4229904b1e5315d20d8f321055822cab523643e4d96a
 ----
+run_started: 2026-10-08T12:31:05Z
+commit: 50e6f9b
+fast_mode: 0
+duration_s: 10615
+hash_recipe: v2
+assets_hash: 5e069c58370c91f30d2dc4e2e8ad8c93d885e8a653b1fb2a8d4dfe5c7e3a4669
+note: final regeneration on FHOPS 1.0.1 (Phase 8, code 50e6f9b); runtimes measured sequentially on an idle 72-core host
+----
