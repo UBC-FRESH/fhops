@@ -1,3 +1,6 @@
+# 2026-10-08 — Release notes: open findings listed as known limitations (#96, part of #90)
+- `docs/releases/v1.0.1.md`: third-audit findings tracked in #157/#158 listed under Known limitations for 1.0.2; "never starved" claim qualified. Docs only.
+
 # 2026-10-08 — Release-notes polish from the third pre-release audit (#96, part of #90)
 - `docs/releases/v1.0.1.md`: SR-109 change also affects the built-in `cable_partial_tr127_block5` harvest system (checklist row and Data corrections; example multiplier/rental-rate values); model-size statement narrowed to constraints and integer variables; `solve_mip` result keys include `earliness`; "three audits".
 - `docs/releases/v1.0.1-github-release.md`: "three pre-release audits"; objective overstatement when mobilisation or transitions were weighted; hard-violation penalty wording no longer overclaims; all four new `plan rolling` flags listed.
