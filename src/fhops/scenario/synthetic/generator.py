@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import random
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -189,6 +189,62 @@ def generate_with_systems(
         update={"blocks": blocks, "machines": machines, "harvest_systems": systems}
     )
     return _attach_system_road_entries(scenario)
+
+
+def _system_roles(system: HarvestSystem) -> list[str]:
+    """Return the distinct machine roles of ``system`` in job order."""
+
+    roles: list[str] = []
+    for job in system.jobs:
+        role = job.machine_role
+        if role and role not in roles:
+            roles.append(role)
+    return roles
+
+
+def _select_fleet_systems(
+    systems: Mapping[str, HarvestSystem],
+    mix: Mapping[str, float] | None,
+    num_machines: int,
+    rng: random.Random,
+) -> tuple[list[str], list[str]]:
+    """Choose the harvest systems a synthetic fleet can deliver and the roles it needs.
+
+    Systems with a positive ``mix`` weight (every system when ``mix`` is ``None`` or selects
+    none) are visited in a weighted random order (without replacement); a system is kept when
+    the roles of the kept systems plus its own fit in ``num_machines`` machines. When no system
+    fits, the system with the fewest roles is kept (some of its roles then have no machine).
+
+    Returns
+    -------
+    tuple[list[str], list[str]]
+        ``(system_ids, roles)``: kept systems in visiting order and the distinct roles they use,
+        in job order (upstream roles first).
+    """
+
+    candidates = [sid for sid in systems if mix and mix.get(sid, 0.0) > 0.0]
+    if not candidates:
+        candidates = list(systems)
+    weights = [float(mix.get(sid, 0.0)) if mix else 1.0 for sid in candidates]
+    if not any(weight > 0.0 for weight in weights):
+        weights = [1.0] * len(candidates)
+    order: list[str] = []
+    while candidates:
+        index = rng.choices(range(len(candidates)), weights=weights, k=1)[0]
+        order.append(candidates.pop(index))
+        weights.pop(index)
+    selected: list[str] = []
+    roles: list[str] = []
+    for system_id in order:
+        new_roles = [role for role in _system_roles(systems[system_id]) if role not in roles]
+        if len(roles) + len(new_roles) <= num_machines:
+            selected.append(system_id)
+            roles.extend(new_roles)
+    if not selected and order:
+        fallback = min(order, key=lambda sid: len(_system_roles(systems[sid])))
+        selected = [fallback]
+        roles = _system_roles(systems[fallback])
+    return selected, roles
 
 
 def _as_range(value: tuple[int, int] | int) -> tuple[int, int]:
@@ -655,7 +711,32 @@ def generate_random_dataset(
     seed: int = 123,
     systems: dict[str, HarvestSystem] | None = None,
 ) -> SyntheticDatasetBundle:
-    """Generate a random synthetic dataset bundle (scenario + CSV tables)."""
+    """Generate a random synthetic dataset bundle (scenario + CSV tables).
+
+    Parameters
+    ----------
+    config : SyntheticDatasetConfig
+        Sizes, sampling ranges and tier presets (``tier`` fills unset pools and ``system_mix``).
+    seed : int, default 123
+        RNG seed; the same config, seed and systems give the same bundle.
+    systems : dict[str, HarvestSystem] | None
+        Harvest systems the blocks may use (``fhops synth`` passes the default registry). When
+        given, the fleet is built from them (since 1.0.1, #158): systems with a positive
+        ``system_mix`` weight are visited in a weighted random order and kept while the distinct
+        roles of the kept systems fit in the sampled machine count; machines take those roles
+        round-robin (upstream roles first; ``role_pool`` is ignored) and every block draws its
+        system from the kept systems by ``system_mix`` weight (round-robin without weights).
+        Every block can therefore be delivered unless no system fits the fleet (then the
+        system with the fewest roles is used and some of its roles have no machine). The
+        chosen systems and roles are recorded in ``metadata`` (``fleet_systems``,
+        ``fleet_roles``). Without systems, machines take ``role_pool`` roles and blocks have no
+        harvest system.
+
+    Returns
+    -------
+    SyntheticDatasetBundle
+        Scenario, CSV tables and metadata.
+    """
 
     rng = random.Random(seed)
     feature_rng = random.Random(seed + 10_001)
@@ -826,9 +907,21 @@ def generate_random_dataset(
                     crew_id = f"{base}-{counts[base]}"
             crew_ids.append(crew_id)
             crew_capabilities[crew_id] = list(base_capabilities.get(base, []))
+    # With harvest systems the fleet's roles come from the systems the blocks will use, so every
+    # block can be delivered (#158): before 1.0.1 the machines kept ``role_pool`` roles that no
+    # system in the tier mixes used, and the synthetic tiers delivered nothing.
+    fleet_systems: list[str] = []
+    fleet_roles: list[str] = []
+    if systems:
+        fleet_systems, fleet_roles = _select_fleet_systems(
+            systems, normalised_mix, num_machines, random.Random(seed + 20_011)
+        )
     for idx in range(num_machines):
-        raw_role = role_pool[idx % len(role_pool)] if role_pool else None
-        role = normalize_machine_role(raw_role)
+        if fleet_roles:
+            role: str | None = fleet_roles[idx % len(fleet_roles)]
+        else:
+            raw_role = role_pool[idx % len(role_pool)] if role_pool else None
+            role = normalize_machine_role(raw_role)
         assigned_crew = crew_ids[idx] if crew_ids else None
         rental_rate = _default_operating_cost_for_role(role)
         machines_records.append(
@@ -950,20 +1043,8 @@ def generate_random_dataset(
     if systems is None:
         systems = {}
     if systems:
-        roles = sorted({job.machine_role for system in systems.values() for job in system.jobs})
-        if roles:
-            updated_machines = [
-                machine.model_copy(
-                    update={
-                        "role": normalize_machine_role(roles[idx % len(roles)]),
-                        "operating_cost": _default_operating_cost_for_role(roles[idx % len(roles)]),
-                    }
-                )
-                for idx, machine in enumerate(scenario.machines)
-            ]
-            scenario = scenario.model_copy(update={"machines": updated_machines})
         updated_blocks = []
-        system_ids = list(systems.keys())
+        system_ids = list(fleet_systems)
         system_weights = None
         if normalised_mix:
             available_mix = {key: normalised_mix.get(key, 0.0) for key in system_ids}
@@ -1029,6 +1110,8 @@ def generate_random_dataset(
             "weights": prescription_weights,
         },
         "system_mix": normalised_mix,
+        "fleet_systems": fleet_systems,
+        "fleet_roles": fleet_roles,
         "blackout_biases": [
             {
                 "start_day": bias.start_day,

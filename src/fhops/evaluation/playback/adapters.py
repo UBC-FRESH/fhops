@@ -178,6 +178,12 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
     are present, their values are copied to ``metadata["downtime_production_lost"]`` /
     ``metadata["weather_production_lost"]`` (m³) for record-level loss KPIs.
 
+    A row without a ``production`` value in a slot that a scenario lock (``ScheduleLock``) pins to
+    the row's block is replayed as a locked slot (#158): it proposes ``min(rate, remaining)``
+    capped by ``ScheduleLock.production`` when set, produces what the staged input allows, and
+    idles without a sequencing violation when the input or a head-start/truckload threshold is
+    missing (as the operational MILP and the heuristics treat locked slots).
+
     When ``Scenario.initial_state`` is set, the sequencing tracker starts from the carried-in
     staged inventory, role remaining volumes, and role shift counts, and each machine's
     mobilisation tracking starts at its ``last_block_id`` so the first move to a different block
@@ -253,6 +259,8 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
     previous_block.update(tracker.ctx.initial_machine_block)
 
     landing_lookup = {block.id: block.landing_id for block in scenario.blocks}
+    lock_ctx = tracker.ctx
+    has_locks = bool(lock_ctx.locked_assignments or lock_ctx.locked_shift_assignments)
 
     blackout_days: set[int] = set()
     if scenario.timeline and scenario.timeline.blackouts:
@@ -341,6 +349,17 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             production_units, production_source = production_for(
                 machine_id, block_id, proposed_production
             )
+            # A locked slot replayed without planned production produces what its staged input
+            # allows (up to ``ScheduleLock.production``) and may idle without a violation (#158).
+            locked_slot = (
+                proposed_production is None
+                and has_locks
+                and lock_ctx.lock_for(machine_id, day, shift_id) == block_id
+            )
+            if locked_slot:
+                lock_cap = lock_ctx.lock_production_for(machine_id, day, shift_id)
+                if lock_cap is not None:
+                    production_units = min(production_units, lock_cap)
             hours_worked, hours_source = hours_for(machine_id, shift_id, day)
             if downtime_flag and downtime_hours is not None and hours_worked is not None:
                 hours_worked = max(hours_worked - downtime_hours, 0.0)
@@ -355,7 +374,9 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
                 metadata["landing_id"] = landing_id
             _copy_lost_volumes(row, metadata)
 
-            sequencing = tracker.process(day, machine_id, block_id, production_units, shift_id)
+            sequencing = tracker.process(
+                day, machine_id, block_id, production_units, shift_id, locked=locked_slot
+            )
             production_units = sequencing.production_units
             role = sequencing.machine_role
             if sequencing.violation_reason:

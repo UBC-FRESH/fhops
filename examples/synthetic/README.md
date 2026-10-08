@@ -7,9 +7,14 @@ This directory contains ready-to-use synthetic FHOPS scenario bundles generated 
 Bundles
 -------
 
-* ``small`` – 4 blocks, 6 days, 2 machines.
-* ``medium`` – 8 blocks, 12 days, 4 machines.
-* ``large`` – 16 blocks, 18 days, 6 machines (two shifts per day).
+* ``small`` – 4 blocks, 2 machines, 112 days (seed 101; harvest system ``cable_micro_hi_skid``).
+* ``medium`` – 8 blocks, 4 machines, 112 days (seed 202; ``steep_tethered``).
+* ``large`` – 16 blocks, 6 machines, 112 days (seed 303; nine cable systems sharing six roles).
+
+Regenerate a bundle with ``fhops synth generate --tier <tier> --overwrite``. Since FHOPS 1.0.1
+(#158) the machine roles come from the harvest systems the blocks use (``fleet_systems`` /
+``fleet_roles`` in ``metadata.yaml``), so every block can be delivered; earlier bundles gave the
+machines ``harvester``/``forwarder`` roles that none of the block systems used.
 
 Each bundle includes a ``scenario.yaml`` pointing at the CSV tables under ``data/``. The YAML can be
 loaded directly with ``fhops.scenario.io.load_scenario``; the regression tests (`tests/test_synthetic_dataset.py`)
