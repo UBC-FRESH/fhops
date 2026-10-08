@@ -9,7 +9,7 @@ from collections import defaultdict
 from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -460,6 +460,8 @@ def _repair_schedule_cover_blocks(
     allowed_roles = ctx.allowed_roles
     loader_roles = ctx.loader_roles
     loader_batch_volume = ctx.loader_batch_volume
+    # ``role_remaining`` looked up with an optional role (absent keys -> ``None``).
+    role_remaining_lookup = cast(Mapping[tuple[str, str | None], float], role_remaining)
     # (block, role) -> the (block, upstream role) inventory keys of its prerequisites.
     prereq_keys: dict[tuple[str, str], tuple[tuple[str, str], ...]] = {
         (block_id, role): tuple((block_id, upstream) for upstream in prereqs)
@@ -744,10 +746,8 @@ def _repair_schedule_cover_blocks(
         if allowed is not None and role is not None and role not in allowed:
             return False
         explicit = role is not None and block_id in explicit_blocks
-        if role is not None and explicit and (block_id, role) in role_remaining:
-            remaining = role_remaining[(block_id, role)]
-        else:
-            remaining = block_remaining.get(block_id, 0.0)
+        role_left = role_remaining_lookup.get((block_id, role)) if explicit else None
+        remaining = role_left if role_left is not None else block_remaining.get(block_id, 0.0)
         if remaining <= BLOCK_COMPLETION_EPS:
             return False
         production = rate_value if rate_value < remaining else remaining
@@ -924,7 +924,12 @@ def _repair_schedule_cover_blocks(
                     if block_id in explicit_blocks:
                         upstream_keys = prereq_keys.get((block_id, role))
                         if upstream_keys and (
-                            min([role_inventory_estimate[key] for key in upstream_keys]) <= 0.0
+                            (
+                                role_inventory_estimate[upstream_keys[0]]
+                                if len(upstream_keys) == 1
+                                else min([role_inventory_estimate[key] for key in upstream_keys])
+                            )
+                            <= 0.0
                         ):
                             continue  # staged nothing (``staged_nothing``)
                     if slot_is_valid(
