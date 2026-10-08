@@ -12,6 +12,7 @@ the real sanitizer and bound the per-iteration work so the regression cannot ret
 from __future__ import annotations
 
 import random
+from itertools import combinations
 
 import pytest
 
@@ -19,9 +20,19 @@ import fhops.optimization.heuristics.registry as registry_module
 from fhops.optimization.heuristics import solve_sa
 from fhops.optimization.heuristics.common import Schedule
 from fhops.optimization.heuristics.registry import (
+    BlockInsertionOperator,
+    CoverageInjectionOperator,
+    CrossExchangeOperator,
+    MobilisationShakeOperator,
+    OperatorContext,
+    _clone_schedule,
+    _locked_assignments,
     _plan_equals,
+    _production_rates,
+    _set_slot,
     _shuffle,
     _shuffle_with_getrandbits,
+    _window_allows,
 )
 from fhops.optimization.operational_problem import (
     OperationalProblem,
@@ -217,3 +228,108 @@ def test_operator_tries_do_not_build_full_candidates(monkeypatch: pytest.MonkeyP
     assert result["meta"]["proposals"] > 0
     assert calls["sanitize"] <= operators * iterations
     assert calls["clone"] <= operators * iterations
+
+
+class ReferenceCrossExchange(CrossExchangeOperator):
+    """Cross exchange as in a0b2799: materialised pair list, full sanitizer per try."""
+
+    def apply(self, context):
+        schedule = context.schedule
+        locks = _locked_assignments(context.problem, context.shift_keys)
+        production = _production_rates(context.problem)
+        assignments = [
+            (machine, shift_key, block_id)
+            for machine, machine_plan in schedule.plan.items()
+            for shift_key, block_id in machine_plan.items()
+            if block_id is not None
+        ]
+        if len(assignments) < 2:
+            return None
+        context.rng.shuffle(assignments)
+        pairs = list(combinations(assignments, 2))
+        context.rng.shuffle(pairs)
+        for (machine_a, shift_a, block_a), (machine_b, shift_b, block_b) in pairs:
+            if machine_a == machine_b:
+                continue
+            if (
+                locks.get((machine_a, shift_a)) == block_a
+                or locks.get((machine_b, shift_b)) == block_b
+            ):
+                continue
+            if production.get((machine_a, block_b), 0.0) <= 0.0:
+                continue
+            if production.get((machine_b, block_a), 0.0) <= 0.0:
+                continue
+            if not _window_allows(shift_a[0], block_b, context):
+                continue
+            if not _window_allows(shift_b[0], block_a, context):
+                continue
+            candidate = _clone_schedule(context, {machine_a, machine_b})
+            _set_slot(context, candidate, machine_a, shift_a, block_b)
+            _set_slot(context, candidate, machine_b, shift_b, block_a)
+            candidate = context.sanitizer(candidate)
+            if _plan_equals(candidate.plan, schedule.plan):
+                continue
+            if candidate.plan.get(machine_a, {}).get(shift_a) != block_b:
+                continue
+            if candidate.plan.get(machine_b, {}).get(shift_b) != block_a:
+                continue
+            return candidate
+        return None
+
+
+def _operator_context(pb, ctx, plan, seed, *, preview: bool) -> OperatorContext:
+    return OperatorContext(
+        problem=pb,
+        schedule=Schedule(plan=plan),
+        sanitizer=ctx.build_sanitizer(Schedule),
+        rng=random.Random(seed),
+        shift_keys=ctx.shift_keys,
+        shift_index=ctx.shift_index,
+        distance_lookup=ctx.distance_lookup,
+        block_windows=ctx.bundle.windows,
+        landing_capacity=ctx.bundle.landing_capacity,
+        landing_of=ctx.bundle.landing_for_block,
+        sanitizer_preview=ctx.build_sanitizer_preview(plan) if preview else None,
+    )
+
+
+@pytest.mark.parametrize("case", range(6))
+def test_operators_return_what_they_returned_before_151(
+    case: int, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Preview, fast shuffle and pair positions change no operator result or random draw."""
+
+    pb, ctx = _contexts()[case]
+    sanitizer = ctx.build_sanitizer(Schedule)
+    slots = list(ctx.shift_keys)
+    machines = [machine.id for machine in pb.scenario.machines]
+    choices: list[str | None] = [None, None, *BLOCKS]
+    plan_rng = random.Random(100 + case)
+    operators = [
+        (BlockInsertionOperator(), BlockInsertionOperator()),
+        (CoverageInjectionOperator(), CoverageInjectionOperator()),
+        (CrossExchangeOperator(), ReferenceCrossExchange()),
+        (MobilisationShakeOperator(), MobilisationShakeOperator()),
+    ]
+    produced = dict.fromkeys((operator.name for operator, _reference in operators), 0)
+    for trial in range(40):
+        plan = {
+            machine_id: {slot: plan_rng.choice(choices) for slot in slots}
+            for machine_id in machines
+        }
+        if trial % 2:
+            plan = sanitizer(Schedule(plan=plan)).plan
+        for operator, reference in operators:
+            fast = _operator_context(pb, ctx, plan, trial, preview=True)
+            result = operator.apply(fast)
+            monkeypatch.setattr(registry_module, "_FAST_SHUFFLE", False)
+            slow = _operator_context(pb, ctx, plan, trial, preview=False)
+            expected = reference.apply(slow)
+            monkeypatch.setattr(registry_module, "_FAST_SHUFFLE", True)
+            assert (result is None) == (expected is None), operator.name
+            if result is not None:
+                assert result.plan == expected.plan, operator.name
+                produced[operator.name] += 1
+            assert fast.rng.getstate() == slow.rng.getstate(), operator.name
+    assert all(produced.values()), produced

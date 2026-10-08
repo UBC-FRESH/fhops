@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from bisect import insort
+from bisect import bisect_right, insort
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from itertools import combinations
 from random import Random
 from typing import TYPE_CHECKING, Any, Protocol
 
@@ -602,9 +601,17 @@ class CrossExchangeOperator:
         if len(assignments) < 2:
             return None
         _shuffle(rng, assignments)
-        pairs = list(combinations(assignments, 2))
-        _shuffle(rng, pairs)
-        for (machine_a, shift_a, block_a), (machine_b, shift_b, block_b) in pairs:
+        # Shuffle positions in ``combinations(assignments, 2)`` order instead of the pair tuples:
+        # same permutation and random draws without materialising every pair (#151).
+        count = len(assignments)
+        row_start = [index * count - index * (index + 1) // 2 for index in range(count)]
+        order = list(range(count * (count - 1) // 2))
+        _shuffle(rng, order)
+        for position in order:
+            first = bisect_right(row_start, position) - 1
+            second = position - row_start[first] + first + 1
+            machine_a, shift_a, block_a = assignments[first]
+            machine_b, shift_b, block_b = assignments[second]
             if machine_a == machine_b:
                 continue
             lock_a = locks.get((machine_a, shift_a))

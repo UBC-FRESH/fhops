@@ -434,7 +434,9 @@ def _repair_schedule_cover_blocks(
     shift_availability = bundle.availability_shift
     availability = bundle.availability_day
     blackout = ctx.blackout_shifts
-    lock_for = ctx.lock_for if (ctx.locked_assignments or ctx.locked_shift_assignments) else _no_lock
+    lock_for = (
+        ctx.lock_for if (ctx.locked_assignments or ctx.locked_shift_assignments) else _no_lock
+    )
     if limit_to_dirty_slots:
         block_remaining = sched.block_remaining_cache
         if block_remaining is None:
@@ -756,7 +758,10 @@ def _repair_schedule_cover_blocks(
         if enforce_prereq and explicit:
             upstream_keys = prereq_keys.get(role_key)
             if upstream_keys:
-                available = min([role_inventory_estimate[key] for key in upstream_keys])
+                if len(upstream_keys) == 1:
+                    available = role_inventory_estimate[upstream_keys[0]]
+                else:
+                    available = min([role_inventory_estimate[key] for key in upstream_keys])
                 if available + SEQUENCING_TOLERANCE < production:
                     return False
                 if role_key in loader_roles:
@@ -852,29 +857,16 @@ def _repair_schedule_cover_blocks(
     def ranking_for(machine_id: str) -> tuple[list[str], bool]:
         return rate_ranking.get(machine_id, no_ranking)
 
-    def is_pending(block_id: str, role: str | None) -> bool:
-        # ``block_id`` appears in ``pending_blocks_for(role)``.
-        if block_id not in dirty_blocks:
-            return False
-        if role is not None:
-            remaining = role_remaining.get((block_id, role))
-            if remaining is not None:
-                if remaining > BLOCK_COMPLETION_EPS:
-                    return True
-                if block_id in explicit_blocks:
-                    return False
-        remaining = block_remaining.get(block_id)
-        return remaining is not None and remaining > BLOCK_COMPLETION_EPS
-
     def select_block(machine_id: str, day: int, shift_id: str, role: str | None) -> str | None:
         # The pending block with the highest rate among those ``slot_is_valid`` accepts (first in
         # demand order on equal rates). Without equal rates the machine's blocks are tried best
         # rate first and the first valid one is taken, which validates far fewer blocks than a
-        # scan of every pending block (#151; same choice).
+        # scan of every pending block (#151; same choice). A block ``slot_is_valid`` accepts has
+        # demand left for ``role``, so it is pending exactly when it is one of ``dirty_blocks``.
         ranked, tied = ranking_for(machine_id)
         if not tied:
             for block_id in ranked:
-                if is_pending(block_id, role) and slot_is_valid(
+                if block_id in dirty_blocks and slot_is_valid(
                     machine_id, day, shift_id, block_id, role
                 ):
                     return block_id
@@ -929,8 +921,8 @@ def _repair_schedule_cover_blocks(
                 # Same choice as below: the machine's blocks best rate first, first valid one.
                 candidate = None
                 for block_id in ranked_blocks:
-                    if not is_pending(block_id, role):
-                        continue
+                    if block_id not in dirty_blocks:
+                        continue  # not pending (see ``select_block``)
                     if block_id in explicit_blocks:
                         upstream_keys = prereq_keys.get((block_id, role))
                         if upstream_keys and (
