@@ -337,7 +337,9 @@ class SanitizerPreview:
                 return None
             overrides[(machine_id, slot)] = block_id
         slots = {slot for _machine_id, slot in overrides}
-        unchanged = self._base_changed_slots() <= slots
+        # The edited slots after sanitizing equal the base plan's (``same``), and no other slot
+        # is changed by the sanitizer (checked only when needed: one pass over the base plan).
+        same = True
         values: dict[tuple[str, tuple[int, str]], str | None] = {}
         cell = self._cell
         for slot in slots:
@@ -352,9 +354,9 @@ class SanitizerPreview:
                 value = cell(machine_id, slot, overrides[key] if edited else base_block, usage)
                 if edited:
                     values[key] = value
-                if unchanged and value != base_block:
-                    unchanged = False
-        return unchanged, values
+                if same and value != base_block:
+                    same = False
+        return same and self._base_changed_slots() <= slots, values
 
 
 def build_operational_problem(pb: Problem) -> OperationalProblem:

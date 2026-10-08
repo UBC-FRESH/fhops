@@ -272,13 +272,9 @@ class SequencingTracker:
         if role is not None:
             self.role_counts_day[(block_id, role)] += 1
 
-        deliverable = False
-        if block_id not in self.ctx.blocks_with_explicit_system:
-            deliverable = True
-        elif role is None:
-            deliverable = True
-        elif self._is_terminal_role(block_id, role):
-            deliverable = True
+        # ``_is_terminal_role`` is also True for blocks without an explicit system and for
+        # machines without a role, i.e. exactly when the output is delivered.
+        deliverable = self._is_terminal_role(block_id, role)
         if deliverable and production_units > 0:
             self.delivered_total += production_units
 
@@ -287,7 +283,7 @@ class SequencingTracker:
                 0.0, self.role_remaining[target_key] - production_units
             )
 
-        if self._is_terminal_role(block_id, role) or not target_key:
+        if deliverable or not target_key:
             if block_id in self.remaining_work:
                 self.remaining_work[block_id] = max(
                     0.0, self.remaining_work[block_id] - production_units
