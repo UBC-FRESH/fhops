@@ -133,6 +133,23 @@ system_mix:
   cable_standing_tr125_strip: 0.01652892561983471
   cable_partial_tr127_block1: 0.008264462809917356
   cable_partial_tr127_block5: 0.008264462809917356
+fleet_systems:
+- cable_running_adv5n28_shelterwood
+- cable_micro_hi_skid
+- cable_running_tr122_clearcut
+- cable_running_tr122_extended
+- cable_highlead_tn147
+- cable_running
+- cable_running_tr122_shelterwood
+- cable_running_adv5n28_clearcut
+- cable_running_tr75_handfelled
+fleet_roles:
+- hand_or_mech_faller
+- grapple_yarder
+- processor
+- loader
+- hand_faller
+- skyline_hi_skid
 blackout_biases:
 - start_day: 5
   end_day: 7
