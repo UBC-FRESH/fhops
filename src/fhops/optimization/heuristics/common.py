@@ -743,10 +743,9 @@ def _repair_schedule_cover_blocks(
         allowed = allowed_roles.get(block_id)
         if allowed is not None and role is not None and role not in allowed:
             return False
-        role_key = (block_id, role)
-        explicit = block_id in explicit_blocks and role is not None
-        if explicit and role_key in role_remaining:
-            remaining = role_remaining[role_key]
+        explicit = role is not None and block_id in explicit_blocks
+        if role is not None and explicit and (block_id, role) in role_remaining:
+            remaining = role_remaining[(block_id, role)]
         else:
             remaining = block_remaining.get(block_id, 0.0)
         if remaining <= BLOCK_COMPLETION_EPS:
