@@ -285,6 +285,65 @@ def _plan_equals(
     return True
 
 
+def _shuffle_with_getrandbits(rng: Random, items: list[Any]) -> None:
+    """Shuffle ``items`` in place exactly as CPython's ``Random.shuffle`` does.
+
+    ``Random.shuffle`` draws ``j = rng._randbelow(i + 1)`` for ``i = n-1 … 1`` and swaps
+    ``items[i]`` and ``items[j]``; ``_randbelow`` draws ``getrandbits(k)`` with
+    ``k = (i + 1).bit_length()`` until the value is below ``i + 1``. This loop makes the same
+    draws without two Python calls per element, which matters for the cross-exchange operator's
+    pair list (tens of thousands of entries per call on Med42, #151).
+    """
+
+    getrandbits = rng.getrandbits
+    size = len(items)
+    if size < 2:
+        return
+    bits = size.bit_length()
+    lowest = 1 << (bits - 1)
+    for index in range(size - 1, 0, -1):
+        bound = index + 1
+        if bound < lowest:
+            bits -= 1
+            lowest >>= 1
+        pick = getrandbits(bits)
+        while pick >= bound:
+            pick = getrandbits(bits)
+        items[index], items[pick] = items[pick], items[index]
+
+
+def _fast_shuffle_matches_random() -> bool:
+    """Return ``True`` when :func:`_shuffle_with_getrandbits` reproduces ``Random.shuffle``."""
+
+    for seed, size in ((0, 0), (1, 1), (2, 2), (3, 7), (4, 64), (5, 65), (12345, 3001)):
+        expected = list(range(size))
+        actual = list(range(size))
+        reference = Random(seed)
+        fast = Random(seed)
+        reference.shuffle(expected)
+        _shuffle_with_getrandbits(fast, actual)
+        if expected != actual or reference.random() != fast.random():
+            return False
+    return True
+
+
+_FAST_SHUFFLE = _fast_shuffle_matches_random()
+
+
+def _shuffle(rng: Random, items: list[Any]) -> None:
+    """``rng.shuffle(items)`` with the same permutation and random-number consumption.
+
+    Uses :func:`_shuffle_with_getrandbits` for plain :class:`random.Random` generators when an
+    import-time self-check confirms it reproduces ``Random.shuffle`` on this Python version;
+    falls back to ``rng.shuffle`` otherwise (subclasses, other implementations).
+    """
+
+    if _FAST_SHUFFLE and type(rng) is Random:
+        _shuffle_with_getrandbits(rng, items)
+    else:
+        rng.shuffle(items)
+
+
 def _preview_rejects(
     context: OperatorContext,
     edits: Sequence[tuple[str, tuple[int, str], str | None]],
@@ -399,7 +458,7 @@ class BlockInsertionOperator:
         ]
         if not assignments:
             return None
-        rng.shuffle(assignments)
+        _shuffle(rng, assignments)
         shifts = context.shift_keys
         if not shifts:
             return None
@@ -418,7 +477,7 @@ class BlockInsertionOperator:
                     if production.get((machine_tgt, block_id), 0.0) <= 0.0:
                         continue
                     candidate_targets.append((machine_tgt, (shift_day, shift_id)))
-            rng.shuffle(candidate_targets)
+            _shuffle(rng, candidate_targets)
             for machine_tgt, shift_tgt in candidate_targets:
                 if _preview_rejects(
                     context,
@@ -503,7 +562,7 @@ class CoverageInjectionOperator:
 
         if not candidate_slots:
             return None
-        rng.shuffle(candidate_slots)
+        _shuffle(rng, candidate_slots)
         candidate_slots.sort(key=lambda item: item[0], reverse=True)
         _, machine_id, shift_key = candidate_slots[0]
         edit = ((machine_id, shift_key, target_block),)
@@ -542,9 +601,9 @@ class CrossExchangeOperator:
         ]
         if len(assignments) < 2:
             return None
-        rng.shuffle(assignments)
+        _shuffle(rng, assignments)
         pairs = list(combinations(assignments, 2))
-        rng.shuffle(pairs)
+        _shuffle(rng, pairs)
         for (machine_a, shift_a, block_a), (machine_b, shift_b, block_b) in pairs:
             if machine_a == machine_b:
                 continue
@@ -608,7 +667,7 @@ class MobilisationShakeOperator:
         ]
         if not assignments:
             return None
-        rng.shuffle(assignments)
+        _shuffle(rng, assignments)
         for machine_src, shift_src, block_id in assignments:
             day_src = shift_src[0]
             candidate_targets: list[tuple[float, int, str, tuple[int, str]]] = []
@@ -634,7 +693,7 @@ class MobilisationShakeOperator:
                     candidate_targets.append((distance, day_delta, machine_tgt, shift_tgt))
             if not candidate_targets:
                 continue
-            rng.shuffle(candidate_targets)
+            _shuffle(rng, candidate_targets)
             candidate_targets.sort(key=lambda item: (item[0], item[1]), reverse=True)
             for _, _, machine_tgt, shift_tgt in candidate_targets:
                 if _preview_rejects(
