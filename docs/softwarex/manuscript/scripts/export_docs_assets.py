@@ -13,10 +13,25 @@ from __future__ import annotations
 
 import argparse
 import csv
+import re
 import subprocess
 import sys
 from collections.abc import Iterable, Sequence
 from pathlib import Path
+
+_GFM_DISPLAY_MATH = re.compile(r"^```math\n(.*?)\n```$", re.MULTILINE | re.DOTALL)
+_GFM_INLINE_MATH = re.compile(r"\$`(.+?)`\$")
+
+
+def gfm_math_to_pandoc(text: str) -> str:
+    """Translate GitHub math syntax (```math fences, $`...`$) to pandoc's $$...$$ / $...$."""
+    text = _GFM_DISPLAY_MATH.sub(lambda m: "$$\n" + _relations(m.group(1)) + "\n$$", text)
+    return _GFM_INLINE_MATH.sub(lambda m: "$" + _relations(m.group(1)) + "$", text)
+
+
+def _relations(math: str) -> str:
+    """Map MathJax ``\\gt``/``\\lt`` (used because GitHub double-escapes ``>``/``<``) to LaTeX."""
+    return math.replace("\\gt ", ">").replace("\\lt ", "<")
 
 
 def run_pandoc(src: Path, target: Path, pandoc_format: str) -> None:
@@ -27,11 +42,11 @@ def run_pandoc(src: Path, target: Path, pandoc_format: str) -> None:
         "markdown",
         "-t",
         pandoc_format,
-        str(src),
         "-o",
         str(target),
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+    source = gfm_math_to_pandoc(src.read_text(encoding="utf-8"))
+    result = subprocess.run(cmd, input=source, capture_output=True, text=True, check=False)
     if result.returncode != 0:
         raise RuntimeError(
             f"pandoc failed for {src} -> {target} ({pandoc_format}):\n"
