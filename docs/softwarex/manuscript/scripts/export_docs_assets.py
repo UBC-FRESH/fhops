@@ -19,7 +19,6 @@ import sys
 from collections.abc import Iterable, Sequence
 from pathlib import Path
 
-
 _GFM_DISPLAY_MATH = re.compile(r"^```math\n(.*?)\n```$", re.MULTILINE | re.DOTALL)
 _GFM_INLINE_MATH = re.compile(r"\$`(.+?)`\$")
 
