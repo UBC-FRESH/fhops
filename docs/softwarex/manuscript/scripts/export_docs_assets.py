@@ -30,8 +30,12 @@ def gfm_math_to_pandoc(text: str) -> str:
 
 
 def _relations(math: str) -> str:
-    """Map MathJax ``\\gt``/``\\lt`` (used because GitHub double-escapes ``>``/``<``) to LaTeX."""
-    return math.replace("\\gt ", ">").replace("\\lt ", "<")
+    """Map GitHub-safe math back to the LaTeX source form.
+
+    GitHub double-escapes ``>``/``<`` (written ``\\gt``/``\\lt``) and rejects ``\\operatorname``
+    (written ``\\mathrm``).
+    """
+    return math.replace("\\gt ", ">").replace("\\lt ", "<").replace("\\mathrm{", "\\operatorname{")
 
 
 def run_pandoc(src: Path, target: Path, pandoc_format: str) -> None:
