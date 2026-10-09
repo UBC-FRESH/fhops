@@ -15,11 +15,11 @@ Given harvest blocks, machine roles, shift calendars, block windows, landing cap
 - $`\mathcal{L}`$: landings.
 - $`\mathcal{P}^{\text{inv}} \subseteq \{(r,b): r \in \mathcal{R}_b\}`$: role-block pairs with upstream prerequisites.
 - $`\mathcal{P}^{\text{stg}} = \{(u,b): u \in \mathcal{U}_{r,b} \text{ for some } (r,b)\in\mathcal{P}^{\text{inv}}\}`$: upstream role-block pairs whose output is staged for downstream roles; $`\mathcal{N}_{u,b} = \{r: u\in\mathcal{U}_{r,b}\}`$ are the downstream roles of $`u`$ on block $`b`$.
-- $`\mathcal{P}^{\text{hs}} \subseteq \mathcal{P}^{\text{inv}}`$: pairs with a head start of $`\beta_{r,b}>0`$ shifts (`role_headstart_shifts`).
-- $`\mathcal{P}^{\text{load}} \subseteq \{(r,b): r \in \mathcal{R}_b\}`$: loader role-block pairs; $`\mathcal{P}^{\text{thr}} = \{(r,b)\in\mathcal{P}^{\text{load}}\cap\mathcal{P}^{\text{inv}}: q^{\text{batch}}_{b}>0,\ W_b>0\}`$: loaders subject to the truckload threshold.
+- $`\mathcal{P}^{\text{hs}} \subseteq \mathcal{P}^{\text{inv}}`$: pairs with a head start of $`\beta_{r,b}\gt 0`$ shifts (`role_headstart_shifts`).
+- $`\mathcal{P}^{\text{load}} \subseteq \{(r,b): r \in \mathcal{R}_b\}`$: loader role-block pairs; $`\mathcal{P}^{\text{thr}} = \{(r,b)\in\mathcal{P}^{\text{load}}\cap\mathcal{P}^{\text{inv}}: q^{\text{batch}}_{b}\gt 0,\ W_b\gt 0\}`$: loaders subject to the truckload threshold.
 - $`\mathcal{P}^{\text{act}} = \mathcal{P}^{\text{hs}} \cup \mathcal{P}^{\text{thr}}`$: role-block pairs whose production is gated by an activation binary.
 - $`\mathcal{P}^{\text{cap}} \subseteq \{(r,b): r \in \mathcal{R}_b\setminus\mathcal{T}_b\}`$: non-terminal pairs with a per-slot remaining-volume cap; it contains every non-terminal pair of systems with a role feeding several roles or with several terminal roles, and, in the other systems, the pairs whose carried-in state violates $`R_{r,b} + \sum_{v\in\pi_{r,b}} \bar{I}_{v,b} \le W_b`$ ($`\pi_{r,b}`$: $`r`$ and the non-terminal roles on its path to the terminal role). The cap is implied by the other constraints for all remaining pairs, and $`\mathcal{P}^{\text{cap}}=\emptyset`$ without an initial state in linear and joining systems.
-- $`\mathcal{S}^{\text{tail}}_b \subseteq \mathcal{S}`$, $`b`$ with a loader in $`\mathcal{P}^{\text{thr}}`$ and $`W_b > q^{\text{batch}}_b`$: slots in which the remaining block volume can have fallen to one truckload, i.e. $`\bar{D}_{b,s} > W_b - q^{\text{batch}}_b`$, where $`\bar{D}_{b,s} = \min\{W_b, \sum_{s'\prec s}\sum_{t\in\mathcal{T}_b}\sum_{m\in\mathcal{M}(t)} A_{m,s'}\mathbf{1}^{\text{window}}_{b,d(s')}\bar{p}_{mb}\}`$ bounds the terminal output delivered before $`s`$.
+- $`\mathcal{S}^{\text{tail}}_b \subseteq \mathcal{S}`$, $`b`$ with a loader in $`\mathcal{P}^{\text{thr}}`$ and $`W_b \gt  q^{\text{batch}}_b`$: slots in which the remaining block volume can have fallen to one truckload, i.e. $`\bar{D}_{b,s} \gt  W_b - q^{\text{batch}}_b`$, where $`\bar{D}_{b,s} = \min\{W_b, \sum_{s'\prec s}\sum_{t\in\mathcal{T}_b}\sum_{m\in\mathcal{M}(t)} A_{m,s'}\mathbf{1}^{\text{window}}_{b,d(s')}\bar{p}_{mb}\}`$ bounds the terminal output delivered before $`s`$.
 - $`s_1 \in \mathcal{S}`$: first shift slot of the horizon.
 - $`\mathcal{M}^{0} \subseteq \mathcal{M}`$ (**INIT**): machines with a known initial block $`b^{0}_m`$ (optional initial state; empty by default); machines in $`\mathcal{M}\setminus\mathcal{M}^{0}`$ start *unplaced*.
 - $`\mathcal{K}`$ (**E13**): locked assignments $`k=(m_k,b_k,d_k,\sigma_k)`$, where $`\sigma_k`$ is a shift label or empty (whole day); $`\mathcal{S}_k = \{s=(d_k,\sigma) \in \mathcal{S} : \sigma_k \text{ empty or } \sigma=\sigma_k\}`$ (empty by default). $`\mathcal{K}_{b,s} = \{m_k: k\in\mathcal{K},\ b_k=b,\ s\in\mathcal{S}_k,\ \chi_k A_{m_k,s}=1\}`$ are the machines locked to block $`b`$ in slot $`s`$.
@@ -60,7 +60,7 @@ Given harvest blocks, machine roles, shift calendars, block windows, landing cap
 - $`\lambda_{b,s} \in \{0,1\}`$, $`s\in\mathcal{S}^{\text{tail}}_b`$: 1 only once the remaining volume of block $`b`$ is at most one truckload (selects the active term of the loader threshold).
 - $`D_{b,s} = \sum_{t\in\mathcal{T}_b}\sum_{s'\preceq s} z_{t,b,s'}`$: terminal output delivered on block $`b`$ up to and including slot $`s`$ (notation for a cumulative sum; $`D_{b,\operatorname{prev}(s_1)} := 0`$).
 - $`L_b \ge 0`$: leftover unmet block volume slack.
-- $`S_{\ell,s,k} \in [0,1]`$, $`k = 1,\dots,K_{\ell}`$: unit landing surplus slack for the $`k`$-th machine beyond capacity on landing $`\ell`$ in slot $`s`$ (only when $`\omega^{\text{land}} > 0`$).
+- $`S_{\ell,s,k} \in [0,1]`$, $`k = 1,\dots,K_{\ell}`$: unit landing surplus slack for the $`k`$-th machine beyond capacity on landing $`\ell`$ in slot $`s`$ (only when $`\omega^{\text{land}} \gt  0`$).
 
 **Objective (OBJ).**
 
@@ -87,7 +87,7 @@ E=\sum_{s\in\mathcal{S}} w_s \sum_{m\in\mathcal{M}}\sum_{b\in\mathcal{B}} p_{m,b
 \qquad w_s=\frac{|\mathcal{S}|-k_s}{|\mathcal{S}|},
 ```
 
-where $`k_s\in\{0,\dots,|\mathcal{S}|-1\}`$ is the position of slot $`s`$ in the slot order. This stage keeps every constraint of **E1**--**E13** and adds $`\text{OBJ}\ge z_1-\tau`$, where $`z_1`$ is the OBJ value of the stage-1 solution and $`\tau=10^{-6}\max(1,|z_1|)`$. Stage 2 is warm-started from the stage-1 solution, so its returned plan has $`\text{OBJ}\ge z_1-\tau`$. If stage 1 is optimal, the returned plan is therefore optimal for OBJ within $`\tau`$, which is 100 times tighter than HiGHS's default relative MIP gap ($`10^{-4}`$). The reported objective is OBJ; $`E`$ is reported separately. A single weighted objective $`\text{OBJ}+\varepsilon E`$ is not used, for two reasons. First, production is continuous and the data are arbitrary reals, so no data-independent $`\varepsilon>0`$ is guaranteed to stay below the smallest positive OBJ difference between plans: for any $`\varepsilon`$ there are data for which the weighted optimum is not OBJ-optimal. Second, an $`\varepsilon`$ small enough to be harmless in practice ($`\varepsilon E\ll 10^{-4}|z_1|`$) is below the solver's relative gap, so the solver would stop before it acts on the tie-break. The cost is a second solve. Rolling-horizon MILP windows enable the option by default, except windows whose lock span covers the whole window. Standalone solves (`fhops solve-mip-operational`, `solve_operational_milp`) do not enable it by default, because the published single-horizon optimum and its solve time stay unchanged; `--earliness` or `earliness=True` turns it on.
+where $`k_s\in\{0,\dots,|\mathcal{S}|-1\}`$ is the position of slot $`s`$ in the slot order. This stage keeps every constraint of **E1**--**E13** and adds $`\text{OBJ}\ge z_1-\tau`$, where $`z_1`$ is the OBJ value of the stage-1 solution and $`\tau=10^{-6}\max(1,|z_1|)`$. Stage 2 is warm-started from the stage-1 solution, so its returned plan has $`\text{OBJ}\ge z_1-\tau`$. If stage 1 is optimal, the returned plan is therefore optimal for OBJ within $`\tau`$, which is 100 times tighter than HiGHS's default relative MIP gap ($`10^{-4}`$). The reported objective is OBJ; $`E`$ is reported separately. A single weighted objective $`\text{OBJ}+\varepsilon E`$ is not used, for two reasons. First, production is continuous and the data are arbitrary reals, so no data-independent $`\varepsilon\gt 0`$ is guaranteed to stay below the smallest positive OBJ difference between plans: for any $`\varepsilon`$ there are data for which the weighted optimum is not OBJ-optimal. Second, an $`\varepsilon`$ small enough to be harmless in practice ($`\varepsilon E\ll 10^{-4}|z_1|`$) is below the solver's relative gap, so the solver would stop before it acts on the tie-break. The cost is a second solve. Rolling-horizon MILP windows enable the option by default, except windows whose lock span covers the whole window. Standalone solves (`fhops solve-mip-operational`, `solve_operational_milp`) do not enable it by default, because the published single-horizon optimum and its solve time stay unchanged; `--earliness` or `earliness=True` turns it on.
 
 **Constraints.**
 
@@ -164,7 +164,7 @@ I_{u,b,s}=I^{\text{start}}_{u,b,s}+z_{u,b,s}-\sum_{r\in\mathcal{N}_{u,b}} z_{r,b
 \qquad \forall (u,b)\in\mathcal{P}^{\text{stg}}, s.
 ```
 
-Staged output is therefore available downstream from the next shift slot. For a linear chain ($`|\mathcal{U}_{r,b}|=|\mathcal{N}_{u,b}|=1`$) these are the FHOPS 1.0.0 inventory equations of the downstream role. The downstream roles of a fork ($`|\mathcal{N}_{u,b}|>1`$) split the staged output of $`u`$: each unit is consumed by one of them. A join ($`|\mathcal{U}_{r,b}|>1`$) consumes each unit of its output from the pool of every upstream role. Hence, without carried-in staged volume, a fork that joins again (a diamond $`u\to\{r_1,r_2\}\to t`$) delivers at most half of the output of $`u`$, i.e. at most $`W_b/2`$.
+Staged output is therefore available downstream from the next shift slot. For a linear chain ($`|\mathcal{U}_{r,b}|=|\mathcal{N}_{u,b}|=1`$) these are the FHOPS 1.0.0 inventory equations of the downstream role. The downstream roles of a fork ($`|\mathcal{N}_{u,b}|\gt 1`$) split the staged output of $`u`$: each unit is consumed by one of them. A join ($`|\mathcal{U}_{r,b}|\gt 1`$) consumes each unit of its output from the pool of every upstream role. Hence, without carried-in staged volume, a fork that joins again (a diamond $`u\to\{r_1,r_2\}\to t`$) delivers at most half of the output of $`u`$, i.e. at most $`W_b/2`$.
 
 Activation, production gating (**E8a**):
 
@@ -205,7 +205,7 @@ linearized exactly as follows (all coefficients are data; $`W_b - D_{b,\operator
 
 ```math
 \begin{aligned}
-&\text{if } W_b > q^{\text{batch}}_b \text{ and } s\notin\mathcal{S}^{\text{tail}}_b:\\
+&\text{if } W_b \gt  q^{\text{batch}}_b \text{ and } s\notin\mathcal{S}^{\text{tail}}_b:\\
 &\qquad I_{u,b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\, g_{r,b,s},\\
 &\text{if } W_b \le q^{\text{batch}}_b:\\
 &\qquad I_{u,b,\operatorname{prev}(s)} + D_{b,\operatorname{prev}(s)} \ge W_b\, g_{r,b,s},\\
@@ -240,12 +240,12 @@ Landing capacity per shift slot, the machines working a landing's blocks concurr
 \le
 \begin{cases}
 \max\{C_{\ell},\, N^{\text{lock}}_{\ell,s}\} & \text{if } \omega^{\text{land}} = 0,\\
-C_{\ell} + \sum_{k=1}^{K_{\ell}} S_{\ell,s,k} & \text{if } \omega^{\text{land}} > 0,
+C_{\ell} + \sum_{k=1}^{K_{\ell}} S_{\ell,s,k} & \text{if } \omega^{\text{land}} \gt  0,
 \end{cases}
 \qquad \forall \ell\in\mathcal{L},\; s\in\mathcal{S},
 ```
 
-where $`N^{\text{lock}}_{\ell,s} = \sum_{b:\,\ell(b)=\ell}|\mathcal{K}_{b,s}|`$ is the number of machines locked to the landing's blocks in slot $`s`$. With $`\omega^{\text{land}}=0`$ the capacity is hard; a slot in which locks alone exceed it keeps the locked machines, admits no other machine, and is reported as a warning (the heuristics charge the same unavoidable overload). With $`\omega^{\text{land}}>0`$ the marginal price $`k\,\omega^{\text{land}}`$ of the slack pieces increases, so an optimal solution uses $`S_{\ell,s,1},\dots,S_{\ell,s,e}`$ for $`e`$ machines beyond capacity and pays $`\omega^{\text{land}}\,e(e+1)/2`$: the $`k`$-th machine beyond capacity in a slot costs $`k\,\omega^{\text{land}}`$, as in the heuristics' evaluation.
+where $`N^{\text{lock}}_{\ell,s} = \sum_{b:\,\ell(b)=\ell}|\mathcal{K}_{b,s}|`$ is the number of machines locked to the landing's blocks in slot $`s`$. With $`\omega^{\text{land}}=0`$ the capacity is hard; a slot in which locks alone exceed it keeps the locked machines, admits no other machine, and is reported as a warning (the heuristics charge the same unavoidable overload). With $`\omega^{\text{land}}\gt 0`$ the marginal price $`k\,\omega^{\text{land}}`$ of the slack pieces increases, so an optimal solution uses $`S_{\ell,s,1},\dots,S_{\ell,s,e}`$ for $`e`$ machines beyond capacity and pays $`\omega^{\text{land}}\,e(e+1)/2`$: the $`k`$-th machine beyond capacity in a slot costs $`k\,\omega^{\text{land}}`$, as in the heuristics' evaluation.
 
 Remaining role output, no role can handle more wood than the block still holds (**E12**):
 
@@ -298,7 +298,7 @@ Primary modules are `operational.py`, `data.py`, and `driver.py` under `src/fhop
 | **E8c** | `model.upstream_done_link` (cumulative output `model.role_cumulative_eq`) |
 | **E9** | `model.loader_threshold`, `model.loader_threshold_tail`, `model.loader_tail_reached`, `model.loader_tail_monotone` ($`\lambda`$ = `model.loader_tail`; $`D_{b,s}`$ from `model.role_cumulative` of the terminal roles) |
 | **E10** | `model.block_balance` (`block_balance_rule`) + `model.leftover` |
-| **E11** | `model.landing_capacity` (`landing_capacity_rule`, indexed by landing and slot; locked overloads from `_landing_slot_capacities`) + `model.landing_surplus` (unit pieces `model.LandingSurplusIndex`, only when $`\omega^{\text{land}}>0`$) |
+| **E11** | `model.landing_capacity` (`landing_capacity_rule`, indexed by landing and slot; locked overloads from `_landing_slot_capacities`) + `model.landing_surplus` (unit pieces `model.LandingSurplusIndex`, only when $`\omega^{\text{land}}\gt 0`$) |
 | **E12** | `model.role_remaining_cap` (from `bundle.initial_role_remaining`, capped at $`W_b`$), per-slot cap `model.role_slot_remaining` |
 | **E13** | `model.locked_assignment` (from `bundle.locked_assignments`, resolved by `resolve_locked_slots(...)` in `fhops.model.milp.data`; warnings in the solve result) |
 | **D1** | Domains of `model.x`, `model.prod`, `model.role_prod`, `model.y`, `model.stay`, `model.depart`, `model.arrive`, `model.first`, `model.unplaced`, `model.inventory_start`, `model.inventory`, `model.role_cumulative`, `model.role_active`, `model.upstream_done`, `model.loader_tail`, `model.leftover`, `model.landing_surplus` |

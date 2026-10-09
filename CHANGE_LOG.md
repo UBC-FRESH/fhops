@@ -1,5 +1,5 @@
 # 2026-10-09 — Formulation markdown renders on GitHub (#161, part of #90)
-- `fhops_operational_formulation.md`: math converted to GitHub-protected syntax (```math fences, $`…`$ inline); GitHub's renderer mangled 80 of 300 math spans. Content unchanged.
+- `fhops_operational_formulation.md`: math converted to GitHub-protected syntax (```math fences, $`…`$ inline; `\gt`/`\lt` for relations, which GitHub double-escapes). Before: 58 of 300 spans unrendered and 4 MathJax errors; after: 300/300 rendered, 0 errors (GitHub markdown API + MathJax 3). Content unchanged.
 - `export_docs_assets.py`: translates the GitHub math syntax back to pandoc `$…$`/`$$…$$` before conversion; regenerated `.tex`/`.rst` byte-identical.
 
 # 2026-10-08 — Release notes: open findings listed as known limitations (#96, part of #90)

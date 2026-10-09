@@ -25,8 +25,13 @@ _GFM_INLINE_MATH = re.compile(r"\$`(.+?)`\$")
 
 def gfm_math_to_pandoc(text: str) -> str:
     """Translate GitHub math syntax (```math fences, $`...`$) to pandoc's $$...$$ / $...$."""
-    text = _GFM_DISPLAY_MATH.sub(lambda m: "$$\n" + m.group(1) + "\n$$", text)
-    return _GFM_INLINE_MATH.sub(lambda m: "$" + m.group(1) + "$", text)
+    text = _GFM_DISPLAY_MATH.sub(lambda m: "$$\n" + _relations(m.group(1)) + "\n$$", text)
+    return _GFM_INLINE_MATH.sub(lambda m: "$" + _relations(m.group(1)) + "$", text)
+
+
+def _relations(math: str) -> str:
+    """Map MathJax ``\\gt``/``\\lt`` (used because GitHub double-escapes ``>``/``<``) to LaTeX."""
+    return math.replace("\\gt ", ">").replace("\\lt ", "<")
 
 
 def run_pandoc(src: Path, target: Path, pandoc_format: str) -> None:
