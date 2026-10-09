@@ -1,3 +1,6 @@
+# 2026-10-09 — Formulation markdown: no `\operatorname` (#161, part of #90)
+- GitHub's math renderer rejects `\operatorname` ("The following macros are not allowed"); the 23 uses (`\operatorname{prev}`) are written `\mathrm{prev}` in the markdown and mapped back by `export_docs_assets.py`; regenerated `.tex`/`.rst` byte-identical. No other macro in the file is on GitHub's block list.
+
 # 2026-10-09 — Formulation markdown renders on GitHub (#161, part of #90)
 - `fhops_operational_formulation.md`: math converted to GitHub-protected syntax (```math fences, $`…`$ inline; `\gt`/`\lt` for relations, which GitHub double-escapes). Before: 58 of 300 spans unrendered and 4 MathJax errors; after: 300/300 rendered, 0 errors (GitHub markdown API + MathJax 3). Content unchanged.
 - `export_docs_assets.py`: translates the GitHub math syntax back to pandoc `$…$`/`$$…$$` before conversion; regenerated `.tex`/`.rst` byte-identical.

@@ -9,7 +9,7 @@ Given harvest blocks, machine roles, shift calendars, block windows, landing cap
 
 - $`m \in \mathcal{M}`$: machines.
 - $`b \in \mathcal{B}`$: blocks.
-- $`s=(d,\sigma) \in \mathcal{S}`$: shift slots indexed by day $`d \in \mathcal{D}`$ and shift label $`\sigma`$, ordered by day and, within a day, by the scenario's shift order; $`\operatorname{prev}(s)`$ is the preceding slot (the previous shift of the same day when there is one) and $`s'\prec s`$ means slot $`s'`$ precedes $`s`$.
+- $`s=(d,\sigma) \in \mathcal{S}`$: shift slots indexed by day $`d \in \mathcal{D}`$ and shift label $`\sigma`$, ordered by day and, within a day, by the scenario's shift order; $`\mathrm{prev}(s)`$ is the preceding slot (the previous shift of the same day when there is one) and $`s'\prec s`$ means slot $`s'`$ precedes $`s`$.
 - $`\mathcal{B}^{\text{seq}} \subseteq \mathcal{B}`$: blocks with an explicit harvest system (`harvest_system_id`); blocks in $`\mathcal{B}\setminus\mathcal{B}^{\text{seq}}`$ carry no sequencing obligations.
 - $`\mathcal{R}_b`$: ordered machine roles required by the harvest system assigned to block $`b\in\mathcal{B}^{\text{seq}}`$ ($`\mathcal{R}_b=\emptyset`$ otherwise).
 - $`\mathcal{L}`$: landings.
@@ -52,13 +52,13 @@ Given harvest blocks, machine roles, shift calendars, block windows, landing cap
 - $`y_{m,b',b,s} \ge 0`$, $`b' \ne b`$: machine $`m`$ moves in slot $`s`$ from its *position* $`b'`$ (the block of its last worked slot before $`s`$, or $`b^{0}_m`$) to block $`b`$, which it works in $`s`$.
 - $`\eta_{m,b,s} \ge 0`$: machine $`m`$ keeps position $`b`$ through slot $`s`$ (it is idle or works $`b`$ again).
 - $`\phi_{m,b,s} \ge 0`$, $`m\notin\mathcal{M}^{0}`$: the first worked slot of machine $`m`$ is $`s`$, on block $`b`$; $`\nu_{m,s} \ge 0`$, $`m\notin\mathcal{M}^{0}`$: machine $`m`$ has not worked up to and including $`s`$ (both $`\equiv 0`$ for $`m\in\mathcal{M}^{0}`$).
-- $`\pi_{m,b,s} = \eta_{m,b,s} + \sum_{b'\ne b} y_{m,b',b,s} + \phi_{m,b,s}`$: machine $`m`$ holds position $`b`$ after slot $`s`$ (notation); $`\pi_{m,b,\operatorname{prev}(s_1)} := \mathbf{1}[m\in\mathcal{M}^{0},\, b=b^{0}_m]`$ and $`\nu_{m,\operatorname{prev}(s_1)} := \mathbf{1}[m\notin\mathcal{M}^{0}]`$.
+- $`\pi_{m,b,s} = \eta_{m,b,s} + \sum_{b'\ne b} y_{m,b',b,s} + \phi_{m,b,s}`$: machine $`m`$ holds position $`b`$ after slot $`s`$ (notation); $`\pi_{m,b,\mathrm{prev}(s_1)} := \mathbf{1}[m\in\mathcal{M}^{0},\, b=b^{0}_m]`$ and $`\nu_{m,\mathrm{prev}(s_1)} := \mathbf{1}[m\notin\mathcal{M}^{0}]`$.
 - $`I^{\text{start}}_{u,b,s} \ge 0`$, $`(u,b)\in\mathcal{P}^{\text{stg}}`$: output of upstream role $`u`$ on block $`b`$ staged for its downstream roles at the start of shift $`s`$.
 - $`I_{u,b,s} \ge 0`$: the same staged volume at the end of shift $`s`$.
 - $`g_{r,b,s} \in \{0,1\}`$, $`(r,b)\in\mathcal{P}^{\text{act}}`$: role activation indicator; it gates production only.
 - $`h_{r,b,s} \in \{0,1\}`$, $`(r,b)\in\mathcal{P}^{\text{hs}}`$: 1 only if every upstream role of $`r`$ on block $`b`$ has output its whole carried-in remaining volume before slot $`s`$ (the buffer can no longer grow and is waived).
 - $`\lambda_{b,s} \in \{0,1\}`$, $`s\in\mathcal{S}^{\text{tail}}_b`$: 1 only once the remaining volume of block $`b`$ is at most one truckload (selects the active term of the loader threshold).
-- $`D_{b,s} = \sum_{t\in\mathcal{T}_b}\sum_{s'\preceq s} z_{t,b,s'}`$: terminal output delivered on block $`b`$ up to and including slot $`s`$ (notation for a cumulative sum; $`D_{b,\operatorname{prev}(s_1)} := 0`$).
+- $`D_{b,s} = \sum_{t\in\mathcal{T}_b}\sum_{s'\preceq s} z_{t,b,s'}`$: terminal output delivered on block $`b`$ up to and including slot $`s`$ (notation for a cumulative sum; $`D_{b,\mathrm{prev}(s_1)} := 0`$).
 - $`L_b \ge 0`$: leftover unmet block volume slack.
 - $`S_{\ell,s,k} \in [0,1]`$, $`k = 1,\dots,K_{\ell}`$: unit landing surplus slack for the $`k`$-th machine beyond capacity on landing $`\ell`$ in slot $`s`$ (only when $`\omega^{\text{land}} \gt  0`$).
 
@@ -127,12 +127,12 @@ z_{r,b,s} = \sum_{m\in\mathcal{M}(r)} p_{m,b,s}
 Machine positions and moves (**E6**; each machine's position is a unit flow through one layer per slot; idle slots keep the position):
 
 ```math
-\pi_{m,b,\operatorname{prev}(s)} = \eta_{m,b,s} + \sum_{b''\ne b} y_{m,b,b'',s}
+\pi_{m,b,\mathrm{prev}(s)} = \eta_{m,b,s} + \sum_{b''\ne b} y_{m,b,b'',s}
 \qquad \forall m\in\mathcal{M},\; b\in\mathcal{B},\; s\in\mathcal{S},
 ```
 
 ```math
-\nu_{m,\operatorname{prev}(s)} = \nu_{m,s} + \sum_{b\in\mathcal{B}} \phi_{m,b,s}
+\nu_{m,\mathrm{prev}(s)} = \nu_{m,s} + \sum_{b\in\mathcal{B}} \phi_{m,b,s}
 \qquad \forall m\in\mathcal{M}\setminus\mathcal{M}^{0},\; s\in\mathcal{S},
 ```
 
@@ -149,7 +149,7 @@ Staged inventory start and balance per upstream role (**E7**; each downstream ro
 I^{\text{start}}_{u,b,s}=
 \begin{cases}
 \bar{I}_{u,b}, & s = s_1\\
-I_{u,b,\operatorname{prev}(s)}, & \text{otherwise}
+I_{u,b,\mathrm{prev}(s)}, & \text{otherwise}
 \end{cases}
 \qquad \forall (u,b)\in\mathcal{P}^{\text{stg}}, s,
 ```
@@ -180,10 +180,10 @@ g_{r,b,s} \le \sum_{m\in\mathcal{M}(r)} x_{m,b,s},\\
 
 An assigned unlocked machine activates its role; a machine locked to the block may stay idle ($`x=1`$, $`p=0`$) without activating it, so a lock never forces production that the staged volumes cannot support.
 
-Head-start buffer (**E8b**; with $`I_{u,b,\operatorname{prev}(s_1)} := \bar{I}_{u,b}`$):
+Head-start buffer (**E8b**; with $`I_{u,b,\mathrm{prev}(s_1)} := \bar{I}_{u,b}`$):
 
 ```math
-I_{u,b,\operatorname{prev}(s)} \ge B_{r,b}\,\left(g_{r,b,s}-h_{r,b,s}\right)
+I_{u,b,\mathrm{prev}(s)} \ge B_{r,b}\,\left(g_{r,b,s}-h_{r,b,s}\right)
 \qquad \forall (r,b)\in\mathcal{P}^{\text{hs}},\; u\in\mathcal{U}_{r,b},\; s.
 ```
 
@@ -197,30 +197,30 @@ Head-start waiver (**E8c**; the buffer is waived once every upstream role has ou
 Loader truckload threshold (**E9**): a producing loader needs one truckload, or the whole remaining block volume when it is smaller, staged by every upstream role at the start of the slot,
 
 ```math
-I_{u,b,\operatorname{prev}(s)} \ge \min\!\left(q^{\text{batch}}_{b},\; W_b - D_{b,\operatorname{prev}(s)}\right) g_{r,b,s}
+I_{u,b,\mathrm{prev}(s)} \ge \min\!\left(q^{\text{batch}}_{b},\; W_b - D_{b,\mathrm{prev}(s)}\right) g_{r,b,s}
 \qquad \forall (r,b)\in\mathcal{P}^{\text{thr}},\; u\in\mathcal{U}_{r,b},\; s,
 ```
 
-linearized exactly as follows (all coefficients are data; $`W_b - D_{b,\operatorname{prev}(s)} \in [0, W_b]`$):
+linearized exactly as follows (all coefficients are data; $`W_b - D_{b,\mathrm{prev}(s)} \in [0, W_b]`$):
 
 ```math
 \begin{aligned}
 &\text{if } W_b \gt  q^{\text{batch}}_b \text{ and } s\notin\mathcal{S}^{\text{tail}}_b:\\
-&\qquad I_{u,b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\, g_{r,b,s},\\
+&\qquad I_{u,b,\mathrm{prev}(s)} \ge q^{\text{batch}}_{b}\, g_{r,b,s},\\
 &\text{if } W_b \le q^{\text{batch}}_b:\\
-&\qquad I_{u,b,\operatorname{prev}(s)} + D_{b,\operatorname{prev}(s)} \ge W_b\, g_{r,b,s},\\
+&\qquad I_{u,b,\mathrm{prev}(s)} + D_{b,\mathrm{prev}(s)} \ge W_b\, g_{r,b,s},\\
 &\text{if } s\in\mathcal{S}^{\text{tail}}_b:\\
-&\qquad I_{u,b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\,(g_{r,b,s}-\lambda_{b,s}),\\
-&\qquad I_{u,b,\operatorname{prev}(s)} + D_{b,\operatorname{prev}(s)} \ge q^{\text{batch}}_{b}\, g_{r,b,s} + (W_b - q^{\text{batch}}_{b})\,\lambda_{b,s},
+&\qquad I_{u,b,\mathrm{prev}(s)} \ge q^{\text{batch}}_{b}\,(g_{r,b,s}-\lambda_{b,s}),\\
+&\qquad I_{u,b,\mathrm{prev}(s)} + D_{b,\mathrm{prev}(s)} \ge q^{\text{batch}}_{b}\, g_{r,b,s} + (W_b - q^{\text{batch}}_{b})\,\lambda_{b,s},
 \end{aligned}
 ```
 
 ```math
 \begin{aligned}
-&D_{b,\operatorname{prev}(s)} \ge (W_b - q^{\text{batch}}_{b})\,\lambda_{b,s}
+&D_{b,\mathrm{prev}(s)} \ge (W_b - q^{\text{batch}}_{b})\,\lambda_{b,s}
 && \forall s\in\mathcal{S}^{\text{tail}}_b,\\
-&\lambda_{b,s} \ge \lambda_{b,\operatorname{prev}(s)}
-&& \forall s \text{ with } s,\operatorname{prev}(s)\in\mathcal{S}^{\text{tail}}_b.
+&\lambda_{b,s} \ge \lambda_{b,\mathrm{prev}(s)}
+&& \forall s \text{ with } s,\mathrm{prev}(s)\in\mathcal{S}^{\text{tail}}_b.
 \end{aligned}
 ```
 
@@ -275,7 +275,7 @@ x, g, h, \lambda \in \{0,1\},\quad p,z,y,\eta,\phi,\nu,I^{\text{start}},I,L \ge 
 
 **Initial state (INIT).** The optional `Scenario.initial_state` supplies $`\bar{I}_{u,b}`$ (**E7**, **E8b**), $`R^{0}_{r,b}`$ (**E8c**, **E12**), and $`b^{0}_m`$ with $`\mathcal{M}^{0}`$ (**E6**); the rolling-horizon driver uses it to carry state from one planning window to the next. Without `Scenario.initial_state` and `Scenario.locked_assignments` ($`\bar{I}\equiv 0`$; $`R^{0}_{r,b}= R_{r,b}= W_b`$; $`\mathcal{M}^{0}=\mathcal{K}=\emptyset`$) the initial-state and lock terms vanish.
 
-**Changes from FHOPS v1.0.0 (1.0.1).** The following corrections make every MILP plan physically feasible and replayable by the playback sequencing tracker without violations: (i) (**E12**) the remaining-output cap applies to every role with $`R_{r,b}=\min(R^{0}_{r,b},W_b)`$ ($`W_b`$ by default), complemented by the per-slot cap $`z_{r,b,s}+D_{b,s}\le W_b`$ where the flow balances do not imply it (v1.0.0 let upstream roles output more volume than the block holds and used that volume to meet head-start and loader thresholds); (ii) (**E8c**) the head-start constraint is waived through $`h_{r,b,s}`$ once every upstream role has output its carried-in remaining volume, so blocks smaller than a buffer can still be finished; (iii) (**E9**) the loader threshold is $`\min(q^{\text{batch}}_b, W_b - D_{b,\operatorname{prev}(s)})`$, the volume still to deliver at the start of the slot (v1.0.0 always required a full truckload), so the last partial truckload of a block can be loaded; (iv) (**E7**) staged inventories are kept per upstream role, $`I_{u,b,s}`$ (v1.0.0 kept one inventory per downstream role fed by the sum of its upstream roles' outputs, so a role with several upstream roles could process wood that only one of them had handled); (v) (**E8a**, **E13**) the activation binary $`g_{r,b,s}`$ gates production only and machines locked to a block may stay idle, so locks (new in 1.0.1) never make the model infeasible; contradictory locks are pinned to idle and reported; (vi) (**E2**) blocks without a harvest system ($`\mathcal{B}\setminus\mathcal{B}^{\text{seq}}`$) have no role obligations, as documented in the data contract (v1.0.0 applied the registry's default system to them); (vii) (**E1**) timeline blackouts, which v1.0.0 enforced only in the heuristics, set $`A_{m,s}=0`$ in every slot of a blackout day for every machine; (viii) (**E11**) landing capacity counts the machines on a landing per shift slot and is hard when $`\omega^{\text{land}}=0`$, as in the heuristics (v1.0.0 counted machine-shifts per day, $`\sum_{\sigma} x_{m,b,(d,\sigma)} \le C_{\ell} + S_{\ell,d}`$, with a slack that was free at the default $`\omega^{\text{land}}=0`$, so the capacity did not bind; on single-shift scenarios the per-slot and per-day counts coincide); (ix) (**E6**) a move is charged when a machine works a block other than its position, its last worked block or $`b^{0}_m`$, through the position network above: staying on a block costs nothing (v1.0.0 also charged $`\omega^{\text{trans}}`$ for consecutive slots on the same block), and a move across idle slots, or from $`b^{0}_m`$ into a first worked slot after $`s_1`$, is charged (v1.0.0 linked only consecutive slots through binaries $`y_{m,b',b,s}\ge x_{m,b',\operatorname{prev}(s)}+x_{m,b,s}-1`$, so idling one slot avoided the move cost that the heuristics and the KPIs charge); (x) (old **E9**) the loader batching variables of v1.0.0 ($`z_{r,b,s}=q^{\text{batch}}_{b}n_{r,b,s}+u_{r,b,s}`$ with $`n_{r,b,s}\in\mathbb{Z}_{\ge0}`$, $`0\le u_{r,b,s}\le q^{\text{batch}}_{b}`$) were removed because every $`z_{r,b,s}\ge 0`$ satisfies them; the truckload rule is the loader threshold above. Playback, the heuristics, and the rolling-horizon carry-forward apply the same rules: staged output is available from the next shift slot, buffers and truckload thresholds are staged volume at the start of the slot, and production is capped by $`R_{r,b}`$ and by the volume the block still holds. For linear harvest systems without loaders, without locks, and with no (or a consistent) initial state, (iii)–(v) leave the equations unchanged apart from indexing the staged inventory by the upstream instead of the downstream role. The initial state (**INIT**), locked assignments (**E13**), and the earliness stage (**OBJ2**) are new in 1.0.1 and vanish by default.
+**Changes from FHOPS v1.0.0 (1.0.1).** The following corrections make every MILP plan physically feasible and replayable by the playback sequencing tracker without violations: (i) (**E12**) the remaining-output cap applies to every role with $`R_{r,b}=\min(R^{0}_{r,b},W_b)`$ ($`W_b`$ by default), complemented by the per-slot cap $`z_{r,b,s}+D_{b,s}\le W_b`$ where the flow balances do not imply it (v1.0.0 let upstream roles output more volume than the block holds and used that volume to meet head-start and loader thresholds); (ii) (**E8c**) the head-start constraint is waived through $`h_{r,b,s}`$ once every upstream role has output its carried-in remaining volume, so blocks smaller than a buffer can still be finished; (iii) (**E9**) the loader threshold is $`\min(q^{\text{batch}}_b, W_b - D_{b,\mathrm{prev}(s)})`$, the volume still to deliver at the start of the slot (v1.0.0 always required a full truckload), so the last partial truckload of a block can be loaded; (iv) (**E7**) staged inventories are kept per upstream role, $`I_{u,b,s}`$ (v1.0.0 kept one inventory per downstream role fed by the sum of its upstream roles' outputs, so a role with several upstream roles could process wood that only one of them had handled); (v) (**E8a**, **E13**) the activation binary $`g_{r,b,s}`$ gates production only and machines locked to a block may stay idle, so locks (new in 1.0.1) never make the model infeasible; contradictory locks are pinned to idle and reported; (vi) (**E2**) blocks without a harvest system ($`\mathcal{B}\setminus\mathcal{B}^{\text{seq}}`$) have no role obligations, as documented in the data contract (v1.0.0 applied the registry's default system to them); (vii) (**E1**) timeline blackouts, which v1.0.0 enforced only in the heuristics, set $`A_{m,s}=0`$ in every slot of a blackout day for every machine; (viii) (**E11**) landing capacity counts the machines on a landing per shift slot and is hard when $`\omega^{\text{land}}=0`$, as in the heuristics (v1.0.0 counted machine-shifts per day, $`\sum_{\sigma} x_{m,b,(d,\sigma)} \le C_{\ell} + S_{\ell,d}`$, with a slack that was free at the default $`\omega^{\text{land}}=0`$, so the capacity did not bind; on single-shift scenarios the per-slot and per-day counts coincide); (ix) (**E6**) a move is charged when a machine works a block other than its position, its last worked block or $`b^{0}_m`$, through the position network above: staying on a block costs nothing (v1.0.0 also charged $`\omega^{\text{trans}}`$ for consecutive slots on the same block), and a move across idle slots, or from $`b^{0}_m`$ into a first worked slot after $`s_1`$, is charged (v1.0.0 linked only consecutive slots through binaries $`y_{m,b',b,s}\ge x_{m,b',\mathrm{prev}(s)}+x_{m,b,s}-1`$, so idling one slot avoided the move cost that the heuristics and the KPIs charge); (x) (old **E9**) the loader batching variables of v1.0.0 ($`z_{r,b,s}=q^{\text{batch}}_{b}n_{r,b,s}+u_{r,b,s}`$ with $`n_{r,b,s}\in\mathbb{Z}_{\ge0}`$, $`0\le u_{r,b,s}\le q^{\text{batch}}_{b}`$) were removed because every $`z_{r,b,s}\ge 0`$ satisfies them; the truckload rule is the loader threshold above. Playback, the heuristics, and the rolling-horizon carry-forward apply the same rules: staged output is available from the next shift slot, buffers and truckload thresholds are staged volume at the start of the slot, and production is capped by $`R_{r,b}`$ and by the volume the block still holds. For linear harvest systems without loaders, without locks, and with no (or a consistent) initial state, (iii)–(v) leave the equations unchanged apart from indexing the staged inventory by the upstream instead of the downstream role. The initial state (**INIT**), locked assignments (**E13**), and the earliness stage (**OBJ2**) are new in 1.0.1 and vanish by default.
 
 **Implementation mapping (equation blocks to code).**
 
