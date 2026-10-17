@@ -12,28 +12,52 @@ CODE = ROOT / "src/fhops/model/milp/operational.py"
 HOWTO = ROOT / "docs/howto/optimization_formulation.rst"
 
 EXPECTED_COMPONENTS = [
-    "model.machine_capacity",
-    "model.role_compatibility",
-    "model.production_cap",
+    "model.activation_prod",
+    "model.arrive",
+    "model.block_balance",
     "model.block_windows",
-    "model.role_prod_balance",
-    "model.transition_prev",
-    "model.transition_curr",
-    "model.transition_link",
-    "model.inventory_start_eq",
+    "model.depart",
+    "model.first",
+    "model.head_start",
+    "model.hub_balance",
+    "model.inventory",
     "model.inventory_balance",
     "model.inventory_guard",
-    "model.activation_prod",
-    "model.head_start",
-    "model.role_active_upper",
-    "model.role_active_lower",
-    "model.loader_batch",
-    "model.loader_partial_cap",
-    "model.block_balance",
-    "model.leftover",
+    "model.inventory_start",
+    "model.inventory_start_eq",
     "model.landing_capacity",
     "model.landing_surplus",
+    "model.leftover",
+    "model.loader_tail",
+    "model.loader_tail_monotone",
+    "model.loader_tail_reached",
+    "model.loader_threshold",
+    "model.loader_threshold_tail",
+    "model.locked_assignment",
+    "model.machine_capacity",
+    "model.move_requires_work",
     "model.objective",
+    "model.position_balance",
+    "model.prod",
+    "model.production_cap",
+    "model.role_active",
+    "model.role_active_lower",
+    "model.role_active_upper",
+    "model.role_compatibility",
+    "model.role_cumulative",
+    "model.role_cumulative_eq",
+    "model.role_prod",
+    "model.role_prod_balance",
+    "model.role_remaining_cap",
+    "model.role_slot_remaining",
+    "model.stay",
+    "model.unplaced",
+    "model.unplaced_balance",
+    "model.upstream_done",
+    "model.upstream_done_link",
+    "model.work_sets_position",
+    "model.x",
+    "model.y",
 ]
 
 
@@ -41,7 +65,7 @@ def test_operational_formulation_traceability_components_exist() -> None:
     source = SOURCE.read_text(encoding="utf-8")
     code = CODE.read_text(encoding="utf-8")
 
-    assert "Equation/constraint block | Pyomo component" in source
+    assert "Implementation mapping (equation blocks to code)" in source
     assert "build_operational_bundle(...)" in source
     for component in EXPECTED_COMPONENTS:
         assert component in source
@@ -59,5 +83,5 @@ def test_generated_operational_formulation_outputs_include_mapping() -> None:
     assert "model.objective" in tex
     assert "model.objective" in rst
     assert "Implementation mapping" in rst
-    assert "Pyomo component" in rst
+    assert "Pyomo objects and rules" in rst
     assert "fhops_operational_formulation.rst" in HOWTO.read_text(encoding="utf-8")

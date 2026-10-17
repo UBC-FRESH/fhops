@@ -339,6 +339,7 @@ def rolling_plan(
     if failure is not None or nothing_solved:
         raise typer.Exit(code=1)
 
+
 @plan_app.command("tactical-operational")
 def tactical_operational_plan(
     scenario_path: Path = typer.Argument(..., help="Path to tactical–operational scenario YAML."),

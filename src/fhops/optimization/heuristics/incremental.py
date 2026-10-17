@@ -23,6 +23,7 @@ from .common import (
     LEFTOVER_PENALTY_FACTOR,
     _ensure_mobilisation_stats,
     _no_lock,
+    build_role_priority,
 )
 
 if TYPE_CHECKING:
@@ -196,11 +197,13 @@ def score_separable(
         totals.delivered += contribution.delivered
         totals.blocks[block_id] = contribution
 
-    totals.leftover = sum(
-        contribution.leftover
-        for contribution in totals.blocks.values()
-        if contribution.leftover > BLOCK_COMPLETION_EPS
-    )
+    work = bundle.work_required
+    totals.leftover = 0.0
+    for block_id, required in work.items():
+        block_contribution = totals.blocks.get(block_id)
+        value = block_contribution.leftover if block_contribution is not None else required
+        if value > BLOCK_COMPLETION_EPS:
+            totals.leftover += value
 
     _ensure_mobilisation_stats(sched, ctx)
     totals.mobilisation = sum(sched.mobilisation_cache[machine.id].cost for machine in sc.machines)
@@ -214,3 +217,223 @@ def score_separable(
     score -= weights.landing_surplus * totals.landing_surplus
     score -= totals.penalty
     return score, totals
+
+
+def slot_diff(a: Schedule, b: Schedule) -> list[Slot]:
+    """Return the ``(machine, day, shift)`` slots where two schedules differ.
+
+    Parameters
+    ----------
+    a, b : Schedule
+        The two schedules.
+
+    Returns
+    -------
+    list of Slot
+        The differing slots.
+    """
+    changed: list[Slot] = []
+    for machine_id in set(a.plan) | set(b.plan):
+        plan_a = a.plan.get(machine_id, {})
+        plan_b = b.plan.get(machine_id, {})
+        for key in set(plan_a) | set(plan_b):
+            if plan_a.get(key) != plan_b.get(key):
+                changed.append((machine_id, key[0], key[1]))
+    return changed
+
+
+class SeparableEvaluator:
+    """Incremental, block-separable scorer for the heuristic objective.
+
+    A block's contribution (delivered, leftover, hard penalties) depends only on its own assigned
+    slots and its landing, because the scenarios pair one landing with each block and the tracker's
+    state is keyed by ``(block, role)``. The evaluator caches each block's contribution and resolves
+    each slot once, and recomputes only the blocks and machines a move touches.
+
+    Parameters
+    ----------
+    pb : Problem
+        The scenario.
+    ctx : OperationalProblem
+        Shared solver context.
+    """
+
+    def __init__(self, pb: Problem, ctx: OperationalProblem) -> None:
+        self.pb = pb
+        self.ctx = ctx
+        self._landing_of = ctx.bundle.landing_for_block
+        self._landing_cap = ctx.bundle.landing_capacity
+        self._rates = ctx.bundle.production_rates
+        self._weights = ctx.bundle.objective_weights
+        self._hard = ctx.hard_violation_penalty()
+        self._work = ctx.bundle.work_required
+        role_priority = build_role_priority(ctx)
+        ordered = sorted(
+            pb.scenario.machines,
+            key=lambda m: (role_priority.get(ctx.bundle.machine_roles.get(m.id) or "", 999), m.id),
+        )
+        self._machine_order = {machine.id: index for index, machine in enumerate(ordered)}
+        self._slot_base: dict[Slot, float] = {}
+        self._slot_block: dict[Slot, str | None] = {}
+        self._slots_by_block: dict[str, list[Slot]] = defaultdict(list)
+        self._block_contrib: dict[str, BlockContribution] = {}
+        self._base_penalty = 0.0
+        self._seq_penalty = 0.0
+        self.last: Schedule | None = None
+
+    def _block_contribution(
+        self, sched: Schedule, block_id: str, slots: list[Slot]
+    ) -> BlockContribution:
+        """Replay one block's slots (with its landing cap) and return its contribution."""
+        contribution = BlockContribution()
+        tracker = SequencingTracker(self.ctx, debug=False)
+        landing_id = self._landing_of.get(block_id)
+        cap = max(self._landing_cap.get(landing_id, 0), 0) if landing_id is not None else 0
+        hard_landing = self._weights.landing_surplus == 0.0 and landing_id is not None
+        ordered = sorted(
+            slots,
+            key=lambda slot: (
+                self.ctx.shift_index[(slot[1], slot[2])],
+                self._machine_order[slot[0]],
+            ),
+        )
+        used = 0
+        current_slot: tuple[int, str] | None = None
+        for machine_id, day, shift_id in ordered:
+            slot_key = (day, shift_id)
+            if slot_key != current_slot:
+                current_slot = slot_key
+                used = 0
+            used += 1
+            if hard_landing and used > cap:
+                contribution.penalty += self._hard
+                continue
+            rate_value = self._rates.get((machine_id, block_id), 0.0)
+            result = tracker.process(day, machine_id, block_id, rate_value, shift_id)
+            if result.violation_reason:
+                contribution.penalty += self._hard
+        tracker.finalize()
+        contribution.delivered = tracker.delivered_total
+        contribution.leftover = tracker.remaining_work.get(block_id, 0.0)
+        return contribution
+
+    def _resolve_into_cache(
+        self, sched: Schedule, machine_id: str, day: int, shift_id: str
+    ) -> None:
+        """Resolve one slot and refresh the base-penalty, slot-block, and block-slot caches."""
+        slot: Slot = (machine_id, day, shift_id)
+        penalty, block_id, feeds = _resolve_slot(
+            self.pb, self.ctx, sched, machine_id, day, shift_id
+        )
+        self._base_penalty += penalty - self._slot_base.get(slot, 0.0)
+        self._slot_base[slot] = penalty
+        previous = self._slot_block.get(slot)
+        if previous is not None and slot in self._slots_by_block.get(previous, []):
+            self._slots_by_block[previous].remove(slot)
+        resolved = block_id if (block_id is not None and feeds) else None
+        self._slot_block[slot] = resolved
+        if resolved is not None:
+            self._slots_by_block.setdefault(resolved, []).append(slot)
+
+    def build(self, sched: Schedule) -> float:
+        """Build the cache from ``sched`` and return its objective.
+
+        Parameters
+        ----------
+        sched : Schedule
+            The schedule to cache.
+
+        Returns
+        -------
+        float
+            The objective.
+        """
+        self._slot_base = {}
+        self._slot_block = {}
+        self._slots_by_block = defaultdict(list)
+        self._block_contrib = {}
+        self._base_penalty = 0.0
+        for day, shift_id in self.ctx.shift_keys:
+            for machine in self.pb.scenario.machines:
+                self._resolve_into_cache(sched, machine.id, day, shift_id)
+        self._seq_penalty = 0.0
+        for block_id, slots in self._slots_by_block.items():
+            contribution = self._block_contribution(sched, block_id, slots)
+            self._block_contrib[block_id] = contribution
+            self._seq_penalty += contribution.penalty
+        _ensure_mobilisation_stats(sched, self.ctx)
+        self.last = sched
+        return self.score(sched)
+
+    def score(self, sched: Schedule) -> float:
+        """Combine the cache into the objective; recomputes no block contributions.
+
+        Parameters
+        ----------
+        sched : Schedule
+            The schedule the cache describes.
+
+        Returns
+        -------
+        float
+            The objective.
+        """
+        w = self._weights
+        delivered = sum(c.delivered for c in self._block_contrib.values())
+        leftover = 0.0
+        for block_id, required in self._work.items():
+            contribution = self._block_contrib.get(block_id)
+            value = contribution.leftover if contribution is not None else required
+            if value > BLOCK_COMPLETION_EPS:
+                leftover += value
+        mob = sum(sched.mobilisation_cache[m.id].cost for m in self.pb.scenario.machines)
+        trans = sum(sched.mobilisation_cache[m.id].transitions for m in self.pb.scenario.machines)
+        score = w.production * (delivered - LEFTOVER_PENALTY_FACTOR * leftover)
+        score -= w.mobilisation * mob
+        score -= w.transitions * trans
+        score -= self._base_penalty + self._seq_penalty
+        return score
+
+    def score_after_move(self, sched: Schedule, changed_slots: list[Slot]) -> float:
+        """Score ``sched`` incrementally after a move that changed ``changed_slots``.
+
+        Recomputes only the blocks in the changed slots (and the machines they touch). The cached
+        contributions of every other block are reused. The caller must pass every slot where
+        ``sched`` differs from the schedule last built.
+
+        Parameters
+        ----------
+        sched : Schedule
+            The schedule reached by the move.
+        changed_slots : list of Slot
+            The slots that changed since the last build.
+
+        Returns
+        -------
+        float
+            The objective.
+        """
+        touched: set[str] = set()
+        for machine_id, day, shift_id in changed_slots:
+            slot: Slot = (machine_id, day, shift_id)
+            previous = self._slot_block.get(slot)
+            if previous is not None:
+                touched.add(previous)
+            self._resolve_into_cache(sched, machine_id, day, shift_id)
+            resolved = self._slot_block.get(slot)
+            if resolved is not None:
+                touched.add(resolved)
+        for block_id in touched:
+            old = self._block_contrib.get(block_id)
+            if old is not None:
+                self._seq_penalty -= old.penalty
+            slots = self._slots_by_block.get(block_id, [])
+            if slots:
+                contribution = self._block_contribution(sched, block_id, slots)
+                self._block_contrib[block_id] = contribution
+                self._seq_penalty += contribution.penalty
+            else:
+                self._block_contrib.pop(block_id, None)
+        _ensure_mobilisation_stats(sched, self.ctx)
+        self.last = sched
+        return self.score(sched)

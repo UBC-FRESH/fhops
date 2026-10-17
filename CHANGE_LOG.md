@@ -1,3 +1,17 @@
+# 2026-10-17 — P10.2: incremental evaluator is exact on the example ladder
+
+- `SeparableEvaluator` in `incremental.py` caches each block's contribution and each slot's static
+  penalty, and re-scores a move in O(slots it touches). Fixed two correctness bugs found by the
+  parity test:
+  - unworked blocks (no assigned slots) still contribute their full `work_required` to leftover;
+  - the per-block landing cap depends on the within-shift machine order (`ordered_machines`).
+- `tests/heuristics/test_incremental_parity.py` now also asserts `build` and `score_after_move`
+  match `_score_plan` to 1e-9 on tiny7, small21, med42 and large84 across a move chain; 8 tests pass.
+- Measured per move (build once, then score): **13.4x on med42, 28.8x on large84**.
+- End-to-end the SA loop gains little (about 1.1x) because it still repairs every candidate (the
+  dominant cost) and the diff is O(schedule). The next tasks are the incremental repair and an
+  O(changed) diff; the SA-loop wiring is held until then.
+
 # 2026-10-17 — P10.1/P10.2: block-separable scorer with an exact parity test
 
 - New `src/fhops/optimization/heuristics/incremental.py` with `score_separable`, which computes the

@@ -57,3 +57,24 @@ def test_separable_matches_full(name: str) -> None:
         full = _score_plan(pb, sched, ctx, None)
         sep, _ = score_separable(pb, sched, ctx)
         assert sep == pytest.approx(full, abs=1e-9), name
+
+
+@pytest.mark.parametrize("name", LADDER)
+def test_evaluator_matches_full_incrementally(name: str) -> None:
+    """The cached evaluator matches the full scorer on every candidate of a move chain."""
+    from fhops.optimization.heuristics.incremental import SeparableEvaluator, slot_diff
+
+    scenario = load_scenario(str(ROOT / "examples" / name / "scenario.yaml"))
+    pb = Problem.from_scenario(scenario)
+    ctx = build_operational_problem(pb)
+    base = init_greedy_schedule(pb, ctx)
+    _repair_schedule_cover_blocks(pb, base, ctx, fill_voids=True)
+    evaluator = SeparableEvaluator(pb, ctx)
+    assert evaluator.build(base) == pytest.approx(_score_plan(pb, base, ctx, None), abs=1e-9)
+    current = base
+    for candidate in _moved_schedules(pb, ctx, base, 5)[1:]:
+        changed = slot_diff(evaluator.last, candidate)
+        incremental = evaluator.score_after_move(candidate, changed)
+        assert incremental == pytest.approx(_score_plan(pb, candidate, ctx, None), abs=1e-9), name
+        current = candidate
+    del current
