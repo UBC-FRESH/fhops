@@ -10,8 +10,14 @@ forest harvesting operations plans. It provides:
 ## Installation
 
 ```bash
-pip install fhops==1.1.0a1
+pip install fhops==1.1.0b1
 ```
+
+FHOPS 1.0.1 requires Python ≥ 3.11 and, among others, `pyomo>=6.9.2` (HiGHS resolution and MILP
+warm starts), `highspy>=1.8.1`, and `typer>=0.15.4` (older Typer releases cannot build the CLI with current Click).
+These floors were verified on Python 3.11 and 3.12 (see `CHANGE_LOG.md`, #118). Scenario files
+that use `initial_state` or `locked_assignments[].shift_id` require `fhops>=1.0.1`; see
+`docs/howto/data_contract.rst`.
 
 For local development or release verification, use Hatch to mirror the CI suite:
 
@@ -59,20 +65,31 @@ export GRB_LICENSE_FILE=/path/to/gurobi.lic
 python -c "import gurobipy as gp; m = gp.Model(); m.setParam('OutputFlag', 0); m.optimize()"
 ```
 
-After the licence is active you can run FHOPS MIP commands with ``--driver gurobi`` (or
-``gurobi-appsi`` / ``gurobi-direct``). Without an available licence FHOPS falls back to HiGHS.
+After the licence is active you can run the operational MILP with
+``fhops solve-mip-operational ... --solver gurobi`` (HiGHS is the default solver).
 
 ## Validate & Evaluate
 
 ```bash
 fhops validate examples/tiny7/scenario.yaml
-fhops solve-mip examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
+fhops solve-mip-operational examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
 fhops solve-heur examples/tiny7/scenario.yaml --out examples/tiny7/out/sa_solution.csv
 fhops evaluate examples/tiny7/scenario.yaml --assignments examples/tiny7/out/mip_solution.csv
 ```
 
+`fhops solve-mip-operational` solves the operational MILP documented in the FHOPS paper
+(`fhops solve-mip` is a deprecated alias of it since 1.0.1; the legacy day-level MIP it used to run
+is infeasible for scenarios with loader roles).
+
+Heuristic objectives for `examples/tiny7` and `examples/small21` use built-in objective-weight
+overrides (soft landing capacity, lower mobilisation weight; `AUTO_OBJECTIVE_WEIGHT_OVERRIDES`), so
+they are not on the MILP objective's scale: the heuristic commands print a notice, and
+`fhops benchmark` / `fhops bench suite` also report the heuristic plan scored under the scenario's own
+weights. With a hard landing capacity (`landing_surplus` weight 0, the default) heuristic plans never
+overload a landing. See `docs/howto/heuristic_presets.rst` ("Objective Weights, Automatic Overrides,
+and Hard Violations").
+
 ```bash
-fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv
 fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
 fhops evaluate tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv
 ```
@@ -147,10 +164,11 @@ python scripts/run_tuning_benchmarks.py \
 ## Watching heuristics (live dashboard)
 
 Most solver commands accept a `--watch/--no-watch` flag that renders a Rich dashboard while the run
-is in progress:
+is in progress (long-running example: 200 000 SA iterations on med42 take several minutes):
 
 ```bash
 fhops solve-heur examples/med42/scenario.yaml \
+  --out tmp/med42_sa_watch.csv \
   --iters 200000 \
   --cooling-rate 0.99999 \
   --restart-interval 500 \
@@ -189,6 +207,6 @@ for real multi-core use prefer `--parallel-multistart` or process-level orchestr
   The TTY sees the dashboard, while the log captures the standard CLI output after the run.
 
 - **How can I record a screenshot/GIF?**
-  Run a short command (e.g., `fhops solve-heur examples/tiny7/scenario.yaml --watch --iters 500`)
+  Run a short command (e.g., `fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa.csv --watch --iters 500`)
   and use your preferred terminal recorder (`asciinema`, `ttystudio`, etc.). The sparkline now renders
   below the main table so column widths stay stable while recording.

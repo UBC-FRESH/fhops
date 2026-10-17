@@ -27,7 +27,7 @@ Example (building on the regression fixtures):
 
 The command prints two tables:
 
-* **Shift Playback Summary** — one row per machine/day/shift. Columns include production units,
+* **Shift Playback Summary** — one row per machine/day/shift. Columns include production (m³),
   worked hours, idle hours (when ``--include-idle`` is used), mobilisation cost, and sequencing
   violation counts gathered during playback.
 * **Day Playback Summary** — day-level aggregation with production, total/idle hours, mobilisation
@@ -64,21 +64,26 @@ shareable summary:
 .. code-block:: python
 
    import pathlib
-   from string import Template
+   import re
+
+   import pandas as pd
 
    from fhops.evaluation import compute_kpis
    from fhops.scenario.contract import Problem
    from fhops.scenario.io import load_scenario
 
-   template_path = pathlib.Path("docs/templates/kpi_summary.md")
-   template = Template(template_path.read_text(encoding="utf-8"))
+
+   def render(template: str, values: dict) -> str:
+       """Replace ``{{ key }}`` placeholders (unknown keys become ``-``)."""
+       return re.sub(r"\{\{\s*(\w+)\s*\}\}", lambda m: str(values.get(m.group(1), "-")), template)
+
 
    pb = Problem.from_scenario(load_scenario("examples/tiny7/scenario.yaml"))
    assignments = pd.read_csv("tests/fixtures/playback/tiny7_assignments.csv")
    kpi_data = compute_kpis(pb, assignments).to_dict()
 
-   report = template.safe_substitute({key: kpi_data.get(key, "-") for key in kpi_data})
-   pathlib.Path("tmp/tiny7_kpi_summary.md").write_text(report, encoding="utf-8")
+   template = pathlib.Path("docs/templates/kpi_summary.md").read_text(encoding="utf-8")
+   pathlib.Path("tmp/tiny7_kpi_summary.md").write_text(render(template, kpi_data), encoding="utf-8")
 
 You can embed the generated Markdown as-is in docs/notebooks or adapt the template to match your
 reporting format (CSV, HTML, etc.). A CSV variant lives alongside the Markdown template, so you can
@@ -86,10 +91,9 @@ generate spreadsheet-friendly snapshots just as easily:
 
 .. code-block:: python
 
-   csv_template = Template(pathlib.Path("docs/templates/kpi_summary.csv").read_text(encoding="utf-8"))
+   csv_template = pathlib.Path("docs/templates/kpi_summary.csv").read_text(encoding="utf-8")
    pathlib.Path("tmp/tiny7_kpi_summary.csv").write_text(
-       csv_template.safe_substitute({key: kpi_data.get(key, "-") for key in kpi_data}),
-       encoding="utf-8",
+       render(csv_template, kpi_data), encoding="utf-8"
    )
 
 Parquet and Markdown exports
@@ -187,8 +191,11 @@ KPI formulas & required signals
 
 The current KPI bundle includes:
 
-* ``total_production`` — sum of ``production_units`` over all day summaries.
-* ``completed_blocks`` — count of blocks whose remaining work is zero after playback.
+* ``total_production`` — delivered volume (m³): the part of ``Block.work_required`` delivered by each
+  block's terminal role during playback. ``production_units`` in the shift/day summaries is in the same
+  units (m³, like ``ProductionRate.rate``) but counts every role's output.
+* ``completed_blocks`` — count of blocks whose remaining volume (``work_required`` minus delivered m³)
+  is zero after playback.
 * ``mobilisation_cost`` — total mobilisation spend accumulated in playback record metadata.
 * ``mobilisation_cost_by_machine`` / ``mobilisation_cost_by_landing`` — JSON mappings that expose
   cumulative mobilisation outlay by machine and landing.
@@ -199,25 +206,68 @@ The current KPI bundle includes:
 * ``makespan_day`` / ``makespan_shift`` — latest day/shift containing productive assignments according to
   the scenario’s shift definition order.
 * ``downtime_hours_total`` / ``downtime_event_count`` / ``downtime_hours_by_machine`` — aggregate downtime
-  exposure derived from stochastic sampling (zero for deterministic runs).
-* ``downtime_production_loss_est`` — estimated production loss, computed as ``downtime_hours_total`` multiplied by the average production rate observed in the current playback.
+  exposure derived from the sampled downtime durations (zero for deterministic runs).
+* ``downtime_production_loss_est`` — volume (m³) removed by downtime, summed per record from the volume
+  the downtime event took out of each hit machine-shift (see below).
 * ``weather_severity_total`` / ``weather_severity_by_machine`` — cumulative weather intensity applied during
   stochastic playback, useful for correlating production drops with weather samples.
-* ``weather_hours_est`` / ``weather_production_loss_est`` — estimated hours and production impact attributable to weather, derived from the aggregate severity multiplied by the average shift length and production rate.
+* ``weather_hours_est`` / ``weather_production_loss_est`` — hours (``severity × shift hours``) and volume (m³)
+  removed by weather, summed per record (see below).
+
+Empty and partial plans
+~~~~~~~~~~~~~~~~~~~~~~~
+
+An empty assignment table (no rows, or only ``assigned = 0`` rows — e.g. a MILP run that found no
+solution) is evaluated like any other plan, so it never looks complete:
+
+* ``total_production = 0``; ``remaining_work_total`` and ``staged_production`` equal
+  ``sum(Block.work_required)`` of the evaluated scenario (the carried-forward volume for a rolling
+  window); ``completed_blocks = 0``; ``makespan_day = 0`` and ``makespan_shift = "N/A"``.
+* Day-level utilisation is ``0`` (every available day is idle); the shift, machine, and role
+  utilisation keys are absent, as are the mobilisation, downtime, and weather keys.
+* Sequencing counts are ``0`` and ``sequencing_clean_blocks`` counts every harvest-system block.
+
+For any plan (empty, partial, or complete) ``total_production`` is the playback delivered volume
+and ``total_production + remaining_work_total = sum(Block.work_required)``. Deterministic and
+stochastic playback (:func:`fhops.evaluation.run_playback`,
+:func:`fhops.evaluation.run_stochastic_playback`) report ``delivered_total = 0`` and
+``remaining_work_total = sum(Block.work_required)`` for an empty plan. FHOPS 1.0.0 reported the
+full scenario volume as delivered for an empty frame (`#108
+<https://github.com/UBC-FRESH/fhops/issues/108>`_). For rolling-horizon comparisons see
+:ref:`rolling-empty-plans`.
 
 Weather & downtime cost assumptions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The loss estimates make the following assumptions:
+The loss KPIs are emitted when :func:`~fhops.evaluation.compute_kpis` evaluates an assignment frame that
+carries stochastic event columns (for example a sample frame built by
+:func:`~fhops.evaluation.run_stochastic_playback`). Since 1.0.1 (`#116
+<https://github.com/UBC-FRESH/fhops/issues/116>`_) they are record-level sums:
 
-* ``downtime_hours_total`` sums the recorded downtime hours emitted by stochastic events. Multiplying by the
-  observed average production rate (total production divided by total hours worked) yields an approximate
-  lost-production figure. This is intentionally conservative—it does not try to infer which machines were
-  idle when downtime struck.
-* ``weather_severity_total`` aggregates the per-assignment severity values (0–1). Converting this to hours
-  uses the average shift duration; multiplying by the same average production rate yields a comparable
-  lost-production estimate. If you model multiple shifts per day or heterogeneous shift lengths, consider
-  computing refined per-machine/shift loss metrics downstream.
+* ``downtime_hours_total`` sums the sampled downtime hours of every hit machine-shift (cancelled shifts
+  count their full shift hours).
+* ``downtime_production_loss_est`` sums, over hit machine-shifts, the proposed volume the downtime event
+  removed: the whole proposed volume for a cancelled shift, ``volume × d / shift_hours`` for a partial loss
+  (the event records it in the private ``_downtime_lost`` column). Frames without that column fall back to
+  ``rate(machine, block) × min(downtime_hours / shift_hours, 1)``.
+* ``weather_production_loss_est`` sums the proposed volume removed by weather (``volume × severity``,
+  column ``_weather_lost``; fallback ``production × severity / (1 − severity)``), and ``weather_hours_est``
+  sums ``severity × shift_hours`` over weather-hit machine-shifts.
+
+The losses are measured on each machine-shift's proposed production before sequencing caps, so they
+include upstream (non-terminal) volume and do not equal the drop in ``total_production`` (which also
+includes knock-on sequencing effects and the other events). FHOPS 1.0.0 estimated both losses as hours ×
+(delivered volume ÷ recorded hours of every role), which did not match the volume the events removed.
+
+Shift hours (recorded ``hours_worked``, shift availability used for utilisation, and the downtime
+fraction ``d / shift_hours``) come from the matching ``timeline.shifts`` definition; without one, the
+machine's ``daily_hours`` is divided by the number of shifts the machine has that day in the shift
+calendar (e.g. three shifts → 8 h each for a 24 h machine). Single-shift scenarios use ``daily_hours``
+unchanged. FHOPS 1.0.0 recorded the full ``daily_hours`` for every shift of a multi-shift day.
+
+Assignments must carry ``shift_id`` on scenarios with more than one shift per day; playback, KPIs, and
+``fhops eval-playback`` raise an error instead of replaying every row as ``S1``. Single-shift scenarios
+keep the ``S1`` default.
 
 Upcoming KPI extensions planned for Phase 3 will reuse the same shift/day summaries:
 
@@ -237,13 +287,75 @@ Stochastic playback toggles
 The command also exposes stochastic options mirroring the API:
 
 * ``--samples`` — number of stochastic samples to evaluate (defaults to ``1`` for deterministic playback).
-* ``--downtime-prob`` / ``--downtime-max`` — probability of downtime events and an optional maximum number of assignments to drop per day.
+* ``--downtime-prob`` / ``--downtime-max`` / ``--downtime-mean`` / ``--downtime-std`` — probability that a
+  machine-shift is hit by downtime (or an exact number of hits per day with ``--downtime-max``) and the
+  Normal duration distribution in hours (defaults ``4.0`` / ``1.5``).
 * ``--weather-prob`` / ``--weather-severity`` / ``--weather-window`` — frequency, severity, and duration of weather-induced production reductions.
-* ``--landing-prob`` / ``--landing-mult-min`` / ``--landing-mult-max`` / ``--landing-duration`` — sample landing congestion shocks that scale production by a multiplier for a fixed number of days.
+* ``--landing-prob`` / ``--landing-mult-min`` / ``--landing-mult-max`` / ``--landing-duration`` — daily
+  probability that a congestion shock starts at each landing, the multiplier range, and the shock length
+  in days.
 
 By default these probabilities are ``0.0`` so the command behaves deterministically unless you turn them on.
 Each sample’s shift/day summaries are concatenated in the exported CSVs, making it easy to aggregate or
 visualise variability across runs.
+
+Stochastic event semantics
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:func:`fhops.evaluation.run_stochastic_playback` copies the deterministic assignments for every sample,
+applies the enabled events in the order downtime → weather → landing shocks, and re-runs deterministic
+playback so sequencing caps still apply. Event effects compose multiplicatively on each assignment's
+production (m³). Sample ``i`` uses ``numpy.random.default_rng(base_seed + i)``, shared by the events in that
+order, so a given seed and configuration always reproduce the same ensemble.
+
+* **Downtime** (:class:`~fhops.evaluation.playback.events.DowntimeEventConfig`). Days are visited in
+  ascending order. On each day every eligible assignment (``assigned > 0``, optional
+  ``target_machine_roles``) is hit with ``probability``; with ``max_concurrent`` set, exactly
+  ``min(max_concurrent, n)`` of the day's ``n`` eligible assignments are hit instead. Each hit samples a
+  duration ``d ~ Normal(mean_duration_hours, std_duration_hours)`` clipped to ``[0, shift_hours]`` and
+  multiplies the assignment's production by ``1 - d / shift_hours``. A full-shift loss
+  (``d == shift_hours``) cancels the assignment (``assigned = 0``, production ``0``). ``shift_hours`` is the
+  matching ``timeline.shifts`` definition, otherwise the machine's ``daily_hours`` divided by its number of
+  shifts that day — the same hours deterministic playback records. The shift summaries report ``downtime_hours`` (the sampled hours,
+  including cancelled shifts) and ``total_hours = shift_hours - d`` for affected shifts, so
+  ``downtime_hours_total`` and utilisation reflect the sampled durations.
+* **Weather** (:class:`~fhops.evaluation.playback.events.WeatherEventConfig`). For each assignment day a
+  spell starts with ``day_probability``, picks a severity level, and covers ``impact_window_days``
+  consecutive days (overlaps keep the highest severity). Affected production is multiplied by
+  ``1 - severity``. ``correlated_days`` is deprecated since 1.0.1: it never had an effect, and explicitly
+  setting it to a non-default value (``False``) emits a ``DeprecationWarning`` (the default ``True``, e.g. in
+  older synthetic ``metadata.yaml`` files, does not warn). Use ``impact_window_days`` to model multi-day
+  spells.
+* **Landing shocks** (:class:`~fhops.evaluation.playback.events.LandingShockConfig`). For each landing and
+  each calendar day of the horizon a shock starts with ``probability``, draws a multiplier uniformly from
+  ``capacity_multiplier_range``, and lasts ``duration_days`` calendar days from its start day. Every
+  assignment on a block served by that landing has its production scaled by the multiplier on the
+  affected days; overlapping shocks use the minimum multiplier. The expected fraction of landing-days
+  under a shock is
+
+  .. math::
+
+     f = 1 - (1 - p)^{D}
+
+  with ``p = probability`` and ``D = duration_days`` (days ``d < D`` at the start of the horizon use
+  ``d`` instead of ``D``). The default :class:`~fhops.evaluation.playback.events.SamplingConfig`
+  (``p = 0.1``, ``D = 1``, multipliers uniform on 0.4–0.8) shocks 10 % of landing-days with a mean
+  multiplier of 0.6, i.e. an expected landing throughput loss of about 4 % over the horizon. The synthetic
+  tier presets (:data:`fhops.scenario.synthetic.SAMPLING_PRESETS`) were recalibrated for these semantics in
+  1.0.1: ``medium`` uses ``p = 0.025``, ``D = 2`` (``f ≈ 4.9 %``) and ``large`` uses ``p = 0.035``,
+  ``D = 3`` (``f ≈ 10.1 %``); the 1.0.0 values (``0.18``/``0.25``) would shock 32.8 % / 57.8 % of
+  landing-days. ``metadata.yaml`` files of the shipped ``examples/synthetic`` bundles record the presets
+  in force when they were generated.
+* **Event seeds.** ``seed_offset`` (on every event config) is deprecated since 1.0.1 and ignored — it was
+  never used. All events of sample ``i`` draw from ``default_rng(base_seed + i)`` in the order above;
+  setting a non-zero ``seed_offset`` emits a ``DeprecationWarning``.
+
+.. note::
+
+   FHOPS 1.0.0 applied landing shocks to the first assignment rows of a shocked landing rather than to
+   calendar days, always removed a whole shift on downtime (ignoring the duration settings), and dropped
+   downtime-cancelled shifts from the summaries (so ``downtime_hours_total`` stayed at zero). Stochastic
+   playback results from 1.0.1 onwards therefore differ from 1.0.0 for the same seed.
 
 Relationship to KPI evaluation
 ------------------------------

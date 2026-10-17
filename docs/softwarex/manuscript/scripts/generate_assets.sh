@@ -20,16 +20,27 @@ scaling_dir="${data_dir}/scaling"
 
 mkdir -p "${bench_dir}" "${fig_dir}" "${data_dir}"
 
+# Every path FHOPS records in the assets (scenario paths in summaries, telemetry, index files) is
+# written as given on the command line, so the pipeline runs from the repository root with
+# repo-relative scenario paths (#144). relativize_asset_paths.py at the end is the safety net.
+cd "${repo_root}"
+
 echo "[assets] Rendering shared manuscript/doc snippets" >&2
 python "${script_dir}/export_docs_assets.py" --repo-root "${repo_root}"
 
-echo "[assets] Rendering PRISMA workflow diagram" >&2
-python "${script_dir}/render_prisma_diagram.py" --repo-root "${repo_root}"
+# The PRISMA diagram is a static workflow figure (no solver output). It needs latexmk/lualatex;
+# without a TeX installation the committed figure is kept.
+if command -v latexmk >/dev/null 2>&1; then
+  echo "[assets] Rendering PRISMA workflow diagram" >&2
+  python "${script_dir}/render_prisma_diagram.py" --repo-root "${repo_root}"
+else
+  echo "[assets] WARN: latexmk not found; keeping the committed PRISMA figure" >&2
+fi
 
 echo "[assets] Summarizing datasets into ${dataset_dir}" >&2
 python "${script_dir}/run_dataset_inspection.py" --repo-root "${repo_root}" --out-dir "${dataset_dir}"
 
-synthetic_scenario="${dataset_dir}/synthetic_small/scenario.yaml"
+synthetic_scenario="docs/softwarex/assets/data/datasets/synthetic_small/scenario.yaml"
 if [[ ! -f "${synthetic_scenario}" ]]; then
   echo "[assets] ERROR: synthetic scenario not found at ${synthetic_scenario}" >&2
   exit 1
@@ -60,13 +71,14 @@ echo "[assets] Regenerating FHOPS benchmark summaries into ${bench_dir}" >&2
 rm -rf "${bench_dir}" && mkdir -p "${bench_dir}"
 
 scenario_specs=(
-  "${repo_root}/examples/tiny7/scenario.yaml|tiny7|Tiny7 reference scenario"
-  "${repo_root}/examples/med42/scenario.yaml|med42|Med42 reference scenario"
+  "examples/tiny7/scenario.yaml|tiny7|Tiny7 reference scenario"
+  "examples/small21/scenario.yaml|small21|Small21 reference scenario"
+  "examples/med42/scenario.yaml|med42|Med42 reference scenario"
   "${synthetic_scenario}|synthetic_small|Synthetic tier (small)"
 )
 
-declare -a bench_pids=()
-
+# Scenarios run one after another (not concurrently) so the recorded runtime_s values are not
+# inflated by the other benchmark processes competing for cores (#131).
 for spec in "${scenario_specs[@]}"; do
   IFS="|" read -r scenario_path slug label <<< "${spec}"
   if [[ ! -f "${scenario_path}" ]]; then
@@ -102,6 +114,24 @@ for spec in "${scenario_specs[@]}"; do
           tabu_batch="4"
           ils_workers="12"
           tabu_workers="12"
+        fi
+        ;;
+      small21)
+        # Committed small21 assets: SA 4000, ILS 800 and Tabu 7000 iterations with the default
+        # batch (1) and worker (4) counts (re-verified in #109 and #119).
+        time_limit="${default_time_limit}"
+        sa_local="${default_sa_iters}"
+        ils_local="${default_ils_iters}"
+        tabu_local="${default_tabu_iters}"
+        ils_batch="${default_ils_batch}"
+        tabu_batch="${default_tabu_batch}"
+        ils_workers="${default_ils_workers}"
+        tabu_workers="${default_tabu_workers}"
+        if [[ "${fast_mode}" != "1" ]]; then
+          time_limit="600"
+          sa_local="4000"
+          ils_local="800"
+          tabu_local="7000"
         fi
         ;;
       med42)
@@ -206,15 +236,7 @@ for spec in "${scenario_specs[@]}"; do
     pushd "${repo_root}" >/dev/null
     python -m fhops.cli.main "${bench_args[@]}"
     popd >/dev/null
-  ) &
-  bench_pids+=("$!")
-done
-
-for pid in "${bench_pids[@]}"; do
-  if ! wait "${pid}"; then
-    echo "[assets] ERROR: benchmark worker ${pid} failed" >&2
-    exit 1
-  fi
+  )
 done
 
 python - <<'PY' "${bench_dir}"
@@ -266,3 +288,9 @@ python "${script_dir}/run_synthetic_sweep.py" --repo-root "${repo_root}" --out-d
 
 echo "[assets] Building solver/tuning tables" >&2
 python "${script_dir}/build_tables.py" --repo-root "${repo_root}"
+
+echo "[assets] Rewriting recorded paths to repo-relative form" >&2
+python "${script_dir}/relativize_asset_paths.py" --repo-root "${repo_root}" "${assets_root}"
+
+echo "[assets] Normalising text assets (pre-commit whitespace/end-of-file rules)" >&2
+python "${script_dir}/normalize_text_assets.py" "${assets_root}"

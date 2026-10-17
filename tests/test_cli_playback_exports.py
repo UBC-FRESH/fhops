@@ -86,17 +86,17 @@ def _resolve_assignments_fixture(scenario_path: str, tmp_path: Path) -> Path:
         if fixture.exists():
             return fixture
 
-    # fallback: generate assignments via CLI
+    # fallback: generate assignments via CLI. The regression fixture's harvest system is not in the
+    # registry, so the operational MILP (behind `solve-mip` since #127) cannot harvest its blocks;
+    # use the heuristic instead.
     assignments = tmp_path / "assignments.csv"
     result = runner.invoke(
         app,
         [
-            "solve-mip",
+            "solve-heur",
             scenario_path,
             "--out",
             str(assignments),
-            "--time-limit",
-            "20",
         ],
     )
     if result.exit_code != 0:

@@ -9,12 +9,22 @@ from collections import defaultdict
 from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
-from fhops.evaluation.sequencing import SequencingTracker, build_role_priority
+import pandas as pd
+
+from fhops.evaluation.sequencing import (
+    SEQUENCING_TOLERANCE,
+    SequencingTracker,
+    build_role_priority,
+)
 from fhops.optimization.heuristics.registry import OperatorContext, OperatorRegistry
-from fhops.optimization.operational_problem import OperationalProblem
+from fhops.optimization.operational_problem import (
+    OperationalProblem,
+    build_operational_problem,
+)
 from fhops.scenario.contract import Problem
+from fhops.scenario.contract.models import ObjectiveWeights
 
 BLOCK_COMPLETION_EPS = 1e-6
 LEFTOVER_PENALTY_FACTOR = 1.0
@@ -34,11 +44,43 @@ AUTO_OBJECTIVE_WEIGHT_OVERRIDES: dict[str, dict[str, float]] = {
 }
 
 
+"""Objective weights the heuristics (SA, ILS, Tabu) apply automatically, keyed by scenario name.
+
+When ``objective_weight_overrides`` is not passed, :func:`resolve_objective_weight_overrides`
+returns the entry for ``Scenario.name``: the shipped Tiny7 and Small21 references
+(``examples/tiny7``, ``examples/small21``) are searched with ``production=1.0``,
+``mobilisation=0.2``, ``transitions=0.1`` and a **soft** landing capacity
+(``landing_surplus=0.05`` per extra machine) instead of their scenario weights
+(``production=1.0``, ``mobilisation=0.5``, ``transitions=0.0``, hard landing capacity). The entries
+date from the v0.x heuristic tuning work (a lower mobilisation weight and soft landings let the
+search move machines between the one-machine landings of these small scenarios); the published
+Tiny7/Small21 heuristic results use them. Heuristic objectives for these scenarios are therefore
+**not** on the scale of the operational MILP objective, which always uses the scenario weights:
+compare plans with :func:`evaluate_assignments` under one set of weights. Since #140 the solvers
+record the applied overrides and their source in ``meta`` (``objective_weight_overrides``,
+``objective_weight_overrides_source``, ``scenario_objective_weights``) and telemetry, and the CLI
+prints a notice (:func:`objective_weight_override_notice`)."""
+
+
 def resolve_objective_weight_overrides(
     pb: Problem,
     overrides: dict[str, float] | None,
 ) -> dict[str, float] | None:
-    """Return explicit overrides or scenario-specific defaults for objective weights."""
+    """Return explicit overrides or scenario-specific defaults for objective weights.
+
+    Parameters
+    ----------
+    pb:
+        Problem being solved; ``pb.scenario.name`` selects an
+        :data:`AUTO_OBJECTIVE_WEIGHT_OVERRIDES` entry.
+    overrides:
+        Explicit overrides (returned unchanged when not ``None``).
+
+    Returns
+    -------
+    dict[str, float] | None
+        ``overrides`` when given, else the automatic entry for the scenario name, else ``None``.
+    """
 
     if overrides is not None:
         return overrides
@@ -46,6 +88,95 @@ def resolve_objective_weight_overrides(
     if scenario_name:
         return AUTO_OBJECTIVE_WEIGHT_OVERRIDES.get(scenario_name)
     return None
+
+
+def objective_weight_override_source(
+    pb: Problem,
+    overrides: Mapping[str, float] | None,
+) -> str | None:
+    """Return where the heuristics' objective-weight overrides come from.
+
+    Parameters
+    ----------
+    pb:
+        Problem being solved.
+    overrides:
+        The ``objective_weight_overrides`` argument passed to the solver.
+
+    Returns
+    -------
+    str | None
+        ``"explicit"`` for non-empty caller overrides, ``"auto"`` when an
+        :data:`AUTO_OBJECTIVE_WEIGHT_OVERRIDES` entry applies, ``None`` when the scenario weights
+        are used unchanged.
+    """
+
+    if overrides is not None:
+        return "explicit" if overrides else None
+    return "auto" if resolve_objective_weight_overrides(pb, None) else None
+
+
+def record_objective_weight_overrides(
+    meta: dict[str, Any],
+    pb: Problem,
+    requested: Mapping[str, float] | None,
+    resolved: Mapping[str, float] | None,
+) -> None:
+    """Record the applied objective-weight overrides in a solver ``meta`` payload (in place).
+
+    Adds ``objective_weight_overrides`` (the applied mapping), ``objective_weight_overrides_source``
+    (see :func:`objective_weight_override_source`) and ``scenario_objective_weights`` (the
+    scenario's own weights, which the operational MILP uses) when overrides apply; leaves ``meta``
+    unchanged otherwise.
+    """
+
+    if not resolved:
+        return
+    meta["objective_weight_overrides"] = dict(resolved)
+    meta["objective_weight_overrides_source"] = objective_weight_override_source(pb, requested)
+    meta["scenario_objective_weights"] = (
+        pb.scenario.objective_weights or ObjectiveWeights()
+    ).model_dump()
+
+
+def objective_weight_override_notice(
+    meta: Mapping[str, Any],
+    scenario_name: str | None = None,
+) -> str | None:
+    """Return a one-line notice describing applied objective-weight overrides (or ``None``).
+
+    Parameters
+    ----------
+    meta:
+        Solver ``meta`` payload (SA/ILS/Tabu) after :func:`record_objective_weight_overrides`.
+    scenario_name:
+        Label used in the notice (defaults to "this scenario").
+
+    Returns
+    -------
+    str | None
+        For example ``"Heuristic objective uses built-in weight overrides for FHOPS Tiny7
+        (production=1.0, mobilisation=0.2, transitions=0.1, landing_surplus=0.05; scenario
+        weights production=1.0, mobilisation=0.5, transitions=0.0, landing_surplus=0.0); not
+        comparable with MILP objectives."``; ``None`` when no override applied.
+    """
+
+    overrides = meta.get("objective_weight_overrides")
+    if not overrides:
+        return None
+    source = meta.get("objective_weight_overrides_source")
+    label = scenario_name or "this scenario"
+    kind = "built-in" if source == "auto" else "user-supplied"
+
+    def _fmt(weights: Mapping[str, Any]) -> str:
+        return ", ".join(f"{key}={float(value):g}" for key, value in weights.items())
+
+    scenario_weights = meta.get("scenario_objective_weights")
+    tail = f"; scenario weights {_fmt(scenario_weights)}" if scenario_weights else ""
+    return (
+        f"Heuristic objective uses {kind} weight overrides for {label} "
+        f"({_fmt(overrides)}{tail}); not comparable with MILP objectives."
+    )
 
 
 @dataclass(slots=True)
@@ -173,14 +304,19 @@ def _recompute_mobilisation_for(
     machine_id: str,
     ctx: OperationalProblem,
 ) -> None:
-    """Recompute mobilisation stats for a single machine."""
+    """Recompute mobilisation stats for a single machine.
+
+    The machine starts at ``ctx.initial_machine_block`` (``Scenario.initial_state``
+    ``last_block_id``) when known, so its first move to a different block is charged; otherwise
+    the first worked block is free (v1.0.0 behaviour).
+    """
 
     params = ctx.mobilisation_params.get(machine_id)
     row = _ensure_machine_matrix(schedule, machine_id, ctx)
     distance_lookup = ctx.distance_lookup
     cost = 0.0
     transitions = 0.0
-    prev_block: str | None = None
+    prev_block: str | None = ctx.initial_machine_block.get(machine_id)
     for block_id in row:
         if block_id is None:
             continue
@@ -204,12 +340,26 @@ def _recompute_mobilisation_for(
 
 
 def _ensure_mobilisation_stats(schedule: Schedule, ctx: OperationalProblem) -> None:
-    """Ensure mobilisation cache entries exist for all machines (recomputing dirty ones)."""
+    """Ensure the mobilisation cache holds exactly one up-to-date entry per planned machine.
 
-    if not schedule.mobilisation_cache and not schedule.dirty_machines:
-        schedule.dirty_machines = set(schedule.plan.keys())
-    for machine_id in list(schedule.dirty_machines):
-        _recompute_mobilisation_for(schedule, machine_id, ctx)
+    Machines marked dirty *and* machines without a cache entry are recomputed; entries for
+    machines that are no longer in the plan are dropped. Candidates built by the operator
+    sanitizer start with an empty cache while the repair pass marks only the machines it changed
+    as dirty, so recomputing dirty machines alone would leave the unchanged machines out of the
+    mobilisation and transition totals (#131).
+    """
+
+    cache = schedule.mobilisation_cache
+    plan = schedule.plan
+    for machine_id in [m for m in cache if m not in plan]:
+        del cache[machine_id]
+    stale = set(schedule.dirty_machines)
+    stale.update(machine_id for machine_id in plan if machine_id not in cache)
+    for machine_id in stale:
+        if machine_id in plan:
+            _recompute_mobilisation_for(schedule, machine_id, ctx)
+        else:
+            schedule.dirty_machines.discard(machine_id)
 
 
 def _release_slot_production(
@@ -259,6 +409,12 @@ def _store_slot_production(
     )
 
 
+def _no_lock(machine_id: str, day: int, shift_id: str) -> str | None:
+    """``OperationalProblem.lock_for`` of a scenario without locks."""
+
+    return None
+
+
 def _repair_schedule_cover_blocks(
     pb: Problem,
     sched: Schedule,
@@ -278,7 +434,9 @@ def _repair_schedule_cover_blocks(
     shift_availability = bundle.availability_shift
     availability = bundle.availability_day
     blackout = ctx.blackout_shifts
-    locked = ctx.locked_assignments
+    lock_for = (
+        ctx.lock_for if (ctx.locked_assignments or ctx.locked_shift_assignments) else _no_lock
+    )
     if limit_to_dirty_slots:
         block_remaining = sched.block_remaining_cache
         if block_remaining is None:
@@ -297,8 +455,18 @@ def _repair_schedule_cover_blocks(
     block_system = bundle.block_system
     explicit_blocks = ctx.blocks_with_explicit_system
     prereq_roles = ctx.prereq_roles
-    role_headstarts = ctx.role_headstarts
+    role_headstart_volume = ctx.role_headstart_volume
     role_priority = build_role_priority(ctx)
+    allowed_roles = ctx.allowed_roles
+    loader_roles = ctx.loader_roles
+    loader_batch_volume = ctx.loader_batch_volume
+    # ``role_remaining`` looked up with an optional role (absent keys -> ``None``).
+    role_remaining_lookup = cast(Mapping[tuple[str, str | None], float], role_remaining)
+    # (block, role) -> the (block, upstream role) inventory keys of its prerequisites.
+    prereq_keys: dict[tuple[str, str], tuple[tuple[str, str], ...]] = {
+        (block_id, role): tuple((block_id, upstream) for upstream in prereqs)
+        for (block_id, role), prereqs in prereq_roles.items()
+    }
 
     shift_keys = ctx.shift_keys
 
@@ -368,11 +536,31 @@ def _repair_schedule_cover_blocks(
         key=lambda m: (role_priority.get(machine_roles.get(m.id) or "", 999), m.id)
     )
 
-    role_inventory_estimate: defaultdict[tuple[str, str], float] = defaultdict(float)
+    role_inventory_estimate: defaultdict[tuple[str, str], float] = defaultdict(
+        float, ctx.initial_role_inventory
+    )
     role_inventory_today: defaultdict[tuple[str, str], float] = defaultdict(float)
-    current_day: int | None = None
-    role_counts_total: defaultdict[tuple[str, str], int] = defaultdict(int)
-    role_counts_day: defaultdict[tuple[str, str], int] = defaultdict(int)
+    current_slot: tuple[int, str] | None = None
+    role_consumed_slot: defaultdict[tuple[str, str], float] = defaultdict(float)
+    # Landing capacity guard (see ``landing_has_room``): only when landing overloads are hard
+    # violations (``landing_surplus`` weight 0), on every day (#140; #116 guarded multi-shift
+    # days only).
+    landing_of = bundle.landing_for_block
+    landing_cap = bundle.landing_capacity
+    landing_guard = bundle.objective_weights.landing_surplus == 0.0
+    # Machines of the current slot that the repair has not reached yet.
+    pending_in_slot: set[str] = set()
+    # Landing each pending downstream machine is expected to take in the current slot (see
+    # ``reserve_downstream_landings``); only with a hard landing capacity and ``fill_voids``.
+    reserved_landing: dict[str, str] = {}
+    roles_needing_input = frozenset(role for (_block, role) in prereq_roles)
+    # Reservations only matter where a landing can be full: capacity below the fleet size.
+    reservations_active = (
+        landing_guard
+        and fill_voids
+        and bool(roles_needing_input)
+        and any(max(cap, 0) < len(sc.machines) for cap in landing_cap.values())
+    )
 
     def is_terminal(block_id: str, role: str | None) -> bool:
         if block_id not in explicit_blocks:
@@ -387,87 +575,124 @@ def _repair_schedule_cover_blocks(
             return True
         return role in terminal
 
-    def compute_production(machine_id: str, block_id: str, role: str | None) -> float:
-        base_rate = rate.get((machine_id, block_id), 0.0)
-        if base_rate <= 0.0:
-            return 0.0
-        if block_id in explicit_blocks and role is not None and (block_id, role) in role_remaining:
-            return min(base_rate, role_remaining[(block_id, role)])
-        return min(base_rate, block_remaining.get(block_id, base_rate))
+    # Landing occupancy of the current slot for ``landing_has_room``, kept incrementally (#151):
+    # machines the repair has handled in this slot (or does not revisit) by the landing of their
+    # final block, pending machines by the landing of their lock.
+    landing_done: defaultdict[str, int] = defaultdict(int)
+    landing_locked_pending: defaultdict[str, int] = defaultdict(int)
+    pending_lock_landing: dict[str, str] = {}
+    machine_priority = {
+        machine.id: role_priority.get(machine_roles.get(machine.id) or "", 999)
+        for machine in sc.machines
+    }
 
-    def has_inventory(block_id: str, role: str | None, production: float) -> bool:
-        if block_id not in explicit_blocks or role is None:
-            return True
-        prereqs = prereq_roles.get((block_id, role))
-        if not prereqs:
-            return True
-        available_volume = min(
-            role_inventory_estimate[(block_id, upstream)] for upstream in prereqs
-        )
-        loader_requirement = 0.0
-        if (block_id, role) in ctx.loader_roles:
-            loader_requirement = min(
-                ctx.loader_batch_volume.get(block_id, 0.0),
-                block_remaining.get(block_id, 0.0),
-            )
-        required_volume = max(production, loader_requirement)
-        return available_volume + 1e-9 >= required_volume
+    scenario_has_locks = bool(ctx.locked_assignments or ctx.locked_shift_assignments)
+    machine_count = len(sc.machines)
 
-    def meets_headstart(block_id: str, role: str | None) -> bool:
-        if block_id not in explicit_blocks or role is None:
+    def start_landing_counts(day: int, shift_id: str) -> None:
+        landing_done.clear()
+        landing_locked_pending.clear()
+        pending_lock_landing.clear()
+        if not scenario_has_locks and len(pending_in_slot) == machine_count:
+            return  # every machine pending and none locked: nothing to count yet
+        slot = (day, shift_id)
+        for other in sc.machines:
+            if other.id in pending_in_slot:
+                other_block = lock_for(other.id, day, shift_id)
+                if other_block is None:
+                    continue
+                landing_id = landing_of.get(other_block)
+                if landing_id is not None:
+                    landing_locked_pending[landing_id] += 1
+                    pending_lock_landing[other.id] = landing_id
+            else:
+                other_block = plan[other.id].get(slot)
+                if other_block is not None:
+                    landing_id = landing_of.get(other_block)
+                    if landing_id is not None:
+                        landing_done[landing_id] += 1
+
+    def landing_has_room(machine_id: str, day: int, shift_id: str, block_id: str) -> bool:
+        # True when fewer than ``capacity`` *other* machines are on the block's landing in this
+        # slot. Machines the repair has already handled in this slot (or does not revisit) count
+        # with their final block; machines it has not reached yet count only through their
+        # locks (which they cannot leave). Ignoring the blocks those later machines hold before
+        # the repair reaches them keeps the repair idempotent: repairing a repaired plan leaves
+        # it unchanged, so the search score equals a fresh evaluation of the plan (#131). Before
+        # 1.0.1 (#116) the later machines' pre-repair blocks were counted too. A landing with
+        # capacity 0 admits no machine (#140). The counts are maintained per slot
+        # (``start_landing_counts`` and the main loop) instead of scanning every machine per call
+        # (#151; same result).
+        landing_id = landing_of.get(block_id)
+        if landing_id is None or landing_id not in landing_cap:
             return True
-        buffer = role_headstarts.get((block_id, role), 0.0)
-        if buffer <= 0.0:
-            return True
-        prereqs = prereq_roles.get((block_id, role))
-        if not prereqs:
-            return True
-        downstream_total = role_counts_total[(block_id, role)]
-        for upstream in prereqs:
-            upstream_total = role_counts_total[(block_id, upstream)]
-            if (upstream_total - downstream_total) + 1e-9 < buffer:
-                return False
+        capacity = max(landing_cap.get(landing_id, 0), 0)
+        if capacity == 0:
+            return False
+        others = landing_done[landing_id] + landing_locked_pending[landing_id]
+        if others >= capacity:
+            return False
+        if reserved_landing:
+            # A later downstream machine whose input is staged holds a place on the landing
+            # it is expected to take (#140): otherwise upstream roles, repaired first, take
+            # every place while upstream work remains and the pipeline never delivers.
+            # Reserving machines are unlocked (``reserve_downstream_landings``).
+            own_priority = machine_priority.get(machine_id, 999)
+            for other_id, reserved_id in reserved_landing.items():
+                if (
+                    reserved_id == landing_id
+                    and other_id in pending_in_slot
+                    and machine_priority.get(other_id, 999) > own_priority
+                ):
+                    others += 1
+                    if others >= capacity:
+                        return False
         return True
 
-    def advance_day(day: int) -> None:
-        nonlocal current_day
-        if current_day is None:
-            current_day = day
+    def advance_slot(day: int, shift_id: str) -> None:
+        # Output staged in a slot becomes available to downstream roles from the next slot
+        # (formulation E7: I_start(s) = I(prev(s))), matching SequencingTracker.
+        nonlocal current_slot
+        slot = (day, shift_id)
+        if current_slot is None:
+            current_slot = slot
             return
-        if day == current_day:
+        if slot == current_slot:
             return
         for key, volume in role_inventory_today.items():
             role_inventory_estimate[key] += volume
         role_inventory_today.clear()
-        for key, count in role_counts_day.items():
-            role_counts_total[key] += count
-        role_counts_day.clear()
-        current_day = day
+        role_consumed_slot.clear()
+        current_slot = slot
 
-    def has_demand(block_id: str, role: str | None) -> bool:
-        if block_id in explicit_blocks and role is not None and (block_id, role) in role_remaining:
-            return role_remaining.get((block_id, role), 0.0) > BLOCK_COMPLETION_EPS
-        return block_remaining.get(block_id, 0.0) > BLOCK_COMPLETION_EPS
+    slot_production = sched.slot_production
 
     def record_assignment(machine_id: str, day: int, shift_id: str, block_id: str) -> None:
+        # ``compute_production`` and ``_store_slot_production`` inlined (hot path, #151).
         role = machine_roles.get(machine_id)
-        production = compute_production(machine_id, block_id, role)
         slot_key = (machine_id, day, shift_id)
+        base_rate = rate.get((machine_id, block_id), 0.0)
+        explicit = block_id in explicit_blocks and role is not None
+        if base_rate <= 0.0:
+            production = 0.0
+        elif explicit and (block_id, role) in role_remaining_lookup:
+            production = min(base_rate, role_remaining_lookup[(block_id, role)])
+        else:
+            production = min(base_rate, block_remaining.get(block_id, base_rate))
         if production <= BLOCK_COMPLETION_EPS:
-            sched.slot_production.pop(slot_key, None)
+            slot_production.pop(slot_key, None)
             return
         block_delta = 0.0
         role_delta = 0.0
-        if block_id in explicit_blocks and role is not None:
-            prereqs = prereq_roles.get((block_id, role))
-            if prereqs:
-                for upstream in prereqs:
-                    key = (block_id, upstream)
-                    role_inventory_estimate[key] = max(
-                        0.0, role_inventory_estimate.get(key, 0.0) - production
-                    )
-            role_inventory_today[(block_id, role)] += production
+        if explicit and role is not None:
             role_key = (block_id, role)
+            upstream_keys = prereq_keys.get(role_key)
+            if upstream_keys:
+                for key in upstream_keys:
+                    current = role_inventory_estimate.get(key, 0.0)
+                    role_inventory_estimate[key] = max(0.0, current - production)
+                    role_consumed_slot[key] += min(production, current)
+            role_inventory_today[role_key] += production
             if role_key in role_remaining:
                 role_remaining[role_key] = max(0.0, role_remaining.get(role_key, 0.0) - production)
                 role_delta = production
@@ -476,29 +701,31 @@ def _repair_schedule_cover_blocks(
                     0.0, block_remaining.get(block_id, 0.0) - production
                 )
                 block_delta = production
-            role_counts_day[(block_id, role)] += 1
         else:
             block_remaining[block_id] = max(0.0, block_remaining.get(block_id, 0.0) - production)
             block_delta = production
-        _store_slot_production(
-            sched,
-            machine_id,
-            day,
-            shift_id,
-            block_id,
-            role,
-            block_delta,
-            role_delta,
-        )
+        if block_delta <= BLOCK_COMPLETION_EPS and role_delta <= BLOCK_COMPLETION_EPS:
+            slot_production.pop(slot_key, None)
+        else:
+            slot_production[slot_key] = SlotProduction(
+                block_id=block_id,
+                role=role,
+                block_volume=block_delta,
+                role_volume=role_delta,
+            )
 
     def slot_is_valid(
         machine_id: str,
         day: int,
+        shift_id: str,
         block_id: str | None,
         role: str | None,
         *,
         enforce_prereq: bool = True,
+        check_landing: bool = True,
     ) -> bool:
+        # Demand, production, staged input and head-start checks are inlined here: this is the
+        # repair's hot path (#151).
         if block_id is None:
             return False
         earliest, latest = windows[block_id]
@@ -507,16 +734,70 @@ def _repair_schedule_cover_blocks(
         rate_value = rate.get((machine_id, block_id), 0.0)
         if rate_value <= 0.0:
             return False
-        allowed = ctx.allowed_roles.get(block_id)
+        allowed = allowed_roles.get(block_id)
         if allowed is not None and role is not None and role not in allowed:
             return False
-        if not has_demand(block_id, role):
+        explicit = role is not None and block_id in explicit_blocks
+        role_left = role_remaining_lookup.get((block_id, role)) if explicit else None
+        remaining = role_left if role_left is not None else block_remaining.get(block_id, 0.0)
+        if remaining <= BLOCK_COMPLETION_EPS:
             return False
-        production = compute_production(machine_id, block_id, role)
+        production = rate_value if rate_value < remaining else remaining
         if production <= BLOCK_COMPLETION_EPS:
             return False
-        if enforce_prereq and (
-            not has_inventory(block_id, role, production) or not meets_headstart(block_id, role)
+        # Staged upstream input (same rules as SequencingTracker.process, formulation E7/E8).
+        if enforce_prereq and explicit and role is not None:
+            prereq_key = (block_id, role)
+            upstream_keys = prereq_keys.get(prereq_key)
+            if upstream_keys:
+                if len(upstream_keys) == 1:
+                    available = role_inventory_estimate[upstream_keys[0]]
+                else:
+                    available = min([role_inventory_estimate[key] for key in upstream_keys])
+                if available + SEQUENCING_TOLERANCE < production:
+                    return False
+                if prereq_key in loader_roles:
+                    loader_requirement = min(
+                        loader_batch_volume.get(block_id, 0.0),
+                        block_remaining.get(block_id, 0.0),
+                    )
+                    if loader_requirement > 0.0:
+                        start_volume = min(
+                            [
+                                role_inventory_estimate[key] + role_consumed_slot.get(key, 0.0)
+                                for key in upstream_keys
+                            ]
+                        )
+                        if start_volume + SEQUENCING_TOLERANCE < loader_requirement:
+                            return False
+                # Head-start buffer, waived when every upstream role finished before this slot
+                # (output staged in the current slot is added back), as in
+                # SequencingTracker._upstream_exhausted / MILP upstream_done.
+                buffer_volume = role_headstart_volume.get(prereq_key, 0.0)
+                if buffer_volume > 0.0 and not all(
+                    role_remaining.get(key, 0.0) + role_inventory_today.get(key, 0.0)
+                    <= SEQUENCING_TOLERANCE
+                    for key in upstream_keys
+                ):
+                    start_volume = min(
+                        [
+                            role_inventory_estimate[key] + role_consumed_slot.get(key, 0.0)
+                            for key in upstream_keys
+                        ]
+                    )
+                    if start_volume + SEQUENCING_TOLERANCE < buffer_volume:
+                        return False
+        # Hard landing capacity: keep/fill a slot only when the block's landing has room in that
+        # shift, as the MILP's hard landing constraint (E11) requires. Without this guard the
+        # repair stacks roles of a block on its landing and the plan pays a hard-violation
+        # penalty per extra machine: on multi-shift days since #109 (#116), and on single-shift
+        # days in every 1.0.x pre-release (all med42 heuristic plans carried 49–61 overloads,
+        # #140). Locked slots are exempt (the repair does not validate them).
+        if (
+            enforce_prereq
+            and check_landing
+            and landing_guard
+            and not landing_has_room(machine_id, day, shift_id, block_id)
         ):
             return False
         return True
@@ -546,21 +827,169 @@ def _repair_schedule_cover_blocks(
         demand.sort(key=lambda item: item[1], reverse=True)
         return [block_id for block_id, _ in demand]
 
+    # Blocks each machine can work (rate > 0), best rate first, and whether two of them share a
+    # rate (then the demand order of ``pending_blocks_for`` breaks the tie).
+    rate_ranking: dict[str, tuple[list[str], bool]] = {}
+    if fill_voids:
+        rates_by_machine: dict[str, list[tuple[float, str]]] = {}
+        for (rate_machine, rate_block), rate_value in rate.items():
+            if rate_value > 0.0:
+                rates_by_machine.setdefault(rate_machine, []).append((rate_value, rate_block))
+        for rate_machine, machine_rates in rates_by_machine.items():
+            machine_rates.sort(key=lambda item: item[0], reverse=True)
+            rate_ranking[rate_machine] = (
+                [block_id for _rate, block_id in machine_rates],
+                any(
+                    machine_rates[index][0] == machine_rates[index + 1][0]
+                    for index in range(len(machine_rates) - 1)
+                ),
+            )
+    no_ranking: tuple[list[str], bool] = ([], False)
+
+    def ranking_for(machine_id: str) -> tuple[list[str], bool]:
+        return rate_ranking.get(machine_id, no_ranking)
+
     def select_block(machine_id: str, day: int, shift_id: str, role: str | None) -> str | None:
+        # The pending block with the highest rate among those ``slot_is_valid`` accepts (first in
+        # demand order on equal rates). Without equal rates the machine's blocks are tried best
+        # rate first and the first valid one is taken, which validates far fewer blocks than a
+        # scan of every pending block (#151; same choice). A block ``slot_is_valid`` accepts has
+        # demand left for ``role``, so it is pending exactly when it is one of ``dirty_blocks``.
+        ranked, tied = ranking_for(machine_id)
+        if not tied:
+            starved = starved_blocks(role)
+            for block_id in ranked:
+                if (
+                    block_id in dirty_blocks
+                    and block_id not in starved
+                    and slot_is_valid(machine_id, day, shift_id, block_id, role)
+                ):
+                    return block_id
+            return None
         best_block: str | None = None
         best_rate = 0.0
         for block_id in pending_blocks_for(role):
-            if not slot_is_valid(machine_id, day, block_id, role):
-                continue
             candidate_rate = rate.get((machine_id, block_id), 0.0)
             if candidate_rate <= best_rate:
+                continue
+            if not slot_is_valid(machine_id, day, shift_id, block_id, role):
                 continue
             best_block = block_id
             best_rate = candidate_rate
         return best_block
 
+    # Blocks on which ``role`` has staged nothing at the start of the current slot (explicit
+    # blocks with prerequisites whose smallest upstream inventory is <= 0), computed once per
+    # slot and role. Within a slot upstream inventory only decreases (output staged in the slot
+    # is released at the next slot), and with nothing staged ``slot_is_valid`` rejects the block
+    # (``production > BLOCK_COMPLETION_EPS == SEQUENCING_TOLERANCE``), so callers may skip these
+    # blocks for the whole slot without changing any decision (#151).
+    upstream_items_by_role: dict[str, list[tuple[str, tuple[tuple[str, str], ...]]]] = {}
+    for (prereq_block, prereq_role), upstream_keys in prereq_keys.items():
+        if upstream_keys and prereq_block in explicit_blocks:
+            upstream_items_by_role.setdefault(prereq_role, []).append((prereq_block, upstream_keys))
+    starved_cache: dict[str | None, frozenset[str]] = {}
+    no_blocks: frozenset[str] = frozenset()
+
+    def starved_blocks(role: str | None) -> frozenset[str]:
+        blocks = starved_cache.get(role)
+        if blocks is None:
+            items = upstream_items_by_role.get(role) if role is not None else None
+            if not items:
+                blocks = no_blocks
+            else:
+                blocks = frozenset(
+                    block_id
+                    for block_id, upstream_keys in items
+                    if (
+                        role_inventory_estimate[upstream_keys[0]]
+                        if len(upstream_keys) == 1
+                        else min([role_inventory_estimate[key] for key in upstream_keys])
+                    )
+                    <= 0.0
+                )
+            starved_cache[role] = blocks
+        return blocks
+
+    def staged_nothing(block_id: str, role: str) -> bool:
+        return block_id in starved_blocks(role)
+
+    def reserve_downstream_landings(day: int, shift_id: str, machines: list[Any]) -> None:
+        # Hard landing capacity: before repairing a slot, predict for every unlocked, available
+        # machine whose role needs staged upstream input the block it would fill at the start of
+        # the slot (``select_block`` ignoring landing capacity). ``landing_has_room`` lets that
+        # machine's landing place count against machines of earlier (upstream) roles, so a role
+        # whose input is staged is served before its upstream roles add more input ("pull"
+        # allocation). The prediction depends only on the repair state at the start of the
+        # slot, never on the blocks pending machines hold before the repair reaches them, so the
+        # repair stays idempotent (#131).
+        reserved_landing.clear()
+        if not reservations_active:
+            return
+        # Nothing is recorded while predicting, so each role's candidate list is fixed.
+        candidates_by_role: dict[str, list[str]] = {}
+        for machine in machines:
+            machine_id = machine.id
+            role = machine_roles.get(machine_id)
+            if role not in roles_needing_input or lock_for(machine_id, day, shift_id) is not None:
+                continue
+            if (
+                shift_availability.get((machine_id, day, shift_id), 1) == 0
+                or availability.get((machine_id, day), 1) == 0
+                or (machine_id, day, shift_id) in blackout
+            ):
+                continue
+            ranked_blocks, tied = ranking_for(machine_id)
+            if not tied:
+                starved = starved_blocks(role)
+                # Same choice as below: the machine's blocks best rate first, first valid one.
+                candidate = None
+                for block_id in ranked_blocks:
+                    if block_id not in dirty_blocks or block_id in starved:
+                        continue  # not pending (see ``select_block``) or staged nothing
+                    if slot_is_valid(
+                        machine_id, day, shift_id, block_id, role, check_landing=False
+                    ):
+                        candidate = block_id
+                        break
+                if candidate is not None and prereq_roles.get((candidate, role)):
+                    landing_id = landing_of.get(candidate)
+                    if landing_id is not None and landing_id in landing_cap:
+                        reserved_landing[machine_id] = landing_id
+                continue
+            if role not in candidates_by_role:
+                # Blocks whose upstream roles have staged nothing fail ``has_inventory`` anyway.
+                candidates_by_role[role] = [
+                    block_id
+                    for block_id in pending_blocks_for(role)
+                    if not staged_nothing(block_id, role)
+                ]
+            # Same choice as ``select_block`` (highest rate, first in demand order on ties), but
+            # candidates are tried best rate first and the first valid one is taken.
+            ordered = candidates_by_role[role]
+            ranked = sorted(
+                range(len(ordered)),
+                key=lambda index: (-rate.get((machine_id, ordered[index]), 0.0), index),
+            )
+            candidate = next(
+                (
+                    ordered[index]
+                    for index in ranked
+                    if slot_is_valid(
+                        machine_id, day, shift_id, ordered[index], role, check_landing=False
+                    )
+                ),
+                None,
+            )
+            if candidate is None or not prereq_roles.get((candidate, role)):
+                continue
+            landing_id = landing_of.get(candidate)
+            if landing_id is not None and landing_id in landing_cap:
+                reserved_landing[machine_id] = landing_id
+
     for day, shift_id in shift_iteration:
-        advance_day(day)
+        advance_slot(day, shift_id)
+        starved_cache.clear()
         if limit_to_dirty_slots:
             machines_for_slot = slots_to_process.get((day, shift_id))
             if not machines_for_slot:
@@ -572,59 +1001,82 @@ def _repair_schedule_cover_blocks(
                 continue
         else:
             machine_iter = ordered_machines
+        pending_in_slot = {machine.id for machine in machine_iter}
+        if reservations_active:
+            reserve_downstream_landings(day, shift_id, machine_iter)
+        if landing_guard:
+            start_landing_counts(day, shift_id)
+        slot_key = (day, shift_id)
+        previous_machine: str | None = None
         for machine in machine_iter:
+            machine_id = machine.id
+            pending_in_slot.discard(machine_id)
+            if landing_guard:
+                # The previous machine is done: count its final block; this machine no longer
+                # counts through its lock.
+                if previous_machine is not None:
+                    done_block = plan[previous_machine].get(slot_key)
+                    if done_block is not None:
+                        done_landing = landing_of.get(done_block)
+                        if done_landing is not None:
+                            landing_done[done_landing] += 1
+                previous_machine = machine_id
+                if pending_lock_landing:
+                    lock_landing = pending_lock_landing.pop(machine_id, None)
+                    if lock_landing is not None:
+                        landing_locked_pending[lock_landing] -= 1
             slots_visited += 1
-            role = machine_roles.get(machine.id)
-            slot_key = (day, shift_id)
-            machine_plan = plan[machine.id]
+            role = machine_roles.get(machine_id)
+            machine_plan = plan[machine_id]
             slot_block: str | None = machine_plan.get(slot_key)
-            lock_block = locked.get((machine.id, day))
+            lock_block = lock_for(machine_id, day, shift_id)
             locked_slot = lock_block is not None
             if locked_slot:
                 slot_block = lock_block
-                set_assignment(machine.id, day, shift_id, slot_block)
+                set_assignment(machine_id, day, shift_id, slot_block)
             if (
                 limit_to_dirty_slots
                 and not locked_slot
                 and slot_block is not None
                 and slot_block not in dirty_blocks
             ):
-                record_assignment(machine.id, day, shift_id, slot_block)
+                record_assignment(machine_id, day, shift_id, slot_block)
                 continue
-            if shift_availability.get((machine.id, day, shift_id), 1) == 0:
-                set_assignment(machine.id, day, shift_id, None)
-                continue
-            if availability.get((machine.id, day), 1) == 0:
-                set_assignment(machine.id, day, shift_id, None)
-                continue
-            if (machine.id, day, shift_id) in blackout:
-                set_assignment(machine.id, day, shift_id, None)
+            if (
+                shift_availability.get((machine_id, day, shift_id), 1) == 0
+                or availability.get((machine_id, day), 1) == 0
+                or (machine_id, day, shift_id) in blackout
+            ):
+                set_assignment(machine_id, day, shift_id, None)
                 continue
             if slot_block is not None and slot_block not in dirty_blocks and not locked_slot:
                 continue
-            if slot_block is not None:
+            # A locked slot keeps its block even when the block has no demand left (an idle
+            # locked slot): ``evaluate_schedule`` scores the locked block in any case, so
+            # replacing it would only add a lock-violation penalty (#131).
+            if slot_block is not None and not locked_slot:
                 if not slot_is_valid(
-                    machine.id,
+                    machine_id,
                     day,
+                    shift_id,
                     slot_block,
                     role,
-                    enforce_prereq=not locked_slot,
                 ):
                     slot_block = None
-                    set_assignment(machine.id, day, shift_id, None)
+                    set_assignment(machine_id, day, shift_id, None)
             if slot_block is None and fill_voids:
-                candidate = select_block(machine.id, day, shift_id, role)
+                candidate = select_block(machine_id, day, shift_id, role)
                 if candidate is None:
-                    set_assignment(machine.id, day, shift_id, None)
+                    set_assignment(machine_id, day, shift_id, None)
                     continue
-                set_assignment(machine.id, day, shift_id, candidate)
+                set_assignment(machine_id, day, shift_id, candidate)
                 slot_block = candidate
-                machines_touched.add(machine.id)
+                machines_touched.add(machine_id)
             if slot_block is not None:
-                record_assignment(machine.id, day, shift_id, slot_block)
-                machines_touched.add(machine.id)
+                record_assignment(machine_id, day, shift_id, slot_block)
+                machines_touched.add(machine_id)
             if limit_to_dirty_slots:
-                processed_slots.add((machine.id, day, shift_id))
+                processed_slots.add((machine_id, day, shift_id))
 
     sched.dirty_blocks.difference_update(dirty_blocks)
     if limit_to_dirty_slots:
@@ -648,7 +1100,22 @@ def _repair_schedule_cover_blocks(
 
 
 def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
-    """Construct an initial Schedule by greedily filling shifts with best-rate blocks."""
+    """Construct an initial Schedule by greedily filling shifts with best-rate blocks.
+
+    Parameters
+    ----------
+    pb:
+        Problem to schedule.
+    ctx:
+        Shared operational context. Locks (``ctx.lock_for``) are applied first; per-role demand
+        starts from ``ctx.role_work_required`` (which includes any ``initial_state``
+        ``role_remaining``), and mobilisation stats start from ``ctx.initial_machine_block``.
+
+    Returns
+    -------
+    Schedule
+        Greedy schedule with populated block/role remaining caches and mobilisation stats.
+    """
 
     sc = pb.scenario
     bundle = ctx.bundle
@@ -659,7 +1126,7 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
     allowed_roles = ctx.allowed_roles
     machine_roles = bundle.machine_roles
     blackout = ctx.blackout_shifts
-    locked = ctx.locked_assignments
+    lock_for = ctx.lock_for
     block_system = bundle.block_system
     explicit_blocks = ctx.blocks_with_explicit_system
     block_remaining = dict(bundle.work_required)
@@ -760,7 +1227,7 @@ def init_greedy_schedule(pb: Problem, ctx: OperationalProblem) -> Schedule:
     # Respect locked assignments up front.
     for day, shift_id in shift_keys:
         for machine in sc.machines:
-            lock_block = locked.get((machine.id, day))
+            lock_block = lock_for(machine.id, day, shift_id)
             if lock_block is None:
                 continue
             assign(machine.id, day, shift_id, lock_block)
@@ -834,7 +1301,36 @@ def evaluate_schedule(
     *,
     limit_repairs_to_dirty: bool = False,
 ) -> float:
-    """Score a schedule using production, mobilisation, transition, and slack penalties."""
+    """Score a schedule using production, mobilisation, transition, and slack penalties.
+
+    Parameters
+    ----------
+    pb:
+        Problem being solved.
+    sched:
+        Candidate schedule (repaired in place before scoring).
+    ctx:
+        Shared operational context. The sequencing tracker, repair pass, and mobilisation cache
+        all start from the context's initial state (staged inventory, role remaining, role shift
+        counts, last block per machine), which is empty unless ``Scenario.initial_state`` is set.
+    debug:
+        Optional dict receiving sequencing debug statistics and watch metrics.
+    limit_repairs_to_dirty:
+        Restrict the repair pass to dirty slots (incremental evaluation).
+
+    Returns
+    -------
+    float
+        ``ω_prod·(delivered − leftover) − ω_mob·mobilisation − ω_trans·transitions −
+        ω_land·landing_surplus − penalties``. ``penalties`` adds
+        :meth:`~fhops.optimization.operational_problem.OperationalProblem.hard_violation_penalty`
+        (``max(1000, 2·ω_prod·r_max + ω_mob·c_max + 1)``; a flat 1000 before #140) per assigned
+        slot that is unavailable (calendar or blackout), violates a lock, role, window or rate,
+        breaks sequencing, or (with ``landing_surplus`` weighted 0) overloads a landing. Idle
+        unavailable slots cost nothing (since 1.0.1; v1.0.0 charged every unavailable slot). Each
+        assigned slot proposes the machine's full rate (capped by the sequencing tracker); use
+        :func:`evaluate_assignments` to score a plan with planned production (MILP plans).
+    """
 
     repair_stats: dict[str, float] | None = {} if limit_repairs_to_dirty else None
     _repair_schedule_cover_blocks(
@@ -844,6 +1340,26 @@ def evaluate_schedule(
         limit_to_dirty_slots=limit_repairs_to_dirty,
         repair_stats=repair_stats,
     )
+    return _score_plan(pb, sched, ctx, debug, repair_stats=repair_stats)
+
+
+def _score_plan(
+    pb: Problem,
+    sched: Schedule,
+    ctx: OperationalProblem,
+    debug: dict[str, Any] | None,
+    *,
+    repair_stats: dict[str, float] | None = None,
+    planned_production: Mapping[tuple[str, int, str], float | None] | None = None,
+) -> float:
+    """Score ``sched`` as planned (no repair); see :func:`evaluate_schedule`.
+
+    ``planned_production`` switches to planned-production scoring (:func:`evaluate_assignments`):
+    ``(machine_id, day, shift_id) -> m³`` proposed to the sequencing tracker for each listed slot
+    (``None`` proposes the machine's rate, as playback does for a missing value); a locked slot
+    without an entry is an idle locked slot (proposes 0). Without it every assigned or locked slot
+    proposes the machine's rate.
+    """
 
     sc = pb.scenario
     bundle = ctx.bundle
@@ -853,19 +1369,21 @@ def evaluate_schedule(
     landing_cap = bundle.landing_capacity
     allowed_roles = ctx.allowed_roles
     blackout = ctx.blackout_shifts
-    locked = ctx.locked_assignments
     shift_availability = bundle.availability_shift
     availability = bundle.availability_day
 
     weights = bundle.objective_weights
+    hard_penalty = ctx.hard_violation_penalty()
 
     _ensure_mobilisation_stats(sched, ctx)
-    mobilisation_total = sum(stats.cost for stats in sched.mobilisation_cache.values())
-    transition_count = sum(stats.transitions for stats in sched.mobilisation_cache.values())
+    # Sum in scenario machine order so the total does not depend on cache insertion order.
+    mobilisation_stats = [sched.mobilisation_cache[machine.id] for machine in sc.machines]
+    mobilisation_total = sum(stats.cost for stats in mobilisation_stats)
+    transition_count = sum(stats.transitions for stats in mobilisation_stats)
     landing_surplus_total = 0.0
     penalty = 0.0
+    hard_violations = 0
 
-    previous_block: dict[str, str | None] = {machine.id: None for machine in sc.machines}
     tracker = SequencingTracker(ctx, debug=bool(debug))
 
     role_priority = build_role_priority(ctx)
@@ -874,52 +1392,76 @@ def evaluate_schedule(
         key=lambda m: (role_priority.get(bundle.machine_roles.get(m.id) or "", 999), m.id),
     )
 
+    lock_for = (
+        ctx.lock_for if (ctx.locked_assignments or ctx.locked_shift_assignments) else _no_lock
+    )
+    machine_roles = bundle.machine_roles
+    plan = sched.plan
+    process = tracker.process
     for day, shift_id in ctx.shift_keys:
         used = {landing.id: 0 for landing in sc.landings}
+        slot = (day, shift_id)
         for machine in ordered_machines:
-            block_id = sched.plan[machine.id][(day, shift_id)]
-            lock_key = (machine.id, day)
+            machine_id = machine.id
+            block_id = plan[machine_id][slot]
 
+            # Unavailable slots (shift/day calendar, blackout) are penalised only when a block is
+            # assigned there; before 1.0.1 every unavailable slot was penalised even when idle (a
+            # constant offset in the objective, #131).
             if (
-                shift_availability.get((machine.id, day, shift_id), 1) == 0
-                or availability.get((machine.id, day), 1) == 0
+                shift_availability.get((machine_id, day, shift_id), 1) == 0
+                or availability.get((machine_id, day), 1) == 0
+                or (machine_id, day, shift_id) in blackout
             ):
-                penalty += 1000.0
-                previous_block[machine.id] = None
-                continue
-            if (machine.id, day, shift_id) in blackout:
-                penalty += 1000.0
-                previous_block[machine.id] = None
+                if block_id is not None:
+                    penalty += hard_penalty
+                    hard_violations += 1
                 continue
 
-            locked_block = locked.get(lock_key)
+            locked_block = lock_for(machine_id, day, shift_id)
+            planned_key: tuple[str, int, str] | None = (machine_id, day, shift_id)
             if locked_block is not None:
                 if block_id is not None and block_id != locked_block:
-                    penalty += 1000.0
+                    penalty += hard_penalty
+                    hard_violations += 1
+                if planned_production is not None and block_id != locked_block:
+                    planned_key = None  # idle locked slot: no planned production
                 block_id = locked_block
 
             if block_id is None:
                 continue
 
-            role = bundle.machine_roles.get(machine.id)
+            role = machine_roles.get(machine_id)
             allowed = allowed_roles.get(block_id)
             if allowed is not None and role is not None and role not in allowed:
-                penalty += 1000.0
+                penalty += hard_penalty
+                hard_violations += 1
                 continue
 
             earliest, latest = windows[block_id]
             if day < earliest or day > latest:
-                penalty += 1000.0
+                penalty += hard_penalty
+                hard_violations += 1
                 continue
 
-            rate_value = rate.get((machine.id, block_id), 0.0)
+            rate_value = rate.get((machine_id, block_id), 0.0)
             if rate_value <= 0.0:
-                penalty += 1000.0
+                penalty += hard_penalty
+                hard_violations += 1
                 continue
 
-            sequencing = tracker.process(day, machine.id, block_id, rate_value)
+            proposed = rate_value
+            if planned_production is not None:
+                if planned_key is not None and planned_key in planned_production:
+                    planned = planned_production[planned_key]
+                    if planned is not None:
+                        proposed = planned
+                else:
+                    proposed = 0.0  # slot without a planned row: idle locked slot
+            sequencing = process(day, machine_id, block_id, proposed, shift_id)
             if sequencing.violation_reason:
-                penalty += 1000.0
+                penalty += hard_penalty
+                hard_violations += 1
 
             landing_id = landing_of.get(block_id)
             if landing_id is not None and landing_id in used:
@@ -928,15 +1470,10 @@ def evaluate_schedule(
                 excess = max(0, used[landing_id] - capacity)
                 if excess > 0:
                     if weights.landing_surplus == 0.0:
-                        penalty += 1000.0
+                        penalty += hard_penalty
+                        hard_violations += 1
                         continue
                     landing_surplus_total += excess
-
-            if sequencing.production_units <= BLOCK_COMPLETION_EPS:
-                previous_block[machine.id] = block_id
-                continue
-
-            previous_block[machine.id] = block_id
 
     tracker.finalize()
     delivered_total = tracker.delivered_total
@@ -955,6 +1492,10 @@ def evaluate_schedule(
         "leftover_total": leftover_total,
         "landing_surplus_total": landing_surplus_total,
         "penalty_total": penalty,
+        "hard_violation_count": hard_violations,
+        "hard_violation_penalty": hard_penalty,
+        "mobilisation_total": mobilisation_total,
+        "transition_count": transition_count,
     }
     if repair_stats:
         watch_stats.setdefault("repair_slots_processed", repair_stats.get("slots_processed", 0.0))
@@ -988,6 +1529,181 @@ def evaluate_schedule_with_debug(
         limit_repairs_to_dirty=limit_repairs_to_dirty,
     )
     return score, debug_map
+
+
+def fresh_schedule_copy(sched: Schedule) -> Schedule:
+    """Return a cache-free copy of ``sched`` holding only its plan.
+
+    The copy has no mobilisation, demand, slot or dirty-set caches, so evaluating it is the same as
+    evaluating a schedule rebuilt from exported assignments.
+    """
+
+    return Schedule(plan={machine: dict(slots) for machine, slots in sched.plan.items()})
+
+
+def rescore_fresh(
+    pb: Problem,
+    sched: Schedule,
+    ctx: OperationalProblem,
+    capture_debug: bool = False,
+) -> tuple[Schedule, float, dict[str, Any] | None]:
+    """Evaluate a cache-free copy of a schedule with a full repair pass.
+
+    Parameters
+    ----------
+    pb:
+        Problem being solved.
+    sched:
+        Schedule to re-score; it is not modified.
+    ctx:
+        Shared operational context (including any objective-weight overrides).
+    capture_debug:
+        When ``True`` also return sequencing debug statistics.
+
+    Returns
+    -------
+    tuple[Schedule, float, dict | None]
+        ``(schedule, score, debug)``: the repaired copy (the plan the solvers export), its
+        :func:`evaluate_schedule` score, and the debug statistics (``None`` unless requested).
+        SA, ILS and Tabu report this score as ``objective``, so it equals a fresh
+        ``evaluate_schedule`` of the exported assignments (#131).
+    """
+
+    fresh = fresh_schedule_copy(sched)
+    score, debug = evaluate_schedule_with_debug(pb, fresh, ctx, capture_debug)
+    return fresh, score, debug
+
+
+def schedule_from_assignments(
+    pb: Problem,
+    assignments: pd.DataFrame,
+    ctx: OperationalProblem | None = None,
+) -> tuple[Schedule, dict[tuple[str, int, str], float | None] | None]:
+    """Convert an assignment table into a :class:`Schedule` and its planned production.
+
+    Parameters
+    ----------
+    pb:
+        Problem the table belongs to; machines not in the scenario are ignored.
+    assignments:
+        Table with ``machine_id``, ``block_id``, ``day`` and ``shift_id`` columns. Rows whose
+        ``assigned`` value (when the column exists) is ``<= 0.5`` or whose ``block_id`` is missing
+        are ignored; a later row for the same machine slot replaces an earlier one. An optional
+        ``production`` column (m³, e.g. operational-MILP plans) is returned as planned production.
+    ctx:
+        Operational context supplying the ordered shift slots (built from ``pb`` when ``None``).
+
+    Returns
+    -------
+    tuple[Schedule, dict | None]
+        The schedule (every scenario machine has an entry for every slot, ``None`` when idle) and
+        ``(machine_id, day, shift_id) -> m³`` planned production for the kept rows (``None`` for a
+        missing value), or ``None`` when the table has no ``production`` column.
+    """
+
+    shift_keys = ctx.shift_keys if ctx is not None else build_operational_problem(pb).shift_keys
+    plan: dict[str, dict[tuple[int, str], str | None]] = {
+        machine.id: {key: None for key in shift_keys} for machine in pb.scenario.machines
+    }
+    frame = assignments
+    if "assigned" in frame.columns:
+        frame = frame[pd.to_numeric(frame["assigned"], errors="coerce").fillna(0.0) > 0.5]
+    has_production = "production" in frame.columns
+    planned: dict[tuple[str, int, str], float | None] | None = {} if has_production else None
+    for record in frame.to_dict(orient="records"):
+        machine_raw = record.get("machine_id")
+        day_raw = record.get("day")
+        shift_raw = record.get("shift_id")
+        block_raw = record.get("block_id")
+        if machine_raw is None or day_raw is None or shift_raw is None:
+            continue
+        if block_raw is None or (isinstance(block_raw, float) and math.isnan(block_raw)):
+            continue
+        try:
+            day_value = int(day_raw)
+        except (TypeError, ValueError):
+            continue
+        machine_id = str(machine_raw)
+        shift_id = str(shift_raw)
+        if machine_id not in plan or (day_value, shift_id) not in plan[machine_id]:
+            continue
+        plan[machine_id][(day_value, shift_id)] = str(block_raw)
+        if planned is not None:
+            value = record.get("production")
+            try:
+                production = float(value) if value is not None else math.nan
+            except (TypeError, ValueError):
+                production = math.nan
+            planned[(machine_id, day_value, shift_id)] = (
+                None if math.isnan(production) else max(production, 0.0)
+            )
+    return Schedule(plan=plan), planned
+
+
+def evaluate_assignments(
+    pb: Problem,
+    assignments: pd.DataFrame,
+    ctx: OperationalProblem | None = None,
+    debug: dict[str, Any] | None = None,
+) -> float:
+    """Score an assignment table as planned, with the heuristic objective (no repair).
+
+    Use this to compare plans from different sources (heuristic exports, operational-MILP plans,
+    user CSVs) on the heuristic objective. Unlike :func:`evaluate_schedule` the plan is not
+    repaired first: every assignment is scored as given, so infeasible rows are charged the hard
+    violation penalty instead of being dropped.
+
+    Parameters
+    ----------
+    pb:
+        Problem the table belongs to.
+    assignments:
+        Assignment table (see :func:`schedule_from_assignments`). With a ``production`` column
+        each row proposes its planned production (m³) to the sequencing tracker, as
+        :func:`fhops.evaluation.playback.run_playback` does: a row planning no production is an
+        idle slot (no head-start/truckload check, #125) and a locked slot without a row is an
+        idle locked slot. Without the column every assigned or locked slot proposes the machine's
+        rate, as :func:`evaluate_schedule` does.
+    ctx:
+        Operational context fixing the objective weights. ``None`` builds one from ``pb`` with the
+        **scenario's own** weights (no ``AUTO_OBJECTIVE_WEIGHT_OVERRIDES``); pass a context from
+        :func:`fhops.optimization.operational_problem.override_objective_weights` to score under
+        overridden weights.
+    debug:
+        Optional dict receiving the same statistics as :func:`evaluate_schedule`.
+
+    Returns
+    -------
+    float
+        The :func:`evaluate_schedule` objective of the plan as given.
+
+    Notes
+    -----
+    For a schedule exported by SA, ILS or Tabu (no ``production`` column) scored with the context
+    the solver used, the result equals the solver's ``objective`` (the repair pass is idempotent
+    on its own output, #131). For an operational-MILP plan (``production`` column) it avoids the
+    ``missing_prereq`` penalties :func:`evaluate_schedule` charges when it proposes full rates
+    for slots the MILP plans at partial or zero production (audit MINOR-F, #140; on the
+    proven-optimal Tiny7 MILP plan: 253.18 instead of -4441.32 after a repair at full rates). It
+    can still differ from the MILP objective where the two objectives differ: the heuristics
+    (and KPIs) charge mobilisation and transitions for a move across idle slots, which the MILP
+    charges only between consecutive slots (Tiny7: MILP objective 279.80, one move of 53.24 at
+    weight 0.5), and any slot the MILP plans differently from the playback rules is penalised.
+
+    Examples
+    --------
+    >>> from fhops.scenario.io import load_scenario
+    >>> from fhops.scenario.contract import Problem
+    >>> from fhops.optimization.heuristics import solve_sa
+    >>> pb = Problem.from_scenario(load_scenario("examples/minitoy/scenario.yaml"))  # doctest: +SKIP
+    >>> res = solve_sa(pb, iters=200, seed=1)  # doctest: +SKIP
+    >>> evaluate_assignments(pb, res["assignments"])  # scenario weights  # doctest: +SKIP
+    """
+
+    if ctx is None:
+        ctx = build_operational_problem(pb)
+    sched, planned = schedule_from_assignments(pb, assignments, ctx)
+    return _score_plan(pb, sched, ctx, debug, planned_production=planned)
 
 
 def build_watch_metadata_from_debug(stats: Mapping[str, Any] | None) -> dict[str, str]:
@@ -1074,6 +1790,7 @@ def generate_neighbors(
         block_windows=block_windows,
         landing_capacity=landing_cap,
         landing_of=landing_of,
+        sanitizer_preview=ctx.build_sanitizer_preview(sched.plan),
     )
 
     enabled_ops = list(registry.enabled())

@@ -14,6 +14,7 @@ from typing import Any
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from relativize_asset_paths import repo_relative
 
 
 @dataclass
@@ -60,7 +61,7 @@ def synth_bundle(repo_root: Path, tier: TierSpec, dest: Path) -> Path:
         "fhops.cli.main",
         "synth",
         "generate",
-        str(dest),
+        repo_relative(dest, repo_root),
         "--tier",
         tier.name,
         "--seed",
@@ -84,10 +85,11 @@ def bench_scenario(repo_root: Path, scenario: Path, out_dir: Path) -> Path:
         "fhops.cli.main",
         "bench",
         "suite",
+        # Recorded as given in summary.csv/json: repo-relative (cwd = repo root, #144).
         "--scenario",
-        str(scenario),
+        repo_relative(scenario, repo_root),
         "--out-dir",
-        str(out_dir),
+        repo_relative(out_dir, repo_root),
         "--time-limit",
         "60",
         "--sa-iters",

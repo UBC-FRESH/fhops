@@ -21,15 +21,18 @@ Workbench: ``examples/tiny7``
 .. code-block:: bash
 
    fhops validate examples/tiny7/scenario.yaml
-   fhops solve-mip examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
+   fhops solve-mip-operational examples/tiny7/scenario.yaml --out examples/tiny7/out/mip_solution.csv
    fhops solve-heur examples/tiny7/scenario.yaml --out examples/tiny7/out/sa_solution.csv
    fhops evaluate examples/tiny7/scenario.yaml --assignments examples/tiny7/out/mip_solution.csv
 
 What those commands do:
 
 - ``fhops validate`` ensures CSV/YAML inputs satisfy the data contract.
-- ``fhops solve-mip`` builds a Pyomo model and solves it with HiGHS. The resulting CSV
-  lists the selected machine/block assignments.
+- ``fhops solve-mip-operational`` builds the operational (day × shift) Pyomo MILP and solves it
+  with HiGHS. The resulting CSV lists the selected machine/block/shift assignments. (``fhops
+  solve-mip`` is a deprecated alias of this command since FHOPS 1.0.1; the legacy day-level MIP it
+  used to run is infeasible for tiny7 and the other bundled examples because of its loader-buffer
+  constraint; see :doc:`../reference/cli`.)
 - ``fhops solve-heur`` runs the simulated annealing heuristic.
 - ``fhops evaluate`` replays a schedule CSV and reports KPIs such as production,
   mobilisation cost, and sequencing health (when harvest systems are configured).
@@ -48,7 +51,6 @@ expected KPI/objective values the automated tests assert against.
 
 .. code-block:: bash
 
-   fhops solve-mip tests/fixtures/regression/regression.yaml --out /tmp/regression_mip.csv
    fhops solve-heur tests/fixtures/regression/regression.yaml --out /tmp/regression_sa.csv
    fhops evaluate tests/fixtures/regression/regression.yaml --assignments /tmp/regression_sa.csv
 
@@ -81,8 +83,8 @@ runs quickly with either SA or HiGHS; swap in med42 when you want a realistic la
 
 .. code-block:: bash
 
-   # 1) Full-horizon baseline (HiGHS)
-   fhops solve-mip examples/tiny7/scenario.yaml --out tmp/tiny7_full.csv --driver highs
+   # 1) Full-horizon baseline (operational MILP, HiGHS)
+   fhops solve-mip-operational examples/tiny7/scenario.yaml --out tmp/tiny7_full.csv
 
    # 2) Rolling MILP (Gurobi shown; use --mip-solver highs if Gurobi is unavailable)
    fhops plan rolling examples/tiny7/scenario.yaml \
@@ -93,7 +95,7 @@ runs quickly with either SA or HiGHS; swap in med42 when you want a realistic la
    # 3) Evaluate KPI deltas in Python
    python - <<'PY'
    import pandas as pd
-   from fhops.planning import comparison_dataframe, compute_rolling_kpis
+   from fhops.planning import compute_rolling_kpis
    from fhops.scenario.io import load_scenario
 
    scenario = load_scenario("examples/tiny7/scenario.yaml")
@@ -105,9 +107,16 @@ runs quickly with either SA or HiGHS; swap in med42 when you want a realistic la
        rolling_df,  # assignments exported from fhops plan rolling
        baseline_assignments=baseline,
    )
-   plot_df = comparison_dataframe(
-       comparison,
-       metrics=["total_production", "mobilisation_cost"],
+   deltas = comparison.delta_totals or {}
+   plot_df = pd.DataFrame(
+       {
+           "metric": metric,
+           "rolling": comparison.rolling_kpis.get(metric),
+           "baseline": comparison.baseline_kpis.get(metric),
+           "delta": deltas.get(f"{metric}_delta"),
+           "pct_delta": deltas.get(f"{metric}_pct_delta"),
+       }
+       for metric in ["total_production", "mobilisation_cost"]
    )
    print(plot_df[["metric", "delta", "pct_delta"]])
    PY
@@ -122,15 +131,15 @@ schedule CSVs and use the playback CLI to validate both shift-level and day-leve
 
 .. code-block:: bash
 
-   # Example snippet inside your scenario YAML
+   # Example snippet inside your scenario YAML (shift labels D and N)
    # timeline:
-   #   horizon_days: 10
    #   shifts:
-   #     - id: D
-   #       label: Day
-   #     - id: N
-   #       label: Night
-   #   shifts_per_day: 2
+   #     - name: D
+   #       hours: 10
+   #       shifts_per_day: 2
+   #     - name: N
+   #       hours: 10
+   #       shifts_per_day: 2
    # data:
    #   shift_calendar: data/shift_calendar.csv  # columns: machine_id,day,shift_id,available
 

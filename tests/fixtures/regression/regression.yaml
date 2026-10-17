@@ -7,3 +7,15 @@ data:
   calendar: calendar.csv
   prod_rates: production_rates.csv
   mobilisation_distances: mobilisation_distances.csv
+# Custom two-role system (feller -> processor); not part of the default registry, so it is
+# registered here (FHOPS >= 1.0.1 rejects blocks that reference an unregistered system).
+harvest_systems:
+  ground_sequence:
+    system_id: ground_sequence
+    jobs:
+      - name: felling
+        machine_role: feller
+        prerequisites: []
+      - name: processing
+        machine_role: processor
+        prerequisites: [felling]

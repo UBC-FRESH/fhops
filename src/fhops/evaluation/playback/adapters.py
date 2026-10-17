@@ -17,7 +17,7 @@ from ..sequencing import (
     build_role_priority,
     build_sequencing_tracker,
 )
-from .core import PlaybackRecord
+from .core import PlaybackRecord, shift_hours_resolver
 
 if TYPE_CHECKING:  # pragma: no cover
     from fhops.optimization.heuristics.sa import Schedule
@@ -27,7 +27,93 @@ else:  # pragma: no cover - runtime fallback
 __all__ = [
     "schedule_to_records",
     "assignments_to_records",
+    "DEFAULT_SHIFT_ID",
+    "multi_shift_days",
+    "normalise_shift_ids",
+    "shift_hours_resolver",
 ]
+
+DEFAULT_SHIFT_ID = "S1"
+"""Shift label assumed for assignment rows without ``shift_id`` in single-shift scenarios."""
+
+
+def multi_shift_days(problem: Problem) -> list[int]:
+    """Return the days on which the problem has more than one shift slot.
+
+    Parameters
+    ----------
+    problem : fhops.scenario.contract.Problem
+        Problem whose ``shifts`` (built from ``shift_calendar``, else ``timeline.shifts``, else one
+        ``S1`` shift per day) define the slot grid. A day counts as multi-shift when any machine
+        (or the timeline) has two or more distinct shift IDs on it.
+
+    Returns
+    -------
+    list[int]
+        Sorted days with at least two distinct shift IDs (empty for single-shift scenarios).
+    """
+
+    per_day: dict[int, set[str]] = defaultdict(set)
+    for shift in problem.shifts:
+        per_day[int(shift.day)].add(str(shift.shift_id))
+    return sorted(day for day, shifts in per_day.items() if len(shifts) > 1)
+
+
+def normalise_shift_ids(problem: Problem, assignments: pd.DataFrame) -> pd.DataFrame:
+    """Return a copy of ``assignments`` with a string ``shift_id`` column.
+
+    Parameters
+    ----------
+    problem : fhops.scenario.contract.Problem
+        Problem being replayed.
+    assignments : pandas.DataFrame
+        Assignment rows; ``shift_id`` is optional only for single-shift scenarios.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Copy with ``shift_id`` filled: missing column or missing values become
+        :data:`DEFAULT_SHIFT_ID` (``"S1"``) when every day has a single shift.
+
+    Raises
+    ------
+    ValueError
+        When the scenario has more than one shift on some day (:func:`multi_shift_days`) and an
+        active row (``assigned > 0``, or every row without an ``assigned`` column) has no
+        ``shift_id`` (missing column or missing value). Replaying such rows as ``"S1"`` would
+        silently collapse every shift of the day onto the first one (FHOPS 1.0.0 behaviour).
+        Inactive rows are filled with ``"S1"`` without error.
+    """
+
+    df = assignments.copy()
+    if "assigned" in df.columns:
+        active = df["assigned"].fillna(0) > 0
+    else:
+        active = pd.Series(True, index=df.index)
+    missing_column = "shift_id" not in df.columns
+    if missing_column:
+        missing_rows = int(active.sum())
+    else:
+        missing_rows = int((df["shift_id"].isna() & active).sum())
+    if missing_rows:
+        days = multi_shift_days(problem)
+        if days:
+            what = (
+                "has no shift_id column"
+                if missing_column
+                else f"has {missing_rows} row(s) without shift_id"
+            )
+            preview = ", ".join(str(day) for day in days[:5])
+            more = ", ..." if len(days) > 5 else ""
+            raise ValueError(
+                f"assignments {what}, but scenario '{problem.scenario.name}' has more than one "
+                f"shift per day (days {preview}{more}); provide shift_id for every row "
+                f"(solver outputs include it)."
+            )
+    if missing_column:
+        df["shift_id"] = DEFAULT_SHIFT_ID
+    df["shift_id"] = df["shift_id"].fillna(DEFAULT_SHIFT_ID).astype(str)
+    return df
 
 
 def schedule_to_records(problem: Problem, schedule: Schedule) -> Iterator[PlaybackRecord]:
@@ -52,10 +138,60 @@ def schedule_to_records(problem: Problem, schedule: Schedule) -> Iterator[Playba
 
 
 def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Iterator[PlaybackRecord]:
-    """Convert solver assignments dataframe into playback records."""
+    """Convert solver assignments dataframe into playback records.
 
+    Parameters
+    ----------
+    problem : fhops.scenario.contract.Problem
+        Problem wrapping the scenario being replayed.
+    assignments : pandas.DataFrame
+        Rows with ``machine_id``, ``block_id``, ``day``, ``shift_id`` (optional only for
+        single-shift scenarios, default ``"S1"``; see :func:`normalise_shift_ids`), ``assigned``
+        (rows with ``assigned <= 0`` are skipped) and ``production`` (volume, m³; when missing
+        the production rate capped by remaining work is used). The frame index is ignored.
+        Stochastic events may add the private columns ``_downtime`` (flag),
+        ``_downtime_hours`` (sampled downtime hours), ``_downtime_lost`` (proposed volume
+        removed by downtime, m³), ``_weather_severity`` and ``_weather_lost`` (proposed volume
+        removed by weather, m³).
+
+    Returns
+    -------
+    Iterator[PlaybackRecord]
+        Iterator over chronologically ordered records. The iterator exposes a
+        ``sequencing_tracker`` attribute holding the :class:`SequencingTracker` used to cap
+        production.
+
+    Raises
+    ------
+    ValueError
+        When required columns are missing, or when the scenario has several shifts per day and a
+        replayed row has no ``shift_id`` (:func:`normalise_shift_ids`).
+
+    Notes
+    -----
+    Rows flagged by downtime keep their record even when the whole shift is lost
+    (``assigned == 0``): such records carry ``production_units = 0``, ``hours_worked = 0``
+    and ``downtime_hours`` equal to the lost shift hours, and they bypass the sequencing
+    tracker and mobilisation costing (the machine did not work). Partially lost shifts report
+    ``hours_worked = shift_hours - downtime_hours``. ``shift_hours`` comes from
+    :func:`shift_hours_resolver`. When the private ``_downtime_lost`` / ``_weather_lost`` columns
+    are present, their values are copied to ``metadata["downtime_production_lost"]`` /
+    ``metadata["weather_production_lost"]`` (m³) for record-level loss KPIs.
+
+    When ``Scenario.initial_state`` is set, the sequencing tracker starts from the carried-in
+    staged inventory, role remaining volumes, and role shift counts, and each machine's
+    mobilisation tracking starts at its ``last_block_id`` so the first move to a different block
+    is charged (matching the operational MILP and the heuristics).
+
+    An empty plan (``assignments`` is ``None``, has no rows, or has no row with
+    ``assigned > 0``) yields no records but still exposes a fresh ``sequencing_tracker``, so
+    callers see the full ``Block.work_required`` as remaining and nothing delivered. Empty
+    frames are accepted without the required-column check.
+    """
+
+    tracker = build_sequencing_tracker(problem)
     if assignments is None or assignments.empty:
-        return iter(())
+        return _RecordIterator(iter(()), tracker)
 
     required = {"machine_id", "block_id", "day"}
     missing = required - set(assignments.columns)
@@ -63,14 +199,16 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
         missing_str = ", ".join(sorted(missing))
         raise ValueError(f"assignments missing required columns: {missing_str}")
 
-    df = assignments.copy()
-    if "shift_id" not in df.columns:
-        df["shift_id"] = "S1"
-    df["shift_id"] = df["shift_id"].fillna("S1").astype(str)
+    df = assignments.reset_index(drop=True)
     if "assigned" in df.columns:
-        df = df[df["assigned"] > 0]
+        keep = df["assigned"] > 0
+        if "_downtime" in df.columns:
+            keep |= df["_downtime"].fillna(0).astype(bool)
+        df = df[keep]
+    if df.empty:
+        return _RecordIterator(iter(()), tracker)
+    df = normalise_shift_ids(problem, df)
 
-    tracker = build_sequencing_tracker(problem)
     machine_roles = tracker.ctx.bundle.machine_roles
     role_order_lookup = build_role_order_lookup(tracker.ctx)
     role_priority = build_role_priority(tracker.ctx)
@@ -85,22 +223,24 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
         role_key = role if role is not None else ""
         return role_order_lookup.get((block_id, role_key), role_priority.get(role_key, 999))
 
+    shift_index = tracker.ctx.shift_index
+    unknown_slot = len(shift_index)
+
+    def _slot_sort_value(row: pd.Series) -> int:
+        return shift_index.get((int(row["day"]), str(row["shift_id"])), unknown_slot)
+
     df["_role_order"] = df.apply(_role_sort_value, axis=1)
-    df = df.sort_values(["day", "shift_id", "_role_order", "machine_id", "block_id"]).reset_index(
-        drop=True
-    )
-    df = df.drop(columns=["_role_order"])
+    df["_slot_order"] = df.apply(_slot_sort_value, axis=1)
+    # Slots replay in the problem's shift order (the operational MILP's prev(s)), not label order.
+    df = df.sort_values(
+        ["day", "_slot_order", "shift_id", "_role_order", "machine_id", "block_id"]
+    ).reset_index(drop=True)
+    df = df.drop(columns=["_role_order", "_slot_order"])
 
     scenario = problem.scenario
     rate = {(r.machine_id, r.block_id): r.rate for r in scenario.production_rates}
     remaining = tracker.remaining_work
-    machine_hours = {machine.id: machine.daily_hours for machine in scenario.machines}
-
-    shift_hours_map: dict[str, float] = {}
-    if scenario.timeline and scenario.timeline.shifts:
-        shift_hours_map = {
-            shift_def.name: shift_def.hours for shift_def in scenario.timeline.shifts
-        }
+    hours_for = shift_hours_resolver(scenario)
 
     mobilisation = scenario.mobilisation
     mobilisation_lookup = build_distance_lookup(mobilisation) if mobilisation else {}
@@ -110,6 +250,7 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
         else {}
     )
     previous_block: dict[str, str | None] = defaultdict(lambda: None)
+    previous_block.update(tracker.ctx.initial_machine_block)
 
     landing_lookup = {block.id: block.landing_id for block in scenario.blocks}
 
@@ -117,14 +258,6 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
     if scenario.timeline and scenario.timeline.blackouts:
         for blackout in scenario.timeline.blackouts:
             blackout_days.update(range(blackout.start_day, blackout.end_day + 1))
-
-    def hours_for(machine_id: str, shift_id: str) -> tuple[float | None, str | None]:
-        if shift_id in shift_hours_map:
-            return shift_hours_map[shift_id], "shift_definition"
-        hours = machine_hours.get(machine_id)
-        if hours is not None:
-            return hours, "machine_daily_hours"
-        return None, None
 
     def production_for(machine_id: str, block_id: str, proposed: float | None) -> tuple[float, str]:
         if proposed is not None:
@@ -159,7 +292,47 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
                 continue
             block_id = str(block_id)
             day = int(row["day"])
-            shift_id = str(row.get("shift_id", "S1"))
+            shift_id = str(row["shift_id"])
+            downtime_value = row.get("_downtime", 0)
+            downtime_flag = bool(pd.notna(downtime_value) and downtime_value)
+            downtime_hours: float | None = None
+            raw_downtime_hours = row.get("_downtime_hours")
+            if downtime_flag and raw_downtime_hours is not None and pd.notna(raw_downtime_hours):
+                downtime_hours = float(raw_downtime_hours)
+            cancelled = False
+            if downtime_flag:
+                assigned_value = row.get("assigned", 1)
+                cancelled = bool(pd.notna(assigned_value) and float(assigned_value) <= 0)
+
+            if cancelled:
+                shift_hours, hours_source = hours_for(machine_id, shift_id, day)
+                landing_id = landing_lookup.get(block_id)
+                cancelled_metadata: dict[str, object] = {
+                    "production_source": "downtime",
+                    "downtime_full_shift": True,
+                }
+                if hours_source:
+                    cancelled_metadata["hours_source"] = hours_source
+                if landing_id is not None:
+                    cancelled_metadata["landing_id"] = landing_id
+                _copy_lost_volumes(row, cancelled_metadata)
+                yield PlaybackRecord(
+                    day=day,
+                    shift_id=shift_id,
+                    machine_id=machine_id,
+                    block_id=block_id,
+                    hours_worked=0.0 if shift_hours is not None else None,
+                    production_units=0.0,
+                    mobilisation_cost=None,
+                    blackout_hit=False,
+                    landing_id=landing_id,
+                    machine_role=machine_roles.get(machine_id),
+                    downtime=True,
+                    weather_severity=None,
+                    metadata=cancelled_metadata,
+                    downtime_hours=downtime_hours if downtime_hours is not None else shift_hours,
+                )
+                continue
 
             proposed_production = None
             if "production" in row and not pd.isna(row["production"]):
@@ -168,7 +341,9 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             production_units, production_source = production_for(
                 machine_id, block_id, proposed_production
             )
-            hours_worked, hours_source = hours_for(machine_id, shift_id)
+            hours_worked, hours_source = hours_for(machine_id, shift_id, day)
+            if downtime_flag and downtime_hours is not None and hours_worked is not None:
+                hours_worked = max(hours_worked - downtime_hours, 0.0)
             mobilisation_value = mobilisation_cost(machine_id, block_id)
 
             metadata: dict[str, object] = {}
@@ -178,8 +353,9 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
             landing_id = landing_lookup.get(block_id)
             if landing_id is not None:
                 metadata["landing_id"] = landing_id
+            _copy_lost_volumes(row, metadata)
 
-            sequencing = tracker.process(day, machine_id, block_id, production_units)
+            sequencing = tracker.process(day, machine_id, block_id, production_units, shift_id)
             production_units = sequencing.production_units
             role = sequencing.machine_role
             if sequencing.violation_reason:
@@ -188,7 +364,6 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
                 metadata["block_completed"] = True
 
             blackout_hit = day in blackout_days
-            downtime_flag = bool(row.get("_downtime", 0))
             weather_severity_value = row.get("_weather_severity")
             if pd.notna(weather_severity_value) and weather_severity_value != 0:
                 weather_severity = float(weather_severity_value)
@@ -209,18 +384,37 @@ def assignments_to_records(problem: Problem, assignments: pd.DataFrame) -> Itera
                 downtime=downtime_flag,
                 weather_severity=weather_severity,
                 metadata=metadata,
+                downtime_hours=downtime_hours,
             )
         tracker.finalize()
 
-    class RecordIterator:
-        def __init__(self, iterator: Iterator[PlaybackRecord], tracker: SequencingTracker) -> None:
-            self._iterator = iterator
-            self.sequencing_tracker = tracker
+    return _RecordIterator(iter_records(), tracker)
 
-        def __iter__(self) -> RecordIterator:
-            return self
 
-        def __next__(self) -> PlaybackRecord:
-            return next(self._iterator)
+_LOST_VOLUME_COLUMNS = (
+    ("_downtime_lost", "downtime_production_lost"),
+    ("_weather_lost", "weather_production_lost"),
+)
 
-    return RecordIterator(iter_records(), tracker)
+
+def _copy_lost_volumes(row: pd.Series, metadata: dict[str, object]) -> None:
+    """Copy event-recorded lost volumes (m³) from private columns into record metadata."""
+
+    for column, key in _LOST_VOLUME_COLUMNS:
+        value = row.get(column)
+        if value is not None and pd.notna(value) and float(value) > 0.0:
+            metadata[key] = float(value)
+
+
+class _RecordIterator:
+    """Record iterator exposing the :class:`SequencingTracker` that capped its production."""
+
+    def __init__(self, iterator: Iterator[PlaybackRecord], tracker: SequencingTracker) -> None:
+        self._iterator = iterator
+        self.sequencing_tracker = tracker
+
+    def __iter__(self) -> _RecordIterator:
+        return self
+
+    def __next__(self) -> PlaybackRecord:
+        return next(self._iterator)

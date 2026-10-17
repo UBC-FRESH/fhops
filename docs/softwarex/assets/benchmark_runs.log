@@ -22,3 +22,39 @@ fast_mode: 1 (manual regeneration)
 duration_s: 3600
 assets_hash: 18dc0ad8fc447a1fbd1f73af443e233adadad33e378ea625b629237ff380f304
 ----
+run_started: 2026-10-06T06:07:46Z
+commit: 30f30a2
+fast_mode: 0
+duration_s: 59
+assets_hash: f3785a486c2e8981ccdea727453b0fc783009889048dde6fe4a14297419a66c7
+note: partial regeneration for FHOPS 1.0.1 (#95): only playback assets (run_playback_analysis.py + plot_playback_variability.py) were regenerated; benchmark/tuning/costing/scaling/dataset assets untouched, and SA (tiny7, small21) plus ILS (tiny7) re-solves reproduced the committed benchmark summaries and assignment CSVs exactly
+----
+run_started: 2026-10-06T22:50:17Z
+commit: a1c8dd8
+fast_mode: 0
+duration_s: 3791
+assets_hash: d75b187f66e127ce3f8a786e453b02b8c2da67d3142e0ae8661eedbaa2dac275
+note: consistency audit for FHOPS 1.0.1 (#119): fhops bench suite re-runs with the committed generate_assets.sh settings (tiny7, small21, med42 split into SA/ILS/Tabu processes, synthetic_small) and run_synthetic_sweep.py into scratch directories reproduced every committed summary row exactly (all columns except scenario_path/runtime) and every assignment CSV byte for byte, except the stale med42 sa_assignments.csv and sa_assignments_diversify.csv, which were replaced by the reproducing run's output; summary.csv/json, telemetry and runtimes untouched; regenerated build_tables.py tables (med42 sense fixed to maximize) and playback assets (run_playback_analysis.py: metrics.json reports delivered volume; med42/sa re-derived) plus plot_playback_variability.py (figure byte-identical); scaling, tuning, costing and dataset assets untouched
+----
+run_started: 2026-10-07T06:53:41Z
+commit: 35c38d9
+fast_mode: 0
+duration_s: 13686
+assets_hash: bcf65f3126ce329267e48aa1cb3ae332a5ee5a2e88ffe03ea44953aa93fe223f
+note: full regeneration on FHOPS 1.0.1 (Phase 8); runtimes measured sequentially on an idle 72-core host
+----
+audit_note: 2026-10-07T14:58:26Z
+commit: a26660f (base; committed together with this entry in #144)
+fast_mode: n/a (no solver run)
+hash_recipe: v2
+assets_hash: 49e7b74787abc50a56812c6f466e5a88ff1c58352c4b6365af88ceb44f91c214
+note: provenance hygiene (#144), no solver run and no result changed: recorded absolute paths (prefix of the removed worktree fhops-wt-131b) rewritten to repo-relative paths in 32 files (relativize_asset_paths.py; every other byte identical, runs.sqlite rows identical apart from the prefix); tuning_leaderboard.csv/.tex rebuilt by build_tables.py with Budget column, ILS/Tabu key settings and Delta/SA-budget note (values unchanged). Hash recipe v2 from now on: SHA-256 of the LC_ALL=C-sorted sha256sum lines of the 197 committed files under docs/softwarex/assets (git ls-files --cached --others --exclude-standard), excluding this log; see docs/softwarex/manuscript/README.md. Correction to the entry run_started 2026-10-07T06:53:41Z (35c38d9, merged as 0463fd5): its v1 assets_hash bcf65f3126ce329267e48aa1cb3ae332a5ee5a2e88ffe03ea44953aa93fe223f also hashed the git-ignored data/tuning/telemetry/steps/*.jsonl (and the log before that entry) and cannot be recomputed from the repository; over the files committed in 0463fd5 the same v1 recipe (LC_ALL=C, log without that entry) gives 16a4def731b7f560b29f4229904b1e5315d20d8f321055822cab523643e4d96a
+----
+run_started: 2026-10-08T12:31:05Z
+commit: 50e6f9b
+fast_mode: 0
+duration_s: 10615
+hash_recipe: v2
+assets_hash: 5e069c58370c91f30d2dc4e2e8ad8c93d885e8a653b1fb2a8d4dfe5c7e3a4669
+note: final regeneration on FHOPS 1.0.1 (Phase 8, code 50e6f9b); runtimes measured sequentially on an idle 72-core host
+----

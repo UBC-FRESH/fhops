@@ -1,7 +1,29 @@
-"""Operational MILP driver (solve + watch wrappers)."""
+"""Operational MILP driver (solve + watch wrappers).
+
+The driver builds the operational Pyomo model, optionally seeds it with an incumbent schedule
+(warm start / MIP start), dispatches it to the requested solver, and converts the solution back
+into an assignment table.
+
+Warm-start dispatch per solver (see :func:`solve_operational_milp`):
+
+* ``highs`` / ``appsi_highs`` — Pyomo's default ``highs`` plugin (``pyomo.contrib.solver``) does
+  not accept MIP starts, so seeded solves are routed through the APPSI HiGHS interface
+  (``appsi_highs``), which hands every seeded variable value to ``highspy.Highs.setSolution``.
+  The HiGHS log is captured to report whether the start was accepted.
+* Legacy Pyomo plugins whose ``warm_start_capable()`` is ``True`` (``gurobi``, ``gurobi_direct``,
+  ``gurobi_persistent``, ``cbc`` ≥ 2.8, ``cplex``, …) receive ``warmstart=True`` as before.
+* Any other solver is called without a warm start and a :class:`MilpWarmStartWarning` is emitted.
+"""
 
 from __future__ import annotations
 
+import io
+import logging
+import math
+import re
+import sys
+import time
+import warnings
 from collections import defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -12,8 +34,8 @@ import pyomo.environ as pyo
 from pyomo.opt import SolverFactory
 
 from fhops.evaluation.sequencing import SequencingTracker, build_role_priority
-from fhops.model.milp.data import OperationalMilpBundle, ShiftKey
-from fhops.model.milp.operational import build_operational_model
+from fhops.model.milp.data import OperationalMilpBundle, ShiftKey, resolve_locked_slots
+from fhops.model.milp.operational import build_operational_model, earliness_expression
 from fhops.optimization.operational_problem import OperationalProblem
 
 ASSIGNMENT_COLUMNS = [
@@ -25,7 +47,72 @@ ASSIGNMENT_COLUMNS = [
     "production",
 ]
 
-__all__ = ["solve_operational_milp"]
+__all__ = ["MilpSolverFallbackWarning", "MilpWarmStartWarning", "solve_operational_milp"]
+
+#: ``SolverFactory`` names tried in order by ``solver="auto"`` (Gurobi only when available).
+AUTO_SOLVER_CANDIDATES = ("gurobi", "highs")
+
+_HIGHS_SOLVER_NAMES = frozenset({"highs", "appsi_highs"})
+_HIGHS_LOGGER_NAME = "fhops.model.milp.driver.highs"
+_LIMIT_TERMINATIONS = frozenset(
+    {"maxtimelimit", "maxiterations", "maxevaluations", "objectivelimit"}
+)
+_HIGHS_START_ACCEPTED = re.compile(r"MIP start solution is feasible", re.IGNORECASE)
+_HIGHS_START_REJECTED = re.compile(
+    r"MIP start solution is infeasible|cannot yield feasible solution|"
+    r"User-supplied solution .* has violations",
+    re.IGNORECASE,
+)
+_HIGHS_START_LINE = re.compile(r"MIP start|user-supplied", re.IGNORECASE)
+_HIGHS_ERROR_LINE = re.compile(r"^ERROR\b", re.IGNORECASE)
+_SOLVED_TERMINATIONS = frozenset({"optimal", "feasible", "locallyoptimal", "globallyoptimal"})
+_INFEASIBLE_TERMINATIONS = frozenset({"infeasible", "infeasibleorunbounded", "unbounded"})
+_ERROR_TERMINATIONS = frozenset(
+    {
+        "error",
+        "solverfailure",
+        "internalsolvererror",
+        "licensingproblems",
+        "unknown",
+        "other",
+        "invalidproblem",
+        "invalidsolverparameter",
+        "resourceinterrupt",
+        "userinterrupt",
+    }
+)
+_SEED_FEASIBILITY_TOLERANCE = 1e-6
+#: Relative slack ``τ/max(1, |z1|)`` of the earliness stage's base-objective floor (#141).
+EARLINESS_OBJECTIVE_TOLERANCE = 1e-6
+
+
+class MilpWarmStartWarning(UserWarning):
+    """Warning emitted when an incumbent cannot be passed to the selected MILP solver.
+
+    Raised (via :func:`warnings.warn`) by :func:`solve_operational_milp` when
+    ``incumbent_assignments`` is supplied but the solver interface has no MIP-start support (or the
+    APPSI HiGHS interface is unavailable). The solve still runs, just without the warm start.
+    """
+
+
+class MilpSolverFallbackWarning(UserWarning):
+    """Warning emitted when ``solver="auto"`` falls back from Gurobi to HiGHS.
+
+    Raised (via :func:`warnings.warn`) by :func:`solve_operational_milp` when the Gurobi solve
+    fails (``solver_error``: e.g. a missing or size-limited licence) and the model is solved again
+    with HiGHS. The same message is prepended to the result's ``warnings``.
+    """
+
+
+class _LineCollector(logging.Handler):
+    """Logging handler that keeps the formatted messages it receives."""
+
+    def __init__(self) -> None:
+        super().__init__(level=logging.DEBUG)
+        self.lines: list[str] = []
+
+    def emit(self, record: logging.LogRecord) -> None:
+        self.lines.append(record.getMessage())
 
 
 @dataclass(slots=True)
@@ -34,7 +121,7 @@ class _IncumbentState:
     production_lookup: dict[tuple[str, str, ShiftKey], float]
     role_prod_lookup: dict[tuple[str, str, ShiftKey], float]
     role_assignment_counts: dict[tuple[str, str, ShiftKey], int]
-    landing_usage: dict[tuple[str, int], int]
+    landing_usage: dict[tuple[str, ShiftKey], int]
     leftover_by_block: dict[str, float]
     block_terminal_total: dict[str, float] | None = None
     block_generic_total: dict[str, float] | None = None
@@ -49,6 +136,8 @@ def solve_operational_milp(
     solver_options: Mapping[str, object] | None = None,
     incumbent_assignments: pd.DataFrame | None = None,
     context: OperationalProblem | None = None,
+    earliness: bool = False,
+    earliness_time_limit: int | None = None,
 ) -> dict[str, Any]:
     """
     Solve the operational MILP given a prepared bundle.
@@ -59,7 +148,9 @@ def solve_operational_milp(
         Operational bundle emitted by :func:`fhops.model.milp.operational.build_operational_model`.
     solver :
         Solver name understood by ``pyomo.opt.SolverFactory`` (``highs`` by default, ``gurobi`` for
-        large ladders).
+        large ladders), or ``"auto"``: Gurobi when ``SolverFactory("gurobi")`` is available,
+        otherwise HiGHS; a Gurobi run that fails (``solver_error``, e.g. a missing or size-limited
+        licence) is retried with HiGHS and a :class:`MilpSolverFallbackWarning` is emitted (#139).
     time_limit :
         Optional second budget forwarded to the solver (``None`` leaves the solver default).
     gap :
@@ -74,74 +165,743 @@ def solve_operational_milp(
         Optional :class:`pandas.DataFrame` with ``machine_id``, ``block_id``, ``day``, ``shift_id``,
         and optional ``assigned``/``production`` columns. When provided we derive every state
         variable implied by the schedule (assignments, production, transitions, mobilisation flags,
-        inventories, landing surplus) and request a Pyomo warm start. The solver will still discard
-        the start if the incumbent is weak; right now only tiny7/small21 benefit measurably, whereas
-        med42/large84 respond better to the solver’s own heuristics.
+        inventories, landing surplus) and pass it to the solver as a MIP start (see *Notes* for
+        the per-solver mechanism). The solver will still discard the start if the incumbent is
+        infeasible; right now only tiny7/small21 benefit measurably, whereas med42/large84 respond
+        better to the solver’s own heuristics.
     context :
         :class:`fhops.optimization.operational_problem.OperationalProblem` describing the scenario.
         Required if the incumbent needs to be expanded into loader and landing state (the CLI and
         benchmark harness populate this automatically).
+    earliness :
+        When ``True``, break ties in favour of early production with a lexicographic second
+        stage (#141; see *Notes*). Default ``False``: a single solve of the base objective.
+        Rolling-horizon MILP windows enable it (:class:`fhops.planning.MILPSolver`).
+    earliness_time_limit :
+        Time limit (seconds) of the earliness stage; ``None`` uses ``time_limit``.
 
     Returns
     -------
     dict
-        Dictionary carrying ``objective``, ``production``, ``assignments`` (DataFrame), and solver
-        status/termination metadata. ``objective`` is ``None`` when the solver fails.
+        The function never raises because a model is infeasible, a limit was hit without an
+        incumbent, or the solver failed (#115): exceptions raised by the solver interface (e.g.
+        ``gurobipy.GurobiError`` for a missing or size-limited licence, #139) are reported as
+        ``outcome="error"`` with ``solver_error`` set. Keys:
+
+        ``objective`` (float | None)
+            Objective of the loaded solution; ``None`` without a feasible solution. A solve
+            stopped by a limit (time, iterations, objective) that holds a feasible incumbent
+            reports that incumbent. Always the base objective (OBJ), also with ``earliness=True``.
+        ``production`` (float)
+            Total machine production of the solution (0.0 without one).
+        ``assignments`` (DataFrame)
+            Columns ``machine_id, block_id, day, shift_id, assigned, production``; one row per
+            assigned slot or slot with production > 1e-6. Production is clamped at 0 (no
+            ``-0.0`` or solver-noise negatives). Empty (same columns) without a solution.
+        ``has_solution`` (bool)
+            ``True`` when a feasible solution was loaded into the model.
+        ``outcome`` (str)
+            ``"optimal"``, ``"feasible"`` (incumbent at a limit), ``"infeasible"``,
+            ``"no_solution"`` (limit reached without an incumbent) or ``"error"``.
+        ``solver_status``, ``termination_condition`` (str)
+            Pyomo solver status and termination condition.
+        ``solver_error`` (str | None)
+            Set when the solver failed rather than proving infeasibility: HiGHS ``ERROR`` log
+            lines (e.g. ``Option 'threads' is set to 1 but global scheduler has already been
+            initialized``), a solver exception raised during ``solve``, or an error/unknown
+            termination without a solution.
+        ``warnings`` (list[str])
+            Locks the model had to drop or pin to zero instead of becoming infeasible (see
+            :func:`fhops.model.milp.data.resolve_locked_slots`).
+        ``warm_start`` (dict)
+            Warm-start report (below).
+        ``solver`` (str)
+            ``SolverFactory`` name that produced the result (the selected candidate for
+            ``solver="auto"``).
+        ``earliness`` (dict | None)
+            ``None`` unless ``earliness=True``. Keys: ``status`` (``"applied"``: the returned
+            plan comes from the earliness stage; ``"kept_stage1"``: the stage returned no usable
+            solution and the base-stage plan is returned; ``"skipped"``: the base stage had no
+            solution or failed), ``stage1_objective`` (base objective of the base stage),
+            ``objective_floor`` (lower bound imposed on the base objective in the earliness
+            stage), ``value`` (earliness score ``E`` of the returned plan),
+            ``stage1_value`` (``E`` of the base-stage plan), ``termination_condition``,
+            ``solver_error`` and ``runtime_s`` of the earliness stage.
+
+        ``warm_start`` keys:
+
+        ``requested`` (bool)
+            ``True`` when ``incumbent_assignments`` was non-empty.
+        ``seeded_slots`` (int)
+            Number of ``(machine, shift)`` assignment slots seeded from the incumbent.
+        ``method`` (str | None)
+            ``"appsi_highs"`` (HiGHS MIP start via ``highspy.Highs.setSolution``),
+            ``"pyomo_warmstart"`` (legacy ``solve(..., warmstart=True)``), or ``None`` when no
+            warm start was passed to the solver.
+        ``solver`` (str)
+            Pyomo solver name actually used (``appsi_highs`` for seeded HiGHS solves).
+        ``accepted`` (bool | None)
+            HiGHS only: ``True`` when the log reports ``MIP start solution is feasible``,
+            ``False`` when HiGHS reports the start infeasible, ``None`` when unknown (other
+            solvers, or no start passed). When the HiGHS log carries no verdict, acceptance is
+            inferred (``True``) if a solution was returned and either its ``x`` values equal the
+            seeded ones, or the returned objective is at least the seed objective and the seed
+            satisfies every model constraint (checked on the recorded seed values, only when
+            needed; tolerance 1e-6).
+        ``acceptance`` (str | None)
+            ``"log"`` when ``accepted`` comes from the HiGHS log, ``"inferred"`` when it was
+            inferred as described above, ``None`` otherwise.
+        ``solver_messages`` (list[str])
+            HiGHS log lines that mention the MIP start (empty for other solvers).
+
+    Warns
+    -----
+    MilpWarmStartWarning
+        When an incumbent was supplied but the solver interface cannot take a MIP start (the solve
+        continues without it).
+    MilpSolverFallbackWarning
+        When ``solver="auto"`` falls back from a failed Gurobi run to HiGHS.
 
     Notes
     -----
+    Warm starts per solver:
+
+    * ``highs`` (default) and ``appsi_highs``: seeded solves use Pyomo's APPSI HiGHS interface
+      (``SolverFactory("appsi_highs")``) with ``warmstart=True``. Pyomo's default ``highs``
+      plugin (``pyomo.contrib.solver``'s ``LegacySolverWrapper``) rejects the ``warmstart``
+      keyword, so it is only used for unseeded solves. HiGHS prints
+      ``MIP start solution is feasible, objective value is …`` when it adopts the start.
+    * ``gurobi``, ``gurobi_direct``, ``gurobi_persistent``, ``cplex``, ``cbc`` (≥ 2.8) and other
+      legacy plugins that report ``warm_start_capable()``: ``warmstart=True`` is forwarded
+      unchanged.
+    * Anything else (e.g., ``glpk`` or other ``pyomo.contrib.solver`` interfaces): solved without
+      a warm start and a :class:`MilpWarmStartWarning` is emitted.
+
+
+    Locks (``bundle.locked_assignments``) and initial state (``bundle.initial_*``, from
+    ``Scenario.initial_state``) are enforced by the model itself (see
+    :func:`fhops.model.milp.operational.build_operational_model`). Incumbents are overlaid with the
+    locks before seeding, and seeded inventories start from the carried-in staged volumes.
+
     The warm-start plumbing is “best effort”: setting ``incumbent_assignments`` is always safe, but
     it only accelerates a solve if the incumbent is close to feasible for the operational MILP.
     Today that means tiny7/small21 runs reuse the incumbent immediately, while med42/large84 usually
     ignore the seed and rely on Gurobi/HiGHS built-in heuristics.
+
+    Earliness tie-break (``earliness=True``, #141). The base objective does not depend on *when*
+    work is done inside the horizon, so many plans tie; a rolling-horizon window may then plan its
+    work after its locked span. With ``earliness=True`` the base solve (stage 1, objective
+    ``z1``) is followed by stage 2, which maximises the earliness score
+    :func:`fhops.model.milp.operational.earliness_expression`
+    (``E = Σ_s w_s Σ_{m,b} p_{m,b,s}``, ``w_s = (|S| − k_s)/|S|``) subject to
+    ``OBJ ≥ z1 − τ`` with ``τ = 10⁻⁶·max(1, |z1|)`` (100× tighter than HiGHS's default relative
+    MIP gap ``10⁻⁴``). Stage 2 is warm-started from the stage-1 plan (feasible for it), so it
+    always holds a solution at least as good as stage 1 under the base objective; if it returns
+    none (e.g. a solver without MIP starts), the stage-1 plan is kept. A single weighted
+    objective ``OBJ + ε·E`` is not used: with continuous production and arbitrary data there is
+    no data-independent ``ε`` below the smallest objective difference between plans, and an
+    ``ε`` small enough to be safe in practice falls below the solver's relative gap, so the
+    solver would ignore the tie-break. ``outcome``, ``solver_status`` and
+    ``termination_condition`` describe stage 1; ``objective`` is the base objective of the
+    returned plan. The cost is a second solve (at most ``earliness_time_limit``).
     """
+
+    if solver.strip().lower() == "auto":
+        return _solve_auto(
+            bundle,
+            time_limit=time_limit,
+            gap=gap,
+            tee=tee,
+            solver_options=solver_options,
+            incumbent_assignments=incumbent_assignments,
+            context=context,
+            earliness=earliness,
+            earliness_time_limit=earliness_time_limit,
+        )
 
     model = build_operational_model(bundle)
     meta = getattr(model, "_warm_start_meta", None)
     if meta is not None and context is not None:
         meta["operational_problem"] = context
+    model_warnings = [str(item) for item in (meta or {}).get("warnings", ())]
     seeded = 0
     if incumbent_assignments is not None:
         seeded = _apply_incumbent_start(model, incumbent_assignments)
+    seed_snapshot = _snapshot_seed(model) if seeded > 0 else None
 
-    opt = SolverFactory(solver)
-    if time_limit is not None:
-        opt.options["time_limit"] = time_limit
-    if gap is not None:
-        # Different solvers expect different gap parameter names.
-        opt.options["mipgap"] = gap  # Gurobi/CPLEX-style
-        if solver.lower() not in {"gurobi", "cplex"}:
-            opt.options["mip_rel_gap"] = gap  # HiGHS-style
-    if solver_options:
-        for key, value in solver_options.items():
-            opt.options[str(key)] = value
-    solve_kwargs: dict[str, object] = {"tee": tee, "load_solutions": True}
-    if seeded > 0:
-        solve_kwargs["warmstart"] = True
-    result = opt.solve(model, **solve_kwargs)
-    status = str(result.solver.status).lower()
-    termination = str(result.solver.termination_condition).lower()
-    solved = termination in {"optimal", "feasible"} or status in {"optimal", "feasible"}
-    if solved:
+    warm_info: dict[str, Any] = {
+        "requested": incumbent_assignments is not None and not incumbent_assignments.empty,
+        "seeded_slots": seeded,
+        "method": None,
+        "solver": None,
+        "accepted": None,
+        "acceptance": None,
+        "solver_messages": [],
+    }
+    opt, solver_used, method = _create_solver(solver, warm_start=seeded > 0)
+    warm_info["method"] = method
+    warm_info["solver"] = solver_used
+    try:
+        if time_limit is not None:
+            opt.options["time_limit"] = time_limit
+        if gap is not None:
+            # Different solvers expect different gap parameter names.
+            opt.options["mipgap"] = gap  # Gurobi/CPLEX-style
+            if not any(name in solver.lower() for name in ("gurobi", "cplex")):
+                opt.options["mip_rel_gap"] = gap  # HiGHS-style
+        if solver_options:
+            for key, value in solver_options.items():
+                opt.options[str(key)] = value
+        solve_kwargs: dict[str, object] = {"tee": tee, "load_solutions": False}
+        if method is not None:
+            solve_kwargs["warmstart"] = True
+        run = _run_solver(opt, model, solve_kwargs, appsi=method == "appsi_highs")
+    except Exception as exc:  # solver creation/configuration failures are reported, not raised
+        run = _SolveRun(
+            status="error",
+            termination="error",
+            has_solution=False,
+            log_lines=[],
+            error=f"{type(exc).__name__}: {exc}",
+        )
+    status = run.status
+    termination = run.termination
+    has_solution = run.has_solution
+    solver_error = run.error
+    if solver_error is None and not has_solution:
+        error_lines = [line for line in run.log_lines if _HIGHS_ERROR_LINE.match(line.strip())]
+        if error_lines:
+            solver_error = " ".join(line.strip() for line in error_lines)
+        elif termination.lower() in _ERROR_TERMINATIONS:
+            solver_error = (
+                f"solver returned no solution (status={status}, termination={termination})"
+            )
+    if method == "appsi_highs":
+        accepted, messages = _parse_highs_start_log(run.log_lines)
+        warm_info["accepted"] = accepted
+        warm_info["solver_messages"] = messages
+        if accepted is not None:
+            warm_info["acceptance"] = "log"
+        elif has_solution and seed_snapshot is not None and _seed_accepted(model, seed_snapshot):
+            warm_info["accepted"] = True
+            warm_info["acceptance"] = "inferred"
+
+    objective_value: float | None = None
+    if has_solution:
         assignments = _extract_assignments(model)
-        prod = sum(pyo.value(model.prod[idx]) for idx in model.prod)
+        prod = float(sum(max(0.0, pyo.value(model.prod[idx])) for idx in model.prod))
+        objective_value = float(pyo.value(model.objective))
     else:
         assignments = pd.DataFrame(columns=ASSIGNMENT_COLUMNS)
         prod = 0.0
+    earliness_info: dict[str, Any] | None = None
+    if earliness:
+        if has_solution and solver_error is None and objective_value is not None:
+            stage2 = _solve_earliness_stage(
+                model,
+                solver,
+                objective_value,
+                time_limit=earliness_time_limit if earliness_time_limit is not None else time_limit,
+                gap=gap,
+                tee=tee,
+                solver_options=solver_options,
+            )
+            earliness_info = stage2.info
+            if stage2.applied:
+                assignments = _extract_assignments(model)
+                prod = float(sum(max(0.0, pyo.value(model.prod[idx])) for idx in model.prod))
+                objective_value = float(pyo.value(model.objective))
+        else:
+            earliness_info = {"status": "skipped"}
+    if solver_error is not None:
+        outcome = "error"
+    elif has_solution:
+        outcome = "optimal" if termination.lower() == "optimal" else "feasible"
+    elif termination.lower() in _INFEASIBLE_TERMINATIONS:
+        outcome = "infeasible"
+    else:
+        outcome = "no_solution"
     return {
-        "objective": pyo.value(model.objective) if solved else None,
+        "objective": objective_value,
         "production": prod,
         "assignments": assignments,
-        "solver_status": str(result.solver.status),
-        "termination_condition": str(result.solver.termination_condition),
+        "has_solution": has_solution,
+        "outcome": outcome,
+        "solver_status": status,
+        "termination_condition": termination,
+        "solver_error": solver_error,
+        "warnings": model_warnings,
+        "warm_start": warm_info,
+        "solver": solver,
+        "earliness": earliness_info,
     }
+
+
+@dataclass(slots=True)
+class _EarlinessStage:
+    applied: bool
+    info: dict[str, Any]
+
+
+def _solve_earliness_stage(
+    model: pyo.ConcreteModel,
+    solver: str,
+    stage1_objective: float,
+    *,
+    time_limit: int | None,
+    gap: float | None,
+    tee: bool,
+    solver_options: Mapping[str, object] | None,
+) -> _EarlinessStage:
+    """Stage 2 of the earliness tie-break: max ``E`` subject to ``OBJ ≥ z1 − τ`` (#141).
+
+    ``model`` holds the stage-1 solution, which seeds the stage as a MIP start. On success the
+    stage-2 solution is left loaded in ``model``; otherwise the caller keeps its stage-1 results.
+    """
+
+    floor = stage1_objective - EARLINESS_OBJECTIVE_TOLERANCE * max(1.0, abs(stage1_objective))
+    model.earliness_score = pyo.Expression(expr=earliness_expression(model))
+    stage1_value = float(pyo.value(model.earliness_score))
+    info: dict[str, Any] = {
+        "status": "kept_stage1",
+        "stage1_objective": stage1_objective,
+        "objective_floor": floor,
+        "value": stage1_value,
+        "stage1_value": stage1_value,
+        "termination_condition": None,
+        "solver_error": None,
+        "runtime_s": None,
+    }
+    model.earliness_floor = pyo.Constraint(expr=model.objective.expr >= floor)
+    model.objective.deactivate()
+    model.earliness_objective = pyo.Objective(expr=model.earliness_score, sense=pyo.maximize)
+    started = time.perf_counter()
+    try:
+        with warnings.catch_warnings():
+            # Solvers without MIP starts still run the stage (stage 1 is kept if it fails).
+            warnings.simplefilter("ignore", MilpWarmStartWarning)
+            opt, _solver_used, method = _create_solver(solver, warm_start=True)
+        if time_limit is not None:
+            opt.options["time_limit"] = time_limit
+        if gap is not None:
+            opt.options["mipgap"] = gap
+            if not any(name in solver.lower() for name in ("gurobi", "cplex")):
+                opt.options["mip_rel_gap"] = gap
+        for key, value in (solver_options or {}).items():
+            opt.options[str(key)] = value
+        solve_kwargs: dict[str, object] = {"tee": tee, "load_solutions": False}
+        if method is not None:
+            solve_kwargs["warmstart"] = True
+        run = _run_solver(opt, model, solve_kwargs, appsi=method == "appsi_highs")
+    except Exception as exc:  # solver creation/configuration failures keep stage 1
+        run = _SolveRun("error", "error", False, [], f"{type(exc).__name__}: {exc}")
+    finally:
+        model.earliness_objective.deactivate()
+        model.objective.activate()
+        model.earliness_floor.deactivate()
+    info["runtime_s"] = time.perf_counter() - started
+    info["termination_condition"] = run.termination
+    info["solver_error"] = run.error
+    if run.has_solution and run.error is None:
+        objective = float(pyo.value(model.objective))
+        if objective >= floor - _SEED_FEASIBILITY_TOLERANCE * max(1.0, abs(floor)):
+            info["status"] = "applied"
+            info["value"] = float(pyo.value(model.earliness_score))
+            return _EarlinessStage(applied=True, info=info)
+        info["solver_error"] = (
+            f"earliness stage returned objective {objective} below the floor {floor}"
+        )
+    return _EarlinessStage(applied=False, info=info)
+
+
+def _solve_auto(bundle: OperationalMilpBundle, **kwargs: Any) -> dict[str, Any]:
+    """Solve with Gurobi when available, falling back to HiGHS on a Gurobi failure.
+
+    Every candidate of :data:`AUTO_SOLVER_CANDIDATES` except HiGHS is skipped when
+    ``SolverFactory(name).available()`` is false. A candidate whose result reports
+    ``solver_error`` (missing or size-limited licence, solver exception, ...) is followed by the
+    next one; the failure is emitted as :class:`MilpSolverFallbackWarning` and prepended to the
+    returned ``warnings``. The result's ``solver`` names the solver that produced it.
+    """
+
+    candidates = [
+        name for name in AUTO_SOLVER_CANDIDATES if name == "highs" or _named_solver_available(name)
+    ]
+    notes: list[str] = []
+    result: dict[str, Any] = {}
+    for index, name in enumerate(candidates):
+        result = solve_operational_milp(bundle, solver=name, **kwargs)
+        if result.get("solver_error") is None or index == len(candidates) - 1:
+            break
+        message = (
+            f"{name} failed ({result['solver_error']}); falling back to "
+            f"{candidates[index + 1]} (solver=auto)."
+        )
+        warnings.warn(message, MilpSolverFallbackWarning, stacklevel=3)
+        notes.append(message)
+    result["warnings"] = notes + list(result.get("warnings") or [])
+    return result
+
+
+def _create_solver(solver: str, *, warm_start: bool) -> tuple[Any, str, str | None]:
+    """Instantiate the Pyomo solver and decide how (or whether) to pass a warm start.
+
+    Parameters
+    ----------
+    solver :
+        Solver name requested by the caller (``SolverFactory`` name).
+    warm_start :
+        ``True`` when the model carries seeded variable values.
+
+    Returns
+    -------
+    tuple
+        ``(opt, solver_used, method)`` where ``method`` is ``"appsi_highs"``,
+        ``"pyomo_warmstart"``, or ``None`` (no warm start). Emits :class:`MilpWarmStartWarning`
+        when ``warm_start`` is requested but unsupported.
+    """
+
+    solver_key = solver.strip().lower()
+    if not warm_start:
+        return SolverFactory(solver), solver, None
+
+    if solver_key in _HIGHS_SOLVER_NAMES:
+        appsi = SolverFactory("appsi_highs")
+        if _solver_available(appsi):
+            return appsi, "appsi_highs", "appsi_highs"
+        warnings.warn(
+            "The APPSI HiGHS interface (SolverFactory('appsi_highs')) is unavailable, so the "
+            "incumbent cannot be passed to HiGHS as a MIP start; solving without a warm start.",
+            MilpWarmStartWarning,
+            stacklevel=3,
+        )
+        return SolverFactory(solver), solver, None
+
+    opt = SolverFactory(solver)
+    if _accepts_warmstart_keyword(opt):
+        return opt, solver, "pyomo_warmstart"
+    warnings.warn(
+        f"Solver '{solver}' does not support MIP warm starts through Pyomo; solving without the "
+        "incumbent. Use solver='highs' or a warm-start-capable solver (gurobi, cbc, cplex).",
+        MilpWarmStartWarning,
+        stacklevel=3,
+    )
+    return opt, solver, None
+
+
+def _named_solver_available(name: str) -> bool:
+    try:
+        return _solver_available(SolverFactory(name))
+    except Exception:
+        return False
+
+
+def _solver_available(opt: Any) -> bool:
+    try:
+        return bool(opt.available(exception_flag=False))
+    except Exception:
+        return False
+
+
+def _accepts_warmstart_keyword(opt: Any) -> bool:
+    """Return ``True`` when ``opt.solve(..., warmstart=True)`` is supported and meaningful."""
+
+    try:
+        from pyomo.contrib.solver.common.base import LegacySolverWrapper
+    except ImportError:  # pragma: no cover - older Pyomo without contrib.solver
+        LegacySolverWrapper = None
+    if LegacySolverWrapper is not None and isinstance(opt, LegacySolverWrapper):
+        return False
+    capable = getattr(opt, "warm_start_capable", None)
+    if not callable(capable):
+        return False
+    try:
+        return bool(capable())
+    except Exception:
+        # e.g. the CBC plugin probes the executable version and fails when it is missing.
+        return False
+
+
+@dataclass(slots=True)
+class _SolveRun:
+    """Outcome of one solver call (see :func:`_run_solver`)."""
+
+    status: str
+    termination: str
+    has_solution: bool
+    log_lines: list[str]
+    error: str | None = None
+
+
+def _run_solver(
+    opt: Any, model: pyo.ConcreteModel, solve_kwargs: Mapping[str, object], *, appsi: bool
+) -> _SolveRun:
+    """Solve ``model`` without automatic solution loading and load a solution only if one exists.
+
+    Every path calls ``opt.solve(..., load_solutions=False)`` so infeasible models, limits without
+    an incumbent and solver errors never raise ``NoFeasibleSolutionError`` (or the equivalent
+    legacy errors). A solution is loaded when the solver holds one:
+
+    * APPSI HiGHS (``appsi=True``): ``opt.load_vars()`` when ``results.solution`` is non-empty;
+    * ``pyomo.contrib.solver`` interfaces wrapped in ``LegacySolverWrapper`` (Pyomo's default
+      ``highs``): ``model.solutions.load_from(results)`` when the wrapper reports an incumbent;
+    * legacy plugins: ``model.solutions.load_from(results)`` when the termination is optimal /
+      feasible, or a limit was hit while a finite incumbent objective is reported.
+
+    The HiGHS log is captured (and still streamed to stdout when ``tee=True``) so callers can
+    report ``ERROR`` lines and MIP-start messages. Every exception raised by the solver interface
+    during ``solve`` (e.g. :class:`pyomo.common.errors.ApplicationError`, ``RuntimeError``, or
+    ``gurobipy.GurobiError`` for a missing or size-limited Gurobi licence) is returned as
+    ``error`` (#139).
+    """
+
+    if appsi:
+        return _solve_appsi_highs(opt, model, solve_kwargs)
+
+    kwargs = dict(solve_kwargs)
+    kwargs["load_solutions"] = False
+    stream: io.StringIO | None = None
+    if _is_contrib_wrapper(opt):
+        stream = io.StringIO()
+        kwargs["tee"] = [stream, sys.stdout] if solve_kwargs.get("tee") else [stream]
+    try:
+        result = opt.solve(model, **kwargs)
+    except Exception as exc:  # any solver failure (e.g. gurobipy.GurobiError) is reported
+        return _SolveRun(
+            status="error",
+            termination="error",
+            has_solution=False,
+            log_lines=stream.getvalue().splitlines() if stream is not None else [],
+            error=f"{type(exc).__name__}: {exc}",
+        )
+    log_lines = stream.getvalue().splitlines() if stream is not None else []
+    solver_info = getattr(result, "solver", None)
+    status = str(getattr(solver_info, "status", "unknown"))
+    termination = str(getattr(solver_info, "termination_condition", "unknown"))
+    solution = getattr(result, "solution", None)
+    try:
+        holds_solution = solution is not None and len(solution) > 0
+    except TypeError:
+        holds_solution = False
+    if stream is None and holds_solution:
+        # Legacy plugins may attach a solution object for non-feasible terminations.
+        status_key, termination_key = status.lower(), termination.lower()
+        holds_solution = termination_key in _SOLVED_TERMINATIONS or status_key in {
+            "optimal",
+            "feasible",
+        }
+        if not holds_solution and termination_key in _LIMIT_TERMINATIONS:
+            holds_solution = _has_incumbent(result, model)
+    has_solution = False
+    error: str | None = None
+    if holds_solution:
+        try:
+            model.solutions.load_from(result)
+            has_solution = True
+        except Exception as exc:  # pragma: no cover - defensive: malformed solver output
+            error = f"failed to load the solver solution: {type(exc).__name__}: {exc}"
+    return _SolveRun(
+        status=status,
+        termination=termination,
+        has_solution=has_solution,
+        log_lines=log_lines,
+        error=error,
+    )
+
+
+def _is_contrib_wrapper(opt: Any) -> bool:
+    try:
+        from pyomo.contrib.solver.common.base import LegacySolverWrapper
+    except ImportError:  # pragma: no cover - older Pyomo without contrib.solver
+        return False
+    return isinstance(opt, LegacySolverWrapper)
+
+
+def _solve_appsi_highs(
+    opt: Any, model: pyo.ConcreteModel, solve_kwargs: Mapping[str, object]
+) -> _SolveRun:
+    """Run a warm-started APPSI HiGHS solve, capturing the HiGHS log.
+
+    Solutions are loaded explicitly (``load_solutions=False`` + ``opt.load_vars()``) because the
+    APPSI interface raises when asked to load a solution that does not exist. The HiGHS log is
+    routed to a private logger (also streamed to stdout when ``tee=True``) so the caller can tell
+    whether the MIP start was accepted and report HiGHS ``ERROR`` lines.
+    """
+
+    collector = _LineCollector()
+    highs_logger = logging.getLogger(_HIGHS_LOGGER_NAME)
+    previous_level = highs_logger.level
+    previous_propagate = highs_logger.propagate
+    highs_logger.addHandler(collector)
+    highs_logger.setLevel(logging.DEBUG)
+    highs_logger.propagate = False
+    config = getattr(opt, "config", None)
+    if config is not None:
+        try:
+            config.solver_output_logger = highs_logger
+            config.log_level = logging.DEBUG
+        except (AttributeError, ValueError):
+            pass
+    kwargs = dict(solve_kwargs)
+    kwargs["load_solutions"] = False
+    error: str | None = None
+    status = termination = "error"
+    has_solution = False
+    try:
+        result = opt.solve(model, **kwargs)
+        status = str(result.solver.status)
+        termination = str(result.solver.termination_condition)
+        solution = getattr(result, "solution", None)
+        has_solution = bool(solution is not None and len(solution) > 0)
+        if has_solution:
+            opt.load_vars()
+    except Exception as exc:  # any solver failure (e.g. gurobipy.GurobiError) is reported
+        error = f"{type(exc).__name__}: {exc}"
+        has_solution = False
+    finally:
+        highs_logger.removeHandler(collector)
+        highs_logger.setLevel(previous_level)
+        highs_logger.propagate = previous_propagate
+    return _SolveRun(
+        status=status,
+        termination=termination,
+        has_solution=has_solution,
+        log_lines=collector.lines,
+        error=error,
+    )
+
+
+@dataclass(slots=True)
+class _SeedSnapshot:
+    """Seeded values recorded before the solve (warm-start acceptance inference).
+
+    Feasibility of the seed is only evaluated when needed (:func:`_seed_accepted`), because a full
+    constraint check costs seconds on large models (ka_6: ~10 s).
+    """
+
+    values: list[tuple[Any, float | None]]
+    x_values: dict[Any, float]
+    objective: float | None
+
+
+def _snapshot_seed(model: pyo.ConcreteModel) -> _SeedSnapshot:
+    """Record every seeded variable value, the seeded assignment and its objective."""
+
+    values = [(var, var.value) for var in model.component_data_objects(pyo.Var)]
+    x_values = {index: float(var.value or 0.0) for index, var in model.x.items()}
+    objective = pyo.value(model.objective, exception=False)
+    return _SeedSnapshot(
+        values=values,
+        x_values=x_values,
+        objective=float(objective) if objective is not None else None,
+    )
+
+
+def _seed_is_feasible(model: pyo.ConcreteModel, seed: _SeedSnapshot) -> bool:
+    """Evaluate the seed's feasibility, restoring the loaded solution afterwards."""
+
+    current = [(var, var.value) for var, _ in seed.values]
+    try:
+        for var, value in seed.values:
+            var.set_value(value, skip_validation=True)
+        return _max_violation(model) <= _SEED_FEASIBILITY_TOLERANCE
+    finally:
+        for var, value in current:
+            var.set_value(value, skip_validation=True)
+
+
+def _max_violation(model: pyo.ConcreteModel) -> float:
+    """Largest absolute bound/integrality violation of the current variable values."""
+
+    worst = 0.0
+    for var in model.component_data_objects(pyo.Var, active=True):
+        value = var.value
+        if value is None:
+            return math.inf
+        if var.lb is not None and value < var.lb:
+            worst = max(worst, var.lb - value)
+        if var.ub is not None and value > var.ub:
+            worst = max(worst, value - var.ub)
+        if var.is_integer():
+            worst = max(worst, abs(value - round(value)))
+    for con in model.component_data_objects(pyo.Constraint, active=True):
+        body = pyo.value(con.body, exception=False)
+        if body is None:
+            return math.inf
+        if con.has_lb():
+            worst = max(worst, pyo.value(con.lower) - body)
+        if con.has_ub():
+            worst = max(worst, body - pyo.value(con.upper))
+    return worst
+
+
+def _seed_accepted(model: pyo.ConcreteModel, seed: _SeedSnapshot) -> bool:
+    """Infer MIP-start acceptance when the solver log is silent.
+
+    Returns ``True`` when the returned incumbent assigns exactly the seeded ``x`` values, or when
+    the seed satisfied every constraint (so HiGHS could adopt it as its first incumbent) and the
+    returned objective is at least the seed objective (relative tolerance 1e-9).
+    """
+
+    returned = {index: float(var.value or 0.0) for index, var in model.x.items()}
+    if all(abs(returned[index] - value) <= 0.5 for index, value in seed.x_values.items()):
+        return True
+    if seed.objective is None:
+        return False
+    objective = pyo.value(model.objective, exception=False)
+    if objective is None:
+        return False
+    tolerance = 1e-9 * max(1.0, abs(seed.objective))
+    if float(objective) < seed.objective - tolerance:
+        return False
+    return _seed_is_feasible(model, seed)
+
+
+def _parse_highs_start_log(lines: list[str]) -> tuple[bool | None, list[str]]:
+    """Return ``(accepted, messages)`` extracted from HiGHS log lines about the MIP start."""
+
+    messages: list[str] = []
+    repair_infeasible = False
+    awaiting_repair_status = False
+    for raw in lines:
+        line = raw.strip()
+        if _HIGHS_START_LINE.search(line):
+            messages.append(line)
+            awaiting_repair_status = "attempting to find feasible solution" in line.lower()
+        elif awaiting_repair_status and line.lower().startswith("model status"):
+            # Outcome of the LP/MIP HiGHS solves to complete the user-supplied discrete values.
+            messages.append(line)
+            repair_infeasible = "infeasible" in line.lower()
+            awaiting_repair_status = False
+    if any(_HIGHS_START_ACCEPTED.search(line) for line in messages):
+        return True, messages
+    if repair_infeasible or any(_HIGHS_START_REJECTED.search(line) for line in messages):
+        return False, messages
+    return None, messages
+
+
+def _has_incumbent(result: Any, model: pyo.ConcreteModel) -> bool:
+    """Return ``True`` when legacy results report a finite incumbent objective."""
+
+    problem = getattr(result, "problem", None)
+    if problem is None:
+        return False
+    try:
+        maximize = model.objective.sense == pyo.maximize
+        bound = problem.lower_bound if maximize else problem.upper_bound
+        return bound is not None and math.isfinite(float(bound))
+    except (AttributeError, TypeError, ValueError):
+        return False
 
 
 def _extract_assignments(model: pyo.ConcreteModel) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
     for (machine_id, block_id, day, shift_id), var in model.x.items():
         assigned_value = pyo.value(var)
-        production_value = pyo.value(model.prod[machine_id, block_id, (day, shift_id)])
+        # Clamp solver noise (-0.0, -1e-12) so exported production is never negative zero.
+        production_value = max(
+            0.0, float(pyo.value(model.prod[machine_id, block_id, (day, shift_id)]))
+        )
         if assigned_value > 0.5 or production_value > 1e-6:
             rows.append(
                 {
@@ -275,7 +1035,6 @@ def _derive_state_with_tracker(
     availability_day = bundle.availability_day
     availability_shift = bundle.availability_shift
     blackout = ctx.blackout_shifts
-    locked = ctx.locked_assignments
     landing_of = bundle.landing_for_block
 
     plan: dict[str, dict[ShiftKey, str | None]] = {
@@ -295,15 +1054,15 @@ def _derive_state_with_tracker(
     production_lookup: dict[tuple[str, str, ShiftKey], float] = {}
     role_prod_lookup: defaultdict[tuple[str, str, ShiftKey], float] = defaultdict(float)
     role_assignment_counts: defaultdict[tuple[str, str, ShiftKey], int] = defaultdict(int)
-    landing_usage: defaultdict[tuple[str, int], int] = defaultdict(int)
+    landing_usage: defaultdict[tuple[str, ShiftKey], int] = defaultdict(int)
 
     for day, shift_id in shift_keys:
         for machine in ordered_machines:
             slot_block: str | None = plan[machine.id].get((day, shift_id))
-            lock_key = (machine.id, day)
             assigned_block = slot_block
-            if lock_key in locked:
-                assigned_block = locked[lock_key]
+            locked_block = ctx.lock_for(machine.id, day, shift_id)
+            if locked_block is not None:
+                assigned_block = locked_block
 
             if (
                 availability_shift.get((machine.id, day, shift_id), 1) == 0
@@ -330,7 +1089,7 @@ def _derive_state_with_tracker(
 
             key = (machine.id, assigned_block, (day, shift_id))
             proposed = provided_prod.get(key, rate_value)
-            sequencing = tracker.process(day, machine.id, assigned_block, proposed)
+            sequencing = tracker.process(day, machine.id, assigned_block, proposed, shift_id)
             prod_units = max(0.0, sequencing.production_units)
             production_lookup[key] = prod_units
 
@@ -341,7 +1100,7 @@ def _derive_state_with_tracker(
 
             landing_id = landing_of.get(assigned_block)
             if landing_id is not None:
-                landing_usage[(landing_id, day)] += 1
+                landing_usage[(landing_id, (day, shift_id))] += 1
 
     tracker.finalize()
     leftover_by_block = {
@@ -368,7 +1127,7 @@ def _derive_state_with_rates(
     production_lookup: dict[tuple[str, str, ShiftKey], float] = {}
     role_prod_lookup: defaultdict[tuple[str, str, ShiftKey], float] = defaultdict(float)
     role_assignment_counts: defaultdict[tuple[str, str, ShiftKey], int] = defaultdict(int)
-    landing_usage: defaultdict[tuple[str, int], int] = defaultdict(int)
+    landing_usage: defaultdict[tuple[str, ShiftKey], int] = defaultdict(int)
     block_terminal_total: defaultdict[str, float] = defaultdict(float)
     block_generic_total: defaultdict[str, float] = defaultdict(float)
 
@@ -389,7 +1148,7 @@ def _derive_state_with_rates(
                 block_terminal_total[block_id] += prod_val
         landing_id = landing_for_block.get(block_id)
         if landing_id is not None:
-            landing_usage[(landing_id, shift[0])] += 1
+            landing_usage[(landing_id, shift)] += 1
 
     leftover_by_block = {
         blk: max(0.0, bundle.work_required.get(blk, 0.0) - block_generic_total.get(blk, 0.0))
@@ -476,6 +1235,8 @@ def _build_incumbent_state(
                     prod_val = 0.0
                 provided_production[(machine_id, block_id, shift_tuple)] = prod_val
 
+    _apply_bundle_locks(bundle, shift_list, assignment_lookup)
+
     context: OperationalProblem | None = meta.get("operational_problem")
     if context is not None:
         derived = _derive_state_with_tracker(
@@ -512,6 +1273,92 @@ def _build_incumbent_state(
     )
 
 
+def _apply_bundle_locks(
+    bundle: OperationalMilpBundle,
+    shift_list: tuple[ShiftKey, ...],
+    assignment_lookup: dict[tuple[str, ShiftKey], str],
+) -> None:
+    """Overlay ``bundle.locked_assignments`` onto an incumbent assignment lookup (in place).
+
+    Locked slots take the locked block when the lock is effective and are cleared when the lock
+    pins the machine to zero (unavailable slot, contradictory lock), mirroring the
+    ``locked_assignment`` constraints (:func:`fhops.model.milp.data.resolve_locked_slots`) so the
+    seeded ``x`` values respect locks.
+    """
+
+    if not bundle.locked_assignments:
+        return
+    grid = set(shift_list)
+    targets, _ = resolve_locked_slots(bundle)
+    for (machine_id, slot), block_id in targets.items():
+        if slot not in grid:
+            continue
+        key = (machine_id, slot)
+        if block_id is not None:
+            assignment_lookup[key] = block_id
+        else:
+            assignment_lookup.pop(key, None)
+
+
+def _seed_moves(
+    model: pyo.ConcreteModel, bundle: OperationalMilpBundle, shift_list: tuple[ShiftKey, ...]
+) -> None:
+    """Seed the position-network variables (``stay``, ``depart``, ``arrive``, ``y``, ``first``,
+    ``unplaced``) from the seeded ``x``.
+
+    A machine's position is the block of its last worked slot (or its carried-in block); it moves
+    when it works another block, as in
+    :func:`fhops.optimization.heuristics.common._recompute_mobilisation_for`.
+    """
+
+    if not hasattr(model, "stay"):
+        return
+    worked: dict[tuple[str, ShiftKey], str] = {}
+    for (machine_id, block_id, day, shift_id), var in model.x.items():
+        if (var.value or 0.0) > 0.5:
+            worked[(machine_id, (int(day), str(shift_id)))] = block_id
+    before: dict[tuple[str, ShiftKey], str | None] = {}
+    after: dict[tuple[str, ShiftKey], str | None] = {}
+    for machine_id in model.M:
+        position = bundle.initial_machine_block.get(machine_id)
+        for slot in shift_list:
+            before[(machine_id, slot)] = position
+            block_id = worked.get((machine_id, slot))
+            if block_id is not None:
+                position = block_id
+            after[(machine_id, slot)] = position
+
+    def _moved(machine_id: str, slot: ShiftKey) -> tuple[str | None, str | None]:
+        """``(from, to)`` when the machine changes position in ``slot``, else ``(None, None)``."""
+
+        prev_block = before[(machine_id, slot)]
+        block_id = worked.get((machine_id, slot))
+        if block_id is None or prev_block == block_id:
+            return None, None
+        return prev_block, block_id
+
+    def _set(var: Any, value: bool) -> None:
+        var.set_value(1.0 if value else 0.0)
+        var.stale = False
+
+    for (machine_id, block_id, day, shift_id), var in model.stay.items():
+        slot = (day, shift_id)
+        _set(var, before[(machine_id, slot)] == block_id and _moved(machine_id, slot)[1] is None)
+    for (machine_id, block_id, day, shift_id), var in model.depart.items():
+        source, target = _moved(machine_id, (day, shift_id))
+        _set(var, target is not None and source == block_id)
+    for (machine_id, block_id, day, shift_id), var in model.arrive.items():
+        source, target = _moved(machine_id, (day, shift_id))
+        _set(var, source is not None and target == block_id)
+    for (machine_id, prev_blk, block_id, day, shift_id), var in model.y.items():
+        _set(var, _moved(machine_id, (day, shift_id)) == (prev_blk, block_id))
+    for (machine_id, block_id, day, shift_id), var in model.first.items():
+        source, target = _moved(machine_id, (day, shift_id))
+        _set(var, source is None and target == block_id)
+    for (machine_id, day, shift_id), var in model.unplaced.items():
+        _set(var, after[(machine_id, (day, shift_id))] is None)
+
+
 def _seed_model_from_state(
     model: pyo.ConcreteModel, meta: Mapping[str, Any], state: _IncumbentState
 ) -> None:
@@ -519,13 +1366,10 @@ def _seed_model_from_state(
     assignment_lookup = state.assignment_lookup
     production_lookup = state.production_lookup
     role_prod_lookup = state.role_prod_lookup
-    role_assignment_counts = state.role_assignment_counts
     landing_usage = state.landing_usage
     shift_list: tuple[ShiftKey, ...] = meta.get("shift_list") or tuple(model.S)
-    prev_shift_map: Mapping[ShiftKey, ShiftKey | None] = meta.get("prev_shift_map", {})
     inventory_pairs: tuple[tuple[str, str], ...] = tuple(meta.get("inventory_pairs", ()))
     role_upstream: Mapping[tuple[str, str], tuple[str, ...]] = meta.get("role_upstream", {})
-    loader_batch_volume: Mapping[tuple[str, str], float] = meta.get("loader_batch_volume", {})
     block_terminal_roles: Mapping[str, tuple[str, ...]] = meta.get("block_terminal_roles", {})
 
     def _slot_key(day: int, shift_id: str) -> ShiftKey:
@@ -549,80 +1393,109 @@ def _seed_model_from_state(
         var.set_value(role_prod_lookup.get(key, 0.0))
         var.stale = False
 
-    if hasattr(model, "y"):
-        for (machine_id, prev_blk, curr_blk, day, shift_id), var in model.y.items():
-            shift = _slot_key(day, shift_id)
-            prev_slot = prev_shift_map.get(shift)
-            value = 0.0
-            if prev_slot is not None:
-                prev_block = assignment_lookup.get((machine_id, prev_slot))
-                curr_block = assignment_lookup.get((machine_id, shift))
-                if prev_block == prev_blk and curr_block == curr_blk:
-                    value = 1.0
-            var.set_value(value)
-            var.stale = False
+    _seed_moves(model, bundle, shift_list)
 
     if hasattr(model, "role_active"):
+        role_to_machines: Mapping[str, tuple[str, ...]] = meta.get("role_to_machines", {})
+        locked_on_block: frozenset = meta.get("locked_on_block", frozenset())
         for (role, block_id, day, shift_id), var in model.role_active.items():
             shift = _slot_key(day, shift_id)
             key = (role, block_id, shift)
-            var.set_value(1.0 if role_assignment_counts.get(key, 0) > 0 else 0.0)
+            # Active when the role produces, or when an unlocked machine of the role is assigned
+            # (role_active_upper); locked machines may sit idle without activating the role.
+            unlocked_assigned = any(
+                assignment_lookup.get((mach, shift)) == block_id
+                and (mach, block_id, shift) not in locked_on_block
+                for mach in role_to_machines.get(role, ())
+            )
+            produced = role_prod_lookup.get(key, 0.0) > 1e-9
+            active = produced or unlocked_assigned
+            var.set_value(1.0 if active else 0.0)
             var.stale = False
 
-    if hasattr(model, "loads") and hasattr(model, "loader_partial"):
-        for (role, block_id, day, shift_id), load_var in model.loads.items():
-            shift = _slot_key(day, shift_id)
-            batch = loader_batch_volume.get((role, block_id), 0.0)
-            prod_value = role_prod_lookup.get((role, block_id, shift), 0.0)
-            if batch > 0:
-                full_loads = int(prod_value // batch)
-                remainder = prod_value - full_loads * batch
-                if remainder >= batch - 1e-6:
-                    full_loads += 1
-                    remainder = 0.0
-            else:
-                full_loads = 0
-                remainder = prod_value
-            load_var.set_value(full_loads)
-            load_var.stale = False
-            loader_partial = model.loader_partial[role, block_id, day, shift_id]
-            loader_partial.set_value(remainder)
-            loader_partial.stale = False
-
-    if hasattr(model, "landing_surplus") and hasattr(model, "Landing"):
-        for landing_id in model.Landing:
-            cap = bundle.landing_capacity.get(landing_id, 0)
-            for day in model.D:
-                usage = landing_usage.get((landing_id, day), 0)
-                surplus = max(0.0, float(usage - cap))
-                var = model.landing_surplus[landing_id, day]
-                var.set_value(surplus)
-                var.stale = False
-
-    if inventory_pairs:
-        inventory_prev: dict[tuple[str, str], float] = {pair: 0.0 for pair in inventory_pairs}
+    cumulative_before: dict[tuple[str, str, ShiftKey], float] = {}
+    if hasattr(model, "role_cumulative"):
+        cumulative: dict[tuple[str, str], float] = {}
         for day, shift_id in shift_list:
             shift = _slot_key(day, shift_id)
-            for role, block_id in inventory_pairs:
-                start_value = inventory_prev[(role, block_id)]
-                inv_start = model.inventory_start[role, block_id, day, shift_id]
+            for role, block_id in model.CumulativePairs:
+                pair = (role, block_id)
+                cumulative_before[(role, block_id, shift)] = cumulative.get(pair, 0.0)
+                cumulative[pair] = cumulative.get(pair, 0.0) + role_prod_lookup.get(
+                    (role, block_id, shift), 0.0
+                )
+                cum_var = model.role_cumulative[role, block_id, day, shift_id]
+                cum_var.set_value(cumulative[pair])
+                cum_var.stale = False
+    if hasattr(model, "upstream_done"):
+        for (role, block_id, day, shift_id), var in model.upstream_done.items():
+            shift = _slot_key(day, shift_id)
+            done = all(
+                cumulative_before.get((up_role, block_id, shift), 0.0) + 1e-9
+                >= bundle.initial_role_remaining.get(
+                    (block_id, up_role), bundle.work_required.get(block_id, 0.0)
+                )
+                for up_role in role_upstream.get((role, block_id), ())
+            )
+            var.set_value(1.0 if done else 0.0)
+            var.stale = False
+
+    if hasattr(model, "landing_surplus") and hasattr(model, "LandingSurplusIndex"):
+        # Unit slack pieces: the first (usage - capacity) pieces of a slot are 1.
+        for landing_id, day, shift_id, piece in model.LandingSurplusIndex:
+            cap = max(int(bundle.landing_capacity.get(landing_id, 0)), 0)
+            usage = landing_usage.get((landing_id, _slot_key(day, shift_id)), 0)
+            var = model.landing_surplus[landing_id, day, shift_id, piece]
+            var.set_value(1.0 if piece <= usage - cap else 0.0)
+            var.stale = False
+
+    if hasattr(model, "loader_tail"):
+        loader_block_batch: Mapping[str, float] = meta.get("loader_block_batch", {})
+        delivered: dict[str, float] = defaultdict(float)
+        delivered_before: dict[tuple[str, ShiftKey], float] = {}
+        for day, shift_id in shift_list:
+            shift = _slot_key(day, shift_id)
+            for block_id in bundle.blocks:
+                delivered_before[(block_id, shift)] = delivered[block_id]
+                delivered[block_id] += sum(
+                    role_prod_lookup.get((role, block_id, shift), 0.0)
+                    for role in block_terminal_roles.get(block_id, ())
+                )
+        for (block_id, day, shift_id), var in model.loader_tail.items():
+            shift = _slot_key(day, shift_id)
+            threshold = bundle.work_required.get(block_id, 0.0) - loader_block_batch.get(
+                block_id, 0.0
+            )
+            reached = delivered_before.get((block_id, shift), 0.0) >= threshold - 1e-9
+            var.set_value(1.0 if reached else 0.0)
+            var.stale = False
+
+    if inventory_pairs:
+        # Staged inventory per upstream role u: output of u minus what its downstream roles used.
+        stage_downstream: Mapping[tuple[str, str], tuple[str, ...]] = meta.get(
+            "stage_downstream", {}
+        )
+        initial_start: Mapping[tuple[str, str], float] = meta.get("initial_inventory_start", {})
+        inventory_prev: dict[tuple[str, str], float] = {
+            pair: float(initial_start.get(pair, 0.0)) for pair in inventory_pairs
+        }
+        for day, shift_id in shift_list:
+            shift = _slot_key(day, shift_id)
+            for up_role, block_id in inventory_pairs:
+                start_value = inventory_prev[(up_role, block_id)]
+                inv_start = model.inventory_start[up_role, block_id, day, shift_id]
                 inv_start.set_value(start_value)
                 inv_start.stale = False
-                upstream_roles = role_upstream.get((role, block_id), ())
-                upstream_sum = sum(
-                    role_prod_lookup.get((up_role, block_id, shift), 0.0)
-                    for up_role in upstream_roles
+                staged_output = role_prod_lookup.get((up_role, block_id, shift), 0.0)
+                consumed = sum(
+                    role_prod_lookup.get((down_role, block_id, shift), 0.0)
+                    for down_role in stage_downstream.get((up_role, block_id), ())
                 )
-                consumed = role_prod_lookup.get((role, block_id, shift), 0.0)
-                end_value = start_value + upstream_sum - consumed
-                if end_value < -1e-5:
-                    end_value = 0.0
-                else:
-                    end_value = max(0.0, end_value)
-                inv_var = model.inventory[role, block_id, day, shift_id]
+                end_value = max(0.0, start_value + staged_output - consumed)
+                inv_var = model.inventory[up_role, block_id, day, shift_id]
                 inv_var.set_value(end_value)
                 inv_var.stale = False
-                inventory_prev[(role, block_id)] = end_value
+                inventory_prev[(up_role, block_id)] = end_value
 
     leftover_map = state.leftover_by_block or {}
     for block_id in model.B:

@@ -13,18 +13,19 @@ from __future__ import annotations
 import json
 import random
 import time
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from contextlib import nullcontext
 from datetime import UTC, datetime
+from enum import StrEnum
 from pathlib import Path
 from typing import Any, cast
 
-import click
 import optuna
 import pandas as pd
 import typer
 import yaml
 from rich.console import Console
+from rich.markup import escape
 from rich.table import Table
 
 from fhops.cli._utils import (
@@ -60,6 +61,7 @@ from fhops.evaluation import (
     shift_dataframe,
     shift_dataframe_from_ensemble,
 )
+from fhops.evaluation.playback.adapters import normalise_shift_ids
 from fhops.model.milp.data import bundle_from_dict, bundle_to_dict
 from fhops.model.milp.driver import solve_operational_milp
 from fhops.optimization.heuristics import (
@@ -68,6 +70,10 @@ from fhops.optimization.heuristics import (
     solve_ils,
     solve_sa,
     solve_tabu,
+)
+from fhops.optimization.heuristics.common import (
+    evaluate_assignments,
+    objective_weight_override_notice,
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.mip import solve_mip
@@ -90,7 +96,14 @@ app.add_typer(plan_app, name="plan")
 app.add_typer(scenario_app, name="scenario")
 app.add_typer(report_app, name="report")
 console = Console()
-KPI_MODE: click.ParamType = click.Choice(["basic", "extended"], case_sensitive=False)
+
+
+class KpiMode(StrEnum):
+    """Verbosity levels accepted by ``--kpi-mode`` on the solver/evaluation commands."""
+
+    BASIC = "basic"
+    EXTENDED = "extended"
+
 
 TUNING_BUNDLE_ALIASES: dict[str, list[tuple[str, Path]]] = {
     "baseline": [
@@ -234,6 +247,35 @@ def _print_kpi_summary(kpis: Any, mode: str = "extended") -> None:
         console.print(
             f"[red]Repair Usage Alert:[/red] non-default FPInnovations usage bucket for {alert}"
         )
+
+
+def _print_weight_override_notice(meta: Mapping[str, Any], scenario_label: str | None) -> None:
+    """Print a one-line notice when a heuristic ran with objective-weight overrides (#140)."""
+
+    notice = objective_weight_override_notice(meta, scenario_label)
+    if notice:
+        console.print(f"[yellow]Note:[/] {escape(notice)}")
+
+
+def _print_warm_start_summary(info: Mapping[str, Any]) -> None:
+    """Report how the ``--incumbent`` warm start was passed to the MILP solver."""
+
+    method = info.get("method")
+    seeded = info.get("seeded_slots", 0)
+    if method is None:
+        console.print(
+            f"[yellow]Warm start not used[/] (seeded_slots={seeded}, solver={info.get('solver')})."
+        )
+        return
+    accepted = info.get("accepted")
+    status = {True: "accepted", False: "rejected", None: "status unknown"}.get(
+        accepted, "status unknown"
+    )
+    console.print(
+        f"Warm start: method={method} solver={info.get('solver')} seeded_slots={seeded} ({status})"
+    )
+    for message in info.get("solver_messages") or []:
+        console.print(f"  [dim]{message}[/]")
 
 
 def _print_sequencing_debug(stats: dict[str, Any] | None) -> None:
@@ -458,7 +500,13 @@ def validate(
 
 @app.command()
 def build_mip(scenario: Path):
-    """Build the MIP model without solving and print component counts.
+    """Deprecated: build the operational MILP without solving and print its size.
+
+    Since FHOPS 1.0.1 (#139, consistent with the ``solve-mip`` delegation of #127) this command
+    builds the operational MILP (the formulation documented in the FHOPS paper and solved by
+    ``fhops solve-mip-operational``) instead of the legacy day-level MIP, which is infeasible for
+    every scenario with a loader role. It prints a one-line deprecation notice and will be removed
+    in a future release.
 
     Parameters
     ----------
@@ -467,24 +515,42 @@ def build_mip(scenario: Path):
 
     Notes
     -----
-    This helper is useful for verifying that Pyomo/HiGHS dependencies are correctly installed and
-    for inspecting the size of the generated model (sets/variables/constraints) before committing to
-    a full solve.  It invokes :func:`fhops.optimization.mip.builder.build_model` and never calls a
-    solver.
+    Builds :func:`fhops.model.milp.operational.build_operational_model` from
+    :func:`fhops.optimization.operational_problem.build_operational_problem` and prints
+    ``Operational MILP built with |M|=… |B|=… |S|=… slots; variables=… (binary=…, integer=…,
+    continuous=…); constraints=…``. No solver is called. Exit code ``1`` when the scenario cannot
+    be loaded or the model cannot be built.
     """
-    sc = load_scenario(str(scenario))
-    pb = Problem.from_scenario(sc)
-    try:
-        from fhops.model.pyomo_builder import build_model
+    import pyomo.environ as pyo
 
-        m = build_model(pb)
-        console.print(
-            f"Model built with |M|={len(m.M)} |B|={len(m.B)} |D|={len(m.D)}; "
-            f"components={len(list(m.component_objects()))}"
-        )
+    from fhops.model.milp.operational import build_operational_model
+
+    console.print(
+        "[yellow]Deprecated:[/] `fhops build-mip` builds the operational MILP (the model solved by "
+        "`fhops solve-mip-operational`) and will be removed in a future release; the legacy "
+        "day-level MIP is no longer built."
+    )
+    try:
+        sc = load_scenario(str(scenario))
+        ctx = build_operational_problem(Problem.from_scenario(sc))
+        m = build_operational_model(ctx.bundle)
     except Exception as e:
         console.print(f"[red]Build failed:[/red] {e}")
         raise typer.Exit(1)
+    binary = integer = continuous = 0
+    for var in m.component_data_objects(pyo.Var):
+        if var.is_binary():
+            binary += 1
+        elif var.is_integer():
+            integer += 1
+        else:
+            continuous += 1
+    constraints = sum(1 for _ in m.component_data_objects(pyo.Constraint, active=True))
+    console.print(
+        f"Operational MILP built with |M|={len(m.M)} |B|={len(m.B)} |S|={len(m.S)} slots; "
+        f"variables={binary + integer + continuous} (binary={binary}, integer={integer}, "
+        f"continuous={continuous}); constraints={constraints}"
+    )
 
 
 @app.command("solve-mip")
@@ -494,7 +560,11 @@ def solve_mip_cmd(
     time_limit: int = 60,
     driver: str = typer.Option(
         "auto",
-        help="MIP driver: auto|highs-appsi|highs-exec|gurobi|gurobi-appsi|gurobi-direct",
+        help=(
+            "Solver for the operational MILP, given as a legacy driver name: auto (Gurobi when "
+            "installed, else HiGHS) | highs-appsi | highs-exec (HiGHS) | gurobi | gurobi-appsi | "
+            "gurobi-direct."
+        ),
     ),
     debug: bool = typer.Option(False, "--debug", help="Verbose tracebacks & solver logs"),
     sequencing_debug: bool = typer.Option(
@@ -503,47 +573,118 @@ def solve_mip_cmd(
         help="Print sequencing diagnostics (first violation, backlog deficits).",
     ),
 ):
-    """Solve the scenario with the exact MIP and write assignments/KPIs.
+    """Deprecated alias: solve the operational MILP and write assignments/KPIs.
+
+    Since FHOPS 1.0.1 (#127) this command runs the operational MILP (the formulation documented in
+    the FHOPS paper, ``fhops solve-mip-operational``) instead of the legacy day-level MIP, which is
+    infeasible for every scenario with a loader role. It prints a one-line deprecation notice;
+    use ``fhops solve-mip-operational`` instead.
 
     Parameters
     ----------
     scenario : pathlib.Path
         Scenario YAML path to load.
     out : pathlib.Path
-        CSV destination for the assignment matrix (``machine_id, block_id, day, shift_id``).
+        CSV destination for the assignment table
+        (``machine_id, block_id, day, shift_id, assigned, production``).
     time_limit : int, default=60
-        Solver wall-clock time limit in seconds.
+        Solver wall-clock time limit in seconds (``solve-mip-operational --time-limit``).
     driver : str, default="auto"
-        HiGHS driver backend (`auto`, `highs-appsi`, `highs-exec`, or Gurobi variants when licensed).
+        Legacy driver name mapped to the operational solver
+        (:func:`fhops.optimization.mip.highs_driver.operational_solver_for_driver`): ``auto`` →
+        Gurobi when installed (HiGHS after a Gurobi solver error), otherwise HiGHS;
+        ``highs``/``highs-appsi``/``highs-exec`` → ``highs``; ``gurobi`` → ``gurobi``;
+        ``gurobi-appsi`` → ``appsi_gurobi``; ``gurobi-direct`` → ``gurobi_direct``.
     debug : bool, default=False
-        Enable verbose solver logging and rich tracebacks.
+        Stream the solver log (``tee``) and enable rich tracebacks.
+    sequencing_debug : bool, default=False
+        Print sequencing diagnostics after the KPI summary.
 
     Notes
     -----
-    The command streams a KPI summary to the console via :func:`fhops.evaluation.compute_kpis`.
-    The return value mirrors :func:`fhops.optimization.mip.solve_mip` (objective, assignments,
-    solver metadata) and is serialized through the CLI side-effects.
+    Equivalent to ``fhops solve-mip-operational SCENARIO --out OUT --solver <solver> --time-limit
+    TIME_LIMIT``; options without a legacy counterpart (``--gap``, ``--solver-option``,
+    ``--incumbent``, ``--telemetry-log``, ``--bundle-json``, ``--watch``) are only available on
+    ``solve-mip-operational``.
+
+    Prints ``MIP outcome=<outcome> solver_status=… termination=… objective=…`` where ``outcome``
+    is ``optimal``, ``feasible`` (incumbent at the time limit), ``infeasible``, ``no_solution``
+    (time limit without an incumbent) or ``error`` (see :func:`fhops.optimization.mip.solve_mip`);
+    the objective is ``n/a`` without a solution. With a solution that assigns machines the KPI
+    summary follows (:func:`fhops.evaluation.compute_kpis`); otherwise the (possibly empty)
+    assignment table is written and the KPI summary is skipped.
+
+    Exit codes: ``0`` when the solver ran (including infeasible models and time limits without an
+    incumbent), ``1`` on a solver error or when the requested solver is unavailable, ``2`` for
+    invalid arguments (e.g. an unknown ``--driver``).
     """
+    from fhops.optimization.mip.highs_driver import SolverUnavailable
+
     if debug:
         _enable_rich_tracebacks()
         console.print(
             f"[dim]types → scenario={type(scenario).__name__}, out={type(out).__name__}[/]"
         )
+    console.print(
+        "[yellow]Deprecated:[/] `fhops solve-mip` is an alias that runs the operational MILP; "
+        "use `fhops solve-mip-operational` instead."
+    )
 
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
 
     out.parent.mkdir(parents=True, exist_ok=True)
-    res = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
+    try:
+        res = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
+    except SolverUnavailable as exc:
+        console.print(f"[red]Solver unavailable:[/] {exc}")
+        raise typer.Exit(1) from exc
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc), param_hint="--driver") from exc
     assignments = cast(pd.DataFrame, res["assignments"])
-    objective = cast(float, res.get("objective", 0.0))
+    raw_objective = res.get("objective")
+    has_solution = bool(res.get("has_solution", raw_objective is not None))
+    solver_error = res.get("solver_error")
+    outcome = res.get("outcome") or (
+        "error" if solver_error else ("feasible" if has_solution else "no_solution")
+    )
 
     assignments.to_csv(str(out), index=False)
-    console.print(f"Objective: {objective:.3f}. Saved to {out}")
-    metrics = compute_kpis(pb, assignments)
-    _print_kpi_summary(metrics)
-    if sequencing_debug:
-        _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
+    objective_text = (
+        f"objective={cast(float, raw_objective):.3f}"
+        if has_solution and raw_objective is not None
+        else "objective=n/a"
+    )
+    console.print(
+        f"MIP outcome={outcome} solver_status={res.get('solver_status')} "
+        f"termination={res.get('termination_condition')} {objective_text}"
+    )
+    if solver_error:
+        console.print(f"[red]Solver error:[/] {solver_error}")
+    for message in cast(Sequence[str], res.get("warnings") or []):
+        console.print(f"[yellow]Warning:[/] {message}")
+    console.print(f"Assignments written to {out}")
+    if not has_solution:
+        reason = {
+            "error": "the solver failed",
+            "infeasible": "the model is infeasible",
+        }.get(cast(str, outcome), "the solver stopped without a feasible solution")
+        console.print(
+            f"[yellow]No feasible solution: {reason}; wrote an empty assignment table and "
+            "skipped the KPI summary.[/]"
+        )
+    elif assignments.empty:
+        console.print(
+            "[yellow]The incumbent assigns no machines (all work is left over); skipping the KPI "
+            "summary.[/]"
+        )
+    else:
+        metrics = compute_kpis(pb, assignments)
+        _print_kpi_summary(metrics)
+        if sequencing_debug:
+            _print_sequencing_debug(getattr(metrics, "sequencing_debug", None))
+    if solver_error:
+        raise typer.Exit(1)
 
 
 @app.command("solve-mip-operational")
@@ -591,8 +732,11 @@ def solve_mip_operational_cmd(
         None,
         "--incumbent",
         help=(
-            "Assignments CSV (e.g., from solve-heur) used to seed the MILP as a warm start. "
-            "Columns must include machine_id, block_id, day, shift_id."
+            "Assignments CSV (e.g., from solve-heur) used to seed the MILP as a warm start "
+            "(MIP start). Columns must include machine_id, block_id, day, shift_id. Supported "
+            "with highs (via Pyomo's appsi_highs interface; the log reports whether HiGHS "
+            "accepted the start) and with warm-start-capable Pyomo plugins such as gurobi, cbc, "
+            "and cplex. Other solvers run without the start and emit a warning."
         ),
     ),
     debug: bool = typer.Option(False, "--debug", help="Verbose solver output/tracebacks."),
@@ -601,8 +745,23 @@ def solve_mip_operational_cmd(
         "--sequencing-debug/--no-sequencing-debug",
         help="Print sequencing diagnostics (first violation, backlog deficits).",
     ),
+    earliness: bool = typer.Option(
+        False,
+        "--earliness/--no-earliness",
+        help=(
+            "Break ties in favour of early production with a second, lexicographic solve (the "
+            "reported objective is unchanged; up to one extra --time-limit). Off by default; "
+            "fhops plan rolling enables it in MILP windows."
+        ),
+    ),
 ):
-    """Solve the operational (day×shift) MILP prototype and emit assignments."""
+    """Solve the operational (day×shift) MILP prototype and emit assignments.
+
+    Prints the solve ``outcome`` (``optimal``, ``feasible``, ``infeasible``, ``no_solution`` or
+    ``error``) with the solver status; the objective is shown only when a feasible solution was
+    returned. Infeasible models and limits without an incumbent write an empty assignment table
+    and exit 0; a solver error (e.g. a HiGHS option error) is printed and exits 1.
+    """
 
     if debug:
         _enable_rich_tracebacks()
@@ -666,6 +825,7 @@ def solve_mip_operational_cmd(
                 "time_limit": time_limit,
                 "gap": gap,
                 "solver_options": parsed_solver_options or None,
+                "earliness": earliness,
             },
             context=context_snapshot,
             step_interval=None,
@@ -700,6 +860,7 @@ def solve_mip_operational_cmd(
     assignments = pd.DataFrame()
     objective_value = 0.0
     metrics_obj = None
+    solver_failed = False
     try:
         with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
             emit_snapshot(0, 0.0, 0.0)
@@ -713,50 +874,105 @@ def solve_mip_operational_cmd(
                     solver_options=parsed_solver_options or None,
                     incumbent_assignments=incumbent_assignments,
                     context=ctx,
+                    **({"earliness": True} if earliness else {}),
                 )
             except ValueError as exc:
                 raise typer.BadParameter(str(exc)) from exc
             runtime_seconds = time.perf_counter() - start_time
-            objective_value = float(result.get("objective") or 0.0)
+            raw_objective = result.get("objective")
+            has_solution = bool(result.get("has_solution", raw_objective is not None))
+            solver_error = result.get("solver_error")
+            outcome = result.get("outcome") or (
+                "error" if solver_error else ("feasible" if has_solution else "no_solution")
+            )
+            objective_value = (
+                float(raw_objective) if has_solution and raw_objective is not None else 0.0
+            )
             emit_snapshot(1, objective_value, runtime_seconds)
             assignments = cast(pd.DataFrame, result.get("assignments", pd.DataFrame()))
             out.parent.mkdir(parents=True, exist_ok=True)
             assignments.to_csv(str(out), index=False)
+            objective_text = f"objective={raw_objective}" if has_solution else "objective=n/a"
             console.print(
-                f"Operational MILP solver_status={result.get('solver_status')} "
-                f"termination={result.get('termination_condition')} "
-                f"objective={result.get('objective')}"
+                f"Operational MILP outcome={outcome} solver_status={result.get('solver_status')} "
+                f"termination={result.get('termination_condition')} {objective_text}"
             )
+            if solver_error:
+                solver_failed = True
+                console.print(f"[red]Solver error:[/] {solver_error}")
+            earliness_info = result.get("earliness")
+            if isinstance(earliness_info, Mapping):
+                console.print(
+                    f"Earliness tie-break: status={earliness_info.get('status')} "
+                    f"E={earliness_info.get('value')} (stage 1: "
+                    f"{earliness_info.get('stage1_value')})"
+                )
+            for message in result.get("warnings") or []:
+                console.print(f"[yellow]Warning:[/] {message}")
+            warm_start_info = result.get("warm_start")
+            if incumbent_assignments is not None and isinstance(warm_start_info, Mapping):
+                _print_warm_start_summary(warm_start_info)
+                if warm_start_info.get("acceptance") == "inferred":
+                    console.print(
+                        "  [dim]HiGHS logged no MIP-start verdict; acceptance inferred from the "
+                        "returned incumbent (equal to, or at least as good as, the feasible seed).[/]"
+                    )
             console.print(f"Assignments written to {out}")
-            if not assignments.empty and pb is not None:
+            if not has_solution:
+                reason = {
+                    "error": "the solver failed",
+                    "infeasible": "the model is infeasible",
+                }.get(outcome, "the solver stopped without a feasible solution")
+                console.print(
+                    f"[yellow]No feasible solution: {reason}; wrote an empty assignment table and "
+                    "skipped the KPI summary.[/]"
+                )
+            elif assignments.empty:
+                console.print(
+                    "[yellow]The incumbent assigns no machines (all work is left over, objective "
+                    f"{objective_value:.3f}); skipping the KPI summary.[/]"
+                )
+            elif pb is None:
+                console.print(
+                    "[yellow]No scenario supplied (--bundle-json); skipping the KPI summary.[/]"
+                )
+            else:
                 metrics_obj = compute_kpis(pb, assignments)
                 _print_kpi_summary(metrics_obj)
                 if sequencing_debug:
                     _print_sequencing_debug(getattr(metrics_obj, "sequencing_debug", None))
-            else:
-                console.print(
-                    "[yellow]No feasible assignment returned or scenario missing; skipping KPI summary.[/]"
-                )
             if telemetry_logger and run_logger:
                 metrics_payload = {
-                    "objective": objective_value,
+                    "objective": objective_value if has_solution else None,
                     "production": float(result.get("production") or 0.0),
                     "runtime_seconds": runtime_seconds,
                 }
                 extra_payload = {
                     "solver_status": result.get("solver_status"),
                     "termination_condition": result.get("termination_condition"),
+                    "outcome": outcome,
+                    "has_solution": has_solution,
                 }
+                if solver_error:
+                    extra_payload["solver_error"] = solver_error
+                if result.get("warnings"):
+                    extra_payload["warnings"] = list(result.get("warnings") or [])
+                if incumbent_assignments is not None and isinstance(warm_start_info, Mapping):
+                    extra_payload["warm_start"] = dict(warm_start_info)
                 kpi_payload = _ensure_kpi_dict(metrics_obj) if metrics_obj is not None else {}
                 run_logger.finalize(
+                    status="error" if solver_error else "ok",
                     metrics=metrics_payload,
                     extra=extra_payload,
+                    error=str(solver_error) if solver_error else None,
                     artifacts=[str(out)],
                     kpis=kpi_payload,
                 )
     finally:
         if watch_runner:
             watch_runner.stop()
+    if solver_failed:
+        raise typer.Exit(code=1)
 
 
 @app.command("solve-heur")
@@ -854,12 +1070,12 @@ def solve_heur_cmd(
         "--sequencing-debug/--no-sequencing-debug",
         help="Print sequencing diagnostics (first violation details) after KPIs.",
     ),
-    kpi_mode: str = typer.Option(
-        "extended",
+    kpi_mode: KpiMode = typer.Option(
+        KpiMode.EXTENDED,
         "--kpi-mode",
+        case_sensitive=False,
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=cast(Any, KPI_MODE),
     ),
     batch_neighbours: int = typer.Option(
         1,
@@ -909,7 +1125,7 @@ def solve_heur_cmd(
         Cooling rate multiplier (higher = slower cooling).
     restart_interval : int, default=0
         Non-accepting-iteration interval before restarts (0 auto-scales with ``iters``).
-    kpi_mode : str, default="extended"
+    kpi_mode : KpiMode, default="extended"
         Controls verbosity of KPI summaries (``basic`` omits diagnostics).
     batch_neighbours : int, default=1
         Number of neighbour candidates sampled per iteration.
@@ -1105,6 +1321,7 @@ def solve_heur_cmd(
     out.parent.mkdir(parents=True, exist_ok=True)
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (heuristic): {objective:.3f}. Saved to {out}")
+    _print_weight_override_notice(meta, sc.name)
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
     if sequencing_debug:
@@ -1144,6 +1361,11 @@ def solve_heur_cmd(
             "max_workers": parallel_workers,
             "machine_costs": machine_costs,
         }
+        if meta.get("objective_weight_overrides"):
+            record["objective_weight_overrides"] = meta["objective_weight_overrides"]
+            record["objective_weight_overrides_source"] = meta.get(
+                "objective_weight_overrides_source"
+            )
         if tier_label:
             record["tier"] = tier_label
         if selected_profile:
@@ -1260,12 +1482,12 @@ def solve_ils_cmd(
         "--watch-debug/--no-watch-debug",
         help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
     ),
-    kpi_mode: str = typer.Option(
-        "extended",
+    kpi_mode: KpiMode = typer.Option(
+        KpiMode.EXTENDED,
         "--kpi-mode",
+        case_sensitive=False,
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=cast(Any, KPI_MODE),
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats after solving."
@@ -1302,7 +1524,7 @@ def solve_ils_cmd(
         Optional telemetry logging location plus a label to group runs in the dashboard.
     watch / watch_refresh :
         Enable and configure the live Rich dashboard for solver progress.
-    kpi_mode : str, default="extended"
+    kpi_mode : KpiMode, default="extended"
         Toggle KPI verbosity (``basic`` omits detailed breakdowns).
     show_operator_stats : bool
         When ``True`` print proposal/acceptance metrics emitted by ``solve_ils``.
@@ -1460,6 +1682,7 @@ def solve_ils_cmd(
     out.parent.mkdir(parents=True, exist_ok=True)
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (ils): {objective:.3f}. Saved to {out}")
+    _print_weight_override_notice(cast(dict[str, Any], res.get("meta", {})), sc.name)
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
     if sequencing_debug:
@@ -1588,12 +1811,12 @@ def solve_tabu_cmd(
         "--watch-debug/--no-watch-debug",
         help="Include sequencing debug metadata in watch output (adds evaluation overhead).",
     ),
-    kpi_mode: str = typer.Option(
-        "extended",
+    kpi_mode: KpiMode = typer.Option(
+        KpiMode.EXTENDED,
         "--kpi-mode",
+        case_sensitive=False,
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=cast(Any, KPI_MODE),
     ),
     show_operator_stats: bool = typer.Option(
         False, "--show-operator-stats", help="Print per-operator stats."
@@ -1631,7 +1854,7 @@ def solve_tabu_cmd(
         Optional telemetry logging destination and label for grouping experiments.
     watch / watch_refresh :
         Enable and configure the live Rich dashboard during Tabu runs.
-    kpi_mode : str, default="extended"
+    kpi_mode : KpiMode, default="extended"
         KPI verbosity switch (``basic`` or ``extended``).
     watch / watch_refresh :
         Enable and configure the live Rich dashboard for Tabu runs.
@@ -1780,6 +2003,7 @@ def solve_tabu_cmd(
     out.parent.mkdir(parents=True, exist_ok=True)
     assignments.to_csv(str(out), index=False)
     console.print(f"Objective (tabu): {objective:.3f}. Saved to {out}")
+    _print_weight_override_notice(cast(dict[str, Any], res.get("meta", {})), sc.name)
     metrics = compute_kpis(pb, assignments)
     _print_kpi_summary(metrics, mode=kpi_mode)
     if sequencing_debug:
@@ -1831,12 +2055,12 @@ def evaluate(
     assignments_csv: Path = typer.Option(
         ..., "--assignments", help="Assignments CSV (machine_id, block_id, day, shift_id)."
     ),
-    kpi_mode: str = typer.Option(
-        "extended",
+    kpi_mode: KpiMode = typer.Option(
+        KpiMode.EXTENDED,
         "--kpi-mode",
+        case_sensitive=False,
         help="Control verbosity of KPI output (basic|extended).",
         show_choices=True,
-        click_type=cast(Any, KPI_MODE),
     ),
 ):
     """Compute KPI summaries for a schedule CSV and print them to the console.
@@ -1847,18 +2071,24 @@ def evaluate(
         Scenario YAML bundle to load.
     assignments_csv : pathlib.Path
         CSV containing ``machine_id, block_id, day, shift_id`` rows produced by a solver.
-    kpi_mode : str, default="extended"
+    kpi_mode : KpiMode, default="extended"
         Verbosity toggle for the KPI printer (``basic`` omits deep breakdowns).
 
     Notes
     -----
     This is a fast wrapper around :func:`fhops.evaluation.compute_kpis` for users who only need
-    aggregated KPIs without the full playback/export pipeline.
+    aggregated KPIs without the full playback/export pipeline. Invalid assignment input (e.g. rows
+    without ``shift_id`` on a scenario with more than one shift per day) is reported as an error
+    message and the command exits with status 1.
     """
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     df = pd.read_csv(str(assignments_csv))
-    kpis = compute_kpis(pb, df)
+    try:
+        kpis = compute_kpis(pb, df)
+    except ValueError as exc:
+        console.print(f"[red]{escape(str(exc))}[/red]")
+        raise typer.Exit(1) from exc
     _print_kpi_summary(kpis, mode=kpi_mode)
 
 
@@ -1891,13 +2121,35 @@ def eval_playback(
         "--downtime-prob",
         min=0.0,
         max=1.0,
-        help="Probability of downtime per eligible assignment (0 disables downtime).",
+        help=(
+            "Probability that an assignment (machine-shift) is hit by downtime (0 disables "
+            "downtime). Each hit samples a duration from --downtime-mean/--downtime-std, clipped "
+            "to the shift length, and removes that fraction of the shift's production."
+        ),
     ),
     downtime_max_concurrent: int | None = typer.Option(
         None,
         "--downtime-max",
         min=1,
-        help="Max assignments to drop per day (None uses binomial sampling).",
+        help=(
+            "Hit exactly this many assignments per day (chosen at random; --downtime-prob then "
+            "only enables the event). Omit for independent per-assignment draws."
+        ),
+    ),
+    downtime_mean_hours: float = typer.Option(
+        4.0,
+        "--downtime-mean",
+        min=0.0,
+        help="Mean downtime duration in hours per hit (Normal distribution).",
+    ),
+    downtime_std_hours: float = typer.Option(
+        1.5,
+        "--downtime-std",
+        min=0.0,
+        help=(
+            "Standard deviation of the downtime duration in hours. Durations are clipped to "
+            "between 0 and the shift length; a full-shift loss cancels the assignment."
+        ),
     ),
     weather_probability: float = typer.Option(
         0.0,
@@ -1917,14 +2169,17 @@ def eval_playback(
         1,
         "--weather-window",
         min=1,
-        help="Number of consecutive days affected once weather occurs.",
+        help="Number of consecutive days affected once weather occurs (models multi-day spells).",
     ),
     landing_probability: float = typer.Option(
         0.0,
         "--landing-prob",
         min=0.0,
         max=1.0,
-        help="Probability a landing experiences a throughput shock (0 disables).",
+        help=(
+            "Daily probability that a throughput shock starts at each landing (0 disables). "
+            "A shock scales production of every assignment on the landing's blocks."
+        ),
     ),
     landing_multiplier_low: float = typer.Option(
         0.4,
@@ -1944,7 +2199,10 @@ def eval_playback(
         1,
         "--landing-duration",
         min=1,
-        help="Number of consecutive days landing shocks persist.",
+        help=(
+            "Number of consecutive calendar days each landing shock lasts; overlapping shocks "
+            "use the lowest multiplier."
+        ),
     ),
     shift_parquet: Path | None = typer.Option(
         None,
@@ -1985,12 +2243,21 @@ def eval_playback(
         Number of stochastic samples to run (``1`` keeps deterministic playback).
     base_seed : int, default=123
         RNG seed forwarded to stochastic playback.
-    downtime_probability / downtime_max_concurrent :
-        Parameters that control random downtime events.
+    downtime_probability / downtime_max_concurrent / downtime_mean_hours / downtime_std_hours :
+        Parameters that control random downtime events. Each hit machine-shift samples a
+        duration ``~ Normal(downtime_mean_hours, downtime_std_hours)`` clipped to between 0 and
+        the shift length and loses that fraction of its production; a full-shift loss cancels
+        the assignment. Shift length is the timeline shift's ``hours``, else the machine's
+        ``daily_hours`` divided by its number of shifts that day.
     weather_probability / weather_severity / weather_window :
         Parameters that control weather impacts.
     landing_probability / landing_multiplier_low / landing_multiplier_high / landing_duration :
-        Parameters for landing throughput shocks.
+        Parameters for landing throughput shocks: for each landing and calendar day a shock
+        starts with ``landing_probability``, lasts ``landing_duration`` days and scales the
+        production of every assignment on that landing by a multiplier drawn uniformly between
+        ``landing_multiplier_low`` and ``landing_multiplier_high`` (minimum across overlaps).
+        The expected fraction of shocked landing-days is
+        ``1 - (1 - landing_probability) ** landing_duration``.
     summary_md : pathlib.Path | None
         Optional Markdown report destination.
     telemetry_log : pathlib.Path | None
@@ -2000,20 +2267,30 @@ def eval_playback(
     -----
     Use this command when you need shift/day tables, KPI exports, or stochastic playback for Monte
     Carlo studies.  Deterministic playback is automatically selected when all stochastic knobs are
-    zeroed out.
+    zeroed out. On scenarios with more than one shift per day the assignments CSV must provide
+    ``shift_id`` for every assigned row (the command exits with an error otherwise).
     """
+    # Keep square brackets out of this docstring and the option help: Rich treats ``[word ...]``
+    # as markup and silently drops it from ``--help`` output.
 
     sc = load_scenario(str(scenario))
     machine_costs = _machine_cost_snapshot(sc)
     pb = Problem.from_scenario(sc)
 
     df = pd.read_csv(assignments_csv)
+    try:
+        df = normalise_shift_ids(pb, df)
+    except ValueError as exc:
+        console.print(f"[red]{escape(str(exc))}[/red]")
+        raise typer.Exit(1) from exc
 
     config_snapshot = {
         "include_idle": include_idle,
         "samples": samples,
         "downtime_probability": downtime_probability,
         "downtime_max_concurrent": downtime_max_concurrent,
+        "downtime_mean_hours": downtime_mean_hours,
+        "downtime_std_hours": downtime_std_hours,
         "weather_probability": weather_probability,
         "weather_severity": weather_severity,
         "weather_window": weather_window,
@@ -2077,6 +2354,8 @@ def eval_playback(
             sampling_config.downtime.enabled = downtime_probability > 0
             sampling_config.downtime.probability = downtime_probability
             sampling_config.downtime.max_concurrent = downtime_max_concurrent
+            sampling_config.downtime.mean_duration_hours = downtime_mean_hours
+            sampling_config.downtime.std_duration_hours = downtime_std_hours
             sampling_config.weather.enabled = weather_probability > 0
             sampling_config.weather.day_probability = weather_probability
             sampling_config.weather.severity_levels = {"default": weather_severity}
@@ -2254,7 +2533,7 @@ def benchmark(
     driver: str = "auto",
     debug: bool = False,
 ):
-    """Run both MIP and simulated annealing to compare objective quality.
+    """Run the operational MILP and simulated annealing to compare objective quality.
 
     Parameters
     ----------
@@ -2267,7 +2546,9 @@ def benchmark(
     iters : int, default=5000
         Simulated annealing iteration budget.
     driver : str, default="auto"
-        MIP driver selection.
+        Legacy driver name mapped to the operational MILP solver (same mapping as
+        ``fhops solve-mip``; see
+        :func:`fhops.optimization.mip.highs_driver.operational_solver_for_driver`).
     debug : bool, default=False
         Enable verbose logging and rich tracebacks.
 
@@ -2275,38 +2556,94 @@ def benchmark(
     -----
     This helper predates the richer ``fhops bench`` app but remains handy for quick smoke tests.  It
     writes ``mip_solution.csv`` and ``sa_solution.csv`` under ``out_dir`` and prints KPI summaries
-    for both solvers.
+    for both solvers. Since 1.0.1 (#127) the MIP step solves the operational MILP
+    (:func:`fhops.optimization.mip.highs_driver.solve_with_operational_milp`) instead of the
+    legacy day-level MIP (infeasible for scenarios with loader roles); the printed ``MIP obj`` is
+    the operational MILP objective.
+
+    When the MIP returns no solution (infeasible model, time limit without an incumbent, solver
+    error) ``mip_solution.csv`` is an empty assignment table, ``MIP obj=n/a (outcome=…)`` is printed
+    and the MIP metrics are skipped; SA still runs. Exit codes as for ``fhops solve-mip``: ``1``
+    when the MIP solver failed (after the SA results are printed) or is unavailable.
+
+    When SA applies objective-weight overrides (explicitly or through
+    :data:`fhops.optimization.heuristics.common.AUTO_OBJECTIVE_WEIGHT_OVERRIDES`, e.g. FHOPS
+    Tiny7/Small21), the SA objective is not on the MILP's scale. The command then prints
+    ``SA obj (override weights)`` (the objective SA optimised) and ``SA obj (scenario weights)``
+    (the SA plan scored as planned under the scenario's own weights, which the MILP uses, with
+    :func:`fhops.optimization.heuristics.common.evaluate_assignments`) next to ``MIP obj``, plus a
+    one-line notice (#140).
     """
+    from fhops.optimization.mip.highs_driver import SolverUnavailable, solve_with_operational_milp
+
     if debug:
         _enable_rich_tracebacks()
     sc = load_scenario(str(scenario))
     pb = Problem.from_scenario(sc)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    res_mip = solve_mip(pb, time_limit=time_limit, driver=driver, debug=debug)
+    try:
+        res_mip = solve_with_operational_milp(pb, time_limit=time_limit, driver=driver, debug=debug)
+    except SolverUnavailable as exc:
+        console.print(f"[red]Solver unavailable:[/] {exc}")
+        raise typer.Exit(1) from exc
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc), param_hint="--driver") from exc
     mip_csv = out_dir / "mip_solution.csv"
     mip_assignments = cast(pd.DataFrame, res_mip["assignments"])
     mip_assignments.to_csv(str(mip_csv), index=False)
+    mip_objective = res_mip.get("objective")
+    mip_has_solution = bool(res_mip.get("has_solution", mip_objective is not None))
+    mip_solver_error = res_mip.get("solver_error")
 
     res_sa = solve_sa(pb, iters=iters)
     sa_csv = out_dir / "sa_solution.csv"
     sa_assignments = cast(pd.DataFrame, res_sa["assignments"])
     sa_assignments.to_csv(str(sa_csv), index=False)
 
-    mip_metrics = compute_kpis(pb, mip_assignments)
+    mip_metrics = (
+        compute_kpis(pb, mip_assignments)
+        if mip_has_solution and not mip_assignments.empty
+        else None
+    )
     sa_metrics = compute_kpis(pb, sa_assignments)
 
-    console.print(
-        f"MIP obj={cast(float, res_mip['objective']):.3f}, "
-        f"SA obj={cast(float, res_sa['objective']):.3f}"
+    mip_text = (
+        f"{cast(float, mip_objective):.3f}"
+        if mip_has_solution and mip_objective is not None
+        else f"n/a (outcome={res_mip.get('outcome')})"
     )
+    sa_meta = cast(dict[str, Any], res_sa.get("meta", {}))
+    sa_objective = cast(float, res_sa["objective"])
+    if sa_meta.get("objective_weight_overrides"):
+        # SA searched with objective-weight overrides; the MILP uses the scenario weights. Score
+        # the SA plan as planned under the scenario weights for a like-for-like comparison (#140).
+        sa_scenario_objective = evaluate_assignments(pb, sa_assignments)
+        console.print(
+            f"MIP obj={mip_text}, SA obj (override weights)={sa_objective:.3f}, "
+            f"SA obj (scenario weights)={sa_scenario_objective:.3f}"
+        )
+        _print_weight_override_notice(sa_meta, sc.name)
+    else:
+        console.print(f"MIP obj={mip_text}, SA obj={sa_objective:.3f}")
+    if mip_solver_error:
+        console.print(f"[red]MIP solver error:[/] {mip_solver_error}")
     console.print(f"Saved: {mip_csv}, {sa_csv}")
-    console.print("MIP metrics:")
-    for key, value in mip_metrics.items():
-        console.print(f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}")
+    if mip_metrics is not None:
+        console.print("MIP metrics:")
+        for key, value in mip_metrics.items():
+            console.print(
+                f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}"
+            )
+    elif mip_has_solution:
+        console.print("[yellow]MIP incumbent assigns no machines; MIP metrics skipped.[/]")
+    else:
+        console.print("[yellow]MIP returned no feasible solution; MIP metrics skipped.[/]")
     console.print("SA metrics:")
     for key, value in sa_metrics.items():
         console.print(f"  {key}: {value:.3f}" if isinstance(value, float) else f"  {key}: {value}")
+    if mip_solver_error:
+        raise typer.Exit(1)
 
 
 @app.command("tune-random")

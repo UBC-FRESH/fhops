@@ -10,6 +10,12 @@ from fhops.optimization.operational_problem import OperationalProblem, build_ope
 from fhops.scenario.contract import Problem
 
 BLOCK_EPSILON = 1e-6
+SEQUENCING_TOLERANCE = 1e-6
+"""Absolute volume tolerance (m³) for inventory and head-start checks.
+
+Operational-MILP plans satisfy their inventory constraints only up to the solver's feasibility
+tolerance (HiGHS: 1e-7 on the scaled problem, observed up to ~5e-7 m³), so a tighter tolerance
+flags spurious violations when MILP plans are replayed."""
 
 
 @dataclass(slots=True)
@@ -24,7 +30,62 @@ class SequencingResult:
 
 @dataclass(slots=True)
 class SequencingTracker:
-    """Tracks staged volume and sequencing feasibility as playback iterates."""
+    """Tracks staged volume and sequencing feasibility as playback iterates.
+
+    The tracker replays assignments in chronological slot order (call :meth:`process` per
+    assignment, then :meth:`finalize`) and applies the operational MILP sequencing rules
+    (formulation E7/E8, ``docs/softwarex/manuscript/sections/includes/
+    fhops_operational_formulation.md``):
+
+    * Output staged in a shift slot ``(day, shift_id)`` becomes available to downstream roles from
+      the **next slot** onward (E7: ``I_start(s) = I(prev(s))``; next shift of the same day in
+      multi-shift scenarios, next day in single-shift scenarios).
+    * A downstream role's production is capped by the staged upstream volume still available
+      (E7 guard); machines of the same role in one slot draw from that volume in turn.
+    * A buffered role (``role_headstart_shifts``) may only work when the upstream volume staged at
+      the start of the slot is at least the head-start volume ``B_{r,b}`` (E8;
+      :attr:`OperationalProblem.role_headstart_volume`), unless every upstream role had already
+      output its whole remaining volume before the current slot (the buffer can no longer grow;
+      output finished in the same slot does not count, matching the MILP's ``upstream_done``).
+    * A loader may only work when the upstream volume staged at the start of the slot covers one
+      truckload (``min(loader_batch_volume_m3, remaining block volume)``).
+    * An assignment proposing no production (``proposed_production <= SEQUENCING_TOLERANCE``) is
+      an idle slot: the head-start and truckload thresholds only apply to a role that produces
+      (the MILP's ``role_active``), so it is never a ``missing_prereq`` violation (#125; e.g. a
+      machine locked to a block that the MILP leaves idle because nothing is staged yet). Role
+      violations (``unknown_role`` / ``forbidden_role``) are still reported. The heuristics always
+      propose the machine's rate, so they are unaffected.
+
+    Calls without ``shift_id`` treat each day as one slot (v1.0.0 behaviour).
+
+    Attributes
+    ----------
+    ctx:
+        Shared :class:`~fhops.optimization.operational_problem.OperationalProblem` context.
+    debug:
+        When ``True`` callers may request :meth:`debug_snapshot` for telemetry.
+    remaining_work:
+        ``block_id -> m³`` terminal volume still to deliver (starts at ``work_required``).
+    role_inventory:
+        ``(block_id, role) -> m³`` output by ``role`` and not yet consumed downstream. Starts from
+        ``ctx.initial_role_inventory`` (``Scenario.initial_state`` staged inventory; empty by
+        default).
+    role_remaining:
+        ``(block_id, role) -> m³`` output the role may still produce. Starts from
+        ``ctx.role_work_required`` (``work_required`` or the carried-in ``role_remaining``).
+    role_counts_total:
+        ``(block_id, role) -> shifts`` worked before the current slot. Starts from
+        ``ctx.initial_role_counts`` (empty by default). Reported for rolling-horizon state
+        carry-forward; head-start checks use staged volume instead.
+
+    Notes
+    -----
+    All volumes are m³. ``remaining_work`` starts at ``Block.work_required`` (terminal delivered
+    volume) and is debited by the terminal role (or by any role for blocks without an explicit
+    harvest system); ``role_remaining`` caps each role at the same volume; ``role_inventory``
+    holds volume output by a role and not yet consumed downstream; ``delivered_total`` sums the
+    terminal deliveries.
+    """
 
     ctx: OperationalProblem
     debug: bool = False
@@ -34,6 +95,7 @@ class SequencingTracker:
     role_remaining: dict[tuple[str, str], float] = field(init=False)
     role_counts_total: defaultdict[tuple[str, str], int] = field(init=False)
     role_counts_day: defaultdict[tuple[str, str], int] = field(init=False)
+    role_consumed_slot: defaultdict[tuple[str, str], float] = field(init=False)
     completed_blocks: set[str] = field(init=False)
     debug_violation_counts: Counter[str] = field(init=False)
     debug_first_violation_role: str | None = field(default=None, init=False)
@@ -41,23 +103,25 @@ class SequencingTracker:
     debug_first_violation_block: str | None = field(default=None, init=False)
     debug_first_violation_day: int | None = field(default=None, init=False)
     debug_first_violation_detail: dict[str, Any] | None = field(default=None, init=False)
-    _current_day: int | None = field(default=None, init=False)
+    _current_slot: tuple[int, str | None] | None = field(default=None, init=False)
     delivered_total: float = field(init=False)
 
     def __post_init__(self) -> None:
         self.remaining_work = dict(self.ctx.bundle.work_required)
-        self.role_inventory = defaultdict(float)
+        self.role_inventory = defaultdict(float, self.ctx.initial_role_inventory)
         self.role_inventory_today = defaultdict(float)
         self.role_remaining = dict(self.ctx.role_work_required)
-        self.role_counts_total = defaultdict(int)
+        self.role_counts_total = defaultdict(int, self.ctx.initial_role_counts)
         self.role_counts_day = defaultdict(int)
+        self.role_consumed_slot = defaultdict(float)
         self.completed_blocks = set()
         self.debug_violation_counts = Counter()
         self.delivered_total = 0.0
 
-    def _roll_day(self, day: int) -> None:
-        if self._current_day is None or day == self._current_day:
-            self._current_day = day
+    def _roll_slot(self, day: int, shift_id: str | None) -> None:
+        slot = (day, shift_id)
+        if self._current_slot is None or slot == self._current_slot:
+            self._current_slot = slot
             return
         for key, volume in self.role_inventory_today.items():
             self.role_inventory[key] += volume
@@ -65,10 +129,11 @@ class SequencingTracker:
         for key, count in self.role_counts_day.items():
             self.role_counts_total[key] += count
         self.role_counts_day.clear()
-        self._current_day = day
+        self.role_consumed_slot.clear()
+        self._current_slot = slot
 
     def finalize(self) -> None:
-        """Flush any remaining day counters (call once after iterating assignments)."""
+        """Flush the current slot's counters (call once after iterating assignments)."""
 
         if self.role_counts_day:
             for key, count in self.role_counts_day.items():
@@ -85,16 +150,36 @@ class SequencingTracker:
         machine_id: str,
         block_id: str,
         proposed_production: float,
+        shift_id: str | None = None,
     ) -> SequencingResult:
-        """Advance the sequencing state for a single assignment."""
+        """Advance the sequencing state for a single assignment.
 
-        self._roll_day(day)
+        Parameters
+        ----------
+        day:
+            Scenario day of the assignment.
+        machine_id, block_id:
+            Assigned machine and block.
+        proposed_production:
+            Planned production (m³); capped by remaining volume and staged upstream inventory.
+            A value ``<= SEQUENCING_TOLERANCE`` is an idle slot: no head-start/truckload check.
+        shift_id:
+            Shift label. Staged output is released when ``(day, shift_id)`` changes; omit it to
+            treat the whole day as one slot.
+
+        Returns
+        -------
+        SequencingResult
+            Capped production, machine role, the first violation reason (``unknown_role``,
+            ``forbidden_role``, ``missing_prereq``) and whether the block completed.
+        """
+
+        self._roll_slot(day, shift_id)
 
         bundle = self.ctx.bundle
         machine_roles = bundle.machine_roles
         allowed_roles = self.ctx.allowed_roles
         prereq_roles = self.ctx.prereq_roles
-        role_headstarts = self.ctx.role_headstarts
 
         role = machine_roles.get(machine_id)
         allowed = allowed_roles.get(block_id)
@@ -106,17 +191,15 @@ class SequencingTracker:
                 violation_reason = "forbidden_role"
 
         prereq_set = prereq_roles.get((block_id, role)) if role is not None else None
+        # Idle slot (no planned production): thresholds only bind a producing role (#125).
+        idle = proposed_production <= SEQUENCING_TOLERANCE
 
-        if prereq_set:
+        if prereq_set and not idle:
             assert role is not None
-            role_key = (block_id, role)
-            buffer = role_headstarts.get((block_id, role), 0.0)
-            if buffer > 0.0:
-                available_units = min(
-                    self.role_counts_total[(block_id, prereq)] for prereq in prereq_set
-                )
-                required_buffer = self.role_counts_total[role_key] + buffer
-                if available_units + 1e-9 < required_buffer:
+            buffer_volume = self.ctx.role_headstart_volume.get((block_id, role), 0.0)
+            if buffer_volume > 0.0 and not self._upstream_exhausted(block_id, prereq_set):
+                start_volume = self._slot_start_volume(block_id, prereq_set)
+                if start_volume + SEQUENCING_TOLERANCE < buffer_volume:
                     violation_reason = violation_reason or "missing_prereq"
                     self._record_violation(
                         block_id,
@@ -124,9 +207,9 @@ class SequencingTracker:
                         "missing_prereq",
                         day,
                         {
-                            "available_units": float(available_units),
-                            "buffer_requirement": float(required_buffer),
-                            "headstart_deficit": float(required_buffer - available_units),
+                            "available_volume": float(start_volume),
+                            "buffer_requirement": float(buffer_volume),
+                            "headstart_deficit": float(buffer_volume - start_volume),
                             "reason": "headstart",
                         },
                     )
@@ -146,15 +229,22 @@ class SequencingTracker:
                 self.role_inventory[(block_id, upstream_role)] for upstream_role in prereq_set
             )
             loader_requirement = 0.0
-            if (block_id, role) in self.ctx.loader_roles:
+            if (block_id, role) in self.ctx.loader_roles and not idle:
                 loader_requirement = min(
                     self.ctx.loader_batch_volume.get(block_id, 0.0),
                     self.remaining_work.get(block_id, 0.0),
                 )
-            required_volume = production_units
-            if loader_requirement > 0.0:
-                required_volume = max(required_volume, loader_requirement)
-            if available_volume + 1e-9 < required_volume:
+            shortfall: tuple[float, float] | None = None
+            if available_volume + SEQUENCING_TOLERANCE < production_units:
+                shortfall = (available_volume, production_units)
+            elif loader_requirement > 0.0:
+                # The truckload threshold applies to the volume staged at the start of the slot
+                # (E8 compares I(prev(s)) with the loader batch), not to what other machines of
+                # the same role have left in this slot.
+                start_volume = self._slot_start_volume(block_id, prereq_set)
+                if start_volume + SEQUENCING_TOLERANCE < loader_requirement:
+                    shortfall = (start_volume, loader_requirement)
+            if shortfall is not None:
                 violation_reason = violation_reason or "missing_prereq"
                 self._record_violation(
                     block_id,
@@ -162,17 +252,19 @@ class SequencingTracker:
                     "missing_prereq",
                     day,
                     {
-                        "available_volume": float(available_volume),
-                        "required_volume": float(required_volume),
+                        "available_volume": float(shortfall[0]),
+                        "required_volume": float(shortfall[1]),
                         "reason": "inventory",
                     },
                 )
             production_units = min(production_units, available_volume)
             for upstream_role in prereq_set:
                 key = (block_id, upstream_role)
+                consumed = min(production_units, self.role_inventory.get(key, 0.0))
                 self.role_inventory[key] = max(
                     0.0, self.role_inventory.get(key, 0.0) - production_units
                 )
+                self.role_consumed_slot[key] += consumed
 
         if explicit_block and role is not None:
             self.role_inventory_today[(block_id, role)] += production_units
@@ -180,13 +272,9 @@ class SequencingTracker:
         if role is not None:
             self.role_counts_day[(block_id, role)] += 1
 
-        deliverable = False
-        if block_id not in self.ctx.blocks_with_explicit_system:
-            deliverable = True
-        elif role is None:
-            deliverable = True
-        elif self._is_terminal_role(block_id, role):
-            deliverable = True
+        # ``_is_terminal_role`` is also True for blocks without an explicit system and for
+        # machines without a role, i.e. exactly when the output is delivered.
+        deliverable = self._is_terminal_role(block_id, role)
         if deliverable and production_units > 0:
             self.delivered_total += production_units
 
@@ -195,7 +283,7 @@ class SequencingTracker:
                 0.0, self.role_remaining[target_key] - production_units
             )
 
-        if self._is_terminal_role(block_id, role) or not target_key:
+        if deliverable or not target_key:
             if block_id in self.remaining_work:
                 self.remaining_work[block_id] = max(
                     0.0, self.remaining_work[block_id] - production_units
@@ -214,6 +302,30 @@ class SequencingTracker:
             machine_role=role,
             violation_reason=violation_reason,
             block_completed=block_completed,
+        )
+
+    def _slot_start_volume(self, block_id: str, prereq_set: frozenset[str]) -> float:
+        """Staged upstream volume available at the start of the current slot (min over roles)."""
+
+        return min(
+            self.role_inventory[(block_id, upstream_role)]
+            + self.role_consumed_slot.get((block_id, upstream_role), 0.0)
+            for upstream_role in prereq_set
+        )
+
+    def _upstream_exhausted(self, block_id: str, prereq_set: frozenset[str]) -> bool:
+        """``True`` when every upstream role finished its volume before the current slot (E8 waiver).
+
+        Output staged by an upstream role in the current slot (``role_inventory_today``) is added
+        back, so finishing the block in the same slot does not waive the head start: the MILP's
+        ``upstream_done`` indicator uses cumulative output up to the previous slot.
+        """
+
+        return all(
+            self.role_remaining.get((block_id, upstream_role), 0.0)
+            + self.role_inventory_today.get((block_id, upstream_role), 0.0)
+            <= SEQUENCING_TOLERANCE
+            for upstream_role in prereq_set
         )
 
     def _record_violation(
@@ -287,7 +399,18 @@ class SequencingTracker:
 
 
 def build_sequencing_tracker(problem: Problem) -> SequencingTracker:
-    """Create a sequencing tracker for the supplied problem."""
+    """Create a sequencing tracker for the supplied problem.
+
+    Parameters
+    ----------
+    problem:
+        Problem whose scenario (including any ``initial_state``) seeds the tracker state.
+
+    Returns
+    -------
+    SequencingTracker
+        Fresh tracker; see :class:`SequencingTracker` for the initial-state seeding rules.
+    """
 
     ctx = build_operational_problem(problem)
     return SequencingTracker(ctx=ctx)

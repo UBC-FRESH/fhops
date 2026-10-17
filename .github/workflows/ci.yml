@@ -12,8 +12,10 @@ permissions:
   pages: write
   id-token: write
 
+# One CI run per branch/PR: a newer push cancels the older run of the SAME ref only. (A single
+# global "pages" group used to make any push cancel every in-progress run on other branches.)
 concurrency:
-  group: "pages"
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -70,6 +72,19 @@ jobs:
 
       - name: Pytest
         run: pytest -m "not milp_refactor"
+
+      # tests/test_cli_* are skipped unless FHOPS_RUN_FULL_CLI_TESTS is set (tests/conftest.py).
+      # Run the operational-MILP, playback, and dataset (productivity/costing) CLI suites here
+      # (~15 s locally; the dataset suites add ~145 tests / ~4 s, #103). tests/cli/ already runs above.
+      - name: Pytest (operational MILP + playback + dataset CLI)
+        env:
+          FHOPS_RUN_FULL_CLI_TESTS: "1"
+        run: >-
+          pytest -m "not milp_refactor"
+          tests/test_cli_operational_mip.py
+          tests/test_cli_playback.py
+          tests/test_cli_playback_exports.py
+          tests/test_cli_dataset_*.py
 
       - name: Pre-commit hooks
         run: pre-commit run --all-files
@@ -180,6 +195,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+    # Pages deployments are serialised separately and never cancelled mid-deploy.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     steps:
       - name: Deploy history to GitHub Pages
         id: deployment

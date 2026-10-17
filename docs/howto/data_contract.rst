@@ -36,7 +36,9 @@ Each scenario references a set of CSV files. Required columns and notes:
 
    * - ``blocks.csv``
      - ``id``, ``landing_id``, ``work_required``
-     - Optional: ``earliest_start``/``latest_finish`` (defaults 1 / ``num_days``); stand metrics (``avg_stem_size_m3``, ``volume_per_ha_m3``, ``stem_density_per_ha``, ``ground_slope_percent``) plus optional uncertainty columns (``volume_per_ha_m3_sigma``, ``stem_density_per_ha_sigma``) are supported and default to Lahrsen (2025) BC ranges in synthetic bundles. Blocks may also specify ``harvest_system_id`` (must match a registry entry) and ``salvage_processing_mode`` (``standard_mill`` | ``portable_mill`` | ``in_woods_chipping``) so salvage presets and telemetry keep the ADV1N5 portable-mill vs. in-woods-chipping warnings aligned with the scenario data.
+     - ``work_required`` is the block's volume in m³ — the terminal delivered volume (e.g., loader
+       output) needed to finish the block, in the same units as ``production_rates.csv`` ``rate``;
+       it is not a machine-hour quantity. Optional: ``earliest_start``/``latest_finish`` (defaults 1 / ``num_days``); stand metrics (``avg_stem_size_m3``, ``volume_per_ha_m3``, ``stem_density_per_ha``, ``ground_slope_percent``) plus optional uncertainty columns (``volume_per_ha_m3_sigma``, ``stem_density_per_ha_sigma``) are supported and default to Lahrsen (2025) BC ranges in synthetic bundles. Blocks may also specify ``harvest_system_id`` (must match a registry entry) and ``salvage_processing_mode`` (``standard_mill`` | ``portable_mill`` | ``in_woods_chipping``) so salvage presets and telemetry keep the ADV1N5 portable-mill vs. in-woods-chipping warnings aligned with the scenario data.
 
    * - ``machines.csv``
      - ``id``
@@ -56,7 +58,8 @@ Each scenario references a set of CSV files. Required columns and notes:
 
    * - ``landings.csv``
      - ``id``
-     - ``daily_capacity`` defaults to 2, must be ≥ 0
+     - ``daily_capacity`` defaults to 2, must be ≥ 0; machines working the landing's blocks
+       concurrently per shift slot (hard limit unless ``objective_weights.landing_surplus`` > 0)
 
    * - ``calendar.csv``
      - ``machine_id``, ``day``
@@ -64,19 +67,33 @@ Each scenario references a set of CSV files. Required columns and notes:
 
    * - ``production_rates.csv``
      - ``machine_id``, ``block_id``, ``rate``
-     - ``rate`` ≥ 0; IDs must exist in machines/blocks
+     - ``rate`` ≥ 0, in m³ per shift assignment (per day in single-shift scenarios); IDs must
+       exist in machines/blocks
 
 Cross References & Validators
 ------------------------------
 
 The Pydantic models enforce consistency:
 
-- Blocks reference known landings; harvest-system IDs must exist (see :doc:`../reference/harvest_systems` for defaults).
+- Blocks reference known landings. A block's ``harvest_system_id`` must be a key of the scenario's
+  ``harvest_systems`` section or of the default registry
+  (:func:`fhops.scheduling.systems.default_system_registry`; see :doc:`../reference/harvest_systems`);
+  scenario systems are overlaid on the defaults, so a scenario that defines its own systems can still
+  use default ones. Enforced since 1.0.1 (FHOPS 1.0.0 never ran this check, see below).
 - Calendar and production rates must reference defined machines/blocks and lie within the
   scenario horizon.
 - Mobilisation distances must reference known blocks; mobilisation parameters must reference
   known machines.
 - Crew assignments (optional) require unique crew IDs and valid machine IDs.
+- Locked assignments reference known machines/blocks, lie inside the horizon and inside the
+  block's ``earliest_start``/``latest_finish`` window, avoid blackouts, and use known shift labels;
+  on blocks with a ``harvest_system_id`` the locked machine's role must be one of that system's
+  roles. A machine may have one day-level lock *or* distinct shift-level locks per day.
+- ``initial_state`` entries reference known blocks/machines, carry non-negative values, use roles of
+  the block's harvest system, keep every ``role_remaining`` value at or below the block's
+  ``work_required``, and point ``last_block_id`` at scenario blocks.
+
+See :ref:`contract-compatibility` for the inputs FHOPS 1.0.1 rejects that 1.0.0 accepted.
 
 Optional Extras
 ---------------
@@ -87,7 +104,11 @@ Recent helpers enable richer metadata:
 - ``GeoMetadata`` — optional GeoJSON paths and CRS tags for blocks/landings.
 - ``CrewAssignment`` — map crew identifiers to machines/roles for downstream planners.
 - ``TimelineConfig`` — shift definitions and blackout windows controlling daily availability.
-- ``ScheduleLock`` — pre-assign specific machine/block/day combinations (enforced in MIP & SA).
+- ``ScheduleLock`` — pre-assign specific machine/block/day (optionally day/shift) combinations
+  (enforced by the operational MILP, the legacy MIP builder, and the heuristics).
+- ``ScenarioInitialState`` — optional carried-in state (staged inventory, remaining role output,
+  head-start shift counts, last block per machine) for resuming mid-operation; see
+  :ref:`initial-state`.
 - ``ObjectiveWeights`` — tweak solver objective weighting (production, mobilisation penalties,
   transition counts, optional landing-cap slack penalties).
 - Round-the-clock operations — unless you override ``machines.csv`` or the calendar, FHOPS
@@ -128,6 +149,14 @@ Add a top-level ``timeline`` block in your scenario YAML to describe shifts and 
      days_per_week: 5
 
 The loader converts this into a ``TimelineConfig`` instance available via ``scenario.timeline``.
+
+Blackout windows are fleet-wide and inclusive: on every day from ``start_day`` to ``end_day`` no
+machine may work any slot of that day (every slot of the problem's shift grid on that day plus the
+machine's own ``shift_calendar`` shifts, also for machines without shift-calendar entries; days
+without grid slots fall back to every ``timeline.shifts`` name, otherwise ``S1``). The operational MILP treats these slots as unavailable
+(availability ``A_{m,s} = 0``), the heuristics never assign them, and locks may not fall inside
+them. Playback does not cancel work scheduled in a blackout (for example, from an external plan);
+it flags the record with ``blackout_hit``.
 
 Shift Calendars & Defaults
 --------------------------
@@ -171,7 +200,157 @@ Lock a machine to a block on a given day by adding ``locked_assignments``:
        block_id: B12
        day: 5
 
-Any attempt to reassign that machine/day is blocked in both the MIP builder and the SA heuristic.
+Any attempt to reassign that machine/day is blocked in the operational MILP
+(``solve-mip-operational``), the legacy MIP builder, the heuristics (SA/ILS/Tabu), and every
+rolling-horizon window that covers the day (``fhops plan rolling``). A lock
+without ``shift_id`` pins every available shift of that day to the block (all other blocks are
+fixed to zero for that machine). Add ``shift_id`` to lock a single slot in multi-shift scenarios:
+
+.. code-block:: yaml
+
+   locked_assignments:
+     - machine_id: YARDER1
+       block_id: B12
+       day: 5
+       shift_id: night
+
+``shift_id`` must be one of the scenario's shift labels, as returned by
+:meth:`fhops.scenario.contract.Scenario.shift_labels`: the ``shift_calendar`` labels when a shift
+calendar is present, otherwise the timeline shift names, otherwise ``{"S1"}`` (the single synthetic
+shift of day-indexed scenarios). Duplicate ``(machine, day, shift)`` locks and mixing a day-level
+lock with shift-level locks for the same machine/day are rejected. Locks must reference known
+machines and blocks, fall within ``1..num_days`` and within the block's
+``[earliest_start, latest_finish]`` window (``latest_finish`` defaults to ``num_days``), and avoid
+timeline blackout days. On a block with ``harvest_system_id`` the locked machine must have a role
+of that harvest system (a machine without a role is rejected too, because the operational MILP
+cannot assign it to such a block); blocks without ``harvest_system_id`` accept any machine.
+``load_scenario`` applies exactly the same checks to YAML ``locked_assignments`` as to locks
+passed to :class:`fhops.scenario.contract.Scenario` in Python (FHOPS 1.0.0 skipped them for YAML
+input).
+
+.. note::
+
+   Scenario files that use ``shift_id`` on a lock require ``fhops>=1.0.1``. FHOPS 1.0.0 silently
+   drops the field and treats the entry as a whole-day lock.
+
+.. _initial-state:
+
+Initial State (Resuming Mid-Operation)
+--------------------------------------
+
+``initial_state`` is an optional top-level YAML mapping (or the
+:class:`fhops.scenario.contract.ScenarioInitialState` model) that describes where operations stand
+at day 1 of the horizon. Typical uses are rolling-horizon windows and re-plans after part of the
+work is done; the rolling planner builds it for every window from the locked plan so far (see
+:doc:`rolling_horizon`). When it is omitted, the horizon starts from the same initial conditions as
+in FHOPS 1.0.0: no staged inventory, zero role shift counts, each role may output the block's full
+``work_required``, and machines have no prior position (their first move is free). Results are not
+guaranteed to match 1.0.0 even then, because 1.0.1 also fixes MILP/playback sequencing, blackouts in
+the MILP, stochastic playback events, empty-plan KPIs, and rolling-horizon state (see
+``docs/releases/v1.0.1.md``).
+
+.. note::
+
+   Scenario files that use ``initial_state`` require ``fhops>=1.0.1``. FHOPS 1.0.0 silently ignores
+   the section and plans from an empty state; ``schema_version`` stays ``1.0.0``.
+
+.. code-block:: yaml
+
+   initial_state:
+     blocks:
+       - block_id: B01
+         role_remaining:        # m³ the role may still output on this block
+           feller_buncher: 0.0
+           grapple_skidder: 150.0
+         staged_inventory:      # m³ output by the role, not yet consumed downstream
+           feller_buncher: 150.0
+           grapple_skidder: 60.0
+         role_shift_counts:     # shifts already worked (informational)
+           feller_buncher: 4
+           grapple_skidder: 2
+     machines:
+       - machine_id: H3
+         last_block_id: B02     # block occupied in the last worked slot
+
+Semantics:
+
+- **Terminal volume** still to deliver is ``Block.work_required`` itself (set it to the remaining
+  volume; finished blocks can stay in the scenario with ``work_required: 0`` so their ids remain
+  valid for mobilisation distances and ``last_block_id``).
+- ``staged_inventory`` is keyed by the role that *produced* the volume. A downstream role can
+  consume, at the start of the horizon, the minimum staged volume over its upstream roles (the
+  single upstream value for linear chains). The operational MILP uses that value as the first-slot
+  ``inventory_start`` and in the head-start check; the heuristics and playback sequencing tracker
+  start their per-role inventories from it and apply the same head-start check (staged volume at
+  the start of the slot against the buffer volume).
+- ``role_remaining`` caps each role's cumulative output (the tracker, greedy seed, and repair use it
+  as the initial remaining volume; the MILP enforces ``sum_s z[r,b,s] <= role_remaining``). Omitted
+  roles default to ``work_required``.
+- ``role_shift_counts`` is informational: it seeds the tracker's shift counters (reported by the
+  rolling-horizon carry-forward) but does not affect sequencing. Head-start buffers
+  (``role_headstart_shifts``) are enforced as staged volume in every solver and in playback
+  (see :doc:`system_sequencing`).
+- ``last_block_id`` makes the first move away from that block cost mobilisation (and a transition)
+  in the MILP objective (first slot), the heuristic score, and playback mobilisation KPIs.
+- Role keys are normalised like machine roles (``Feller-Buncher`` → ``feller_buncher``) and must be
+  roles of the block's harvest system; role-keyed state therefore requires ``harvest_system_id``.
+- ``role_remaining`` values may not exceed the block's ``work_required`` (tolerance 1e-6 m³): an
+  upstream role has always output at least as much as the terminal role, so it cannot have more
+  volume left than the block still has to deliver.
+
+Note that the operational MILP charges the boundary move only when the machine works in the first
+shift slot (consistent with its slot-to-slot transition variables), whereas the heuristics and
+playback charge it on the machine's first worked slot. The deprecated legacy builder
+(:func:`fhops.optimization.mip.builder.build_model`) does not model ``initial_state`` and warns
+when one is present; ``fhops solve-mip`` runs the operational MILP since 1.0.1.
+
+.. _contract-compatibility:
+
+Compatibility with FHOPS 1.0.0
+------------------------------
+
+``schema_version`` is unchanged (``1.0.0``) and every 1.0.1 addition is optional, but files are
+not interchangeable in both directions:
+
+- **Files that need 1.0.1.** Scenarios that use ``initial_state`` or ``locked_assignments[].shift_id``
+  require ``fhops>=1.0.1``. FHOPS 1.0.0 does not reject them: it ignores ``initial_state`` and reads a
+  shift lock as a whole-day lock, so it silently plans something else.
+- **Inputs 1.0.1 rejects at load.** FHOPS 1.0.0's ``load_scenario`` attached optional YAML sections
+  without cross-validation, so it accepted these inputs; most 1.0.0 commands then rejected the
+  invalid locks, duplicate crew ids, and superset distance tables later, when they built the
+  internal ``Problem``, while ``fhops plan rolling`` ran to completion with them (it dropped user
+  locks). FHOPS 1.0.0 had no window, role, harvest-system, or initial-state checks at all. In 1.0.1
+  ``load_scenario`` (and therefore every CLI command, including ``fhops validate``, the solvers,
+  ``eval-playback``, and ``fhops plan rolling``) raises a ``ValidationError`` at load for:
+
+  * locks on a timeline blackout day;
+  * locks that reference an unknown machine or block, or a day outside ``1..num_days``;
+  * duplicate locks for the same machine/day (or day/shift), and a day-level lock combined with
+    shift-level locks for the same machine/day;
+  * locks with an unknown ``shift_id`` (see :meth:`~fhops.scenario.contract.Scenario.shift_labels`);
+  * locks outside the block's ``earliest_start``/``latest_finish`` window (also rejected for
+    scenarios built in Python);
+  * locks on a block with ``harvest_system_id`` whose machine has no role or a role outside that
+    harvest system (also rejected in Python);
+  * mobilisation distance tables (``distance_csv``) that mention blocks not in the scenario — a
+    distance CSV covering a *superset* of the scenario's blocks must be trimmed;
+  * crew assignments or mobilisation ``machine_params`` that reference unknown machines, and
+    duplicate crew ids;
+  * invalid ``initial_state`` entries (unknown ids, roles outside the block's harvest system,
+    ``role_remaining`` above ``work_required``);
+  * blocks whose ``harvest_system_id`` is neither in the scenario's ``harvest_systems`` nor in the
+    default registry (also rejected in Python). FHOPS 1.0.0 had this check, but it never ran
+    (Pydantic validated ``blocks`` before ``harvest_systems`` was available), so such blocks loaded
+    and the solvers treated them inconsistently: the operational MILP gave the unknown system no
+    roles and could not harvest the block, while the heuristics and playback did not sequence it.
+    Register the system under ``harvest_systems`` (inline mapping or a ``data.harvest_systems``
+    YAML file) or use a registry id.
+
+  The 1.0.1 release was checked against every scenario in this repository and the companion BC case
+  study scenarios: all load to the same validated ``Scenario`` as under 1.0.0, except the repository's
+  own regression fixture (``tests/fixtures/regression/regression.yaml``), whose custom
+  ``ground_sequence`` system (feller → processor) was never registered; it is now defined in the
+  fixture's ``harvest_systems`` section.
 
 GeoJSON Ingestion & Distances
 -----------------------------
@@ -191,7 +370,7 @@ To generate mobilisation distances from geometries, run:
 
 .. code-block:: bash
 
-   fhops geo distances --blocks blocks.geojson --out mobilisation_distances.csv
+   fhops geo distances blocks.geojson --out mobilisation_distances.csv
 
 The command computes centroid-to-centroid distances (in metres) respecting the CRS. The
 resulting CSV aligns with the ``MobilisationConfig`` distance format and can be referenced

@@ -25,8 +25,19 @@ Key options:
     Non-improving iterations before perturbation/restart logic triggers (default: ``10``).
 
 ``--hybrid-use-mip`` / ``--hybrid-mip-time-limit``
-    Opt-in hybrid path that launches a time-boxed MIP solve once stalls exceed the limit. Results
-    are converted back into the heuristic schedule when feasible.
+    Opt-in hybrid path: each time stalls reach the limit, the operational MILP
+    (:func:`fhops.model.milp.driver.solve_operational_milp`, HiGHS, time-boxed by
+    ``--hybrid-mip-time-limit`` seconds, same objective weights as the ILS run) is solved with the
+    best ILS schedule as its incumbent — a genuine MIP start through Pyomo's ``appsi_highs``
+    interface (see :doc:`mip_warm_starts`). The MILP schedule replaces the ILS best only when it
+    scores higher under the heuristic objective, scored as planned (its ``production`` column and
+    idle locked slots, as playback does, via
+    :func:`fhops.optimization.heuristics.common.evaluate_assignments`; before #140 it was repaired
+    and scored at full rates, which charged spurious ``missing_prereq`` penalties); a MILP solve
+    without a solution keeps the ILS schedule. When an adopted MILP plan is still the best at the
+    end it is returned as planned (assignments include ``production``). (Before FHOPS 1.0.1 this
+    step solved the legacy day-level MIP without an incumbent, which is infeasible for scenarios
+    with loader roles; #104, #127.)
 
 ``--batch-neighbours`` / ``--parallel-workers``
     Reuse the batched neighbour generation/evaluation infrastructure from SA. Defaults keep the
@@ -41,6 +52,12 @@ ILS telemetry mirrors SA metadata (initial/best score, operator weights/stats) a
 * ``restarts`` – restarts triggered via hybrid or perturbation.
 * ``improvement_steps`` – count of local search improvements.
 * ``hybrid_use_mip`` / ``hybrid_mip_time_limit`` – hybrid configuration echoed for diagnostics.
+* ``hybrid_mip`` (result ``meta`` only, when the hybrid step is enabled) – one record per hybrid
+  MILP solve: ``iteration``, ``seed_score``, ``outcome``, ``objective``, ``solver_error``,
+  ``warm_start_accepted``, ``warm_start_seeded_slots``, ``hybrid_score`` (planned-production
+  score of the MILP plan, used for adoption), ``hybrid_rate_score`` (repaired plan at full rates,
+  the pre-#140 score; diagnostic) and ``adopted``; ``hybrid_mip_adopted_final`` tells whether the
+  returned plan is an adopted MILP plan.
 
 Benchmarks
 ----------

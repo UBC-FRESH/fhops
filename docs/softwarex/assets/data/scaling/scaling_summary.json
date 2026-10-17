@@ -4,26 +4,26 @@
     "blocks": 4,
     "machines": 2,
     "num_days": 112,
-    "assignments": 122.0,
-    "runtime_s": 31.67842185823247,
-    "objective": -75039.791
+    "assignments": 69.0,
+    "runtime_s": 20.68562389351428,
+    "objective": -39.791
   },
   {
     "tier": "medium",
     "blocks": 8,
     "machines": 4,
     "num_days": 112,
-    "assignments": 272.0,
-    "runtime_s": 83.58066941611469,
-    "objective": -261097.033
+    "assignments": 145.0,
+    "runtime_s": 45.8621434988454,
+    "objective": -97.033
   },
   {
     "tier": "large",
     "blocks": 16,
     "machines": 6,
     "num_days": 112,
-    "assignments": 317.0,
-    "runtime_s": 105.42369785439224,
-    "objective": -359224.711
+    "assignments": 295.0,
+    "runtime_s": 69.22300220001489,
+    "objective": -224.711
   }
 ]
