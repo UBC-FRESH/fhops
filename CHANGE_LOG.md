@@ -1,3 +1,21 @@
+# 2026-10-17 — P9 S4a: lazy candidate evaluation in the SA loop
+
+- The SA loop generated and evaluated every neighbour from `generate_neighbors` (up to ~7 per
+  iteration) and then broke at the first acceptance, discarding most evaluations. It now scores
+  candidates lazily, stopping at the first acceptance. The RNG order is unchanged (evaluation draws
+  no randomness), so every run is identical; only the discarded work is saved.
+- Benchmark ladder (200 iters, seed 42), objectives byte-identical to before:
+
+  | scenario | before | after | speedup |
+  |---|---|---|---|
+  | tiny7 | 281 | 580 | 2.1x |
+  | small21 | 72 | 167 | 2.3x |
+  | med42 | 21.2 | 44.4 | 2.1x |
+  | large84 | 2.2 | 3.4 | 1.5x |
+
+- Gates: `ruff format --check src tests`, `ruff check src tests`, `mypy src`, `pytest` all pass; the
+  pinned heuristic and initial-state regressions are unchanged.
+
 # 2026-10-17 — Merge v1.0.1 operational corrections into main (targets 1.1.0b1)
 
 - `main` (1.1.0a1, the tactical-operational extension) and `v1.0.1` (the operational corrections frozen for the accepted SoftwareX manuscript) were sibling lines from `d98fd10`; 38 v1.0.1 commits were absent from `main`, whose operational heuristics were byte-identical to the pre-1.0.1 ancestor.

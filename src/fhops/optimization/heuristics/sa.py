@@ -6,6 +6,7 @@ import math
 import random as _random
 import time
 from collections import deque
+from collections.abc import Iterable
 from contextlib import nullcontext
 from pathlib import Path
 from typing import Any
@@ -363,16 +364,23 @@ def solve_sa(
                 ctx,
                 batch_size=batch_size,
             )
-            evaluations = evaluate_candidates(
-                pb,
-                candidates,
-                ctx,
-                max_workers=max_workers if batch_size and batch_size > 1 else None,
-                limit_repairs_to_dirty=local_repairs,
-            )
+            # Evaluate candidates lazily, stopping at the first acceptance. The RNG order is
+            # unchanged (evaluation draws no randomness), so the run is identical to evaluating
+            # every candidate up front, but unused candidates are never scored. Batch mode keeps
+            # the parallel path because it exists to score a batch.
+            if batch_size and batch_size > 1 and max_workers and max_workers > 1:
+                scored: Iterable[tuple[Schedule, float]] = evaluate_candidates(
+                    pb,
+                    candidates,
+                    ctx,
+                    max_workers=max_workers,
+                    limit_repairs_to_dirty=local_repairs,
+                )
+            else:
+                scored = ((candidate, _score_schedule(candidate)[0]) for candidate in candidates)
             if workers_total:
-                current_workers_busy = min(workers_total, len(evaluations)) if evaluations else 0
-            for neighbor, neighbor_score in evaluations:
+                current_workers_busy = min(workers_total, len(candidates)) if candidates else 0
+            for neighbor, neighbor_score in scored:
                 proposals += 1
                 delta = neighbor_score - current_score
                 if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
