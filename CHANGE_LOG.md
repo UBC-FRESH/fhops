@@ -1,3 +1,15 @@
+# 2026-10-17 — P10.1/P10.2: block-separable scorer with an exact parity test
+
+- New `src/fhops/optimization/heuristics/incremental.py` with `score_separable`, which computes the
+  heuristic objective block by block (per-block sequencing replay plus per-machine mobilisation and
+  the per-(landing, shift) capacity term) instead of one global walk.
+- `tests/heuristics/test_incremental_parity.py` asserts `score_separable` equals `_score_plan` to
+  1e-9 on tiny7, small21, med42 and large84, on the greedy schedule and on schedules reached by the
+  real neighbour generator. It passes, so the decomposition is exact.
+- The from-scratch separable scorer is ~20 percent slower than the full scorer (med42 1.9 vs 1.6 ms;
+  large84 8.1 vs 6.5 ms); the win comes from caching per-block contributions and recomputing only
+  the blocks a move touches, which is the next task (P10.3-P10.6).
+
 # 2026-10-17 — P9 S4a: lazy candidate evaluation in the SA loop
 
 - The SA loop generated and evaluated every neighbour from `generate_neighbors` (up to ~7 per
