@@ -77,3 +77,17 @@ Performance page, changelog, and a close-out report.
   is why the parity test is about the final re-score, not the intermediate trajectory.
 - ws4's negative results transfer as guidance: native kernels are not needed until the Python cost is
   gone, and threads are a dead end for CPU-bound Python (GIL); processes are the lever.
+
+
+## Results so far (2026-10-17)
+
+| Task | Result |
+|---|---|
+| S1 harness | done; baseline tiny7 281, small21 72, med42 21.2, large84 2.2 evals/s |
+| S4a lazy candidate evaluation | **done, 2.1x** (tiny7 580, small21 167, med42 44.4, large84 3.4), objectives byte-identical |
+| S2 dirty-only repair default | measured: mixed (tiny7 1376, small21 144 worse, med42 47.9, large84 3.4). **Dropped**: needs a size gate, breaks pins, no consistent gain |
+| S3 nested-dict hot path | measured: slightly worse on every scenario (the per-call rebuild and two-level lookup cost more than the tuple hashes). **Reverted** |
+
+Remaining headroom is the per-move repair itself and the RNG shuffle (~18 percent, constrained by
+the pinned random stream). Both need a larger, separately scoped change (an incremental evaluator
+with parity tests) rather than a tweak. Stopped the side-quest after S4a.
