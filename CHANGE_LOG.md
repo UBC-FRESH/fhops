@@ -2,7 +2,7 @@
 
 - `cross_exchange` shuffled a materialised O(n^2) pair list (412 686 entries on large84), 32 percent
   of runtime. It now draws random distinct pairs up to `tries = 500`. This changes the SA random
-  stream, accepted in `notes/adr/0001-bounded-cross-exchange-random-stream.md`.
+  stream, accepted in `notes/adr/0003-bounded-cross-exchange-random-stream.md`.
 - Re-pinned the SA baselines with `scripts/regenerate_sa_baselines.py` (`*_v101.csv`,
   `sa_objective_v101`, `kpis_v101`); the v1.0.0 baselines are unchanged. Removed the `cross_exchange`
   case from the pre-#151 operator-parity test.

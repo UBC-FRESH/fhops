@@ -1,4 +1,4 @@
-# ADR 0001: the SA search may change its random stream for performance
+# ADR 0003: the SA search may change its random stream for performance
 
 Status: accepted on 2026-10-17 (G. Paradis).
 Date: 2026-10-17
