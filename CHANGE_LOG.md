@@ -1,3 +1,11 @@
+# 2026-10-17 — Merge v1.0.1 operational corrections into main (targets 1.1.0b1)
+
+- `main` (1.1.0a1, the tactical-operational extension) and `v1.0.1` (the operational corrections frozen for the accepted SoftwareX manuscript) were sibling lines from `d98fd10`; 38 v1.0.1 commits were absent from `main`, whose operational heuristics were byte-identical to the pre-1.0.1 ancestor.
+- Merged `feature/phase8-v101-maintenance` into `main` on `merge/v101-into-main`. 13 conflicts, resolved by taking v1.0.1 for the operational code, sequencing, playback, contract and the canonical labelled formulation docs; keeping main's tactical-operational extension; and unioning `cli/planning.py` (main's tactical command plus v1.0.1's exit codes).
+- Updated the Phase 5 formulation traceability test (`tests/test_operational_formulation_traceability.py`) to the labelled 1.0.1 formulation: it now checks the 46 mapping components that exist in `operational.py`, the `Implementation mapping (equation blocks to code)` heading, and the `Pyomo objects and rules` table header.
+- Bumped the version to `1.1.0b1`.
+- Gates: `ruff format --check src tests` (265 files), `ruff check src tests` (pass), `mypy src` (126 files, no issues), `pytest` (pass).
+
 # 2026-10-09 — Formulation markdown: no `\operatorname` (#161, part of #90)
 - GitHub's math renderer rejects `\operatorname` ("The following macros are not allowed"); the 23 uses (`\operatorname{prev}`) are written `\mathrm{prev}` in the markdown and mapped back by `export_docs_assets.py`; regenerated `.tex`/`.rst` byte-identical. No other macro in the file is on GitHub's block list.
 
