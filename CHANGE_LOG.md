@@ -1,3 +1,16 @@
+# 2026-10-17 — P10.3: bounded cross_exchange sampling (large84 1.7x)
+
+- `cross_exchange` shuffled a materialised O(n^2) pair list (412 686 entries on large84), 32 percent
+  of runtime. It now draws random distinct pairs up to `tries = 500`. This changes the SA random
+  stream, accepted in `notes/adr/0001-bounded-cross-exchange-random-stream.md`.
+- Re-pinned the SA baselines with `scripts/regenerate_sa_baselines.py` (`*_v101.csv`,
+  `sa_objective_v101`, `kpis_v101`); the v1.0.0 baselines are unchanged. Removed the `cross_exchange`
+  case from the pre-#151 operator-parity test.
+- Ladder (200 iters): tiny7 560, small21 187, med42 51.0, large84 5.7 evaluations/s. Against the
+  S4a baseline (580/167/44.4/3.4): large84 1.68x, med42 1.15x, small21 1.12x, tiny7 0.97x. Against
+  the original pre-S4a baseline (281/72/21.2/2.2): about 2.4-2.6x across the ladder.
+- Gates: 901 passed, 214 skipped; ruff and mypy clean.
+
 # 2026-10-17 — P10.2: incremental evaluator is exact on the example ladder
 
 - `SeparableEvaluator` in `incremental.py` caches each block's contribution and each slot's static

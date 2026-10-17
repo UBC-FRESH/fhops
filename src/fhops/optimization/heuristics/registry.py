@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bisect import bisect_right, insort
+from bisect import insort
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
@@ -578,10 +578,16 @@ class CoverageInjectionOperator:
 
 
 class CrossExchangeOperator:
-    """Exchange two assignments across machines/shifts to rebalance workload."""
+    """Exchange two assignments across machines/shifts to rebalance workload.
+
+    Pairs are drawn at random, up to ``tries`` attempts, instead of shuffling the whole
+    ``O(n^2)`` pair list. The random stream differs from the pre-1.1.0b2 shuffle; the search is
+    otherwise unchanged (the same checks and the same first-valid-pair acceptance).
+    """
 
     name: str = "cross_exchange"
     weight: float
+    tries: int = 500
 
     def __init__(self, weight: float = 0.0) -> None:
         self.weight = weight
@@ -598,18 +604,14 @@ class CrossExchangeOperator:
             for shift_key, block_id in machine_plan.items()
             if block_id is not None
         ]
-        if len(assignments) < 2:
-            return None
-        _shuffle(rng, assignments)
-        # Shuffle positions in ``combinations(assignments, 2)`` order instead of the pair tuples:
-        # same permutation and random draws without materialising every pair (#151).
         count = len(assignments)
-        row_start = [index * count - index * (index + 1) // 2 for index in range(count)]
-        order = list(range(count * (count - 1) // 2))
-        _shuffle(rng, order)
-        for position in order:
-            first = bisect_right(row_start, position) - 1
-            second = position - row_start[first] + first + 1
+        if count < 2:
+            return None
+        for _ in range(min(self.tries, count * (count - 1) // 2)):
+            first = rng.randrange(count)
+            second = rng.randrange(count - 1)
+            if second >= first:
+                second += 1
             machine_a, shift_a, block_a = assignments[first]
             machine_b, shift_b, block_b = assignments[second]
             if machine_a == machine_b:

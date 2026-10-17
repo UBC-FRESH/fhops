@@ -306,10 +306,11 @@ def test_operators_return_what_they_returned_before_151(
     machines = [machine.id for machine in pb.scenario.machines]
     choices: list[str | None] = [None, None, *BLOCKS]
     plan_rng = random.Random(100 + case)
+    # cross_exchange is excluded: since 1.1.0b2 it samples pairs with a bounded budget and a
+    # deliberate new random stream, so it no longer reproduces the pre-#151 shuffle.
     operators = [
         (BlockInsertionOperator(), BlockInsertionOperator()),
         (CoverageInjectionOperator(), CoverageInjectionOperator()),
-        (CrossExchangeOperator(), ReferenceCrossExchange()),
         (MobilisationShakeOperator(), MobilisationShakeOperator()),
     ]
     produced = dict.fromkeys((operator.name for operator, _reference in operators), 0)
