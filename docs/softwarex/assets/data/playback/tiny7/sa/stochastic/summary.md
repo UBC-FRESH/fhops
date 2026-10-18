@@ -1,16 +1,16 @@
 # Playback Summary
 
 - Samples: 50
-- Total production units: 756948.24
-- Total hours worked: 26256.00
-- Average utilisation (day-level): 0.35
-- Total mobilisation cost: 27258.88
+- Total production units: 798955.49
+- Total hours worked: 27350.49
+- Average utilisation (day-level): 0.36
+- Total mobilisation cost: 29282.00
 
 ## Top Machines by Utilisation
 
 |   sample_id | machine_id   |   total_hours |   available_hours |   production_units |   mobilisation_cost |   blackout_conflicts |   sequencing_violations |   utilisation_ratio |
 |------------:|:-------------|--------------:|------------------:|-------------------:|--------------------:|---------------------:|------------------------:|--------------------:|
-|          49 | H8           |            48 |                48 |            479.641 |               53.24 |                    0 |                       2 |                   1 |
+|          49 | H8           |            48 |                48 |            801.967 |               53.24 |                    0 |                       1 |                   1 |
 |           0 | H1           |            48 |                48 |           2415.62  |               53.24 |                    0 |                       0 |                   1 |
 |           0 | H2           |            48 |                48 |           1999.09  |               53.24 |                    0 |                       0 |                   1 |
 |           0 | H3           |            96 |                96 |           3970.51  |              106.48 |                    0 |                       0 |                   1 |

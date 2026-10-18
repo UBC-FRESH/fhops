@@ -30,6 +30,14 @@ jobs:
       - name: Build package
         run: hatch clean && hatch build
 
+      - name: Check artifacts for non-FHOPS or sensitive files
+        run: |
+          listing=$( (for f in dist/*.tar.gz; do tar tzf "$f"; done; for f in dist/*.whl; do unzip -Z1 "$f"; done) )
+          if echo "$listing" | grep -E '(^|/)config/|\.sqlite3$|\.djcache$|secret_key|(^|/)\.env$|\.pypirc$|reference-documents/'; then
+            echo "::error::Unexpected files in build artifacts (see #118)"
+            exit 1
+          fi
+
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
         with:

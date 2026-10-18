@@ -21,6 +21,9 @@ from fhops.optimization.heuristics.common import (
     evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
+    objective_weight_override_source,
+    record_objective_weight_overrides,
+    rescore_fresh,
     resolve_objective_weight_overrides,
 )
 from fhops.optimization.heuristics.registry import OperatorRegistry
@@ -120,12 +123,17 @@ def solve_tabu(
     watch_debug : bool, default=False
         When ``True`` include sequencing debug metadata in watch output (adds evaluation overhead).
     use_local_repairs : bool, default=False
-        Enable dirty-slot repairs while scoring neighbours. The final plan is always re-evaluated
-        with a full repair before reporting.
+        Enable dirty-slot repairs while scoring the initial schedule and neighbours. Approximate
+        mode (see :func:`solve_sa`): search scores can differ from a full evaluation of the same
+        plan. The final plan is always re-evaluated with a full repair before reporting. Before
+        1.0.1 the initial greedy schedule was always scored with dirty-slot repairs, even when
+        this flag was ``False`` (#131).
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
-        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 auto-apply a reduced
-        mobilisation weight to encourage exploration.
+        ``landing_surplus``). ``None`` keeps the scenario weights, except for the scenarios listed in
+        :data:`~fhops.optimization.heuristics.common.AUTO_OBJECTIVE_WEIGHT_OVERRIDES` (FHOPS
+        Tiny7/Small21: production 1.0, mobilisation 0.2, transitions 0.1, soft landing capacity
+        0.05), which are applied automatically and recorded in ``meta`` (#140).
     milp_objective : float | None, optional
         Reference MILP objective for reporting the current gap (best - MILP) in watch telemetry and
         result metadata. ``None`` skips gap reporting.
@@ -133,7 +141,8 @@ def solve_tabu(
     Returns
     -------
     dict
-        Dictionary with ``objective`` (float), ``assignments`` (pandas.DataFrame), and ``meta`` with
+        Dictionary with ``objective`` (float; fresh full evaluation of the returned schedule),
+        ``assignments`` (pandas.DataFrame), and ``meta`` with
         operator stats, acceptance counters, and optional ``telemetry_run_id``—matching the contract
         exposed by :func:`solve_sa` / :func:`solve_ils`.
     """
@@ -181,6 +190,9 @@ def solve_tabu(
         config_snapshot["milp_objective"] = float(milp_objective)
     if resolved_weight_overrides:
         config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
+        config_snapshot["objective_weight_overrides_source"] = objective_weight_override_source(
+            pb, objective_weight_overrides
+        )
     context_payload = dict(telemetry_context or {})
     scenario = pb.scenario
     timeline = getattr(scenario, "timeline", None)
@@ -245,9 +257,9 @@ def solve_tabu(
                 schedule,
                 ctx,
                 capture_debug=True,
-                limit_repairs_to_dirty=True,
+                limit_repairs_to_dirty=local_repairs,
             )
-        return evaluate_schedule(pb, schedule, ctx, limit_repairs_to_dirty=True), None
+        return evaluate_schedule(pb, schedule, ctx, limit_repairs_to_dirty=local_repairs), None
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = init_greedy_schedule(pb, ctx)
@@ -439,30 +451,11 @@ def solve_tabu(
         if watch_sink and last_iteration and last_emitted_step != last_iteration:
             emit_snapshot(last_iteration)
 
+        # Report a fresh full evaluation of the returned schedule (#131).
+        best, best_score, final_debug_stats = rescore_fresh(pb, best, ctx, debug_capture)
         if debug_capture:
-            best_score, best_debug_stats = evaluate_schedule_with_debug(
-                pb,
-                best,
-                ctx,
-                capture_debug=True,
-                limit_repairs_to_dirty=False,
-            )
-        else:
-            best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
+            best_debug_stats = final_debug_stats
         current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
-
-        if local_repairs:
-            if debug_capture:
-                best_score, best_debug_stats = evaluate_schedule_with_debug(
-                    pb,
-                    best,
-                    ctx,
-                    capture_debug=True,
-                    limit_repairs_to_dirty=False,
-                )
-            else:
-                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
-            current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
         rows = []
         for machine_id, plan in best.plan.items():
@@ -493,8 +486,9 @@ def solve_tabu(
         if milp_objective is not None:
             meta["milp_objective"] = float(milp_objective)
             meta["milp_gap"] = float(best_score - milp_objective)
-        if resolved_weight_overrides:
-            meta["objective_weight_overrides"] = resolved_weight_overrides
+        record_objective_weight_overrides(
+            meta, pb, objective_weight_overrides, resolved_weight_overrides
+        )
         meta["objective_weights"] = objective_weights_snapshot
         if operator_stats:
             meta["operators_stats"] = operator_stats

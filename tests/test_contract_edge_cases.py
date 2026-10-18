@@ -19,6 +19,11 @@ from fhops.scenario.io import load_scenario
 from fhops.scheduling.mobilisation import BlockDistance, MachineMobilisation, MobilisationConfig
 from fhops.scheduling.timeline.models import BlackoutWindow, ShiftDefinition, TimelineConfig
 
+# These tests exercise the deprecated legacy builder on purpose (#127).
+pytestmark = pytest.mark.filterwarnings(
+    "ignore::fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning"
+)
+
 
 def build_scenario(**overrides) -> Scenario:
     base = dict(

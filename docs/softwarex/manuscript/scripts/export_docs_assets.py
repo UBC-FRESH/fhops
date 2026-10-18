@@ -13,10 +13,29 @@ from __future__ import annotations
 
 import argparse
 import csv
+import re
 import subprocess
 import sys
 from collections.abc import Iterable, Sequence
 from pathlib import Path
+
+_GFM_DISPLAY_MATH = re.compile(r"^```math\n(.*?)\n```$", re.MULTILINE | re.DOTALL)
+_GFM_INLINE_MATH = re.compile(r"\$`(.+?)`\$")
+
+
+def gfm_math_to_pandoc(text: str) -> str:
+    """Translate GitHub math syntax (```math fences, $`...`$) to pandoc's $$...$$ / $...$."""
+    text = _GFM_DISPLAY_MATH.sub(lambda m: "$$\n" + _relations(m.group(1)) + "\n$$", text)
+    return _GFM_INLINE_MATH.sub(lambda m: "$" + _relations(m.group(1)) + "$", text)
+
+
+def _relations(math: str) -> str:
+    """Map GitHub-safe math back to the LaTeX source form.
+
+    GitHub double-escapes ``>``/``<`` (written ``\\gt``/``\\lt``) and rejects ``\\operatorname``
+    (written ``\\mathrm``).
+    """
+    return math.replace("\\gt ", ">").replace("\\lt ", "<").replace("\\mathrm{", "\\operatorname{")
 
 
 def run_pandoc(src: Path, target: Path, pandoc_format: str) -> None:
@@ -27,12 +46,15 @@ def run_pandoc(src: Path, target: Path, pandoc_format: str) -> None:
         "markdown",
         "-t",
         pandoc_format,
+        # Pin the line-wrapping so the output does not depend on the terminal width (pandoc's
+        # ``--wrap=auto`` default wraps to ``COLUMNS``, or 72 when not a TTY, which made the
+        # committed assets and the CI drift check disagree).
         "--columns=160",
-        str(src),
         "-o",
         str(target),
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+    source = gfm_math_to_pandoc(src.read_text(encoding="utf-8"))
+    result = subprocess.run(cmd, input=source, capture_output=True, text=True, check=False)
     if result.returncode != 0:
         raise RuntimeError(
             f"pandoc failed for {src} -> {target} ({pandoc_format}):\n"
@@ -212,11 +234,14 @@ def main() -> int:
         print("[export-docs] No Markdown snippets found.")
     else:
         for path in generated:
+            # ``--includes-dir``/``--rst-out-dir`` may point outside the repo (the drift check in
+            # ``scripts/check_formulation_assets.py`` renders into a temporary tree), so only
+            # shorten paths that are actually under the repo root.
             try:
-                display_path = path.relative_to(repo_root)
+                display = path.relative_to(repo_root)
             except ValueError:
-                display_path = path
-            print(f"[export-docs] Wrote {display_path}")
+                display = path
+            print(f"[export-docs] Wrote {display}")
 
     return 0
 

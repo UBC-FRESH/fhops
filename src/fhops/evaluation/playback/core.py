@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Callable, Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from fhops.scenario.contract import Problem
+from fhops.scenario.contract import Problem, Scenario
 
 if TYPE_CHECKING:  # pragma: no cover - import for typing only
     import pandas as pd
@@ -21,6 +21,7 @@ __all__ = [
     "run_playback",
     "summarise_shifts",
     "summarise_days",
+    "shift_hours_resolver",
 ]
 
 
@@ -35,7 +36,15 @@ class PlaybackConfig:
 
 @dataclass(slots=True)
 class PlaybackRecord:
-    """Atomic shift-level record produced by deterministic playback."""
+    """Atomic shift-level record produced by deterministic playback.
+
+    Notes
+    -----
+    ``hours_worked`` is the productive time of the machine-shift (hours); ``production_units``
+    is the delivered volume (m³) after sequencing caps. ``downtime`` flags machine-shifts hit
+    by stochastic downtime and ``downtime_hours`` stores the sampled hours lost (``None`` when
+    unknown, in which case summaries fall back to ``hours_worked``).
+    """
 
     day: int
     shift_id: str
@@ -51,6 +60,7 @@ class PlaybackRecord:
     weather_severity: float | None = None
     metadata: dict[str, object] = field(default_factory=dict)
     sample_id: int = 0
+    downtime_hours: float | None = None
 
 
 @dataclass(slots=True)
@@ -97,7 +107,16 @@ class DaySummary:
 
 @dataclass(slots=True)
 class PlaybackResult:
-    """Container grouping playback outputs."""
+    """Container grouping playback outputs.
+
+    Notes
+    -----
+    ``delivered_total`` is the volume (m³) delivered by terminal roles and
+    ``remaining_work_total`` the volume (m³) of ``Block.work_required`` still undelivered.
+    :func:`run_playback` always sets both from the sequencing tracker; for an empty plan
+    ``delivered_total == 0`` and ``remaining_work_total == sum(Block.work_required)`` (the field
+    defaults only apply to hand-built instances).
+    """
 
     records: Sequence[PlaybackRecord]
     shift_summaries: Sequence[ShiftSummary]
@@ -116,7 +135,33 @@ def run_playback(
     config: PlaybackConfig | None = None,
     sample_id: int = 0,
 ) -> PlaybackResult:
-    """Convert solver assignments into playback records and aggregated summaries."""
+    """Convert solver assignments into playback records and aggregated summaries.
+
+    Parameters
+    ----------
+    problem : fhops.scenario.contract.Problem
+        Problem wrapping the scenario being replayed (including any ``initial_state``).
+    assignments : pandas.DataFrame
+        Assignment rows accepted by :func:`~fhops.evaluation.playback.adapters.assignments_to_records`.
+        May be empty (no rows, no columns) or contain only ``assigned <= 0`` rows.
+    config : PlaybackConfig | None, default=None
+        Playback options; ``None`` uses :class:`PlaybackConfig` defaults.
+    sample_id : int, default=0
+        Identifier stamped on the summaries (stochastic playback sample index).
+
+    Returns
+    -------
+    PlaybackResult
+        Records, shift/day summaries, the tracker's ``sequencing_debug`` snapshot,
+        ``delivered_total`` and ``remaining_work_total`` (m³).
+
+    Notes
+    -----
+    An empty plan yields no records and no shift summaries; day summaries still list the
+    available hours of every scenario day (utilisation ``0``). ``delivered_total`` is ``0`` and
+    ``remaining_work_total`` equals ``sum(Block.work_required)`` (FHOPS ≤ 1.0.0 reported ``0``
+    remaining for an empty frame, which made a plan with no assignments look complete).
+    """
 
     cfg = config or PlaybackConfig()
     availability_map = _compute_shift_availability(problem, cfg)
@@ -127,14 +172,14 @@ def run_playback(
 
     # Materialise records since downstream summaries iterate multiple times.
     records: tuple[PlaybackRecord, ...] = tuple(record_iter)
-    sequencing_debug: dict[str, object] | None = None
     tracker = getattr(record_iter, "sequencing_tracker", None)
-    delivered_total = 0.0
-    remaining_work_total = 0.0
-    if tracker is not None:
-        sequencing_debug = tracker.debug_snapshot()
-        delivered_total = float(getattr(tracker, "delivered_total", 0.0) or 0.0)
-        remaining_work_total = float(sum(tracker.remaining_work.values()))
+    if tracker is None:  # pragma: no cover - assignments_to_records always attaches one
+        raise RuntimeError("assignments_to_records did not expose a sequencing tracker")
+    # The tracker exists even for an empty plan, so totals come from its state rather than
+    # from defaults (an empty plan must report the full work_required as remaining).
+    sequencing_debug: dict[str, object] | None = tracker.debug_snapshot()
+    delivered_total = float(tracker.delivered_total)
+    remaining_work_total = float(sum(tracker.remaining_work.values()))
 
     shift_summaries = tuple(
         summarise_shifts(
@@ -195,6 +240,12 @@ def summarise_shifts(
         (resulting in ``total_hours = 0`` but preserving the availability baseline).
     sample_id:
         Identifier propagated through stochastic playback so downstream aggregations can group rows.
+
+    Notes
+    -----
+    ``downtime_hours`` sums each downtime record's sampled ``downtime_hours`` (falling back to
+    ``hours_worked`` when the record carries no sampled value) and ``downtime_events`` counts
+    those records.
     """
 
     aggregates: dict[tuple[int, str, str], ShiftSummary] = {}
@@ -237,9 +288,13 @@ def summarise_shifts(
             summary.blackout_conflicts += 1
         if record.metadata.get("sequencing_violation"):
             summary.sequencing_violations += 1
-        if record.downtime and record.hours_worked is not None:
-            summary.downtime_hours += record.hours_worked
-            summary.downtime_events += 1
+        if record.downtime:
+            lost_hours = (
+                record.downtime_hours if record.downtime_hours is not None else record.hours_worked
+            )
+            if lost_hours is not None:
+                summary.downtime_hours += lost_hours
+                summary.downtime_events += 1
         if record.weather_severity:
             summary.weather_severity_total += float(record.weather_severity)
 
@@ -315,11 +370,83 @@ def summarise_days(
         yield day_summary
 
 
+def shift_hours_resolver(
+    scenario: Scenario,
+) -> Callable[[str, str, int], tuple[float | None, str | None]]:
+    """Build the lookup playback uses to assign hours to a machine-shift.
+
+    Parameters
+    ----------
+    scenario : fhops.scenario.contract.Scenario
+        Scenario providing optional ``timeline.shifts`` definitions, the optional
+        ``shift_calendar`` and machine ``daily_hours``.
+
+    Returns
+    -------
+    Callable[[str, str, int], tuple[float | None, str | None]]
+        Function ``(machine_id, shift_id, day) -> (hours, source)``:
+
+        * ``ShiftDefinition.hours`` of the matching ``timeline.shifts`` entry
+          (``source="shift_definition"``);
+        * otherwise the machine's ``daily_hours`` divided by the number of shifts the machine has
+          that day (``source="machine_daily_hours"``). The shift count is the number of distinct
+          ``shift_calendar`` shift IDs for ``(machine_id, day)`` (available or not); when the
+          machine has no calendar entry that day, the number of distinct shift IDs any machine has
+          that day; without a shift calendar, the number of ``timeline.shifts`` definitions; and
+          ``1`` otherwise (one shift per day, so ``daily_hours`` itself);
+        * ``(None, None)`` for an unknown machine.
+
+    Notes
+    -----
+    Deterministic playback (``hours_worked``), shift availability (utilisation denominators) and
+    the stochastic downtime event (lost fraction ``d / shift_hours``) all use this rule, so they
+    stay on one scale. FHOPS 1.0.0 used the full ``daily_hours`` for every shift of a multi-shift
+    day when no timeline definition matched, overstating hours (e.g. 3 × 24 h per machine-day).
+    Single-shift scenarios are unchanged.
+    """
+
+    machine_hours = {machine.id: machine.daily_hours for machine in scenario.machines}
+    shift_hours_map: dict[str, float] = {}
+    timeline_shift_count = 0
+    if scenario.timeline and scenario.timeline.shifts:
+        shift_hours_map = {
+            shift_def.name: shift_def.hours for shift_def in scenario.timeline.shifts
+        }
+        timeline_shift_count = len(shift_hours_map)
+    machine_day_shifts: dict[tuple[str, int], set[str]] = defaultdict(set)
+    day_shifts: dict[int, set[str]] = defaultdict(set)
+    for entry in scenario.shift_calendar or []:
+        machine_day_shifts[(entry.machine_id, entry.day)].add(entry.shift_id)
+        day_shifts[entry.day].add(entry.shift_id)
+    has_shift_calendar = bool(machine_day_shifts)
+
+    def shifts_on(machine_id: str, day: int) -> int:
+        if has_shift_calendar:
+            shifts = machine_day_shifts.get((machine_id, day)) or day_shifts.get(day)
+            return max(len(shifts), 1) if shifts else 1
+        return max(timeline_shift_count, 1)
+
+    def hours_for(machine_id: str, shift_id: str, day: int) -> tuple[float | None, str | None]:
+        if shift_id in shift_hours_map:
+            return shift_hours_map[shift_id], "shift_definition"
+        hours = machine_hours.get(machine_id)
+        if hours is not None:
+            count = shifts_on(machine_id, int(day))
+            return (hours / count if count > 1 else hours), "machine_daily_hours"
+        return None, None
+
+    return hours_for
+
+
 def _compute_shift_availability(
     problem: Problem,
     config: PlaybackConfig,
 ) -> dict[tuple[int, str, str], float]:
-    """Derive available hours per machine/day/shift from scenario data."""
+    """Derive available hours per machine/day/shift from scenario data.
+
+    Shift hours follow :func:`shift_hours_resolver` (timeline definition, else the machine's
+    ``daily_hours`` split over its shifts that day).
+    """
 
     scenario = problem.scenario
     machines = {machine.id: machine for machine in scenario.machines}
@@ -331,6 +458,7 @@ def _compute_shift_availability(
     shift_hours = {}
     if scenario.timeline and scenario.timeline.shifts:
         shift_hours = {shift_def.name: shift_def.hours for shift_def in scenario.timeline.shifts}
+    hours_for = shift_hours_resolver(scenario)
 
     availability: dict[tuple[int, str, str], float] = {}
 
@@ -347,7 +475,9 @@ def _compute_shift_availability(
                 continue
             hours = shift_hours.get(shift_entry.shift_id)
             if hours is None and config.infer_missing_shifts:
-                hours = machines[shift_entry.machine_id].daily_hours
+                hours, _source = hours_for(
+                    shift_entry.machine_id, shift_entry.shift_id, shift_entry.day
+                )
             if hours is None:
                 continue
             availability[(shift_entry.day, shift_entry.shift_id, shift_entry.machine_id)] = hours

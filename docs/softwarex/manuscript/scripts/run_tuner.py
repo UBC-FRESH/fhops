@@ -58,22 +58,17 @@ def main() -> int:
         synthetic_scenario,
     ]
 
-    fast_mode = os.environ.get("FHOPS_ASSETS_FAST", "0") == "1"
-    random_iters = "200"
-    grid_iters = "200"
-    bayes_trials = "15"
-    bayes_iters = "200"
-    ils_iters = "220"
-    tabu_iters = "1500"
-
-    if fast_mode:
-        random_iters = "120"
-        grid_iters = "120"
-        bayes_trials = "8"
-        bayes_iters = "120"
-        ils_iters = "160"
-        tabu_iters = "900"
-        print("[tuning] FAST mode enabled for tuner budgets", flush=True)
+    # Published budgets (manuscript Table 5, "iters=120"): the committed tuning assets were
+    # produced with these values, which used to be the FAST-mode branch while full mode used
+    # 200/200/15/200/220/1500. Both modes now use the published budgets (#131).
+    random_iters = "120"
+    grid_iters = "120"
+    bayes_trials = "8"
+    bayes_iters = "120"
+    ils_iters = "160"
+    tabu_iters = "900"
+    if os.environ.get("FHOPS_ASSETS_FAST", "0") == "1":
+        print("[tuning] FAST mode uses the published tuner budgets as well", flush=True)
 
     cmd: list[str] = [
         sys.executable,
@@ -122,8 +117,10 @@ def main() -> int:
         tabu_iters,
     ]
 
+    # Repo-relative scenario arguments (cwd = repo root): the tuning telemetry records them as
+    # given, so the committed runs.jsonl/runs.sqlite carry no checkout-specific paths (#144).
     for scenario_path in scenarios:
-        cmd.extend(["--scenario", str(scenario_path)])
+        cmd.extend(["--scenario", scenario_path.relative_to(repo_root).as_posix()])
 
     print(f"[tuning] Running condensed studies into {out_dir}")
     subprocess.run(cmd, cwd=repo_root, check=True)

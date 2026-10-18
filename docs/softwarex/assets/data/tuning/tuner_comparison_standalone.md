@@ -1,7 +1,7 @@
 | scenario | bundle | algorithm | best_objective | mean_objective | mean_runtime | delta_vs_best |
 | --- | --- | --- | --- | --- | --- | --- |
-| synthetic-small | standalone | bayes | -75039.791 | -75039.791 | 1.387 | 0.000 |
-| synthetic-small | standalone | grid | -75039.791 | -75039.791 | 1.347 | 0.000 |
-| synthetic-small | standalone | ils | -75039.791 | -75039.791 | 4.873 | 0.000 |
-| synthetic-small | standalone | random | -75039.791 | -75039.791 | 1.397 | 0.000 |
-| synthetic-small | standalone | tabu | -75039.791 | -75039.791 | 14.368 | 0.000 |
+| synthetic-small | standalone | bayes | -39.791 | -39.791 | 0.974 | 0.000 |
+| synthetic-small | standalone | grid | -39.791 | -39.791 | 0.944 | 0.000 |
+| synthetic-small | standalone | ils | -39.791 | -39.791 | 2.615 | 0.000 |
+| synthetic-small | standalone | random | -39.791 | -39.791 | 0.968 | 0.000 |
+| synthetic-small | standalone | tabu | -39.791 | -39.791 | 9.563 | 0.000 |

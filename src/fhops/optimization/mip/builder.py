@@ -1,12 +1,21 @@
-"""Pyomo builder for FHOPS MIP."""
+"""Pyomo builder for the legacy FHOPS day-level MIP (deprecated since 1.0.1, #127).
+
+The builder is kept importable for API compatibility only. It is infeasible for every scenario
+whose harvest system has a loader role with machines (see
+:mod:`fhops.optimization.mip.deprecation`), and no FHOPS solver uses it any more: ``solve_mip``,
+``fhops solve-mip``, ``fhops benchmark`` and the ILS hybrid step all run the operational MILP
+(:mod:`fhops.model.milp`).
+"""
 
 from __future__ import annotations
 
+import warnings
 from collections import defaultdict
 
 import pyomo.environ as pyo
 
 from fhops.optimization.mip.constraints.system_sequencing import apply_system_sequencing_constraints
+from fhops.optimization.mip.deprecation import LEGACY_BUILDER_MESSAGE, LegacyMipDeprecationWarning
 from fhops.optimization.operational_problem import build_operational_problem
 from fhops.scenario.contract import Problem
 from fhops.scheduling.mobilisation import MachineMobilisation, build_distance_lookup
@@ -15,7 +24,15 @@ __all__ = ["build_model"]
 
 
 def build_model(pb: Problem) -> pyo.ConcreteModel:
-    """Build the core FHOPS MIP model.
+    """Build the legacy FHOPS day-level MIP model (deprecated).
+
+    .. deprecated:: 1.0.1
+       Emits :class:`fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning`. The model is
+       infeasible whenever a block's harvest system has a loader role with machines (the
+       ``system_loader_buffer`` rows demand ``−batch`` m³ of buffer in the first shift), which
+       includes the bundled tiny7, small21 and med42 examples. Use the operational MILP
+       (:func:`fhops.model.milp.operational.build_operational_model`,
+       :func:`fhops.model.milp.driver.solve_operational_milp`).
 
     Parameters
     ----------
@@ -44,9 +61,23 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
 
     Any change to this function should be reflected in ``docs/howto/thesis_eval.rst`` and the MIP
     section of the API docs.
+
+    ``Scenario.locked_assignments`` are fixed on the assignment variables: a lock without
+    ``shift_id`` fixes every shift of its day, a lock with ``shift_id`` fixes only that slot.
+    ``Scenario.initial_state`` is **not** modelled by this legacy builder (a ``UserWarning`` is
+    emitted); use the operational MILP (:func:`fhops.model.milp.driver.solve_operational_milp`,
+    ``fhops solve-mip-operational``) when carrying state into a horizon.
     """
 
+    warnings.warn(LEGACY_BUILDER_MESSAGE, LegacyMipDeprecationWarning, stacklevel=2)
     sc = pb.scenario
+    if sc.initial_state is not None:
+        warnings.warn(
+            "Scenario.initial_state is ignored by the legacy MIP builder; use the operational "
+            "MILP (solve-mip-operational) to honour carried-in state.",
+            UserWarning,
+            stacklevel=2,
+        )
     system_ctx = build_operational_problem(pb)
 
     machines = [machine.id for machine in sc.machines]
@@ -81,7 +112,12 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
                         calendar_blackouts.add((machine.id, day, shift_id))
 
     locked_assignments = sc.locked_assignments or []
-    locked_lookup = {(lock.machine_id, lock.day): lock.block_id for lock in locked_assignments}
+    locked_slots: set[tuple[str, int, str]] = {
+        (lock.machine_id, day, shift_id)
+        for lock in locked_assignments
+        for day, shift_id in shift_tuples
+        if day == lock.day and (lock.shift_id is None or lock.shift_id == shift_id)
+    }
     windows = {block_id: sc.window_for(block_id) for block_id in sc.block_ids()}
 
     model = pyo.ConcreteModel()
@@ -205,7 +241,7 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     def mach_one_shift_rule(mdl, mach, day, shift_id):
         if (mach, day, shift_id) in calendar_blackouts:
             return sum(mdl.x[mach, blk, (day, shift_id)] for blk in mdl.B) == 0
-        if (mach, day) in locked_lookup:
+        if (mach, day, shift_id) in locked_slots:
             return pyo.Constraint.Skip
         available = shift_availability.get((mach, day, shift_id))
         if available is not None:
@@ -292,14 +328,17 @@ def build_model(pb: Problem) -> pyo.ConcreteModel:
     )
 
     for lock in locked_assignments:
-        for day, shift_id in model.S:
-            if day == lock.day:
-                allowed = shift_availability.get((lock.machine_id, day, shift_id), 1)
-                model.x[lock.machine_id, lock.block_id, (day, shift_id)].fix(1 if allowed else 0)
+        lock_slots = [
+            (day, shift_id)
+            for day, shift_id in model.S
+            if day == lock.day and (lock.shift_id is None or lock.shift_id == shift_id)
+        ]
+        for day, shift_id in lock_slots:
+            allowed = shift_availability.get((lock.machine_id, day, shift_id), 1)
+            model.x[lock.machine_id, lock.block_id, (day, shift_id)].fix(1 if allowed else 0)
         for other_blk in blocks:
             if other_blk != lock.block_id:
-                for day, shift_id in model.S:
-                    if day == lock.day:
-                        model.x[lock.machine_id, other_blk, (day, shift_id)].fix(0)
+                for day, shift_id in lock_slots:
+                    model.x[lock.machine_id, other_blk, (day, shift_id)].fix(0)
 
     return model

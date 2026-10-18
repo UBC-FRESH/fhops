@@ -47,13 +47,16 @@ Pipeline Overview
 
 3. **Run Baseline Solvers**
 
-   - **MIP (reference solution)**:
+   - **Operational MILP (reference solution)**:
 
      .. code-block:: bash
 
-        fhops solve-mip case_study/scenario.yaml \
+        fhops solve-mip-operational case_study/scenario.yaml \
           --out case_study/out/mip_solution.csv \
-          --driver auto --time-limit 1800
+          --time-limit 1800
+
+     Add ``--solver gurobi`` when a Gurobi licence is available. (``fhops solve-mip`` is a
+     deprecated alias that runs the same model since FHOPS 1.0.1.)
 
    - **Simulated Annealing (fast heuristic)**:
 
@@ -72,7 +75,7 @@ Pipeline Overview
 
    .. seealso::
 
-      :func:`fhops.cli.main.solve_mip_cmd`, :func:`fhops.cli.main.solve_heur_cmd`, :func:`fhops.cli.main.solve_ils_cmd`, and :func:`fhops.cli.main.solve_tabu_cmd` – each CLI entrypoint documents the complete option set, telemetry hooks, and solver-specific notes.
+      :func:`fhops.cli.main.solve_mip_operational_cmd`, :func:`fhops.cli.main.solve_heur_cmd`, :func:`fhops.cli.main.solve_ils_cmd`, and :func:`fhops.cli.main.solve_tabu_cmd` – each CLI entrypoint documents the complete option set, telemetry hooks, and solver-specific notes.
 
 4. **Evaluate KPIs & Mobilisation Spend**
 

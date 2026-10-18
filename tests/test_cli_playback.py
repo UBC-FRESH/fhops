@@ -108,6 +108,10 @@ def test_eval_playback_cli_stochastic(tmp_path: Path):
             str(samples),
             "--downtime-prob",
             "1.0",
+            "--downtime-mean",
+            "1000",
+            "--downtime-std",
+            "0",
             "--shift-out",
             str(shift_out),
             "--day-out",
@@ -119,11 +123,17 @@ def test_eval_playback_cli_stochastic(tmp_path: Path):
     shift_df = pd.read_csv(shift_out)
     day_df = pd.read_csv(day_out)
 
-    # All production zero due to downtime probability 1.0
+    # Every assignment loses its full shift (duration clipped to the shift length).
     assert pytest.approx(shift_df["production_units"].sum(), abs=1e-9) == 0.0
     assert pytest.approx(day_df["production_units"].sum(), abs=1e-9) == 0.0
 
-    assert shift_df.empty
+    # Cancelled shifts still report their lost hours instead of disappearing.
+    assignments = pd.read_csv(assignments_path)
+    assigned_rows = int((assignments.get("assigned", 1) > 0).sum())
+    assert not shift_df.empty
+    assert (shift_df["total_hours"] == 0.0).all()
+    assert (shift_df["downtime_hours"] > 0.0).all()
+    assert int(shift_df["downtime_events"].sum()) == assigned_rows * samples
 
     base = run_playback(
         Problem.from_scenario(load_scenario(scenario_path)),
@@ -131,6 +141,40 @@ def test_eval_playback_cli_stochastic(tmp_path: Path):
     )
     base_day_len = len(base.day_summaries)
     assert len(day_df) == base_day_len * samples
+
+
+def test_eval_playback_cli_partial_downtime(tmp_path: Path):
+    scenario_path = "examples/tiny7/scenario.yaml"
+    assignments_path = Path("tests/fixtures/playback/tiny7_assignments.csv")
+    shift_out = tmp_path / "shift_partial.csv"
+
+    result = runner.invoke(
+        app,
+        [
+            "eval-playback",
+            scenario_path,
+            "--assignments",
+            str(assignments_path),
+            "--samples",
+            "1",
+            "--downtime-prob",
+            "1.0",
+            "--downtime-mean",
+            "6",
+            "--downtime-std",
+            "0",
+            "--shift-out",
+            str(shift_out),
+        ],
+    )
+    assert result.exit_code == 0, result.stdout
+
+    shift_df = pd.read_csv(shift_out)
+    rows = len(pd.read_csv(assignments_path))
+    # tiny7 machines work 24 h shifts: 6 h of downtime per assignment, 18 h worked.
+    assert shift_df["downtime_hours"].sum() == pytest.approx(6.0 * rows)
+    assert shift_df["total_hours"].sum() == pytest.approx(18.0 * rows)
+    assert int(shift_df["downtime_events"].sum()) == rows
 
 
 def test_eval_playback_cli_landing(tmp_path: Path):

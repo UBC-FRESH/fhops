@@ -290,7 +290,14 @@ class BlackoutBias:
 
 @dataclass
 class SyntheticDatasetConfig:
-    """Configuration for generating random synthetic datasets."""
+    """Configuration for generating random synthetic datasets.
+
+    Notes
+    -----
+    ``work_required`` and ``production_rate`` are sampling ranges in m³ (block volume to deliver
+    and volume per shift assignment), matching ``Block.work_required`` and
+    ``ProductionRate.rate``; ``shift_hours`` and ``machine_daily_hours`` are hours.
+    """
 
     name: str
     num_blocks: tuple[int, int] | int
@@ -517,6 +524,11 @@ TIER_DEFAULTS: dict[str, dict[str, object]] = {
     },
 }
 
+# Landing shocks start independently per landing and calendar day (FHOPS >= 1.0.1), so the expected
+# fraction of landing-days under a shock is 1 - (1 - probability) ** duration_days. The tier
+# presets target ~5 % (medium: 1 - 0.975**2 = 0.0494) and ~10 % (large: 1 - 0.965**3 = 0.1014)
+# shocked landing-days. FHOPS 1.0.0 used probability 0.18/0.25 with the per-assignment-row rule;
+# under per-landing-day semantics those values would shock 32.8 % / 57.8 % of landing-days.
 SAMPLING_PRESETS: dict[str, dict[str, object]] = {
     "small": {
         "samples": 6,
@@ -541,7 +553,7 @@ SAMPLING_PRESETS: dict[str, dict[str, object]] = {
         },
         "landing": {
             "enabled": True,
-            "probability": 0.18,
+            "probability": 0.025,
             "capacity_multiplier_range": (0.45, 0.75),
             "duration_days": 2,
         },
@@ -563,7 +575,7 @@ SAMPLING_PRESETS: dict[str, dict[str, object]] = {
         },
         "landing": {
             "enabled": True,
-            "probability": 0.25,
+            "probability": 0.035,
             "capacity_multiplier_range": (0.35, 0.7),
             "duration_days": 3,
         },
@@ -571,11 +583,56 @@ SAMPLING_PRESETS: dict[str, dict[str, object]] = {
 }
 
 
+_DEPRECATED_SAMPLING_FIELDS: dict[str, Any] = {
+    "downtime": {"seed_offset"},
+    "weather": {"seed_offset", "correlated_days"},
+    "landing": {"seed_offset"},
+}
+
+
+def sampling_config_dump(config: SamplingConfig) -> dict[str, Any]:
+    """Dump a :class:`SamplingConfig` without its deprecated, ignored fields.
+
+    Parameters
+    ----------
+    config : SamplingConfig
+        Configuration to serialise.
+
+    Returns
+    -------
+    dict[str, Any]
+        ``config.model_dump()`` without ``weather.correlated_days`` and the per-event
+        ``seed_offset`` (both deprecated in FHOPS 1.0.1 and ignored by playback). Used for the
+        preset merge in :func:`sampling_config_for` and for the ``sampling_config`` entry of the
+        generated ``metadata.yaml``.
+    """
+
+    return config.model_dump(exclude=_DEPRECATED_SAMPLING_FIELDS)
+
+
 def sampling_config_for(config: SyntheticDatasetConfig) -> SamplingConfig:
+    """Return the stochastic playback configuration for a synthetic dataset tier.
+
+    Parameters
+    ----------
+    config : SyntheticDatasetConfig
+        Dataset configuration; ``tier`` selects a :data:`SAMPLING_PRESETS` entry (``small``,
+        ``medium``, ``large``; unknown tiers keep the defaults) and ``sampling_overrides`` is
+        deep-merged on top.
+
+    Returns
+    -------
+    SamplingConfig
+        ``SamplingConfig(samples=10)`` updated with the tier preset and overrides. Landing-shock
+        presets are calibrated for per-landing-day shocks: the expected fraction of shocked
+        landing-days is ``1 - (1 - probability) ** duration_days`` (medium ≈ 4.9 %, large ≈
+        10.1 %; the default config gives ``0.1``). Deprecated fields (``correlated_days``,
+        ``seed_offset``) are dropped before re-validation, so no deprecation warning is emitted.
+    """
     base = SamplingConfig(samples=10)
     tier_key = (config.tier or "").lower()
     preset_updates = SAMPLING_PRESETS.get(tier_key, {})
-    data = base.model_dump()
+    data = sampling_config_dump(base)
     if preset_updates:
         data = _deep_merge(data, preset_updates)
     if config.sampling_overrides:
@@ -981,7 +1038,7 @@ def generate_random_dataset(
             }
             for bias in blackout_biases
         ],
-        "sampling_config": sampling_config.model_dump(),
+        "sampling_config": sampling_config_dump(sampling_config),
     }
 
     return SyntheticDatasetBundle(

@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 
 from fhops.cli.main import app
@@ -145,3 +147,49 @@ def test_solve_mip_operational_incumbent(monkeypatch, tmp_path):
     assert result.exit_code == 0, cli_text(result)
     assert isinstance(captured["incumbent"], pd.DataFrame)
     assert len(captured["incumbent"]) == 2
+
+
+def test_solve_mip_operational_incumbent_highs_warm_start(tmp_path):
+    """Regression for #99: --incumbent with HiGHS must warm start instead of raising TypeError."""
+
+    runner = CliRunner()
+    cold_path = tmp_path / "tiny7_cold.csv"
+    cold = runner.invoke(
+        app,
+        [
+            "solve-mip-operational",
+            "examples/tiny7/scenario.yaml",
+            "--out",
+            str(cold_path),
+            "--time-limit",
+            "60",
+        ],
+    )
+    assert cold.exit_code == 0, cli_text(cold)
+
+    warm_path = tmp_path / "tiny7_warm.csv"
+    telemetry_log = tmp_path / "telemetry.jsonl"
+    warm = runner.invoke(
+        app,
+        [
+            "solve-mip-operational",
+            "examples/tiny7/scenario.yaml",
+            "--out",
+            str(warm_path),
+            "--time-limit",
+            "5",
+            "--incumbent",
+            str(cold_path),
+            "--telemetry-log",
+            str(telemetry_log),
+        ],
+    )
+    text = cli_text(warm)
+    assert warm.exit_code == 0, text
+    assert "Warm start: method=appsi_highs" in text
+    assert "(accepted)" in text
+    assert "MIP start solution is feasible" in text
+    assert not pd.read_csv(warm_path).empty
+
+    record = json.loads(telemetry_log.read_text(encoding="utf-8").splitlines()[-1])
+    assert record["extra"]["warm_start"]["accepted"] is True

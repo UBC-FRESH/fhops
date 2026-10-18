@@ -5,7 +5,7 @@ ASSETS_SCRIPT=scripts/generate_assets.sh
 ELSARTICLE_CLS=elsarticle/elsarticle.cls
 LATEX_ENV=TEXINPUTS=.:elsarticle//: BSTINPUTS=.:elsarticle//:
 
-.PHONY: all assets pdf clean default manuscript-benchmarks manuscript-benchmarks-fast
+.PHONY: all assets pdf clean default manuscript-benchmarks manuscript-benchmarks-fast verify-assets-hash
 
 all: clean assets pdf
 
@@ -17,6 +17,9 @@ manuscript-benchmarks:
 
 manuscript-benchmarks-fast:
 	FHOPS_ASSETS_FAST=1 bash scripts/run_manuscript_benchmarks.sh
+
+verify-assets-hash:
+	python scripts/asset_hash.py verify
 
 pdf: $(PDF)
 

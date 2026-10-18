@@ -17,6 +17,12 @@ SCENARIOS = [
 SOLVERS = ("sa", "ils")
 MODES = ("deterministic", "stochastic")
 COLORS = {"deterministic": "#4c72b0", "stochastic": "#dd8452"}
+# The manuscript (elsarticle preprint, 12pt) includes the figure at \linewidth = 390 pt (5.4 in).
+# Drawing at that width (minus the saved padding) keeps the scale factor >= 1, so FONT_SIZE is the
+# minimum printed text size; wider journal layouts only enlarge it.
+FIGSIZE_IN = (5.35, 2.4)
+FONT_SIZE = 9
+SAVE_PAD_IN = 0.02
 
 
 def parse_args() -> argparse.Namespace:
@@ -42,15 +48,20 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_utilisation(day_csv: Path, mode: str) -> tuple[float, float]:
+def load_utilisation(day_csv: Path, mode: str) -> tuple[float, float, int]:
+    """Return mean/std day-level utilisation and the number of samples in ``day_csv``.
+
+    Deterministic runs report the mean of ``utilisation_ratio`` over all days (std 0). Stochastic
+    runs average each sample's days first, then report the mean and population std across samples.
+    """
     df = pd.read_csv(day_csv)
     if mode == "deterministic":
         mean = df["utilisation_ratio"].mean()
-        return mean, 0.0
+        return mean, 0.0, 1
     grouped = df.groupby("sample_id")["utilisation_ratio"].mean()
     mean = grouped.mean()
     std = grouped.std(ddof=0)
-    return mean, std
+    return mean, std, int(grouped.size)
 
 
 def collect_metrics(playback_dir: Path) -> pd.DataFrame:
@@ -61,7 +72,7 @@ def collect_metrics(playback_dir: Path) -> pd.DataFrame:
                 day_csv = playback_dir / slug / solver / mode / "day.csv"
                 if not day_csv.exists():
                     continue
-                mean, std = load_utilisation(day_csv, mode)
+                mean, std, samples = load_utilisation(day_csv, mode)
                 records.append(
                     {
                         "Scenario": label,
@@ -69,6 +80,7 @@ def collect_metrics(playback_dir: Path) -> pd.DataFrame:
                         "mode": mode,
                         "mean_util": mean,
                         "std_util": std,
+                        "samples": samples,
                     }
                 )
     if not records:
@@ -77,42 +89,83 @@ def collect_metrics(playback_dir: Path) -> pd.DataFrame:
 
 
 def plot(df: pd.DataFrame, out_path: Path) -> None:
-    scenarios = df["Scenario"].unique()
-    fig, axes = plt.subplots(1, len(scenarios), figsize=(12, 4), sharey=True)
-    if len(scenarios) == 1:
-        axes = [axes]
+    """Draw one panel per scenario sized for the manuscript text width (``FIGSIZE_IN``).
 
-    for ax, scenario in zip(axes, scenarios):
-        sub = df[df["Scenario"] == scenario]
-        x_positions = range(len(SOLVERS))
-        width = 0.35
-        for idx, mode in enumerate(MODES):
-            offset = (idx - 0.5) * width
-            mode_data = sub[sub["mode"] == mode]
-            ax.bar(
-                [x + offset for x in x_positions],
-                mode_data["mean_util"],
-                width=width,
-                color=COLORS[mode],
-                label=mode.capitalize() if scenario == scenarios[0] else "",
-                yerr=mode_data["std_util"],
-                capsize=3 if mode == "stochastic" else 0,
-            )
-        ax.set_xticks(list(x_positions))
-        ax.set_xticklabels(SOLVERS)
-        ax.set_ylim(0, 1.05)
-        ax.set_title(scenario)
-        ax.grid(axis="y", linestyle="--", alpha=0.4)
+    All text is set at ``FONT_SIZE`` points at print size, the legend sits in one row above the
+    panels (inside the saved canvas), and no suptitle is drawn because the manuscript caption
+    describes the figure.
+    """
+    scenarios = list(df["Scenario"].unique())
+    solvers = [solver.upper() for solver in SOLVERS]
+    stochastic_samples = df.loc[df["mode"] == "stochastic", "samples"]
+    stochastic_label = "Stochastic (mean ± SD"
+    if not stochastic_samples.empty and stochastic_samples.nunique() == 1:
+        stochastic_label += f", n = {int(stochastic_samples.iloc[0])}"
+    stochastic_label += ")"
+    labels = {"deterministic": "Deterministic", "stochastic": stochastic_label}
 
-    axes[0].set_ylabel("Mean utilisation")
-    fig.suptitle("Playback robustness: deterministic vs stochastic utilisation")
-    fig.legend(loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.05))
-    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    with plt.rc_context(
+        {
+            "font.size": FONT_SIZE,
+            "axes.titlesize": FONT_SIZE,
+            "axes.labelsize": FONT_SIZE,
+            "xtick.labelsize": FONT_SIZE,
+            "ytick.labelsize": FONT_SIZE,
+            "legend.fontsize": FONT_SIZE,
+        }
+    ):
+        fig, axes = plt.subplots(
+            1, len(scenarios), figsize=FIGSIZE_IN, sharey=True, layout="constrained"
+        )
+        if len(scenarios) == 1:
+            axes = [axes]
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=300)
-    fig.savefig(out_path.with_suffix(".pdf"))
-    plt.close(fig)
+        width = 0.38
+        x_positions = list(range(len(solvers)))
+        for ax, scenario in zip(axes, scenarios):
+            sub = df[df["Scenario"] == scenario]
+            for idx, mode in enumerate(MODES):
+                offset = (idx - 0.5) * width
+                mode_data = sub[sub["mode"] == mode].set_index("solver").reindex(solvers)
+                ax.bar(
+                    [x + offset for x in x_positions],
+                    mode_data["mean_util"],
+                    width=width,
+                    color=COLORS[mode],
+                    label=labels[mode],
+                    yerr=mode_data["std_util"] if mode == "stochastic" else None,
+                    capsize=3 if mode == "stochastic" else 0,
+                    error_kw={"elinewidth": 1.0, "capthick": 1.0},
+                    zorder=2,
+                )
+            ax.set_xticks(x_positions)
+            ax.set_xticklabels(solvers)
+            ax.set_xlim(-0.6, len(solvers) - 0.4)
+            ax.set_ylim(0, 1.0)
+            ax.set_title(scenario)
+            ax.grid(axis="y", linestyle="--", alpha=0.4, zorder=0)
+            ax.set_axisbelow(True)
+
+        axes[0].set_ylabel("Mean day-level utilisation")
+        handles, legend_labels = axes[0].get_legend_handles_labels()
+        legend = fig.legend(
+            handles,
+            legend_labels,
+            loc="outside upper center",
+            ncol=len(MODES),
+            frameon=False,
+        )
+
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        save_kwargs = {
+            "bbox_inches": "tight",
+            "bbox_extra_artists": [legend],
+            "pad_inches": SAVE_PAD_IN,
+        }
+        fig.savefig(out_path, dpi=300, **save_kwargs)
+        # Drop the PDF creation timestamp so reruns on unchanged data are byte-identical.
+        fig.savefig(out_path.with_suffix(".pdf"), metadata={"CreationDate": None}, **save_kwargs)
+        plt.close(fig)
 
 
 def main() -> int:

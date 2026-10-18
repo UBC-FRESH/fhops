@@ -6,6 +6,7 @@ import math
 import random as _random
 import time
 from collections import deque
+from collections.abc import Iterable
 from contextlib import nullcontext
 from pathlib import Path
 from typing import Any
@@ -15,14 +16,20 @@ import pandas as pd
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics.common import (
     Schedule,
+    _repair_schedule_cover_blocks,
+    _score_plan,
     build_watch_metadata_from_debug,
     evaluate_candidates,
     evaluate_schedule,
     evaluate_schedule_with_debug,
     generate_neighbors,
     init_greedy_schedule,
+    objective_weight_override_source,
+    record_objective_weight_overrides,
+    rescore_fresh,
     resolve_objective_weight_overrides,
 )
+from fhops.optimization.heuristics.cooling import AdaptiveCooling, AdaptiveSchedule
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.operational_problem import (
     build_operational_problem,
@@ -108,6 +115,13 @@ def solve_sa(
     use_local_repairs: bool = False,
     objective_weight_overrides: dict[str, float] | None = None,
     milp_objective: float | None = None,
+    pre_repair: bool = True,
+    commitment_front: float = 0.0,
+    incremental_repair: bool = True,
+    adaptive_cooling: bool = False,
+    cooling_window: int | None = None,
+    cooling_initial_acceptance: float = 0.9,
+    cooling_delta: float = 0.1,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -130,6 +144,21 @@ def solve_sa(
         Maximum worker threads for evaluating batched neighbours. ``None``/``<=1`` keeps sequential scoring.
     cooling_rate : float, default=0.999
         Multiplicative cooling factor applied each iteration (0 < rate < 1). Larger values cool more slowly.
+        Ignored when ``adaptive_cooling`` is set.
+    adaptive_cooling : bool, default=False
+        Use the Aarts and Van Laarhoven (1985) adaptive temperature schedule instead of geometric
+        cooling. The first ``cooling_window`` iterations are a warm-up (every move accepted) that sets
+        the initial temperature from the average uphill move; the temperature is then decremented from
+        the spread of the scores seen. Tunes itself to the scenario.
+    cooling_window : int | None, optional
+        Iterations per temperature under ``adaptive_cooling``. ``None`` auto-scales to ``64`` capped
+        at half of ``iters``.
+    cooling_initial_acceptance : float, default=0.9
+        Acceptance ratio the adaptive warm-up targets when setting the initial temperature
+        (``(0, 1)``). Ignored unless ``adaptive_cooling`` is set.
+    cooling_delta : float, default=0.1
+        Distance from stationarity the adaptive decrement allows (positive). Ignored unless
+        ``adaptive_cooling`` is set.
     restart_interval : int | None, optional
         Number of consecutive non-accepting iterations before restarting from the greedy seed. ``None`` auto-scales
         to ``max(1000, iters / 5)``.
@@ -148,12 +177,22 @@ def solve_sa(
     watch_debug : bool, default=False
         When ``True`` capture sequencing debug stats for watch snapshots (adds overhead).
     use_local_repairs : bool, default=False
-        When ``True`` repairs only the slots touched by a candidate before scoring. The
-        final schedule is always re-scored with a full repair before reporting.
+        When ``True`` repairs only the slots touched by a candidate before scoring. This is an
+        approximate mode: the dirty-slot repair does not refill every idle slot, so a candidate's
+        search score can differ from a full evaluation of the same plan. The final schedule is
+        always re-scored with a full repair before reporting.
+    incremental_repair : bool, default=True
+        Resume each candidate's repair from the accepted schedule's per-slot state at its earliest
+        changed slot instead of repairing the whole horizon. Provably identical to the full repair
+        and faster on large scenarios (~1.15x on large84); it falls back to the full repair
+        automatically in the modes where that equivalence is not guaranteed (``batch_size`` with
+        parallel workers, ``pre_repair=False``, or ``use_local_repairs=True``).
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
-        ``landing_surplus``). ``None`` keeps scenario defaults, but Tiny7/Small21 scenarios auto-apply
-        a reduced mobilisation weight to encourage exploration.
+        ``landing_surplus``). ``None`` keeps the scenario weights, except for the scenarios listed in
+        :data:`~fhops.optimization.heuristics.common.AUTO_OBJECTIVE_WEIGHT_OVERRIDES` (FHOPS
+        Tiny7/Small21: production 1.0, mobilisation 0.2, transitions 0.1, soft landing capacity
+        0.05), which are applied automatically and recorded in ``meta`` (#140).
     milp_objective : float | None, optional
         Reference MILP objective used for gap reporting (best - MILP) in watch/telemetry output.
         ``None`` skips gap metrics.
@@ -164,7 +203,8 @@ def solve_sa(
         Dictionary with the following keys:
 
         ``objective`` (float)
-            Best objective value achieved during the run (higher is better).
+            Fresh :func:`~fhops.optimization.heuristics.common.evaluate_schedule` score of the
+            returned schedule (higher is better); it equals a re-evaluation of ``assignments``.
         ``assignments`` (pandas.DataFrame)
             Assignment matrix with columns ``machine_id, block_id, day, shift_id, assigned``.
         ``meta`` (dict[str, Any])
@@ -205,6 +245,18 @@ def solve_sa(
         else max(1000, iters // 5 or 200)
     )
 
+    adaptive_window = AdaptiveSchedule.effective_window(iters, cooling_window)
+    adaptive_schedule = (
+        AdaptiveSchedule(
+            window=adaptive_window,
+            rule=AdaptiveCooling(
+                initial_acceptance=cooling_initial_acceptance, delta=cooling_delta
+            ),
+        )
+        if adaptive_cooling
+        else None
+    )
+
     resolved_weight_overrides = resolve_objective_weight_overrides(pb, objective_weight_overrides)
     if resolved_weight_overrides is not None:
         resolved_weight_overrides = dict(resolved_weight_overrides)
@@ -227,6 +279,7 @@ def solve_sa(
         "batch_size": batch_size,
         "max_workers": max_workers,
         "cooling_rate": cooling_rate,
+        "adaptive_cooling": adaptive_cooling,
         "restart_interval": restart_interval_value,
         "operators": registry.weights(),
     }
@@ -234,6 +287,9 @@ def solve_sa(
         config_snapshot["milp_objective"] = float(milp_objective)
     if resolved_weight_overrides:
         config_snapshot["objective_weight_overrides"] = resolved_weight_overrides
+        config_snapshot["objective_weight_overrides_source"] = objective_weight_override_source(
+            pb, objective_weight_overrides
+        )
     if auto_profile_applied:
         config_snapshot["auto_profile"] = "mobilisation"
     if auto_batch_applied:
@@ -297,6 +353,15 @@ def solve_sa(
         ctx = override_objective_weights(ctx, resolved_weight_overrides)
     debug_capture = bool(watch_debug and watch_sink)
     local_repairs = bool(use_local_repairs)
+    # The incremental repair resumes from the accepted schedule's per-slot state snapshots, which is
+    # only provably equivalent to the full repair in the sequential, pre-repair path. Batch
+    # evaluation bypasses the resume entirely (its candidates carry no snapshots), dirty-limited
+    # repairs score a different plan, and skipping the pre-repair changes what the resume sees, so
+    # in those modes we fall back to the full repair and the run is byte-identical to before.
+    batch_parallel = bool(batch_size and batch_size > 1 and max_workers and max_workers > 1)
+    incremental_active = (
+        incremental_repair and pre_repair and not local_repairs and not batch_parallel
+    )
     objective_weights_snapshot = ctx.bundle.objective_weights.model_dump()
 
     def _score_schedule(
@@ -324,7 +389,11 @@ def solve_sa(
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = init_greedy_schedule(pb, ctx)
-        current_score, current_debug_stats = _score_schedule(current)
+        if incremental_active:
+            _repair_schedule_cover_blocks(pb, current, ctx, snapshot=True)
+            current_score, current_debug_stats = _score_plan(pb, current, ctx, None), None
+        else:
+            current_score, current_debug_stats = _score_schedule(current)
         best = current
         best_score = current_score
         best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
@@ -333,7 +402,7 @@ def solve_sa(
         best_assignment_delta = 0
 
         temperature0 = max(1.0, best_score / 10.0)
-        temperature = temperature0
+        temperature = adaptive_schedule.temperature if adaptive_schedule else temperature0
         initial_score = current_score
         proposals = 0
         accepted_moves = 0
@@ -343,6 +412,14 @@ def solve_sa(
         run_start = time.perf_counter()
         for step in range(1, iters + 1):
             accepted = False
+            # Commitment front: advance ``min_day`` so the search stops churning the early
+            # decisions it has already made (the ones with the largest downstream reach).
+            front_day = 0
+            if commitment_front > 0:
+                front_day = 1 + int((ctx.bundle.windows and 0) or 0)
+                front_day = 1 + int(
+                    commitment_front * (pb.scenario.num_days - 1) * (step - 1) / max(1, iters - 1)
+                )
             candidates = generate_neighbors(
                 pb,
                 current,
@@ -351,22 +428,70 @@ def solve_sa(
                 operator_stats,
                 ctx,
                 batch_size=batch_size,
+                pre_repair=False,  # the pre-repair runs lazily below, only for evaluated candidates
+                min_day=front_day,
             )
-            evaluations = evaluate_candidates(
-                pb,
-                candidates,
-                ctx,
-                max_workers=max_workers if batch_size and batch_size > 1 else None,
-                limit_repairs_to_dirty=local_repairs,
-            )
+            # Evaluate candidates lazily, stopping at the first acceptance. The RNG order is
+            # unchanged (evaluation draws no randomness), so the run is identical to evaluating
+            # every candidate up front, but unused candidates are never scored. Batch mode keeps
+            # the parallel path because it exists to score a batch.
+            if batch_size and batch_size > 1 and max_workers and max_workers > 1:
+                scored: Iterable[tuple[Schedule, float]] = evaluate_candidates(
+                    pb,
+                    candidates,
+                    ctx,
+                    max_workers=max_workers,
+                    limit_repairs_to_dirty=local_repairs,
+                )
+            else:
+
+                def _score_lazily() -> Iterable[tuple[Schedule, float]]:
+                    for candidate in candidates:
+                        start = None
+                        if incremental_active and current.repair_state is not None:
+                            dirty = candidate.dirty_slots
+                            if dirty:
+                                start = min(
+                                    ctx.shift_index[(day, shift)] for (_m, day, shift) in dirty
+                                )
+                        if pre_repair:
+                            # Pre-repair draws no randomness, so doing it here (only for the
+                            # candidates reached before acceptance) keeps the run identical while
+                            # skipping the pre-repair of candidates that are never evaluated.
+                            _repair_schedule_cover_blocks(pb, candidate, ctx, fill_voids=False)
+                        snapshots = current.repair_state.snapshots if current.repair_state else ()
+                        if start is not None and start < len(snapshots):
+                            # Resume the repair from the earliest changed slot and re-capture the
+                            # snapshots (cheap) so the accepted candidate keeps a full list and the
+                            # next iteration needs no extra repair.
+                            _repair_schedule_cover_blocks(
+                                pb,
+                                candidate,
+                                ctx,
+                                resume=(snapshots, start),
+                                snapshot=True,
+                            )
+                            yield candidate, _score_plan(pb, candidate, ctx, None)
+                        else:
+                            yield candidate, _score_schedule(candidate)[0]
+
+                scored = _score_lazily()
             if workers_total:
-                current_workers_busy = min(workers_total, len(evaluations)) if evaluations else 0
-            for neighbor, neighbor_score in evaluations:
+                current_workers_busy = min(workers_total, len(candidates)) if candidates else 0
+            first_delta: float | None = None
+            for neighbor, neighbor_score in scored:
                 proposals += 1
                 delta = neighbor_score - current_score
+                if first_delta is None:
+                    first_delta = delta
                 if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
                     current = neighbor
                     current_score = neighbor_score
+                    if incremental_active and not (
+                        current.repair_state and current.repair_state.snapshots
+                    ):
+                        # Only when the candidate came through the fallback full repair.
+                        _repair_schedule_cover_blocks(pb, current, ctx, snapshot=True)
                     accepted = True
                     accepted_moves += 1
                     if debug_capture:
@@ -378,7 +503,13 @@ def solve_sa(
                 best, best_score = current, current_score
                 best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
                 best_assignment_delta = _assignment_delta(initial_plan, best.plan)
-            temperature = max(temperature * cooling_rate, 1e-6)
+            if adaptive_schedule is not None:
+                # Uphill magnitude of this iteration's primary proposal (positive = worse score).
+                increase = -(first_delta if first_delta is not None else 0.0)
+                adaptive_schedule.observe(increase, current_score)
+                temperature = adaptive_schedule.temperature
+            else:
+                temperature = max(temperature * cooling_rate, 1e-6)
             if run_logger and telemetry_logger and telemetry_logger.step_interval:
                 if step == 1 or step == iters or (step % telemetry_logger.step_interval == 0):
                     acceptance_rate_log = (accepted_moves / proposals) if proposals else 0.0
@@ -411,7 +542,11 @@ def solve_sa(
                 current_score, current_debug_stats = _score_schedule(current)
                 restarts += 1
                 stalled_steps = 0
-                temperature = temperature0
+                if adaptive_schedule is not None:
+                    adaptive_schedule.reset()
+                    temperature = adaptive_schedule.temperature
+                else:
+                    temperature = temperature0
 
             rolling_scores.append(float(current_score))
             acceptance_window.append(1 if accepted else 0)
@@ -465,18 +600,11 @@ def solve_sa(
                     )
                 )
 
-        # Re-score the best schedule with a full repair pass for final reporting.
+        # Report a fresh full evaluation of the returned schedule (#131).
+        best, best_score, final_debug_stats = rescore_fresh(pb, best, ctx, debug_capture)
+        if debug_capture:
+            best_debug_stats = final_debug_stats
         if local_repairs:
-            if debug_capture:
-                best_score, best_debug_stats = evaluate_schedule_with_debug(
-                    pb,
-                    best,
-                    ctx,
-                    capture_debug=True,
-                    limit_repairs_to_dirty=False,
-                )
-            else:
-                best_score = evaluate_schedule(pb, best, ctx, limit_repairs_to_dirty=False)
             current_score = evaluate_schedule(pb, current, ctx, limit_repairs_to_dirty=False)
 
         rows: list[dict[str, str | int]] = []
@@ -558,6 +686,7 @@ def solve_sa(
             "iterations": iters,
             "temperature0": float(temperature0),
             "cooling_rate": float(cooling_rate),
+            "adaptive_cooling": adaptive_cooling,
             "restart_interval": int(restart_interval_value),
             "operators": registry.weights(),
             "batch_size": batch_size,
@@ -565,11 +694,16 @@ def solve_sa(
             "auto_batch_applied": auto_batch_applied,
             "auto_shake_triggers": shake_trigger_count if shake_threshold is not None else 0,
         }
+        if adaptive_cooling:
+            meta["cooling_window"] = adaptive_window
+            meta["cooling_initial_acceptance"] = float(cooling_initial_acceptance)
+            meta["cooling_delta"] = float(cooling_delta)
         if milp_objective is not None:
             meta["milp_objective"] = float(milp_objective)
             meta["milp_gap"] = float(best_score - milp_objective)
-        if resolved_weight_overrides:
-            meta["objective_weight_overrides"] = resolved_weight_overrides
+        record_objective_weight_overrides(
+            meta, pb, objective_weight_overrides, resolved_weight_overrides
+        )
         meta["objective_weights"] = objective_weights_snapshot
         meta.update(
             {

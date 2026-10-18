@@ -87,12 +87,14 @@ def test_solve_ils_hybrid_invokes_mip(monkeypatch):
     )
 
     calls: dict[str, int] = {"count": 0}
+    incumbents: list[object] = []
 
-    def fake_solve_mip(*args, **kwargs):
+    def fake_solve_operational_milp(*args, **kwargs):
         calls["count"] += 1
+        incumbents.append(kwargs.get("incumbent_assignments"))
         return {"assignments": fres.copy(), "objective": 50.0}
 
-    monkeypatch.setattr(ils_module, "solve_mip", fake_solve_mip)
+    monkeypatch.setattr(ils_module, "solve_operational_milp", fake_solve_operational_milp)
     result = solve_ils(
         pb,
         iters=3,
@@ -102,6 +104,7 @@ def test_solve_ils_hybrid_invokes_mip(monkeypatch):
         hybrid_mip_time_limit=1,
     )
     assert calls["count"] >= 1
+    assert all(isinstance(item, pd.DataFrame) and not item.empty for item in incumbents)
     assert result["meta"]["hybrid_used"] is True
     ctx = build_operational_problem(pb)
     expected = evaluate_schedule(pb, ils_module._assignments_to_schedule(pb, fres), ctx)

@@ -14,14 +14,19 @@ Example:
 
    from fhops.scenario.io import load_scenario
    from fhops.scenario.contract import Problem
-   from fhops.optimization.mip import solve_mip
+   from fhops.optimization.operational_problem import build_operational_problem
+   from fhops.model.milp.driver import solve_operational_milp
    from fhops.evaluation import compute_kpis
 
    scenario = load_scenario("examples/tiny7/scenario.yaml")
    problem = Problem.from_scenario(scenario)
-   mip_res = solve_mip(problem, time_limit=60)
+   ctx = build_operational_problem(problem)
+   mip_res = solve_operational_milp(ctx.bundle, time_limit=60, context=ctx)
    kpis = compute_kpis(problem, mip_res["assignments"])
    print(kpis["total_production"], kpis["mobilisation_cost"])
+
+(:func:`fhops.optimization.mip.solve_mip` is a deprecated wrapper around the same operational MILP
+since FHOPS 1.0.1.)
 
 .. automodule:: fhops.evaluation
    :members:

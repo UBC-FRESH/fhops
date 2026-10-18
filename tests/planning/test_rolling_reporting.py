@@ -41,7 +41,8 @@ def test_rolling_assignments_dataframe_shape() -> None:
     result = _build_plan_result(locks)
 
     df = rolling_assignments_dataframe(result)
-    assert list(df.columns) == ["machine_id", "block_id", "day", "assigned"]
+    assert list(df.columns) == ["machine_id", "block_id", "day", "shift_id", "assigned"]
+    assert df["shift_id"].isna().all()
     assert df["assigned"].sum() == len(locks)
     assert df["day"].tolist() == [1, 2]
 

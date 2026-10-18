@@ -21,15 +21,17 @@ Typical usage:
    scenario = load_scenario("examples/tiny7/scenario.yaml")
    result = solve_rolling_plan(
        scenario,
-       master_days=14,
-       subproblem_days=7,
-       lock_days=7,
+       master_days=7,  # tiny7 has a 7-day horizon
+       subproblem_days=4,
+       lock_days=3,
        solver="sa",
        sa_iters=200,
        sa_seed=123,
    )
    print(result.metadata, len(result.locked_assignments))
 
+   # Full-horizon baseline, e.g. from
+   # fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_full_horizon.csv
    baseline_df = pd.read_csv("tmp/tiny7_full_horizon.csv")
    comparison = compute_rolling_kpis(
        scenario,

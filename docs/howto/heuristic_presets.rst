@@ -19,8 +19,9 @@ Preset Overview
 Operator presets provide named weight profiles for the heuristic registry. Each preset targets a
 specific behaviour:
 
-``default``
-    Balanced swap/move operators with advanced moves disabled (baseline behaviour).
+``balanced``
+    Default mix: swap/move plus block insertion and cross exchange (0.6) with a moderate
+    mobilisation shake (0.2).
 ``explore``
     Enables advanced neighbourhoods (block insertion, cross exchange, mobilisation shake) with
     moderate weights to diversify search.
@@ -33,7 +34,11 @@ List presets with:
 
 .. code-block:: bash
 
-    fhops solve-heur ... --list-operator-presets
+    fhops bench suite --list-operator-presets
+
+``fhops solve-heur``/``solve-ils``/``solve-tabu`` accept the same flag, but still require the
+scenario argument and ``--out`` (nothing is solved or written), e.g.
+``fhops solve-heur examples/tiny7/scenario.yaml --out tmp/unused.csv --list-operator-presets``.
 
 Applying Presets
 ----------------
@@ -45,7 +50,7 @@ merged in order; later presets overwrite weights from earlier ones.
 
     # Balanced baseline
     fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_sa.csv \
-        --operator-preset default
+        --operator-preset balanced
 
     # Diversification-heavy profile
     fhops solve-heur examples/med42/scenario.yaml --out tmp/med42_explore.csv \
@@ -55,7 +60,8 @@ Explicit Overrides
 ------------------
 
 Presets can be combined with ``--operator`` (to restrict the enabled set) and
-``--operator-weight name=value`` overrides. Overrides apply after presets.
+``--operator-weight name=value`` overrides. Overrides apply after presets. (Long-running: the default
+2000 SA iterations on large84 take tens of minutes; add ``--iters 200`` for a quick check.)
 
 .. code-block:: bash
 
@@ -111,9 +117,10 @@ The registry-backed operators work across all heuristics. Opt-in features share 
 * **Iterated Local Search**: ``fhops solve-ils`` reuses presets/weights. Parallel knobs mirror SA.
 * **Tabu Search**: ``fhops solve-tabu`` accepts the same preset/weight flags while adding
   Tabu-specific parameters (tenure, stall limit).
-* **Profiles**: ``fhops solve-heur --profile explore`` applies a bundled configuration (operator
-  presets, batching, multi-start). List options via ``fhops solve-heur --list-profiles``; explicit CLI
-  flags still override profile defaults.
+* **Profiles**: ``fhops solve-heur ... --profile explore`` applies a bundled configuration (operator
+  presets, batching, multi-start). List options via ``fhops bench suite --list-profiles`` (``fhops
+  solve-heur`` also accepts ``--list-profiles`` but still requires a scenario argument and ``--out``);
+  explicit CLI flags still override profile defaults.
 
 Reference the dedicated how-tos for ILS and Tabu when tuning those solvers.
 * :doc:`parallel_heuristics` details the opt-in parallel execution pathways shared across heuristics.
@@ -148,7 +155,7 @@ overrides with telemetry logs to spot under-performing operators:
     fhops solve-heur ... --telemetry-log tmp/heuristics.jsonl --show-operator-stats
 
 Benchmark summaries include comparison columns (best heuristic solver, objective gaps, runtime
-ratios). Generate visualisations with:
+ratios). Generate visualisations with (long-running: all default scenarios, default budgets):
 
 .. code-block:: bash
 
@@ -163,7 +170,8 @@ labels and records the results in ``preset_label``. The summary also embeds two 
 ``operators_stats``
     Per-operator telemetry (``proposals``, ``accepted``, ``skipped``, ``weight``, ``acceptance_rate``).
 
-Inspect them directly with ``jq`` or load them into Pandas for analysis:
+Inspect them directly with ``jq`` or load them into Pandas for analysis (long-running: all default
+scenarios, including the MILP; add ``--no-include-mip`` or ``--scenario`` for a quick run):
 
 .. code-block:: bash
 
@@ -175,6 +183,94 @@ Inspect them directly with ``jq`` or load them into Pandas for analysis:
     stats = df[df["solver"] == "sa"]["operators_stats"].iloc[0]
     print(stats)
     PY
+
+.. _heuristic-objective-weights:
+
+Objective Weights, Automatic Overrides, and Hard Violations
+-----------------------------------------------------------
+
+SA, ILS, and Tabu maximise the heuristic objective
+
+.. code-block:: text
+
+    ω_prod·(delivered − leftover) − ω_mob·mobilisation − ω_trans·transitions
+        − ω_land·landing_surplus − P·(hard violations)
+
+with the scenario's ``objective_weights`` unless overrides apply.
+
+**Automatic overrides.** ``AUTO_OBJECTIVE_WEIGHT_OVERRIDES``
+(``src/fhops/optimization/heuristics/common.py``) replaces the weights of two shipped reference
+scenarios whenever no ``--objective-weight`` / ``objective_weight_overrides`` is given:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Scenario (``Scenario.name``)
+     - Heuristic weights
+     - Scenario (MILP) weights
+   * - FHOPS Tiny7 (``examples/tiny7``)
+     - production 1.0, mobilisation 0.2, transitions 0.1, landing_surplus 0.05 (soft landings)
+     - production 1.0, mobilisation 0.5, transitions 0.0, landing_surplus 0.0 (hard landings)
+   * - FHOPS Small21 (``examples/small21``)
+     - production 1.0, mobilisation 0.2, transitions 0.1, landing_surplus 0.05 (soft landings)
+     - production 1.0, mobilisation 0.5, transitions 0.0, landing_surplus 0.0 (hard landings)
+
+They date from the heuristic tuning work on these one-machine-per-landing scenarios (a lower
+mobilisation weight and soft landings let the search move machines between landings), and the
+published Tiny7/Small21 heuristic results use them. A heuristic objective for these scenarios is
+therefore **not** on the operational MILP's scale. Since 1.0.1 (#140) the overrides are reported
+wherever they apply:
+
+* ``fhops solve-heur`` / ``solve-ils`` / ``solve-tabu``, ``fhops benchmark`` and ``fhops bench suite``
+  print a one-line ``Note: Heuristic objective uses built-in weight overrides ...``;
+* the solver ``meta`` carries ``objective_weight_overrides``, ``objective_weight_overrides_source``
+  (``auto`` or ``explicit``) and ``scenario_objective_weights``; telemetry ``config`` records the
+  overrides and their source;
+* ``fhops benchmark`` prints ``SA obj (override weights)`` and ``SA obj (scenario weights)`` next to
+  ``MIP obj``, and ``fhops bench suite`` adds the ``objective_weights_source``,
+  ``objective_weight_overrides``, ``objective_scenario_weights`` and
+  ``objective_scenario_weights_vs_mip_gap`` summary columns (see :doc:`benchmarks`).
+
+To compare plans from different sources under one set of weights, score the assignment tables with
+``fhops.optimization.heuristics.common.evaluate_assignments(pb, assignments, ctx=None)``: it scores
+a table as planned (no repair; rows breaking hard rules are penalised), uses a ``production`` column
+when present (operational-MILP plans: planned production and idle locked slots, as playback does),
+and uses the scenario's own weights unless you pass a context with overrides. For a heuristic export
+scored with the solver's weights it returns the solver's ``objective``.
+
+**Hard violations.** Each assignment that is unavailable or blacked out, breaks a lock, uses a
+forbidden role, falls outside the block window, has no production rate, breaks sequencing, or
+overloads a landing while ``landing_surplus`` is weighted 0 costs
+
+.. code-block:: text
+
+    P = max(1000, 2·ω_prod·r_max + ω_mob·c_max + 1)
+
+where ``r_max`` is the largest production rate (m³/shift) and ``c_max`` the largest cost of one
+machine move. ``P`` strictly exceeds what one assignment can add to the objective through its own
+production (delivered and no longer counted as leftover) and mobilisation, so a plan never gains by
+keeping a violating assignment for its direct contribution. Before #140 ``P`` was a flat 1000, which
+a machine-shift worth more than 1000 could outweigh (an SA plan overloading a hard landing then
+beat the MILP's hard optimum). Indirect effects through downstream sequencing are not bounded.
+Scenarios whose largest rate is below about 500 m³/shift keep ``P = 1000``.
+
+**Landing guard.** With ``landing_surplus`` weighted 0 the heuristics' repair pass keeps or fills an
+unlocked slot only when the block's landing has room in that shift, on **every** day; a landing
+with capacity 0 admits no machine. Until #140 the guard ran on multi-shift days only, so every
+published med42 heuristic plan overloaded single-shift landings 49–61 times (plans the MILP
+forbids). With a positive ``landing_surplus`` weight (soft landings, e.g. the Tiny7/Small21
+overrides) overloads remain a priced choice and the repair is unchanged.
+
+Because the repair visits the machines of a slot in harvest-system role order, a hard capacity
+smaller than the crew used to go to the upstream roles first: while felling work remained anywhere
+on a landing the feller took its only place, downstream roles never worked there and the plan
+delivered nothing (a feller → skidder → loader chain on a capacity-1 landing: SA 0 m³, MILP
+500 m³). Since #140, before repairing a slot the repair predicts the block each unlocked downstream
+machine whose input is already staged would take, and that machine's landing place is held against
+machines of earlier roles ("pull" allocation: staged volume is moved on before more is produced).
+The same chain now delivers 500 m³ (the MILP optimum), with no landing overloads and no sequencing
+violations. The prediction depends only on the state at the start of the slot, so the repair stays
+idempotent and the reported objective remains a fresh evaluation of the plan.
 
 Next Steps
 ----------
