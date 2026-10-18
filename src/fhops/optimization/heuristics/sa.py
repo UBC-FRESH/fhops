@@ -29,7 +29,7 @@ from fhops.optimization.heuristics.common import (
     rescore_fresh,
     resolve_objective_weight_overrides,
 )
-from fhops.optimization.heuristics.cooling import AdaptiveSchedule
+from fhops.optimization.heuristics.cooling import AdaptiveCooling, AdaptiveSchedule
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.operational_problem import (
     build_operational_problem,
@@ -120,6 +120,8 @@ def solve_sa(
     incremental_repair: bool = False,
     adaptive_cooling: bool = False,
     cooling_window: int | None = None,
+    cooling_initial_acceptance: float = 0.9,
+    cooling_delta: float = 0.1,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -151,6 +153,12 @@ def solve_sa(
     cooling_window : int | None, optional
         Iterations per temperature under ``adaptive_cooling``. ``None`` auto-scales to ``64`` capped
         at half of ``iters``.
+    cooling_initial_acceptance : float, default=0.9
+        Acceptance ratio the adaptive warm-up targets when setting the initial temperature
+        (``(0, 1)``). Ignored unless ``adaptive_cooling`` is set.
+    cooling_delta : float, default=0.1
+        Distance from stationarity the adaptive decrement allows (positive). Ignored unless
+        ``adaptive_cooling`` is set.
     restart_interval : int | None, optional
         Number of consecutive non-accepting iterations before restarting from the greedy seed. ``None`` auto-scales
         to ``max(1000, iters / 5)``.
@@ -232,7 +240,16 @@ def solve_sa(
     )
 
     adaptive_window = AdaptiveSchedule.effective_window(iters, cooling_window)
-    adaptive_schedule = AdaptiveSchedule(window=adaptive_window) if adaptive_cooling else None
+    adaptive_schedule = (
+        AdaptiveSchedule(
+            window=adaptive_window,
+            rule=AdaptiveCooling(
+                initial_acceptance=cooling_initial_acceptance, delta=cooling_delta
+            ),
+        )
+        if adaptive_cooling
+        else None
+    )
 
     resolved_weight_overrides = resolve_objective_weight_overrides(pb, objective_weight_overrides)
     if resolved_weight_overrides is not None:
@@ -664,6 +681,8 @@ def solve_sa(
         }
         if adaptive_cooling:
             meta["cooling_window"] = adaptive_window
+            meta["cooling_initial_acceptance"] = float(cooling_initial_acceptance)
+            meta["cooling_delta"] = float(cooling_delta)
         if milp_objective is not None:
             meta["milp_objective"] = float(milp_objective)
             meta["milp_gap"] = float(best_score - milp_objective)

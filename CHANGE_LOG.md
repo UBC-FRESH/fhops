@@ -1,3 +1,16 @@
+# 2026-10-18 — SA cooling tuning: harness + adaptive rule parameters (keep opt-in)
+
+- Exposed `cooling_initial_acceptance` and `cooling_delta` on `solve_sa` (adaptive mode only) so the
+  Aarts-Van Laarhoven rule can be tuned; reported in `meta` alongside `cooling_window`.
+- Added `scripts/benchmark_sa_cooling.py`: records the best-so-far curve every iteration via
+  `watch_sink` and reports objective at fixed iterations and interpolated at equal wall-clock.
+- Tuning findings (documented in `notes/sa_performance_plan.md`): med42 improves +6% with
+  `window=8` (22286 vs 21046); large84 does not (geometric -210111 over 8 seeds vs adaptive -209247
+  at `window=8`). The window dominates, and the geometric `T0 = max(1, best/10)` floors at 1.0 for
+  negative-objective scenarios, which is what makes geometric strong on large84. A scale-aware
+  (`abs`) start was tested and made large84 worse, then reverted.
+- **Decision: keep adaptive cooling opt-in.** Not a robust default; would change every pinned result.
+
 # 2026-10-18 — Lockwood & Moore follow-up: adaptive (Aarts-Van Laarhoven) SA cooling, opt-in
 
 Added `src/fhops/optimization/heuristics/cooling.py` (`AdaptiveCooling` rule + `AdaptiveSchedule`)

@@ -91,3 +91,36 @@ Performance page, changelog, and a close-out report.
 Remaining headroom is the per-move repair itself and the RNG shuffle (~18 percent, constrained by
 the pinned random stream). Both need a larger, separately scoped change (an incremental evaluator
 with parity tests) rather than a tweak. Stopped the side-quest after S4a.
+
+## Adaptive cooling study (2026-10-18)
+
+Ported the Aarts and Van Laarhoven (1985) adaptive schedule from ws4
+(`src/fhops/optimization/heuristics/cooling.py`) and wired it into `solve_sa` as opt-in
+(`adaptive_cooling`, `cooling_window`, `cooling_initial_acceptance`, `cooling_delta`). The default
+path (geometric, `temperature *= cooling_rate`) is unchanged, so the pinned baselines are untouched.
+
+Harness: `scripts/benchmark_sa_cooling.py`. It records the best-so-far curve every iteration through
+`watch_sink` and reports the objective at fixed iterations and interpolated at equal wall-clock.
+
+### Findings (5-8 seeds, seed 42 family)
+
+| Scenario | Geometric final | Adaptive best (window) | Verdict |
+|---|---|---|---|
+| med42 (iters 300) | 21046 | **22286** (w=8) | adaptive clearly better at equal iterations and equal time |
+| large84 (iters 200) | **-210111** (8 seeds) | -209247 (w=8), -215603 (w=16) | geometric better at long budgets; adaptive converges earlier |
+
+- The **window dominates**; the auto default (`64`) is far too large when `iters` is only a few
+  hundred (the schedule gets ~2 cooling steps). Medium scenarios want `window ~ 8`.
+- On large84 the adaptive accepts more (fewer candidate evaluations, ~1.5-2x faster per iteration)
+  but converges to a worse objective; the geometric's `T0 = max(1, best/10)` floors at 1.0 for the
+  negative-objective scenarios and that cold schedule is actually good there. Confirmed by
+  experiment: making the geometric scale-aware (`abs(best)/10`, i.e. hot) made large84 *worse*
+  (-217798 vs -208717), so a hot start is not the answer for the large instance.
+
+### Recommendation
+
+**Keep adaptive cooling opt-in, do not enable by default.** It is a real win for medium scenarios
+(and a modest per-iteration speedup everywhere), but it is not a robust improvement on the largest
+scenario, and it would change every pinned SA result. Before any default-on decision: more seeds,
+an equal-wall-clock "iterations-to-target" harness across the full ladder, a rule that scales the
+window with `iters` and the objective scale, and the usual re-pin (ADR 0003 discipline).
