@@ -1,3 +1,14 @@
+# 2026-10-18 — P10.6 step 1: extract `RepairState` (behaviour-neutral)
+
+- Added `RepairState` (block_remaining, role_remaining, role_inventory_estimate,
+  role_inventory_today, role_consumed_slot) and a `Schedule.repair_state` field. The repair now
+  builds one state object and aliases its structures to the existing locals, so the body is
+  unchanged; it writes the state back on the schedule. This is the foundation for the incremental
+  repair (resume from the earliest changed slot).
+- Objectives unchanged on the ladder (tiny7 4295.7748, small21 15508.8848, med42 20980.8459,
+  large84 -209898.4783). mypy clean.
+- Plan: `notes/p10_repair_refactor.md`.
+
 # 2026-10-18 — P10.5: lazy candidate pre-repair (1.2-1.7x, identical results)
 
 - `generate_neighbors` pre-repaired every candidate up front, but the loop stops at the first

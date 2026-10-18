@@ -190,6 +190,21 @@ class SlotProduction:
 
 
 @dataclass(slots=True)
+class RepairState:
+    """Persistent mutable state of the cover-blocks repair (P10.6).
+
+    Held on the schedule so a later call can resume from a slot instead of rebuilding every
+    structure. The five structures are exactly the ones the repair mutates as it walks slots.
+    """
+
+    block_remaining: dict[str, float]
+    role_remaining: dict[tuple[str, str], float]
+    role_inventory_estimate: defaultdict[tuple[str, str], float]
+    role_inventory_today: defaultdict[tuple[str, str], float]
+    role_consumed_slot: defaultdict[tuple[str, str], float]
+
+
+@dataclass(slots=True)
 class Schedule:
     """Machine assignment plan storing both dict and array views."""
 
@@ -203,6 +218,7 @@ class Schedule:
     block_slots: dict[str, list[tuple[int, str]]] = field(default_factory=dict)
     dirty_slots: set[tuple[str, int, str]] = field(default_factory=set)
     slot_production: dict[tuple[str, int, str], SlotProduction] = field(default_factory=dict)
+    repair_state: RepairState | None = None
     watch_stats: dict[str, Any] | None = None
 
 
@@ -536,12 +552,19 @@ def _repair_schedule_cover_blocks(
         key=lambda m: (role_priority.get(machine_roles.get(m.id) or "", 999), m.id)
     )
 
-    role_inventory_estimate: defaultdict[tuple[str, str], float] = defaultdict(
-        float, ctx.initial_role_inventory
+    state = RepairState(
+        block_remaining=block_remaining,
+        role_remaining=role_remaining,
+        role_inventory_estimate=defaultdict(float, ctx.initial_role_inventory),
+        role_inventory_today=defaultdict(float),
+        role_consumed_slot=defaultdict(float),
     )
-    role_inventory_today: defaultdict[tuple[str, str], float] = defaultdict(float)
+    block_remaining = state.block_remaining
+    role_remaining = state.role_remaining
+    role_inventory_estimate = state.role_inventory_estimate
+    role_inventory_today = state.role_inventory_today
+    role_consumed_slot = state.role_consumed_slot
     current_slot: tuple[int, str] | None = None
-    role_consumed_slot: defaultdict[tuple[str, str], float] = defaultdict(float)
     # Landing capacity guard (see ``landing_has_room``): only when landing overloads are hard
     # violations (``landing_surplus`` weight 0), on every day (#140; #116 guarded multi-shift
     # days only).
@@ -1078,6 +1101,7 @@ def _repair_schedule_cover_blocks(
             if limit_to_dirty_slots:
                 processed_slots.add((machine_id, day, shift_id))
 
+    sched.repair_state = state
     sched.dirty_blocks.difference_update(dirty_blocks)
     if limit_to_dirty_slots:
         if processed_slots:
