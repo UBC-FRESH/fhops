@@ -1,3 +1,14 @@
+# 2026-10-18 — CI: fix the formulation asset drift check when rendering outside the repo
+
+The first CI run on the phase branch (PR #167) failed the `lint-test-docs` / "Formulation asset
+drift check" step: `scripts/check_formulation_assets.py` renders into a temporary tree, and
+`docs/softwarex/manuscript/scripts/export_docs_assets.py` printed every generated path with
+`path.relative_to(repo_root)`, which raises when the output dir is outside the repo
+(``ValueError: '/tmp/fhops-formulation-check-...' is not in the subpath of ...``).
+
+- `export_docs_assets.py` now shortens a path only when it is under the repo root and prints it
+  as-is otherwise. Display-only change; the regenerated assets are unchanged.
+
 # 2026-10-18 — Phase close-out: P9/P10 SA performance and the 1.1.0b1 merge (#164, #165, #166)
 
 - Queued PR #167 (`feature/p10-incremental-eval` -> `main`) and committed the phase close-out report

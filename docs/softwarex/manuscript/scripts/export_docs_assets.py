@@ -230,7 +230,14 @@ def main() -> int:
         print("[export-docs] No Markdown snippets found.")
     else:
         for path in generated:
-            print(f"[export-docs] Wrote {path.relative_to(repo_root)}")
+            # ``--includes-dir``/``--rst-out-dir`` may point outside the repo (the drift check in
+            # ``scripts/check_formulation_assets.py`` renders into a temporary tree), so only
+            # shorten paths that are actually under the repo root.
+            try:
+                display = path.relative_to(repo_root)
+            except ValueError:
+                display = path
+            print(f"[export-docs] Wrote {display}")
 
     return 0
 
