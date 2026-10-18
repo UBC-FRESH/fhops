@@ -1,3 +1,14 @@
+# 2026-10-18 — P10.6: resume-path debugging (isolated; not wired in)
+
+- Traced the resume mismatch: at day 9 the fill picks a different block for one machine
+  (med42: full B04, resume B12), rooted in a `role_inventory_estimate` difference at slot 5
+  (~943 m3 of unconsumed feller-buncher inventory). Aliasing `sched.block_remaining_cache` /
+  `role_remaining_cache` to the restored state did not fix it, so the divergence is deeper than
+  those caches.
+- The snapshot/resume code stays default-off and does not affect the solver. Removed the temporary
+  debug sink. `pytest tests/heuristics tests/initial_state`: 149 passed; ruff and mypy clean.
+- Open: find the state structure or ordering the restore does not reproduce.
+
 # 2026-10-18 — P10.6 step 2: slot snapshots and a resume path (neutral; resume not yet exact)
 
 - `RepairState` gains `snapshots` and `capture`/`restore`; the repair gains `snapshot=True` (capture

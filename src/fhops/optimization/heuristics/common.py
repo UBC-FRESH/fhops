@@ -462,6 +462,9 @@ def _no_lock(machine_id: str, day: int, shift_id: str) -> str | None:
     return None
 
 
+#: Temporary debug sink for the repair (P10.6); ``None`` disables logging.
+
+
 def _repair_schedule_cover_blocks(
     pb: Problem,
     sched: Schedule,
@@ -613,6 +616,8 @@ def _repair_schedule_cover_blocks(
     role_inventory_estimate = state.role_inventory_estimate
     role_inventory_today = state.role_inventory_today
     role_consumed_slot = state.role_consumed_slot
+    sched.block_remaining_cache = block_remaining
+    sched.role_remaining_cache = role_remaining
     current_slot: tuple[int, str] | None = None
     # Landing capacity guard (see ``landing_has_room``): only when landing overloads are hard
     # violations (``landing_surplus`` weight 0), on every day (#140; #116 guarded multi-shift
