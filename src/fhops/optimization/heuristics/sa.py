@@ -29,6 +29,7 @@ from fhops.optimization.heuristics.common import (
     rescore_fresh,
     resolve_objective_weight_overrides,
 )
+from fhops.optimization.heuristics.cooling import AdaptiveSchedule
 from fhops.optimization.heuristics.registry import OperatorRegistry
 from fhops.optimization.operational_problem import (
     build_operational_problem,
@@ -117,6 +118,8 @@ def solve_sa(
     pre_repair: bool = True,
     commitment_front: float = 0.0,
     incremental_repair: bool = False,
+    adaptive_cooling: bool = False,
+    cooling_window: int | None = None,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -139,6 +142,15 @@ def solve_sa(
         Maximum worker threads for evaluating batched neighbours. ``None``/``<=1`` keeps sequential scoring.
     cooling_rate : float, default=0.999
         Multiplicative cooling factor applied each iteration (0 < rate < 1). Larger values cool more slowly.
+        Ignored when ``adaptive_cooling`` is set.
+    adaptive_cooling : bool, default=False
+        Use the Aarts and Van Laarhoven (1985) adaptive temperature schedule instead of geometric
+        cooling. The first ``cooling_window`` iterations are a warm-up (every move accepted) that sets
+        the initial temperature from the average uphill move; the temperature is then decremented from
+        the spread of the scores seen. Tunes itself to the scenario.
+    cooling_window : int | None, optional
+        Iterations per temperature under ``adaptive_cooling``. ``None`` auto-scales to ``64`` capped
+        at half of ``iters``.
     restart_interval : int | None, optional
         Number of consecutive non-accepting iterations before restarting from the greedy seed. ``None`` auto-scales
         to ``max(1000, iters / 5)``.
@@ -219,6 +231,9 @@ def solve_sa(
         else max(1000, iters // 5 or 200)
     )
 
+    adaptive_window = AdaptiveSchedule.effective_window(iters, cooling_window)
+    adaptive_schedule = AdaptiveSchedule(window=adaptive_window) if adaptive_cooling else None
+
     resolved_weight_overrides = resolve_objective_weight_overrides(pb, objective_weight_overrides)
     if resolved_weight_overrides is not None:
         resolved_weight_overrides = dict(resolved_weight_overrides)
@@ -241,6 +256,7 @@ def solve_sa(
         "batch_size": batch_size,
         "max_workers": max_workers,
         "cooling_rate": cooling_rate,
+        "adaptive_cooling": adaptive_cooling,
         "restart_interval": restart_interval_value,
         "operators": registry.weights(),
     }
@@ -354,7 +370,7 @@ def solve_sa(
         best_assignment_delta = 0
 
         temperature0 = max(1.0, best_score / 10.0)
-        temperature = temperature0
+        temperature = adaptive_schedule.temperature if adaptive_schedule else temperature0
         initial_score = current_score
         proposals = 0
         accepted_moves = 0
@@ -430,9 +446,12 @@ def solve_sa(
                 scored = _score_lazily()
             if workers_total:
                 current_workers_busy = min(workers_total, len(candidates)) if candidates else 0
+            first_delta: float | None = None
             for neighbor, neighbor_score in scored:
                 proposals += 1
                 delta = neighbor_score - current_score
+                if first_delta is None:
+                    first_delta = delta
                 if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
                     current = neighbor
                     current_score = neighbor_score
@@ -452,7 +471,13 @@ def solve_sa(
                 best, best_score = current, current_score
                 best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
                 best_assignment_delta = _assignment_delta(initial_plan, best.plan)
-            temperature = max(temperature * cooling_rate, 1e-6)
+            if adaptive_schedule is not None:
+                # Uphill magnitude of this iteration's primary proposal (positive = worse score).
+                increase = -(first_delta if first_delta is not None else 0.0)
+                adaptive_schedule.observe(increase, current_score)
+                temperature = adaptive_schedule.temperature
+            else:
+                temperature = max(temperature * cooling_rate, 1e-6)
             if run_logger and telemetry_logger and telemetry_logger.step_interval:
                 if step == 1 or step == iters or (step % telemetry_logger.step_interval == 0):
                     acceptance_rate_log = (accepted_moves / proposals) if proposals else 0.0
@@ -485,7 +510,11 @@ def solve_sa(
                 current_score, current_debug_stats = _score_schedule(current)
                 restarts += 1
                 stalled_steps = 0
-                temperature = temperature0
+                if adaptive_schedule is not None:
+                    adaptive_schedule.reset()
+                    temperature = adaptive_schedule.temperature
+                else:
+                    temperature = temperature0
 
             rolling_scores.append(float(current_score))
             acceptance_window.append(1 if accepted else 0)
@@ -625,6 +654,7 @@ def solve_sa(
             "iterations": iters,
             "temperature0": float(temperature0),
             "cooling_rate": float(cooling_rate),
+            "adaptive_cooling": adaptive_cooling,
             "restart_interval": int(restart_interval_value),
             "operators": registry.weights(),
             "batch_size": batch_size,
@@ -632,6 +662,8 @@ def solve_sa(
             "auto_batch_applied": auto_batch_applied,
             "auto_shake_triggers": shake_trigger_count if shake_threshold is not None else 0,
         }
+        if adaptive_cooling:
+            meta["cooling_window"] = adaptive_window
         if milp_objective is not None:
             meta["milp_objective"] = float(milp_objective)
             meta["milp_gap"] = float(best_score - milp_objective)

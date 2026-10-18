@@ -1,3 +1,34 @@
+# 2026-10-18 — Lockwood & Moore follow-up: adaptive (Aarts-Van Laarhoven) SA cooling, opt-in
+
+Added `src/fhops/optimization/heuristics/cooling.py` (`AdaptiveCooling` rule + `AdaptiveSchedule`)
+and wired it into `solve_sa(..., adaptive_cooling=False, cooling_window=None)`. Off by default, so
+the pinned baselines and the default trajectory are unchanged.
+
+Design: the first `cooling_window` iterations are a warm-up (`temperature = inf`, every move
+accepted) that sets `c0 = mean(uphill dE) / ln(1 / chi0)`; each following window recomputes
+`c_{k+1} = c_k / (1 + c_k ln(1+delta) / (3 sigma_k))` from the population stdev of the scores
+(Aarts & Van Laarhoven 1985). Restarts re-arm the warm-up.
+
+**Benchmark (5 seeds; higher = better; large84, mean objective at fixed iterations):**
+
+| wall/run | geometric | adaptive |
+|---|---|---|
+| ~12 s  | -214819 (100 it) | ~-215000 (interp.) |
+| ~18 s  | -210561 (150 it) | ~-212500 |
+| ~25 s  | -208717 (200 it) | ~-210500 |
+
+The adaptive schedule accepts more moves, so it evaluates fewer candidates per iteration and is
+**~1.8x faster in wall-clock per iteration** on large84 (200 it: 127 s -> 74 s for 5 seeds), but at
+equal wall-clock the geometric schedule still reaches a slightly better objective there. On med42
+the adaptive is better at equal iterations (+3.2%, 250 it: 21543 vs 20881). Verdict: **mixed**, not
+a default-on win yet — needs per-scenario tuning of `cooling_window`/`initial_acceptance`/`delta`,
+more seeds, and an equal-wall-clock "iterations-to-target" harness before we re-pin.
+
+- Tests: `tests/heuristics/test_cooling.py` (9 tests: rule, warm-up, reset, window cap, opt-in
+  flag). Full suite: 914 passed, 214 skipped; `mypy src` clean; ruff clean.
+- TODO before enabling by default: give it its own child issue under the SA-perf parent (#165),
+  decide the default, and re-pin the `*_v101.csv` baselines (ADR 0003 discipline).
+
 # 2026-10-18 — P10.6 done: incremental repair triggers, is exact, and wins on the big scenario
 
 Three fixes turned the incremental repair from "exact but never fires / net negative" into a real
