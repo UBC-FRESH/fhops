@@ -1,3 +1,15 @@
+# 2026-10-18 — P10.5: lazy candidate pre-repair (1.2-1.7x, identical results)
+
+- `generate_neighbors` pre-repaired every candidate up front, but the loop stops at the first
+  acceptance, so the candidates after it were pre-repaired and thrown away. The pre-repair now runs
+  in the lazy evaluation loop, only for candidates that are actually reached. The pre-repair draws
+  no randomness, so the operator draws (all in `generate_neighbors`) and the RNG stream are
+  unchanged: every objective is byte-identical.
+- Ladder (200 iters): tiny7 596 to 789, small21 178 to 270, med42 48 to 81.5 (1.7x), large84 5.7 to
+  6.9. Cumulative against the original pre-P9 baseline (281/72/21.2/2.2): **2.8x to 3.8x**, with no
+  result change.
+- Gates: 901 passed, 214 skipped; ruff and mypy clean.
+
 # 2026-10-18 — P10.4: commitment front (opt-in) and the sequence-dependency finding
 
 - Added an opt-in commitment front: `solve_sa(..., commitment_front=t)` advances a `min_day` front

@@ -16,6 +16,7 @@ import pandas as pd
 from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics.common import (
     Schedule,
+    _repair_schedule_cover_blocks,
     build_watch_metadata_from_debug,
     evaluate_candidates,
     evaluate_schedule,
@@ -373,7 +374,7 @@ def solve_sa(
                 operator_stats,
                 ctx,
                 batch_size=batch_size,
-                pre_repair=pre_repair,
+                pre_repair=False,  # the pre-repair runs lazily below, only for evaluated candidates
                 min_day=front_day,
             )
             # Evaluate candidates lazily, stopping at the first acceptance. The RNG order is
@@ -389,7 +390,17 @@ def solve_sa(
                     limit_repairs_to_dirty=local_repairs,
                 )
             else:
-                scored = ((candidate, _score_schedule(candidate)[0]) for candidate in candidates)
+
+                def _score_lazily() -> Iterable[tuple[Schedule, float]]:
+                    for candidate in candidates:
+                        if pre_repair:
+                            # Pre-repair draws no randomness, so doing it here (only for the
+                            # candidates reached before acceptance) keeps the run identical while
+                            # skipping the pre-repair of candidates that are never evaluated.
+                            _repair_schedule_cover_blocks(pb, candidate, ctx, fill_voids=False)
+                        yield candidate, _score_schedule(candidate)[0]
+
+                scored = _score_lazily()
             if workers_total:
                 current_workers_busy = min(workers_total, len(candidates)) if candidates else 0
             for neighbor, neighbor_score in scored:
