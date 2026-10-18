@@ -17,6 +17,7 @@ from fhops.evaluation import compute_kpis
 from fhops.optimization.heuristics.common import (
     Schedule,
     _repair_schedule_cover_blocks,
+    _score_plan,
     build_watch_metadata_from_debug,
     evaluate_candidates,
     evaluate_schedule,
@@ -115,6 +116,7 @@ def solve_sa(
     milp_objective: float | None = None,
     pre_repair: bool = True,
     commitment_front: float = 0.0,
+    incremental_repair: bool = False,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -339,7 +341,11 @@ def solve_sa(
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = init_greedy_schedule(pb, ctx)
-        current_score, current_debug_stats = _score_schedule(current)
+        if incremental_repair:
+            _repair_schedule_cover_blocks(pb, current, ctx, snapshot=True)
+            current_score, current_debug_stats = _score_plan(pb, current, ctx, None), None
+        else:
+            current_score, current_debug_stats = _score_schedule(current)
         best = current
         best_score = current_score
         best_debug_stats = dict(current_debug_stats) if current_debug_stats else None
@@ -393,12 +399,28 @@ def solve_sa(
 
                 def _score_lazily() -> Iterable[tuple[Schedule, float]]:
                     for candidate in candidates:
+                        start = None
+                        if incremental_repair and current.repair_state is not None:
+                            dirty = candidate.dirty_slots
+                            if dirty:
+                                start = min(
+                                    ctx.shift_index[(day, shift)] for (_m, day, shift) in dirty
+                                )
                         if pre_repair:
                             # Pre-repair draws no randomness, so doing it here (only for the
                             # candidates reached before acceptance) keeps the run identical while
                             # skipping the pre-repair of candidates that are never evaluated.
                             _repair_schedule_cover_blocks(pb, candidate, ctx, fill_voids=False)
-                        yield candidate, _score_schedule(candidate)[0]
+                        if start is not None and current.repair_state is not None:
+                            _repair_schedule_cover_blocks(
+                                pb,
+                                candidate,
+                                ctx,
+                                resume=(current.repair_state.snapshots[start], start),
+                            )
+                            yield candidate, _score_plan(pb, candidate, ctx, None)
+                        else:
+                            yield candidate, _score_schedule(candidate)[0]
 
                 scored = _score_lazily()
             if workers_total:
@@ -409,6 +431,8 @@ def solve_sa(
                 if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
                     current = neighbor
                     current_score = neighbor_score
+                    if incremental_repair:
+                        _repair_schedule_cover_blocks(pb, current, ctx, snapshot=True)
                     accepted = True
                     accepted_moves += 1
                     if debug_capture:

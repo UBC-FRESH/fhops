@@ -1,3 +1,14 @@
+# 2026-10-18 — P10.6 step 4: wired the incremental repair (exact, but snapshot overhead)
+
+- `solve_sa(..., incremental_repair=True)`: the accepted schedule is repaired once with
+  `snapshot=True`; each candidate resumes the repair from its earliest changed slot. Default off.
+- **Parity holds**: identical objectives on small21/med42/large84 (and the run is unchanged).
+- **But it is slower (0.73-0.83x):** the per-slot snapshot capture and the on-acceptance
+  re-snapshot cost more than the per-candidate resume saves. The mechanism is correct; the
+  overhead is the problem.
+- Next: make snapshots cheap (per-slot deltas, or capture only the structures the resume reads),
+  and avoid the full re-snapshot on acceptance. Then re-measure.
+
 # 2026-10-18 — P10.6 fix: the resume mismatch was a stale binding, not missing state
 
 - Root cause: `role_remaining_lookup` (the production cap in `record_assignment`) was bound before
