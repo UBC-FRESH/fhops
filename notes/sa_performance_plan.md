@@ -124,3 +124,15 @@ Harness: `scripts/benchmark_sa_cooling.py`. It records the best-so-far curve eve
 scenario, and it would change every pinned SA result. Before any default-on decision: more seeds,
 an equal-wall-clock "iterations-to-target" harness across the full ladder, a rule that scales the
 window with `iters` and the objective scale, and the usual re-pin (ADR 0003 discipline).
+
+## Incremental repair (P10.6, 2026-10-18) — shipped as the SA default
+
+The per-move repair was the remaining hot spot; P10.6 resumes it from the accepted schedule's
+per-slot state instead of re-repairing the horizon. It is exact and now the default
+(`incremental_repair=True`), with automatic fallback to the full repair where equivalence is not
+proven (batch parallel, `pre_repair=False`, `use_local_repairs=True`). Speedup (5 seeds): tiny7
+1.00x, small21 0.99x, med42 1.06x, large84 1.14x; the pinned fixtures regenerate with no diff. See
+`notes/p10_repair_refactor.md` for the root causes and the parity contract.
+
+A first, orthogonal experiment with the adaptive cooling schedule is recorded above; it stays
+opt-in.
