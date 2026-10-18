@@ -1,3 +1,17 @@
+# 2026-10-18 — P10.6 fix: the resume mismatch was a stale binding, not missing state
+
+- Root cause: `role_remaining_lookup` (the production cap in `record_assignment`) was bound before
+  `RepairState` is created and aliased. On resume the local `role_remaining` is reassigned to the
+  restored copy, but `role_remaining_lookup` kept pointing at the fresh dict, so a resumed repair
+  capped production against full volumes (med42 day 5: 1299 instead of 356 m3). Moved the binding to
+  after the state aliasing.
+- Result: `resume@0 == full` on tiny7/small21/med42/large84, and `resume@S` equals a full repair of
+  the same schedule for S = 0, mid-horizon and last slot. **The incremental repair is exact.**
+- Cost (med42 / large84): resume at 50% of the horizon 1.7x / 2.1x; at 90%, 5.5x / 8.2x. The win
+  scales with how late the earliest change is.
+- Still default-off; not yet wired into the SA loop. Debug instrumentation removed.
+- Tests: 149 passed (heuristics + initial_state); ruff and mypy clean.
+
 # 2026-10-18 — P10.6: resume-path debugging (isolated; not wired in)
 
 - Traced the resume mismatch: at day 9 the fill picks a different block for one machine

@@ -517,8 +517,6 @@ def _repair_schedule_cover_blocks(
     allowed_roles = ctx.allowed_roles
     loader_roles = ctx.loader_roles
     loader_batch_volume = ctx.loader_batch_volume
-    # ``role_remaining`` looked up with an optional role (absent keys -> ``None``).
-    role_remaining_lookup = cast(Mapping[tuple[str, str | None], float], role_remaining)
     # (block, role) -> the (block, upstream role) inventory keys of its prerequisites.
     prereq_keys: dict[tuple[str, str], tuple[tuple[str, str], ...]] = {
         (block_id, role): tuple((block_id, upstream) for upstream in prereqs)
@@ -618,6 +616,9 @@ def _repair_schedule_cover_blocks(
     role_consumed_slot = state.role_consumed_slot
     sched.block_remaining_cache = block_remaining
     sched.role_remaining_cache = role_remaining
+    # Bind after the state aliasing: the resume path reassigns ``role_remaining`` to the restored
+    # copy, and a binding made earlier would keep pointing at the fresh dict (P10.6 bug).
+    role_remaining_lookup = cast(Mapping[tuple[str, str | None], float], role_remaining)
     current_slot: tuple[int, str] | None = None
     # Landing capacity guard (see ``landing_has_room``): only when landing overloads are hard
     # violations (``landing_surplus`` weight 0), on every day (#140; #116 guarded multi-shift
