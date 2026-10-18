@@ -46,6 +46,10 @@ def run_pandoc(src: Path, target: Path, pandoc_format: str) -> None:
         "markdown",
         "-t",
         pandoc_format,
+        # Pin the line-wrapping so the output does not depend on the terminal width (pandoc's
+        # ``--wrap=auto`` default wraps to ``COLUMNS``, or 72 when not a TTY, which made the
+        # committed assets and the CI drift check disagree).
+        "--columns=160",
         "-o",
         str(target),
     ]
