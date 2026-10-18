@@ -1,3 +1,19 @@
+# 2026-10-18 — P10.4: commitment front (opt-in) and the sequence-dependency finding
+
+- Added an opt-in commitment front: `solve_sa(..., commitment_front=t)` advances a `min_day` front
+  over the iterations, and the operators stay at or after it (`registry._eligible_shifts`,
+  `_eligible_assignments`). Default 0 disables it, so behaviour is unchanged.
+- Multi-seed test (med42, large84; seeds 1/42/123) shows the front does **not** reliably change the
+  objective at fixed iterations (means are flat) and does not change speed. Kept as an opt-in
+  experiment, not a default.
+- Finding: the repair's global fill order is the sequence-dependency cost. A move re-fills the whole
+  schedule, and the front does not reduce that because the cost is per move, not per slot moved. The
+  incremental repair needs the repair state extracted into a `RepairState` with snapshot/restore and
+  a re-fill from the earliest changed slot; scoped in `notes/p10_incremental_eval.md`.
+- Also added `pre_repair` (default True) so a caller can skip the candidate pre-repair; measured it
+  as a 1.5-2x speedup that changes the schedule (med42 +2.8%, large84 -2.2% at equal wall-clock), so
+  it is not enabled by default.
+
 # 2026-10-17 — P10.3: bounded cross_exchange sampling (large84 1.7x)
 
 - `cross_exchange` shuffled a materialised O(n^2) pair list (412 686 entries on large84), 32 percent

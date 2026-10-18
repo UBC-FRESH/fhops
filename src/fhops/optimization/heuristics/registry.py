@@ -40,6 +40,21 @@ class OperatorContext:
     mobilisation_budget: Mapping[str, float] | None = None
     cooldown_tracker: Mapping[str, Any] | None = None
     sanitizer_preview: SanitizerPreview | None = None
+    #: Commitment front (P10): operators stay at or after this day, so the search stops churning
+    #: the foundations it has already built. ``0`` disables the front.
+    min_day: int = 0
+
+
+def _eligible_shifts(shifts, min_day: int):
+    """Return the shifts at or after ``min_day`` (all of them when none qualify)."""
+    eligible = [shift for shift in shifts if shift[0] >= min_day]
+    return eligible or list(shifts)
+
+
+def _eligible_assignments(assignments, min_day: int):
+    """Return the ``(machine, shift, block)`` assignments at or after ``min_day``."""
+    eligible = [entry for entry in assignments if entry[1][0] >= min_day]
+    return eligible or list(assignments)
 
 
 class Operator(Protocol):
@@ -387,7 +402,7 @@ class SwapOperator:
         if not shifts:
             return None
         rng = context.rng
-        shift_key = rng.choice(shifts)
+        shift_key = rng.choice(_eligible_shifts(shifts, context.min_day))
         try:
             machine_pair = rng.sample(machines, k=2)
         except ValueError:
@@ -417,7 +432,7 @@ class MoveOperator:
             return None
         rng = context.rng
         machine = rng.choice(machines)
-        shift_keys = list(schedule.plan[machine].keys())
+        shift_keys = _eligible_shifts(list(schedule.plan[machine].keys()), context.min_day)
         if not shift_keys:
             return None
         if len(shift_keys) >= 2:
@@ -455,10 +470,11 @@ class BlockInsertionOperator:
             for shift_key, block_id in machine_plan.items()
             if block_id is not None and locks.get((machine, shift_key)) != block_id
         ]
+        assignments = _eligible_assignments(assignments, context.min_day)
         if not assignments:
             return None
         _shuffle(rng, assignments)
-        shifts = context.shift_keys
+        shifts = _eligible_shifts(context.shift_keys, context.min_day)
         if not shifts:
             return None
         for machine_src, shift_src, block_id in assignments:
@@ -604,6 +620,7 @@ class CrossExchangeOperator:
             for shift_key, block_id in machine_plan.items()
             if block_id is not None
         ]
+        assignments = _eligible_assignments(assignments, context.min_day)
         count = len(assignments)
         if count < 2:
             return None

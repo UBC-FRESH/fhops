@@ -1765,8 +1765,14 @@ def generate_neighbors(
     ctx: OperationalProblem,
     *,
     batch_size: int | None = None,
+    pre_repair: bool = True,
+    min_day: int = 0,
 ) -> list[Schedule]:
-    """Generate neighbour schedules via enabled operators with feasibility sanitization."""
+    """Generate neighbour schedules via enabled operators with feasibility sanitization.
+
+    With ``pre_repair`` unset, candidates are returned as the operators produced them and the
+    caller's evaluation performs the only repair pass.
+    """
 
     sc = pb.scenario
     if not sc.machines or not pb.shifts:
@@ -1791,6 +1797,7 @@ def generate_neighbors(
         landing_capacity=landing_cap,
         landing_of=landing_of,
         sanitizer_preview=ctx.build_sanitizer_preview(sched.plan),
+        min_day=min_day,
     )
 
     enabled_ops = list(registry.enabled())
@@ -1833,7 +1840,8 @@ def generate_neighbors(
 
         candidate = operator.apply(context)
         if candidate is not None:
-            _repair_schedule_cover_blocks(pb, candidate, ctx, fill_voids=False)
+            if pre_repair:
+                _repair_schedule_cover_blocks(pb, candidate, ctx, fill_voids=False)
             neighbours.append(candidate)
             stats["accepted"] += 1.0
             if limit is not None and len(neighbours) >= limit:

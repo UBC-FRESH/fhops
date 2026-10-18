@@ -112,6 +112,8 @@ def solve_sa(
     use_local_repairs: bool = False,
     objective_weight_overrides: dict[str, float] | None = None,
     milp_objective: float | None = None,
+    pre_repair: bool = True,
+    commitment_front: float = 0.0,
 ) -> dict[str, Any]:
     """Solve the scheduling problem with simulated annealing.
 
@@ -355,6 +357,14 @@ def solve_sa(
         run_start = time.perf_counter()
         for step in range(1, iters + 1):
             accepted = False
+            # Commitment front: advance ``min_day`` so the search stops churning the early
+            # decisions it has already made (the ones with the largest downstream reach).
+            front_day = 0
+            if commitment_front > 0:
+                front_day = 1 + int((ctx.bundle.windows and 0) or 0)
+                front_day = 1 + int(
+                    commitment_front * (pb.scenario.num_days - 1) * (step - 1) / max(1, iters - 1)
+                )
             candidates = generate_neighbors(
                 pb,
                 current,
@@ -363,6 +373,8 @@ def solve_sa(
                 operator_stats,
                 ctx,
                 batch_size=batch_size,
+                pre_repair=pre_repair,
+                min_day=front_day,
             )
             # Evaluate candidates lazily, stopping at the first acceptance. The RNG order is
             # unchanged (evaluation draws no randomness), so the run is identical to evaluating
