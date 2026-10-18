@@ -5,7 +5,7 @@ with the v1.0.1-into-`main` merge.
 Parent issues: #164 (merge v1.0.1 into `main`, targets 1.1.0b1), #165 (P9 SA performance),
 #166 (P10 incremental evaluation and repair).
 Pull request: #167, `feature/p10-incremental-eval` into `main`.
-Evidence head: `<the CI-fix commit>`. The gates below were run before the
+Evidence head: `d0b372cd5051a1cc4584df302891c404d678120c`. The gates below were run before the
 report; the first CI run on the branch exposed a formulation-check bug (see Deviations), fixed in
 the evidence head.
 Report commit: the tip of this branch (see PR #167). Its CI run is posted on #167 and on the issues.
