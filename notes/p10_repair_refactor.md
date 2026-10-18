@@ -66,3 +66,21 @@ repair state to be recoverable at that point.
 
 - The RNG stream (ADR 0003 covers the cross-exchange change).
 - The pre-repair (`fill_voids=False`); it is already cheap (0.67 ms on med42).
+
+## Outcome (2026-10-18): shipped, default on
+
+The incremental repair is implemented, exact, and now the default. Three bugs/fixes got it there:
+
+1. `role_remaining_lookup` was bound before `RepairState` is created and aliased; on resume it kept
+   pointing at the fresh dict, so the production cap read full volumes (day-5 med42: 1299 vs 356).
+   Bound after the aliasing -> `resume@0 == full` on all four scenarios.
+2. `build_sanitizer` returned a fresh `schedule_cls(plan=plan)` and dropped the operator's
+   `_set_slot` dirty marks, so candidates had `dirty_slots == set()` and the resume never fired. It
+   now carries the input dirty sets and adds the cells it drops.
+3. The resume takes the full snapshot list (indexed by slot) and carries the parent prefix, so the
+   accepted candidate already has snapshots -- no full repair per acceptance.
+
+Measured (5 seeds): tiny7 1.00x, small21 0.99x, med42 1.06x, large84 1.14x; objectives and exported
+assignments byte-identical. The guards in `solve_sa` fall back to the full repair when the
+equivalence is not guaranteed (`batch_size` + parallel workers, `pre_repair=False`,
+`use_local_repairs=True`), and the pinned fixtures regenerate with no diff.

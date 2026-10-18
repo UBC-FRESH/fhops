@@ -117,7 +117,7 @@ def solve_sa(
     milp_objective: float | None = None,
     pre_repair: bool = True,
     commitment_front: float = 0.0,
-    incremental_repair: bool = False,
+    incremental_repair: bool = True,
     adaptive_cooling: bool = False,
     cooling_window: int | None = None,
     cooling_initial_acceptance: float = 0.9,
@@ -181,6 +181,12 @@ def solve_sa(
         approximate mode: the dirty-slot repair does not refill every idle slot, so a candidate's
         search score can differ from a full evaluation of the same plan. The final schedule is
         always re-scored with a full repair before reporting.
+    incremental_repair : bool, default=True
+        Resume each candidate's repair from the accepted schedule's per-slot state at its earliest
+        changed slot instead of repairing the whole horizon. Provably identical to the full repair
+        and faster on large scenarios (~1.15x on large84); it falls back to the full repair
+        automatically in the modes where that equivalence is not guaranteed (``batch_size`` with
+        parallel workers, ``pre_repair=False``, or ``use_local_repairs=True``).
     objective_weight_overrides : dict[str, float] | None, optional
         Override scenario objective weights (keys: ``production``, ``mobilisation``, ``transitions``,
         ``landing_surplus``). ``None`` keeps the scenario weights, except for the scenarios listed in
@@ -347,6 +353,15 @@ def solve_sa(
         ctx = override_objective_weights(ctx, resolved_weight_overrides)
     debug_capture = bool(watch_debug and watch_sink)
     local_repairs = bool(use_local_repairs)
+    # The incremental repair resumes from the accepted schedule's per-slot state snapshots, which is
+    # only provably equivalent to the full repair in the sequential, pre-repair path. Batch
+    # evaluation bypasses the resume entirely (its candidates carry no snapshots), dirty-limited
+    # repairs score a different plan, and skipping the pre-repair changes what the resume sees, so
+    # in those modes we fall back to the full repair and the run is byte-identical to before.
+    batch_parallel = bool(batch_size and batch_size > 1 and max_workers and max_workers > 1)
+    incremental_active = (
+        incremental_repair and pre_repair and not local_repairs and not batch_parallel
+    )
     objective_weights_snapshot = ctx.bundle.objective_weights.model_dump()
 
     def _score_schedule(
@@ -374,7 +389,7 @@ def solve_sa(
 
     with telemetry_logger if telemetry_logger else nullcontext() as run_logger:
         current = init_greedy_schedule(pb, ctx)
-        if incremental_repair:
+        if incremental_active:
             _repair_schedule_cover_blocks(pb, current, ctx, snapshot=True)
             current_score, current_debug_stats = _score_plan(pb, current, ctx, None), None
         else:
@@ -433,7 +448,7 @@ def solve_sa(
                 def _score_lazily() -> Iterable[tuple[Schedule, float]]:
                     for candidate in candidates:
                         start = None
-                        if incremental_repair and current.repair_state is not None:
+                        if incremental_active and current.repair_state is not None:
                             dirty = candidate.dirty_slots
                             if dirty:
                                 start = min(
@@ -472,7 +487,7 @@ def solve_sa(
                 if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
                     current = neighbor
                     current_score = neighbor_score
-                    if incremental_repair and not (
+                    if incremental_active and not (
                         current.repair_state and current.repair_state.snapshots
                     ):
                         # Only when the candidate came through the fallback full repair.

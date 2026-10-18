@@ -1,3 +1,22 @@
+# 2026-10-18 — P10.6 decision: incremental repair is the SA default (behaviour-identical)
+
+Flipped `solve_sa(..., incremental_repair=True)` to the default.
+
+- **Byte-identical**: `scripts/regenerate_sa_baselines.py` rewrites the pinned `*_v101.csv` and
+  `baseline.json` entries with **no diff**; a 4-scenario x 6-config x 3-seed matrix (72 pairs) is
+  72/72 identical to `incremental_repair=False`.
+- **Self-guarding**: `incremental_active = incremental_repair and pre_repair and not
+  use_local_repairs and not (batch_size>1 and max_workers>1)`. In the modes where the resume's
+  equivalence is not proven (batch parallel, `pre_repair=False`, dirty-limited repairs) it falls back
+  to the full repair, so those runs are unchanged.
+- **Speedup** (5 seeds): tiny7 1.00x, small21 0.99x, med42 1.06x, large84 1.14x.
+- Tests: 914 passed, 214 skipped; mypy clean; ruff clean. `test_sa_incremental_repair_parity` now
+  compares the default against `incremental_repair=False`.
+
+Note: populating the sanitizer's dirty marks also affects the (default-off, previously dropped)
+`use_local_repairs=True` path; that mode is documented as approximate and is not part of any pinned
+result.
+
 # 2026-10-18 — SA cooling tuning: harness + adaptive rule parameters (keep opt-in)
 
 - Exposed `cooling_initial_acceptance` and `cooling_delta` on `solve_sa` (adaptive mode only) so the

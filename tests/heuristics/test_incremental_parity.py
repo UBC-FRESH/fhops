@@ -120,11 +120,12 @@ def test_repair_resume_matches_full(name: str) -> None:
 
 
 def test_sa_incremental_repair_parity() -> None:
-    """``solve_sa`` with the incremental repair matches the full-repair run exactly."""
+    """``solve_sa`` with the incremental repair (the default) matches the full-repair run exactly."""
     from fhops.optimization.heuristics import solve_sa
 
     scenario = load_scenario(str(ROOT / "examples" / "small21" / "scenario.yaml"))
     pb = Problem.from_scenario(scenario)
-    full = solve_sa(pb, iters=50, seed=42)
-    incremental = solve_sa(pb, iters=50, seed=42, incremental_repair=True)
+    full = solve_sa(pb, iters=50, seed=42, incremental_repair=False)
+    incremental = solve_sa(pb, iters=50, seed=42)
     assert incremental["objective"] == pytest.approx(full["objective"], abs=1e-9)
+    assert incremental["assignments"].equals(full["assignments"])
