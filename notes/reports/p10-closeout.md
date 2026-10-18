@@ -5,9 +5,10 @@ with the v1.0.1-into-`main` merge.
 Parent issues: #164 (merge v1.0.1 into `main`, targets 1.1.0b1), #165 (P9 SA performance),
 #166 (P10 incremental evaluation and repair).
 Pull request: #167, `feature/p10-incremental-eval` into `main`.
-Evidence head: `63f644b6699fe90b6f2f96919cf99c61cfff4b83`, the last task commit. The gates below
-were run before it.
-Report commit: `c482cb14794af5437be371c0df44feb9758d2df6`. Its CI run is posted on #167 and on the issues.
+Evidence head: `15e521cd7056468236304a7bfb1b5c3db2c7acc3`. The gates below were run before the
+report; the first CI run on the branch exposed a formulation-check bug (see Deviations), fixed in
+the evidence head.
+Report commit: the tip of this branch (see PR #167). Its CI run is posted on #167 and on the issues.
 Date: 2026-10-18
 Status: queued for approval. Nothing is merged, tagged, released, or changed in repository settings.
 
@@ -21,7 +22,7 @@ item can be approved or declined on its own.
    branch tip, so the merge is clean.
 
    ```bash
-   gh pr merge 167 -R UBC-FRESH/fhops --merge --match-head-commit c482cb14794af5437be371c0df44feb9758d2df6
+   gh pr merge 167 -R UBC-FRESH/fhops --merge --match-head-commit <branch tip at approval>
    ```
 
 2. Delete the remote branch `feature/p10-incremental-eval`.
@@ -87,6 +88,9 @@ Deferred, named for a separate approval (not part of this report):
 - Populating the sanitizer's dirty marks also changes the default-off, previously dropped
   `use_local_repairs=True` path; that mode is documented as approximate and is in no pinned result.
 - The CJFR manuscript repository depends on FHOPS 1.0.1, not on this branch.
+- The first CI run on the branch (this PR) failed the formulation asset drift check: the exporter
+  printed `path.relative_to(repo_root)` on a temporary render path. Fixed in the evidence head
+  (display-only; the generated assets are unchanged).
 
 ## Recommended next steps
 
