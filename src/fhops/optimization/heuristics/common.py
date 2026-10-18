@@ -6,7 +6,7 @@ import json
 import math
 from bisect import insort
 from collections import defaultdict
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Any, cast
@@ -474,13 +474,16 @@ def _repair_schedule_cover_blocks(
     limit_to_dirty_slots: bool = False,
     repair_stats: dict[str, float] | None = None,
     snapshot: bool = False,
-    resume: tuple[RepairStateSnapshot, int] | None = None,
+    resume: tuple[Sequence[RepairStateSnapshot], int] | None = None,
 ) -> None:
     """Fill empty/invalid shifts with high-demand blocks per role.
 
     With ``snapshot``, capture the repair state at every slot boundary into
-    ``Schedule.repair_state.snapshots``. With ``resume=(snapshot, slot_index)``, restore that
-    snapshot and run the repair only from ``slot_index`` onward (the incremental path).
+    ``Schedule.repair_state.snapshots``. With ``resume=(snapshots, slot_index)``, restore
+    ``snapshots[slot_index]`` and run the repair only from ``slot_index`` onward (the incremental
+    path). The caller must guarantee the schedule matches the one the snapshots came from on every
+    slot before ``slot_index``. When ``snapshot`` is combined with ``resume``, the earlier captures
+    are carried over so the result still has a full slot-indexed snapshot list.
     """
 
     sc = pb.scenario
@@ -592,7 +595,8 @@ def _repair_schedule_cover_blocks(
     )
 
     if resume is not None:
-        _snapshot, _resume_index = resume
+        _snapshots, _resume_index = resume
+        _snapshot = _snapshots[_resume_index]
         state = RepairState(
             block_remaining=dict(_snapshot[0]),
             role_remaining=dict(_snapshot[1]),
@@ -600,6 +604,11 @@ def _repair_schedule_cover_blocks(
             role_inventory_today=defaultdict(float, _snapshot[3]),
             role_consumed_slot=defaultdict(float, _snapshot[4]),
         )
+        if snapshot:
+            # The resumed repair covers slots ``_resume_index..`` only; keep the parent's captures
+            # for the earlier slots (unchanged, since the candidate matches the parent there) so the
+            # resulting state still carries a full slot-indexed snapshot list.
+            state.snapshots = list(_snapshots[:_resume_index])
     else:
         _resume_index = 0
         state = RepairState(

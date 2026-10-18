@@ -1,3 +1,26 @@
+# 2026-10-18 — P10.6 done: incremental repair triggers, is exact, and wins on the big scenario
+
+Three fixes turned the incremental repair from "exact but never fires / net negative" into a real
+(small) win:
+
+1. **Sanitizer kept the dirty marks** (`operational_problem.build_sanitizer`). It returned a fresh
+   `schedule_cls(plan=plan)`, discarding the operator's `_set_slot` marks, so every candidate had
+   `dirty_slots == set()` and the resume never triggered. It now carries the input dirty sets and
+   adds the cells it drops.
+2. **Resume takes the full snapshot list.** `resume=(snapshots, slot_index)` restores
+   `snapshots[slot_index]`; with `snapshot=True` the earlier captures are carried over, so the
+   repaired schedule keeps a full slot-indexed list.
+3. **No re-snapshot on acceptance.** The SA resumes with `snapshot=True` (cheap) instead of paying a
+   full repair per accepted move, which was what made the first wiring slower.
+
+Result (`solve_sa`, 200 iters, seed 42): objectives are **identical** to the full-repair run, and
+wall-clock is large84 **1.15x**, med42 ~0.98x, small21 ~0.94x — the win scales with repair cost and
+the latency of the earliest change. Still default off.
+
+- Tests: `pytest` -> 901 passed, 214 skipped (unchanged); `mypy src` clean; ruff clean. New coverage:
+  `test_repair_resume_matches_full` (resume==full for a cell cleared at the resume slot) and
+  `test_sa_incremental_repair_parity` (`solve_sa` incremental == full).
+
 # 2026-10-18 — P10.6 step 4: wired the incremental repair (exact, but snapshot overhead)
 
 - `solve_sa(..., incremental_repair=True)`: the accepted schedule is repaired once with

@@ -411,12 +411,17 @@ def solve_sa(
                             # candidates reached before acceptance) keeps the run identical while
                             # skipping the pre-repair of candidates that are never evaluated.
                             _repair_schedule_cover_blocks(pb, candidate, ctx, fill_voids=False)
-                        if start is not None and current.repair_state is not None:
+                        snapshots = current.repair_state.snapshots if current.repair_state else ()
+                        if start is not None and start < len(snapshots):
+                            # Resume the repair from the earliest changed slot and re-capture the
+                            # snapshots (cheap) so the accepted candidate keeps a full list and the
+                            # next iteration needs no extra repair.
                             _repair_schedule_cover_blocks(
                                 pb,
                                 candidate,
                                 ctx,
-                                resume=(current.repair_state.snapshots[start], start),
+                                resume=(snapshots, start),
+                                snapshot=True,
                             )
                             yield candidate, _score_plan(pb, candidate, ctx, None)
                         else:
@@ -431,7 +436,10 @@ def solve_sa(
                 if delta >= 0 or rng.random() < math.exp(delta / max(temperature, 1e-6)):
                     current = neighbor
                     current_score = neighbor_score
-                    if incremental_repair:
+                    if incremental_repair and not (
+                        current.repair_state and current.repair_state.snapshots
+                    ):
+                        # Only when the candidate came through the fallback full repair.
                         _repair_schedule_cover_blocks(pb, current, ctx, snapshot=True)
                     accepted = True
                     accepted_moves += 1

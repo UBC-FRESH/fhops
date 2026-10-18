@@ -176,12 +176,29 @@ class OperationalProblem:
         def sanitizer(schedule: Schedule) -> Schedule:
             landing_usage: dict[tuple[int, str, str], int] = {}
             plan: dict[str, dict[tuple[int, str], str | None]] = {}
+            # Carry the edits the caller already recorded (the operator's ``_set_slot`` marks) and
+            # add the cells this pass drops, so the result reports every slot that differs from the
+            # pre-edit schedule. Without this the fresh ``schedule_cls`` loses the dirty marks and
+            # an incremental repair cannot tell where the edit starts.
+            dirty_slots = set(getattr(schedule, "dirty_slots", ()))
+            dirty_machines = set(getattr(schedule, "dirty_machines", ()))
+            dirty_blocks = set(getattr(schedule, "dirty_blocks", ()))
             for machine_id, assignments in schedule.plan.items():
-                plan[machine_id] = {
-                    slot: sanitize_cell(machine_id, slot, block_id, landing_usage)
-                    for slot, block_id in assignments.items()
-                }
-            return schedule_cls(plan=plan)
+                machine_plan: dict[tuple[int, str], str | None] = {}
+                for slot, block_id in assignments.items():
+                    sanitized = sanitize_cell(machine_id, slot, block_id, landing_usage)
+                    machine_plan[slot] = sanitized
+                    if sanitized != block_id:
+                        dirty_slots.add((machine_id, slot[0], slot[1]))
+                        dirty_machines.add(machine_id)
+                        if block_id is not None:
+                            dirty_blocks.add(block_id)
+                plan[machine_id] = machine_plan
+            result = schedule_cls(plan=plan)
+            result.dirty_slots = dirty_slots
+            result.dirty_machines = dirty_machines
+            result.dirty_blocks = dirty_blocks
+            return result
 
         return sanitizer
 
