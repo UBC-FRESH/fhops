@@ -1,3 +1,13 @@
+# 2026-10-18 — Phase close-out: P9/P10 SA performance and the 1.1.0b1 merge (#164, #165, #166)
+
+- Queued PR #167 (`feature/p10-incremental-eval` -> `main`) and committed the phase close-out report
+  `notes/reports/p10-closeout.md` (ADR 0008). The merge, branch deletion, and the closures of #164,
+  #165, #166 are named there and await maintainer approval.
+- Ladder speed (200 iters, 3 seeds, evals/s) vs the 1.1.0b1 base: tiny7 2.28x, small21 3.59x,
+  med42 4.81x, large84 4.14x (geometric mean ~3.6x). Today's P10.5/P10.6 increment is ~1.48x,
+  byte-identical.
+- Deferred for a separate approval: a `v1.1.0b2` tag/release.
+
 # 2026-10-18 — P10.6 decision: incremental repair is the SA default (behaviour-identical)
 
 Flipped `solve_sa(..., incremental_repair=True)` to the default.

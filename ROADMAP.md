@@ -264,6 +264,12 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
     - The version bump was gated on benchmark and practitioner evidence because Phase 6 materially expands FHOPS's potential use cases.
     - SoftwareX manuscript edits are out of scope here; the manuscript lives in the separate `fhops-manuscript` repository.
 
+15. **SA Performance and Incremental Repair (#165, #166; `notes/sa_performance_plan.md`, `notes/p10_repair_refactor.md`, ADR 0003)**
+    - P9 S4a lazy candidate evaluation (2.1x, identical objectives); S2 (dirty-only repair) dropped and S3 (nested hot path) reverted, both recorded.
+    - P10 block-separable evaluator, bounded `cross_exchange` sampling (ADR 0003), lazy pre-repair, and the incremental repair, which is now the SA default and behaviour-identical (72/72 parity; pinned baselines regenerate with no diff).
+    - Session throughput ~3.6x (geometric mean) on the example ladder; today's P10.5/P10.6 increment ~1.48x.
+    - Close-out report `notes/reports/p10-closeout.md`; PR #167 queued into `main`.
+
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
