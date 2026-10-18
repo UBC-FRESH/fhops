@@ -202,6 +202,37 @@ class RepairState:
     role_inventory_estimate: defaultdict[tuple[str, str], float]
     role_inventory_today: defaultdict[tuple[str, str], float]
     role_consumed_slot: defaultdict[tuple[str, str], float]
+    #: Per-slot state captures (only when the caller asks for them), one per slot boundary.
+    snapshots: list[RepairStateSnapshot] = field(default_factory=list)
+
+    def capture(self) -> RepairStateSnapshot:
+        """Return a copy of the mutable structures (a slot-boundary snapshot)."""
+        return (
+            dict(self.block_remaining),
+            dict(self.role_remaining),
+            dict(self.role_inventory_estimate),
+            dict(self.role_inventory_today),
+            dict(self.role_consumed_slot),
+        )
+
+    def restore(self, snapshot: RepairStateSnapshot) -> None:
+        """Load a snapshot returned by :meth:`capture` back into this state."""
+        block, role, estimate, today, consumed = snapshot
+        self.block_remaining = dict(block)
+        self.role_remaining = dict(role)
+        self.role_inventory_estimate = defaultdict(float, estimate)
+        self.role_inventory_today = defaultdict(float, today)
+        self.role_consumed_slot = defaultdict(float, consumed)
+
+
+#: One per-slot capture: the five structures of :class:`RepairState` copied.
+RepairStateSnapshot = tuple[
+    dict[str, float],
+    dict[tuple[str, str], float],
+    dict[tuple[str, str], float],
+    dict[tuple[str, str], float],
+    dict[tuple[str, str], float],
+]
 
 
 @dataclass(slots=True)
@@ -439,8 +470,15 @@ def _repair_schedule_cover_blocks(
     fill_voids: bool = True,
     limit_to_dirty_slots: bool = False,
     repair_stats: dict[str, float] | None = None,
+    snapshot: bool = False,
+    resume: tuple[RepairStateSnapshot, int] | None = None,
 ) -> None:
-    """Fill empty/invalid shifts with high-demand blocks per role."""
+    """Fill empty/invalid shifts with high-demand blocks per role.
+
+    With ``snapshot``, capture the repair state at every slot boundary into
+    ``Schedule.repair_state.snapshots``. With ``resume=(snapshot, slot_index)``, restore that
+    snapshot and run the repair only from ``slot_index`` onward (the incremental path).
+    """
 
     sc = pb.scenario
     bundle = ctx.bundle
@@ -552,13 +590,24 @@ def _repair_schedule_cover_blocks(
         key=lambda m: (role_priority.get(machine_roles.get(m.id) or "", 999), m.id)
     )
 
-    state = RepairState(
-        block_remaining=block_remaining,
-        role_remaining=role_remaining,
-        role_inventory_estimate=defaultdict(float, ctx.initial_role_inventory),
-        role_inventory_today=defaultdict(float),
-        role_consumed_slot=defaultdict(float),
-    )
+    if resume is not None:
+        _snapshot, _resume_index = resume
+        state = RepairState(
+            block_remaining=dict(_snapshot[0]),
+            role_remaining=dict(_snapshot[1]),
+            role_inventory_estimate=defaultdict(float, _snapshot[2]),
+            role_inventory_today=defaultdict(float, _snapshot[3]),
+            role_consumed_slot=defaultdict(float, _snapshot[4]),
+        )
+    else:
+        _resume_index = 0
+        state = RepairState(
+            block_remaining=block_remaining,
+            role_remaining=role_remaining,
+            role_inventory_estimate=defaultdict(float, ctx.initial_role_inventory),
+            role_inventory_today=defaultdict(float),
+            role_consumed_slot=defaultdict(float),
+        )
     block_remaining = state.block_remaining
     role_remaining = state.role_remaining
     role_inventory_estimate = state.role_inventory_estimate
@@ -1010,8 +1059,12 @@ def _repair_schedule_cover_blocks(
             if landing_id is not None and landing_id in landing_cap:
                 reserved_landing[machine_id] = landing_id
 
+    if resume is not None:
+        shift_iteration = shift_iteration[_resume_index:]
     for day, shift_id in shift_iteration:
         advance_slot(day, shift_id)
+        if snapshot:
+            state.snapshots.append(state.capture())
         starved_cache.clear()
         if limit_to_dirty_slots:
             machines_for_slot = slots_to_process.get((day, shift_id))

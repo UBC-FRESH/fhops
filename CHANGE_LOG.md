@@ -1,3 +1,15 @@
+# 2026-10-18 — P10.6 step 2: slot snapshots and a resume path (neutral; resume not yet exact)
+
+- `RepairState` gains `snapshots` and `capture`/`restore`; the repair gains `snapshot=True` (capture
+  the state at every slot boundary) and `resume=(snapshot, slot_index)` (restore and run from a
+  slot). Both default off, so the solver is unchanged (objectives identical on the ladder).
+- Snapshotting is neutral (`snapshot=True` gives the same plan). **The resume path is not yet
+  exact:** resuming from slot 0 differs from the full repair from slot 14 onward (slots 0-13 match),
+  so the restored state does not evolve identically. Next: find the missing state (the plan matches
+  before the divergence, so a structure the snapshot does not carry leaks between slots), then the
+  parity test `resume@0 == full` and `resume@k` correct.
+- Not enabled anywhere; the SA still uses the full repair.
+
 # 2026-10-18 — P10.6 step 1: extract `RepairState` (behaviour-neutral)
 
 - Added `RepairState` (block_remaining, role_remaining, role_inventory_estimate,
