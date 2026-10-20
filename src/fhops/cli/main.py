@@ -260,6 +260,20 @@ def _print_weight_override_notice(meta: Mapping[str, Any], scenario_label: str |
 def _print_warm_start_summary(info: Mapping[str, Any]) -> None:
     """Report how the ``--incumbent`` warm start was passed to the MILP solver."""
 
+    derived = info.get("feasible_start")
+    if isinstance(derived, Mapping) and derived.get("requested"):
+        if derived.get("derived"):
+            console.print(
+                "Feasible start: derived from the incumbent via a fixed-binary LP "
+                f"(objective={derived.get('objective')}, "
+                f"{derived.get('runtime_s', 0):.1f} s)."
+            )
+        else:
+            console.print(
+                "[yellow]Feasible start: LP did not return a usable point[/] "
+                f"(status={derived.get('status')}, {derived.get('solver_error') or 'no error'}); "
+                "keeping the heuristic start."
+            )
     method = info.get("method")
     seeded = info.get("seeded_slots", 0)
     if method is None:
@@ -739,6 +753,16 @@ def solve_mip_operational_cmd(
             "and cplex. Other solvers run without the start and emit a warning."
         ),
     ),
+    feasible_start: bool = typer.Option(
+        False,
+        "--feasible-start/--no-feasible-start",
+        help=(
+            "With --incumbent: fix the plan's assignment binaries, solve the resulting LP to derive "
+            "the flows, and pass that provably feasible point to the MIP as its start. Removes the "
+            "no-incumbent-at-the-time-limit failures on large windows, at the cost of one LP "
+            "(seconds to ~20 s). Without --incumbent this has no effect."
+        ),
+    ),
     debug: bool = typer.Option(False, "--debug", help="Verbose solver output/tracebacks."),
     sequencing_debug: bool = typer.Option(
         False,
@@ -873,6 +897,7 @@ def solve_mip_operational_cmd(
                     tee=debug,
                     solver_options=parsed_solver_options or None,
                     incumbent_assignments=incumbent_assignments,
+                    feasible_start=feasible_start,
                     context=ctx,
                     **({"earliness": True} if earliness else {}),
                 )

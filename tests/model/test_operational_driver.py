@@ -305,3 +305,72 @@ def test_highs_warm_start_falls_back_without_appsi(tiny7_highs_solution, monkeyp
     assert result["warm_start"]["method"] is None
     assert result["warm_start"]["solver"] == "highs"
     assert result["objective"] == pytest.approx(cold["objective"], abs=1e-6)
+
+
+def _greedy_assignment_table(problem, ctx) -> pd.DataFrame:
+    from fhops.optimization.heuristics.common import (
+        _repair_schedule_cover_blocks,
+        init_greedy_schedule,
+    )
+
+    schedule = init_greedy_schedule(problem, ctx)
+    _repair_schedule_cover_blocks(problem, schedule, ctx, fill_voids=True)
+    return pd.DataFrame(
+        [
+            {
+                "machine_id": machine,
+                "block_id": block,
+                "day": int(day),
+                "shift_id": shift,
+                "assigned": 1,
+                "production": 0.0,
+            }
+            for machine, slots in schedule.plan.items()
+            for (day, shift), block in slots.items()
+            if block
+        ]
+    )
+
+
+def test_feasible_start_derives_a_feasible_lp_point():
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
+    problem = Problem.from_scenario(scenario)
+    ctx = build_operational_problem(problem)
+    incumbent = _greedy_assignment_table(problem, ctx)
+    assert not incumbent.empty
+
+    result = solve_operational_milp(
+        ctx.bundle,
+        solver="highs",
+        time_limit=2,
+        incumbent_assignments=incumbent,
+        feasible_start=True,
+        context=ctx,
+    )
+
+    info = result["warm_start"]["feasible_start"]
+    assert info is not None
+    assert info["requested"] is True
+    assert info["derived"] is True
+    assert info["solver_error"] is None
+    assert info["objective"] is not None
+    assert info["runtime_s"] is not None and info["runtime_s"] >= 0
+    # the derived start must not prevent the MIP from returning a plan
+    assert result["has_solution"] is True
+
+
+def test_feasible_start_is_off_by_default():
+    scenario = load_scenario("examples/tiny7/scenario.yaml")
+    problem = Problem.from_scenario(scenario)
+    ctx = build_operational_problem(problem)
+    incumbent = _greedy_assignment_table(problem, ctx)
+
+    result = solve_operational_milp(
+        ctx.bundle,
+        solver="highs",
+        time_limit=2,
+        incumbent_assignments=incumbent,
+        context=ctx,
+    )
+
+    assert result["warm_start"]["feasible_start"] is None

@@ -1,4 +1,46 @@
-# 2026-10-18 — CI: make the formulation asset drift check deterministic and re-sync the assets
+# 2026-10-20 — `feasible_start`: derive a provably feasible MIP start from a heuristic plan
+
+Warm-starting the operational MILP from a heuristic incumbent did not work on the larger
+instances: the heuristic derivation (`_apply_incumbent_start`) sets the assignment binaries and
+rebuilds the implied state from a sequencing tracker, but the resulting point can violate the
+continuous constraints slightly, so the solver rejects the MIP start. The documented consequence was
+that "med42/large84 usually ignore the seed and rely on Gurobi/HiGHS built-in heuristics".
+
+New opt-in mechanism: `solve_operational_milp(..., feasible_start=True)`.
+
+1. Apply the incumbent as before (binaries + derived state).
+2. **Fix every `x` assignment binary** to the plan.
+3. Solve the remaining **LP**; the continuous flows, inventories, landings and transitions are
+   chosen subject to every constraint, so the point is feasible for the MILP by construction.
+4. Unfix the binaries and leave the LP values loaded as the MIP start.
+
+The LP costs seconds on med42 and ~15–20 s on the 112-day 40-block window (`pg_40`); it is bounded
+by `feasible_start_time_limit` (default 600 s) and is **self-guarding** — if the LP is infeasible or
+errors, the heuristic start is kept and the solve proceeds unchanged.
+
+Evidence (Gurobi 13.0.3, 36 threads, idle box, `pg_40` full-horizon MILP, 300 s MIP):
+
+| arm | seed wall | LP | Gurobi objective |
+|---|---|---|---|
+| cold | 0 | – | **−1,309,443** (no usable incumbent) |
+| greedy + LP | ~10 s | 17 s | **+100,070** |
+| SA (27 iters) + LP | 281 s | 18 s | **+169,818** |
+| ILS (8 iters) + LP | 222 s | 17 s | **+211,930** |
+| Tabu (26 iters) + LP | 277 s | 16 s | **+223,774** |
+
+On `med42` (300 s MIP) cold was 21,916; ILS (50 iters, 7 s) + LP reached 28,322–28,504 across
+seeds. The same fixed-binary-LP trick is applied to the ILS hybrid step
+(`solve_ils(..., hybrid_use_mip=True)`), which is already opt-in.
+
+Also newly reported: `warm_start["feasible_start"]` (requested, derived, status, termination,
+solver error, LP objective, runtime) and a CLI flag `fhops plan mip --feasible-start` with a summary
+line. `feasible_start` requires `--incumbent`; without one it has no effect.
+
+Tests: `tests/model/test_operational_driver.py::test_feasible_start_derives_a_feasible_lp_point`
+(derived point, no error, MIP still returns a plan) and `::test_feasible_start_is_off_by_default`.
+Full driver, ILS and CLI-operational suites pass.
+
+
 
 The first CI run on the phase branch (PR #167) failed the `lint-test-docs` / "Formulation asset
 drift check" step for two reasons, both pre-existing on the v1.0.1 line and unrelated to P9/P10:

@@ -135,6 +135,8 @@ def solve_operational_milp(
     tee: bool = False,
     solver_options: Mapping[str, object] | None = None,
     incumbent_assignments: pd.DataFrame | None = None,
+    feasible_start: bool = False,
+    feasible_start_time_limit: float | None = 600.0,
     context: OperationalProblem | None = None,
     earliness: bool = False,
     earliness_time_limit: int | None = None,
@@ -168,7 +170,22 @@ def solve_operational_milp(
         inventories, landing surplus) and pass it to the solver as a MIP start (see *Notes* for
         the per-solver mechanism). The solver will still discard the start if the incumbent is
         infeasible; right now only tiny7/small21 benefit measurably, whereas med42/large84 respond
-        better to the solver’s own heuristics.
+        better to the solver’s own heuristics. Pair with ``feasible_start`` to remove that failure
+        mode.
+    feasible_start :
+        When ``True`` (and ``incumbent_assignments`` is non-empty), convert the heuristic plan into
+        a *provably MILP-feasible* starting point before the MIP solve: fix every assignment binary
+        to the plan, solve the resulting feasibility LP (the continuous flows, inventories and
+        transitions are derived by the solver), then unfix and load the LP values as the start. The
+        heuristic derivation cannot guarantee feasibility on larger instances, which is why the
+        solver often discards it; the LP-derived point satisfies every constraint by construction,
+        so the MIP holds an incumbent at ``t = 0``. This is the mechanism that fixes the
+        no-incumbent-at-the-time-limit failures on 40-block windows. Cost: one LP per solve
+        (typically seconds on med42 and ~15–20 s on the 112-day 40-block window), bounded by
+        ``feasible_start_time_limit``. If the LP is infeasible or fails, the heuristic start is
+        kept unchanged.
+    feasible_start_time_limit :
+        Time limit (seconds) for the ``feasible_start`` LP; ``None`` leaves the solver default.
     context :
         :class:`fhops.optimization.operational_problem.OperationalProblem` describing the scenario.
         Required if the incumbent needs to be expanded into loader and landing state (the CLI and
@@ -234,6 +251,11 @@ def solve_operational_milp(
             ``True`` when ``incumbent_assignments`` was non-empty.
         ``seeded_slots`` (int)
             Number of ``(machine, shift)`` assignment slots seeded from the incumbent.
+        ``feasible_start`` (dict | None)
+            ``None`` unless ``feasible_start=True``. Keys: ``requested``, ``derived`` (``True`` when
+            the fixed-binary LP returned an optimal point that is now loaded as the start),
+            ``status``, ``termination_condition``, ``solver_error``, ``solver``, ``objective`` (the
+            LP objective of the seeded plan) and ``runtime_s``.
         ``method`` (str | None)
             ``"appsi_highs"`` (HiGHS MIP start via ``highspy.Highs.setSolution``),
             ``"pyomo_warmstart"`` (legacy ``solve(..., warmstart=True)``), or ``None`` when no
@@ -327,6 +349,15 @@ def solve_operational_milp(
     seeded = 0
     if incumbent_assignments is not None:
         seeded = _apply_incumbent_start(model, incumbent_assignments)
+    feasible_start_info: dict[str, Any] | None = None
+    if feasible_start and seeded > 0:
+        feasible_start_info = _derive_feasible_start(
+            model,
+            solver=solver,
+            time_limit=feasible_start_time_limit,
+            solver_options=solver_options,
+            tee=tee,
+        )
     seed_snapshot = _snapshot_seed(model) if seeded > 0 else None
 
     warm_info: dict[str, Any] = {
@@ -337,6 +368,7 @@ def solve_operational_milp(
         "accepted": None,
         "acceptance": None,
         "solver_messages": [],
+        "feasible_start": feasible_start_info,
     }
     opt, solver_used, method = _create_solver(solver, warm_start=seeded > 0)
     warm_info["method"] = method
@@ -963,6 +995,79 @@ def _apply_incumbent_start(model: pyo.ConcreteModel, assignments: pd.DataFrame |
         return _seed_basic_assignments(model, assignments)
     _seed_model_from_state(model, meta, state)
     return len(state.assignment_lookup)
+
+
+def _derive_feasible_start(
+    model: pyo.ConcreteModel,
+    *,
+    solver: str,
+    time_limit: float | None,
+    solver_options: Mapping[str, object] | None,
+    tee: bool,
+) -> dict[str, Any]:
+    """Turn the seeded heuristically-derived values into a provably feasible MILP start.
+
+    The incumbent derivation in :func:`_apply_incumbent_start` sets the assignment binaries and
+    rebuilds the implied state, but the resulting point need not satisfy every constraint (the
+    derived production, inventories and mobilisation flags can be inconsistent by small amounts).
+    Solvers then reject it as a MIP start, which is why seeded med42/40-block solves were reported
+    as ignoring the incumbent.
+
+    Fixing the assignment binaries and solving the remaining **LP** removes that failure mode: the
+    continuous flows, inventories and transitions are chosen by the solver subject to every
+    constraint, so the resulting point is feasible for the MILP by construction. The binaries are
+    then unfixed and the LP values left loaded, ready to be handed to the MIP solve.
+
+    Returns
+    -------
+    dict
+        Report with ``requested``, ``derived``, ``status``, ``termination_condition``,
+        ``solver_error``, ``solver``, ``objective`` and ``runtime_s``. ``derived`` is ``False``
+        when the LP did not return a usable point; the caller then keeps the heuristic start.
+    """
+
+    started = time.perf_counter()
+    info: dict[str, Any] = {
+        "requested": True,
+        "derived": False,
+        "status": None,
+        "termination_condition": None,
+        "solver_error": None,
+        "solver": solver,
+        "objective": None,
+        "runtime_s": None,
+    }
+    unbounded: list[pyo.VarData] = []
+    for index, var in model.x.items():
+        value = var.value
+        var.fix(1.0 if value is not None and value >= 0.5 else 0.0)
+        unbounded.append(var)
+    try:
+        opt, solver_used, method = _create_solver(solver, warm_start=False)
+        info["solver"] = solver_used
+        if time_limit is not None:
+            opt.options["time_limit"] = time_limit
+        for key, value in (solver_options or {}).items():
+            opt.options[str(key)] = value
+        run = _run_solver(
+            opt,
+            model,
+            {"tee": tee, "load_solutions": False},
+            appsi=method == "appsi_highs",
+        )
+        info["status"] = run.status
+        info["termination_condition"] = run.termination
+        info["solver_error"] = run.error
+        if run.has_solution and run.error is None:
+            info["derived"] = True
+            info["objective"] = float(pyo.value(model.objective))
+    except Exception as exc:  # an LP failure must never break the MIP solve
+        info["solver_error"] = f"{type(exc).__name__}: {exc}"
+    finally:
+        for var in unbounded:
+            var.unfix()
+        info["runtime_s"] = time.perf_counter() - started
+    return info
 
 
 def _seed_basic_assignments(model: pyo.ConcreteModel, assignments: pd.DataFrame) -> int:
