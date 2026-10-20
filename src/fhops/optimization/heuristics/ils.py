@@ -2,7 +2,9 @@
 
 The optional hybrid step (``hybrid_use_mip``) warm-starts the operational MILP
 (:func:`fhops.model.milp.driver.solve_operational_milp`) from the best ILS schedule when the search
-stalls (#127, #104).
+stalls (#127, #104). The start is passed through ``feasible_start=True``: the plan's assignment
+binaries are fixed and the resulting LP derives the flows, so the MIP receives a point that
+satisfies every constraint instead of a heuristic derivation that large instances often reject.
 """
 
 from __future__ import annotations
@@ -534,6 +536,7 @@ def solve_ils(
                                 if best_mip_table is not None
                                 else _schedule_to_incumbent(best)
                             ),
+                            feasible_start=True,
                             context=ctx,
                         )
                     except Exception as exc:  # pragma: no cover - defensive path
