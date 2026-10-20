@@ -65,6 +65,7 @@ def test_solve_mip_operational_solver_options(monkeypatch, tmp_path):
         tee=False,
         solver_options=None,
         incumbent_assignments=None,
+        feasible_start=False,
         context=None,
     ):
         captured["solver_options"] = solver_options
@@ -118,9 +119,11 @@ def test_solve_mip_operational_incumbent(monkeypatch, tmp_path):
         tee=False,
         solver_options=None,
         incumbent_assignments=None,
+        feasible_start=False,
         context=None,
     ):
         captured["incumbent"] = incumbent_assignments
+        captured["feasible_start"] = feasible_start
         return {
             "objective": 0.0,
             "production": 0.0,
@@ -142,11 +145,13 @@ def test_solve_mip_operational_incumbent(monkeypatch, tmp_path):
             str(out_path),
             "--incumbent",
             str(incumbent_path),
+            "--feasible-start",
         ],
     )
     assert result.exit_code == 0, cli_text(result)
     assert isinstance(captured["incumbent"], pd.DataFrame)
     assert len(captured["incumbent"]) == 2
+    assert captured["feasible_start"] is True
 
 
 def test_solve_mip_operational_incumbent_highs_warm_start(tmp_path):
