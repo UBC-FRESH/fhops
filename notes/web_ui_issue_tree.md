@@ -11,6 +11,7 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 
 - Parent issue: [#171 - P12: FHOPS web application (WS4-style artefact reader)](https://github.com/UBC-FRESH/fhops/issues/171)
 - Phase branch: `feature/p12-web-ui` (reserved; created from `main` at activation)
+- Planning PR: #184 (draft)
 - Status: queued
 
 | Issue | Task | Child branch |

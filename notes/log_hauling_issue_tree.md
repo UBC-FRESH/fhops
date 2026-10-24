@@ -9,6 +9,7 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 
 - Parent issue: [#170 - P11: Log hauling and mill delivery optimization (Ghotb decomposition)](https://github.com/UBC-FRESH/fhops/issues/170)
 - Phase branch: `feature/p11-log-hauling` (reserved; created from `main` at activation)
+- Planning PR: #184 (draft)
 - Status: queued
 
 | Issue | Task | Child branch |

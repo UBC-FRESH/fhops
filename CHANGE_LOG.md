@@ -20,6 +20,8 @@
 - The phase branches `feature/p11-log-hauling` and `feature/p12-web-ui` are **reserved, not
   created**. They will be cut from the then-current `main` at activation, as the workflow requires.
 - No product code changed. This is planning scaffolding only.
+- Planning PR #184 (draft) carries the roadmap entry, changelog, plans, and issue trees. Its
+  planning commit is `e8121a8`; this entry is refreshed on the same branch before approval.
 
 Verification:
 - `python <workflow-repo>/scripts/check_workflow.py --files <issue-body-dir>/*.md` ->
