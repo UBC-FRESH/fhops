@@ -1,3 +1,37 @@
+# 2026-10-24 — Queue P11 log hauling and P12 web UI expansion phases (#170, #171)
+
+- Opened the two queued parent issues and their child issue trees:
+  - **P11 #170 — Log hauling and mill delivery optimization (Ghotb decomposition)**, children
+    #172-#177. Plan: `notes/log_hauling_expansion_plan.md`; tree:
+    `notes/log_hauling_issue_tree.md`.
+  - **P12 #171 — FHOPS web application (WS4-style artefact reader)**, children #178-#183. Plan:
+    `notes/web_ui_expansion_plan.md`; tree: `notes/web_ui_issue_tree.md`.
+- The P11 plan records the thesis provenance (Ghotb 2023, UBC cIRcle handle 2429/85563; CJFR 2022;
+  IJFE 2024; ESWA 2024), the two-phase decomposition, the Phase I goal-programming model, the
+  Phase II continuous-time truck/loader scheduling model, the SA/SPT decoder, the FHOPS integration
+  points, the output contract, and an explicit statement that the confidential company case cannot
+  be reproduced in dollars. It also lists the thesis transcription issues to resolve in #172/#174.
+- The P12 plan records the WS4 reference design and stack: FastAPI + uvicorn behind `fhops[web]`, a
+  vanilla ES module SPA, MapLibre with an SVG fallback, JSON skin manifests, SSE with a 204
+  finished-run contract, loopback-only defaults, and an opt-in assistant. It freezes the CLI
+  artefact contract and adds a proposed `run.json` manifest in #178.
+- Added `phase` and `task` labels; parent issues carry the `Feature` issue type, child issues the
+  `Task` type, and every child is linked as a GitHub sub-issue.
+- The phase branches `feature/p11-log-hauling` and `feature/p12-web-ui` are **reserved, not
+  created**. They will be cut from the then-current `main` at activation, as the workflow requires.
+- No product code changed. This is planning scaffolding only.
+
+Verification:
+- `python <workflow-repo>/scripts/check_workflow.py --files <issue-body-dir>/*.md` ->
+  `0 error(s), 0 warning(s)` before posting.
+- Read back `gh issue view` for #170 and #171; both child checklists and all twelve sub-issue links
+  resolve.
+- `git diff --check` on the planning branch.
+
+Next: activation of either phase needs a maintainer decision. If P11 is activated first, #172 gates
+the models and solver. If P12 is activated first, #178 freezes the artefact contract before any API
+or UI code.
+
 # 2026-10-20 — `feasible_start`: derive a provably feasible MIP start from a heuristic plan
 
 Warm-starting the operational MILP from a heuristic incumbent did not work on the larger
