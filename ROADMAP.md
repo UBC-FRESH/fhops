@@ -179,6 +179,32 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
 - [x] #152 Labelled canonical operational formulation: OBJ/OBJ2/E1–E13 (E8a–c)/INIT/D1 labels, Block → Pyomo mapping table, docs page anchor `operational-milp-formulation` for citation, drift test (no code change).
 - [x] #147 Final SoftwareX asset regeneration on the final 1.0.1 code (50e6f9b, incl. the #151 performance fix): one sequential full pipeline run on an idle host (2 h 57 min; `assets_hash` 5e069c58…, recipe v2, `asset_hash.py verify` passes), tables/figures rebuilt, asset audit 0 failures, plans/objectives identical to the superseded a0b2799 run (#150); manuscript values manuscript → committed → new in `notes/v101_maintenance_plan.md` §8.28.
 
+## Phase 11 — Log Hauling and Mill Delivery Optimization (Ghotb-Inspired) — queued
+Parent #170; branch `feature/p11-log-hauling` (created at activation); plan
+`notes/log_hauling_expansion_plan.md`; issue tree `notes/log_hauling_issue_tree.md`.
+Adds the operational log-hauling layer missing between harvest and mill demand: Phase I monthly
+daily-flow MIP with contractor workload balance, Phase II continuous-time truck/loader scheduling,
+and a thesis-calibrated SA solver.
+- [ ] #172 P11.1 Provenance, hauling contract, and formulation audit.
+- [ ] #173 P11.2 Phase I monthly flow MILP and goal programming.
+- [ ] #174 P11.3 Phase II daily routing and scheduling MILP.
+- [ ] #175 P11.4 SA solution approach, SPT decoder, and calibration.
+- [ ] #176 P11.5 FHOPS integration, CLI, reporting, and example case.
+- [ ] #177 P11.6 Validation, documentation, formulation sync, and close-out.
+
+## Phase 12 — FHOPS Web Application (WS4-Style) — queued
+Parent #171; branch `feature/p12-web-ui` (created at activation); plan
+`notes/web_ui_expansion_plan.md`; issue tree `notes/web_ui_issue_tree.md`.
+Adds an optional FastAPI + vanilla-ES-module web surface over the CLI's artefacts, following the
+WS4 web UI design: map/layer tree, schedule/Gantt, KPIs, reports, comparison, live SSE runs, skins,
+and an opt-in assistant.
+- [ ] #178 P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry.
+- [ ] #179 P12.2 Read-only API, SPA shell, and skin loader.
+- [ ] #180 P12.3 Map, layer tree, and day/period control.
+- [ ] #181 P12.4 Schedule/Gantt, KPI, report, and comparison panels.
+- [ ] #182 P12.5 Live runs, SSE, and run control.
+- [ ] #183 P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out.
+
 ## Detailed Next Steps
 0. **Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**
    - 2026-10-06: #91 (`issue-91-initial-state-contract`) adds optional `Scenario.initial_state` and `ScheduleLock.shift_id`, honoured by the operational MILP (first-slot inventory/head-start, role-remaining cap, boundary move, lock constraints), heuristics, and playback, with v1.0.0 regression parity tests. Next: #92 rolling-horizon carry-forward builds on this contract.
@@ -270,10 +296,29 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
     - Session throughput ~3.6x (geometric mean) on the example ladder; today's P10.5/P10.6 increment ~1.48x.
     - Close-out report `notes/reports/p10-closeout.md`; PR #167 queued into `main`.
 
+16. **Log Hauling and Mill Delivery (#170; `notes/log_hauling_expansion_plan.md`, `notes/log_hauling_issue_tree.md`)**
+    - Queued as P11. The phase adds the operational hauling layer between harvest and mill demand:
+      Ghotb's Phase I monthly daily-flow MIP with contractor workload balance, Phase II
+      continuous-time truck/loader scheduling, and the SA solver with an SPT decoder.
+    - Child issues #172-#177 are linked as sub-issues; the phase branch is reserved until activation.
+    - The thesis case data is confidential, so acceptance uses structural fidelity, MIP-versus-SA
+      parity on thesis-shaped synthetic instances, and the published qualitative findings. Exact
+      company-dollar reproduction is explicitly not claimed.
+    - Start with #172 (contract and formulation audit); it gates the models and solver.
+
+17. **FHOPS Web Application (#171; `notes/web_ui_expansion_plan.md`, `notes/web_ui_issue_tree.md`)**
+    - Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,
+      following the WS4 web UI design: map/layer tree, schedule, KPIs, reports, comparison, live SSE
+      runs, skins, and an opt-in assistant.
+    - Child issues #178-#183 are linked as sub-issues; the phase branch is reserved until activation.
+    - P12.1 freezes the artefact contract (including a new `run.json`) before the API and UI work.
+      P11 hauling outputs are optional; missing layers are named, not invented.
+    - Start with #178; re-read the WS4 design note and `ws4/web/app.py` before the first service line.
+
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
-- [ ] Scenario authoring UI and schema validators for web clients.
+- [ ] Scenario authoring UI and schema validators for web clients (queued as P12, #171).
 - [ ] Cloud execution harness for large-scale heuristics.
 - [ ] DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
 - [ ] Jaffray MASc thesis alignment checkpoints (`notes/thesis_alignment.md` TBD).
