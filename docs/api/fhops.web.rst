@@ -18,3 +18,9 @@
    :undoc-members:
    :show-inheritance:
    :noindex:
+
+.. automodule:: fhops.web.mapdata
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:

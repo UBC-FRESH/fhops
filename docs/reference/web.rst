@@ -30,6 +30,11 @@ Key objects
 - :func:`fhops.web.app.validate_bind` – loopback/remote-bind guard.
 - :func:`fhops.web.skins.load_skins` / :func:`fhops.web.skins.validate_skin` – skin registry.
 - :class:`fhops.web.skins.SkinManifest` – validated domain skin.
+- :func:`fhops.web.mapdata.load_block_geometry` – resolve block geometry from ``--geometry``, the
+  scenario, or a run-local GeoJSON.
+- :func:`fhops.web.mapdata.layer_registry` – available/unavailable map layers with reasons.
+- :func:`fhops.web.mapdata.time_payload` – day/shift/period control values.
+- :func:`fhops.web.mapdata.map_payload` – GeoJSON FeatureCollection for the requested layers.
 
 CLI
 ---

@@ -15,6 +15,33 @@ def _write(run_dir: Path, name: str, text: str) -> None:
     (run_dir / name).write_text(text, encoding="utf-8")
 
 
+def _geometry(root: Path) -> Path:
+    payload = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"block_id": "b1"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
+                },
+            },
+            {
+                "type": "Feature",
+                "properties": {"block_id": "b2"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [[[1, 0], [2, 0], [2, 1], [1, 1], [1, 0]]],
+                },
+            },
+        ],
+    }
+    path = root / "blocks.geojson"
+    path.write_text(__import__("json").dumps(payload), encoding="utf-8")
+    return path
+
+
 def _operational_run(root: Path) -> Path:
     run_dir = root / "op"
     _write(
@@ -66,7 +93,8 @@ def client(tmp_path: Path) -> TestClient:
     _operational_run(tmp_path)
     _hauling_run(tmp_path)
     _tactical_run(tmp_path)
-    app = create_app(ServiceConfig(roots=[tmp_path], host="127.0.0.1"))
+    geometry = _geometry(tmp_path)
+    app = create_app(ServiceConfig(roots=[tmp_path], host="127.0.0.1", geometry=geometry))
     return TestClient(app)
 
 
@@ -185,6 +213,56 @@ def test_static_shell_and_skins(client: TestClient) -> None:
     }
     assert client.get("/api/skins/reviewer").json()["read_only"] is True
     assert client.get("/api/skins/nope").status_code == 404
+
+
+def test_time_layers_and_map_for_all_domains(client: TestClient) -> None:
+    op_time = client.get("/api/runs/op/time").json()
+    assert op_time["domain"] == "operational"
+    assert op_time["values"] == [1]
+    assert op_time["shifts"] == ["DAY", "NIGHT"]
+
+    op_layers = client.get("/api/runs/op/layers").json()
+    names = {layer["name"]: layer for layer in op_layers["layers"]}
+    assert names["blocks"]["available"] is True
+    assert names["machines"]["available"] is True
+    assert names["roads"]["available"] is False
+
+    op_map = client.get("/api/runs/op/map?day=1&layers=blocks,machines,treatments").json()
+    layers = {feature["properties"]["layer"] for feature in op_map["features"]}
+    assert layers == {"blocks", "machines", "treatments"}
+    machines = [f for f in op_map["features"] if f["properties"]["layer"] == "machines"]
+    assert machines[0]["geometry"]["type"] == "Point"
+
+    haul_time = client.get("/api/runs/haul/time").json()
+    assert haul_time["domain"] == "hauling"
+    assert haul_time["values"] == [1, 2]
+    haul_map = client.get("/api/runs/haul/map?day=1&layers=blocks").json()
+    b1 = next(f for f in haul_map["features"] if f["properties"]["block_id"] == "b1")
+    assert b1["properties"]["flow_m3"] == 45.0
+
+    tac_time = client.get("/api/runs/tac/time").json()
+    assert tac_time["domain"] == "tactical_operational"
+    assert tac_time["values"] == ["p1"]
+    tac_map = client.get("/api/runs/tac/map?period=p1&layers=tactical_units").json()
+    assert tac_map["features"][0]["properties"]["harvested_area_ha"] == 10.0
+
+
+def test_unavailable_and_unknown_map_layers(client: TestClient) -> None:
+    unavailable = client.get("/api/runs/op/map?layers=roads")
+    assert unavailable.status_code == 400
+    assert "unavailable" in unavailable.json()["detail"]
+    unknown = client.get("/api/runs/op/map?layers=nope")
+    assert unknown.status_code == 400
+    assert "Unknown map layer" in unknown.json()["detail"]
+
+
+def test_map_without_geometry_names_the_missing_source(tmp_path: Path) -> None:
+    _operational_run(tmp_path)
+    app = create_app(ServiceConfig(roots=[tmp_path], host="127.0.0.1"))
+    client = TestClient(app)
+    response = client.get("/api/runs/op/map")
+    assert response.status_code == 404
+    assert "geometry" in response.json()["detail"]
 
 
 def test_remote_bind_is_refused_without_opt_in() -> None:

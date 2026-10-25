@@ -35,6 +35,11 @@ def web(
         "--allow-remote",
         help="Allow a non-loopback bind. The service has no authentication.",
     ),
+    geometry: Path | None = typer.Option(
+        None,
+        "--geometry",
+        help="Optional block GeoJSON for map layers.",
+    ),
 ) -> None:
     """Start the web service when no subcommand is given."""
     if ctx.invoked_subcommand is not None:
@@ -53,6 +58,7 @@ def web(
         port=port,
         root_path=root_path,
         allow_remote=allow_remote,
+        geometry=geometry,
     )
     try:
         run_server(config)

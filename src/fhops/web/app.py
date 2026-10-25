@@ -18,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 
 import fhops
 from fhops.web.discovery import RunRecord, discover_runs
+from fhops.web.mapdata import layer_registry, load_block_geometry, map_payload, time_payload
 from fhops.web.skins import load_skins
 
 __all__ = ["ServiceConfig", "create_app", "is_loopback", "run_server", "validate_bind"]
@@ -41,6 +42,9 @@ class ServiceConfig:
         Explicit opt-in for a non-loopback bind.
     title:
         Page/service title.
+    geometry:
+        Optional block GeoJSON path. When omitted, the service tries the scenario's
+        ``geo_block_path`` and a ``blocks.geojson`` file inside the run directory.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -49,6 +53,7 @@ class ServiceConfig:
     root_path: str = ""
     allow_remote: bool = False
     title: str = "FHOPS Web"
+    geometry: Path | None = None
 
 
 def is_loopback(host: str) -> bool:
@@ -377,6 +382,52 @@ def create_app(config: ServiceConfig) -> FastAPI:
         offset: int = Query(0, ge=0),
     ) -> dict[str, Any]:
         return tactical_table(run_id, "fleet", period, None, None, None, limit, offset)
+
+    @app.get("/api/runs/{run_id}/time")
+    def run_time(run_id: str) -> dict[str, Any]:
+        return time_payload(run_or_404(run_id))
+
+    @app.get("/api/runs/{run_id}/layers")
+    def run_layers(run_id: str) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        geometry = load_block_geometry(record, config.geometry)
+        return {
+            "run_id": record.run_id,
+            "domain": record.domain,
+            "geometry_available": bool(geometry),
+            "layers": layer_registry(record, geometry),
+        }
+
+    @app.get("/api/runs/{run_id}/map")
+    def run_map(
+        run_id: str,
+        day: int | None = Query(None),
+        period: str | None = Query(None),
+        shift: str | None = Query(None),
+        layers: str | None = Query(None, description="Comma-separated layer names."),
+    ) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        geometry = load_block_geometry(record, config.geometry)
+        if not geometry:
+            raise HTTPException(
+                status_code=404,
+                detail=(
+                    "No block geometry found. Pass --geometry to the service or add a block "
+                    "GeoJSON path to the scenario."
+                ),
+            )
+        requested = [name.strip() for name in layers.split(",") if name.strip()] if layers else None
+        try:
+            return map_payload(
+                record,
+                geometry,
+                day=day,
+                period=period,
+                shift=shift,
+                layers=requested,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @app.get("/api/runs/{run_id}/reports")
     def reports(run_id: str) -> dict[str, Any]:

@@ -1,3 +1,32 @@
+# 2026-10-25 — P12.3: map, layer tree, and day/shift/period control (#180)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- Added `src/fhops/web/mapdata.py`: block geometry resolution, layer registry, time control, and
+  GeoJSON map payloads.
+  - Geometry priority: `--geometry`, the scenario `geo_block_path` through the run manifest, then a
+    run-local `blocks.geojson`.
+  - Layers: blocks, operational treatments/machines, tactical planning units; roads, mills, haul
+    routes, and facilities are reported unavailable with reasons rather than invented.
+  - Time values: operational days/shifts, hauling days, tactical periods.
+- Added `/api/runs/{id}/layers`, `/time`, and `/map?day=&period=&shift=&layers=`.
+- Added `--geometry` to `fhops web`.
+- Added MapLibre GL JS (vendored) with an OpenStreetMap raster basemap and an SVG fallback, a layer
+  tree, feature click details, and a renderer selector.
+- Added block geometry to `examples/hauling/`.
+- Added map API tests and docs.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 23 passed.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- An actual `fhops haul plan` run exposes geometry through the manifest scenario path; the map
+  endpoint returns 3 block features for `examples/hauling/`.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #181, operational/hauling/tactical panels, KPIs, reports, and comparison.
+
 # 2026-10-25 — P12.2: read-only API, SPA shell, and skin loader (#179)
 
 Part of P12 (#171) on `feature/p12-web-ui`.

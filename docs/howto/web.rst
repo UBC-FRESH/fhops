@@ -16,7 +16,8 @@ The same application covers three planning lenses:
 
 P12.1 ships the service skeleton, run discovery, the `run.json` manifest, and a minimal run browser.
 P12.2 adds the read-only artefact API for all three domains, the navigable SPA shell, and the skin
-loader. The map/layer tree, full Gantt/panels, live SSE, and editing land in P12.3–P12.6.
+loader. P12.3 adds the map, layer tree, and day/shift/period control (MapLibre with an SVG
+fallback). The full Gantt/panels, live SSE, and editing land in P12.4–P12.6.
 
 Install and run
 ---------------
@@ -36,6 +37,7 @@ Useful options:
 
    fhops web --runs runs/ --runs examples/ --port 9000
    fhops web --runs runs/ --root-path /user/me/proxy/8765
+   fhops web --runs runs/ --geometry examples/hauling/blocks.geojson
 
 ``--root-path`` makes the SPA and API prefix-relative, so a notebook proxy can publish the service
 under a subpath.
@@ -114,6 +116,34 @@ logical file. The SPA shell selects a skin and run, shows the skin's tabs, and r
 domain table/KPI/report from the API. The map, full Gantt, comparison, live SSE, and editing land in
 P12.3–P12.6.
 
+Map and layers
+--------------
+
+The map panel reads:
+
+- ``GET /api/runs/{id}/time`` – the domain's control values: days plus shifts for operational,
+  days for hauling, periods for tactical.
+- ``GET /api/runs/{id}/layers`` – every known layer with an ``available`` flag and a reason when it
+  is not drawable.
+- ``GET /api/runs/{id}/map?day=&period=&shift=&layers=`` – a GeoJSON FeatureCollection.
+
+Block geometry is resolved in this order:
+
+1. ``--geometry path/to/blocks.geojson`` passed to ``fhops web``;
+2. the scenario's ``geo_block_path``, read through the run manifest's ``scenario`` path;
+3. a ``blocks.geojson`` file inside the run directory.
+
+The first cut draws block geometry, operational treatments/machines, hauling block flow volumes, and
+tactical harvested areas. Roads, mills/sort yards, haul routes, and tactical facilities are reported
+as unavailable until a geometry source exists; the service never invents coordinates. The layer tree
+shows those reasons.
+
+The renderer is MapLibre GL JS with an OpenStreetMap raster basemap; SVG is the fallback and is
+switchable in the panel. The time control is day/shift for operational and hauling and period for
+tactical.
+
+Skins
+-----
 Skins
 -----
 

@@ -16,6 +16,7 @@ repos:
     rev: v6.0.0
     hooks:
       - id: check-added-large-files
+        exclude: "^src/fhops/web/static/vendor/"
       - id: check-merge-conflict
       - id: end-of-file-fixer
         exclude: "^\\.continue/|^notes/reference/|^data/"
