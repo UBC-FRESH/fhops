@@ -1,3 +1,30 @@
+# 2026-10-25 — P12.4: domain panels, KPI cards, reports, and comparison (#181)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- Operational Schedule: machine × day/shift Gantt from the assignment CSV plus the assignment table.
+- Hauling Haul: run provenance, then flows/truckloads, a truck/loader Gantt by truck/minute, yard
+  inventory and contractor workload grouped bars, trucks, and loaders.
+- Tactical Tactical: period Gantt of harvest decisions plus production, flows, inventory, purchases,
+  roads, silviculture, and fleet tables.
+- KPIs: numeric cards, full key/value payload, and run summary.
+- Reports: file tree plus a domain-aware report builder; every table has client-side CSV download.
+- Compare: two-run selectors, summaries, and a KPI table with `B − A` deltas.
+- Fixed two panel-render promise/append bugs found by the headless DOM harness.
+- SPA cache-bust bumped to `?v=7`.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 25 passed.
+- Headless DOM harness across all three runs and panels: no JS page errors; operational Gantt,
+  hauling provenance/dataset chooser, tactical dataset chooser, KPI cards, reports, and compare all
+  render.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #182, live runs, SSE, and run control.
+
 # 2026-10-25 — P12.3 fix: reset the MapLibre instance when switching panels/runs
 
 - Switching from hauling to operational/tactical (or clicking Map while the map was already

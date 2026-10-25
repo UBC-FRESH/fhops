@@ -205,7 +205,7 @@ reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
 - [x] #178 P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry.
 - [x] #179 P12.2 Read-only API, SPA shell, and skin loader.
 - [x] #180 P12.3 Map, layer tree, and day/period control.
-- [ ] #181 P12.4 Schedule/Gantt, KPI, report, and comparison panels.
+- [x] #181 P12.4 Schedule/Gantt, KPI, report, and comparison panels.
 - [ ] #182 P12.5 Live runs, SSE, and run control.
 - [ ] #183 P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out.
 
@@ -314,10 +314,10 @@ reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
     - Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,
       following the WS4 web UI design: map/layer tree, schedule, KPIs, reports, comparison, live SSE
       runs, skins, and an opt-in assistant.
-    - Child issues #178-#183 are linked as sub-issues; #178-#180 are complete and the phase is active on `feature/p12-web-ui`.
+    - Child issues #178-#183 are linked as sub-issues; #178-#181 are complete and the phase is active on `feature/p12-web-ui`.
     - P12.1 freezes the artefact contract (including a new `run.json`) before the API and UI work.
       P11 hauling outputs are optional; missing layers are named, not invented.
-    - #178-#180 (service, API/shell, map/layers/time control) are complete; #181 (domain panels, KPIs, reports, comparison) is next.
+    - #178-#181 (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison) are complete; #182 (live runs/SSE/control) is next.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.

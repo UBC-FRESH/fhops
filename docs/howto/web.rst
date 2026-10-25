@@ -17,7 +17,9 @@ The same application covers three planning lenses:
 P12.1 ships the service skeleton, run discovery, the `run.json` manifest, and a minimal run browser.
 P12.2 adds the read-only artefact API for all three domains, the navigable SPA shell, and the skin
 loader. P12.3 adds the map, layer tree, and day/shift/period control (MapLibre with an SVG
-fallback). The full Gantt/panels, live SSE, and editing land in P12.4–P12.6.
+fallback). P12.4 adds the domain panels: operational shift Gantt, hauling truck/loader Gantt and
+charts, tactical period Gantt, KPI cards, report builder, and run comparison. Live SSE and editing
+land in P12.5–P12.6.
 
 Install and run
 ---------------
@@ -147,8 +149,38 @@ The renderer is MapLibre GL JS with an OpenStreetMap raster basemap; SVG is the 
 switchable in the panel. The time control is day/shift for operational and hauling and period for
 tactical.
 
+Domain panels
+--------------
+
+- **Operational:** the Schedule tab renders a machine × day/shift Gantt from the assignment CSV,
+  followed by the assignment table. KPIs and Reports read the run's own payloads.
+- **Hauling:** the Haul tab shows the run provenance, then a dataset chooser for flows, truckloads,
+  the truck/loader schedule (Gantt by truck/minute), yard inventory (grouped bars), contractor
+  workload (grouped bars), trucks, and loaders.
+- **Tactical:** the Tactical tab shows a period Gantt of harvest decisions plus production, flows,
+  inventory, purchases, roads, silviculture, and fleet tables.
+- **KPIs:** numeric KPI cards plus the full key/value payload and the run summary.
+- **Reports:** the file tree plus a report builder over the current domain's artefact tables.
+  Every table has a client-side CSV download.
+- **Compare:** two run selectors, summaries, and a KPI table with `B − A` deltas.
+
 Skins
 -----
+Domain panels
+--------------
+
+- **Operational:** the Schedule tab renders a machine × day/shift Gantt from the assignment CSV,
+  followed by the assignment table. KPIs and Reports read the run's own payloads.
+- **Hauling:** the Haul tab shows the run provenance, then a dataset chooser for flows, truckloads,
+  the truck/loader schedule (Gantt by truck/minute), yard inventory (grouped bars), contractor
+  workload (grouped bars), trucks, and loaders.
+- **Tactical:** the Tactical tab shows a period Gantt of harvest decisions plus production, flows,
+  inventory, purchases, roads, silviculture, and fleet tables.
+- **KPIs:** numeric KPI cards plus the full key/value payload and the run summary.
+- **Reports:** the file tree plus a report builder over the current domain's artefact tables.
+  Every table has a client-side CSV download.
+- **Compare:** two run selectors, summaries, and a KPI table with `B − A` deltas.
+
 Skins
 -----
 

@@ -284,6 +284,14 @@ def test_spa_avoids_readonly_svg_classname_assignment() -> None:
     assert 'svg.setAttribute("class"' in source
     assert "state.mapInstance.remove()" in source
     assert "mapRenderToken" in source
+    for function in (
+        "renderOperationalGantt",
+        "renderHaulGantt",
+        "renderTacticalGantt",
+        "renderKpiCards",
+        "renderCompare",
+    ):
+        assert function in source
 
 
 def test_projected_geometry_is_transformed_for_maplibre(tmp_path: Path) -> None:

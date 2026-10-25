@@ -155,34 +155,17 @@ function renderPanel() {
     case "legend":
       return renderLegend(run);
     case "schedule":
-      return renderDataset(`api/runs/${encoded}/assignments?limit=5000`, "Assignments");
+      return renderSchedule(encoded);
     case "haul":
-      return renderChooser("haul", [
-        ["Flows", `${encoded}/hauling/flows`],
-        ["Truckloads", `${encoded}/hauling/truckloads`],
-        ["Truck / loader schedule", `${encoded}/hauling/schedule`],
-        ["Yard inventory", `${encoded}/hauling/yard-inventory`],
-        ["Contractor workload", `${encoded}/hauling/contractor-workload`],
-        ["Trucks", `${encoded}/hauling/trucks`],
-        ["Loaders", `${encoded}/hauling/loaders`],
-      ]);
+      return renderHaul(encoded);
     case "tactical":
-      return renderChooser("tactical", [
-        ["Harvest decisions", `${encoded}/tactical/harvest`],
-        ["Production", `${encoded}/tactical/production`],
-        ["Flows", `${encoded}/tactical/flows`],
-        ["Inventory", `${encoded}/tactical/inventory`],
-        ["Purchases", `${encoded}/tactical/purchases`],
-        ["Roads", `${encoded}/tactical/roads`],
-        ["Silviculture", `${encoded}/tactical/silviculture`],
-        ["Fleet", `${encoded}/tactical/fleet`],
-      ]);
+      return renderTactical(encoded);
     case "kpis":
-      return fetchJson(`api/runs/${encoded}/kpis`).then(renderKeyValues);
+      return renderKpis(encoded);
     case "reports":
       return renderReports(encoded);
     case "compare":
-      return renderPlaceholder("Run comparison", "Two-run map, KPI, and assignment deltas arrive in P12.4.");
+      return renderCompare(encoded);
     case "scenario":
       return renderPlaceholder("Scenario editing", "Validated operational/hauling/tactical edits arrive in P12.6.");
     case "map":
@@ -213,9 +196,10 @@ function renderChooser(kind, entries) {
   const controls = el("div", null, "controls");
   const label = el("label", "Dataset ");
   const select = document.createElement("select");
-  for (const [title, path] of entries) {
+  for (const [title, path, view] of entries) {
     const option = el("option", title);
     option.value = path;
+    option.dataset.view = view || "table";
     select.appendChild(option);
   }
   label.appendChild(select);
@@ -225,12 +209,70 @@ function renderChooser(kind, entries) {
   els.body.appendChild(target);
   const load = () => {
     target.innerHTML = "";
-    fetchJson(`api/runs/${select.value}`).then((payload) => target.appendChild(renderTable(payload)))
+    const view = select.selectedOptions[0]?.dataset.view || "table";
+    fetchJson(`api/runs/${select.value}`)
+      .then((payload) => {
+        if (view === "haul-gantt") target.appendChild(renderHaulGantt(payload));
+        else if (view === "tactical-gantt") target.appendChild(renderTacticalGantt(payload));
+        else if (view === "workload-bars") target.appendChild(renderBars(payload, "day", ["truckloads", "preferred_truckloads"]));
+        else if (view === "inventory-bars") target.appendChild(renderBars(payload, "day", ["unsorted_inventory_m3", "water_inventory_m3"]));
+        else target.appendChild(renderTable(payload));
+      })
       .catch((error) => target.appendChild(el("p", error.message, "warnings")));
   };
   select.addEventListener("change", load);
   load();
   return Promise.resolve();
+}
+
+async function renderSchedule(encoded) {
+  const [time, payload] = await Promise.all([
+    fetchJson(`api/runs/${encoded}/time`),
+    fetchJson(`api/runs/${encoded}/assignments?limit=5000`),
+  ]);
+  els.body.appendChild(renderOperationalGantt(payload, time));
+  els.body.appendChild(renderTable(payload));
+}
+
+async function renderHaul(encoded) {
+  try {
+    const summary = await fetchJson(`api/runs/${encoded}/summary`);
+    els.body.appendChild(renderProvenance(summary, "Hauling run"));
+  } catch (_error) { /* summary is optional */ }
+  await renderChooser("haul", [
+      ["Flows", `${encoded}/hauling/flows`, "table"],
+      ["Truckloads", `${encoded}/hauling/truckloads`, "table"],
+      ["Truck / loader schedule", `${encoded}/hauling/schedule`, "haul-gantt"],
+      ["Yard inventory", `${encoded}/hauling/yard-inventory`, "inventory-bars"],
+      ["Contractor workload", `${encoded}/hauling/contractor-workload`, "workload-bars"],
+      ["Trucks", `${encoded}/hauling/trucks`, "table"],
+      ["Loaders", `${encoded}/hauling/loaders`, "table"],
+    ]);
+}
+
+async function renderTactical(encoded) {
+  const time = await fetchJson(`api/runs/${encoded}/time`);
+  state.tacticalTime = time;
+  await renderChooser("tactical", [
+      ["Harvest decisions", `${encoded}/tactical/harvest`, "tactical-gantt"],
+      ["Production", `${encoded}/tactical/production`, "table"],
+      ["Flows", `${encoded}/tactical/flows`, "table"],
+      ["Inventory", `${encoded}/tactical/inventory`, "table"],
+      ["Purchases", `${encoded}/tactical/purchases`, "table"],
+      ["Roads", `${encoded}/tactical/roads`, "table"],
+      ["Silviculture", `${encoded}/tactical/silviculture`, "table"],
+      ["Fleet", `${encoded}/tactical/fleet`, "table"],
+    ]);
+}
+
+async function renderKpis(encoded) {
+  const payload = await fetchJson(`api/runs/${encoded}/kpis`);
+  try {
+    const summary = await fetchJson(`api/runs/${encoded}/summary`);
+    els.body.appendChild(renderProvenance(summary, "Run summary"));
+  } catch (_error) { /* optional */ }
+  els.body.appendChild(renderKpiCards(payload));
+  els.body.appendChild(renderKeyValues(payload));
 }
 
 function renderDataset(path, title) {
@@ -270,7 +312,13 @@ function renderTable(payload) {
     "hint",
   );
   const container = el("div");
-  container.appendChild(note);
+  const head = el("div", null, "table-head");
+  head.appendChild(note);
+  const exportButton = el("button", "Download CSV", "export-button");
+  exportButton.type = "button";
+  exportButton.addEventListener("click", () => downloadCsv(payload));
+  head.appendChild(exportButton);
+  container.appendChild(head);
   container.appendChild(wrap);
   return container;
 }
@@ -282,27 +330,92 @@ function renderKeyValues(payload) {
     grid.appendChild(el("b", key));
     grid.appendChild(el("span", value === null ? "—" : value));
   }
-  els.body.appendChild(grid);
+  return grid;
 }
 
-function renderReports(encoded) {
-  return fetchJson(`api/runs/${encoded}/reports`).then((payload) => {
-    if (!payload.reports.length) {
-      els.body.appendChild(el("p", "No report files were found.", "hint"));
-      return;
-    }
-    const list = el("ul");
-    for (const report of payload.reports) {
-      const item = document.createElement("li");
-      const link = el("a", report.path);
-      const safePath = report.path.split("/").map(encodeURIComponent).join("/");
-      link.href = api(`api/runs/${encoded}/reports/${safePath}`);
-      item.appendChild(link);
-      item.appendChild(document.createTextNode(` · ${report.size} bytes`));
-      list.appendChild(item);
-    }
-    els.body.appendChild(list);
+function downloadCsv(payload) {
+  const columns = payload.columns || Object.keys(payload.rows?.[0] || {});
+  const escape = (value) => {
+    if (value === null || value === undefined) return "";
+    const text = String(value);
+    return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+  };
+  const lines = [columns.map(escape).join(",")];
+  for (const row of payload.rows || []) {
+    lines.push(columns.map((column) => escape(row[column])).join(","));
+  }
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${payload.run_id || "fhops"}-${payload.artefact || "table"}.csv`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
+async function renderReports(encoded) {
+  const payload = await fetchJson(`api/runs/${encoded}/reports`);
+  const list = el("ul");
+  for (const report of payload.reports) {
+    const item = document.createElement("li");
+    const link = el("a", report.path);
+    const safePath = report.path.split("/").map(encodeURIComponent).join("/");
+    link.href = api(`api/runs/${encoded}/reports/${safePath}`);
+    item.appendChild(link);
+    item.appendChild(document.createTextNode(` · ${report.size} bytes`));
+    list.appendChild(item);
+  }
+  els.body.appendChild(el("h3", "Run files"));
+  if (payload.reports.length) els.body.appendChild(list);
+  else els.body.appendChild(el("p", "No report files were found.", "hint"));
+
+  const builder = el("div", null, "report-builder");
+  builder.appendChild(el("h3", "Build a report"));
+  const controls = el("div", null, "controls");
+  const select = document.createElement("select");
+  const entries = reportEntries(encoded);
+  for (const [label, path] of entries) {
+    const option = el("option", label);
+    option.value = path;
+    select.appendChild(option);
+  }
+  const button = el("button", "Build");
+  button.type = "button";
+  controls.appendChild(select);
+  controls.appendChild(button);
+  builder.appendChild(controls);
+  const target = el("div");
+  builder.appendChild(target);
+  button.addEventListener("click", () => {
+    target.innerHTML = "";
+    fetchJson(`api/runs/${select.value}`)
+      .then((table) => target.appendChild(renderTable(table)))
+      .catch((error) => target.appendChild(el("p", error.message, "warnings")));
   });
+  els.body.appendChild(builder);
+}
+
+function reportEntries(encoded) {
+  const common = {
+    operational: [
+      ["Assignments", `${encoded}/assignments?limit=5000`],
+      ["Day playback", `${encoded}/playback?scope=day`],
+      ["Shift playback", `${encoded}/playback?scope=shift`],
+    ],
+    hauling: [
+      ["Flows", `${encoded}/hauling/flows`],
+      ["Truckloads", `${encoded}/hauling/truckloads`],
+      ["Truck schedule", `${encoded}/hauling/schedule`],
+      ["Yard inventory", `${encoded}/hauling/yard-inventory`],
+      ["Contractor workload", `${encoded}/hauling/contractor-workload`],
+    ],
+    tactical_operational: [
+      ["Harvest decisions", `${encoded}/tactical/harvest`],
+      ["Production", `${encoded}/tactical/production`],
+      ["Product flows", `${encoded}/tactical/flows`],
+      ["Inventory", `${encoded}/tactical/inventory`],
+    ],
+  };
+  return common[state.run?.domain] || [];
 }
 
 function renderPlaceholder(title, text) {
@@ -741,4 +854,230 @@ function fitMapLibre(data) {
   const bbox = featureBounds(data);
   if (!map || !bbox) return;
   map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], { padding: 24, maxZoom: 14 });
+}
+
+function renderProvenance(summary, title) {
+  const box = el("div", null, "provenance");
+  box.appendChild(el("b", title));
+  for (const [key, value] of Object.entries(summary)) {
+    if (["files", "flow", "schedule"].includes(key)) continue;
+    if (value !== null && typeof value === "object") continue;
+    const item = el("span", `${key}: ${value === null ? "—" : value}`);
+    box.appendChild(item);
+  }
+  return box;
+}
+
+function renderKpiCards(payload) {
+  const grid = el("div", null, "cards");
+  for (const [key, value] of Object.entries(payload).sort(([a], [b]) => a.localeCompare(b))) {
+    if (value !== null && typeof value === "object") continue;
+    const card = el("div", null, "card");
+    card.appendChild(el("span", key.replaceAll("_", " "), "card-label"));
+    const display = typeof value === "number"
+      ? (Number.isInteger(value) ? value.toString() : value.toFixed(3))
+      : (value === null ? "—" : String(value));
+    card.appendChild(el("strong", display, "card-value"));
+    grid.appendChild(card);
+  }
+  return grid;
+}
+
+function renderOperationalGantt(payload, time) {
+  const days = (time.values || []).map(String);
+  const shifts = time.shifts && time.shifts.length ? time.shifts : ["S1"];
+  const total = Math.max(days.length * shifts.length, 1);
+  const groups = new Map();
+  for (const row of payload.rows || []) {
+    if (row.assigned !== undefined && Number(row.assigned) === 0) continue;
+    const machine = row.machine_id || "machine";
+    const dayIndex = Math.max(0, days.indexOf(String(row.day)));
+    const shiftIndex = Math.max(0, shifts.indexOf(String(row.shift_id || shifts[0])));
+    const start = dayIndex * shifts.length + shiftIndex;
+    const bar = {
+      start,
+      end: start + 1,
+      label: row.block_id || "",
+      color: barColor(row.block_id || machine),
+      title: `${machine} · ${row.block_id} · day ${row.day} ${row.shift_id || ""}`,
+    };
+    if (!groups.has(machine)) groups.set(machine, []);
+    groups.get(machine).push(bar);
+  }
+  return renderGantt("Machine / shift", groups, total, days, "Operational schedule");
+}
+
+function renderHaulGantt(payload) {
+  const groups = new Map();
+  let maxTime = 1;
+  for (const row of payload.rows || []) {
+    const start = Number(row.pickup_start ?? row.arrival_pickup ?? 0);
+    const end = Number(row.delivery_finish ?? row.delivery_start ?? start + 1);
+    maxTime = Math.max(maxTime, end, Number(row.truck_return_time ?? end));
+    const truck = row.truck_id || "truck";
+    const bar = {
+      start,
+      end,
+      label: `${row.block_id || ""}→${row.yard_id || ""}`,
+      color: barColor(row.contractor_id || truck),
+      title: `${truck} · ${row.load_id} · ${start.toFixed(0)}–${end.toFixed(0)} min`,
+    };
+    if (!groups.has(truck)) groups.set(truck, []);
+    groups.get(truck).push(bar);
+  }
+  const ticks = [0, Math.round(maxTime / 2), Math.round(maxTime)];
+  return renderGantt("Truck / minute", groups, maxTime, ticks.map(String), "Truck and loader schedule");
+}
+
+function renderTacticalGantt(payload) {
+  const periods = (state.tacticalTime?.values || []).map(String);
+  const groups = new Map();
+  for (const row of payload.rows || []) {
+    const area = Number(row.harvested_area_ha ?? row.area_ha ?? 0);
+    if (area <= 0) continue;
+    const block = row.block_id || "block";
+    const index = Math.max(0, periods.indexOf(String(row.period_id)));
+    const bar = {
+      start: index,
+      end: index + 1,
+      label: row.system_id || "",
+      color: barColor(row.system_id || block),
+      title: `${block} · ${row.period_id} · ${area.toFixed(2)} ha`,
+    };
+    if (!groups.has(block)) groups.set(block, []);
+    groups.get(block).push(bar);
+  }
+  return renderGantt("Planning unit / period", groups, Math.max(periods.length, 1), periods, "Harvest decisions");
+}
+
+function renderGantt(axisLabel, groups, total, ticks, title) {
+  const wrap = el("div", null, "gantt-wrap");
+  wrap.appendChild(el("h3", title));
+  if (!groups.size) {
+    wrap.appendChild(el("p", "No rows for this view.", "hint"));
+    return wrap;
+  }
+  const gantt = el("div", null, "gantt");
+  for (const [label, bars] of [...groups.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+    const row = el("div", null, "gantt-row");
+    row.appendChild(el("div", label, "gantt-label"));
+    const track = el("div", null, "gantt-track");
+    for (const bar of bars) {
+      const node = el("div", null, "gantt-bar");
+      node.style.left = `${(bar.start / total) * 100}%`;
+      node.style.width = `${Math.max(((bar.end - bar.start) / total) * 100, 0.4)}%`;
+      node.style.background = bar.color;
+      node.title = bar.title;
+      if ((bar.end - bar.start) / total > 0.08) node.textContent = bar.label;
+      track.appendChild(node);
+    }
+    row.appendChild(track);
+    gantt.appendChild(row);
+  }
+  wrap.appendChild(gantt);
+  const axis = el("div", null, "gantt-axis");
+  axis.appendChild(el("span", axisLabel, "gantt-axis-label"));
+  for (const tick of ticks) axis.appendChild(el("span", tick));
+  wrap.appendChild(axis);
+  return wrap;
+}
+
+function renderBars(payload, xKey, series) {
+  const rows = payload.rows || [];
+  const wrap = el("div", null, "bar-chart");
+  if (!rows.length) {
+    wrap.appendChild(el("p", "No rows for this view.", "hint"));
+    return wrap;
+  }
+  const values = rows.flatMap((row) => series.map((key) => Number(row[key] ?? 0)));
+  const max = Math.max(...values, 1);
+  for (const row of rows) {
+    const group = el("div", null, "bar-group");
+    group.appendChild(el("div", `${row[xKey] ?? ""}`, "bar-group-label"));
+    for (const key of series) {
+      const value = Number(row[key] ?? 0);
+      const item = el("div", null, "bar-item");
+      item.appendChild(el("span", key.replaceAll("_", " "), "bar-name"));
+      const track = el("div", null, "bar-track");
+      const bar = el("div", null, "bar-fill");
+      bar.style.width = `${Math.max((value / max) * 100, 0)}%`;
+      bar.style.background = barColor(key);
+      track.appendChild(bar);
+      item.appendChild(track);
+      item.appendChild(el("b", typeof value === "number" ? value.toFixed(2) : value));
+      group.appendChild(item);
+    }
+    wrap.appendChild(group);
+  }
+  const table = renderTable(payload);
+  table.classList.add("bar-table");
+  wrap.appendChild(table);
+  return wrap;
+}
+
+function renderCompare(encoded) {
+  const controls = el("div", null, "compare-controls");
+  const a = document.createElement("select");
+  const b = document.createElement("select");
+  for (const run of state.runs) {
+    for (const select of [a, b]) {
+      const option = el("option", run.run_id);
+      option.value = run.run_id;
+      select.appendChild(option);
+    }
+  }
+  a.value = state.run.run_id;
+  b.value = (state.runs.find((run) => run.run_id !== state.run.run_id) || state.run).run_id;
+  const loadButton = el("button", "Compare");
+  loadButton.type = "button";
+  controls.appendChild(el("label", "A "));
+  controls.appendChild(a);
+  controls.appendChild(el("label", " B "));
+  controls.appendChild(b);
+  controls.appendChild(loadButton);
+  els.body.appendChild(controls);
+  const target = el("div");
+  els.body.appendChild(target);
+
+  const load = async () => {
+    target.innerHTML = "";
+    try {
+      const [kpisA, kpisB, summaryA, summaryB] = await Promise.all([
+        fetchJson(`api/runs/${encodeURIComponent(a.value)}/kpis`).catch(() => ({})),
+        fetchJson(`api/runs/${encodeURIComponent(b.value)}/kpis`).catch(() => ({})),
+        fetchJson(`api/runs/${encodeURIComponent(a.value)}/summary`).catch(() => ({})),
+        fetchJson(`api/runs/${encodeURIComponent(b.value)}/summary`).catch(() => ({})),
+      ]);
+      target.appendChild(renderProvenance(summaryA, `A · ${a.value}`));
+      target.appendChild(renderProvenance(summaryB, `B · ${b.value}`));
+      const keys = [...new Set([...Object.keys(kpisA), ...Object.keys(kpisB)])]
+        .filter((key) => typeof kpisA[key] !== "object" && typeof kpisB[key] !== "object")
+        .sort();
+      const payload = {
+        columns: ["metric", "A", "B", "B-A"],
+        rows: keys.map((key) => {
+          const av = kpisA[key];
+          const bv = kpisB[key];
+          const delta = typeof av === "number" && typeof bv === "number" ? bv - av : "";
+          return { metric: key, A: av ?? "—", B: bv ?? "—", "B-A": delta };
+        }),
+        total: keys.length,
+        returned: keys.length,
+        run_id: "compare",
+        artefact: "kpis",
+      };
+      target.appendChild(renderTable(payload));
+    } catch (error) {
+      target.appendChild(el("p", error.message, "warnings"));
+    }
+  };
+  loadButton.addEventListener("click", load);
+  return load();
+}
+
+function barColor(key) {
+  const palette = ["#2f7d4f", "#b45309", "#1f6feb", "#6b4c9a", "#c0392b", "#0f766e", "#7c3aed"];
+  let hash = 0;
+  for (const char of String(key)) hash = (hash * 31 + char.charCodeAt(0)) | 0;
+  return palette[Math.abs(hash) % palette.length];
 }
