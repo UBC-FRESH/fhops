@@ -1,7 +1,7 @@
 # Multi-day marine barge cycles
 
 Date: 2026-10-25
-Status: design; no solver change yet.
+Status: implemented in P13.2; design retained for provenance.
 Parent issue: #197
 Task: #196 (P13.1)
 
@@ -180,7 +180,7 @@ Use Option B.
 
 `examples/hauling_marine_multiday/` is a synthetic, redistributable case:
 
-- one block, one yard, one barge, 20 trucks;
+- one block, one yard, one barge, 60 trucks;
 - 10,000 m3 barge capacity;
 - 3,955-minute cycle;
 - eight-day horizon;
@@ -192,18 +192,20 @@ case is optimal. It fails now on the barge fleet constraint and will become
 XPASS when the model supports multi-day voyages. That XPASS is the signal to
 remove the xfail and add the full arrival-timing assertions.
 
-## Implementation split
+## Implementation
 
-P13.2 (recommended next task):
+P13.2 implements the recommended timing model:
 
-1. add voyage-days and arrival/transit variables;
-2. update destination port inventory and barge occupancy;
-3. update reporting with departure/arrival days;
-4. flip the xfail into positive assertions;
-5. add late-departure and multiple-barge cases;
-6. update docs and formulation notes.
+- `arrival_lag_days` and `occupancy_days` are derived from the validated marine lane.
+- `mww`/`mwc` remain departure volumes; destination port inventory and yard delivery use the
+  arrival day.
+- `mdw`/`mdc` are linked to the departure water volume and delivered on the arrival day.
+- The barge fleet uses a sliding occupancy window.
+- Departures that cannot finish inside the horizon are fixed to zero.
+- `marine_flows` and `barge_trips` report departure/arrival and transit/occupancy days.
 
-P13.3: validation, CLI/reporting, and close-out.
+The Quatsino -> Ladysmith fixture solves with one barge, arrival on day 5, occupancy through day 8,
+and demand on day 8. Same-day Sunshine Coast -> Howe Sound behavior is unchanged.
 
 ## Open questions
 

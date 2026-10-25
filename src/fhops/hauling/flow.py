@@ -97,6 +97,8 @@ _WORKLOAD_COLUMNS = [
 _MARINE_FLOW_COLUMNS = [
     "day",
     "scenario_day",
+    "arrival_day",
+    "arrival_scenario_day",
     "marine_route_id",
     "block_id",
     "yard_id",
@@ -138,6 +140,10 @@ _BARGE_TRIP_COLUMNS = [
     "water_arc_id",
     "water_m3",
     "barge_trips",
+    "arrival_day",
+    "arrival_scenario_day",
+    "transit_days",
+    "occupancy_days",
     "barge_cycle_minutes",
     "barge_load_minutes",
     "barge_unload_minutes",
@@ -212,6 +218,12 @@ class MarineLane:
         Cargo capacities in cubic metres.
     barge_cycle_minutes:
         Round-trip barge time including loading, unloading, and terminal handling.
+    arrival_lag_days:
+        Whole-day lag between a departure and cargo arrival at the destination.
+        ``0`` means same-day delivery.
+    occupancy_days:
+        Whole days a barge is occupied by the round trip. Used by the
+        sliding-window fleet constraint.
     pickup_cycle_minutes / delivery_cycle_minutes:
         Round-trip drayage truck time on each side.
     barge_cost_per_trip:
@@ -248,6 +260,8 @@ class MarineLane:
     barge_capacity: float
     truck_capacity: float
     barge_cycle_minutes: float
+    arrival_lag_days: int
+    occupancy_days: int
     pickup_cycle_minutes: float
     delivery_cycle_minutes: float
     barge_cost_per_trip: float
@@ -645,6 +659,16 @@ def _build_marine_lanes(
             + origin_port.handling_minutes_per_trip
             + destination_port.handling_minutes_per_trip
         )
+        transit_minutes = (
+            water_arc.travel_minutes + unload_minutes + destination_port.handling_minutes_per_trip
+        )
+        regular_minutes = config.driver_policy.regular_minutes
+        arrival_lag_days = (
+            0
+            if transit_minutes <= regular_minutes
+            else math.ceil(transit_minutes / regular_minutes)
+        )
+        occupancy_days = max(1, math.ceil(barge_cycle / regular_minutes))
         pickup_cycle = origin_leg.travel_minutes + origin_leg.empty_travel_minutes()
         delivery_cycle = destination_leg.travel_minutes + destination_leg.empty_travel_minutes()
         barge_cost = (
@@ -684,6 +708,8 @@ def _build_marine_lanes(
             barge_capacity=barge_type.capacity_m3,
             truck_capacity=truck_type.capacity_m3,
             barge_cycle_minutes=barge_cycle,
+            arrival_lag_days=arrival_lag_days,
+            occupancy_days=occupancy_days,
             pickup_cycle_minutes=pickup_cycle,
             delivery_cycle_minutes=delivery_cycle,
             barge_cost_per_trip=barge_cost,
@@ -888,11 +914,21 @@ def build_flow_model(
     ] = {}
     marine_sorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
     marine_unsorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
+    marine_delivery_sorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
+    marine_delivery_unsorted_by_contractor_day: dict[
+        tuple[str, int], list[tuple[str, str, int]]
+    ] = {}
     marine_by_contractor_truck_day: dict[tuple[str, str, int], list[tuple[str, str, int]]] = {}
     marine_sorted_by_contractor_truck_day: dict[
         tuple[str, str, int], list[tuple[str, str, int]]
     ] = {}
     marine_unsorted_by_contractor_truck_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_delivery_sorted_by_contractor_truck_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_delivery_unsorted_by_contractor_truck_day: dict[
         tuple[str, str, int], list[tuple[str, str, int]]
     ] = {}
 
@@ -907,13 +943,16 @@ def build_flow_model(
         for sort_id in problem.sorts:
             if lane.can_carry_sorted and (lane.block_id, sort_id) in problem.supply_sorted:
                 for day in problem.days:
+                    arrival_day = day + lane.arrival_lag_days
+                    if arrival_day > problem.horizon_days:
+                        continue
                     marine_key = (route_id, sort_id, day)
                     marine_sorted_keys.append(marine_key)
                     marine_pickup_sorted_by_supply.setdefault((lane.block_id, sort_id), []).append(
                         marine_key
                     )
                     marine_delivery_sorted_by_yard_sort_day.setdefault(
-                        (lane.yard_id, sort_id, day), []
+                        (lane.yard_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_water_by_route_day[(route_id, day)].append(marine_key)
                     marine_pickup_by_port_sort_day.setdefault(
@@ -929,16 +968,16 @@ def build_flow_model(
                         (lane.origin_port_id, sort_id, day), []
                     ).append(marine_key)
                     marine_water_in_by_port_sort_day.setdefault(
-                        (lane.destination_port_id, sort_id, day), []
+                        (lane.destination_port_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_water_in_sorted_by_port_sort_day.setdefault(
-                        (lane.destination_port_id, sort_id, day), []
+                        (lane.destination_port_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_delivery_by_port_sort_day.setdefault(
-                        (lane.destination_port_id, sort_id, day), []
+                        (lane.destination_port_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_delivery_sorted_by_port_sort_day.setdefault(
-                        (lane.destination_port_id, sort_id, day), []
+                        (lane.destination_port_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_sorted_by_contractor_day.setdefault(
                         (lane.contractor_id, day), []
@@ -949,15 +988,24 @@ def build_flow_model(
                     marine_sorted_by_contractor_truck_day.setdefault(
                         (lane.contractor_id, lane.truck_type_id, day), []
                     ).append(marine_key)
+                    marine_delivery_sorted_by_contractor_day.setdefault(
+                        (lane.contractor_id, arrival_day), []
+                    ).append(marine_key)
+                    marine_delivery_sorted_by_contractor_truck_day.setdefault(
+                        (lane.contractor_id, lane.truck_type_id, arrival_day), []
+                    ).append(marine_key)
             if lane.can_carry_unsorted and (lane.block_id, sort_id) in problem.supply_unsorted:
                 for day in problem.days:
+                    arrival_day = day + lane.arrival_lag_days
+                    if arrival_day > problem.horizon_days:
+                        continue
                     marine_key = (route_id, sort_id, day)
                     marine_unsorted_keys.append(marine_key)
                     marine_pickup_unsorted_by_supply.setdefault(
                         (lane.block_id, sort_id), []
                     ).append(marine_key)
                     marine_delivery_unsorted_by_yard_sort_day.setdefault(
-                        (lane.yard_id, sort_id, day), []
+                        (lane.yard_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_water_by_route_day[(route_id, day)].append(marine_key)
                     marine_pickup_by_port_sort_day.setdefault(
@@ -973,16 +1021,16 @@ def build_flow_model(
                         (lane.origin_port_id, sort_id, day), []
                     ).append(marine_key)
                     marine_water_in_by_port_sort_day.setdefault(
-                        (lane.destination_port_id, sort_id, day), []
+                        (lane.destination_port_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_water_in_unsorted_by_port_sort_day.setdefault(
-                        (lane.destination_port_id, sort_id, day), []
+                        (lane.destination_port_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_delivery_by_port_sort_day.setdefault(
-                        (lane.destination_port_id, sort_id, day), []
+                        (lane.destination_port_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_delivery_unsorted_by_port_sort_day.setdefault(
-                        (lane.destination_port_id, sort_id, day), []
+                        (lane.destination_port_id, sort_id, arrival_day), []
                     ).append(marine_key)
                     marine_unsorted_by_contractor_day.setdefault(
                         (lane.contractor_id, day), []
@@ -993,9 +1041,15 @@ def build_flow_model(
                     marine_unsorted_by_contractor_truck_day.setdefault(
                         (lane.contractor_id, lane.truck_type_id, day), []
                     ).append(marine_key)
+                    marine_delivery_unsorted_by_contractor_day.setdefault(
+                        (lane.contractor_id, arrival_day), []
+                    ).append(marine_key)
+                    marine_delivery_unsorted_by_contractor_truck_day.setdefault(
+                        (lane.contractor_id, lane.truck_type_id, arrival_day), []
+                    ).append(marine_key)
 
     marine_trip_keys = sorted(
-        {(key[0], key[2]) for key in (*marine_sorted_keys, *marine_unsorted_keys)}
+        (route_id, day) for route_id in problem.marine_lanes for day in problem.days
     )
     port_sort_day_keys = [
         (port_id, sort_id, day)
@@ -1154,6 +1208,8 @@ def build_flow_model(
             unsorted_by_contractor_day,
             marine_sorted_by_contractor_day,
             marine_unsorted_by_contractor_day,
+            marine_delivery_sorted_by_contractor_day,
+            marine_delivery_unsorted_by_contractor_day,
             problem,
         )
         return loads - phi[contractor_id] <= mdl.u[contractor_id, day]
@@ -1167,6 +1223,8 @@ def build_flow_model(
             unsorted_by_contractor_day,
             marine_sorted_by_contractor_day,
             marine_unsorted_by_contractor_day,
+            marine_delivery_sorted_by_contractor_day,
+            marine_delivery_unsorted_by_contractor_day,
             problem,
         )
         return phi[contractor_id] - loads <= mdl.u[contractor_id, day]
@@ -1352,14 +1410,22 @@ def build_flow_model(
         ]
         if not route_ids:
             return pyo.Constraint.Skip
-        minutes = sum(
-            mdl.mt[route_id, day] * problem.marine_lanes[route_id].barge_cycle_minutes
-            for route_id in route_ids
-        )
-        available = problem.marine_barge_fleet.get((contractor_id, barge_type_id), 0) * (
-            problem.regular_minutes
-        )
-        return minutes <= available
+        # A barge is occupied for the whole round trip. Count every departure
+        # whose occupancy window still covers this day.
+        trips = 0
+        for route_id in route_ids:
+            lane = problem.marine_lanes[route_id]
+            first_day = max(1, day - lane.occupancy_days + 1)
+            trips += sum(mdl.mt[route_id, start_day] for start_day in range(first_day, day + 1))
+        available = problem.marine_barge_fleet.get((contractor_id, barge_type_id), 0)
+        return trips <= available
+
+    def barge_departure_cutoff_rule(mdl, route_id: str, day: int):
+        lane = problem.marine_lanes[route_id]
+        latest_start = problem.horizon_days - lane.occupancy_days + 1
+        if day <= latest_start:
+            return pyo.Constraint.Skip
+        return mdl.mt[route_id, day] == 0
 
     model.marine_barge_capacity_upper = pyo.Constraint(
         model.MarineTripKeys, rule=barge_capacity_upper_rule
@@ -1369,6 +1435,22 @@ def build_flow_model(
     )
     model.marine_barge_fleet_capacity = pyo.Constraint(
         model.MarineBargeFleetKeys, rule=barge_fleet_capacity_rule
+    )
+    model.marine_departure_cutoff = pyo.Constraint(
+        model.MarineTripKeys, rule=barge_departure_cutoff_rule
+    )
+
+    def marine_delivery_sorted_link_rule(mdl, route_id: str, sort_id: str, day: int):
+        return mdl.mdw[route_id, sort_id, day] == mdl.mww[route_id, sort_id, day]
+
+    def marine_delivery_unsorted_link_rule(mdl, route_id: str, sort_id: str, day: int):
+        return mdl.mdc[route_id, sort_id, day] == mdl.mwc[route_id, sort_id, day]
+
+    model.marine_delivery_sorted_link = pyo.Constraint(
+        model.MarineSortedKeys, rule=marine_delivery_sorted_link_rule
+    )
+    model.marine_delivery_unsorted_link = pyo.Constraint(
+        model.MarineUnsortedKeys, rule=marine_delivery_unsorted_link_rule
     )
 
     def fleet_capacity_rule(mdl, contractor_id: str, truck_type_id: str, day: int):
@@ -1382,32 +1464,49 @@ def build_flow_model(
         marine_unsorted_keys = marine_unsorted_by_contractor_truck_day.get(
             (contractor_id, truck_type_id, day), []
         )
+        marine_delivery_sorted_keys = marine_delivery_sorted_by_contractor_truck_day.get(
+            (contractor_id, truck_type_id, day), []
+        )
+        marine_delivery_unsorted_keys = marine_delivery_unsorted_by_contractor_truck_day.get(
+            (contractor_id, truck_type_id, day), []
+        )
         if (
             not sorted_keys
             and not unsorted_keys
             and not marine_sorted_keys
             and not marine_unsorted_keys
+            and not marine_delivery_sorted_keys
+            and not marine_delivery_unsorted_keys
         ):
             return pyo.Constraint.Skip
         minutes = sum(mdl.nw[key] * _cycle_for_key(problem, key) for key in sorted_keys) + sum(
             mdl.nc[key] * _cycle_for_load_key(problem, key) for key in unsorted_keys
         )
-        marine_minutes = sum(
-            mdl.mpw[key]
-            / problem.marine_lanes[key[0]].truck_capacity
-            * problem.marine_lanes[key[0]].pickup_cycle_minutes
-            + mdl.mdw[key]
-            / problem.marine_lanes[key[0]].truck_capacity
-            * problem.marine_lanes[key[0]].delivery_cycle_minutes
-            for key in marine_sorted_keys
-        ) + sum(
-            mdl.mpc[key]
-            / problem.marine_lanes[key[0]].truck_capacity
-            * problem.marine_lanes[key[0]].pickup_cycle_minutes
-            + mdl.mdc[key]
-            / problem.marine_lanes[key[0]].truck_capacity
-            * problem.marine_lanes[key[0]].delivery_cycle_minutes
-            for key in marine_unsorted_keys
+        marine_minutes = (
+            sum(
+                mdl.mpw[key]
+                / problem.marine_lanes[key[0]].truck_capacity
+                * problem.marine_lanes[key[0]].pickup_cycle_minutes
+                for key in marine_sorted_keys
+            )
+            + sum(
+                mdl.mpc[key]
+                / problem.marine_lanes[key[0]].truck_capacity
+                * problem.marine_lanes[key[0]].pickup_cycle_minutes
+                for key in marine_unsorted_keys
+            )
+            + sum(
+                mdl.mdw[key]
+                / problem.marine_lanes[key[0]].truck_capacity
+                * problem.marine_lanes[key[0]].delivery_cycle_minutes
+                for key in marine_delivery_sorted_keys
+            )
+            + sum(
+                mdl.mdc[key]
+                / problem.marine_lanes[key[0]].truck_capacity
+                * problem.marine_lanes[key[0]].delivery_cycle_minutes
+                for key in marine_delivery_unsorted_keys
+            )
         )
         available = problem.fleet_count.get((contractor_id, truck_type_id), 0) * (
             problem.regular_minutes
@@ -1516,6 +1615,10 @@ def _contractor_day_truckloads(
     | None = None,
     marine_unsorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]]
     | None = None,
+    marine_delivery_sorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]]
+    | None = None,
+    marine_delivery_unsorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]]
+    | None = None,
     problem: HaulingFlowProblem | None = None,
 ):
     """Return the contractor/day truckload expression (road plus marine drayage)."""
@@ -1532,10 +1635,16 @@ def _contractor_day_truckloads(
     if problem is not None:
         for key in (marine_sorted_by_contractor_day or {}).get((contractor_id, day), []):
             capacity = problem.marine_lanes[key[0]].truck_capacity
-            marine_loads += (model.mpw[key] + model.mdw[key]) / capacity
+            marine_loads += model.mpw[key] / capacity
         for key in (marine_unsorted_by_contractor_day or {}).get((contractor_id, day), []):
             capacity = problem.marine_lanes[key[0]].truck_capacity
-            marine_loads += (model.mpc[key] + model.mdc[key]) / capacity
+            marine_loads += model.mpc[key] / capacity
+        for key in (marine_delivery_sorted_by_contractor_day or {}).get((contractor_id, day), []):
+            capacity = problem.marine_lanes[key[0]].truck_capacity
+            marine_loads += model.mdw[key] / capacity
+        for key in (marine_delivery_unsorted_by_contractor_day or {}).get((contractor_id, day), []):
+            capacity = problem.marine_lanes[key[0]].truck_capacity
+            marine_loads += model.mdc[key] / capacity
     return sorted_loads + unsorted_loads + marine_loads
 
 
@@ -1901,6 +2010,8 @@ def _extract_result(
             _unsorted_by_contractor_day(model),
             _marine_sorted_by_contractor_day(model),
             _marine_unsorted_by_contractor_day(model),
+            _marine_delivery_sorted_by_contractor_day(model),
+            _marine_delivery_unsorted_by_contractor_day(model),
             problem,
         )
         value = float(pyo.value(loads))
@@ -1985,10 +2096,13 @@ def _extract_marine_result(
             delivery_m3 = float(pyo.value(delivery_var[key]))
             if max(pickup_m3, water_m3, delivery_m3) <= 1e-8:
                 continue
+            arrival_day = day + lane.arrival_lag_days
             flow_rows.append(
                 {
                     "day": day,
                     "scenario_day": problem.start_day + day - 1,
+                    "arrival_day": arrival_day,
+                    "arrival_scenario_day": problem.start_day + arrival_day - 1,
                     "marine_route_id": route_id,
                     "block_id": lane.block_id,
                     "yard_id": lane.yard_id,
@@ -2083,6 +2197,10 @@ def _extract_marine_result(
                 "water_arc_id": lane.water_arc_id,
                 "water_m3": water_m3,
                 "barge_trips": trips,
+                "arrival_day": day + lane.arrival_lag_days,
+                "arrival_scenario_day": problem.start_day + day + lane.arrival_lag_days - 1,
+                "transit_days": lane.arrival_lag_days,
+                "occupancy_days": lane.occupancy_days,
                 "barge_cycle_minutes": trips * lane.barge_cycle_minutes,
                 "barge_load_minutes": trips * lane.load_minutes,
                 "barge_unload_minutes": trips * lane.unload_minutes,
@@ -2114,17 +2232,17 @@ def _extract_marine_result(
             *[key for key in model.MarineUnsortedKeys if key[0] in problem.marine_lanes],
         ):
             route_id, candidate_sort, candidate_day = key
-            if candidate_sort != sort_id or candidate_day != day:
+            if candidate_sort != sort_id:
                 continue
             lane = problem.marine_lanes[route_id]
             if key in model.MarineSortedKeys:
                 pickup, water, delivery = model.mpw[key], model.mww[key], model.mdw[key]
             else:
                 pickup, water, delivery = model.mpc[key], model.mwc[key], model.mdc[key]
-            if lane.origin_port_id == port_id:
+            if lane.origin_port_id == port_id and candidate_day == day:
                 inbound += float(pyo.value(pickup))
                 outbound += float(pyo.value(water))
-            if lane.destination_port_id == port_id:
+            if lane.destination_port_id == port_id and candidate_day + lane.arrival_lag_days == day:
                 inbound += float(pyo.value(water))
                 outbound += float(pyo.value(delivery))
         handled = max(inbound, outbound)
@@ -2167,8 +2285,8 @@ def _extract_marine_result(
         unsorted_loads = 0 if row["sorted"] else row["delivery_truckloads"]
         truck_rows.append(
             {
-                "day": row["day"],
-                "scenario_day": row["scenario_day"],
+                "day": row["arrival_day"],
+                "scenario_day": row["arrival_scenario_day"],
                 "marine_route_id": row["marine_route_id"],
                 "leg": "delivery",
                 "block_id": lane.destination_port_id,
@@ -2349,6 +2467,38 @@ def _marine_unsorted_by_contractor_day(
     for key in model.MarineUnsortedKeys:
         lane = problem.marine_lanes[key[0]]
         index.setdefault((lane.contractor_id, key[2]), []).append(key)
+    return index
+
+
+def _marine_delivery_sorted_by_contractor_day(
+    model: pyo.ConcreteModel,
+) -> dict[tuple[str, int], list[tuple[str, str, int]]]:
+    """Rebuild the marine sorted delivery contractor/arrival-day index."""
+    index: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
+    problem: HaulingFlowProblem | None = getattr(model, "problem", None)
+    if problem is None:
+        return index
+    for key in model.MarineSortedKeys:
+        lane = problem.marine_lanes[key[0]]
+        arrival_day = key[2] + lane.arrival_lag_days
+        if arrival_day <= problem.horizon_days:
+            index.setdefault((lane.contractor_id, arrival_day), []).append(key)
+    return index
+
+
+def _marine_delivery_unsorted_by_contractor_day(
+    model: pyo.ConcreteModel,
+) -> dict[tuple[str, int], list[tuple[str, str, int]]]:
+    """Rebuild the marine unsorted delivery contractor/arrival-day index."""
+    index: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
+    problem: HaulingFlowProblem | None = getattr(model, "problem", None)
+    if problem is None:
+        return index
+    for key in model.MarineUnsortedKeys:
+        lane = problem.marine_lanes[key[0]]
+        arrival_day = key[2] + lane.arrival_lag_days
+        if arrival_day <= problem.horizon_days:
+            index.setdefault((lane.contractor_id, arrival_day), []).append(key)
     return index
 
 

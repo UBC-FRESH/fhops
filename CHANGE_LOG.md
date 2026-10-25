@@ -3877,3 +3877,12 @@ PY
   infeasibility: a 3,955-minute barge cycle cannot fit the 510-minute daily fleet budget. Existing
   day-trip marine behaviour is unchanged; the solver change is left for P13.2.
 - 2026-10-25: P13.1 merged as `65b0d2b1` (PR #198); issue #196 closed. P13 remains active for the P13.2 solver implementation.
+
+- 2026-10-25: P13.2 (#199, parent #197) implements multi-day marine voyages in Phase I. The model
+  derives `arrival_lag_days` and `occupancy_days`, shifts destination inventory/delivery to the
+  arrival day, links delivery to departure volume, caps barge occupancy with a sliding window, and
+  disallows departures that cannot finish inside the horizon. The Quatsino -> Ladysmith fixture now
+  solves with one barge, arrival on day 5, occupancy through day 8, and demand on day 8; the
+  Sunshine Coast -> Howe Sound day-trip fixture is unchanged. Marine flow/trip outputs report
+  departure/arrival and transit/occupancy days.
+- Verification for P13.2: ruff/ruff format clean, `mypy src` clean, full `pytest` passed, pre-commit passed, Sphinx clean; `fhops haul plan` on the multiday fixture is optimal (62,771.667 CAD).

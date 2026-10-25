@@ -49,7 +49,7 @@ SCHEDULE_FILES = {
     "kpis": "haul_kpis.json",
     "summary": "haul_summary.json",
 }
-OUTPUT_SCHEMA_VERSION = "1.0.0"
+OUTPUT_SCHEMA_VERSION = "1.1.0"
 
 
 def write_flow_run(

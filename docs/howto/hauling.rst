@@ -183,11 +183,12 @@ Marine assumptions and limits:
   scheduler charges the barge type's fixed dispatch cost once per used barge.
 - Port inventory carries over between days; ``storage_m3`` caps it (zero means no storage
   constraint) and ``daily_handling_m3`` caps the handled water volume (``None`` means uncapped).
-- The barge fleet is constrained by ``DriverPolicy.regular_minutes`` exactly like the truck fleet.
-- Phase I currently assumes a same-day barge cycle. A multi-day voyage is not yet
-  represented; the Quatsino Sound -> Ladysmith regression case and the proposed
-  model are tracked at `UBC-FRESH/fhops#196`_ and
-  ``notes/multiday_marine_cycles.md``.
+- A barge voyage can span multiple days. ``arrival_lag_days`` is the whole-day lag from
+  departure to cargo arrival; ``occupancy_days`` is the whole-day round-trip occupancy. The
+  destination port and yard receive cargo on the arrival day, and the barge fleet uses a sliding
+  occupancy window rather than a one-day budget.
+- A departure that cannot complete its occupancy window inside the horizon is fixed to zero. Demand
+  before arrival is infeasible unless destination inventory already covers it.
 - Phase II schedules the road drayage loads and the barge cycles separately. The returned
   ``pickup_truck_depart``/``delivery_truck_arrive`` columns are the synchronization handoff; the
   first release reports them rather than hard-linking the two MIPs.
@@ -283,8 +284,8 @@ The result payload carries:
 - ``yard_inventory``: unsorted and water inventory, processed volume, and demand;
 - ``block_inventory``: sorted and unsorted roadside inventory at the horizon end;
 - ``contractor_workload``: daily truckloads, preferred level, and deviation;
-- ``marine_flows`` and ``barge_trips``: water-leg volume, barge trips, terminal handling, and leg
-  cost/time provenance;
+- ``marine_flows`` and ``barge_trips``: water-leg volume, barge trips, terminal handling, departure
+  and arrival days, transit/occupancy days, and leg cost/time provenance;
 - ``port_inventory``: opening, inbound, outbound, ending inventory, and handled volume per port/sort;
 - ``marine_truckloads``: pickup and delivery drayage load counts for Phase II;
 - objective values, goal deviations, solver provenance, and diagnostics.
@@ -432,7 +433,8 @@ Phase I:
 - ``haul_barge_trips.csv``
 - ``haul_port_inventory.csv``
 - ``haul_kpis.json``
-- ``haul_summary.json``
+- ``haul_summary.json`` (output schema ``1.1.0``; marine rows carry departure/arrival and
+  transit/occupancy fields)
 
 Phase II/III:
 
