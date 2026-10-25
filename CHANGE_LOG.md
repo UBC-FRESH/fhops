@@ -1,3 +1,49 @@
+# 2026-10-25 — P11.1: hauling contract, schema 1.1.0, and formulation audit (#172)
+
+Activated P11 (`feature/p11-log-hauling`, from `main` at `d130fed`) and completed its first child,
+#172 (part of #170).
+
+- Added `src/fhops/hauling/` with the optional `hauling:` contract: log sorts, contractors, truck
+  types, individual trucks, depots, depot legs, sort yards, loader location bindings, sorted and
+  unsorted supply, daily demand, haul arcs, contractor-block eligibility, compatibility overrides,
+  and the driver/roadside-inventory/loader-cost policy.
+- `Scenario` now accepts the optional `hauling` section and schema `1.1.0`; `1.0.0` scenarios still
+  load unchanged, while a `1.0.0` file that contains `hauling:` is refused. The loader now passes
+  the YAML `schema_version` through (it previously defaulted every file to `1.0.0`), and it accepts
+  either an inline section or a `data.hauling` YAML file.
+- Cross-validation covers unknown block/machine/yard/truck/contractor/log-sort references, duplicate
+  records, truck ownership and type links, loader kind/location agreement, yard capacity
+  consistency, horizon overflow, and required fleet/depot/arc presence.
+- `fhops validate` now reports hauling dimensions when the section is present.
+- Added `examples/hauling/` (3 blocks, 2 contractors, 6 trucks, 3 log sorts, 1 sort yard, 5-day
+  hauling horizon) and `notes/hauling_formulation_audit.md`, the equation-level bridge for
+  P11.2-P11.4, including the thesis transcription issues (4-14 `N1`/`N2`, 4-15 `e+`/`e-`, the
+  synchronization sum, absolute-value linearisation, goal-deviation domains).
+- Added `docs/howto/hauling.rst`, `docs/reference/hauling.rst`, the `fhops.hauling` API stub, and a
+  data-contract cross-link.
+- Fixed a pre-existing mypy failure in `src/fhops/planning/tactical_operational/io.py` by replacing
+  `DataFrame.where(..., None)` with an explicit `pd.isna` record scrub; runtime values are
+  unchanged.
+
+Verification:
+- `PYTHONPATH=src python -m pytest -q tests/hauling` -> 17 passed.
+- `PYTHONPATH=src python -m pytest -q tests/planning/test_tactical_operational_scenario.py
+  tests/planning/test_tactical_operational_contract.py tests/cli/test_scenario_reporting_cli.py` ->
+  9 passed.
+- `ruff format src tests` and `ruff check src tests` -> clean.
+- `mypy src` -> no issues (130 files).
+- `PYTHONPATH=src python -m fhops.cli.main validate examples/hauling/scenario.yaml` -> valid, with
+  hauling dimensions.
+- `PATH=/tmp/opencode/pandoc-3.1.3/bin:$PATH PYTHONPATH=src python -m sphinx -b html docs
+  /tmp/opencode/fhops-p11-sphinx7 -W` -> build succeeded.
+- Full `pytest -q` still has two pre-existing environment failures in the HiGHS option-error tests
+  (`tests/model/test_milp_driver_robustness.py`,
+  `tests/test_legacy_mip_driver.py`); highspy reports an `iteration_count` error rather than the
+  `threads` error the test expects. No hauling code touches that path. The third pre-existing
+  failure (missing `jinja2`) was fixed by installing the declared dev dependency.
+
+Next: #173, the Phase I monthly flow MILP and goal programming.
+
 # 2026-10-24 — Queue P11 log hauling and P12 web UI expansion phases (#170, #171)
 
 - Opened the two queued parent issues and their child issue trees:

@@ -42,6 +42,7 @@ Key models:
 * :class:`fhops.scenario.contract.ScenarioInitialState` – optional carried-in state (staged inventory, remaining role
   output, head-start shift counts, last block per machine); see :ref:`initial-state`.
 * :class:`fhops.scenario.contract.ScheduleLock` – machine/block/day locks with an optional ``shift_id``.
+* :class:`fhops.hauling.contract.HaulingConfig` – optional log-hauling extension (schema ``1.1.0``); see :doc:`../howto/hauling`.
 
 .. automodule:: fhops.scenario.io
    :members:

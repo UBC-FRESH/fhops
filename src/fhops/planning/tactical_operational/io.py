@@ -50,8 +50,12 @@ _LIST_MODELS: dict[str, Any] = {
 
 def _records_from_csv(path: Path) -> list[dict[str, Any]]:
     frame = pd.read_csv(path)
-    frame = frame.where(pd.notna(frame), None)
-    return cast(list[dict[str, Any]], frame.to_dict("records"))
+    records = cast(list[dict[str, Any]], frame.to_dict("records"))
+    for record in records:
+        for key, value in record.items():
+            if pd.isna(cast("Any", value)):
+                record[key] = None
+    return records
 
 
 def _load_section(

@@ -1,10 +1,11 @@
 # Log Hauling and Mill Delivery Expansion Plan (Ghotb-Inspired)
 
-Date: 2026-10-24
-Status: queued
+Date: 2026-10-25
+Status: active (P11.1)
 Phase: P11
 Branch: `feature/p11-log-hauling` (created from `main` at activation)
 Parent issue: #170
+Formulation audit: `notes/hauling_formulation_audit.md`
 Primary source: Ghotb, S. (2023), *Optimization of Log Logistics at the Operational Level
 Considering Sorting Decisions and Synchronization Requirements*, PhD thesis, University of British
 Columbia. Handle: <https://hdl.handle.net/2429/85563>
@@ -89,7 +90,8 @@ inputs are confidential and are not published. The defensible acceptance target 
   highest);
 - a transparent statement of every deviation from the thesis text.
 
-The thesis contains transcription issues that must be resolved in the first task and documented:
+The thesis contains transcription issues that must be resolved in the first task and documented in
+`notes/hauling_formulation_audit.md`:
 
 - Equation (4-14) indexes the destination as `N1`; the intended set is `N2`.
 - Equation (4-15) uses `e+`/`e-`; the intended depot nodes are `f+`/`f-`.
@@ -174,7 +176,7 @@ Add an optional `hauling:` section to `Scenario`. The extension is additive; eve
 scenario must continue to load unchanged. The candidate schema is:
 
 ```yaml
-schema_version: "1.1.0"   # proposed; P11.1 decides whether a bump is needed
+schema_version: "1.1.0"
 hauling:
   planning_horizon_days: 20
   start_day: 1
@@ -199,14 +201,16 @@ hauling:
       truck_type_id: highway
   depots:
     - id: depot
-      location_id: depot
   sort_yards:
     - id: yard1
-      location_id: yard1
+      facility_id: mill_a               # optional link to a tactical Facility
       unsorted_storage_m3: 5000
       sorted_processing_m3_per_day: 1200
       unsorted_processing_m3_per_day: 800
       total_processing_m3_per_day: 1600
+  depot_legs:
+    - {depot_id: depot, location_id: b1, truck_type_id: highway, travel_minutes: 35}
+    - {depot_id: depot, location_id: yard1, truck_type_id: highway, travel_minutes: 30}
   loader_locations:
     - loader_id: loader_yard1
       location_id: yard1
@@ -222,35 +226,39 @@ hauling:
       day: 1
       volume_m3: 200
   haul_arcs:
-    - block_id: b1
-      yard_id: yard1
-      truck_type_id: highway
-      travel_minutes: 180
-  compatibility:
-    - contractor_id: c1
-      block_id: b1
-    - contractor_id: c1
-      truck_type_id: highway
+    - {block_id: b1, yard_id: yard1, truck_type_id: highway, travel_minutes: 180}
+  contractor_blocks:
+    - {contractor_id: c1, block_id: b1}
   driver_policy:
     regular_minutes: 510
     max_overtime_minutes: 150
+    overtime_violation_penalty_per_minute: 10
+  roadside_inventory_penalty_per_m3: 25
+  loader_travel_cost_per_km: 0
+  default_loader_service_minutes: 20
 ```
 
-Open decisions for P11.1:
+### Decisions resolved in P11.1
 
-- **Schema version.** Prefer a bump to `1.1.0` with continued acceptance of `1.0.0`, unless the
-  loader team finds that the optional block is safe under `1.0.0`. Do not silently accept unknown
-  versions.
-- **Log sorts versus products.** Reuse `Product` where the tactical contract already defines the
-  sort; add `LogSort` only for sorted/unsorted handling and diameter classes that `Product` does not
-  carry.
-- **Loaders.** Reuse `Machine` for loader resources and add a location binding rather than
-  duplicating availability and cost fields.
-- **Yards versus facilities.** Reuse `Facility` identity and add hauling-specific capacity fields in
-  `sort_yards`; do not create a second facility registry.
+- **Schema version.** `1.1.0` is the hauling schema. `1.0.0` remains accepted without a hauling
+  section; a `1.0.0` file that contains `hauling:` is refused. The loader previously ignored the
+  YAML `schema_version` field; it now passes it through, which is required for the guard to work.
+- **Log sorts versus products.** `LogSort.product_id` is an optional link. `LogSort` carries the
+  sorted/unsorted distinction that `Product` does not.
+- **Loaders.** Loaders are FHOPS `Machine` records, bound to a block or yard by
+  `LoaderLocation`. Availability remains in the normal calendar/shift calendar.
+- **Yards versus facilities.** `SortYard.facility_id` is an optional link to a tactical `Facility`.
+  The hauling layer owns storage and processing capacities; it does not create a second facility
+  registry.
 - **Temporal resolution.** Phase I is day-level within one month; Phase II is one continuous working
   day. Shift calendars constrain availability but do not become a separate time index in the first
   release.
+- **Compatibility.** `contractor_blocks` is an optional allowlist. Truck ownership and the
+  truck-type sorted/unsorted flags carry the rest. The `compatibility` list is reserved for later
+  exceptions.
+- **Costs and services.** `roadside_inventory_penalty_per_m3`, `loader_travel_cost_per_km`, and
+  `default_loader_service_minutes` cover the remaining thesis parameters. The full equation map is
+  in `notes/hauling_formulation_audit.md`.
 
 ## 6. Phase I model (monthly daily flows)
 

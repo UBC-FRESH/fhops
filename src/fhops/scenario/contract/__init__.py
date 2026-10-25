@@ -1,6 +1,7 @@
 """Scenario contract models (Pydantic schemas, validators)."""
 
 from .models import (
+    SUPPORTED_SCHEMA_VERSIONS,
     Block,
     BlockInitialState,
     CalendarEntry,
@@ -36,4 +37,5 @@ __all__ = [
     "MachineInitialState",
     "ScenarioInitialState",
     "validate_initial_state",
+    "SUPPORTED_SCHEMA_VERSIONS",
 ]

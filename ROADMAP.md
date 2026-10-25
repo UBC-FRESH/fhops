@@ -185,7 +185,7 @@ Parent #170; branch `feature/p11-log-hauling` (active from 2026-10-25); plan
 Adds the operational log-hauling layer missing between harvest and mill demand: Phase I monthly
 daily-flow MIP with contractor workload balance, Phase II continuous-time truck/loader scheduling,
 and a thesis-calibrated SA solver.
-- [ ] #172 P11.1 Provenance, hauling contract, and formulation audit.
+- [x] #172 P11.1 Provenance, hauling contract, and formulation audit.
 - [ ] #173 P11.2 Phase I monthly flow MILP and goal programming.
 - [ ] #174 P11.3 Phase II daily routing and scheduling MILP.
 - [ ] #175 P11.4 SA solution approach, SPT decoder, and calibration.
@@ -300,11 +300,11 @@ and an opt-in assistant.
     - Queued as P11. The phase adds the operational hauling layer between harvest and mill demand:
       Ghotb's Phase I monthly daily-flow MIP with contractor workload balance, Phase II
       continuous-time truck/loader scheduling, and the SA solver with an SPT decoder.
-    - Child issues #172-#177 are linked as sub-issues; the phase branch is reserved until activation.
+    - Child issues #172-#177 are linked as sub-issues; the phase is active on `feature/p11-log-hauling`.
     - The thesis case data is confidential, so acceptance uses structural fidelity, MIP-versus-SA
       parity on thesis-shaped synthetic instances, and the published qualitative findings. Exact
       company-dollar reproduction is explicitly not claimed.
-    - Start with #172 (contract and formulation audit); it gates the models and solver.
+    - #172 (contract and formulation audit) is complete; #173 (Phase I flow model) is next.
 
 17. **FHOPS Web Application (#171; `notes/web_ui_expansion_plan.md`, `notes/web_ui_issue_tree.md`)**
     - Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,

@@ -10,11 +10,11 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 - Parent issue: [#170 - P11: Log hauling and mill delivery optimization (Ghotb decomposition)](https://github.com/UBC-FRESH/fhops/issues/170)
 - Phase branch: `feature/p11-log-hauling` (reserved; created from `main` at activation)
 - Planning PR: #184 (draft)
-- Status: active (2026-10-25)
+- Status: active (2026-10-25); #172 complete, #173 next
 
 | Issue | Task | Child branch |
 |---:|---|---|
-| [#172](https://github.com/UBC-FRESH/fhops/issues/172) | P11.1 Provenance, contract, and formulation audit | `issue-172-hauling-contract` |
+| [#172](https://github.com/UBC-FRESH/fhops/issues/172) | P11.1 Provenance, contract, and formulation audit — complete | `feature/p11-log-hauling` |
 | [#173](https://github.com/UBC-FRESH/fhops/issues/173) | P11.2 Phase I monthly flow MILP and goal programming | `issue-173-hauling-flow` |
 | [#174](https://github.com/UBC-FRESH/fhops/issues/174) | P11.3 Phase II daily routing and scheduling MILP | `issue-174-hauling-schedule` |
 | [#175](https://github.com/UBC-FRESH/fhops/issues/175) | P11.4 SA solution approach, SPT decoder, and calibration | `issue-175-hauling-sa` |
@@ -24,6 +24,11 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 All six child issues are linked to parent #170 through GitHub sub-issues and assigned the `Task`
 issue type. The parent carries the `Feature` issue type. The repository did not previously carry
 `phase`/`task` labels; both were added for this queue and future phases.
+
+## Progress
+
+- 2026-10-25: #172 complete. The `hauling:` contract, schema 1.1.0 guard, loader support, example,
+  docs, and formulation audit are on `feature/p11-log-hauling`. #173 is next.
 
 ## Activation checklist
 

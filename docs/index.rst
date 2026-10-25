@@ -33,6 +33,7 @@ ensembles.
    howto/tabu
    howto/rolling_horizon
    howto/tactical_operational
+   howto/hauling
 
 .. toctree::
    :maxdepth: 2
@@ -42,6 +43,7 @@ ensembles.
    reference/cli
    reference/playback_aggregates
    reference/harvest_systems
+   reference/hauling
    reference/telemetry
    reference/dashboards
    reference/source_bibliography

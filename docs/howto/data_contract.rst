@@ -512,6 +512,17 @@ Arnvik (2024) Appendix 5 stand metadata is bundled under
 - Programmatically, ``fhops.reference.arnvik_appendix5`` exposes dataclasses and helper functions so skyline
   helpers and costing workflows can bind stand descriptors to the new cable productivity models.
 
+Log Hauling Extension
+---------------------
+
+``schema_version: "1.1.0"`` may add an optional ``hauling:`` section with log sorts, contractors,
+truck types and trucks, depots, sort yards, supply, demand, haul arcs, loader bindings, and a
+driver policy. The section can be inline or referenced from ``data.hauling``. Existing ``1.0.0``
+scenarios remain valid and have no hauling layer; a ``1.0.0`` file that contains ``hauling:`` is
+refused so older readers cannot silently ignore it.
+
+See :doc:`hauling` for the entity rules, units, and a complete example.
+
 Authoring Checklist
 -------------------
 
@@ -520,6 +531,7 @@ Authoring Checklist
    costs matter.
 3. Use ``crew_assignments`` and ``geo`` only when you have supporting data.
 4. Run ``fhops validate <scenario.yaml>`` to confirm the scenario satisfies the contract.
+5. Add a ``hauling:`` section only when the scenario needs log transport; see :doc:`hauling`.
 
 Fixture Gallery
 ---------------

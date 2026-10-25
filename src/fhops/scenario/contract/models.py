@@ -9,6 +9,7 @@ from typing import cast
 from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 
 from fhops.costing.machine_rates import compose_default_rental_rate_for_role, normalize_machine_role
+from fhops.hauling.contract import HaulingConfig
 from fhops.scheduling import MobilisationConfig, TimelineConfig
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
@@ -97,6 +98,10 @@ class ObjectiveWeights(BaseModel):
 
 
 Day = int  # 1..D
+
+#: Scenario schema versions accepted by the loader. ``1.1.0`` adds the optional ``hauling:``
+#: section; every ``1.0.0`` scenario remains valid.
+SUPPORTED_SCHEMA_VERSIONS: frozenset[str] = frozenset({"1.0.0", "1.1.0"})
 
 
 class SalvageProcessingMode(StrEnum):
@@ -654,6 +659,11 @@ class Scenario(BaseModel):
         Optional :class:`ObjectiveWeights` overriding default solver weights.
     road_construction:
         Optional list of :class:`RoadConstruction` entries used by telemetry/costing exports.
+    hauling:
+        Optional :class:`~fhops.hauling.contract.HaulingConfig` with log sorts, contractors,
+        truck types and trucks, depots, sort yards, haul arcs, loader bindings, and the driver
+        policy. ``None`` (default) means the scenario has no hauling layer. Files using this
+        field require schema ``1.1.0`` (the loader still accepts ``1.0.0``).
     initial_state:
         Optional :class:`ScenarioInitialState` carrying staged inter-role inventory, remaining
         per-role output, head-start shift counts, and each machine's last block at the start of
@@ -689,6 +699,7 @@ class Scenario(BaseModel):
     objective_weights: ObjectiveWeights | None = None
     road_construction: list[RoadConstruction] | None = None
     initial_state: ScenarioInitialState | None = None
+    hauling: HaulingConfig | None = None
 
     @field_validator("num_days")
     @classmethod
@@ -700,10 +711,10 @@ class Scenario(BaseModel):
     @field_validator("schema_version")
     @classmethod
     def _schema_version_supported(cls, value: str) -> str:
-        supported = {"1.0.0"}
-        if value not in supported:
+        if value not in SUPPORTED_SCHEMA_VERSIONS:
             raise ValueError(
-                f"Unsupported schema_version={value}. Supported versions: {', '.join(sorted(supported))}"
+                f"Unsupported schema_version={value}. Supported versions: "
+                f"{', '.join(sorted(SUPPORTED_SCHEMA_VERSIONS))}"
             )
         return value
 
@@ -864,6 +875,17 @@ class Scenario(BaseModel):
 
         if self.initial_state is not None:
             validate_initial_state(self)
+
+        if self.hauling is not None:
+            if self.schema_version != "1.1.0":
+                raise ValueError(
+                    f"Scenario.hauling requires schema_version=1.1.0 (got {self.schema_version})"
+                )
+            self.hauling.validate_against_scenario(
+                block_ids=block_ids,
+                machine_ids=machine_ids,
+                num_days=self.num_days,
+            )
 
         return self
 

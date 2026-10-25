@@ -509,6 +509,12 @@ def validate(
     t.add_row("Blocks", str(len(sc.blocks)))
     t.add_row("Machines", str(len(sc.machines)))
     t.add_row("Landings", str(len(sc.landings)))
+    if sc.hauling is not None:
+        t.add_row("Hauling log sorts", str(len(sc.hauling.log_sorts)))
+        t.add_row("Hauling contractors", str(len(sc.hauling.contractors)))
+        t.add_row("Hauling trucks", str(len(sc.hauling.trucks)))
+        t.add_row("Hauling yards", str(len(sc.hauling.sort_yards)))
+        t.add_row("Hauling horizon (days)", str(sc.hauling.planning_horizon_days))
     console.print(t)
 
 
