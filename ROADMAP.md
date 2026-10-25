@@ -215,6 +215,7 @@ Parent #197; branch `feature/phase13-multiday-marine`; design
 Extends the P11.7 marine path so a barge voyage can span more than one day
 without adding dummy barges or relaxing capacity checks.
 - [x] #196 P13.1 Design multi-day marine cycles and add the failing regression fixture.
+- [x] #199 P13.2 Implement multi-day marine departure/arrival timing.
 
 ## Detailed Next Steps
 0. **Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**
