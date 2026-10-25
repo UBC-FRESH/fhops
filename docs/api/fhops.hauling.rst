@@ -30,3 +30,15 @@
    :undoc-members:
    :show-inheritance:
    :noindex:
+
+.. automodule:: fhops.hauling.integration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+.. automodule:: fhops.hauling.reporting
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:

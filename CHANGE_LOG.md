@@ -1,3 +1,42 @@
+# 2026-10-25 — P11.5: integration, CLI, reporting, and scale example (#176)
+
+Part of #170. Makes the hauling stack usable from FHOPS on `feature/p11-log-hauling`.
+
+- `src/fhops/hauling/integration.py`: operational assignment -> block/sort supply (with explicit
+  `sort_shares` or a warned equal split); tactical production -> supply and facility demand ->
+  yard demand (with a warned even spread over the day horizon); `residual_report` for pre-solve
+  supply/demand gaps.
+- `src/fhops/hauling/reporting.py`: stable Phase I/II/III artefact writers, merged solve summaries,
+  JSON KPIs, and a Markdown report with no optional `tabulate` dependency.
+- `src/fhops/cli/hauling.py` and `fhops haul validate|plan|schedule|solve|report`. `plan` runs
+  Phase I, `schedule` reads a Phase I run or solves in memory, `solve` runs both, and `report`
+  renders the run.
+- Stable artefacts: `haul_flows.csv`, `haul_truckloads.csv`, `haul_yard_inventory.csv`,
+  `haul_block_inventory.csv`, `haul_contractor_workload.csv`, `haul_schedule.csv`,
+  `haul_truck_summary.csv`, `haul_loader_summary.csv`, `haul_kpis.json`, `haul_summary.json`.
+- `scripts/generate_hauling_scale_case.py` and `examples/hauling_scale/`: 13 blocks, 3 yards,
+  4 contractors, 60 trucks, 3 log sorts, block GeoJSON, and ~90 truckloads/day. It allows 300
+  overtime minutes so the full day remains feasible; Phase I can return a time-limited feasible
+  incumbent rather than a proven optimum.
+- `solve_flow` and `solve_schedule` now map `maxTimeLimit`/`maxIteration` terminations with an
+  incumbent to `status="feasible"` instead of `error`.
+- Docs: CLI reference, operational/tactical handoff, stable artefacts, and the scale case.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 64 passed.
+- `fhops haul validate examples/hauling/scenario.yaml` -> valid, residuals zero.
+- `fhops haul plan ... --time-limit 30`, `haul schedule ... --solver sa`, `haul solve ... --solver
+  mip`, and `haul report ...` all succeed on the small example.
+- `examples/hauling_scale/` validates; Phase I returns feasible at 30 s; SA day 1 (92 loads) reaches
+  zero violation.
+- `ruff format --check src tests scripts/generate_hauling_scale_case.py` / `ruff check` -> clean.
+- `mypy src` -> no issues (137 files).
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures remain.
+- `pre-commit run --files <changed files>` -> passed.
+
+Next: #177, validation, documentation, formulation sync, and close-out.
+
 # 2026-10-25 — P11.4: simulated annealing, SPT decoder, and calibration (#175)
 
 Part of #170. Adds the third Ghotb decomposition phase on `feature/p11-log-hauling`.

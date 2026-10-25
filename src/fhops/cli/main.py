@@ -39,6 +39,7 @@ from fhops.cli._utils import (
 from fhops.cli.benchmarks import benchmark_app
 from fhops.cli.dataset import dataset_app
 from fhops.cli.geospatial import geospatial_app
+from fhops.cli.hauling import hauling_app
 from fhops.cli.planning import plan_app
 from fhops.cli.profiles import format_profiles, get_profile, merge_profile_with_cli
 from fhops.cli.reporting import report_app
@@ -88,6 +89,7 @@ from fhops.telemetry.watch import Snapshot, WatchConfig
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(geospatial_app, name="geo")
+app.add_typer(hauling_app, name="haul")
 app.add_typer(benchmark_app, name="bench")
 app.add_typer(synth_app, name="synth")
 app.add_typer(telemetry_app, name="telemetry")

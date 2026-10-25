@@ -982,7 +982,14 @@ def solve_flow(
     termination = str(results.solver.termination_condition).lower()
     if termination in {"optimal", "locallyoptimal", "globallyoptimal"}:
         status = "optimal"
-    elif termination == "feasible":
+    elif termination in {
+        "feasible",
+        "maxtimelimit",
+        "maxiterations",
+        "maxevaluations",
+        "objectivelimit",
+        "timelimit",
+    }:
         status = "feasible"
     elif termination in {"infeasible", "infeasibleorunbounded"}:
         status = "infeasible"

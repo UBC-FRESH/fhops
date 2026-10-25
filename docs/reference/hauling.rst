@@ -42,6 +42,14 @@ Key models
   cost evaluation and loader-order decoding.
 - :class:`fhops.hauling.heuristic.HaulingSAResult` – best schedule, cost components, search
   provenance, and history.
+- :func:`fhops.hauling.integration.scenario_from_operational_plan` – operational assignments to
+  hauling supply.
+- :func:`fhops.hauling.integration.scenario_from_tactical_plan` – tactical production/demand to
+  hauling supply/demand.
+- :func:`fhops.hauling.integration.residual_report` – supply/demand residual per log sort.
+- :func:`fhops.hauling.reporting.write_flow_run` / :func:`fhops.hauling.reporting.write_schedule_run`
+  / :func:`fhops.hauling.reporting.write_solve_run` – stable artefact writers.
+- :func:`fhops.hauling.reporting.build_markdown_report` – Markdown run report.
 
 Example
 -------

@@ -189,7 +189,7 @@ and a thesis-calibrated SA solver.
 - [x] #173 P11.2 Phase I monthly flow MILP and goal programming.
 - [x] #174 P11.3 Phase II daily routing and scheduling MILP.
 - [x] #175 P11.4 SA solution approach, SPT decoder, and calibration.
-- [ ] #176 P11.5 FHOPS integration, CLI, reporting, and example case.
+- [x] #176 P11.5 FHOPS integration, CLI, reporting, and example case.
 - [ ] #177 P11.6 Validation, documentation, formulation sync, and close-out.
 
 ## Phase 12 — FHOPS Web Application (WS4-Style) — queued
@@ -304,7 +304,7 @@ and an opt-in assistant.
     - The thesis case data is confidential, so acceptance uses structural fidelity, MIP-versus-SA
       parity on thesis-shaped synthetic instances, and the published qualitative findings. Exact
       company-dollar reproduction is explicitly not claimed.
-    - #172 (contract), #173 (Phase I flow), #174 (Phase II scheduling), and #175 (SA solver) are complete; #176 (integration/CLI) is next.
+    - #172 (contract), #173 (Phase I flow), #174 (Phase II scheduling), #175 (SA solver), and #176 (integration/CLI) are complete; #177 (validation/close-out) is next.
 
 17. **FHOPS Web Application (#171; `notes/web_ui_expansion_plan.md`, `notes/web_ui_issue_tree.md`)**
     - Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,

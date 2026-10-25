@@ -163,3 +163,26 @@ the corresponding API surface:
 Each function linked above now documents parameter units, accepted ranges, default templates, and the
 structure of the result dataclasses. Run ``sphinx-build -b html docs _build/html -W`` after adding
 new roles so these cross-references stay valid.
+
+Log-hauling commands
+--------------------
+
+The optional hauling layer adds a `fhops haul` command group:
+
+.. code-block:: bash
+
+   fhops haul validate examples/hauling/scenario.yaml
+   fhops haul plan examples/hauling/scenario.yaml --out-dir runs/haul-plan --time-limit 60
+   fhops haul schedule examples/hauling/scenario.yaml --out-dir runs/haul-day1 \
+     --flow-dir runs/haul-plan --day 1 --solver sa --sa-iters 5000
+   fhops haul solve examples/hauling/scenario.yaml --out-dir runs/haul-solve \
+     --day 1 --solver mip --time-limit 60
+   fhops haul report runs/haul-solve --out runs/haul-solve/report.md
+
+- ``plan`` solves Phase I: cost, contractor workload, or goal programming.
+- ``schedule`` solves Phase II/III for one day; it loads an existing Phase I run or solves Phase I
+  in memory.
+- ``solve`` runs both phases and writes a merged summary.
+- ``report`` renders a Markdown report from the stable CSV/JSON artefacts.
+
+See :doc:`../howto/hauling` for the data contract, output schemas, and integration notes.

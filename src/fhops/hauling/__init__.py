@@ -41,11 +41,25 @@ from .heuristic import (
     solve_sa,
     summarize_sa_result,
 )
+from .integration import (
+    HaulingIntegrationResult,
+    residual_report,
+    scenario_from_operational_plan,
+    scenario_from_tactical_plan,
+)
 from .network import (
     ScheduleProblem,
     Truckload,
     build_schedule_problem,
     build_schedule_problem_from_loads,
+)
+from .reporting import (
+    FLOW_FILES,
+    SCHEDULE_FILES,
+    build_markdown_report,
+    write_flow_run,
+    write_schedule_run,
+    write_solve_run,
 )
 from .schedule import (
     SchedulePlan,
@@ -97,4 +111,14 @@ __all__ = [
     "initial_solution",
     "solve_sa",
     "summarize_sa_result",
+    "HaulingIntegrationResult",
+    "residual_report",
+    "scenario_from_operational_plan",
+    "scenario_from_tactical_plan",
+    "FLOW_FILES",
+    "SCHEDULE_FILES",
+    "build_markdown_report",
+    "write_flow_run",
+    "write_schedule_run",
+    "write_solve_run",
 ]

@@ -298,33 +298,34 @@ def build_schedule_problem_from_loads(
     depot_to_block: dict[tuple[str, str], float] = {}
     yard_to_depot: dict[tuple[str, str], float] = {}
 
+    # Populate every arc, not only the loads on this day. A truck may deliver to one yard and
+    # then travel empty to a block whose own load goes to another yard.
+    for arc_key, arc in haul_arcs.items():
+        block_id, yard_id, truck_type_id = arc_key
+        block_to_yard[arc_key] = arc.travel_minutes
+        yard_to_block[(yard_id, block_id, truck_type_id)] = arc.empty_travel_minutes()
+    for (location_id, truck_type_id), minutes in depot_legs.items():
+        depot_to_block[(location_id, truck_type_id)] = minutes
+        yard_to_depot[(location_id, truck_type_id)] = minutes
+
     for load in loads:
         arc_key = (load.block_id, load.yard_id, load.truck_type_id)
-        arc = haul_arcs.get(arc_key)
-        if arc is None:
+        if arc_key not in haul_arcs:
             raise ValueError(
                 "No haul arc for load "
                 f"{load.load_id}: block_id={load.block_id}, yard_id={load.yard_id}, "
                 f"truck_type_id={load.truck_type_id}"
             )
-        block_to_yard[arc_key] = arc.travel_minutes
-        yard_to_block[(load.yard_id, load.block_id, load.truck_type_id)] = (
-            arc.empty_travel_minutes()
-        )
-        block_leg = depot_legs.get((load.block_id, load.truck_type_id))
-        if block_leg is None:
+        if (load.block_id, load.truck_type_id) not in depot_legs:
             raise ValueError(
                 f"No depot leg from depot {depot.id} to block_id={load.block_id} "
                 f"for truck_type_id={load.truck_type_id}"
             )
-        depot_to_block[(load.block_id, load.truck_type_id)] = block_leg
-        yard_leg = depot_legs.get((load.yard_id, load.truck_type_id))
-        if yard_leg is None:
+        if (load.yard_id, load.truck_type_id) not in depot_legs:
             raise ValueError(
                 f"No depot leg from yard_id={load.yard_id} to depot {depot.id} "
                 f"for truck_type_id={load.truck_type_id}"
             )
-        yard_to_depot[(load.yard_id, load.truck_type_id)] = yard_leg
 
     return ScheduleProblem(
         scenario_name=scenario.name,

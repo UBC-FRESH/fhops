@@ -17,9 +17,9 @@ The model follows the two-phase decomposition in Ghotb (2023):
 
 P11.1 ships the contract and validation. P11.2 adds the Phase I flow model and goal programming.
 P11.3 adds the Phase II continuous-time scheduling model and its simulator/validator. P11.4 adds
-the simulated-annealing solver for larger days. The hauling CLI lands in P11.5. Until then,
-``fhops validate`` accepts a hauling section and reports its dimensions, and the Phase I/II/III
-models are available from Python.
+the simulated-annealing solver for larger days. P11.5 adds the `fhops haul` CLI, the operational/
+tactical bridges, and the stable run artefacts. The Phase I/II/III models remain available from
+Python.
 
 Schema version
 --------------
@@ -287,6 +287,101 @@ reaches the same 2992.50 objective with both methods. For a parameter sweep, run
    python scripts/benchmark_hauling.py --solver both --day 1
    python scripts/benchmark_hauling.py --solver sa --calibrate --sa-iters 500      --out-dir tmp/hauling-calibration
 
+CLI
+---
+
+The `fhops haul` commands are:
+
+.. code-block:: bash
+
+   fhops haul validate examples/hauling/scenario.yaml
+   fhops haul plan examples/hauling/scenario.yaml --out-dir runs/haul-plan
+   fhops haul schedule examples/hauling/scenario.yaml --out-dir runs/haul-day1      --flow-dir runs/haul-plan --day 1 --solver sa --sa-iters 5000
+   fhops haul solve examples/hauling/scenario.yaml --out-dir runs/haul-solve      --day 1 --solver mip --time-limit 60
+   fhops haul report runs/haul-solve
+
+``plan`` solves Phase I and writes the flow artefacts. ``schedule`` solves Phase II/III for one day;
+it reads an existing Phase I run with ``--flow-dir`` or solves Phase I in memory. ``solve`` runs both
+and writes a merged summary. ``report`` renders a Markdown report from any run directory.
+
+Stable artefacts
+----------------
+
+The writers in :mod:`fhops.hauling.reporting` use these names:
+
+Phase I:
+
+- ``haul_flows.csv``
+- ``haul_truckloads.csv``
+- ``haul_yard_inventory.csv``
+- ``haul_block_inventory.csv``
+- ``haul_contractor_workload.csv``
+- ``haul_kpis.json``
+- ``haul_summary.json``
+
+Phase II/III:
+
+- ``haul_schedule.csv``
+- ``haul_truck_summary.csv``
+- ``haul_loader_summary.csv``
+- ``haul_kpis.json``
+- ``haul_summary.json``
+
+A combined solve writes both families and a merged ``haul_summary.json`` with phase ``I+II/III``.
+
+Operational and tactical handoff
+--------------------------------
+
+The operational model does not carry product yields, and the tactical model uses a different
+contract. The bridge is explicit:
+
+.. code-block:: python
+
+   from fhops.hauling import (
+       scenario_from_operational_plan,
+       scenario_from_tactical_plan,
+   )
+
+   # Operational assignments -> block/sort supply. Without sort_shares, equal shares are used
+   # and a warning is recorded.
+   bridged = scenario_from_operational_plan(
+       scenario,
+       assignments,
+       sort_shares={"fir_saw": 0.5, "hemlock_pulp": 0.3, "mixed_unsorted": 0.2},
+   )
+
+   # Tactical production + facility demand -> hauling supply/demand.
+   bridged = scenario_from_tactical_plan(
+       scenario,
+       tactical,
+       period_id="p1",
+       production=tactical_result["production"],
+   )
+
+The tactical bridge maps products to log sorts through ``LogSort.product_id`` (or a matching
+``LogSort.id``), facilities to yards through ``SortYard.facility_id``, and spreads period demand
+evenly over the hauling horizon. It records a warning when a product/facility has no link, when no
+production table is supplied, or when the even split is used. It does not invent a missing haul arc;
+the base scenario's arcs remain the travel-time source.
+
+``residual_report`` returns supply, demand, and the residual per log sort before a solve. A positive
+residual means demand exceeds supply.
+
+Scale case
+----------
+
+``examples/hauling_scale/`` is a generated stress case: 13 blocks, 3 yards, 4 contractors, 60
+trucks, 3 log sorts, block polygons, and about 90 truckloads/day. Regenerate it with:
+
+.. code-block:: bash
+
+   python scripts/generate_hauling_scale_case.py
+
+It is deliberately larger than the CI slice in ``examples/hauling/``. The Phase I model may need a
+time limit and return a feasible incumbent rather than a proven optimum; the SA scheduler is the
+intended Phase II/III path at this size. The case allows 300 overtime minutes so a full day remains
+feasible without turning the exercise into a fleet-sizing study.
+
 Limitations
 -----------
 
@@ -299,6 +394,10 @@ Limitations
 - The exact schedule MIP is for small/medium days. The SA solver is the large-case path.
 - The SA decoder assigns each load to the fastest loader at its location. Multiple-loader
   balancing is left to the exact MIP; a future SA variant can add loader assignment moves.
+- The operational bridge needs a sort split; equal shares are a visible default, not a real yield
+  model. Supply a ``sort_shares`` mapping when the product split matters.
+- The tactical bridge needs a tactical production table for supply and spreads period demand evenly
+  across the hauling horizon. It does not create missing haul arcs.
 - The confidential company case in the thesis is not redistributable. The repository example is
   synthetic; exact reproduction of the case's dollar values is not a project target.
 
