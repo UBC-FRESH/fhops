@@ -1,0 +1,8 @@
+{
+  "id": "operational-planner",
+  "title": "Operational planner",
+  "panels": ["legend", "map", "schedule", "kpis", "reports", "compare", "scenario"],
+  "layers": ["blocks", "machines", "treatments", "roads"],
+  "actions": ["start_run", "pause", "stop", "edit_objective", "edit_locks", "export", "compare"],
+  "read_only": false
+}

@@ -9,38 +9,22 @@
 <body>
   <header>
     <strong>FHOPS</strong><span class="build">web</span>
-    <span class="pill">Operational</span>
-    <span class="pill">Hauling</span>
-    <span class="pill">Tactical</span>
+    <label>Skin <select id="skin"></select></label>
+    <label>Run <select id="run"></select></label>
+    <span id="domain" class="badge unknown">—</span>
     <span id="status">loading…</span>
+    <button id="refresh" type="button">Refresh</button>
   </header>
   <main>
     <aside>
-      <h1>Runs</h1>
-      <p class="hint">Artefacts discovered under the configured run roots. The full panels arrive in
-        P12.2–P12.5.</p>
-      <label class="filter">Domain
-        <select id="domain-filter">
-          <option value="">All domains</option>
-          <option value="operational">Operational</option>
-          <option value="hauling">Hauling</option>
-          <option value="tactical_operational">Tactical–operational</option>
-        </select>
-      </label>
-      <button id="refresh" type="button">Refresh</button>
-      <ul id="runs" class="runs"></ul>
+      <nav id="tabs" class="tabs"></nav>
+      <p id="skin-meta" class="hint"></p>
+      <div id="run-meta" class="run-meta"></div>
       <p id="empty" class="hint" hidden>No runs found. Pass <code>--runs &lt;dir&gt;</code> to the service.</p>
     </aside>
-    <section class="detail">
-      <h2 id="run-title">Select a run</h2>
-      <div id="run-meta" class="meta"></div>
-      <div id="run-files" class="files"></div>
-      <div id="run-warnings" class="warnings"></div>
-      <div class="placeholder">
-        <h3>Next in P12</h3>
-        <p>Map and layer tree, shift/hauling/tactical Gantt, KPIs, reports, comparison, live SSE,
-          and the domain skins.</p>
-      </div>
+    <section class="panel">
+      <h2 id="panel-title">Runs</h2>
+      <div id="panel-body"></div>
     </section>
   </main>
   <script type="module" src="static/app.js"></script>

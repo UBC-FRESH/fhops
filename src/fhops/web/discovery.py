@@ -37,6 +37,7 @@ _KNOWN_FILES: dict[str, tuple[str, ...]] = {
     "assignments": ("assignments.csv", "*_solution.csv", "mip_solution.csv", "sa_solution.csv"),
     "summary": ("summary.json",),
     "telemetry": ("telemetry.jsonl", "telemetry-*.jsonl"),
+    "kpis": ("kpis.json",),
     "day_summary": ("day_summary.csv",),
     "shift_summary": ("shift_summary.csv",),
     "day_parquet": ("day_summary.parquet",),

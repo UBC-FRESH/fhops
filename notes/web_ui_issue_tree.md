@@ -12,12 +12,12 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 - Parent issue: [#171 - P12: FHOPS web application (WS4-style artefact reader)](https://github.com/UBC-FRESH/fhops/issues/171)
 - Phase branch: `feature/p12-web-ui` (active from `main` at `52462d2`)
 - Planning PR: #184 (draft)
-- Status: active (2026-10-25); #178 complete, #179 next
+- Status: active (2026-10-25); #178 and #179 complete, #180 next
 
 | Issue | Task | Child branch |
 |---:|---|---|
 | [#178](https://github.com/UBC-FRESH/fhops/issues/178) | P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry — complete | `feature/p12-web-ui` |
-| [#179](https://github.com/UBC-FRESH/fhops/issues/179) | P12.2 Read-only API, SPA shell, and skin loader | `issue-179-web-api` |
+| [#179](https://github.com/UBC-FRESH/fhops/issues/179) | P12.2 Read-only API, SPA shell, and skin loader — complete | `feature/p12-web-ui` |
 | [#180](https://github.com/UBC-FRESH/fhops/issues/180) | P12.3 Map, layer tree, and day/period control | `issue-180-web-map` |
 | [#181](https://github.com/UBC-FRESH/fhops/issues/181) | P12.4 Schedule/Gantt, KPI, report, and comparison panels | `issue-181-web-panels` |
 | [#182](https://github.com/UBC-FRESH/fhops/issues/182) | P12.5 Live runs, SSE, and run control | `issue-182-web-live` |

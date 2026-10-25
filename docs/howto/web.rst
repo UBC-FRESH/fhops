@@ -15,8 +15,8 @@ The same application covers three planning lenses:
   facility demand and inventory, roads, silviculture, and fleet.
 
 P12.1 ships the service skeleton, run discovery, the `run.json` manifest, and a minimal run browser.
-The domain panels, map/layer tree, Gantt, reports, comparison, live SSE, and editing land in
-P12.2–P12.6.
+P12.2 adds the read-only artefact API for all three domains, the navigable SPA shell, and the skin
+loader. The map/layer tree, full Gantt/panels, live SSE, and editing land in P12.3–P12.6.
 
 Install and run
 ---------------
@@ -96,15 +96,35 @@ status is available it reads the status from a summary artefact; it never invent
 Service surface
 ---------------
 
-P12.1 provides:
+The read-only API provides:
 
 - ``GET /api/health``
-- ``GET /api/runs``
-- ``GET /api/runs/{run_id}``
+- ``GET /api/runs`` and ``GET /api/runs/{run_id}``
+- ``GET /api/runs/{run_id}/summary`` and ``/kpis``
+- ``GET /api/runs/{run_id}/assignments`` and ``/playback``
+- ``GET /api/runs/{run_id}/hauling/{flows,truckloads,schedule,yard-inventory,contractor-workload,trucks,loaders}``
+- ``GET /api/runs/{run_id}/tactical/{harvest,production,flows,inventory,purchases,roads,silviculture,fleet}``
+- ``GET /api/runs/{run_id}/reports`` and ``/reports/{path}``
+- ``GET /api/skins`` and ``/api/skins/{id}``
 - ``GET /`` and ``/static/*``
 
-P12.2 adds the read-only artefact endpoints for the three domains, P12.3 the map/layers, P12.4 the
-domain panels, P12.5 live runs/SSE, and P12.6 editing/skins.
+Table endpoints return ``columns``, ``rows``, ``total``, and ``returned``. Filters are optional
+query parameters; an unknown filter column is a 400, and a missing artefact is a 404 naming the
+logical file. The SPA shell selects a skin and run, shows the skin's tabs, and renders the selected
+domain table/KPI/report from the API. The map, full Gantt, comparison, live SSE, and editing land in
+P12.3–P12.6.
+
+Skins
+-----
+
+Skins are JSON manifests in ``src/fhops/web/skins/``. The loader validates every panel, layer, and
+action against a registry; an unknown name is refused with the name. ``read_only`` removes every
+mutating action. The shipped skins are:
+
+- ``operational-planner`` – schedule, objectives/locks, run control, KPIs, reports.
+- ``hauling-planner`` – hauling flows/schedule/inventory, driver policy, run control, KPIs.
+- ``tactical-planner`` – tactical decisions/flows/inventory, overlays, run control, KPIs.
+- ``reviewer`` – read-only access to schedule/haul/tactical, KPIs, reports, and comparison.
 
 Security and limits
 -------------------

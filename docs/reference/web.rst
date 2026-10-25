@@ -28,6 +28,8 @@ Key objects
 - :class:`fhops.web.app.ServiceConfig` – roots, bind, proxy prefix, and remote-bind opt-in.
 - :func:`fhops.web.app.create_app` – FastAPI factory.
 - :func:`fhops.web.app.validate_bind` – loopback/remote-bind guard.
+- :func:`fhops.web.skins.load_skins` / :func:`fhops.web.skins.validate_skin` – skin registry.
+- :class:`fhops.web.skins.SkinManifest` – validated domain skin.
 
 CLI
 ---

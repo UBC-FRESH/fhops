@@ -1,0 +1,8 @@
+{
+  "id": "reviewer",
+  "title": "Reviewer",
+  "panels": ["legend", "schedule", "haul", "tactical", "kpis", "reports", "compare"],
+  "layers": ["blocks", "machines", "treatments", "roads", "mills", "haul_routes", "tactical_units", "facilities"],
+  "actions": ["export", "compare"],
+  "read_only": true
+}

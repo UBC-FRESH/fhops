@@ -1,3 +1,32 @@
+# 2026-10-25 — P12.2: read-only API, SPA shell, and skin loader (#179)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- Added the read-only artefact API:
+  - summary/KPIs, operational assignments and playback;
+  - hauling flows, truckloads, truck/loader schedule, yard inventory, contractor workload,
+    trucks, and loaders;
+  - tactical harvest, production, flows, inventory, purchases, roads, silviculture, and fleet;
+  - report listing/download and skin listing/detail.
+- Table endpoints return `columns`, `rows`, `total`, and `returned`; filters are optional query
+  parameters. Unknown filter columns are 400s; missing artefacts are 404s naming the logical file.
+- Added `src/fhops/web/skins.py` and four manifests: `operational-planner`, `hauling-planner`,
+  `tactical-planner`, `reviewer`. Unknown panels/layers/actions are refused by name; read-only skins
+  cannot enable mutating actions.
+- Rebuilt the static shell as a skin/run-driven SPA: header skin/run selectors, domain badge, tabs
+  from the skin, legend/files, operational assignments, hauling and tactical dataset choosers, KPIs,
+  reports, and named placeholders for map/comparison/scenario.
+- Added API/skin tests and updated the web how-to/reference/API docs and CLI docs.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 20 passed.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #180, the map, layer tree, and day/shift/period control.
+
 # 2026-10-25 — P12.1: service skeleton, three-domain discovery, and `fhops web` (#178)
 
 First implementation task of P12 (#171) on `feature/p12-web-ui`.

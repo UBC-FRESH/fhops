@@ -6,15 +6,19 @@ core CLI imports :mod:`fhops.cli.web` lazily, so a core install never needs Fast
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
-from fastapi import FastAPI, HTTPException
+import pandas as pd
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 import fhops
 from fhops.web.discovery import RunRecord, discover_runs
+from fhops.web.skins import load_skins
 
 __all__ = ["ServiceConfig", "create_app", "is_loopback", "run_server", "validate_bind"]
 
@@ -92,6 +96,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
             "version": fhops.__version__,
             "roots": [str(root) for root in roots],
             "domain_count": 3,
+            "skins": [skin.id for skin in load_skins()],
         }
 
     @app.get("/api/runs")
@@ -105,6 +110,298 @@ def create_app(config: ServiceConfig) -> FastAPI:
             raise HTTPException(status_code=404, detail=f"Unknown run_id={run_id}")
         return record.to_dict()
 
+    def run_or_404(run_id: str) -> RunRecord:
+        record = _find_run(roots, run_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail=f"Unknown run_id={run_id}")
+        return record
+
+    @app.get("/api/runs/{run_id}/summary")
+    def run_summary(run_id: str) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _summary_payload(record)
+
+    @app.get("/api/runs/{run_id}/kpis")
+    def run_kpis(run_id: str) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _kpi_payload(record)
+
+    @app.get("/api/runs/{run_id}/assignments")
+    def run_assignments(
+        run_id: str,
+        day: int | None = Query(None),
+        shift: str | None = Query(None),
+        machine: str | None = Query(None),
+        block: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _table_payload(
+            record,
+            "assignments",
+            {"day": day, "shift_id": shift, "machine_id": machine, "block_id": block},
+            limit=limit,
+            offset=offset,
+        )
+
+    @app.get("/api/runs/{run_id}/playback")
+    def run_playback(
+        run_id: str,
+        scope: str = Query("day", pattern="^(day|shift)$"),
+    ) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        logical = "day_summary" if scope == "day" else "shift_summary"
+        return _table_payload(record, logical, {}, limit=50000, offset=0)
+
+    @app.get("/api/runs/{run_id}/hauling/flows")
+    def hauling_flows(
+        run_id: str,
+        day: int | None = Query(None),
+        block: str | None = Query(None),
+        yard: str | None = Query(None),
+        sort: str | None = Query(None),
+        contractor: str | None = Query(None),
+        truck_type: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _table_payload(
+            record,
+            "haul_flows",
+            {
+                "day": day,
+                "block_id": block,
+                "yard_id": yard,
+                "log_sort_id": sort,
+                "contractor_id": contractor,
+                "truck_type_id": truck_type,
+            },
+            limit=limit,
+            offset=offset,
+        )
+
+    @app.get("/api/runs/{run_id}/hauling/truckloads")
+    def hauling_truckloads(
+        run_id: str,
+        day: int | None = Query(None),
+        block: str | None = Query(None),
+        yard: str | None = Query(None),
+        contractor: str | None = Query(None),
+        truck_type: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _table_payload(
+            record,
+            "haul_truckloads",
+            {
+                "day": day,
+                "block_id": block,
+                "yard_id": yard,
+                "contractor_id": contractor,
+                "truck_type_id": truck_type,
+            },
+            limit=limit,
+            offset=offset,
+        )
+
+    @app.get("/api/runs/{run_id}/hauling/schedule")
+    def hauling_schedule(
+        run_id: str,
+        day: int | None = Query(None),
+        truck: str | None = Query(None),
+        contractor: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _table_payload(
+            record,
+            "haul_schedule",
+            {"day": day, "truck_id": truck, "contractor_id": contractor},
+            limit=limit,
+            offset=offset,
+        )
+
+    @app.get("/api/runs/{run_id}/hauling/yard-inventory")
+    def hauling_yard_inventory(
+        run_id: str,
+        day: int | None = Query(None),
+        yard: str | None = Query(None),
+        sort: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _table_payload(
+            record,
+            "haul_yard_inventory",
+            {"day": day, "yard_id": yard, "log_sort_id": sort},
+            limit=limit,
+            offset=offset,
+        )
+
+    @app.get("/api/runs/{run_id}/hauling/contractor-workload")
+    def hauling_contractor_workload(
+        run_id: str,
+        day: int | None = Query(None),
+        contractor: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _table_payload(
+            record,
+            "haul_contractor_workload",
+            {"day": day, "contractor_id": contractor},
+            limit=limit,
+            offset=offset,
+        )
+
+    @app.get("/api/runs/{run_id}/hauling/trucks")
+    def hauling_trucks(run_id: str) -> dict[str, Any]:
+        return _table_payload(run_or_404(run_id), "haul_truck_summary", {}, limit=50000, offset=0)
+
+    @app.get("/api/runs/{run_id}/hauling/loaders")
+    def hauling_loaders(run_id: str) -> dict[str, Any]:
+        return _table_payload(run_or_404(run_id), "haul_loader_summary", {}, limit=50000, offset=0)
+
+    def tactical_table(
+        run_id: str,
+        logical: str,
+        period: str | None,
+        product: str | None,
+        facility: str | None,
+        block: str | None,
+        limit: int,
+        offset: int,
+        facility_column: str = "facility_id",
+    ) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _table_payload(
+            record,
+            logical,
+            {
+                "period_id": period,
+                "product_id": product,
+                facility_column: facility,
+                "block_id": block,
+            },
+            limit=limit,
+            offset=offset,
+        )
+
+    @app.get("/api/runs/{run_id}/tactical/harvest")
+    def tactical_harvest(
+        run_id: str,
+        period: str | None = Query(None),
+        block: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        return tactical_table(run_id, "harvest_decisions", period, None, None, block, limit, offset)
+
+    @app.get("/api/runs/{run_id}/tactical/production")
+    def tactical_production(
+        run_id: str,
+        period: str | None = Query(None),
+        product: str | None = Query(None),
+        block: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        return tactical_table(run_id, "production", period, product, None, block, limit, offset)
+
+    @app.get("/api/runs/{run_id}/tactical/flows")
+    def tactical_flows(
+        run_id: str,
+        period: str | None = Query(None),
+        product: str | None = Query(None),
+        facility: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        return tactical_table(
+            run_id, "flows", period, product, facility, None, limit, offset, "destination_id"
+        )
+
+    @app.get("/api/runs/{run_id}/tactical/inventory")
+    def tactical_inventory(
+        run_id: str,
+        period: str | None = Query(None),
+        product: str | None = Query(None),
+        facility: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        return tactical_table(run_id, "inventory", period, product, facility, None, limit, offset)
+
+    @app.get("/api/runs/{run_id}/tactical/purchases")
+    def tactical_purchases(
+        run_id: str,
+        period: str | None = Query(None),
+        product: str | None = Query(None),
+        facility: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        return tactical_table(run_id, "purchases", period, product, facility, None, limit, offset)
+
+    @app.get("/api/runs/{run_id}/tactical/roads")
+    def tactical_roads(
+        run_id: str,
+        period: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        return tactical_table(run_id, "roads", period, None, None, None, limit, offset)
+
+    @app.get("/api/runs/{run_id}/tactical/silviculture")
+    def tactical_silviculture(
+        run_id: str,
+        period: str | None = Query(None),
+        block: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        return tactical_table(run_id, "silviculture", period, None, None, block, limit, offset)
+
+    @app.get("/api/runs/{run_id}/tactical/fleet")
+    def tactical_fleet(
+        run_id: str,
+        period: str | None = Query(None),
+        limit: int = Query(5000, ge=1, le=50000),
+        offset: int = Query(0, ge=0),
+    ) -> dict[str, Any]:
+        return tactical_table(run_id, "fleet", period, None, None, None, limit, offset)
+
+    @app.get("/api/runs/{run_id}/reports")
+    def reports(run_id: str) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return _report_listing(record)
+
+    @app.get("/api/runs/{run_id}/reports/{report_path:path}")
+    def report_file(run_id: str, report_path: str) -> FileResponse:
+        record = run_or_404(run_id)
+        path = _safe_child(record.path, report_path)
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail=f"Missing report file: {report_path}")
+        return FileResponse(path)
+
+    @app.get("/api/skins")
+    def skins() -> list[dict[str, Any]]:
+        return [skin.to_dict() for skin in load_skins()]
+
+    @app.get("/api/skins/{skin_id}")
+    def skin(skin_id: str) -> dict[str, Any]:
+        for manifest in load_skins():
+            if manifest.id == skin_id:
+                return manifest.to_dict()
+        raise HTTPException(status_code=404, detail=f"Unknown skin_id={skin_id}")
+
     if _STATIC_DIR.exists():
         app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
 
@@ -116,6 +413,135 @@ def create_app(config: ServiceConfig) -> FastAPI:
         return FileResponse(index_path)
 
     return app
+
+
+def _summary_payload(record: RunRecord) -> dict[str, Any]:
+    for logical in ("haul_summary", "tactical_summary", "summary"):
+        if logical in record.files:
+            return _read_json(record, logical)
+    raise HTTPException(
+        status_code=404,
+        detail=f"Run {record.run_id} has no summary artefact",
+    )
+
+
+def _kpi_payload(record: RunRecord) -> dict[str, Any]:
+    for logical in ("haul_kpis", "kpis"):
+        if logical in record.files:
+            return _read_json(record, logical)
+    for logical in ("tactical_summary", "haul_summary", "summary"):
+        if logical in record.files:
+            payload = _read_json(record, logical)
+            return {key: value for key, value in payload.items() if key != "files"}
+    raise HTTPException(status_code=404, detail=f"Run {record.run_id} has no KPI artefact")
+
+
+def _read_json(record: RunRecord, logical: str) -> dict[str, Any]:
+    path = _artifact_path(record, logical)
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise HTTPException(status_code=500, detail=f"Could not read {path.name}: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=500, detail=f"{path.name} is not a JSON object")
+    return payload
+
+
+def _table_payload(
+    record: RunRecord,
+    logical: str,
+    filters: dict[str, Any],
+    *,
+    limit: int,
+    offset: int,
+) -> dict[str, Any]:
+    path = _artifact_path(record, logical)
+    frame = _read_frame(path)
+    for column, value in filters.items():
+        if value is None or value == "":
+            continue
+        if column not in frame.columns:
+            raise HTTPException(status_code=400, detail=f"Unknown filter column: {column}")
+        frame = frame[frame[column].astype(str) == str(value)]
+    total = len(frame)
+    if offset:
+        frame = frame.iloc[offset:]
+    if limit:
+        frame = frame.head(limit)
+    records = frame.to_dict("records")
+    for row in records:
+        for key, value in row.items():
+            if pd.isna(value):
+                row[key] = None
+    return {
+        "run_id": record.run_id,
+        "artefact": logical,
+        "file": record.files[logical],
+        "columns": [str(column) for column in frame.columns],
+        "rows": records,
+        "total": total,
+        "returned": len(records),
+    }
+
+
+def _read_frame(path: Path) -> pd.DataFrame:
+    suffix = path.suffix.lower()
+    if suffix == ".csv":
+        return pd.read_csv(path)
+    if suffix == ".parquet":
+        return pd.read_parquet(path)
+    if suffix == ".json":
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if isinstance(payload, list):
+            return pd.DataFrame(payload)
+        if isinstance(payload, dict) and isinstance(payload.get("rows"), list):
+            return pd.DataFrame(payload["rows"])
+        return pd.DataFrame([payload])
+    raise HTTPException(status_code=400, detail=f"Unsupported table format: {path.suffix}")
+
+
+def _artifact_path(record: RunRecord, logical: str) -> Path:
+    filename = record.files.get(logical)
+    if not filename:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Run {record.run_id} has no {logical} artefact",
+        )
+    path = _safe_child(record.path, filename)
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail=f"Missing artefact file: {filename}")
+    return path
+
+
+def _safe_child(run_dir: Path, relative: str) -> Path:
+    root = run_dir.resolve()
+    path = (root / relative).resolve()
+    if not path.is_relative_to(root):
+        raise HTTPException(status_code=404, detail=f"Path escapes the run directory: {relative}")
+    return path
+
+
+def _report_listing(record: RunRecord) -> dict[str, Any]:
+    root = record.path.resolve()
+    reports = []
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or path.name == "run.json":
+            continue
+        try:
+            relative = path.relative_to(root)
+        except ValueError:
+            continue
+        reports.append(
+            {
+                "name": path.name,
+                "path": str(relative),
+                "size": path.stat().st_size,
+                "suffix": path.suffix.lower(),
+            }
+        )
+        if len(reports) >= 500:
+            break
+    return {"run_id": record.run_id, "reports": reports, "count": len(reports)}
 
 
 def _find_run(roots: list[Path], run_id: str) -> RunRecord | None:
