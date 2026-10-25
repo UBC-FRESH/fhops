@@ -44,6 +44,15 @@ issue type. The parent carries the `Feature` issue type. The repository did not 
   Phase I marine flow, barge-cycle scheduler, CLI artefacts, docs, and the Sunshine Coast →
   Howe Sound fixture. PR #195 opened against `main`.
 
+## Post-P11 follow-up: multi-day marine cycles
+
+- Parent phase: [#197](https://github.com/UBC-FRESH/fhops/issues/197) (Phase 13)
+- Child task: [#196](https://github.com/UBC-FRESH/fhops/issues/196) (P13.1)
+- Branch: `feature/phase13-multiday-marine`
+- Design: `notes/multiday_marine_cycles.md`
+- Regression fixture: `examples/hauling_marine_multiday/`
+- Status: design and failing regression fixture complete; solver change queued for P13.2.
+
 ## Activation checklist
 
 - [ ] Create `feature/p11-log-hauling` from the then-current `main`.

@@ -184,6 +184,10 @@ Marine assumptions and limits:
 - Port inventory carries over between days; ``storage_m3`` caps it (zero means no storage
   constraint) and ``daily_handling_m3`` caps the handled water volume (``None`` means uncapped).
 - The barge fleet is constrained by ``DriverPolicy.regular_minutes`` exactly like the truck fleet.
+- Phase I currently assumes a same-day barge cycle. A multi-day voyage is not yet
+  represented; the Quatsino Sound -> Ladysmith regression case and the proposed
+  model are tracked at `UBC-FRESH/fhops#196`_ and
+  ``notes/multiday_marine_cycles.md``.
 - Phase II schedules the road drayage loads and the barge cycles separately. The returned
   ``pickup_truck_depart``/``delivery_truck_arrive`` columns are the synchronization handoff; the
   first release reports them rather than hard-linking the two MIPs.
@@ -191,6 +195,8 @@ Marine assumptions and limits:
   cross-stage empty leg is represented by a full-day deadhead so an unsupported transfer is
   infeasible rather than invented as a short road trip.
 - Tide, weather, naval architecture, customs, and a full coastal network remain out of scope.
+
+.. _UBC-FRESH/fhops#196: https://github.com/UBC-FRESH/fhops/issues/196
 
 Validate a scenario with the normal command:
 
