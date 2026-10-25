@@ -153,8 +153,10 @@ def test_validate_schedule_detects_loader_overlap() -> None:
     )
     result = solve_schedule(problem, time_limit=60)
     schedule = result.schedule.copy()
-    # Force the second load to start during the first load's picker service.
+    # Force both loads into the same pickup-loader window.
+    schedule.loc[schedule["load_id"] == "L1", "pickup_start"] = 20.0
     schedule.loc[schedule["load_id"] == "L2", "pickup_start"] = 25.0
+    schedule.loc[schedule["load_id"] == "L1", "pickup_finish"] = 30.0
     schedule.loc[schedule["load_id"] == "L2", "pickup_finish"] = 35.0
     violations = validate_schedule(problem, schedule)
     assert any("overlapping pickup service" in violation for violation in violations)

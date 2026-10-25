@@ -92,6 +92,9 @@ class ScheduleProblem:
         ``(location, truck_type) -> minutes``.
     regular_minutes / max_overtime_minutes:
         Driver policy.
+    overtime_violation_penalty_per_minute:
+        Soft penalty per minute above ``regular_minutes + max_overtime_minutes`` used by the SA
+        solver. The exact MIP treats the limit as hard.
     """
 
     scenario_name: str
@@ -112,6 +115,7 @@ class ScheduleProblem:
     yard_to_depot: dict[tuple[str, str], float]
     regular_minutes: float
     max_overtime_minutes: float
+    overtime_violation_penalty_per_minute: float
 
     def load_by_id(self, load_id: str) -> Truckload:
         """Return a load by id."""
@@ -343,6 +347,9 @@ def build_schedule_problem_from_loads(
         yard_to_depot=yard_to_depot,
         regular_minutes=config.driver_policy.regular_minutes,
         max_overtime_minutes=config.driver_policy.max_overtime_minutes,
+        overtime_violation_penalty_per_minute=(
+            config.driver_policy.overtime_violation_penalty_per_minute
+        ),
     )
 
 

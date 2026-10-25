@@ -24,3 +24,9 @@
    :undoc-members:
    :show-inheritance:
    :noindex:
+
+.. automodule:: fhops.hauling.heuristic
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:

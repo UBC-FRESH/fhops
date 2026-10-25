@@ -1,3 +1,36 @@
+# 2026-10-25 — P11.4: simulated annealing, SPT decoder, and calibration (#175)
+
+Part of #170. Adds the third Ghotb decomposition phase on `feature/p11-log-hauling`.
+
+- `src/fhops/hauling/heuristic.py`: route-permutation SA with an SPT decoder, swap/reversion/
+  insertion operators, Metropolis acceptance, geometric cooling, determinism, and the thesis
+  Taguchi defaults (`T0=300`, `Tmin=0.0005*T0`, `alpha=0.95`, 90 moves per temperature).
+- The decoder assigns each load to the fastest loader at its location, derives loader orders from
+  projected arrival times, and reuses `simulate_plan`; `evaluate_routes` computes fixed, variable,
+  overtime, and soft overtime-violation costs.
+- `SAConfig`, `SolutionEvaluation`, `HaulingSAResult`, and `summarize_sa_result`.
+- `scripts/benchmark_hauling.py`: Phase I/II/III benchmark and a compact Taguchi-style calibration
+  sweep (`--calibrate`).
+- Found and fixed a Phase II loader-order bug: the one-direction `pick_before` equality forced the
+  lexicographically smaller load to be first at every loader. Removing it lets the MIP choose any
+  loader order. The example day-1 MIP objective fell from 4464.20 to **2992.50**, exactly matching
+  the SA result.
+- Docs: Phase III Python API, decoder/operator semantics, calibration commands, and formulation-
+  audit implementation decisions.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 53 passed.
+- Example day-1: MIP and SA both **2992.50**; `validate_schedule` empty for both.
+- `python scripts/benchmark_hauling.py --solver both --sa-iters 100` -> Phase I optimal, MIP and SA
+  both 2992.50, no violations.
+- `ruff format --check src tests` / `ruff check src tests` -> clean.
+- `mypy src` -> no issues (134 files).
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures remain.
+- `pre-commit run --files <changed files>` -> passed.
+
+Next: #176, FHOPS integration, CLI, reporting, and the example case.
+
 # 2026-10-25 — P11.3: Phase II continuous-time truck routing and scheduling (#174)
 
 Part of #170. Adds the second Ghotb decomposition phase on `feature/p11-log-hauling`.

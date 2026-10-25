@@ -35,6 +35,13 @@ Key models
   independent schedule oracles.
 - :class:`fhops.hauling.schedule.ScheduleSolveResult` – schedule, truck/loader summaries, plan, and
   solver provenance.
+- :class:`fhops.hauling.heuristic.SAConfig` – thesis-derived annealing parameters and operator
+  weights.
+- :func:`fhops.hauling.heuristic.solve_sa` – route-permutation SA with the SPT decoder.
+- :func:`fhops.hauling.heuristic.evaluate_routes` / :func:`fhops.hauling.heuristic.decode_routes` –
+  cost evaluation and loader-order decoding.
+- :class:`fhops.hauling.heuristic.HaulingSAResult` – best schedule, cost components, search
+  provenance, and history.
 
 Example
 -------

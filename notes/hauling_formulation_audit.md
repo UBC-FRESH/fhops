@@ -386,3 +386,46 @@ Limitations recorded for P11.4/P11.5:
 - No lunch breaks, driver changes, or shift boundaries inside the day.
 - The exact model uses pairwise loader sequencing, which grows quadratically with loads at a
   location; the SA solver needs a more scalable decoder.
+
+## 10. P11.4 implementation decisions
+
+The SA solver is in `src/fhops/hauling/heuristic.py`.
+
+1. **Route permutation.** A solution is `truck_id -> ordered load ids`. Every load appears exactly
+   once and only on a compatible truck. The thesis's delimiter representation is equivalent; the
+   dict form avoids parsing delimiters and makes the compatibility invariant structural.
+2. **Initial solution.** Loads are visited in a stable order and assigned to the compatible truck
+   with the fewest loads, ties broken randomly. This is a feasible starting point, not a greedy
+   cost heuristic.
+3. **SPT decoder.** The decoder assigns each load to the fastest loader at its location, computes a
+   no-wait forward pass for projected pickup/delivery arrivals, sorts each loader's loads by those
+   arrivals, and calls `simulate_plan` with the resulting loader orders. This reuses the Phase II
+   timing oracle and captures the thesis's SPT priority rule. The thesis's dynamic re-sort after
+   waiting is approximated by the fixed loader order; P11.6 can compare the two more closely if
+   needed.
+4. **Operators.** Swap, reversion, and insertion. Insertion may move a load to another compatible
+   truck. Operator weights are configurable; the default is equal weight.
+5. **Acceptance and cooling.** Metropolis acceptance `exp(-delta/T)` for worse solutions, geometric
+   cooling, and a stop when `T <= initial * min_temperature_ratio`. Thesis defaults are 300,
+   0.0005, 0.95, and 90 moves per temperature.
+6. **Overtime penalty.** The SA cost charges fixed + variable regular + overtime + a soft penalty for
+   minutes above `regular + max_overtime`. The exact MIP keeps the limit hard.
+7. **Determinism.** A local `random.Random(seed)` is used; the same seed and budget reproduce the
+   same route, objective, and accepted-move count.
+8. **MIP loader-order bug found during parity.** The P11.3 one-direction `pick_before` equality
+   effectively forced the lexicographically smaller load to be first at every loader. The equality
+   was wrong: a single binary already encodes the two directions, and the no-overlap constraints
+   enforce one of them. Removing the equality lets the MIP choose any loader order. With the fix,
+   the example day-1 MIP objective fell from 4464.20 to 2992.50, exactly matching the SA result.
+9. **Parity evidence.** The SA result on the example day-1 case is 2992.50, the same as the fixed
+   MIP; `validate_schedule` reports no violations. A 100-move run already reaches the optimum on
+   this small case.
+
+Limitations:
+
+- The decoder assigns all loads at a location to the fastest loader; it does not search loader
+  assignment. The exact MIP does.
+- The loader order is fixed from the no-wait projection rather than re-sorted after each waiting
+  event.
+- The SA objective is a soft-penalty version of the exact model, so a run with a large violation is
+  reported as feasible-but-penalized rather than infeasible.

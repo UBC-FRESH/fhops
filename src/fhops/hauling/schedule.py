@@ -381,23 +381,6 @@ def build_schedule_model(problem: ScheduleProblem) -> pyo.ConcreteModel:
     model.pickup_loader_sum = pyo.Constraint(model.Loads, rule=pickup_loader_sum_rule)
     model.delivery_loader_sum = pyo.Constraint(model.Loads, rule=delivery_loader_sum_rule)
 
-    def pickup_before_rule(mdl, left: str, right: str, loader_id: str):
-        return (
-            mdl.pick_before[left, right, loader_id]
-            == mdl.pick_assign[left, loader_id] + mdl.pick_assign[right, loader_id] - 1
-        )
-
-    def delivery_before_rule(mdl, left: str, right: str, loader_id: str):
-        return (
-            mdl.delivery_before[left, right, loader_id]
-            == mdl.delivery_assign[left, loader_id] + mdl.delivery_assign[right, loader_id] - 1
-        )
-
-    model.pickup_before_order = pyo.Constraint(model.PickupBeforePairs, rule=pickup_before_rule)
-    model.delivery_before_order = pyo.Constraint(
-        model.DeliveryBeforePairs, rule=delivery_before_rule
-    )
-
     def pickup_no_overlap_rule(mdl, left: str, right: str, loader_id: str):
         assigned = 2 - mdl.pick_assign[left, loader_id] - mdl.pick_assign[right, loader_id]
         return (

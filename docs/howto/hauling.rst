@@ -16,9 +16,10 @@ The model follows the two-phase decomposition in Ghotb (2023):
    schedule decoder.
 
 P11.1 ships the contract and validation. P11.2 adds the Phase I flow model and goal programming.
-P11.3 adds the Phase II continuous-time scheduling model and its simulator/validator. The SA solver
-lands in P11.4 and the hauling CLI in P11.5. Until then, ``fhops validate`` accepts a hauling section
-and reports its dimensions, and the Phase I/II models are available from Python.
+P11.3 adds the Phase II continuous-time scheduling model and its simulator/validator. P11.4 adds
+the simulated-annealing solver for larger days. The hauling CLI lands in P11.5. Until then,
+``fhops validate`` accepts a hauling section and reports its dimensions, and the Phase I/II/III
+models are available from Python.
 
 Schema version
 --------------
@@ -242,6 +243,50 @@ as independent oracles.
 The exact MIP is intended for small and medium daily instances. The real case in the thesis has 81
 truckloads and 168 nodes; Phase III (P11.4) handles that scale with simulated annealing.
 
+Phase III simulated annealing
+-----------------------------
+
+The exact scheduling MIP is the oracle for small days. For large days, use the SA solver:
+
+.. code-block:: python
+
+   from fhops.hauling import SAConfig, solve_sa, summarize_sa_result
+
+   result = solve_sa(
+       schedule_problem,
+       SAConfig(
+           initial_temperature=300,
+           min_temperature_ratio=0.0005,
+           cooling_rate=0.95,
+           iterations_per_temperature=90,
+           max_iterations=50_000,
+           seed=42,
+       ),
+   )
+   print(summarize_sa_result(result))
+   print(result.schedule.head())
+
+The solution is a permutation of truck routes. The decoder assigns each load to the fastest loader
+at its location, derives pickup and delivery loader orders from projected arrival times (SPT), and
+calls the same :func:`~fhops.hauling.schedule.simulate_plan` used by the Phase II oracle. The
+neighbourhood operators are swap, reversion, and insertion; insertion may move a load to another
+compatible truck. The acceptance rule is the usual Metropolis rule with geometric cooling.
+
+``SAConfig`` defaults come from the thesis Taguchi calibration: ``T0=300``,
+``T_min = 0.0005 * T0``, ``alpha=0.95``, and 90 moves per temperature. They are configurable. The
+result carries the best schedule, truck/loader summaries, route plan, objective components,
+iterations, accepted moves, runtime, seed, and a per-move history. An overtime violation above
+``regular_minutes + max_overtime_minutes`` is soft-penalized in the SA cost; the exact MIP treats it
+as hard.
+
+For a small day, the SA solver should match the MIP objective. The example day-1 case currently
+reaches the same 2992.50 objective with both methods. For a parameter sweep, run:
+
+.. code-block:: bash
+
+   python scripts/benchmark_hauling.py --solver both --day 1
+   python scripts/benchmark_hauling.py --solver sa --calibrate --sa-iters 500      --out-dir tmp/hauling-calibration
+
 Limitations
 -----------
 
@@ -251,7 +296,9 @@ Limitations
   missing leg is a named error, never an invented travel time.
 - Phase II uses the same loaded travel time for the empty yard-to-block leg unless
   ``HaulArc.return_travel_minutes`` is supplied.
-- The exact schedule MIP is for small/medium days. The SA solver in P11.4 is the large-case path.
+- The exact schedule MIP is for small/medium days. The SA solver is the large-case path.
+- The SA decoder assigns each load to the fastest loader at its location. Multiple-loader
+  balancing is left to the exact MIP; a future SA variant can add loader assignment moves.
 - The confidential company case in the thesis is not redistributable. The repository example is
   synthetic; exact reproduction of the case's dollar values is not a project target.
 

@@ -31,6 +31,16 @@ from .flow import (
     solve_flow,
     summarize_flow_result,
 )
+from .heuristic import (
+    HaulingSAResult,
+    SAConfig,
+    SolutionEvaluation,
+    decode_routes,
+    evaluate_routes,
+    initial_solution,
+    solve_sa,
+    summarize_sa_result,
+)
 from .network import (
     ScheduleProblem,
     Truckload,
@@ -79,4 +89,12 @@ __all__ = [
     "simulate_plan",
     "solve_schedule",
     "validate_schedule",
+    "SAConfig",
+    "SolutionEvaluation",
+    "HaulingSAResult",
+    "decode_routes",
+    "evaluate_routes",
+    "initial_solution",
+    "solve_sa",
+    "summarize_sa_result",
 ]
