@@ -11,6 +11,17 @@ from .contract import (
     Scenario,
 )
 from .io import load_scenario, read_csv
+from .lidar import (
+    FemicLidarBundle,
+    FemicLidarError,
+    FemicLidarProduct,
+    FemicLidarValidation,
+    LidarPolygonSummary,
+    bundle_pin,
+    load_femic_lidar_bundle,
+    summarize_femic_lidar_for_polygons,
+    validate_femic_lidar_bundle,
+)
 
 __all__ = [
     "Day",
@@ -23,4 +34,13 @@ __all__ = [
     "Problem",
     "load_scenario",
     "read_csv",
+    "FemicLidarBundle",
+    "FemicLidarError",
+    "FemicLidarProduct",
+    "FemicLidarValidation",
+    "LidarPolygonSummary",
+    "bundle_pin",
+    "load_femic_lidar_bundle",
+    "summarize_femic_lidar_for_polygons",
+    "validate_femic_lidar_bundle",
 ]

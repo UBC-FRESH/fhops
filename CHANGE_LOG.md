@@ -3877,3 +3877,10 @@ PY
   infeasibility: a 3,955-minute barge cycle cannot fit the 510-minute daily fleet budget. Existing
   day-trip marine behaviour is unchanged; the solver change is left for P13.2.
 - 2026-10-25: P13.1 merged as `65b0d2b1` (PR #198); issue #196 closed. P13 remains active for the P13.2 solver implementation.
+
+- 2026-10-25: P14.1 added `fhops.scenario.lidar` to pin FEMIC LidarBC bundles,
+  validate manifest schema, OGL-BC licence, checksums, CRS, resolution, vertical
+  datum, and source-tile membership, and summarize slope/CHM rasters over
+  block/landing support. Added the `fhops[lidar]` optional extra, the contract
+  note, reference docs, and shared parity evidence against
+  `lidarbc-995fb1f771f4d7fe` (max difference 0.0 versus WS4).

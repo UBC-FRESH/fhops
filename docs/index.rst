@@ -50,6 +50,7 @@ ensembles.
    reference/telemetry
    reference/dashboards
    reference/source_bibliography
+   reference/femic_lidar
 
 .. toctree::
    :maxdepth: 1

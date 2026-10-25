@@ -330,6 +330,27 @@ without adding dummy barges or relaxing capacity checks.
       P11 hauling outputs are optional; missing layers are named, not invented.
     - #178-#183 (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison, live runs/SSE/control, editing/assistant/packaging/security/close-out) are complete.
 
+## Phase 14 — Consume FEMIC-compiled LidarBC Products — active
+
+Parent issue: #188. Branch: `feature/phase14-lidar-products`.
+
+Goal: pin and validate FEMIC LidarBC bundles, map terrain/canopy products into
+block/landing support, and preserve native-resolution provenance without
+reimplementing discovery or materialization.
+
+- [x] P14.1 Define the FHOPS consumer contract for FEMIC LidarBC products (#189)
+  - [x] Pin bundle id/version and per-product checksums
+  - [x] Validate manifest, licence, CRS, resolution, vertical datum, and source tiles
+  - [x] Add polygon support summaries without reprojection
+  - [x] Validate shared slope/CHM parity with WS4
+
+Acceptance:
+
+- FHOPS can validate and pin a FEMIC bundle.
+- Polygon support summaries preserve the product CRS and native resolution.
+- Shared-AOI slope/CHM values match WS4 within the documented tolerance.
+- No discovery or materialization is reimplemented in FHOPS.
+
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
