@@ -647,3 +647,50 @@ The detailed issue bodies carry the subtasks, acceptance criteria, and verificat
 - Contractor collaboration and shared blocks.
 - Dynamic re-optimization after disruptions.
 - Integration with a commercial transport-management system.
+
+## 17. Marine/barge extension (#187)
+
+Issue #187 extends the P11 hauling layer with an explicit marine path instead of aliasing a barge
+as a truck type. Implementation branch: `issue-187-marine-haul`.
+
+Contract additions:
+
+- `TransportMode` (`road`, `water`, `rail`) and `HaulArc.mode` (road only).
+- `BargeType` (capacity, fixed/variable/overtime cost, load/unload time, sorted/unsorted flags) and
+  `Barge` (contractor-owned vessel identity).
+- `Port` (storage, opening inventory, per-trip handling time/cost, optional daily throughput cap).
+- `WaterArc` (port pair, barge type, sailing/return time, distance, load/unload overrides).
+- `PortLeg` (origin block-to-port and destination port-to-yard drayage).
+- `MarineRoute` (block, yard, ports, water arc, contractor, drayage truck type).
+- `LoaderLocationKind.PORT` for terminal loaders shared by drayage and barge service.
+- Validation rejects a barge-named `TruckType`, a non-road `HaulArc`, a marine entity set without a
+  `MarineRoute`, and a route without matching port legs, barge, or drayage truck.
+
+Phase I additions:
+
+- Separate pickup, water, and delivery drayage volumes per marine route/sort/day.
+- Barge trip integer linking to water volume and capacity.
+- Port inventory recursion, storage caps, and daily handling caps.
+- Barge fleet capacity by contractor/type and drayage truck capacity on the combined fleet.
+- `marine_flows`, `barge_trips`, `port_inventory`, and `marine_truckloads` result tables plus stable
+  CSV artefacts.
+
+Phase II/III additions:
+
+- Marine drayage loads enter the existing truck/loader MIP with explicit `leg` and
+  `marine_route_id` labels.
+- `fhops.hauling.marine` deterministically schedules barge trips, assigns port loaders, reports
+  load/sail/unload/return times, and returns synchronized road pickup/delivery windows.
+- `BargeScheduleResult` is attached to the exact and SA results and written as
+  `haul_barge_schedule.csv` / `haul_barge_summary.csv`.
+
+Supporting work:
+
+- `examples/hauling_marine/` synthetic Sunshine Coast → Howe Sound fixture.
+- Contract, flow, schedule, example, and CLI tests.
+- How-to/reference/API documentation and roadmap/changelog updates.
+
+Documented limits: the first release does not hard-link the barge and truck MIPs with time windows;
+the barge scheduler reports the handoff instead. Tide, weather, naval architecture, customs, and a
+full coastal network remain out of scope. A missing cross-stage drayage deadhead is treated as a
+full-day deadhead so an unsupported transfer is infeasible rather than invented.

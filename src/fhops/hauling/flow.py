@@ -19,6 +19,7 @@ section. It does not import or modify the operational or tactical MILPs.
 
 from __future__ import annotations
 
+import math
 import time
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
@@ -28,7 +29,7 @@ import pyomo.environ as pyo
 from pyomo.contrib.solver.common.util import NoFeasibleSolutionError
 from pyomo.opt import SolverFactory
 
-from fhops.hauling.contract import HaulingConfig, LoaderLocationKind
+from fhops.hauling.contract import HaulingConfig, LoaderLocationKind, PortSide
 
 if TYPE_CHECKING:
     from fhops.scenario.contract import Scenario
@@ -36,6 +37,7 @@ if TYPE_CHECKING:
 __all__ = [
     "FlowSolveResult",
     "HaulingFlowProblem",
+    "MarineLane",
     "build_flow_model",
     "build_flow_problem",
     "solve_flow",
@@ -92,6 +94,168 @@ _WORKLOAD_COLUMNS = [
     "preferred_truckloads",
     "deviation",
 ]
+_MARINE_FLOW_COLUMNS = [
+    "day",
+    "scenario_day",
+    "marine_route_id",
+    "block_id",
+    "yard_id",
+    "log_sort_id",
+    "contractor_id",
+    "truck_type_id",
+    "barge_type_id",
+    "origin_port_id",
+    "destination_port_id",
+    "water_arc_id",
+    "sorted",
+    "pickup_road_m3",
+    "water_m3",
+    "delivery_road_m3",
+    "pickup_truckloads",
+    "delivery_truckloads",
+    "barge_trips",
+    "origin_handling_m3",
+    "destination_handling_m3",
+    "barge_load_minutes",
+    "barge_unload_minutes",
+    "sail_minutes",
+    "barge_cycle_minutes",
+    "origin_handling_cost",
+    "destination_handling_cost",
+    "barge_variable_cost",
+    "drayage_cost",
+    "total_cost",
+]
+_BARGE_TRIP_COLUMNS = [
+    "day",
+    "scenario_day",
+    "marine_route_id",
+    "contractor_id",
+    "truck_type_id",
+    "barge_type_id",
+    "origin_port_id",
+    "destination_port_id",
+    "water_arc_id",
+    "water_m3",
+    "barge_trips",
+    "barge_cycle_minutes",
+    "barge_load_minutes",
+    "barge_unload_minutes",
+    "sail_minutes",
+    "origin_handling_minutes",
+    "destination_handling_minutes",
+    "origin_handling_cost",
+    "destination_handling_cost",
+    "barge_variable_cost",
+    "handling_cost",
+    "total_cost",
+]
+_PORT_INVENTORY_COLUMNS = [
+    "day",
+    "scenario_day",
+    "port_id",
+    "log_sort_id",
+    "opening_inventory_m3",
+    "inbound_m3",
+    "outbound_m3",
+    "inventory_m3",
+    "handled_m3",
+]
+_MARINE_TRUCKLOAD_COLUMNS = [
+    "day",
+    "scenario_day",
+    "marine_route_id",
+    "leg",
+    "block_id",
+    "yard_id",
+    "contractor_id",
+    "truck_type_id",
+    "sorted_truckloads",
+    "unsorted_truckloads",
+    "total_truckloads",
+]
+
+
+@dataclass(frozen=True, slots=True)
+class MarineLane:
+    """Normalised Phase I data for one marine route.
+
+    A lane bundles the road pickup leg, the water leg, terminal handling at both ports, and the road
+    delivery leg. The Phase I model treats the lane as an alternative supply path from a block to a
+    yard, while still reporting the three physical legs separately.
+
+    Attributes
+    ----------
+    route_id:
+        Marine-route identifier.
+    block_id / yard_id:
+        Pickup block and delivery sort yard.
+    origin_port_id / destination_port_id:
+        Loading and unloading ports.
+    contractor_id / truck_type_id:
+        Contractor and road truck type for the drayage legs.
+    barge_type_id / water_arc_id:
+        Barge equipment and sailing arc.
+    pickup_travel_minutes / pickup_return_minutes:
+        Loaded and empty road times between the block and the origin port.
+    delivery_travel_minutes / delivery_return_minutes:
+        Loaded and empty road times between the destination port and the yard.
+    water_travel_minutes / water_return_minutes:
+        Loaded and empty sailing times.
+    load_minutes / unload_minutes:
+        Barge loading and unloading service times.
+    origin_handling_minutes / destination_handling_minutes:
+        Terminal handling time at each port.
+    origin_handling_cost / destination_handling_cost:
+        Terminal handling cost per barge trip at each port.
+    barge_capacity / truck_capacity:
+        Cargo capacities in cubic metres.
+    barge_cycle_minutes:
+        Round-trip barge time including loading, unloading, and terminal handling.
+    pickup_cycle_minutes / delivery_cycle_minutes:
+        Round-trip drayage truck time on each side.
+    barge_cost_per_trip:
+        Variable barge cost plus terminal handling cost for one trip.
+    pickup_drayage_cost_per_m3 / delivery_drayage_cost_per_m3:
+        Road truck variable cost per cubic metre on each drayage leg.
+    drayage_cost_per_m3:
+        Sum of the pickup and delivery drayage rates, kept for reporting.
+    can_carry_sorted / can_carry_unsorted:
+        Barge-type compatibility flags.
+    """
+
+    route_id: str
+    block_id: str
+    yard_id: str
+    origin_port_id: str
+    destination_port_id: str
+    contractor_id: str
+    truck_type_id: str
+    barge_type_id: str
+    water_arc_id: str
+    pickup_travel_minutes: float
+    pickup_return_minutes: float
+    delivery_travel_minutes: float
+    delivery_return_minutes: float
+    water_travel_minutes: float
+    water_return_minutes: float
+    load_minutes: float
+    unload_minutes: float
+    origin_handling_minutes: float
+    destination_handling_minutes: float
+    origin_handling_cost: float
+    destination_handling_cost: float
+    barge_capacity: float
+    truck_capacity: float
+    barge_cycle_minutes: float
+    pickup_cycle_minutes: float
+    delivery_cycle_minutes: float
+    barge_cost_per_trip: float
+    pickup_drayage_cost_per_m3: float
+    delivery_drayage_cost_per_m3: float
+    drayage_cost_per_m3: float
+    can_carry_sorted: bool
+    can_carry_unsorted: bool
 
 
 @dataclass(frozen=True, slots=True)
@@ -141,6 +305,14 @@ class HaulingFlowProblem:
         Fallback loader service time.
     pickup_service / delivery_service:
         ``location_id ->`` service minutes.
+    marine_lanes:
+        ``route_id -> MarineLane``. Empty for a road-only problem.
+    marine_ports / marine_port_storage / marine_port_initial / marine_port_daily_handling:
+        Port ids and their storage, opening inventory, and optional daily handling caps.
+    marine_barge_fleet:
+        ``(contractor_id, barge_type_id) ->`` number of enabled barges.
+    port_inventory_penalty:
+        Cost per m3 left at a port at the end of the horizon.
     """
 
     scenario_name: str
@@ -174,6 +346,21 @@ class HaulingFlowProblem:
     default_service_minutes: float
     pickup_service: dict[str, float]
     delivery_service: dict[str, float]
+    marine_lanes: dict[str, MarineLane] = field(default_factory=dict)
+    marine_ports: tuple[str, ...] = ()
+    marine_port_storage: dict[str, float] = field(default_factory=dict)
+    marine_port_initial: dict[tuple[str, str], float] = field(default_factory=dict)
+    marine_port_daily_handling: dict[str, float | None] = field(default_factory=dict)
+    marine_barge_fleet: dict[tuple[str, str], int] = field(default_factory=dict)
+    port_inventory_penalty: float = 0.0
+
+    def marine_routes(self) -> tuple[MarineLane, ...]:
+        """Return marine lanes in route-id order."""
+        return tuple(self.marine_lanes[route_id] for route_id in sorted(self.marine_lanes))
+
+    def has_marine(self) -> bool:
+        """Return whether the problem contains any marine routes."""
+        return bool(self.marine_lanes)
 
     def contractor_can_serve(self, contractor_id: str, block_id: str) -> bool:
         """Return whether a contractor may serve a block under the allowlist rule."""
@@ -209,6 +396,9 @@ class FlowSolveResult:
         Preferred daily truckloads used for the workload objective.
     flows / truckloads / yard_inventory / block_inventory / contractor_workload:
         DataFrames with the documented schemas.
+    marine_flows / barge_trips / port_inventory / marine_truckloads:
+        Marine-leg volume, barge trip, terminal inventory, and drayage truckload tables. They are
+        empty for road-only scenarios.
     solver / termination / runtime_seconds / gap / solver_error:
         Solver provenance and diagnostics.
     """
@@ -233,6 +423,18 @@ class FlowSolveResult:
     )
     contractor_workload: pd.DataFrame = field(
         default_factory=lambda: pd.DataFrame(columns=_WORKLOAD_COLUMNS)
+    )
+    marine_flows: pd.DataFrame = field(
+        default_factory=lambda: pd.DataFrame(columns=_MARINE_FLOW_COLUMNS)
+    )
+    barge_trips: pd.DataFrame = field(
+        default_factory=lambda: pd.DataFrame(columns=_BARGE_TRIP_COLUMNS)
+    )
+    port_inventory: pd.DataFrame = field(
+        default_factory=lambda: pd.DataFrame(columns=_PORT_INVENTORY_COLUMNS)
+    )
+    marine_truckloads: pd.DataFrame = field(
+        default_factory=lambda: pd.DataFrame(columns=_MARINE_TRUCKLOAD_COLUMNS)
     )
     solver: str = "highs"
     termination: str = ""
@@ -309,6 +511,15 @@ def build_flow_problem(scenario: Scenario) -> HaulingFlowProblem:
         truck_key = (truck.contractor_id, truck.truck_type_id)
         fleet_count[truck_key] = fleet_count.get(truck_key, 0) + 1
 
+    (
+        marine_lanes,
+        marine_ports,
+        marine_port_storage,
+        marine_port_initial,
+        marine_port_daily_handling,
+        marine_barge_fleet,
+    ) = _build_marine_lanes(config, sorts)
+
     preferred = {
         contractor.id: contractor.preferred_daily_truckloads for contractor in config.contractors
     }
@@ -369,6 +580,126 @@ def build_flow_problem(scenario: Scenario) -> HaulingFlowProblem:
         default_service_minutes=config.default_loader_service_minutes,
         pickup_service=pickup_service,
         delivery_service=delivery_service,
+        marine_lanes=marine_lanes,
+        marine_ports=marine_ports,
+        marine_port_storage=marine_port_storage,
+        marine_port_initial=marine_port_initial,
+        marine_port_daily_handling=marine_port_daily_handling,
+        marine_barge_fleet=marine_barge_fleet,
+        port_inventory_penalty=config.port_inventory_penalty_per_m3,
+    )
+
+
+def _build_marine_lanes(
+    config: HaulingConfig,
+    sorts: tuple[str, ...],
+) -> tuple[
+    dict[str, MarineLane],
+    tuple[str, ...],
+    dict[str, float],
+    dict[tuple[str, str], float],
+    dict[str, float | None],
+    dict[tuple[str, str], int],
+]:
+    """Build normalised marine lanes and port data from the contract."""
+    lanes: dict[str, MarineLane] = {}
+    ports = tuple(port.id for port in config.ports)
+    port_storage = {port.id: port.storage_m3 for port in config.ports}
+    port_initial = {
+        (port.id, sort_id): port.initial_inventory_m3 for port in config.ports for sort_id in sorts
+    }
+    port_daily_handling = {port.id: port.daily_handling_m3 for port in config.ports}
+    barge_fleet: dict[tuple[str, str], int] = {}
+    for barge in config.barges:
+        if not barge.enabled:
+            continue
+        key = (barge.contractor_id, barge.barge_type_id)
+        barge_fleet[key] = barge_fleet.get(key, 0) + 1
+
+    truck_types = {truck_type.id: truck_type for truck_type in config.truck_types}
+    for route in config.marine_routes:
+        water_arc = config.water_arc(route.water_arc_id)
+        barge_type = config.barge_type(water_arc.barge_type_id)
+        origin_port = config.port(route.origin_port_id)
+        destination_port = config.port(route.destination_port_id)
+        origin_leg = config.port_leg_for(route, PortSide.ORIGIN)
+        destination_leg = config.port_leg_for(route, PortSide.DESTINATION)
+        if origin_leg is None or destination_leg is None:
+            raise ValueError(f"MarineRoute {route.id} is missing an origin or destination PortLeg")
+        truck_type = truck_types[route.truck_type_id]
+        load_minutes = (
+            water_arc.load_minutes
+            if water_arc.load_minutes is not None
+            else barge_type.load_minutes
+        )
+        unload_minutes = (
+            water_arc.unload_minutes
+            if water_arc.unload_minutes is not None
+            else barge_type.unload_minutes
+        )
+        barge_cycle = (
+            water_arc.travel_minutes
+            + water_arc.empty_travel_minutes()
+            + load_minutes
+            + unload_minutes
+            + origin_port.handling_minutes_per_trip
+            + destination_port.handling_minutes_per_trip
+        )
+        pickup_cycle = origin_leg.travel_minutes + origin_leg.empty_travel_minutes()
+        delivery_cycle = destination_leg.travel_minutes + destination_leg.empty_travel_minutes()
+        barge_cost = (
+            barge_type.variable_cost_per_minute * barge_cycle
+            + origin_port.handling_cost_per_trip
+            + destination_port.handling_cost_per_trip
+        )
+        pickup_drayage_cost = (
+            truck_type.variable_cost_per_minute * pickup_cycle
+        ) / truck_type.capacity_m3
+        delivery_drayage_cost = (
+            truck_type.variable_cost_per_minute * delivery_cycle
+        ) / truck_type.capacity_m3
+        drayage_cost = pickup_drayage_cost + delivery_drayage_cost
+        lanes[route.id] = MarineLane(
+            route_id=route.id,
+            block_id=route.block_id,
+            yard_id=route.yard_id,
+            origin_port_id=route.origin_port_id,
+            destination_port_id=route.destination_port_id,
+            contractor_id=route.contractor_id,
+            truck_type_id=route.truck_type_id,
+            barge_type_id=barge_type.id,
+            water_arc_id=water_arc.id,
+            pickup_travel_minutes=origin_leg.travel_minutes,
+            pickup_return_minutes=origin_leg.empty_travel_minutes(),
+            delivery_travel_minutes=destination_leg.travel_minutes,
+            delivery_return_minutes=destination_leg.empty_travel_minutes(),
+            water_travel_minutes=water_arc.travel_minutes,
+            water_return_minutes=water_arc.empty_travel_minutes(),
+            load_minutes=load_minutes,
+            unload_minutes=unload_minutes,
+            origin_handling_minutes=origin_port.handling_minutes_per_trip,
+            destination_handling_minutes=destination_port.handling_minutes_per_trip,
+            origin_handling_cost=origin_port.handling_cost_per_trip,
+            destination_handling_cost=destination_port.handling_cost_per_trip,
+            barge_capacity=barge_type.capacity_m3,
+            truck_capacity=truck_type.capacity_m3,
+            barge_cycle_minutes=barge_cycle,
+            pickup_cycle_minutes=pickup_cycle,
+            delivery_cycle_minutes=delivery_cycle,
+            barge_cost_per_trip=barge_cost,
+            pickup_drayage_cost_per_m3=pickup_drayage_cost,
+            delivery_drayage_cost_per_m3=delivery_drayage_cost,
+            drayage_cost_per_m3=drayage_cost,
+            can_carry_sorted=barge_type.can_carry_sorted,
+            can_carry_unsorted=barge_type.can_carry_unsorted,
+        )
+    return (
+        lanes,
+        ports,
+        port_storage,
+        port_initial,
+        port_daily_handling,
+        barge_fleet,
     )
 
 
@@ -516,6 +847,169 @@ def build_flow_model(
             unsorted_load_keys.append(load_key)
         unsorted_volume_keys_by_load[load_key].append(key)
 
+    marine_sorted_keys: list[tuple[str, str, int]] = []
+    marine_unsorted_keys: list[tuple[str, str, int]] = []
+    marine_pickup_sorted_by_supply: dict[tuple[str, str], list[tuple[str, str, int]]] = {}
+    marine_pickup_unsorted_by_supply: dict[tuple[str, str], list[tuple[str, str, int]]] = {}
+    marine_delivery_sorted_by_yard_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_delivery_unsorted_by_yard_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_water_by_route_day: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
+    marine_pickup_by_port_sort_day: dict[tuple[str, str, int], list[tuple[str, str, int]]] = {}
+    marine_water_out_by_port_sort_day: dict[tuple[str, str, int], list[tuple[str, str, int]]] = {}
+    marine_water_in_by_port_sort_day: dict[tuple[str, str, int], list[tuple[str, str, int]]] = {}
+    marine_delivery_by_port_sort_day: dict[tuple[str, str, int], list[tuple[str, str, int]]] = {}
+    marine_pickup_sorted_by_port_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_pickup_unsorted_by_port_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_water_out_sorted_by_port_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_water_out_unsorted_by_port_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_water_in_sorted_by_port_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_water_in_unsorted_by_port_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_delivery_sorted_by_port_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_delivery_unsorted_by_port_sort_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_sorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
+    marine_unsorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
+    marine_by_contractor_truck_day: dict[tuple[str, str, int], list[tuple[str, str, int]]] = {}
+    marine_sorted_by_contractor_truck_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+    marine_unsorted_by_contractor_truck_day: dict[
+        tuple[str, str, int], list[tuple[str, str, int]]
+    ] = {}
+
+    for route_id in sorted(problem.marine_lanes):
+        lane = problem.marine_lanes[route_id]
+        if not problem.contractor_can_serve(lane.contractor_id, lane.block_id):
+            continue
+        if problem.fleet_count.get((lane.contractor_id, lane.truck_type_id), 0) <= 0:
+            continue
+        for day in problem.days:
+            marine_water_by_route_day.setdefault((route_id, day), [])
+        for sort_id in problem.sorts:
+            if lane.can_carry_sorted and (lane.block_id, sort_id) in problem.supply_sorted:
+                for day in problem.days:
+                    marine_key = (route_id, sort_id, day)
+                    marine_sorted_keys.append(marine_key)
+                    marine_pickup_sorted_by_supply.setdefault((lane.block_id, sort_id), []).append(
+                        marine_key
+                    )
+                    marine_delivery_sorted_by_yard_sort_day.setdefault(
+                        (lane.yard_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_by_route_day[(route_id, day)].append(marine_key)
+                    marine_pickup_by_port_sort_day.setdefault(
+                        (lane.origin_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_pickup_sorted_by_port_sort_day.setdefault(
+                        (lane.origin_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_out_by_port_sort_day.setdefault(
+                        (lane.origin_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_out_sorted_by_port_sort_day.setdefault(
+                        (lane.origin_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_in_by_port_sort_day.setdefault(
+                        (lane.destination_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_in_sorted_by_port_sort_day.setdefault(
+                        (lane.destination_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_delivery_by_port_sort_day.setdefault(
+                        (lane.destination_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_delivery_sorted_by_port_sort_day.setdefault(
+                        (lane.destination_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_sorted_by_contractor_day.setdefault(
+                        (lane.contractor_id, day), []
+                    ).append(marine_key)
+                    marine_by_contractor_truck_day.setdefault(
+                        (lane.contractor_id, lane.truck_type_id, day), []
+                    ).append(marine_key)
+                    marine_sorted_by_contractor_truck_day.setdefault(
+                        (lane.contractor_id, lane.truck_type_id, day), []
+                    ).append(marine_key)
+            if lane.can_carry_unsorted and (lane.block_id, sort_id) in problem.supply_unsorted:
+                for day in problem.days:
+                    marine_key = (route_id, sort_id, day)
+                    marine_unsorted_keys.append(marine_key)
+                    marine_pickup_unsorted_by_supply.setdefault(
+                        (lane.block_id, sort_id), []
+                    ).append(marine_key)
+                    marine_delivery_unsorted_by_yard_sort_day.setdefault(
+                        (lane.yard_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_by_route_day[(route_id, day)].append(marine_key)
+                    marine_pickup_by_port_sort_day.setdefault(
+                        (lane.origin_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_pickup_unsorted_by_port_sort_day.setdefault(
+                        (lane.origin_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_out_by_port_sort_day.setdefault(
+                        (lane.origin_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_out_unsorted_by_port_sort_day.setdefault(
+                        (lane.origin_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_in_by_port_sort_day.setdefault(
+                        (lane.destination_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_water_in_unsorted_by_port_sort_day.setdefault(
+                        (lane.destination_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_delivery_by_port_sort_day.setdefault(
+                        (lane.destination_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_delivery_unsorted_by_port_sort_day.setdefault(
+                        (lane.destination_port_id, sort_id, day), []
+                    ).append(marine_key)
+                    marine_unsorted_by_contractor_day.setdefault(
+                        (lane.contractor_id, day), []
+                    ).append(marine_key)
+                    marine_by_contractor_truck_day.setdefault(
+                        (lane.contractor_id, lane.truck_type_id, day), []
+                    ).append(marine_key)
+                    marine_unsorted_by_contractor_truck_day.setdefault(
+                        (lane.contractor_id, lane.truck_type_id, day), []
+                    ).append(marine_key)
+
+    marine_trip_keys = sorted(
+        {(key[0], key[2]) for key in (*marine_sorted_keys, *marine_unsorted_keys)}
+    )
+    port_sort_day_keys = [
+        (port_id, sort_id, day)
+        for port_id in problem.marine_ports
+        for sort_id in problem.sorts
+        for day in problem.days
+    ]
+    marine_barge_fleet_keys = [
+        (contractor_id, barge_type_id, day)
+        for contractor_id, barge_type_id in problem.marine_barge_fleet
+        for day in problem.days
+        if problem.marine_barge_fleet.get((contractor_id, barge_type_id), 0) > 0
+    ]
+
     yard_sort_day_keys = [
         (yard_id, sort_id, day)
         for yard_id in problem.yards
@@ -543,6 +1037,11 @@ def build_flow_model(
     model.YardDayKeys = pyo.Set(initialize=yard_day_keys, dimen=2)
     model.FleetKeys = pyo.Set(initialize=fleet_keys, dimen=3)
     model.WorkloadKeys = pyo.Set(initialize=workload_keys, dimen=2)
+    model.MarineSortedKeys = pyo.Set(initialize=marine_sorted_keys, dimen=3)
+    model.MarineUnsortedKeys = pyo.Set(initialize=marine_unsorted_keys, dimen=3)
+    model.MarineTripKeys = pyo.Set(initialize=marine_trip_keys, dimen=2)
+    model.PortSortDayKeys = pyo.Set(initialize=port_sort_day_keys, dimen=3)
+    model.MarineBargeFleetKeys = pyo.Set(initialize=marine_barge_fleet_keys, dimen=3)
 
     model.vw = pyo.Var(model.SortedKeys, domain=pyo.NonNegativeReals, initialize=0.0)
     model.vc = pyo.Var(model.UnsortedKeys, domain=pyo.NonNegativeReals, initialize=0.0)
@@ -554,10 +1053,21 @@ def build_flow_model(
     model.iw = pyo.Var(model.YardSortDayKeys, domain=pyo.NonNegativeReals, initialize=0.0)
     model.pv = pyo.Var(model.YardSortDayKeys, domain=pyo.NonNegativeReals, initialize=0.0)
     model.u = pyo.Var(model.WorkloadKeys, domain=pyo.NonNegativeReals, initialize=0.0)
+    model.mpw = pyo.Var(model.MarineSortedKeys, domain=pyo.NonNegativeReals, initialize=0.0)
+    model.mpc = pyo.Var(model.MarineUnsortedKeys, domain=pyo.NonNegativeReals, initialize=0.0)
+    model.mww = pyo.Var(model.MarineSortedKeys, domain=pyo.NonNegativeReals, initialize=0.0)
+    model.mwc = pyo.Var(model.MarineUnsortedKeys, domain=pyo.NonNegativeReals, initialize=0.0)
+    model.mdw = pyo.Var(model.MarineSortedKeys, domain=pyo.NonNegativeReals, initialize=0.0)
+    model.mdc = pyo.Var(model.MarineUnsortedKeys, domain=pyo.NonNegativeReals, initialize=0.0)
+    model.mt = pyo.Var(model.MarineTripKeys, domain=pyo.NonNegativeIntegers, initialize=0)
+    model.pi = pyo.Var(model.PortSortDayKeys, domain=pyo.NonNegativeReals, initialize=0.0)
 
     def sorted_supply_balance_rule(mdl, block_id: str, sort_id: str):
         return (
             sum(mdl.vw[key] for key in sorted_by_supply.get((block_id, sort_id), []))
+            + sum(
+                mdl.mpw[key] for key in marine_pickup_sorted_by_supply.get((block_id, sort_id), [])
+            )
             + mdl.ibw[block_id, sort_id]
             == problem.supply_sorted[block_id, sort_id]
         )
@@ -569,6 +1079,10 @@ def build_flow_model(
     def unsorted_supply_balance_rule(mdl, block_id: str, sort_id: str):
         return (
             sum(mdl.vc[key] for key in unsorted_by_supply.get((block_id, sort_id), []))
+            + sum(
+                mdl.mpc[key]
+                for key in marine_pickup_unsorted_by_supply.get((block_id, sort_id), [])
+            )
             + mdl.ibc[block_id, sort_id]
             == problem.supply_unsorted[block_id, sort_id]
         )
@@ -638,6 +1152,9 @@ def build_flow_model(
             day,
             sorted_by_contractor_day,
             unsorted_by_contractor_day,
+            marine_sorted_by_contractor_day,
+            marine_unsorted_by_contractor_day,
+            problem,
         )
         return loads - phi[contractor_id] <= mdl.u[contractor_id, day]
 
@@ -648,6 +1165,9 @@ def build_flow_model(
             day,
             sorted_by_contractor_day,
             unsorted_by_contractor_day,
+            marine_sorted_by_contractor_day,
+            marine_unsorted_by_contractor_day,
+            problem,
         )
         return phi[contractor_id] - loads <= mdl.u[contractor_id, day]
 
@@ -662,6 +1182,9 @@ def build_flow_model(
         )
         delivered = sum(
             mdl.vc[key] for key in unsorted_by_yard_sort_day.get((yard_id, sort_id, day), [])
+        ) + sum(
+            mdl.mdc[key]
+            for key in marine_delivery_unsorted_by_yard_sort_day.get((yard_id, sort_id, day), [])
         )
         return mdl.ic[yard_id, sort_id, day] == previous + delivered - mdl.pv[yard_id, sort_id, day]
 
@@ -673,6 +1196,9 @@ def build_flow_model(
         )
         delivered = sum(
             mdl.vw[key] for key in sorted_by_yard_sort_day.get((yard_id, sort_id, day), [])
+        ) + sum(
+            mdl.mdw[key]
+            for key in marine_delivery_sorted_by_yard_sort_day.get((yard_id, sort_id, day), [])
         )
         demand = problem.demand_for(yard_id, sort_id, day)
         return (
@@ -715,39 +1241,222 @@ def build_flow_model(
     )
     model.yard_total_capacity = pyo.Constraint(model.YardDayKeys, rule=yard_total_capacity_rule)
 
+    def port_inventory_rule(mdl, port_id: str, sort_id: str, day: int):
+        previous = (
+            problem.marine_port_initial.get((port_id, sort_id), 0.0)
+            if day == 1
+            else mdl.pi[port_id, sort_id, day - 1]
+        )
+        inbound = (
+            sum(
+                mdl.mpw[key]
+                for key in marine_pickup_sorted_by_port_sort_day.get((port_id, sort_id, day), [])
+            )
+            + sum(
+                mdl.mww[key]
+                for key in marine_water_in_sorted_by_port_sort_day.get((port_id, sort_id, day), [])
+            )
+            + sum(
+                mdl.mpc[key]
+                for key in marine_pickup_unsorted_by_port_sort_day.get((port_id, sort_id, day), [])
+            )
+            + sum(
+                mdl.mwc[key]
+                for key in marine_water_in_unsorted_by_port_sort_day.get(
+                    (port_id, sort_id, day), []
+                )
+            )
+        )
+        outbound = (
+            sum(
+                mdl.mww[key]
+                for key in marine_water_out_sorted_by_port_sort_day.get((port_id, sort_id, day), [])
+            )
+            + sum(
+                mdl.mdw[key]
+                for key in marine_delivery_sorted_by_port_sort_day.get((port_id, sort_id, day), [])
+            )
+            + sum(
+                mdl.mwc[key]
+                for key in marine_water_out_unsorted_by_port_sort_day.get(
+                    (port_id, sort_id, day), []
+                )
+            )
+            + sum(
+                mdl.mdc[key]
+                for key in marine_delivery_unsorted_by_port_sort_day.get(
+                    (port_id, sort_id, day), []
+                )
+            )
+        )
+        return mdl.pi[port_id, sort_id, day] == previous + inbound - outbound
+
+    def port_storage_rule(mdl, port_id: str, day: int):
+        capacity = problem.marine_port_storage.get(port_id, 0.0)
+        if capacity <= 0:
+            return pyo.Constraint.Skip
+        return sum(mdl.pi[port_id, sort_id, day] for sort_id in problem.sorts) <= capacity
+
+    def port_handling_rule(mdl, port_id: str, day: int):
+        capacity = problem.marine_port_daily_handling.get(port_id)
+        if capacity is None:
+            return pyo.Constraint.Skip
+        handled = (
+            sum(
+                mdl.mww[key]
+                for sort_id in problem.sorts
+                for key in marine_water_out_sorted_by_port_sort_day.get((port_id, sort_id, day), [])
+            )
+            + sum(
+                mdl.mwc[key]
+                for sort_id in problem.sorts
+                for key in marine_water_out_unsorted_by_port_sort_day.get(
+                    (port_id, sort_id, day), []
+                )
+            )
+            + sum(
+                mdl.mww[key]
+                for sort_id in problem.sorts
+                for key in marine_water_in_sorted_by_port_sort_day.get((port_id, sort_id, day), [])
+            )
+            + sum(
+                mdl.mwc[key]
+                for sort_id in problem.sorts
+                for key in marine_water_in_unsorted_by_port_sort_day.get(
+                    (port_id, sort_id, day), []
+                )
+            )
+        )
+        return handled <= capacity
+
+    model.port_inventory = pyo.Constraint(model.PortSortDayKeys, rule=port_inventory_rule)
+    model.port_storage = pyo.Constraint(model.YardDayKeys, rule=port_storage_rule)
+    model.port_handling = pyo.Constraint(model.YardDayKeys, rule=port_handling_rule)
+
+    def barge_capacity_upper_rule(mdl, route_id: str, day: int):
+        lane = problem.marine_lanes[route_id]
+        volume = _route_day_water(mdl, route_id, day)
+        return volume <= lane.barge_capacity * mdl.mt[route_id, day]
+
+    def barge_capacity_lower_rule(mdl, route_id: str, day: int):
+        lane = problem.marine_lanes[route_id]
+        volume = _route_day_water(mdl, route_id, day)
+        return volume >= (mdl.mt[route_id, day] - 1) * lane.barge_capacity
+
+    def barge_fleet_capacity_rule(mdl, contractor_id: str, barge_type_id: str, day: int):
+        route_ids = [
+            route_id
+            for route_id in problem.marine_lanes
+            if problem.marine_lanes[route_id].contractor_id == contractor_id
+            and problem.marine_lanes[route_id].barge_type_id == barge_type_id
+        ]
+        if not route_ids:
+            return pyo.Constraint.Skip
+        minutes = sum(
+            mdl.mt[route_id, day] * problem.marine_lanes[route_id].barge_cycle_minutes
+            for route_id in route_ids
+        )
+        available = problem.marine_barge_fleet.get((contractor_id, barge_type_id), 0) * (
+            problem.regular_minutes
+        )
+        return minutes <= available
+
+    model.marine_barge_capacity_upper = pyo.Constraint(
+        model.MarineTripKeys, rule=barge_capacity_upper_rule
+    )
+    model.marine_barge_capacity_lower = pyo.Constraint(
+        model.MarineTripKeys, rule=barge_capacity_lower_rule
+    )
+    model.marine_barge_fleet_capacity = pyo.Constraint(
+        model.MarineBargeFleetKeys, rule=barge_fleet_capacity_rule
+    )
+
     def fleet_capacity_rule(mdl, contractor_id: str, truck_type_id: str, day: int):
         sorted_keys = sorted_by_contractor_truck_day.get((contractor_id, truck_type_id, day), [])
         unsorted_keys = _unique_unsorted_load_keys(
             unsorted_by_contractor_truck_day.get((contractor_id, truck_type_id, day), [])
         )
-        if not sorted_keys and not unsorted_keys:
+        marine_sorted_keys = marine_sorted_by_contractor_truck_day.get(
+            (contractor_id, truck_type_id, day), []
+        )
+        marine_unsorted_keys = marine_unsorted_by_contractor_truck_day.get(
+            (contractor_id, truck_type_id, day), []
+        )
+        if (
+            not sorted_keys
+            and not unsorted_keys
+            and not marine_sorted_keys
+            and not marine_unsorted_keys
+        ):
             return pyo.Constraint.Skip
         minutes = sum(mdl.nw[key] * _cycle_for_key(problem, key) for key in sorted_keys) + sum(
             mdl.nc[key] * _cycle_for_load_key(problem, key) for key in unsorted_keys
         )
+        marine_minutes = sum(
+            mdl.mpw[key]
+            / problem.marine_lanes[key[0]].truck_capacity
+            * problem.marine_lanes[key[0]].pickup_cycle_minutes
+            + mdl.mdw[key]
+            / problem.marine_lanes[key[0]].truck_capacity
+            * problem.marine_lanes[key[0]].delivery_cycle_minutes
+            for key in marine_sorted_keys
+        ) + sum(
+            mdl.mpc[key]
+            / problem.marine_lanes[key[0]].truck_capacity
+            * problem.marine_lanes[key[0]].pickup_cycle_minutes
+            + mdl.mdc[key]
+            / problem.marine_lanes[key[0]].truck_capacity
+            * problem.marine_lanes[key[0]].delivery_cycle_minutes
+            for key in marine_unsorted_keys
+        )
         available = problem.fleet_count.get((contractor_id, truck_type_id), 0) * (
             problem.regular_minutes
         )
-        return minutes <= available
+        return minutes + marine_minutes <= available
 
     model.fleet_capacity = pyo.Constraint(model.FleetKeys, rule=fleet_capacity_rule)
 
     inventory_keys = sorted(set(sorted_supply_keys) | set(unsorted_supply_keys))
-    model.cost_expr = sum(
-        mdl_load * problem.transport_cost[(block_id, yard_id, truck_type_id)]
-        for (block_id, yard_id, truck_type_id) in problem.transport_cost
-        for mdl_load in _load_count_expressions(
-            model,
-            block_id,
-            yard_id,
-            truck_type_id,
-            sorted_by_contractor_truck_day,
-            unsorted_by_contractor_truck_day,
+    marine_drayage_cost = sum(
+        model.mpw[key] * problem.marine_lanes[key[0]].pickup_drayage_cost_per_m3
+        + model.mdw[key] * problem.marine_lanes[key[0]].delivery_drayage_cost_per_m3
+        for key in marine_sorted_keys
+    ) + sum(
+        model.mpc[key] * problem.marine_lanes[key[0]].pickup_drayage_cost_per_m3
+        + model.mdc[key] * problem.marine_lanes[key[0]].delivery_drayage_cost_per_m3
+        for key in marine_unsorted_keys
+    )
+    marine_barge_cost = sum(
+        model.mt[route_id, day] * problem.marine_lanes[route_id].barge_cost_per_trip
+        for route_id, day in marine_trip_keys
+    )
+    port_inventory_penalty = problem.port_inventory_penalty * sum(
+        model.pi[port_id, sort_id, problem.days[-1]]
+        for port_id in problem.marine_ports
+        for sort_id in problem.sorts
+    )
+    model.cost_expr = (
+        sum(
+            mdl_load * problem.transport_cost[(block_id, yard_id, truck_type_id)]
+            for (block_id, yard_id, truck_type_id) in problem.transport_cost
+            for mdl_load in _load_count_expressions(
+                model,
+                block_id,
+                yard_id,
+                truck_type_id,
+                sorted_by_contractor_truck_day,
+                unsorted_by_contractor_truck_day,
+            )
         )
-    ) + problem.roadside_penalty * sum(
-        (model.ibw[block_id, sort_id] if (block_id, sort_id) in sorted_supply_keys else 0.0)
-        + (model.ibc[block_id, sort_id] if (block_id, sort_id) in unsorted_supply_keys else 0.0)
-        for block_id, sort_id in inventory_keys
+        + problem.roadside_penalty
+        * sum(
+            (model.ibw[block_id, sort_id] if (block_id, sort_id) in sorted_supply_keys else 0.0)
+            + (model.ibc[block_id, sort_id] if (block_id, sort_id) in unsorted_supply_keys else 0.0)
+            for block_id, sort_id in inventory_keys
+        )
+        + marine_drayage_cost
+        + marine_barge_cost
+        + port_inventory_penalty
     )
     model.workload_expr = sum(model.u[contractor_id, day] for contractor_id, day in workload_keys)
 
@@ -772,6 +1481,19 @@ def build_flow_model(
     return model
 
 
+def _route_day_water(
+    model: pyo.ConcreteModel,
+    route_id: str,
+    day: int,
+) -> Any:
+    """Return the water-volume expression for one marine route/day."""
+    return sum(
+        model.mww[key] for key in model.MarineSortedKeys if key[0] == route_id and key[2] == day
+    ) + sum(
+        model.mwc[key] for key in model.MarineUnsortedKeys if key[0] == route_id and key[2] == day
+    )
+
+
 def _cycle_for_key(problem: HaulingFlowProblem, key: Key6) -> float:
     """Return the cycle minutes for a sorted key."""
     block_id, yard_id, _sort_id, _contractor_id, truck_type_id, _day = key
@@ -790,8 +1512,13 @@ def _contractor_day_truckloads(
     day: int,
     sorted_by_contractor_day: dict[tuple[str, int], list[Key6]],
     unsorted_by_contractor_day: dict[tuple[str, int], list[Key6]],
+    marine_sorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]]
+    | None = None,
+    marine_unsorted_by_contractor_day: dict[tuple[str, int], list[tuple[str, str, int]]]
+    | None = None,
+    problem: HaulingFlowProblem | None = None,
 ):
-    """Return the contractor/day truckload expression (sorted loads plus unsorted loads)."""
+    """Return the contractor/day truckload expression (road plus marine drayage)."""
     sorted_loads = sum(
         model.nw[key] for key in sorted_by_contractor_day.get((contractor_id, day), [])
     )
@@ -801,7 +1528,15 @@ def _contractor_day_truckloads(
             unsorted_by_contractor_day.get((contractor_id, day), [])
         )
     )
-    return sorted_loads + unsorted_loads
+    marine_loads = 0
+    if problem is not None:
+        for key in (marine_sorted_by_contractor_day or {}).get((contractor_id, day), []):
+            capacity = problem.marine_lanes[key[0]].truck_capacity
+            marine_loads += (model.mpw[key] + model.mdw[key]) / capacity
+        for key in (marine_unsorted_by_contractor_day or {}).get((contractor_id, day), []):
+            capacity = problem.marine_lanes[key[0]].truck_capacity
+            marine_loads += (model.mpc[key] + model.mdc[key]) / capacity
+    return sorted_loads + unsorted_loads + marine_loads
 
 
 def _unique_unsorted_load_keys(keys: list[Key6]) -> list[Key5]:
@@ -1164,6 +1899,9 @@ def _extract_result(
             day,
             _sorted_by_contractor_day(model),
             _unsorted_by_contractor_day(model),
+            _marine_sorted_by_contractor_day(model),
+            _marine_unsorted_by_contractor_day(model),
+            problem,
         )
         value = float(pyo.value(loads))
         workload_rows.append(
@@ -1182,6 +1920,12 @@ def _extract_result(
     yard_inventory = pd.DataFrame(inventory_rows, columns=_INVENTORY_COLUMNS)
     block_inventory = pd.DataFrame(block_inventory_rows, columns=_BLOCK_INVENTORY_COLUMNS)
     contractor_workload = pd.DataFrame(workload_rows, columns=_WORKLOAD_COLUMNS)
+    (
+        marine_flows,
+        barge_trips,
+        port_inventory,
+        marine_truckloads,
+    ) = _extract_marine_result(problem, model)
 
     goal_deviations: dict[str, float] = {}
     if hasattr(model, "dev_cost"):
@@ -1205,10 +1949,262 @@ def _extract_result(
         yard_inventory=yard_inventory,
         block_inventory=block_inventory,
         contractor_workload=contractor_workload,
+        marine_flows=marine_flows,
+        barge_trips=barge_trips,
+        port_inventory=port_inventory,
+        marine_truckloads=marine_truckloads,
         solver=solver,
         termination=termination,
         runtime_seconds=runtime,
     )
+
+
+def _extract_marine_result(
+    problem: HaulingFlowProblem,
+    model: pyo.ConcreteModel,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Convert marine model variables into the Phase I marine tables."""
+    if not problem.marine_lanes:
+        return (
+            pd.DataFrame(columns=_MARINE_FLOW_COLUMNS),
+            pd.DataFrame(columns=_BARGE_TRIP_COLUMNS),
+            pd.DataFrame(columns=_PORT_INVENTORY_COLUMNS),
+            pd.DataFrame(columns=_MARINE_TRUCKLOAD_COLUMNS),
+        )
+
+    flow_rows: list[dict[str, Any]] = []
+    for sorted_flag, keys, pickup_var, water_var, delivery_var in (
+        (True, model.MarineSortedKeys, model.mpw, model.mww, model.mdw),
+        (False, model.MarineUnsortedKeys, model.mpc, model.mwc, model.mdc),
+    ):
+        for key in keys:
+            route_id, sort_id, day = key
+            lane = problem.marine_lanes[route_id]
+            pickup_m3 = float(pyo.value(pickup_var[key]))
+            water_m3 = float(pyo.value(water_var[key]))
+            delivery_m3 = float(pyo.value(delivery_var[key]))
+            if max(pickup_m3, water_m3, delivery_m3) <= 1e-8:
+                continue
+            flow_rows.append(
+                {
+                    "day": day,
+                    "scenario_day": problem.start_day + day - 1,
+                    "marine_route_id": route_id,
+                    "block_id": lane.block_id,
+                    "yard_id": lane.yard_id,
+                    "log_sort_id": sort_id,
+                    "contractor_id": lane.contractor_id,
+                    "truck_type_id": lane.truck_type_id,
+                    "barge_type_id": lane.barge_type_id,
+                    "origin_port_id": lane.origin_port_id,
+                    "destination_port_id": lane.destination_port_id,
+                    "water_arc_id": lane.water_arc_id,
+                    "sorted": sorted_flag,
+                    "pickup_road_m3": pickup_m3,
+                    "water_m3": water_m3,
+                    "delivery_road_m3": delivery_m3,
+                    "pickup_truckloads": _ceil_loads(pickup_m3, lane.truck_capacity),
+                    "delivery_truckloads": _ceil_loads(delivery_m3, lane.truck_capacity),
+                    "barge_trips": 0,
+                    "origin_handling_m3": water_m3,
+                    "destination_handling_m3": water_m3,
+                    "barge_load_minutes": 0.0,
+                    "barge_unload_minutes": 0.0,
+                    "sail_minutes": 0.0,
+                    "barge_cycle_minutes": 0.0,
+                    "origin_handling_cost": 0.0,
+                    "destination_handling_cost": 0.0,
+                    "barge_variable_cost": 0.0,
+                    "drayage_cost": (
+                        pickup_m3 * lane.pickup_drayage_cost_per_m3
+                        + delivery_m3 * lane.delivery_drayage_cost_per_m3
+                    ),
+                    "total_cost": 0.0,
+                }
+            )
+
+    # Allocate integer trips to the sort rows of each route/day, then fill trip-level costs.
+    grouped: dict[tuple[str, int], list[dict[str, Any]]] = {}
+    for row in flow_rows:
+        grouped.setdefault((row["marine_route_id"], row["day"]), []).append(row)
+    for (route_id, day), rows in grouped.items():
+        lane = problem.marine_lanes[route_id]
+        total_trips = int(round(float(pyo.value(model.mt[route_id, day]))))
+        allocation = _allocate_integer_units(
+            [float(row["water_m3"]) for row in rows],
+            total_trips,
+        )
+        for row, trips in zip(rows, allocation, strict=True):
+            row["barge_trips"] = trips
+            row["barge_load_minutes"] = trips * lane.load_minutes
+            row["barge_unload_minutes"] = trips * lane.unload_minutes
+            row["sail_minutes"] = trips * lane.water_travel_minutes
+            row["barge_cycle_minutes"] = trips * lane.barge_cycle_minutes
+            row["origin_handling_cost"] = trips * lane.origin_handling_cost
+            row["destination_handling_cost"] = trips * lane.destination_handling_cost
+            handling = row["origin_handling_cost"] + row["destination_handling_cost"]
+            row["barge_variable_cost"] = max(0.0, trips * lane.barge_cost_per_trip - handling)
+            row["total_cost"] = row["barge_variable_cost"] + handling + row["drayage_cost"]
+
+    marine_flows = pd.DataFrame(flow_rows, columns=_MARINE_FLOW_COLUMNS)
+    if not marine_flows.empty:
+        marine_flows = marine_flows.sort_values(
+            ["day", "marine_route_id", "log_sort_id"]
+        ).reset_index(drop=True)
+
+    trip_rows: list[dict[str, Any]] = []
+    for route_id, day in model.MarineTripKeys:
+        lane = problem.marine_lanes[route_id]
+        trips = int(round(float(pyo.value(model.mt[route_id, day]))))
+        if trips <= 0:
+            continue
+        # Recompute the route/day water volume from the two variable sets without assuming a
+        # particular sort mix.
+        water_m3 = sum(
+            float(pyo.value(model.mww[key]))
+            for key in model.MarineSortedKeys
+            if key[0] == route_id and key[2] == day
+        ) + sum(
+            float(pyo.value(model.mwc[key]))
+            for key in model.MarineUnsortedKeys
+            if key[0] == route_id and key[2] == day
+        )
+        handling = trips * (lane.origin_handling_cost + lane.destination_handling_cost)
+        trip_rows.append(
+            {
+                "day": day,
+                "scenario_day": problem.start_day + day - 1,
+                "marine_route_id": route_id,
+                "contractor_id": lane.contractor_id,
+                "truck_type_id": lane.truck_type_id,
+                "barge_type_id": lane.barge_type_id,
+                "origin_port_id": lane.origin_port_id,
+                "destination_port_id": lane.destination_port_id,
+                "water_arc_id": lane.water_arc_id,
+                "water_m3": water_m3,
+                "barge_trips": trips,
+                "barge_cycle_minutes": trips * lane.barge_cycle_minutes,
+                "barge_load_minutes": trips * lane.load_minutes,
+                "barge_unload_minutes": trips * lane.unload_minutes,
+                "sail_minutes": trips * lane.water_travel_minutes,
+                "origin_handling_minutes": trips * lane.origin_handling_minutes,
+                "destination_handling_minutes": trips * lane.destination_handling_minutes,
+                "origin_handling_cost": trips * lane.origin_handling_cost,
+                "destination_handling_cost": trips * lane.destination_handling_cost,
+                "barge_variable_cost": max(0.0, trips * lane.barge_cost_per_trip - handling),
+                "handling_cost": handling,
+                "total_cost": trips * lane.barge_cost_per_trip,
+            }
+        )
+    barge_trips = pd.DataFrame(trip_rows, columns=_BARGE_TRIP_COLUMNS)
+    if not barge_trips.empty:
+        barge_trips = barge_trips.sort_values(["day", "marine_route_id"]).reset_index(drop=True)
+
+    port_rows: list[dict[str, Any]] = []
+    for port_id, sort_id, day in model.PortSortDayKeys:
+        opening = (
+            problem.marine_port_initial.get((port_id, sort_id), 0.0)
+            if day == 1
+            else float(pyo.value(model.pi[port_id, sort_id, day - 1]))
+        )
+        inbound = 0.0
+        outbound = 0.0
+        for key in (
+            *[key for key in model.MarineSortedKeys if key[0] in problem.marine_lanes],
+            *[key for key in model.MarineUnsortedKeys if key[0] in problem.marine_lanes],
+        ):
+            route_id, candidate_sort, candidate_day = key
+            if candidate_sort != sort_id or candidate_day != day:
+                continue
+            lane = problem.marine_lanes[route_id]
+            if key in model.MarineSortedKeys:
+                pickup, water, delivery = model.mpw[key], model.mww[key], model.mdw[key]
+            else:
+                pickup, water, delivery = model.mpc[key], model.mwc[key], model.mdc[key]
+            if lane.origin_port_id == port_id:
+                inbound += float(pyo.value(pickup))
+                outbound += float(pyo.value(water))
+            if lane.destination_port_id == port_id:
+                inbound += float(pyo.value(water))
+                outbound += float(pyo.value(delivery))
+        handled = max(inbound, outbound)
+        port_rows.append(
+            {
+                "day": day,
+                "scenario_day": problem.start_day + day - 1,
+                "port_id": port_id,
+                "log_sort_id": sort_id,
+                "opening_inventory_m3": opening,
+                "inbound_m3": inbound,
+                "outbound_m3": outbound,
+                "inventory_m3": float(pyo.value(model.pi[port_id, sort_id, day])),
+                "handled_m3": handled,
+            }
+        )
+    port_inventory = pd.DataFrame(port_rows, columns=_PORT_INVENTORY_COLUMNS)
+
+    truck_rows: list[dict[str, Any]] = []
+    for row in flow_rows:
+        lane = problem.marine_lanes[row["marine_route_id"]]
+        sorted_loads = row["pickup_truckloads"] if row["sorted"] else 0
+        unsorted_loads = 0 if row["sorted"] else row["pickup_truckloads"]
+        truck_rows.append(
+            {
+                "day": row["day"],
+                "scenario_day": row["scenario_day"],
+                "marine_route_id": row["marine_route_id"],
+                "leg": "pickup",
+                "block_id": lane.block_id,
+                "yard_id": lane.origin_port_id,
+                "contractor_id": lane.contractor_id,
+                "truck_type_id": lane.truck_type_id,
+                "sorted_truckloads": sorted_loads,
+                "unsorted_truckloads": unsorted_loads,
+                "total_truckloads": sorted_loads + unsorted_loads,
+            }
+        )
+        sorted_loads = row["delivery_truckloads"] if row["sorted"] else 0
+        unsorted_loads = 0 if row["sorted"] else row["delivery_truckloads"]
+        truck_rows.append(
+            {
+                "day": row["day"],
+                "scenario_day": row["scenario_day"],
+                "marine_route_id": row["marine_route_id"],
+                "leg": "delivery",
+                "block_id": lane.destination_port_id,
+                "yard_id": lane.yard_id,
+                "contractor_id": lane.contractor_id,
+                "truck_type_id": lane.truck_type_id,
+                "sorted_truckloads": sorted_loads,
+                "unsorted_truckloads": unsorted_loads,
+                "total_truckloads": sorted_loads + unsorted_loads,
+            }
+        )
+    marine_truckloads = pd.DataFrame(truck_rows, columns=_MARINE_TRUCKLOAD_COLUMNS)
+    if not marine_truckloads.empty:
+        marine_truckloads = (
+            marine_truckloads.groupby(
+                [
+                    "day",
+                    "scenario_day",
+                    "marine_route_id",
+                    "leg",
+                    "block_id",
+                    "yard_id",
+                    "contractor_id",
+                    "truck_type_id",
+                ],
+                as_index=False,
+            )[["sorted_truckloads", "unsorted_truckloads"]]
+            .sum()
+            .assign(
+                total_truckloads=lambda frame: (
+                    frame["sorted_truckloads"] + frame["unsorted_truckloads"]
+                )
+            )
+            .loc[:, _MARINE_TRUCKLOAD_COLUMNS]
+        )
+    return marine_flows, barge_trips, port_inventory, marine_truckloads
 
 
 def _flow_row(
@@ -1234,6 +2230,35 @@ def _flow_row(
         "sorted_m3": sorted_m3,
         "unsorted_m3": unsorted_m3,
     }
+
+
+def _ceil_loads(volume_m3: float, capacity_m3: float) -> int:
+    """Return the number of started loads for a volume (zero for an empty volume)."""
+    if volume_m3 <= 1e-8:
+        return 0
+    return int(math.ceil(volume_m3 / capacity_m3 - 1e-9))
+
+
+def _allocate_integer_units(weights: list[float], total: int) -> list[int]:
+    """Allocate an integer total across weights using the largest-remainder rule."""
+    if total <= 0:
+        return [0 for _ in weights]
+    weight_sum = sum(weights)
+    if weight_sum <= 0:
+        allocation = [0 for _ in weights]
+        allocation[0] = total
+        return allocation
+    raw = [total * weight / weight_sum for weight in weights]
+    allocation = [int(math.floor(value)) for value in raw]
+    remainder = total - sum(allocation)
+    order = sorted(
+        range(len(weights)),
+        key=lambda index: (raw[index] - allocation[index], weights[index]),
+        reverse=True,
+    )
+    for index in order[:remainder]:
+        allocation[index] += 1
+    return allocation
 
 
 def _truckload_row(
@@ -1299,6 +2324,34 @@ def _unsorted_by_contractor_day(model: pyo.ConcreteModel) -> dict[tuple[str, int
     return index
 
 
+def _marine_sorted_by_contractor_day(
+    model: pyo.ConcreteModel,
+) -> dict[tuple[str, int], list[tuple[str, str, int]]]:
+    """Rebuild the marine sorted contractor/day index from the model sets."""
+    index: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
+    problem: HaulingFlowProblem | None = getattr(model, "problem", None)
+    if problem is None:
+        return index
+    for key in model.MarineSortedKeys:
+        lane = problem.marine_lanes[key[0]]
+        index.setdefault((lane.contractor_id, key[2]), []).append(key)
+    return index
+
+
+def _marine_unsorted_by_contractor_day(
+    model: pyo.ConcreteModel,
+) -> dict[tuple[str, int], list[tuple[str, str, int]]]:
+    """Rebuild the marine unsorted contractor/day index from the model sets."""
+    index: dict[tuple[str, int], list[tuple[str, str, int]]] = {}
+    problem: HaulingFlowProblem | None = getattr(model, "problem", None)
+    if problem is None:
+        return index
+    for key in model.MarineUnsortedKeys:
+        lane = problem.marine_lanes[key[0]]
+        index.setdefault((lane.contractor_id, key[2]), []).append(key)
+    return index
+
+
 def summarize_flow_result(result: FlowSolveResult) -> str:
     """Return a compact human-readable summary of a Phase I solve.
 
@@ -1355,5 +2408,13 @@ def summarize_flow_result(result: FlowSolveResult) -> str:
             "ending_yard_inventory_m3: "
             f"unsorted={ending['unsorted_inventory_m3'].sum():.3f}, "
             f"water={ending['water_inventory_m3'].sum():.3f}"
+        )
+    if not result.marine_flows.empty:
+        lines.append(
+            "marine: "
+            f"water_m3={result.marine_flows['water_m3'].sum():.3f}, "
+            f"barge_trips={int(result.barge_trips['barge_trips'].sum())}, "
+            "terminal_handling_m3="
+            f"{result.marine_flows['origin_handling_m3'].sum() + result.marine_flows['destination_handling_m3'].sum():.3f}"
         )
     return "\n".join(lines)

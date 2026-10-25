@@ -1,0 +1,125 @@
+name: Sunshine Coast to Howe Sound marine haul
+num_days: 3
+schema_version: 1.1.0
+start_date: 2026-11-02
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: production_rates.csv
+hauling:
+  planning_horizon_days: 3
+  start_day: 1
+  log_sorts:
+    - id: fir_saw
+      sorted: true
+      description: Synthetic coastal fir sawlogs
+  contractors:
+    - id: c1
+      name: Coast Contracting
+      preferred_daily_truckloads: 4
+  truck_types:
+    - id: highway
+      capacity_m3: 45
+      fixed_cost: 120.0
+      variable_cost_per_minute: 1.20
+      overtime_cost_per_minute: 1.80
+      can_carry_sorted: true
+      can_carry_unsorted: true
+  trucks:
+    - id: c1_h1
+      contractor_id: c1
+      truck_type_id: highway
+    - id: c1_h2
+      contractor_id: c1
+      truck_type_id: highway
+  depots:
+    - id: depot
+      name: Sechelt depot
+  depot_legs:
+    - {depot_id: depot, location_id: b_sc, truck_type_id: highway, travel_minutes: 20}
+    - {depot_id: depot, location_id: sechelt, truck_type_id: highway, travel_minutes: 15}
+    - {depot_id: depot, location_id: howe_sound, truck_type_id: highway, travel_minutes: 15}
+    - {depot_id: depot, location_id: y1, truck_type_id: highway, travel_minutes: 12}
+  barge_types:
+    - id: log_barge
+      capacity_m3: 3000
+      fixed_cost: 1500.0
+      variable_cost_per_minute: 5.0
+      overtime_cost_per_minute: 7.5
+      load_minutes: 30
+      unload_minutes: 30
+      can_carry_sorted: true
+      can_carry_unsorted: true
+  barges:
+    - id: c1_b1
+      contractor_id: c1
+      barge_type_id: log_barge
+  ports:
+    - id: sechelt
+      name: Sunshine Coast terminal
+      storage_m3: 500
+      initial_inventory_m3: 0
+      handling_minutes_per_trip: 20
+      handling_cost_per_trip: 100
+      daily_handling_m3: 1000
+    - id: howe_sound
+      name: Howe Sound sort-yard terminal
+      storage_m3: 500
+      initial_inventory_m3: 0
+      handling_minutes_per_trip: 25
+      handling_cost_per_trip: 120
+      daily_handling_m3: 1000
+  water_arcs:
+    - id: sc_hs
+      origin_port_id: sechelt
+      destination_port_id: howe_sound
+      barge_type_id: log_barge
+      travel_minutes: 200
+      distance_km: 80
+      return_travel_minutes: 200
+      load_minutes: 30
+      unload_minutes: 30
+  port_legs:
+    - {port_id: sechelt, location_id: b_sc, side: origin, truck_type_id: highway, travel_minutes: 35, distance_km: 28, return_travel_minutes: 35}
+    - {port_id: howe_sound, location_id: y1, side: destination, truck_type_id: highway, travel_minutes: 30, distance_km: 24, return_travel_minutes: 30}
+  marine_routes:
+    - id: sc_hs_y1
+      block_id: b_sc
+      yard_id: y1
+      origin_port_id: sechelt
+      destination_port_id: howe_sound
+      water_arc_id: sc_hs
+      contractor_id: c1
+      truck_type_id: highway
+  sort_yards:
+    - id: y1
+      facility_id: mill_a
+      unsorted_storage_m3: 5000
+      sorted_processing_m3_per_day: 1500
+      unsorted_processing_m3_per_day: 800
+      total_processing_m3_per_day: 2000
+      initial_unsorted_inventory_m3: 0
+      initial_water_inventory_m3: 0
+  loader_locations:
+    - {loader_id: loader_sc, location_id: b_sc, location_kind: pickup, service_minutes: 20}
+    - {loader_id: loader_sechelt, location_id: sechelt, location_kind: port, service_minutes: 25}
+    - {loader_id: loader_howe_sound, location_id: howe_sound, location_kind: port, service_minutes: 25}
+    - {loader_id: loader_y1, location_id: y1, location_kind: delivery, service_minutes: 18}
+  supply:
+    - {block_id: b_sc, log_sort_id: fir_saw, sorted_m3: 180, unsorted_m3: 0}
+  demand:
+    - {yard_id: y1, log_sort_id: fir_saw, day: 1, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 2, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 3, volume_m3: 60}
+  haul_arcs: []
+  contractor_blocks:
+    - {contractor_id: c1, block_id: b_sc}
+  driver_policy:
+    regular_minutes: 510
+    max_overtime_minutes: 150
+    overtime_violation_penalty_per_minute: 10
+  roadside_inventory_penalty_per_m3: 100
+  port_inventory_penalty_per_m3: 100
+  default_loader_service_minutes: 20

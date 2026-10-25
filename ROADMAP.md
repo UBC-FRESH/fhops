@@ -191,6 +191,10 @@ and a thesis-calibrated SA solver.
 - [x] #175 P11.4 SA solution approach, SPT decoder, and calibration.
 - [x] #176 P11.5 FHOPS integration, CLI, reporting, and example case.
 - [x] #177 P11.6 Validation, documentation, formulation sync, and close-out.
+- [x] #187 P11.7 Marine/barge haul legs: explicit `TransportMode`, `BargeType`/`Barge`, `Port`,
+  `WaterArc`, `PortLeg`, and `MarineRoute`; Phase I water/terminal flow tables; deterministic
+  barge-cycle scheduling with port-load synchronization; Sunshine Coast → Howe Sound fixture and
+  contract/flow/schedule/CLI tests.
 
 ## Phase 12 — FHOPS Web Application (WS4-Style) — queued
 Parent #171; branch `feature/p12-web-ui` (created at activation); plan

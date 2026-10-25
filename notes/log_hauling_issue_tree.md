@@ -20,6 +20,7 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 | [#175](https://github.com/UBC-FRESH/fhops/issues/175) | P11.4 SA solution approach, SPT decoder, and calibration — complete | `feature/p11-log-hauling` |
 | [#176](https://github.com/UBC-FRESH/fhops/issues/176) | P11.5 FHOPS integration, CLI, reporting, and example case — complete | `feature/p11-log-hauling` |
 | [#177](https://github.com/UBC-FRESH/fhops/issues/177) | P11.6 Validation, documentation, formulation sync, and close-out — complete | `feature/p11-log-hauling` |
+| [#187](https://github.com/UBC-FRESH/fhops/issues/187) | P11.7 Marine/barge haul legs (explicit water mode, barges, ports, water arcs, barge scheduling) — implementation | `issue-187-marine-haul` |
 
 All six child issues are linked to parent #170 through GitHub sub-issues and assigned the `Task`
 issue type. The parent carries the `Feature` issue type. The repository did not previously carry
@@ -39,6 +40,9 @@ issue type. The parent carries the `Feature` issue type. The repository did not 
   writers, Markdown report, and the generated scale case are on the phase branch.
 - 2026-10-25: #177 complete. Parity/scale evidence, canonical formulation assets, docs, and the
   close-out report are on the phase branch. PR #185 is queued for approval.
+- 2026-10-25: #187 marine/barge extension implemented on `issue-187-marine-haul`: contract,
+  Phase I marine flow, barge-cycle scheduler, CLI artefacts, docs, and the Sunshine Coast →
+  Howe Sound fixture.
 
 ## Activation checklist
 

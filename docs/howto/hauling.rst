@@ -18,8 +18,9 @@ The model follows the two-phase decomposition in Ghotb (2023):
 P11.1 ships the contract and validation. P11.2 adds the Phase I flow model and goal programming.
 P11.3 adds the Phase II continuous-time scheduling model and its simulator/validator. P11.4 adds
 the simulated-annealing solver for larger days. P11.5 adds the `fhops haul` CLI, the operational/
-tactical bridges, and the stable run artefacts. The Phase I/II/III models remain available from
-Python.
+tactical bridges, and the stable run artefacts. P11.7 adds the explicit marine/barge path
+(`TransportMode`, barges, ports, water arcs, and port-to-port cycles). The Phase I/II/III models
+remain available from Python.
 
 Schema version
 --------------
@@ -98,7 +99,100 @@ The section may also live in a separate YAML file referenced from ``data.hauling
    data:
      hauling: hauling.yaml
 
-Validate it with the normal command:
+Marine and barge legs
+---------------------
+
+A barge is **not** a truck type. The contract gives marine transport its own equipment and
+topology so the model can report water volume, barge trips, terminal handling, and port
+synchronization instead of silently applying truck capacity and a road cycle.
+
+The marine path is a four-part chain:
+
+1. a **road pickup leg** from a block to an origin :class:`Port`;
+2. **terminal handling** at the origin port;
+3. a **water leg** on a :class:`WaterArc` operated by a :class:`Barge` of a
+   :class:`BargeType`;
+4. **terminal handling** at the destination port and a **road delivery leg** to the sort yard.
+
+A :class:`MarineRoute` binds those parts to a block, yard, contractor, drayage truck type, port
+pair, and water arc. Phase I treats the marine route as an alternative supply path with separate
+pickup, water, and delivery volumes. Phase II schedules the road drayage loads in the truck/loader
+MIP and schedules the barge cycles with :mod:`fhops.hauling.marine`. The barge scheduler assigns
+port loaders, loads, sails, unloads, returns empty, and reports the synchronized pickup and delivery
+truck windows.
+
+The redistributable fixture is ``examples/hauling_marine/``. It represents a synthetic Sunshine
+Coast pickup, a Sechelt terminal, a water leg to Howe Sound, and a Howe Sound terminal feeding a
+sort yard:
+
+.. code-block:: yaml
+
+   hauling:
+     log_sorts:
+       - {id: fir_saw, sorted: true}
+     truck_types:
+       - {id: highway, capacity_m3: 45, variable_cost_per_minute: 1.2}
+     trucks:
+       - {id: c1_h1, contractor_id: c1, truck_type_id: highway}
+     barge_types:
+       - {id: log_barge, capacity_m3: 3000, load_minutes: 30, unload_minutes: 30}
+     barges:
+       - {id: c1_b1, contractor_id: c1, barge_type_id: log_barge}
+     ports:
+       - {id: sechelt, storage_m3: 500, handling_minutes_per_trip: 20,
+          handling_cost_per_trip: 100, daily_handling_m3: 1000}
+       - {id: howe_sound, storage_m3: 500, handling_minutes_per_trip: 25,
+          handling_cost_per_trip: 120, daily_handling_m3: 1000}
+     water_arcs:
+       - {id: sc_hs, origin_port_id: sechelt, destination_port_id: howe_sound,
+          barge_type_id: log_barge, travel_minutes: 200, distance_km: 80,
+          return_travel_minutes: 200, load_minutes: 30, unload_minutes: 30}
+     port_legs:
+       - {port_id: sechelt, location_id: b_sc, side: origin,
+          truck_type_id: highway, travel_minutes: 35, return_travel_minutes: 35}
+       - {port_id: howe_sound, location_id: y1, side: destination,
+          truck_type_id: highway, travel_minutes: 30, return_travel_minutes: 30}
+     marine_routes:
+       - {id: sc_hs_y1, block_id: b_sc, yard_id: y1, origin_port_id: sechelt,
+          destination_port_id: howe_sound, water_arc_id: sc_hs,
+          contractor_id: c1, truck_type_id: highway}
+     loader_locations:
+       - {loader_id: loader_sechelt, location_id: sechelt, location_kind: port}
+       - {loader_id: loader_howe_sound, location_id: howe_sound, location_kind: port}
+
+Run the fixture with:
+
+.. code-block:: bash
+
+   fhops haul validate examples/hauling_marine/scenario.yaml
+   fhops haul plan examples/hauling_marine/scenario.yaml --out-dir runs/marine-plan
+   fhops haul schedule examples/hauling_marine/scenario.yaml --day 1 \
+       --flow-dir runs/marine-plan --out-dir runs/marine-day1
+   fhops haul report runs/marine-day1
+
+The contract rejects a barge-named ``TruckType`` (``barge``, ``vessel``, ``ferry``, ``marine``, or
+``ship``) with a message that names the marine entities to declare instead. A ``HaulArc`` accepts
+only ``mode: road``; water legs must use a ``WaterArc`` and ``MarineRoute``. If any marine entity is
+present but no ``MarineRoute`` connects it to a block and yard, validation fails rather than
+silently ignoring the marine data.
+
+Marine assumptions and limits:
+
+- Phase I uses the barge capacity for the water leg, the truck capacity for the drayage legs, and
+  charges barge variable and per-trip terminal handling separately from drayage cost. The barge
+  scheduler charges the barge type's fixed dispatch cost once per used barge.
+- Port inventory carries over between days; ``storage_m3`` caps it (zero means no storage
+  constraint) and ``daily_handling_m3`` caps the handled water volume (``None`` means uncapped).
+- The barge fleet is constrained by ``DriverPolicy.regular_minutes`` exactly like the truck fleet.
+- Phase II schedules the road drayage loads and the barge cycles separately. The returned
+  ``pickup_truck_depart``/``delivery_truck_arrive`` columns are the synchronization handoff; the
+  first release reports them rather than hard-linking the two MIPs.
+- A truck cannot be at both the origin and destination port in one road movement. A missing
+  cross-stage empty leg is represented by a full-day deadhead so an unsupported transfer is
+  infeasible rather than invented as a short road trip.
+- Tide, weather, naval architecture, customs, and a full coastal network remain out of scope.
+
+Validate a scenario with the normal command:
 
 .. code-block:: bash
 
@@ -113,16 +207,20 @@ The contract validates identifiers, units, ranges, and cross references. The imp
 
 - Every ``block_id`` in supply, haul arcs, contractor eligibility, and compatibility must exist in
   the scenario's blocks.
-- Every ``loader_id`` must be a machine in the scenario. A pickup loader points at a block; a
-  delivery loader points at a sort yard.
+- Every ``loader_id`` must be a machine in the scenario. A pickup loader points at a block, a
+  delivery loader points at a sort yard, and a port loader points at a port.
 - Every truck references a known contractor and truck type. A truck type must be able to carry
-  sorted or unsorted logs (or both).
+  sorted or unsorted logs (or both). Barge-named truck types are rejected.
 - A sort yard's total daily processing capacity must be at least its sorted and unsorted component
   capacities.
 - Demand days are one-indexed **relative to the hauling horizon**, not the parent scenario. The
   hauling horizon must fit inside the parent ``num_days``.
-- Supply, demand, haul arcs, and contractor-block pairs are unique.
-- A hauling section needs at least one truck, one depot, and one haul arc.
+- Supply, demand, haul arcs, and contractor-block pairs are unique. Marine routes are unique by
+  block, yard, truck type, and barge type.
+- A hauling section needs at least one truck, one depot, and one haul arc **or** one marine route.
+- A marine route needs an origin and destination port, a matching water arc, an origin and
+  destination port leg, an enabled barge of the water arc's type, and an enabled truck of the
+  drayage type.
 
 Contractor eligibility
 ----------------------
@@ -179,6 +277,10 @@ The result payload carries:
 - ``yard_inventory``: unsorted and water inventory, processed volume, and demand;
 - ``block_inventory``: sorted and unsorted roadside inventory at the horizon end;
 - ``contractor_workload``: daily truckloads, preferred level, and deviation;
+- ``marine_flows`` and ``barge_trips``: water-leg volume, barge trips, terminal handling, and leg
+  cost/time provenance;
+- ``port_inventory``: opening, inbound, outbound, ending inventory, and handled volume per port/sort;
+- ``marine_truckloads``: pickup and delivery drayage load counts for Phase II;
 - objective values, goal deviations, solver provenance, and diagnostics.
 
 Units and assumptions:
@@ -233,6 +335,9 @@ The result contains:
 - ``truck_summary``: used trucks, load counts, return time, regular/overtime minutes, and cost
   components;
 - ``loader_summary``: loader kind/location, load count, busy minutes, first start, and last finish;
+- ``barge_schedule``: one row per barge trip with the barge, port loaders, load/sail/unload/return
+  times, waiting, synchronized pickup/delivery truck windows, and cost components;
+- ``barge_summary``: trips, volume, sailing/load/unload/return minutes, and barge/handling cost;
 - ``plan``: the truck routes and loader orders.
 
 ``simulate_plan`` recomputes the earliest schedule for the result's route and loader order by
@@ -316,6 +421,10 @@ Phase I:
 - ``haul_yard_inventory.csv``
 - ``haul_block_inventory.csv``
 - ``haul_contractor_workload.csv``
+- ``haul_marine_flows.csv``
+- ``haul_marine_truckloads.csv``
+- ``haul_barge_trips.csv``
+- ``haul_port_inventory.csv``
 - ``haul_kpis.json``
 - ``haul_summary.json``
 
@@ -324,8 +433,12 @@ Phase II/III:
 - ``haul_schedule.csv``
 - ``haul_truck_summary.csv``
 - ``haul_loader_summary.csv``
+- ``haul_barge_schedule.csv``
+- ``haul_barge_summary.csv``
 - ``haul_kpis.json``
 - ``haul_summary.json``
+
+The marine files are present but empty for road-only scenarios.
 
 A combined solve writes both families and a merged ``haul_summary.json`` with phase ``I+II/III``.
 
@@ -394,6 +507,13 @@ Limitations
 - The exact schedule MIP is for small/medium days. The SA solver is the large-case path.
 - The SA decoder assigns each load to the fastest loader at its location. Multiple-loader
   balancing is left to the exact MIP; a future SA variant can add loader assignment moves.
+- Marine drayage and barge cycles are scheduled by separate solvers. The barge scheduler reports the
+  synchronized road windows, but the first release does not add them as hard time windows in the
+  truck MIP. Tide, weather, naval architecture, customs, and a full coastal network are out of
+  scope.
+- A truck may not transfer from a destination-port delivery leg to an origin-block pickup leg
+  without a modelled deadhead; a missing cross-stage leg is treated as a full-day deadhead so the
+  unsupported transfer cannot appear as a short invented road trip.
 - The operational bridge needs a sort split; equal shares are a visible default, not a real yield
   model. Supply a ``sort_shares`` mapping when the product split matters.
 - The tactical bridge needs a tactical production table for supply and spreads period demand evenly

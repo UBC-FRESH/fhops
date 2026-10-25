@@ -179,3 +179,53 @@ def test_day_outside_horizon_is_rejected() -> None:
     flow = solve_flow(build_flow_problem(scenario), time_limit=60)
     with pytest.raises(ValueError, match="outside the hauling horizon"):
         build_schedule_problem(scenario, flow, 2)
+
+
+def _marine_schedule_problem():
+    from fhops.scenario.io import load_scenario
+
+    scenario = load_scenario("examples/hauling_marine/scenario.yaml")
+    flow_result = solve_flow(build_flow_problem(scenario), time_limit=60)
+    return scenario, flow_result, build_schedule_problem(scenario, flow_result, 1)
+
+
+def test_marine_day_schedules_drayage_and_a_barge_cycle() -> None:
+    from fhops.hauling.marine import validate_barge_schedule
+
+    _, _, problem = _marine_schedule_problem()
+    assert problem.marine is not None
+    assert {load.leg for load in problem.loads} == {"pickup", "delivery"}
+    result = solve_schedule(problem, time_limit=60)
+    assert result.status in {"optimal", "feasible"}
+    assert not result.barge_schedule.empty
+    assert len(result.barge_schedule) == 1
+    trip = result.barge_schedule.iloc[0]
+    assert trip["barge_id"] == "c1_b1"
+    assert trip["origin_port_id"] == "sechelt"
+    assert trip["destination_port_id"] == "howe_sound"
+    assert trip["load_finish"] > trip["load_start"]
+    assert trip["unload_finish"] > trip["unload_start"]
+    assert trip["pickup_truck_arrive"] == pytest.approx(trip["load_start"])
+    assert trip["delivery_truck_depart"] == pytest.approx(trip["unload_finish"])
+    assert validate_barge_schedule(problem.marine, result.barge_schedule) == []
+    assert validate_schedule(problem, result.schedule) == []
+    assert result.barge_objective == pytest.approx(4245.0)
+
+
+def test_barge_scheduler_handles_multiple_trips_without_port_overlap() -> None:
+    from dataclasses import replace
+
+    from fhops.hauling.marine import (
+        schedule_barge_trips,
+        validate_barge_schedule,
+    )
+
+    _, _, problem = _marine_schedule_problem()
+    assert problem.marine is not None
+    request = replace(problem.marine.requests[0], trips=2, volume_m3=180.0)
+    marine = replace(problem.marine, requests=(request,))
+    result = schedule_barge_trips(marine)
+    assert result.status == "feasible"
+    assert len(result.schedule) == 2
+    assert result.schedule["barge_id"].nunique() == 1
+    assert validate_barge_schedule(marine, result.schedule) == []
