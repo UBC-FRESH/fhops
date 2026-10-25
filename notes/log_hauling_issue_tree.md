@@ -10,13 +10,13 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 - Parent issue: [#170 - P11: Log hauling and mill delivery optimization (Ghotb decomposition)](https://github.com/UBC-FRESH/fhops/issues/170)
 - Phase branch: `feature/p11-log-hauling` (reserved; created from `main` at activation)
 - Planning PR: #184 (draft)
-- Status: active (2026-10-25); #172 and #173 complete, #174 next
+- Status: active (2026-10-25); #172-#174 complete, #175 next
 
 | Issue | Task | Child branch |
 |---:|---|---|
 | [#172](https://github.com/UBC-FRESH/fhops/issues/172) | P11.1 Provenance, contract, and formulation audit — complete | `feature/p11-log-hauling` |
 | [#173](https://github.com/UBC-FRESH/fhops/issues/173) | P11.2 Phase I monthly flow MILP and goal programming — complete | `feature/p11-log-hauling` |
-| [#174](https://github.com/UBC-FRESH/fhops/issues/174) | P11.3 Phase II daily routing and scheduling MILP | `issue-174-hauling-schedule` |
+| [#174](https://github.com/UBC-FRESH/fhops/issues/174) | P11.3 Phase II daily routing and scheduling MILP — complete | `feature/p11-log-hauling` |
 | [#175](https://github.com/UBC-FRESH/fhops/issues/175) | P11.4 SA solution approach, SPT decoder, and calibration | `issue-175-hauling-sa` |
 | [#176](https://github.com/UBC-FRESH/fhops/issues/176) | P11.5 FHOPS integration, CLI, reporting, and example case | `issue-176-hauling-integration` |
 | [#177](https://github.com/UBC-FRESH/fhops/issues/177) | P11.6 Validation, documentation, formulation sync, and close-out | `issue-177-hauling-closeout` |
@@ -30,7 +30,9 @@ issue type. The parent carries the `Feature` issue type. The repository did not 
 - 2026-10-25: #172 complete. The `hauling:` contract, schema 1.1.0 guard, loader support, example,
   docs, and formulation audit are on `feature/p11-log-hauling`.
 - 2026-10-25: #173 complete. Phase I cost/workload/goal models, result payloads, summary printer,
-  and the example solve are on the phase branch. #174 is next.
+  and the example solve are on the phase branch.
+- 2026-10-25: #174 complete. Phase II continuous-time scheduling, loader assignment/order, MTZ
+  routing, simulator/validator, and the example day-1 schedule are on the phase branch. #175 is next.
 
 ## Activation checklist
 

@@ -27,6 +27,14 @@ Key models
   solve the monthly flow model.
 - :class:`fhops.hauling.flow.FlowSolveResult` – flows, truckloads, inventories, workload, and
   solver provenance.
+- :class:`fhops.hauling.network.Truckload` / :class:`fhops.hauling.network.ScheduleProblem` –
+  individual loads and normalised Phase II data.
+- :func:`fhops.hauling.network.build_schedule_problem` – Phase I result to one-day scheduling data.
+- :func:`fhops.hauling.schedule.solve_schedule` – continuous-time truck/loader scheduling MIP.
+- :func:`fhops.hauling.schedule.simulate_plan` / :func:`fhops.hauling.schedule.validate_schedule` –
+  independent schedule oracles.
+- :class:`fhops.hauling.schedule.ScheduleSolveResult` – schedule, truck/loader summaries, plan, and
+  solver provenance.
 
 Example
 -------

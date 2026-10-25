@@ -31,6 +31,20 @@ from .flow import (
     solve_flow,
     summarize_flow_result,
 )
+from .network import (
+    ScheduleProblem,
+    Truckload,
+    build_schedule_problem,
+    build_schedule_problem_from_loads,
+)
+from .schedule import (
+    SchedulePlan,
+    ScheduleSolveResult,
+    build_schedule_model,
+    simulate_plan,
+    solve_schedule,
+    validate_schedule,
+)
 
 __all__ = [
     "ContractCompatibility",
@@ -55,4 +69,14 @@ __all__ = [
     "build_flow_problem",
     "solve_flow",
     "summarize_flow_result",
+    "ScheduleProblem",
+    "Truckload",
+    "build_schedule_problem",
+    "build_schedule_problem_from_loads",
+    "SchedulePlan",
+    "ScheduleSolveResult",
+    "build_schedule_model",
+    "simulate_plan",
+    "solve_schedule",
+    "validate_schedule",
 ]

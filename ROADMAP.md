@@ -187,7 +187,7 @@ daily-flow MIP with contractor workload balance, Phase II continuous-time truck/
 and a thesis-calibrated SA solver.
 - [x] #172 P11.1 Provenance, hauling contract, and formulation audit.
 - [x] #173 P11.2 Phase I monthly flow MILP and goal programming.
-- [ ] #174 P11.3 Phase II daily routing and scheduling MILP.
+- [x] #174 P11.3 Phase II daily routing and scheduling MILP.
 - [ ] #175 P11.4 SA solution approach, SPT decoder, and calibration.
 - [ ] #176 P11.5 FHOPS integration, CLI, reporting, and example case.
 - [ ] #177 P11.6 Validation, documentation, formulation sync, and close-out.
@@ -304,7 +304,7 @@ and an opt-in assistant.
     - The thesis case data is confidential, so acceptance uses structural fidelity, MIP-versus-SA
       parity on thesis-shaped synthetic instances, and the published qualitative findings. Exact
       company-dollar reproduction is explicitly not claimed.
-    - #172 (contract and formulation audit) and #173 (Phase I flow model) are complete; #174 (Phase II scheduling) is next.
+    - #172 (contract), #173 (Phase I flow), and #174 (Phase II scheduling) are complete; #175 (SA solver) is next.
 
 17. **FHOPS Web Application (#171; `notes/web_ui_expansion_plan.md`, `notes/web_ui_issue_tree.md`)**
     - Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,

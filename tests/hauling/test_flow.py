@@ -44,6 +44,9 @@ def _scenario(
     unsorted: bool = False,
     travel_minutes: float = 50.0,
     sorted_capacity_m3: float = 1000.0,
+    fixed_cost: float = 0.0,
+    variable_cost: float = 1.0,
+    overtime_cost: float = 2.0,
 ) -> Scenario:
     contractors = [
         Contractor(id=f"c{index + 1}", preferred_daily_truckloads=1.0)
@@ -51,12 +54,12 @@ def _scenario(
     ]
     trucks = [
         Truck(
-            id=f"c{index + 1}_h1",
-            contractor_id=f"c{index + 1}",
+            id=f"c{contractor_index + 1}_h{truck_index + 1}",
+            contractor_id=f"c{contractor_index + 1}",
             truck_type_id="highway",
         )
-        for index in range(contractor_count)
-        for _ in range(truck_count)
+        for contractor_index in range(contractor_count)
+        for truck_index in range(truck_count)
     ]
     config = HaulingConfig(
         planning_horizon_days=1,
@@ -67,9 +70,9 @@ def _scenario(
             TruckType(
                 id="highway",
                 capacity_m3=capacity_m3,
-                fixed_cost=0.0,
-                variable_cost_per_minute=1.0,
-                overtime_cost_per_minute=2.0,
+                fixed_cost=fixed_cost,
+                variable_cost_per_minute=variable_cost,
+                overtime_cost_per_minute=overtime_cost,
             )
         ],
         trucks=trucks,

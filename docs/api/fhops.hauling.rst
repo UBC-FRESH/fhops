@@ -12,3 +12,15 @@
    :undoc-members:
    :show-inheritance:
    :noindex:
+
+.. automodule:: fhops.hauling.network
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+.. automodule:: fhops.hauling.schedule
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:

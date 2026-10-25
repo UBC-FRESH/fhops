@@ -1,3 +1,39 @@
+# 2026-10-25 — P11.3: Phase II continuous-time truck routing and scheduling (#174)
+
+Part of #170. Adds the second Ghotb decomposition phase on `feature/p11-log-hauling`.
+
+- `src/fhops/hauling/network.py`: expands Phase I truckload counts into individual `Truckload`
+  records, resolves the central depot, pickup/delivery loaders, service times, loaded/empty travel,
+  and depot legs. Missing loaders or travel legs fail with a named diagnostic.
+- `src/fhops/hauling/schedule.py`: continuous-time pickup-and-delivery MIP with compatible-truck
+  assignment, start/end routes, MTZ subtour elimination, loader assignment and total order at each
+  pickup/delivery, truck-loader synchronization, empty return travel, and separate regular/overtime
+  minutes.
+- Objective: fixed dispatch cost + variable regular-minute cost + overtime cost.
+- `HaulArc.return_travel_minutes` is an optional empty yard-to-block leg; the loaded time is the
+  fallback.
+- `simulate_plan` recomputes the earliest schedule for a fixed route/loader order by max-plus
+  fixed-point iteration; `validate_schedule` checks compatibility, synchronization, loader overlap,
+  route travel, and return times.
+- Found and fixed a big-M defect: the time-relaxation constant must exceed the horizon, otherwise
+  feasible routes near the end of the day are cut off. The Phase II model now uses `2 * horizon`.
+- The example day-1 schedule (6 loads) solves optimally; the simulator matches the MIP times to
+  about `1e-12`.
+- Docs: Phase II Python API, output schemas, assumptions, and limitations; formulation-audit
+  implementation decisions.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 42 passed.
+- `examples/hauling` day 1 -> 6 loads, optimal; `validate_schedule` empty; simulator parity.
+- `ruff format --check src tests` / `ruff check src tests` -> clean.
+- `mypy src` -> no issues (133 files).
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures remain; no hauling code
+  touches that path.
+- `pre-commit run --files <changed files>` -> passed.
+
+Next: #175, the SA solution approach, SPT decoder, and calibration.
+
 # 2026-10-25 — P11.2: Phase I monthly flow MILP and goal programming (#173)
 
 Part of #170. Adds the first Ghotb decomposition phase on `feature/p11-log-hauling`.

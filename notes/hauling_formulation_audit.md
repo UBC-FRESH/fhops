@@ -338,3 +338,51 @@ The Phase I model is in `src/fhops/hauling/flow.py`. Its choices are:
 
 The result payload is documented in `docs/howto/hauling.rst` and in the `FlowSolveResult`
 docstring.
+
+## 9. P11.3 implementation decisions
+
+The Phase II model is in `src/fhops/hauling/schedule.py`; the data bridge is in
+`src/fhops/hauling/network.py`.
+
+1. **Load-level network.** Each Phase I truckload is an individual `Truckload` with a pickup block,
+   delivery yard, contractor, truck type, and nominal volume. The model does not merge loads.
+2. **One central depot.** The first scheduling cut requires exactly one depot and a `DepotLeg` for
+   every used block/yard and truck type. Multiple depots are a later extension; a missing leg is a
+   named error.
+3. **Truck assignment and route.** `z[v,l]` assigns a load to a compatible truck. `start[v,l]`,
+   `end[v,l]`, and `order[v,i,j]` define the route. The route flow balance plus MTZ `route_pos`
+   eliminates subtours.
+4. **Loader assignment and order.** `pick_assign[l,p]` / `delivery_assign[l,p]` choose one loader at
+   the load's location. `pick_before[i,j,p]` / `delivery_before[i,j,p]` impose a total order and
+   no-overlap constraints for each loader. This implements the thesis synchronization correction:
+   the common service start is shared by the assigned truck and loader, and waiting is the gap
+   between arrival and start, rather than a sum over all machines at the node.
+5. **Varying service time.** The service duration is `sum_p assign[l,p] * service[p]`, so multiple
+   loaders at one location can have different service times without a separate duration variable per
+   assignment.
+6. **Empty travel.** The loaded leg uses `HaulArc.travel_minutes`; the empty yard-to-next-block leg
+   uses `HaulArc.return_travel_minutes` when supplied, otherwise the loaded time. The depot legs use
+   `DepotLeg`.
+7. **Regular time and overtime.** `return_time = regular + overtime`, `regular <= Tmax`, and
+   `overtime <= Emax`. The objective charges fixed cost per used truck, variable cost on regular
+   minutes, and overtime cost on overtime minutes. This avoids the thesis's `r - e` ambiguity when
+   overtime is cheaper than regular time.
+8. **Big-M.** The time-relaxation constant is `2 * horizon`, not the horizon itself. A horizon-sized
+   M cuts off feasible routes when the relaxed predecessor/successor arc would finish near the end
+   of the day; the two-load example exposed this during P11.3.
+9. **Exact scope.** The MIP is intended for small and medium daily instances. It is not expected to
+   solve the 81-truckload real case; P11.4's SA solver handles that scale.
+10. **Simulator oracle.** `simulate_plan` recomputes the earliest schedule for a fixed route and
+    loader order by max-plus fixed-point iteration. `validate_schedule` checks compatibility,
+    synchronization, loader overlap, route travel, and return times. The example day-1 schedule
+    matches the simulator to about `1e-12`.
+11. **Loader travel.** The thesis assumes stationary loaders, so loader travel cost is zero. The
+    contract keeps `loader_travel_cost_per_km` for a later mobile-loader extension; the first cut
+    does not use it.
+
+Limitations recorded for P11.4/P11.5:
+
+- One depot only; multiple depots need a truck-to-depot assignment.
+- No lunch breaks, driver changes, or shift boundaries inside the day.
+- The exact model uses pairwise loader sequencing, which grows quadratically with loads at a
+  location; the SA solver needs a more scalable decoder.

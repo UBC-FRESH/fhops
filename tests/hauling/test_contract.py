@@ -313,3 +313,15 @@ def test_hauling_can_be_a_separate_yaml_file(tmp_path: Path) -> None:
     scenario = load_scenario(tmp_path / "scenario.yaml")
     assert scenario.hauling is not None
     assert scenario.hauling.planning_horizon_days == 5
+
+
+def test_haul_arc_empty_return_defaults_to_loaded_time() -> None:
+    arc = HaulArc(
+        block_id="b1",
+        yard_id="y1",
+        truck_type_id="highway",
+        travel_minutes=120.0,
+    )
+    assert arc.empty_travel_minutes() == 120.0
+    faster_empty = arc.model_copy(update={"return_travel_minutes": 90.0})
+    assert faster_empty.empty_travel_minutes() == 90.0

@@ -433,6 +433,9 @@ class HaulArc(BaseModel):
         unloading. Must be greater than zero.
     distance_km:
         Optional distance for reporting and cost checks. Non-negative.
+    return_travel_minutes:
+        Optional empty return time from the yard to the block. When ``None``, Phase II uses
+        ``travel_minutes`` for the empty leg as well.
     """
 
     block_id: str
@@ -440,6 +443,7 @@ class HaulArc(BaseModel):
     truck_type_id: str
     travel_minutes: float
     distance_km: float | None = None
+    return_travel_minutes: float | None = None
 
     @field_validator("travel_minutes")
     @classmethod
@@ -454,6 +458,21 @@ class HaulArc(BaseModel):
         if value is not None and value < 0:
             raise ValueError("HaulArc.distance_km must be non-negative")
         return value
+
+    @field_validator("return_travel_minutes")
+    @classmethod
+    def _return_travel_positive(cls, value: float | None) -> float | None:
+        if value is not None and value <= 0:
+            raise ValueError("HaulArc.return_travel_minutes must be > 0 when supplied")
+        return value
+
+    def empty_travel_minutes(self) -> float:
+        """Return the empty return time from the yard to the block."""
+        return (
+            self.return_travel_minutes
+            if self.return_travel_minutes is not None
+            else self.travel_minutes
+        )
 
 
 class ContractorBlock(BaseModel):

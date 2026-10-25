@@ -16,9 +16,9 @@ The model follows the two-phase decomposition in Ghotb (2023):
    schedule decoder.
 
 P11.1 ships the contract and validation. P11.2 adds the Phase I flow model and goal programming.
-The Phase II scheduling model and the SA solver land in P11.3-P11.4; the hauling CLI arrives in
-P11.5. Until then, ``fhops validate`` accepts a hauling section and reports its dimensions, and the
-Phase I model is available from Python.
+P11.3 adds the Phase II continuous-time scheduling model and its simulator/validator. The SA solver
+lands in P11.4 and the hauling CLI in P11.5. Until then, ``fhops validate`` accepts a hauling section
+and reports its dimensions, and the Phase I/II models are available from Python.
 
 Schema version
 --------------
@@ -193,13 +193,65 @@ Units and assumptions:
 - The workload deviation is linearised with two inequalities; goal deviations are non-negative
   continuous variables.
 
+Phase II schedule
+-----------------
+
+The Phase II model turns the Phase I integer truckloads into a single-day truck and loader
+schedule:
+
+.. code-block:: python
+
+   from fhops.hauling import (
+       build_schedule_problem,
+       solve_schedule,
+       simulate_plan,
+       validate_schedule,
+   )
+
+   flow_problem = build_flow_problem(scenario)
+   flow_result = solve_flow(flow_problem)
+   schedule_problem = build_schedule_problem(scenario, flow_result, day=1)
+   result = solve_schedule(schedule_problem, time_limit=60)
+   print(result.schedule.head())
+   print(result.truck_summary.head())
+   print(result.loader_summary.head())
+   print(validate_schedule(schedule_problem, result.schedule))
+
+The model assigns every truckload to exactly one compatible truck, routes each truck from the
+central depot through its loads and back, assigns each pickup/delivery load to a loader at its
+location, and orders the loads at each loader. Time is continuous. Regular minutes and overtime are
+separate variables, so the objective charges:
+
+``sum fixed_cost * used_truck + sum variable_cost * regular_minutes
++ sum overtime_cost * overtime_minutes``.
+
+The result contains:
+
+- ``schedule``: one row per load with the truck, contractor, type, pickup/delivery loaders,
+  arrival, service start/finish, waiting, route order, and truck return/regular/overtime minutes;
+- ``truck_summary``: used trucks, load counts, return time, regular/overtime minutes, and cost
+  components;
+- ``loader_summary``: loader kind/location, load count, busy minutes, first start, and last finish;
+- ``plan``: the truck routes and loader orders.
+
+``simulate_plan`` recomputes the earliest schedule for the result's route and loader order by
+fixed-point iteration, without using the MIP's time variables. ``validate_schedule`` checks
+compatibility, synchronisation, loader overlap, route travel, and return-time consistency. Use both
+as independent oracles.
+
+The exact MIP is intended for small and medium daily instances. The real case in the thesis has 81
+truckloads and 168 nodes; Phase III (P11.4) handles that scale with simulated annealing.
+
 Limitations
 -----------
 
 - The first cut is deterministic. Emissions, electric-truck charging, stochastic supply/demand,
   loader breakdowns, lunch breaks, driver changes, and contractor collaboration are out of scope.
-- The contract does not build or solve a model yet. The Phase I/II models and the SA solver are
-  tracked as P11.2-P11.4.
+- Phase II requires exactly one depot and a depot leg for every used block/yard and truck type. A
+  missing leg is a named error, never an invented travel time.
+- Phase II uses the same loaded travel time for the empty yard-to-block leg unless
+  ``HaulArc.return_travel_minutes`` is supplied.
+- The exact schedule MIP is for small/medium days. The SA solver in P11.4 is the large-case path.
 - The confidential company case in the thesis is not redistributable. The repository example is
   synthetic; exact reproduction of the case's dollar values is not a project target.
 
