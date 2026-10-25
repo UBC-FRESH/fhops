@@ -1,15 +1,12 @@
+"""FEMIC LidarBC bundle contract tests (P14.1)."""
+
 from __future__ import annotations
 
 import hashlib
 import json
 from pathlib import Path
 
-import geopandas as gpd
-import numpy as np
 import pytest
-import rasterio
-from rasterio.transform import from_origin
-from shapely.geometry import box
 
 from fhops.scenario.lidar import (
     FemicLidarError,
@@ -24,25 +21,32 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _bundle(tmp_path: Path) -> Path:
+def _bundle(tmp_path: Path, *, with_raster: bool = False) -> Path:
     root = tmp_path / "bundle"
     products = root / "products"
     products.mkdir(parents=True)
     raster_path = products / "slope__01__slope.tif"
-    values = np.array([[10.0, 20.0, 30.0], [40.0, 50.0, 60.0], [70.0, 80.0, 90.0]])
-    with rasterio.open(
-        raster_path,
-        "w",
-        driver="GTiff",
-        width=3,
-        height=3,
-        count=1,
-        dtype="float32",
-        crs="EPSG:3005",
-        transform=from_origin(0, 3, 1, 1),
-        nodata=-9999.0,
-    ) as dataset:
-        dataset.write(values, 1)
+    if with_raster:
+        np = pytest.importorskip("numpy")
+        rasterio = pytest.importorskip("rasterio")
+        from rasterio.transform import from_origin  # noqa: PLC0415
+
+        values = np.array([[10.0, 20.0, 30.0], [40.0, 50.0, 60.0], [70.0, 80.0, 90.0]])
+        with rasterio.open(
+            raster_path,
+            "w",
+            driver="GTiff",
+            width=3,
+            height=3,
+            count=1,
+            dtype="float32",
+            crs="EPSG:3005",
+            transform=from_origin(0, 3, 1, 1),
+            nodata=-9999.0,
+        ) as dataset:
+            dataset.write(values, 1)
+    else:
+        raster_path.write_bytes(b"synthetic slope grid")
     manifest = {
         "schema_version": "femic.lidar.product.v1",
         "layout_version": "femic.lidar.bundle.v1",
@@ -118,7 +122,10 @@ def test_expected_pin_mismatch_is_rejected(tmp_path: Path) -> None:
 
 
 def test_polygon_summary(tmp_path: Path) -> None:
-    root = _bundle(tmp_path)
+    gpd = pytest.importorskip("geopandas")
+    from shapely.geometry import box  # noqa: PLC0415
+
+    root = _bundle(tmp_path, with_raster=True)
     bundle = load_femic_lidar_bundle(root)
     polygons = gpd.GeoDataFrame(
         {"feature_id": ["p1"]},
@@ -142,7 +149,10 @@ def test_polygon_summary(tmp_path: Path) -> None:
 
 
 def test_polygon_summary_rejects_crs_mismatch(tmp_path: Path) -> None:
-    root = _bundle(tmp_path)
+    gpd = pytest.importorskip("geopandas")
+    from shapely.geometry import box  # noqa: PLC0415
+
+    root = _bundle(tmp_path, with_raster=True)
     bundle = load_femic_lidar_bundle(root)
     polygons = gpd.GeoDataFrame(
         {"feature_id": ["p1"]},

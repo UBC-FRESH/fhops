@@ -344,6 +344,7 @@ reimplementing discovery or materialization.
   - [x] Pin bundle id/version and per-product checksums
   - [x] Validate manifest, licence, CRS, resolution, vertical datum, and source tiles
   - [x] Add polygon support summaries without reprojection
+  - [x] Add optional scenario `lidar_products`/`lidar_support` pins and loader validation
   - [x] Validate shared slope/CHM parity with WS4
 
 Acceptance:

@@ -1,5 +1,6 @@
 """Scenario contract models (Pydantic schemas, validators)."""
 
+from .lidar import LidarProductRef, LidarSupport
 from .models import (
     SUPPORTED_SCHEMA_VERSIONS,
     Block,
@@ -33,6 +34,8 @@ __all__ = [
     "CrewAssignment",
     "SalvageProcessingMode",
     "ScheduleLock",
+    "LidarProductRef",
+    "LidarSupport",
     "BlockInitialState",
     "MachineInitialState",
     "ScenarioInitialState",

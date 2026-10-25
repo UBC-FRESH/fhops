@@ -170,8 +170,8 @@ def summarize_femic_lidar_for_polygons(
     try:
         import geopandas as gpd
         import numpy as np
-        import rasterio  # type: ignore[import-untyped]
-        import rasterio.mask  # type: ignore[import-untyped]
+        import rasterio
+        import rasterio.mask
     except ImportError as exc:  # pragma: no cover - dependency boundary
         raise FemicLidarError(
             "Polygon summaries require the `geo` optional dependencies plus rasterio."

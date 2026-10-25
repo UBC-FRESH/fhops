@@ -3905,4 +3905,7 @@ PY
   datum, and source-tile membership, and summarize slope/CHM rasters over
   block/landing support. Added the `fhops[lidar]` optional extra, the contract
   note, reference docs, and shared parity evidence against
-  `lidarbc-995fb1f771f4d7fe` (max difference 0.0 versus WS4).
+  `lidarbc-995fb1f771f4d7fe` (max difference 0.0 versus WS4). Optional scenario
+  `lidar_products`/`lidar_support` fields record the bundle pin and aggregated
+  slope/canopy/vertical-structure evidence; the loader validates block/landing/road ids, duplicate
+  rows, and unpinned bundles while leaving existing scenarios unchanged.

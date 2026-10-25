@@ -12,6 +12,7 @@ import yaml
 from pydantic import TypeAdapter
 
 from fhops.hauling.contract import HaulingConfig
+from fhops.scenario.contract.lidar import LidarProductRef, LidarSupport
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
@@ -324,6 +325,16 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     if "objective_weights" in meta:
         extras["objective_weights"] = TypeAdapter(ObjectiveWeights).validate_python(
             meta["objective_weights"]
+        )
+
+    if "lidar_products" in meta:
+        extras["lidar_products"] = TypeAdapter(list[LidarProductRef]).validate_python(
+            meta["lidar_products"]
+        )
+
+    if "lidar_support" in meta:
+        extras["lidar_support"] = TypeAdapter(list[LidarSupport]).validate_python(
+            meta["lidar_support"]
         )
 
     if meta.get("initial_state") is not None:

@@ -22,6 +22,38 @@ FHOPS records:
 - per-product CRS, resolution, vertical datum, source-tile membership;
 - path containment, file size, and SHA-256.
 
+## Scenario Pin and Support
+
+A scenario may also record the pin and aggregated support rows so a run is reproducible without
+side files:
+
+```yaml
+lidar_products:
+  - bundle_id: lidarbc-tfl6-2026.10
+    bundle_version: 2026.10.0-tfl6
+    manifest_sha256: <64 hex>
+    licence_id: OGL-BC
+    manifest_path: lidarbc-tfl6-2026.10/manifest.json
+lidar_support:
+  - support_unit: block
+    support_id: B01
+    bundle_id: lidarbc-tfl6-2026.10
+    bundle_version: 2026.10.0-tfl6
+    product: slope
+    aggregation: area_weighted_mean
+    native_resolution_m: 1.0
+    support_area_m2: 12000.0
+    valid_pixels: 12000
+    slope_percent: 8.2
+    canopy_cover_percent: 62.0
+    provenance: FEMIC p79.8; 1 m slope/CHM; area-weighted within block polygon
+```
+
+Both sections are optional. Block/landing support ids must exist in the scenario, road ids must
+exist when `road_construction` is present, support rows must reference a pinned bundle when pins are
+present, and duplicate pins/rows are rejected. Existing scenarios without LiDAR fields remain
+unchanged.
+
 ## Support Mapping
 
 `summarize_femic_lidar_for_polygons` maps a bundle raster to block/landing
