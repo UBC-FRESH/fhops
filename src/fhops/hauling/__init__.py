@@ -23,6 +23,14 @@ from .contract import (
     Truck,
     TruckType,
 )
+from .flow import (
+    FlowSolveResult,
+    HaulingFlowProblem,
+    build_flow_model,
+    build_flow_problem,
+    solve_flow,
+    summarize_flow_result,
+)
 
 __all__ = [
     "ContractCompatibility",
@@ -41,4 +49,10 @@ __all__ = [
     "SortYard",
     "Truck",
     "TruckType",
+    "FlowSolveResult",
+    "HaulingFlowProblem",
+    "build_flow_model",
+    "build_flow_problem",
+    "solve_flow",
+    "summarize_flow_result",
 ]

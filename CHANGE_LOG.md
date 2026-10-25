@@ -1,3 +1,38 @@
+# 2026-10-25 — P11.2: Phase I monthly flow MILP and goal programming (#173)
+
+Part of #170. Adds the first Ghotb decomposition phase on `feature/p11-log-hauling`.
+
+- `src/fhops/hauling/flow.py`: a sparse Pyomo model for daily sorted/unsorted flows from blocks to
+  sort yards, with supply balance, truckload linking, contractor workload deviation, yard
+  inventory, storage/processing capacities, and fleet capacity.
+- Objectives: Ghotb's cost objective `Z1`, the workload objective `Z2`, and a goal-programming
+  solve with normalized positive deviations.
+- Compatibility is enforced by index restriction rather than big-M; the absolute workload deviation
+  is linearised; goal deviations are non-negative continuous variables.
+- A goal solve with no explicit goals runs cost-only first, uses its objective as `Goal1`, sets
+  `Goal2 = 0`, and derives preferred daily truckloads from the cost plan.
+- `FlowSolveResult` carries flows, truckloads, yard and block inventory, contractor workload,
+  objective values, goal deviations, solver provenance, and diagnostics. `summarize_flow_result`
+  gives a compact CLI/notebook summary.
+- HiGHS is the default; Gurobi is accepted. Infeasible HiGHS solves are reported as `infeasible`,
+  not as a generic error.
+- The `examples/hauling/` supply/demand was reduced to a feasible five-day demo (300/250/250 m3
+  supply and 60/50/50 m3/day demand) and the preferred workloads were set to 4/3.
+- Docs: Phase I Python API, output schemas, assumptions, and the formulation-audit implementation
+  decisions.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 31 passed.
+- `examples/hauling/scenario.yaml` -> cost solve optimal; flows, truckloads, and workload populated.
+- `ruff format --check src tests` / `ruff check src tests` -> clean.
+- `mypy src` -> no issues (131 files).
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures (`iteration_count` vs
+  `threads`) remain; no hauling code touches that path.
+- `pre-commit run --files <changed files>` -> passed.
+
+Next: #174, the Phase II daily routing and scheduling MILP.
+
 # 2026-10-25 — P11.1: hauling contract, schema 1.1.0, and formulation audit (#172)
 
 Activated P11 (`feature/p11-log-hauling`, from `main` at `d130fed`) and completed its first child,

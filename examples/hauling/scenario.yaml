@@ -26,10 +26,10 @@ hauling:
   contractors:
     - id: c1
       name: Contractor One
-      preferred_daily_truckloads: 8
+      preferred_daily_truckloads: 4
     - id: c2
       name: Contractor Two
-      preferred_daily_truckloads: 6
+      preferred_daily_truckloads: 3
   truck_types:
     - id: highway
       capacity_m3: 45
@@ -91,25 +91,25 @@ hauling:
     - {loader_id: ldr_b3, location_id: b3, location_kind: pickup, service_minutes: 22}
     - {loader_id: ldr_y1, location_id: y1, location_kind: delivery, service_minutes: 18}
   supply:
-    - {block_id: b1, log_sort_id: fir_saw, sorted_m3: 800, unsorted_m3: 0}
-    - {block_id: b2, log_sort_id: hemlock_pulp, sorted_m3: 600, unsorted_m3: 0}
-    - {block_id: b3, log_sort_id: mixed_unsorted, sorted_m3: 0, unsorted_m3: 900}
+    - {block_id: b1, log_sort_id: fir_saw, sorted_m3: 300, unsorted_m3: 0}
+    - {block_id: b2, log_sort_id: hemlock_pulp, sorted_m3: 250, unsorted_m3: 0}
+    - {block_id: b3, log_sort_id: mixed_unsorted, sorted_m3: 0, unsorted_m3: 250}
   demand:
-    - {yard_id: y1, log_sort_id: fir_saw, day: 1, volume_m3: 160}
-    - {yard_id: y1, log_sort_id: fir_saw, day: 2, volume_m3: 160}
-    - {yard_id: y1, log_sort_id: fir_saw, day: 3, volume_m3: 160}
-    - {yard_id: y1, log_sort_id: fir_saw, day: 4, volume_m3: 160}
-    - {yard_id: y1, log_sort_id: fir_saw, day: 5, volume_m3: 160}
-    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 1, volume_m3: 120}
-    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 2, volume_m3: 120}
-    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 3, volume_m3: 120}
-    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 4, volume_m3: 120}
-    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 5, volume_m3: 120}
-    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 1, volume_m3: 180}
-    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 2, volume_m3: 180}
-    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 3, volume_m3: 180}
-    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 4, volume_m3: 180}
-    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 5, volume_m3: 180}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 1, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 2, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 3, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 4, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 5, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 1, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 2, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 3, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 4, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 5, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 1, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 2, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 3, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 4, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 5, volume_m3: 50}
   haul_arcs:
     - {block_id: b1, yard_id: y1, truck_type_id: highway, travel_minutes: 150, distance_km: 92}
     - {block_id: b1, yard_id: y1, truck_type_id: offhighway, travel_minutes: 165, distance_km: 92}

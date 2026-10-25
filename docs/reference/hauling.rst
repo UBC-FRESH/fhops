@@ -22,6 +22,11 @@ Key models
 - :class:`fhops.hauling.contract.HaulingSupply` / :class:`fhops.hauling.contract.HaulingDemand` /
   :class:`fhops.hauling.contract.HaulArc` – the Phase I flow inputs.
 - :class:`fhops.hauling.contract.DriverPolicy` – regular time and overtime rules.
+- :class:`fhops.hauling.flow.HaulingFlowProblem` – normalised Phase I data.
+- :func:`fhops.hauling.flow.build_flow_problem` / :func:`fhops.hauling.flow.solve_flow` – build and
+  solve the monthly flow model.
+- :class:`fhops.hauling.flow.FlowSolveResult` – flows, truckloads, inventories, workload, and
+  solver provenance.
 
 Example
 -------

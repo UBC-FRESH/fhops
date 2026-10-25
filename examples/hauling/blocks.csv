@@ -1,4 +1,4 @@
 id,landing_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,stem_density_per_ha,ground_slope_percent
-b1,l1,800,1,20,0.42,310,620,12
-b2,l2,600,1,20,0.38,280,700,18
-b3,l2,900,1,20,0.31,240,760,9
+b1,l1,300,1,20,0.42,310,620,12
+b2,l2,250,1,20,0.38,280,700,18
+b3,l2,250,1,20,0.31,240,760,9

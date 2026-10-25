@@ -15,9 +15,10 @@ The model follows the two-phase decomposition in Ghotb (2023):
 3. **Phase III** solves the large daily scheduling instances with simulated annealing and an SPT
    schedule decoder.
 
-P11.1 ships the contract and validation. The Phase I/II models and the SA solver land in
-P11.2-P11.4. Until then, ``fhops validate`` accepts a hauling section and reports its dimensions;
-the hauling CLI arrives in P11.5.
+P11.1 ships the contract and validation. P11.2 adds the Phase I flow model and goal programming.
+The Phase II scheduling model and the SA solver land in P11.3-P11.4; the hauling CLI arrives in
+P11.5. Until then, ``fhops validate`` accepts a hauling section and reports its dimensions, and the
+Phase I model is available from Python.
 
 Schema version
 --------------
@@ -144,6 +145,53 @@ Units and defaults
 - ``planning_horizon_days`` defaults to 20 (four weeks); ``start_day`` defaults to 1.
 - ``driver_policy.regular_minutes`` defaults to 510 (8.5 h); ``max_overtime_minutes`` defaults to
   150 (2.5 h). These match the thesis case.
+
+Phase I solve
+-------------
+
+The Phase I model is a Python API in :mod:`fhops.hauling.flow`:
+
+.. code-block:: python
+
+   from fhops.scenario.io import load_scenario
+   from fhops.hauling.flow import build_flow_problem, solve_flow, summarize_flow_result
+
+   scenario = load_scenario("examples/hauling/scenario.yaml")
+   problem = build_flow_problem(scenario)
+   cost = solve_flow(problem)                      # Ghotb's Z1
+   balanced = solve_flow(problem, objective="goal", weights=(1.0, 0.5))
+   print(summarize_flow_result(balanced))
+   print(balanced.flows.head())
+   print(balanced.contractor_workload.head())
+
+``solve_flow`` accepts ``objective="cost"``, ``"workload"``, or ``"goal"``. A goal solve with no
+explicit ``goals`` runs a cost-only solve first, uses its objective as ``Goal1``, sets ``Goal2`` to
+zero, and derives each contractor's preferred daily truckloads from that cost plan unless the
+contract or the caller supplies them. The normalized goal objective is
+
+``w1 * dev_cost / max(|Goal1|, 1) + w2 * dev_workload / max(sum(phi), 1)``.
+
+The result payload carries:
+
+- ``flows``: block/yard/sort/contractor/type/day volumes;
+- ``truckloads``: sorted and unsorted load counts per block/yard/contractor/type/day;
+- ``yard_inventory``: unsorted and water inventory, processed volume, and demand;
+- ``block_inventory``: sorted and unsorted roadside inventory at the horizon end;
+- ``contractor_workload``: daily truckloads, preferred level, and deviation;
+- objective values, goal deviations, solver provenance, and diagnostics.
+
+Units and assumptions:
+
+- ``cycle_minutes = 2 * HaulArc.travel_minutes + pickup service + delivery service``.
+- Transport cost per started truckload is ``TruckType.variable_cost_per_minute * cycle_minutes``.
+  The fixed truck cost belongs to Phase II, which decides whether to dispatch a truck or pay
+  overtime.
+- The fleet-capacity constraint uses ``DriverPolicy.regular_minutes``.
+- A zero ``roadside_inventory_penalty_per_m3`` lets the model leave supply at the block for free.
+  Set a positive penalty for a meaningful flow plan.
+- Compatibility is enforced by omitting infeasible variables, not by a big-M.
+- The workload deviation is linearised with two inequalities; goal deviations are non-negative
+  continuous variables.
 
 Limitations
 -----------

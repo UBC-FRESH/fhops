@@ -302,3 +302,39 @@ calibration evidence.
   named field and record.
 - The example in `examples/hauling/` validates.
 - This audit is the reference for P11.2-P11.4.
+
+## 8. P11.2 implementation decisions
+
+The Phase I model is in `src/fhops/hauling/flow.py`. Its choices are:
+
+1. **Compatibility by index restriction.** Instead of Ghotb's big-M constraints (3-5)/(3-6), the
+   model only creates a sorted or unsorted variable when the contractor can serve the block, owns a
+   truck of the type, the type can carry that load kind, and a haul arc exists. This is equivalent
+   and tighter. A supply that has no feasible arc remains at the block and pays the roadside
+   inventory penalty.
+2. **Workload linearisation.** The absolute-value constraint (3-9) is implemented as
+   `loads - phi_o <= u_o` and `phi_o - loads <= u_o`.
+3. **Continuous goal deviations.** `dev_cost` and `dev_workload` are non-negative continuous
+   variables. This resolves the thesis/paper disagreement and avoids integrality that the objective
+   does not need.
+4. **Goal normalisation.** The goal objective is
+   `w1 * dev_cost / max(|Goal1|, 1) + w2 * dev_workload / max(sum(phi), 1)`.
+   The second scale is the sum of preferred daily truckloads, not `Goal2` (which is usually zero).
+5. **Cycle time.** `cycle_minutes = 2 * HaulArc.travel_minutes + pickup_service +
+   delivery_service`. The pickup/delivery service is the fastest configured loader at that
+   location, or `HaulingConfig.default_loader_service_minutes` when no loader binding supplies a
+   value.
+6. **Transport cost.** `TruckType.variable_cost_per_minute * cycle_minutes` is charged per started
+   truckload. `TruckType.fixed_cost` is intentionally not used in Phase I; Phase II charges it when
+   a truck is dispatched.
+7. **Fleet capacity.** The model uses `TruckType` counts from enabled `Truck` records and the
+   `DriverPolicy.regular_minutes` limit. It does not add `max_overtime_minutes` to Phase I.
+8. **Roadside penalty.** The contract accepts a zero penalty, but a zero penalty makes leaving all
+   supply at the block cost-free. The example sets a positive penalty and the how-to says so.
+9. **Goal goals.** A goal solve with no explicit goals runs a cost-only solve, uses `Z1` as
+   `Goal1`, sets `Goal2 = 0`, and derives `phi_o` from the cost plan's average daily truckloads.
+10. **Solver.** HiGHS is the default. `gurobi` is accepted when installed and licensed. Infeasible
+    HiGHS solves are reported as `status="infeasible"` rather than a generic error.
+
+The result payload is documented in `docs/howto/hauling.rst` and in the `FlowSolveResult`
+docstring.

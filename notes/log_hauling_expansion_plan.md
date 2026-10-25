@@ -1,7 +1,7 @@
 # Log Hauling and Mill Delivery Expansion Plan (Ghotb-Inspired)
 
 Date: 2026-10-25
-Status: active (P11.1)
+Status: active (P11.2)
 Phase: P11
 Branch: `feature/p11-log-hauling` (created from `main` at activation)
 Parent issue: #170
@@ -614,8 +614,8 @@ Names are provisional; P11.1 fixes the public surface and docstrings.
 
 ## 14. Child tasks
 
-- **#172 P11.1** Provenance, contract, and formulation audit.
-- **#173 P11.2** Phase I monthly flow MILP and goal programming.
+- **#172 P11.1** Provenance, contract, and formulation audit. Complete (`1e32fce`).
+- **#173 P11.2** Phase I monthly flow MILP and goal programming. Complete.
 - **#174 P11.3** Phase II daily routing and scheduling MILP.
 - **#175 P11.4** SA solution approach, SPT decoder, and calibration.
 - **#176 P11.5** FHOPS integration, CLI, reporting, and example case.
