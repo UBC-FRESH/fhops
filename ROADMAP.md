@@ -179,8 +179,8 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
 - [x] #152 Labelled canonical operational formulation: OBJ/OBJ2/E1–E13 (E8a–c)/INIT/D1 labels, Block → Pyomo mapping table, docs page anchor `operational-milp-formulation` for citation, drift test (no code change).
 - [x] #147 Final SoftwareX asset regeneration on the final 1.0.1 code (50e6f9b, incl. the #151 performance fix): one sequential full pipeline run on an idle host (2 h 57 min; `assets_hash` 5e069c58…, recipe v2, `asset_hash.py verify` passes), tables/figures rebuilt, asset audit 0 failures, plans/objectives identical to the superseded a0b2799 run (#150); manuscript values manuscript → committed → new in `notes/v101_maintenance_plan.md` §8.28.
 
-## Phase 11 — Log Hauling and Mill Delivery Optimization (Ghotb-Inspired) — queued
-Parent #170; branch `feature/p11-log-hauling` (created at activation); plan
+## Phase 11 — Log Hauling and Mill Delivery Optimization (Ghotb-Inspired) — active
+Parent #170; branch `feature/p11-log-hauling` (active from 2026-10-25); plan
 `notes/log_hauling_expansion_plan.md`; issue tree `notes/log_hauling_issue_tree.md`.
 Adds the operational log-hauling layer missing between harvest and mill demand: Phase I monthly
 daily-flow MIP with contractor workload balance, Phase II continuous-time truck/loader scheduling,
