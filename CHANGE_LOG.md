@@ -1,3 +1,273 @@
+# 2026-10-25 — P12.6: editing, assistant, packaging, security, and close-out (#183)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- `GET /api/scenarios/{run_id}` and validated `PUT` endpoints for operational objective weights and
+  schedule locks, inline hauling driver policy/contractor preferences, and tactical demand
+  envelopes.
+- Operational/hauling edits replace top-level YAML sections and validate a temporary file with
+  `load_scenario` before the original is replaced; comments elsewhere are preserved. Invalid edits
+  return the loader's message and leave the file untouched.
+- Tactical edits write a validated sparse overlay and a derived merged scenario under the first run
+  root; the base tactical bundle is never rewritten. The Scenario tab can pass the derived path to
+  the Run tab.
+- Scenario tab for the three planner skins: objective/lock form and table, driver policy/contractor
+  table, and demand-envelope table with overlay validation.
+- Optional local assistant (`--allow-agent`, `--agent-timeout`) calling the installed `opencode` CLI
+  without a shell; off by default, hidden in the UI unless enabled, and guarded by `/api/agent`.
+- Packaging verification: wheel contains the SPA, vendor assets, and four skins; `fhops[web]`
+  installs in a clean venv; a core-only install has no FastAPI/uvicorn and still runs the CLI.
+- Security tests for loopback/remote bind, static/scenario traversal, scenario-root allowlists,
+  reviewer read-only actions, assistant opt-in, and request bounds.
+- Docs cover scenario editing, overlays, assistant risk, and packaging; SPA cache-bust is `?v=9`.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 50 passed.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+- `tests/web/test_packaging.py`: wheel contains `fhops/web/static/*`, vendor files, and all four
+  skins; the `web` extra metadata is present.
+- Clean-venv `pip install 'fhops[web]'` wheel smoke: `/api/health` and `/` served with `?v=9`.
+- Core-only clean venv: `fhops --help` works and FastAPI/uvicorn are absent.
+- Headless DOM: Scenario panels render for all three planner skins; a UI objective save preserved
+  the scenario comment and reloaded through `load_scenario`; reviewer hides Scenario/Run.
+
+Close-out report: `notes/reports/p12-closeout.md`. Next: phase PR review and merge.
+
+# 2026-10-25 — P12.5: live runs, SSE, and run control (#182)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- `POST /api/runs` starts an allowlisted operational, hauling, or tactical–operational CLI run as
+  a subprocess, with the scenario resolved under `--workspace` and output under the first run root.
+  The allowlist covers `solve-heur`/`solve-ils`/`solve-tabu`/`solve-mip-operational`, playback and
+  rolling horizon; `haul plan`/`schedule`/`solve`; and tactical solve/report.
+- `GET /api/runs/{id}/status`, `POST /api/runs/{id}/control` (`pause`/`resume`/`stop`), and a
+  named-event SSE endpoint at `GET /api/runs/{id}/events`.
+- SSE reads the run's own telemetry (`telemetry.jsonl`, `steps/*.jsonl`, and rolling
+  `iterations.jsonl`), emits domain-tagged `progress`, `kpis`, `assignment`, `done`, and `error`,
+  is throttled to at most 2 Hz, closes after ten minutes, and returns 204 for a finished run.
+- Run-panel UI for the three planner skins: scenario/options form, start, objective sparkline,
+  status, and pause/resume/stop, with status polling when EventSource is unavailable.
+- Process manager writes a running manifest immediately and refreshes it with the final status;
+  output directories are bounded and CLI crashes cannot take the API down.
+- CLI `fhops web --workspace` selects the scenario/process working directory.
+- Tests cover subprocess startup for all three domains, expected command construction for every
+  allowlisted run type, SSE progress/kpis/assignment/done, finished-run 204, client disconnect,
+  path/type/option rejection, and pause/resume/stop.
+- SPA cache-bust bumped to `?v=8`; docs cover live runs and the workspace boundary.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 36 passed.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Headless DOM harness: the Run tab renders in the planner skins and a UI-started operational run
+  reaches `finished: ok` with no JS page errors.
+- Live demo: `POST /api/runs` started operational, hauling, and tactical runs; `/events` streamed
+  status, objective/KPI, and assignment events, and the finished run returned 204.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #183, editing, assistant, packaging, security, docs, and close-out.
+
+# 2026-10-25 — P12.4: domain panels, KPI cards, reports, and comparison (#181)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- Operational Schedule: machine × day/shift Gantt from the assignment CSV plus the assignment table.
+- Hauling Haul: run provenance, then flows/truckloads, a truck/loader Gantt by truck/minute, yard
+  inventory and contractor workload grouped bars, trucks, and loaders.
+- Tactical Tactical: period Gantt of harvest decisions plus production, flows, inventory, purchases,
+  roads, silviculture, and fleet tables.
+- KPIs: numeric cards, full key/value payload, and run summary.
+- Reports: file tree plus a domain-aware report builder; every table has client-side CSV download.
+- Compare: two-run selectors, summaries, and a KPI table with `B − A` deltas.
+- Fixed two panel-render promise/append bugs found by the headless DOM harness.
+- SPA cache-bust bumped to `?v=7`.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 25 passed.
+- Headless DOM harness across all three runs and panels: no JS page errors; operational Gantt,
+  hauling provenance/dataset chooser, tactical dataset chooser, KPI cards, reports, and compare all
+  render.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #182, live runs, SSE, and run control.
+
+# 2026-10-25 — P12.3 fix: reset the MapLibre instance when switching panels/runs
+
+- Switching from hauling to operational/tactical (or clicking Map while the map was already
+  rendering) could reuse a MapLibre instance whose container had been replaced. The map then stayed
+  on "loading map…" or was blank.
+- `renderMap` now destroys the previous map instance and uses a render token so stale async
+  responses cannot install a map into a detached container. Leaving the Map panel also destroys the
+  instance.
+- Added a static regression check for the teardown/token path and bumped the SPA cache-bust to
+  `?v=5`.
+
+Verification:
+- Headless DOM harness against the live service: operational 6 features, hauling 3, tactical 5; one
+  live map instance per mode; no JS errors.
+- `PYTHONPATH=src pytest -q tests/web` -> 25 passed.
+- `node --check src/fhops/web/static/app.js` -> clean.
+
+# 2026-10-25 — P12.3 CI fix: pyproj typing and GeoJSON newline
+
+- Added the mypy override for optional `pyproj` imports so the pre-commit/CI mypy gate passes
+  without pyproj stubs.
+- Normalised the generated `examples/hauling_scale/blocks.geojson` end-of-file newline.
+- No runtime behaviour changed; the WGS84 transformation itself landed in `741a983`.
+
+# 2026-10-25 — P12.3 fix: transform projected geometry to WGS84 for MapLibre
+
+- MapLibre rejects projected coordinates (BC Albers, EPSG:3005) as invalid lng/lat. The map service
+  now transforms geometry to EPSG:4326 with `pyproj` before returning the FeatureCollection.
+- CRS priority: `--geometry-crs`, scenario `geo_crs`, GeoJSON `crs` member, then EPSG:4326. Invalid
+  or out-of-range coordinates raise a named 400 instead of reaching MapLibre.
+- Added `pyproj` to the `fhops[web]` extra and dev dependencies; added a projected-geometry test.
+- Fixed the committed example and demo geometries to valid BC Albers coordinates.
+- The map endpoint now returns lng/lat; the SVG renderer uses the same WGS84 payload.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 25 passed.
+- The live hauling map returns `[-123.24, 49.48]` for a BC Albers block.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+
+# 2026-10-25 — P12.3 fix: SVG class assignment broke the map panel
+
+- The map panel threw `Attempted to assign to readonly property` because `SVGElement.className`
+  is read-only. The shell now uses `svg.setAttribute("class", ...)`.
+- Added a regression test that rejects `svg.className` assignments in `app.js`.
+- Added a cache-busting `?v=3` to the SPA script reference so the fixed module is loaded.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 24 passed.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- The live demo at port 8765 serves the updated module without a restart.
+
+# 2026-10-25 — P12.3 CI fix: vendored MapLibre excluded from text hooks
+
+- `check-added-large-files`, `end-of-file-fixer`, and `trailing-whitespace` now exclude
+  `src/fhops/web/static/vendor/`. The vendored MapLibre bundle is 785 KB and upstream-formatted;
+  the text hooks must not rewrite it.
+- No application behaviour changed. The map code and tests are the P12.3 commit `01f3d41`.
+
+# 2026-10-25 — P12.3: map, layer tree, and day/shift/period control (#180)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- Added `src/fhops/web/mapdata.py`: block geometry resolution, layer registry, time control, and
+  GeoJSON map payloads.
+  - Geometry priority: `--geometry`, the scenario `geo_block_path` through the run manifest, then a
+    run-local `blocks.geojson`.
+  - Layers: blocks, operational treatments/machines, tactical planning units; roads, mills, haul
+    routes, and facilities are reported unavailable with reasons rather than invented.
+  - Time values: operational days/shifts, hauling days, tactical periods.
+- Added `/api/runs/{id}/layers`, `/time`, and `/map?day=&period=&shift=&layers=`.
+- Added `--geometry` to `fhops web`.
+- Added MapLibre GL JS (vendored) with an OpenStreetMap raster basemap and an SVG fallback, a layer
+  tree, feature click details, and a renderer selector.
+- Added block geometry to `examples/hauling/`.
+- Added map API tests and docs.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 23 passed.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- An actual `fhops haul plan` run exposes geometry through the manifest scenario path; the map
+  endpoint returns 3 block features for `examples/hauling/`.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #181, operational/hauling/tactical panels, KPIs, reports, and comparison.
+
+# 2026-10-25 — P12.2: read-only API, SPA shell, and skin loader (#179)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- Added the read-only artefact API:
+  - summary/KPIs, operational assignments and playback;
+  - hauling flows, truckloads, truck/loader schedule, yard inventory, contractor workload,
+    trucks, and loaders;
+  - tactical harvest, production, flows, inventory, purchases, roads, silviculture, and fleet;
+  - report listing/download and skin listing/detail.
+- Table endpoints return `columns`, `rows`, `total`, and `returned`; filters are optional query
+  parameters. Unknown filter columns are 400s; missing artefacts are 404s naming the logical file.
+- Added `src/fhops/web/skins.py` and four manifests: `operational-planner`, `hauling-planner`,
+  `tactical-planner`, `reviewer`. Unknown panels/layers/actions are refused by name; read-only skins
+  cannot enable mutating actions.
+- Rebuilt the static shell as a skin/run-driven SPA: header skin/run selectors, domain badge, tabs
+  from the skin, legend/files, operational assignments, hauling and tactical dataset choosers, KPIs,
+  reports, and named placeholders for map/comparison/scenario.
+- Added API/skin tests and updated the web how-to/reference/API docs and CLI docs.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 20 passed.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #180, the map, layer tree, and day/shift/period control.
+
+# 2026-10-25 — P12.1: service skeleton, three-domain discovery, and `fhops web` (#178)
+
+First implementation task of P12 (#171) on `feature/p12-web-ui`.
+
+- Added `src/fhops/web/discovery.py`: run discovery under configured roots, three-domain
+  classification (`operational`, `hauling`, `tactical_operational`), `run.json` build/write, and
+  status inference from summary artefacts.
+- Added `src/fhops/web/app.py`: FastAPI factory with `/api/health`, `/api/runs`,
+  `/api/runs/{run_id}`, the static shell, loopback/remote-bind guard, and `--root-path` support.
+- Added the minimal static shell (`index.html`, `style.css`, `app.js`) with a run browser and domain
+  badges. Domain panels, maps, Gantt, reports, live SSE, and editing remain P12.2-P12.6.
+- Added `fhops web` (serve), `fhops web manifest`, and `fhops web discover`.
+- `fhops haul plan/schedule/solve` now write `run.json` automatically.
+- Added the optional `fhops[web]` extra (`fastapi`, `uvicorn`) and web/httpx to dev dependencies.
+- Added web how-to/reference/API docs and the CLI reference section.
+- Confirmed the wheel includes `fhops/web/static/*`; a clean-venv wheel+`[web]` install imports
+  FastAPI and creates the app.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 12 passed.
+- `PYTHONPATH=src pytest -q tests/hauling/test_cli.py` -> 5 passed (includes `run.json` assertions).
+- `fhops web --help`, `fhops web manifest`, and `fhops web discover` succeed.
+- `hatch build -t wheel` + clean-venv `pip install '<wheel>[web]'` imports `fhops.web.app`.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #179, the read-only API for operational/hauling/tactical runs, SPA shell, and skin loader.
+
+# 2026-10-25 — P12 scope clarified: three planning lenses
+
+- The web UI must cover all three FHOPS planning domains in one application:
+  - shift-level operational planning (`solve-heur`/`solve-ils`/`solve-tabu`/`solve-mip-operational`,
+    `eval-playback`, `plan rolling`);
+  - Ghotb-derived log hauling (`haul plan`/`haul schedule`/`haul solve`, Phase I flows, Phase II/III
+    truck and loader schedules, yard inventory, contractor workload, haul KPIs);
+  - TOPM-style tactical–operational planning (`plan tactical-operational`, period harvest decisions,
+    production, product flows, facility demand/inventory, roads, silviculture, fleet).
+- `notes/web_ui_expansion_plan.md` now specifies the three lenses, domain API endpoints, map/layer
+  and time-control differences, domain panels, and domain skins (Operational planner, Hauling
+  planner, Tactical planner, read-only Reviewer).
+- Parent issue #171 and child issues #178-#183 carry the corresponding domain coverage. `run.json`
+  must record `domain` and `run_type`, with file-based fallback and no cross-domain mixing.
+- No code has changed.
+
+# 2026-10-25 — P11 close-out and P12 activation
+
+- P11 (#170) is complete. PR #185 squash-merged as `52462d2`; branch
+  `feature/p11-log-hauling` deleted locally and remotely; parent #170 closed with the close-out
+  report `notes/reports/p11-closeout.md`.
+- P12 (#171) is active on `feature/p12-web-ui`, cut from `main` at `52462d2`. The roadmap, log
+  hauling plan, web UI plan, and issue trees are updated to the new status.
+- P12 child issues #178-#183 remain linked. The first task is #178 (service skeleton, run manifest,
+  artefact discovery, and CLI entry).
+- No tag, release, or PyPI publication is part of this close-out.
 # 2026-10-25 — P11.7: marine/barge haul legs (#187)
 
 Adds an explicit marine transport path to the log-hauling layer instead of aliasing a barge as a

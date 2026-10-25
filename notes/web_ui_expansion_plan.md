@@ -1,7 +1,7 @@
 # FHOPS Web Application Expansion Plan (WS4-Style)
 
 Date: 2026-10-24
-Status: queued
+Status: complete (P12.6 close-out)
 Phase: P12
 Branch: `feature/p12-web-ui` (created from `main` at activation)
 Parent issue: #171
@@ -51,6 +51,22 @@ Let a planner, analyst, or reviewer:
   uses;
 - ask the optional assistant about the scenario or run.
 
+### 2.1 The three planning domains
+
+The UI is one application with three planning lenses. A run belongs to one lens, and the lens
+selects the panels, layers, period control, and editable fields.
+
+| Lens | CLI / artefacts | Primary questions |
+|---|---|---|
+| **Shift-level operational** | `solve-heur`, `solve-ils`, `solve-tabu`, `solve-mip-operational`, `eval-playback`, `plan rolling` | Which machine works which block on each day/shift? What is the machine/crew Gantt, production, utilisation, mobilisation, and playback result? |
+| **Log hauling (Ghotb)** | `haul plan`, `haul schedule`, `haul solve`; `haul_flows.csv`, `haul_truckloads.csv`, `haul_schedule.csv`, `haul_yard_inventory.csv`, `haul_contractor_workload.csv`, `haul_truck_summary.csv`, `haul_loader_summary.csv`, `haul_kpis.json` | Which sort moves from each block to each yard/mill, on which truck and contractor, at what time, with which loader, and with what yard inventory/overtime? |
+| **TOPM-style tactical–operational** | `plan tactical-operational`, `scenario benchmark`, `report`; `harvest_decisions.csv`, `production.csv`, `flows.csv`, `purchases.csv`, `inventory.csv`, `roads.csv`, `silviculture.csv`, `fleet.csv`, tactical `summary.json` | Which planning unit/system/period is harvested, what product flows to which facility, what inventory/road/silviculture/fleet decisions follow, and how do periods compare? |
+
+The same map, table, chart, and report primitives are reused. The domain lens changes the time
+control (day/shift for operational and hauling; period for tactical), the available layers, and the
+default panels. The service classifies a run from its manifest and files; it never guesses a domain
+from a filename alone when the manifest says otherwise.
+
 ### Non-goals (first release)
 
 - A second optimisation model, a database, multi-user accounts, or authentication.
@@ -81,7 +97,9 @@ The first cut should read, at minimum:
 | `plan rolling` outputs | Locked assignments, per-iteration summaries, window status |
 | `fhops report` output | Standard tactical reports and downloadable files |
 | P11 hauling outputs | Flows, truckloads, schedules, yard inventory, contractor workload, haul KPIs |
-| `run.json` (new, P12.1) | Stable run manifest: command, scenario, seed, solver, start time, files |
+| Operational playback outputs | Shift/day summaries, utilisation, downtime, weather, sequencing |
+| `plan rolling` outputs | Locked assignments, per-iteration summaries, window status |
+| `run.json` (new, P12.1) | Stable run manifest: domain, run type, command, scenario, seed, solver, start time, files |
 
 ### Run manifest
 
@@ -91,6 +109,8 @@ FHOPS does not currently write a single run manifest. P12.1 adds a small, additi
 {
   "schema_version": "1.0.0",
   "run_id": "2026-10-24T18-22-01_sa_tiny7",
+  "domain": "operational",
+  "run_type": "solve_heur",
   "command": "fhops solve-heur examples/tiny7/scenario.yaml --out ...",
   "scenario": "examples/tiny7/scenario.yaml",
   "solver": "sa",
@@ -124,9 +144,23 @@ core install.
 | GET | `/api/runs` | Runs under the configured roots, with summary and status |
 | GET | `/api/runs/{id}` | Run manifest, files, and status |
 | GET | `/api/runs/{id}/summary` | `summary.json` as written |
-| GET | `/api/runs/{id}/assignments?day=&shift=&machine=&block=` | Assignment rows, filtered |
-| GET | `/api/runs/{id}/kpis?scope=run|day|shift` | KPI payload, filtered |
-| GET | `/api/runs/{id}/map?day=&layers=` | GeoJSON `FeatureCollection`; properties are requested layers |
+| GET | `/api/runs/{id}/assignments?day=&shift=&machine=&block=` | Operational assignment rows, filtered |
+| GET | `/api/runs/{id}/playback?scope=day|shift` | Playback summaries and stochastic bands |
+| GET | `/api/runs/{id}/hauling/flows?day=&block=&yard=&sort=` | Phase I flow rows |
+| GET | `/api/runs/{id}/hauling/truckloads?day=` | Phase I truckload counts |
+| GET | `/api/runs/{id}/hauling/schedule?day=&truck=&contractor=` | Phase II/III truck/loader schedule |
+| GET | `/api/runs/{id}/hauling/yard-inventory?day=&yard=&sort=` | Yard water/unsorted inventory and processing |
+| GET | `/api/runs/{id}/hauling/contractor-workload?day=` | Contractor truckloads, preferred, deviation |
+| GET | `/api/runs/{id}/hauling/trucks?day=` | Truck and loader summaries |
+| GET | `/api/runs/{id}/tactical/harvest?period=` | Harvest decisions by planning unit/system/period |
+| GET | `/api/runs/{id}/tactical/production?period=&product=` | Product production |
+| GET | `/api/runs/{id}/tactical/flows?period=&product=&facility=` | Product transport flows |
+| GET | `/api/runs/{id}/tactical/inventory?period=&facility=` | Facility inventory and consumption |
+| GET | `/api/runs/{id}/tactical/roads?period=` | Road build/availability decisions |
+| GET | `/api/runs/{id}/tactical/silviculture?period=` | Silviculture transitions |
+| GET | `/api/runs/{id}/tactical/fleet?period=` | Fleet acquisitions |
+| GET | `/api/runs/{id}/kpis?scope=run|day|shift|period` | KPI payload, filtered by the domain's time unit |
+| GET | `/api/runs/{id}/map?day=&period=&layers=` | GeoJSON `FeatureCollection`; properties are requested layers |
 | GET | `/api/runs/{id}/layers` | Layer families the run can draw, with legends |
 | GET | `/api/runs/{id}/reports` | Report tree (standard and scenario files) |
 | GET | `/api/runs/{id}/reports/{name}` | Report rows (JSON) plus CSV/Parquet/PNG path |
@@ -175,8 +209,12 @@ Reuse the WS4 design language:
 - Header: product mark, build/version, skin selector, scenario selector, run selector, day/period
   slider with an explicit label, status text.
 - Main grid: resizable left sidebar, splitter, map or schedule canvas.
-- Sidebar tabs: **Legend**, **Schedule**, **KPIs**, **Reports**, **Compare**. Add **Scenario** for
-  editable objective/lock fields in the planner skin.
+- A **planning-level** selector (Operational / Hauling / Tactical) or a domain-specific skin
+  selects the lens.
+- Sidebar tabs: **Legend**, **Schedule**, **KPIs**, **Reports**, **Compare**. Domain panels add
+  **Haul** (flows, truckloads, yard inventory, contractor workload, truck/loader schedule) and
+  **Tactical** (harvest decisions, production, flows, facility inventory, roads, silviculture,
+  fleet). Add **Scenario** for the editable fields in the planner skins.
 - Lower-left assistant panel with a draggable splitter, a "New" button, a model label, escaped
   markdown, and action chips. It is hidden unless the service starts with `--allow-agent`.
 - Keyboard: left/right arrow steps one day/period; `f` fits the map; `/` focuses search.
@@ -196,13 +234,19 @@ Reuse the WS4 design language:
   source attribute (for example harvest system or block status).
 - Click a block for its attributes, assigned machines, production, and KPI contribution.
 - MapLibre is the default renderer; the dependency-free SVG shell remains a fallback and is
-  switchable in the layer tree.
+  switchable in the layer tree. The service transforms block geometry to EPSG:4326 with
+  ``pyproj``; the source CRS comes from ``--geometry-crs``, the scenario ``geo_crs``, the GeoJSON
+  ``crs`` member, or EPSG:4326.
 
 ### Schedule
 
-- A Gantt/timeline by day and shift, rows for machines or crews, bars for block assignments.
-- Click a bar to open the assignment, block, and KPI context.
-- A playback control for shift/day summaries and optional stochastic bands.
+- **Operational:** a Gantt/timeline by day and shift, rows for machines or crews, bars for block
+  assignments, with playback summaries and optional stochastic bands.
+- **Hauling:** a truck/loader Gantt for the selected day, truckload table, contractor workload,
+  yard inventory chart, and flow table (block -> yard -> sort -> contractor -> truck type).
+- **Tactical:** a period Gantt/table by planning unit/system, product-flow table, facility demand
+  vs delivered/inventory chart, and road/silviculture/fleet decision tables.
+- Click a bar or row to open the assignment/load/decision context.
 - A table view for accessibility and copy/export.
 
 ### KPIs and reports
@@ -242,18 +286,25 @@ editing.
 
 Ship four manifests:
 
-- **Builder** - scenario validation, layer authoring, attribute tables, and loader warnings.
-- **Planner** - schedule, objective/locks, run control, live KPIs, and reports.
-- **Analyst** - maps, KPIs, reports, and comparison; no editing.
-- **Reviewer** - a deliberately small read-only skin: schedule, KPI table, report tree, provenance.
+- **Operational planner** - shift Gantt, machine/block assignments, playback, objective/locks, run
+  control, live KPIs, and reports.
+- **Hauling planner** - Phase I flows, truckloads, Phase II/III truck/loader schedules, yard
+  inventory, contractor workload, driver policy/contractor preferences, run control, and reports.
+- **Tactical planner** - period Gantt, harvest decisions, product flows, facility demand/inventory,
+  roads, silviculture, fleet, scenario overlays, run control, and reports.
+- **Reviewer** - a deliberately small read-only skin that can open any of the three domains:
+  schedule/table, KPI table, report tree, provenance.
+- Optional **Builder** - scenario validation, layer authoring, attribute tables, and loader warnings.
 
 ## 8. Editable fields
 
 The first release edits only fields that can round-trip through the existing loader:
 
-- `objective_weights` in `scenario.yaml`;
-- `locked_assignments` in `scenario.yaml`;
-- after P11, `hauling.driver_policy` and contractor preferred workloads.
+- **Operational:** `objective_weights` and `locked_assignments` in `scenario.yaml`.
+- **Hauling:** `hauling.driver_policy`, contractor preferred workloads, and (when exposed) hauling
+  truck/depot fields.
+- **Tactical:** scenario overlays/diffs and demand envelopes, written as a validated overlay that
+  the CLI reads; do not rewrite the base tactical bundle in place.
 
 Every PUT writes a temporary YAML, loads it with `load_scenario`, and only then replaces the file.
 An invalid edit is refused with the loader's own message. There is no parallel JSON model and no
@@ -309,28 +360,34 @@ P12.1, before any editor is exposed.
 
 ## 12. Child tasks
 
-- **#178 P12.1** Service skeleton, run manifest, artefact discovery, and CLI entry.
-- **#179 P12.2** Read-only API, SPA shell, and skin loader.
-- **#180 P12.3** Map, layer tree, and day/period control.
-- **#181 P12.4** Schedule/Gantt, KPI, report, and comparison panels.
-- **#182 P12.5** Live runs, SSE, and run control.
-- **#183 P12.6** Editable objective/locks, assistant, packaging, security, docs, and close-out.
+- **#178 P12.1** Service skeleton, run manifest, three-domain artefact discovery, and CLI entry.
+- **#179 P12.2** Read-only API for operational/hauling/tactical runs, SPA shell, and skin loader.
+- **#180 P12.3** Map, layer tree, and day/shift/period control for all three lenses.
+- **#181 P12.4** Operational shift Gantt, hauling flows/truck-loader schedule, tactical period
+  panels, KPIs, reports, and comparison.
+- **#182 P12.5** Live operational/hauling/tactical runs, SSE, and run control.
+- **#183 P12.6** Domain-specific editing and skins, assistant, packaging, security, docs, and
+  close-out.
 
 The detailed issue bodies carry the subtasks, acceptance criteria, and verification commands.
 
 ## 13. Acceptance criteria for the phase
 
 - `pip install fhops[web]` then `fhops web --runs <dir>` serves the SPA at `/` and a documented API.
-- A completed run loads with its scenario, map, schedule, KPIs, and reports; every displayed value
-  comes from a file the CLI wrote.
-- The day/period control moves the map and schedule through the horizon.
-- The map draws blocks, treatments, machines, roads, mills/sort yards, and (after P11) haul routes,
-  with a legend and feature selection.
+- A completed **operational** run loads with its scenario, shift Gantt, assignments, playback,
+  KPIs, and reports; every displayed value comes from a file the CLI wrote.
+- A completed **hauling** run loads with its Phase I flows/truckloads, Phase II/III truck/loader
+  schedule, yard inventory, contractor workload, KPIs, and reports.
+- A completed **tactical–operational** run loads with its period harvest decisions, production,
+  product flows, facility inventory/demand, roads, silviculture, fleet, KPIs, and reports.
+- The day/shift/period control moves the relevant map and schedule through the horizon.
+- The map draws operational blocks/machines, hauling blocks/yards/routes/trucks, and tactical
+  planning units/facilities/roads, with a legend and feature selection.
 - Two runs compare by map difference and KPI delta.
 - A live run streams progress and updates the KPIs; a finished run returns 204 on `/events`.
-- The four skins load from manifests; the reviewer skin cannot edit anything.
-- An objective/lock edit round-trips through the loader and is refused with the loader's message
-  when invalid.
+- The domain skins load from manifests; the reviewer skin cannot edit anything.
+- An operational objective/lock edit, a hauling driver/contractor edit, and a tactical overlay edit
+  each round-trip through the loader and are refused with the loader's message when invalid.
 - The service refuses a non-loopback bind without `--allow-remote`; the assistant is off by default.
 - The core install and CLI are unchanged for a user who does not install the extra.
 - All FHOPS gates are green, including the wheel/extra smoke test.
@@ -347,7 +404,8 @@ The detailed issue bodies carry the subtasks, acceptance criteria, and verificat
 | The assistant has shell access. | Off by default; explicit `--allow-agent`; local-only; documented as an operator feature. |
 | Authentication is absent. | Loopback default; refuse remote bind without an explicit flag; state the limit. |
 | The web UI is built before stable artefacts exist. | P12.1 freezes the artefact contract; P12.2 reads only what exists; unknown files are reported, not invented. |
-| P11 hauling outputs change while P12 is built. | Define stable file names in P11.5; P12 treats missing layers as unavailable with a named follow-up. |
+| P11 hauling outputs change while P12 is built. | P11.5 froze the stable file names; P12 treats missing layers as unavailable with a named follow-up. |
+| The three domains have different time units and contracts. | A run manifest carries `domain` and `run_type`; each lens owns its period control and panel set. No cross-domain recomputation. |
 
 ## 15. Out-of-scope follow-ups to record, not start
 

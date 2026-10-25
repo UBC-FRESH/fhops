@@ -179,8 +179,8 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
 - [x] #152 Labelled canonical operational formulation: OBJ/OBJ2/E1–E13 (E8a–c)/INIT/D1 labels, Block → Pyomo mapping table, docs page anchor `operational-milp-formulation` for citation, drift test (no code change).
 - [x] #147 Final SoftwareX asset regeneration on the final 1.0.1 code (50e6f9b, incl. the #151 performance fix): one sequential full pipeline run on an idle host (2 h 57 min; `assets_hash` 5e069c58…, recipe v2, `asset_hash.py verify` passes), tables/figures rebuilt, asset audit 0 failures, plans/objectives identical to the superseded a0b2799 run (#150); manuscript values manuscript → committed → new in `notes/v101_maintenance_plan.md` §8.28.
 
-## Phase 11 — Log Hauling and Mill Delivery Optimization (Ghotb-Inspired) — close-out queued
-Parent #170; branch `feature/p11-log-hauling` (active from 2026-10-25); plan
+## Phase 11 — Log Hauling and Mill Delivery Optimization (Ghotb-Inspired) ✅ (complete)
+Parent #170; branch `feature/p11-log-hauling` (merged as `52462d2`); plan
 `notes/log_hauling_expansion_plan.md`; issue tree `notes/log_hauling_issue_tree.md`.
 Adds the operational log-hauling layer missing between harvest and mill demand: Phase I monthly
 daily-flow MIP with contractor workload balance, Phase II continuous-time truck/loader scheduling,
@@ -196,18 +196,22 @@ and a thesis-calibrated SA solver.
   barge-cycle scheduling with port-load synchronization; Sunshine Coast → Howe Sound fixture and
   contract/flow/schedule/CLI tests.
 
-## Phase 12 — FHOPS Web Application (WS4-Style) — queued
-Parent #171; branch `feature/p12-web-ui` (created at activation); plan
+## Phase 12 — FHOPS Web Application (WS4-Style) — complete
+Parent #171; branch `feature/p12-web-ui` (active from 2026-10-25); plan
 `notes/web_ui_expansion_plan.md`; issue tree `notes/web_ui_issue_tree.md`.
 Adds an optional FastAPI + vanilla-ES-module web surface over the CLI's artefacts, following the
-WS4 web UI design: map/layer tree, schedule/Gantt, KPIs, reports, comparison, live SSE runs, skins,
-and an opt-in assistant.
-- [ ] #178 P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry.
-- [ ] #179 P12.2 Read-only API, SPA shell, and skin loader.
-- [ ] #180 P12.3 Map, layer tree, and day/period control.
-- [ ] #181 P12.4 Schedule/Gantt, KPI, report, and comparison panels.
-- [ ] #182 P12.5 Live runs, SSE, and run control.
-- [ ] #183 P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out.
+WS4 web UI design. The same application covers three lenses: shift-level operational planning
+(machine/crew day-shift Gantt, assignments, playback, KPIs), Ghotb-derived log hauling (Phase I
+flows/truckloads, Phase II/III truck/loader schedule, yard inventory, contractor workload, haul
+KPIs), and TOPM-style tactical-operational planning (period harvest decisions, product flows,
+facility demand/inventory, roads, silviculture, fleet). It adds map/layer tree, domain Gantt/tables,
+reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
+- [x] #178 P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry.
+- [x] #179 P12.2 Read-only API, SPA shell, and skin loader.
+- [x] #180 P12.3 Map, layer tree, and day/period control.
+- [x] #181 P12.4 Schedule/Gantt, KPI, report, and comparison panels.
+- [x] #182 P12.5 Live runs, SSE, and run control.
+- [x] #183 P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out.
 
 ## Phase 13 — Multi-day Marine Barge Cycles — active
 Parent #197; branch `feature/phase13-multiday-marine`; design
@@ -311,25 +315,25 @@ without adding dummy barges or relaxing capacity checks.
     - Queued as P11. The phase adds the operational hauling layer between harvest and mill demand:
       Ghotb's Phase I monthly daily-flow MIP with contractor workload balance, Phase II
       continuous-time truck/loader scheduling, and the SA solver with an SPT decoder.
-    - Child issues #172-#177 are linked as sub-issues; the phase branch `feature/p11-log-hauling` is in close-out review (PR #185).
+    - Child issues #172-#177 are linked as sub-issues; the phase branch merged as `52462d2` and the parent is closed.
     - The thesis case data is confidential, so acceptance uses structural fidelity, MIP-versus-SA
       parity on thesis-shaped synthetic instances, and the published qualitative findings. Exact
       company-dollar reproduction is explicitly not claimed.
-    - #172-#176 are complete. #177 is complete; the phase close-out report is queued for approval (PR #185).
+    - #172-#177 are complete. The phase PR #185 merged as `52462d2`; the close-out report is `notes/reports/p11-closeout.md`.
 
 17. **FHOPS Web Application (#171; `notes/web_ui_expansion_plan.md`, `notes/web_ui_issue_tree.md`)**
     - Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,
       following the WS4 web UI design: map/layer tree, schedule, KPIs, reports, comparison, live SSE
       runs, skins, and an opt-in assistant.
-    - Child issues #178-#183 are linked as sub-issues; the phase branch is reserved until activation.
+    - Child issues #178-#183 are linked as sub-issues; all six are complete on `feature/p12-web-ui`.
     - P12.1 freezes the artefact contract (including a new `run.json`) before the API and UI work.
       P11 hauling outputs are optional; missing layers are named, not invented.
-    - Start with #178; re-read the WS4 design note and `ws4/web/app.py` before the first service line.
+    - #178-#183 (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison, live runs/SSE/control, editing/assistant/packaging/security/close-out) are complete.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
-- [ ] Scenario authoring UI and schema validators for web clients (queued as P12, #171).
+- [x] Scenario authoring UI and schema validators for web clients (P12.6, #183).
 - [ ] Cloud execution harness for large-scale heuristics.
 - [ ] DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
 - [ ] Jaffray MASc thesis alignment checkpoints (`notes/thesis_alignment.md` TBD).

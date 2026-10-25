@@ -186,3 +186,19 @@ The optional hauling layer adds a `fhops haul` command group:
 - ``report`` renders a Markdown report from the stable CSV/JSON artefacts.
 
 See :doc:`../howto/hauling` for the data contract, output schemas, and integration notes.
+
+
+Web commands
+------------
+
+The optional web service adds:
+
+.. code-block:: bash
+
+   fhops web --runs runs/ --port 8765
+   fhops web --runs runs/ --allow-agent --agent-timeout 120
+   fhops web manifest runs/run-a --status optimal
+   fhops web discover runs/
+
+See :doc:`../howto/web` for the three planning lenses, run discovery, the `run.json` manifest, and
+the security defaults.

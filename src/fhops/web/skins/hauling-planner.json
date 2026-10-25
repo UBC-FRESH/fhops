@@ -1,0 +1,8 @@
+{
+  "id": "hauling-planner",
+  "title": "Hauling planner",
+  "panels": ["legend", "map", "haul", "kpis", "reports", "compare", "scenario", "run"],
+  "layers": ["blocks", "mills", "haul_routes", "roads"],
+  "actions": ["start_run", "pause", "stop", "edit_hauling", "export", "compare"],
+  "read_only": false
+}

@@ -17,3 +17,4 @@ papermill>=2.5
 jupyter>=1.0
 ipykernel>=6.29
 nbsphinx>=0.9
+fastapi>=0.110

@@ -41,6 +41,7 @@ def test_haul_plan_writes_flow_files(tmp_path: Path) -> None:
         "haul_contractor_workload.csv",
         "haul_kpis.json",
         "haul_summary.json",
+        "run.json",
     ):
         assert (tmp_path / name).exists(), name
 
@@ -75,6 +76,7 @@ def test_haul_schedule_from_flow_dir(tmp_path: Path) -> None:
     assert (schedule_dir / "haul_schedule.csv").exists()
     assert (schedule_dir / "haul_truck_summary.csv").exists()
     assert (schedule_dir / "haul_summary.json").exists()
+    assert (schedule_dir / "run.json").exists()
 
 
 def test_haul_report_reads_a_run(tmp_path: Path) -> None:
@@ -111,6 +113,7 @@ def test_haul_solve_writes_combined_run(tmp_path: Path) -> None:
     assert (out_dir / "haul_flows.csv").exists()
     assert (out_dir / "haul_schedule.csv").exists()
     assert (out_dir / "haul_summary.json").exists()
+    assert (out_dir / "run.json").exists()
 
 
 MARINE_SCENARIO = "examples/hauling_marine/scenario.yaml"

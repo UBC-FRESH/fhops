@@ -10,21 +10,28 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 ## Live GitHub structure
 
 - Parent issue: [#171 - P12: FHOPS web application (WS4-style artefact reader)](https://github.com/UBC-FRESH/fhops/issues/171)
-- Phase branch: `feature/p12-web-ui` (reserved; created from `main` at activation)
+- Phase branch: `feature/p12-web-ui` (active from `main` at `52462d2`)
 - Planning PR: #184 (draft)
-- Status: queued
+- Status: complete (2026-10-25); #178-#183 complete
 
 | Issue | Task | Child branch |
 |---:|---|---|
-| [#178](https://github.com/UBC-FRESH/fhops/issues/178) | P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry | `issue-178-web-service` |
-| [#179](https://github.com/UBC-FRESH/fhops/issues/179) | P12.2 Read-only API, SPA shell, and skin loader | `issue-179-web-api` |
-| [#180](https://github.com/UBC-FRESH/fhops/issues/180) | P12.3 Map, layer tree, and day/period control | `issue-180-web-map` |
-| [#181](https://github.com/UBC-FRESH/fhops/issues/181) | P12.4 Schedule/Gantt, KPI, report, and comparison panels | `issue-181-web-panels` |
-| [#182](https://github.com/UBC-FRESH/fhops/issues/182) | P12.5 Live runs, SSE, and run control | `issue-182-web-live` |
-| [#183](https://github.com/UBC-FRESH/fhops/issues/183) | P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out | `issue-183-web-closeout` |
+| [#178](https://github.com/UBC-FRESH/fhops/issues/178) | P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry — complete | `feature/p12-web-ui` |
+| [#179](https://github.com/UBC-FRESH/fhops/issues/179) | P12.2 Read-only API, SPA shell, and skin loader — complete | `feature/p12-web-ui` |
+| [#180](https://github.com/UBC-FRESH/fhops/issues/180) | P12.3 Map, layer tree, and day/period control — complete | `feature/p12-web-ui` |
+| [#181](https://github.com/UBC-FRESH/fhops/issues/181) | P12.4 Schedule/Gantt, KPI, report, and comparison panels — complete | `feature/p12-web-ui` |
+| [#182](https://github.com/UBC-FRESH/fhops/issues/182) | P12.5 Live runs, SSE, and run control — complete | `feature/p12-web-ui` |
+| [#183](https://github.com/UBC-FRESH/fhops/issues/183) | P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out — complete | `feature/p12-web-ui` |
 
 All six child issues are linked to parent #171 through GitHub sub-issues and assigned the `Task`
 issue type. The parent carries the `Feature` issue type.
+
+## Domain coverage
+
+The UI is one application with three lenses: shift-level operational, Ghotb-derived log hauling,
+and TOPM-style tactical-operational. A run manifest carries `domain` and `run_type`; the lens
+selects the time control (day/shift vs period), layers, panels, KPIs, reports, and editable fields.
+The issue bodies carry the domain-specific additions from the 2026-10-25 scope clarification.
 
 ## Dependencies
 
@@ -38,10 +45,10 @@ issue type. The parent carries the `Feature` issue type.
 
 ## Activation checklist
 
-- [ ] Create `feature/p12-web-ui` from the then-current `main`.
-- [ ] Update `ROADMAP.md` status from `queued` to `active` and record the activation date.
-- [ ] Post an activation comment on #171.
-- [ ] Start #178.
+- [x] Create `feature/p12-web-ui` from `main` at `52462d2`.
+- [x] Update `ROADMAP.md` status from `queued` to `active` and record the activation date (`2026-10-25`).
+- [x] Post an activation comment on #171.
+- [x] Start #178 (complete).
 - [ ] Re-read the WS4 design note and `ws4/web/app.py` before the first service line.
 
 ## Ongoing hygiene
