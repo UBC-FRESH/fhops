@@ -16,6 +16,14 @@ Key models
   :class:`fhops.hauling.contract.Truck` – the contracted fleet.
 - :class:`fhops.hauling.contract.Depot` / :class:`fhops.hauling.contract.DepotLeg` – central depot
   and its travel times.
+- :class:`fhops.hauling.contract.BargeType` / :class:`fhops.hauling.contract.Barge` – barge capacity,
+  cost, and vessel ownership.
+- :class:`fhops.hauling.contract.Port` / :class:`fhops.hauling.contract.PortLeg` /
+  :class:`fhops.hauling.contract.WaterArc` / :class:`fhops.hauling.contract.MarineRoute` – the
+  explicit marine chain (terminal nodes, drayage legs, sailing legs, and a complete block-to-yard
+  route).
+- :class:`fhops.hauling.contract.TransportMode` – ``road``/``water``/``rail`` mode label; only road
+  haul arcs and water marine routes are accepted by the first release.
 - :class:`fhops.hauling.contract.SortYard` – storage and processing capacities.
 - :class:`fhops.hauling.contract.LoaderLocation` – binding from a FHOPS machine to a pickup or
   delivery location.
@@ -35,6 +43,16 @@ Key models
   independent schedule oracles.
 - :class:`fhops.hauling.schedule.ScheduleSolveResult` – schedule, truck/loader summaries, plan, and
   solver provenance.
+- :class:`fhops.hauling.marine.MarineScheduleProblem` /
+  :class:`fhops.hauling.marine.MarineTripRequest` – normalized barge-trip data.
+- :func:`fhops.hauling.marine.build_marine_schedule_problem` – Phase I barge trips to a one-day
+  marine schedule problem.
+- :func:`fhops.hauling.marine.schedule_barge_trips` – deterministic barge-cycle and port-loader
+  scheduler.
+- :func:`fhops.hauling.marine.validate_barge_schedule` – barge/port-loader overlap and sequence
+  validator.
+- :class:`fhops.hauling.marine.BargeScheduleResult` – trip-level barge schedule, barge summary, and
+  synchronized road windows.
 - :class:`fhops.hauling.heuristic.SAConfig` – thesis-derived annealing parameters and operator
   weights.
 - :func:`fhops.hauling.heuristic.solve_sa` – route-permutation SA with the SPT decoder.
@@ -63,3 +81,12 @@ Example
    print(scenario.hauling.planning_horizon_days)
    print(scenario.hauling.log_sort_ids())
    print(scenario.hauling.trucks_for("c1", "highway"))
+
+The marine fixture exercises the barge path:
+
+.. code-block:: python
+
+   marine = load_scenario("examples/hauling_marine/scenario.yaml")
+   assert marine.hauling is not None
+   assert marine.hauling.marine_route_ids() == {"sc_hs_y1"}
+   assert marine.hauling.port_ids() == {"sechelt", "howe_sound"}

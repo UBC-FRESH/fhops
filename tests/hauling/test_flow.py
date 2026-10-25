@@ -405,3 +405,42 @@ def test_summary_reports_the_key_metrics() -> None:
     assert "cost_objective: 120.000" in summary
     assert "truckloads: sorted=1, unsorted=0, total=1" in summary
     assert "delivered_m3: 45.000" in summary
+
+
+def _marine_scenario():
+    from fhops.scenario.io import load_scenario
+
+    return load_scenario("examples/hauling_marine/scenario.yaml")
+
+
+def test_marine_flow_reports_water_leg_trips_and_terminal_handling() -> None:
+    result = solve_flow(build_flow_problem(_marine_scenario()), time_limit=60)
+    assert result.status == "optimal"
+    assert not result.marine_flows.empty
+    assert result.marine_flows["water_m3"].sum() == pytest.approx(180.0)
+    assert result.marine_flows["barge_trips"].sum() == 1
+    assert result.barge_trips["barge_trips"].sum() == 1
+    assert result.barge_trips["handling_cost"].sum() == pytest.approx(220.0)
+    assert result.marine_flows["origin_handling_m3"].sum() == pytest.approx(180.0)
+    assert result.marine_flows["destination_handling_m3"].sum() == pytest.approx(180.0)
+    assert not result.port_inventory.empty
+    assert result.port_inventory["handled_m3"].sum() > 0
+    assert not result.marine_truckloads.empty
+    assert set(result.marine_truckloads["leg"]) == {"pickup", "delivery"}
+    assert result.marine_truckloads["total_truckloads"].sum() == pytest.approx(8)
+
+
+def test_marine_flow_has_explicit_port_inventory_and_drayage_cost() -> None:
+    problem = build_flow_problem(_marine_scenario())
+    lane = problem.marine_lanes["sc_hs_y1"]
+    assert lane.barge_capacity == pytest.approx(3000.0)
+    assert lane.barge_cycle_minutes == pytest.approx(505.0)
+    assert lane.drayage_cost_per_m3 == pytest.approx((1.2 * (70.0 + 60.0)) / 45.0)
+    result = solve_flow(problem, time_limit=60)
+    marine = result.marine_flows.iloc[0]
+    assert marine["total_cost"] == pytest.approx(
+        marine["barge_variable_cost"]
+        + marine["origin_handling_cost"]
+        + marine["destination_handling_cost"]
+        + marine["drayage_cost"]
+    )
