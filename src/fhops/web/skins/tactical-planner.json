@@ -1,7 +1,7 @@
 {
   "id": "tactical-planner",
   "title": "Tactical planner",
-  "panels": ["legend", "map", "tactical", "kpis", "reports", "compare", "scenario"],
+  "panels": ["legend", "map", "tactical", "kpis", "reports", "compare", "scenario", "run"],
   "layers": ["tactical_units", "facilities", "roads"],
   "actions": ["start_run", "pause", "stop", "edit_tactical", "export", "compare"],
   "read_only": false

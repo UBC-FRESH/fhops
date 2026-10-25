@@ -24,6 +24,7 @@ const PANEL_LABELS = {
   reports: "Reports",
   compare: "Compare",
   scenario: "Scenario",
+  run: "Run",
 };
 const DOMAIN_PANELS = {
   operational: "schedule",
@@ -38,6 +39,24 @@ const DOMAIN_SKINS = {
 
 function api(path) {
   return new URL(path, document.baseURI).toString();
+}
+
+async function postJson(path, payload) {
+  const response = await fetch(api(path), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    let detail = `HTTP ${response.status}`;
+    try {
+      const body = await response.json();
+      if (body.detail) detail = body.detail;
+    } catch (_error) { /* keep status */ }
+    throw new Error(detail);
+  }
+  if (response.status === 204) return {};
+  return response.json();
 }
 
 async function fetchJson(path) {
@@ -168,6 +187,8 @@ function renderPanel() {
       return renderCompare(encoded);
     case "scenario":
       return renderPlaceholder("Scenario editing", "Validated operational/hauling/tactical edits arrive in P12.6.");
+    case "run":
+      return renderRunPanel();
     case "map":
       return renderMap(encoded);
     default:
@@ -1080,4 +1101,280 @@ function barColor(key) {
   let hash = 0;
   for (const char of String(key)) hash = (hash * 31 + char.charCodeAt(0)) | 0;
   return palette[Math.abs(hash) % palette.length];
+}
+
+function domainForSkin() {
+  if (!state.skin) return "operational";
+  if (state.skin.id === "hauling-planner") return "hauling";
+  if (state.skin.id === "tactical-planner") return "tactical_operational";
+  return "operational";
+}
+
+function renderRunPanel() {
+  const domain = domainForSkin();
+  const defaults = {
+    operational: "examples/tiny7/scenario.yaml",
+    hauling: "examples/hauling/scenario.yaml",
+    tactical_operational: "tests/fixtures/tactical_operational/practitioner-case/scenario.yaml",
+  };
+  const scenarioDefault =
+    state.run?.domain === domain && state.run?.manifest?.scenario
+      ? state.run.manifest.scenario
+      : defaults[domain] || "";
+  const runTypes = {
+    operational: [["Heuristic SA", "solve_heur"], ["Operational MIP", "solve_mip_operational"]],
+    hauling: [["Haul solve", "haul_solve"]],
+    tactical_operational: [["Tactical-operational", "tactical_operational"]],
+  }[domain];
+
+  const form = el("div", null, "run-form");
+  const scenarioLabel = el("label", "Scenario");
+  const scenario = document.createElement("input");
+  scenario.type = "text";
+  scenario.value = scenarioDefault;
+  scenario.size = 56;
+  scenarioLabel.appendChild(scenario);
+  form.appendChild(scenarioLabel);
+
+  const typeLabel = el("label", "Run type");
+  const runType = document.createElement("select");
+  for (const [label, value] of runTypes) {
+    const option = el("option", label);
+    option.value = value;
+    runType.appendChild(option);
+  }
+  typeLabel.appendChild(runType);
+  form.appendChild(typeLabel);
+
+  const iterationsLabel = el("label", "Iterations");
+  const iterations = document.createElement("input");
+  iterations.type = "number";
+  iterations.value = "500";
+  iterations.min = "1";
+  iterationsLabel.appendChild(iterations);
+  form.appendChild(iterationsLabel);
+
+  const seedLabel = el("label", "Seed");
+  const seed = document.createElement("input");
+  seed.type = "number";
+  seed.value = "42";
+  seedLabel.appendChild(seed);
+  form.appendChild(seedLabel);
+
+  const dayLabel = el("label", "Day");
+  const day = document.createElement("input");
+  day.type = "number";
+  day.value = "1";
+  day.min = "1";
+  dayLabel.appendChild(day);
+  form.appendChild(dayLabel);
+
+  const solverLabel = el("label", "Solver");
+  const solver = document.createElement("select");
+  for (const value of ["sa", "mip"]) {
+    const option = el("option", value);
+    option.value = value;
+    solver.appendChild(option);
+  }
+  solverLabel.appendChild(solver);
+  form.appendChild(solverLabel);
+
+  const timeLabel = el("label", "Time limit (s)");
+  const timeLimit = document.createElement("input");
+  timeLimit.type = "number";
+  timeLimit.min = "0";
+  timeLimit.placeholder = "none";
+  timeLabel.appendChild(timeLimit);
+  form.appendChild(timeLabel);
+
+  const start = el("button", "Start run");
+  start.type = "button";
+  form.appendChild(start);
+  els.body.appendChild(form);
+
+  const status = el("div", "No live run.", "run-status");
+  const metrics = el("div", "", "run-metrics");
+  const controls = el("div", null, "run-controls");
+  const pause = el("button", "Pause");
+  const resume = el("button", "Resume");
+  const stop = el("button", "Stop");
+  for (const button of [pause, resume, stop]) {
+    button.type = "button";
+    button.disabled = true;
+    controls.appendChild(button);
+  }
+  const spark = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  spark.setAttribute("class", "sparkline");
+  spark.setAttribute("viewBox", "0 0 320 64");
+  els.body.appendChild(status);
+  els.body.appendChild(metrics);
+  els.body.appendChild(controls);
+  els.body.appendChild(spark);
+
+  let liveId = null;
+  let source = null;
+  let pollTimer = null;
+  let points = [];
+  let objectiveText = "";
+  let kpiText = "";
+  let assignmentText = "";
+
+  const setStatus = (text, kind = "") => {
+    status.textContent = text;
+    status.className = `run-status ${kind}`.trim();
+  };
+  const setButtons = (enabled) => {
+    for (const button of [pause, resume, stop]) button.disabled = !enabled;
+  };
+  const renderMetrics = () => {
+    metrics.textContent = [objectiveText, kpiText, assignmentText].filter(Boolean).join(" · ");
+  };
+  const drawSpark = () => {
+    spark.innerHTML = "";
+    if (points.length < 2) return;
+    const values = points.map((point) => Number(point.objective)).filter((value) => Number.isFinite(value));
+    if (values.length < 2) return;
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const span = Math.max(max - min, 1e-9);
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    const coords = values.map((value, index) => {
+      const x = 6 + (index / (values.length - 1)) * 308;
+      const y = 58 - ((value - min) / span) * 52;
+      return `${x},${y}`;
+    }).join(" ");
+    path.setAttribute("points", coords);
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", "#1f6feb");
+    path.setAttribute("stroke-width", "1.5");
+    spark.appendChild(path);
+  };
+  const updateProgress = (payload) => {
+    if (payload.objective !== undefined && payload.objective !== null) {
+      points.push(payload);
+      if (points.length > 400) points.shift();
+      objectiveText = `step ${payload.iteration ?? payload.step ?? "—"} · objective ${payload.objective} · best ${payload.best ?? "—"}`;
+      renderMetrics();
+      drawSpark();
+    } else if (payload.elapsed_seconds !== undefined && !objectiveText) {
+      objectiveText = `elapsed ${Number(payload.elapsed_seconds).toFixed(1)} s`;
+      renderMetrics();
+    }
+  };
+  const closeLive = () => {
+    if (source) source.close();
+    source = null;
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = null;
+    setButtons(false);
+  };
+  const pollStatus = async () => {
+    if (!liveId) return;
+    try {
+      const payload = await fetchJson(`api/runs/${encodeURIComponent(liveId)}/status`);
+      setStatus(`${payload.status} · ${payload.finished ? "finished" : "running"}`, payload.status);
+      if (payload.finished) {
+        closeLive();
+        await refreshRuns();
+        setStatus(`finished: ${payload.status}`, payload.status);
+      }
+    } catch (error) {
+      setStatus(error.message, "error");
+    }
+  };
+  const watch = (runId) => {
+    closeLive();
+    liveId = runId;
+    points = [];
+    objectiveText = "";
+    kpiText = "";
+    assignmentText = "";
+    metrics.textContent = "";
+    setButtons(true);
+    setStatus(`running ${runId}`, "running");
+    pollTimer = setInterval(pollStatus, 1000);
+    if (window.EventSource) {
+      source = new EventSource(api(`api/runs/${encodeURIComponent(runId)}/events`));
+      source.addEventListener("progress", (event) => {
+        try { updateProgress(JSON.parse(event.data)); } catch (_error) { /* ignore */ }
+      });
+      source.addEventListener("kpis", (event) => {
+        try {
+          const payload = JSON.parse(event.data);
+          const keys = ["total_production", "mobilisation_cost", "utilisation_ratio_mean_day", "objective"];
+          kpiText = keys
+            .filter((key) => payload[key] !== undefined && payload[key] !== null)
+            .map((key) => `${key} ${Number(payload[key]).toFixed(2)}`)
+            .join(" · ");
+          renderMetrics();
+        } catch (_error) { /* ignore */ }
+      });
+      source.addEventListener("assignment", (event) => {
+        try {
+          const payload = JSON.parse(event.data);
+          assignmentText = `last ${payload.machine_id ?? "?"}@${payload.block_id ?? "?"} d${payload.day ?? "?"} ${payload.shift_id ?? ""}`.trim();
+          renderMetrics();
+        } catch (_error) { /* ignore */ }
+      });
+      source.addEventListener("done", (event) => {
+        setStatus(`done: ${runId}`, "ok");
+        closeLive();
+        refreshRuns();
+      });
+      source.addEventListener("error", () => {
+        if (source && source.readyState === EventSource.CLOSED) {
+          setStatus(`stream closed: ${runId}`, "error");
+        }
+      });
+    }
+    pollStatus();
+  };
+
+  start.addEventListener("click", async () => {
+    const options = {
+      iterations: Number(iterations.value) || 500,
+      seed: Number(seed.value) || 42,
+      day: Number(day.value) || 1,
+      solver: solver.value,
+    };
+    if (timeLimit.value) options.time_limit = Number(timeLimit.value);
+    setStatus("starting…", "running");
+    start.disabled = true;
+    try {
+      const response = await postJson("api/runs", {
+        domain,
+        run_type: runType.value,
+        scenario: scenario.value,
+        options,
+      });
+      watch(response.run_id);
+    } catch (error) {
+      setStatus(error.message, "error");
+    } finally {
+      start.disabled = false;
+    }
+  });
+
+  const control = async (action) => {
+    if (!liveId) return;
+    try {
+      const payload = await postJson(`api/runs/${encodeURIComponent(liveId)}/control`, { action });
+      setStatus(`${action}: ${payload.status}`, payload.status);
+      if (payload.finished) {
+        closeLive();
+        await refreshRuns();
+      }
+    } catch (error) {
+      setStatus(error.message, "error");
+    }
+  };
+  pause.addEventListener("click", () => control("pause"));
+  resume.addEventListener("click", () => control("resume"));
+  stop.addEventListener("click", () => control("stop"));
+  return Promise.resolve();
+}
+
+async function refreshRuns() {
+  state.runs = await fetchJson("api/runs");
+  renderRuns();
 }

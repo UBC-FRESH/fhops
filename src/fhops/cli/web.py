@@ -45,6 +45,11 @@ def web(
         "--geometry-crs",
         help="Source CRS for --geometry/run-local GeoJSON (e.g. EPSG:3005).",
     ),
+    workspace: Path = typer.Option(
+        Path.cwd(),
+        "--workspace",
+        help="Working directory for CLI subprocesses and scenario paths.",
+    ),
 ) -> None:
     """Start the web service when no subcommand is given."""
     if ctx.invoked_subcommand is not None:
@@ -65,6 +70,7 @@ def web(
         allow_remote=allow_remote,
         geometry=geometry,
         geometry_crs=geometry_crs,
+        workspace=workspace,
     )
     try:
         run_server(config)

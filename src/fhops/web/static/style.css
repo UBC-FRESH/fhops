@@ -115,3 +115,23 @@ code { background:#eef2f6; padding:0 .15rem; border-radius:.2rem; }
 .compare-controls select { font:inherit; font-size:.8rem; }
 .report-builder { margin-top:1rem; border-top:1px solid var(--line); padding-top:.6rem; }
 .report-builder h3 { font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+
+/* Live run panel */
+.run-form { display:flex; flex-wrap:wrap; gap:.55rem .9rem; align-items:flex-end; border:1px solid var(--line);
+            border-radius:.45rem; background:var(--panel); padding:.65rem .7rem; margin:.3rem 0 .8rem; }
+.run-form label { display:flex; flex-direction:column; gap:.15rem; font-size:.7rem; color:var(--muted);
+                  text-transform:uppercase; letter-spacing:.04em; }
+.run-form input, .run-form select { font:inherit; font-size:.8rem; padding:.2rem .3rem; border:1px solid var(--line);
+                                    border-radius:.3rem; text-transform:none; letter-spacing:normal; }
+.run-form input[type=number] { width:6rem; }
+.run-form button { padding:.3rem .7rem; }
+.run-status { padding:.35rem .55rem; border-radius:.35rem; background:#eef2f6; font-size:.8rem;
+              font-variant-numeric:tabular-nums; }
+.run-status.running { background:#eef8f1; color:#2f7d4f; }
+.run-status.ok { background:#eef8f1; color:#2f7d4f; }
+.run-status.error { background:#fff4f4; color:#9b2c2c; }
+.run-status.stopped { background:#fff7ed; color:#9a3412; }
+.run-metrics { font-size:.78rem; color:var(--muted); margin:.35rem 0; font-variant-numeric:tabular-nums; }
+.run-controls { display:flex; gap:.4rem; margin-bottom:.4rem; }
+.sparkline { width:20rem; height:4rem; background:var(--panel); border:1px solid var(--line);
+             border-radius:.35rem; }

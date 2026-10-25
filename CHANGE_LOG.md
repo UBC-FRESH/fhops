@@ -1,3 +1,36 @@
+# 2026-10-25 — P12.5: live runs, SSE, and run control (#182)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- `POST /api/runs` starts an allowlisted operational, hauling, or tactical–operational CLI run as
+  a subprocess, with the scenario resolved under `--workspace` and output under the first run root.
+- `GET /api/runs/{id}/status`, `POST /api/runs/{id}/control` (`pause`/`resume`/`stop`), and a
+  named-event SSE endpoint at `GET /api/runs/{id}/events`.
+- SSE reads the run's own telemetry (`telemetry.jsonl` and `steps/*.jsonl`), emits `progress`,
+  `kpis`, `assignment`, `done`, and `error`, is throttled to at most 2 Hz, closes after ten minutes,
+  and returns 204 for a finished run.
+- Run-panel UI for the three planner skins: scenario/options form, start, objective sparkline,
+  status, and pause/resume/stop, with status polling when EventSource is unavailable.
+- Process manager writes a running manifest immediately and refreshes it with the final status;
+  output directories are bounded and CLI crashes cannot take the API down.
+- CLI `fhops web --workspace` selects the scenario/process working directory.
+- Tests cover subprocess startup for all three domains, expected command construction, SSE
+  progress/kpis/assignment/done, finished-run 204, path/type/option rejection, and
+  pause/resume/stop.
+- SPA cache-bust bumped to `?v=8`; docs cover live runs and the workspace boundary.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 33 passed.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Headless DOM harness: the Run tab renders in the planner skins and a UI-started operational run
+  reaches `finished: ok` with no JS page errors.
+- Live demo: `POST /api/runs` started operational, hauling, and tactical runs; `/events` streamed
+  status, objective/KPI, and assignment events, and the finished run returned 204.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #183, editing, assistant, packaging, security, docs, and close-out.
+
 # 2026-10-25 — P12.4: domain panels, KPI cards, reports, and comparison (#181)
 
 Part of P12 (#171) on `feature/p12-web-ui`.

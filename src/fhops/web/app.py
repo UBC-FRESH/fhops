@@ -7,18 +7,21 @@ core CLI imports :mod:`fhops.cli.web` lazily, so a core install never needs Fast
 from __future__ import annotations
 
 import json
+import sys
+from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 import fhops
 from fhops.web.discovery import RunRecord, discover_runs
 from fhops.web.mapdata import layer_registry, load_block_geometry, map_payload, time_payload
+from fhops.web.runs import RunControlRequest, RunManager, RunRequest
 from fhops.web.skins import load_skins
 
 __all__ = ["ServiceConfig", "create_app", "is_loopback", "run_server", "validate_bind"]
@@ -48,6 +51,11 @@ class ServiceConfig:
     geometry_crs:
         Optional source CRS for the geometry. When omitted, the scenario ``geo_crs`` or the
         GeoJSON ``crs`` member is used; coordinates are transformed to WGS84 for MapLibre.
+    workspace:
+        Working directory for CLI subprocesses and for resolving scenario paths.
+    cli_command:
+        Command prefix used to invoke FHOPS. Defaults to the current Python interpreter running
+        ``-m fhops.cli.main``.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -58,6 +66,10 @@ class ServiceConfig:
     title: str = "FHOPS Web"
     geometry: Path | None = None
     geometry_crs: str | None = None
+    workspace: Path = field(default_factory=Path.cwd)
+    cli_command: tuple[str, ...] = field(
+        default_factory=lambda: (sys.executable, "-m", "fhops.cli.main")
+    )
 
 
 def is_loopback(host: str) -> bool:
@@ -95,8 +107,17 @@ def create_app(config: ServiceConfig) -> FastAPI:
         Application with health, run discovery, run detail, and the static shell.
     """
     validate_bind(config.host, allow_remote=config.allow_remote)
-    app = FastAPI(title=config.title, version=fhops.__version__)
     roots = [root.expanduser().resolve() for root in config.roots]
+    run_manager = RunManager()
+
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        try:
+            yield
+        finally:
+            run_manager.shutdown()
+
+    app = FastAPI(title=config.title, version=fhops.__version__, lifespan=lifespan)
 
     @app.get("/api/health")
     def health() -> dict[str, object]:
@@ -111,6 +132,69 @@ def create_app(config: ServiceConfig) -> FastAPI:
     @app.get("/api/runs")
     def runs() -> list[dict[str, object]]:
         return [record.to_dict() for record in discover_runs(roots)]
+
+    @app.post("/api/runs")
+    def start_run(request: RunRequest) -> dict[str, Any]:
+        run_root = roots[0]
+        run_root.mkdir(parents=True, exist_ok=True)
+        try:
+            record = run_manager.start(
+                request,
+                workspace=config.workspace,
+                run_root=run_root,
+                cli_command=config.cli_command,
+            )
+        except (ValueError, FileNotFoundError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return run_manager.status(record)
+
+    @app.get("/api/runs/{run_id}/status")
+    def run_status(run_id: str) -> dict[str, Any]:
+        active = run_manager.get(run_id)
+        if active is not None:
+            return run_manager.status(active)
+        record = _find_run(roots, run_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail=f"Unknown run_id={run_id}")
+        return {
+            "run_id": record.run_id,
+            "domain": record.domain,
+            "run_type": record.run_type,
+            "status": record.status,
+            "finished": True,
+            "paused": False,
+            "returncode": None,
+            "output_dir": str(record.path),
+            "started_at": None,
+            "elapsed_seconds": None,
+        }
+
+    @app.post("/api/runs/{run_id}/control")
+    def control_run(run_id: str, control: RunControlRequest) -> dict[str, Any]:
+        try:
+            return run_manager.control(run_id, control.action)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=f"Unknown live run_id={run_id}") from exc
+        except RuntimeError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    @app.get("/api/runs/{run_id}/events")
+    def run_events(run_id: str) -> Response:
+        live = run_manager.get(run_id)
+        if live is None:
+            if _find_run(roots, run_id) is None:
+                raise HTTPException(status_code=404, detail=f"Unknown run_id={run_id}")
+            return Response(status_code=204)
+        if live.finished:
+            return Response(status_code=204)
+        return StreamingResponse(
+            run_manager.stream(run_id),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no",
+            },
+        )
 
     @app.get("/api/runs/{run_id}")
     def run_detail(run_id: str) -> dict[str, object]:

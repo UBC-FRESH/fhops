@@ -17,6 +17,12 @@ imported only when the optional ``fhops[web]`` extra is installed.
    :show-inheritance:
    :noindex:
 
+.. automodule:: fhops.web.runs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
 Key objects
 -----------
 
@@ -26,7 +32,9 @@ Key objects
 - :func:`fhops.web.discovery.build_run_manifest` / :func:`fhops.web.discovery.write_run_manifest` –
   build or write ``run.json``.
 - :class:`fhops.web.app.ServiceConfig` – roots, bind, proxy prefix, remote-bind opt-in, geometry,
-  and geometry CRS.
+  geometry CRS, workspace, and CLI command prefix.
+- :class:`fhops.web.runs.RunManager` / :class:`fhops.web.runs.RunRequest` – start, monitor, stream,
+  and control CLI subprocesses without importing the optimizer.
 - :func:`fhops.web.app.create_app` – FastAPI factory.
 - :func:`fhops.web.app.validate_bind` – loopback/remote-bind guard.
 - :func:`fhops.web.skins.load_skins` / :func:`fhops.web.skins.validate_skin` – skin registry.
@@ -42,6 +50,6 @@ CLI
 
 .. code-block:: bash
 
-   fhops web --runs runs/
+   fhops web --runs runs/ --workspace /path/to/fhops-checkout
    fhops web manifest runs/run-a --status optimal
    fhops web discover runs/

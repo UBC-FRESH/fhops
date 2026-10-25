@@ -34,6 +34,7 @@ PANELS = frozenset(
         "reports",
         "compare",
         "scenario",
+        "run",
     }
 )
 LAYERS = frozenset(
