@@ -32,7 +32,7 @@ Verification:
 - Headless DOM: Scenario panels render for all three planner skins; a UI objective save preserved
   the scenario comment and reloaded through `load_scenario`; reviewer hides Scenario/Run.
 
-Next: `notes/reports/p12-closeout.md` and the phase PR close-out.
+Close-out report: `notes/reports/p12-closeout.md`. Next: phase PR review and merge.
 
 # 2026-10-25 — P12.5: live runs, SSE, and run control (#182)
 
