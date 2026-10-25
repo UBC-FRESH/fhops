@@ -54,6 +54,20 @@ exist when `road_construction` is present, support rows must reference a pinned 
 present, and duplicate pins/rows are rejected. Existing scenarios without LiDAR fields remain
 unchanged.
 
+## Registration Workflow
+
+```bash
+fhops scenario lidar validate data/femic/lidarbc-tfl6-2026.10
+fhops scenario lidar register scenarios/tfl6/scenario.yaml \
+  data/femic/lidarbc-tfl6-2026.10 \
+  --expected-bundle-id lidarbc-995fb1f771f4d7fe
+```
+
+Registration validates the bundle, checks the scenario `geo.crs` against the product CRS, records
+the block-GeoJSON bbox, writes the bundle pin/product checksums/selection, and reloads the scenario
+through the normal loader before replacement. `--dry-run` prints the pin without writing. No source
+tiles are downloaded.
+
 ## Support Mapping
 
 `summarize_femic_lidar_for_polygons` maps a bundle raster to block/landing

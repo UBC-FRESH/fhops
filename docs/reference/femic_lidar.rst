@@ -86,6 +86,24 @@ Rules:
 - native resolution, aggregation, support area, valid pixels, and provenance record how the FEMIC
   summary was made; FHOPS does not compute or resample those values in P14.1.
 
+Operator Workflow
+-----------------
+
+Validate a delivered bundle without touching a scenario::
+
+   fhops scenario lidar validate data/femic/lidarbc-tfl6-2026.10
+
+Pin it in a scenario AOI::
+
+   fhops scenario lidar register scenarios/tfl6/scenario.yaml \
+     data/femic/lidarbc-tfl6-2026.10 \
+     --expected-bundle-id lidarbc-995fb1f771f4d7fe
+
+Registration validates the bundle and the scenario, checks that the scenario ``geo.crs`` matches
+the bundle product CRS, records the block-GeoJSON AOI bbox when present, writes the bundle pin and
+per-product checksums, and reloads the scenario through the normal loader before replacing it.
+Use ``--dry-run`` to print the pin without writing. No source tile is downloaded or materialized.
+
 Shared Parity
 -------------
 
