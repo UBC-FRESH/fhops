@@ -47,6 +47,11 @@ Useful options:
 under a subpath. ``--workspace`` is the working directory for CLI subprocesses and the allowed root
 for scenario paths; it defaults to the directory where ``fhops web`` was started.
 
+For live SSE through a notebook or reverse proxy, allow ``text/event-stream`` and disable response
+buffering (for example ``X-Accel-Buffering: no``, which the service already sends). If the proxy
+still holds the stream, the Run panel's status polling and the finished-run 204 path recover the
+state; ``--root-path`` keeps every API and static URL under the proxy prefix.
+
 Run discovery
 -------------
 
@@ -188,9 +193,12 @@ subprocess:
      "options": {"iterations": 500, "seed": 42}
    }
 
-Supported run types are ``solve_heur`` and ``solve_mip_operational`` (operational), ``haul_solve``
-(hauling), and ``tactical_operational`` (tactical–operational). An unknown type, a missing scenario,
-or a scenario outside the workspace is a 400.
+Supported operational run types are ``solve_heur``, ``solve_ils``, ``solve_tabu``,
+``solve_mip_operational``, ``eval_playback``, and ``plan_rolling``; hauling supports ``haul_plan``,
+``haul_schedule``, and ``haul_solve``; tactical supports ``tactical_operational`` and
+``tactical_report``. Playback and tactical report runs take ``options.assignments`` and
+``options.result_json`` respectively, resolved under ``--workspace`` or the run root. An unknown
+type, a missing scenario/input, or a path outside those roots is a 400.
 
 ``GET /api/runs/{id}/status`` reports the process state. ``POST /api/runs/{id}/control`` accepts
 ``{"action": "pause"}``, ``"resume"``, or ``"stop"``; pause/resume use ``SIGSTOP``/``SIGCONT`` on
@@ -199,8 +207,9 @@ POSIX systems and stop terminates the subprocess. A CLI crash cannot take the AP
 ``GET /api/runs/{id}/events`` is a named-event SSE stream. Live events use the run's own telemetry:
 ``progress`` carries ``iteration``/``step``, ``objective``, ``best``, and temperature when written;
 ``kpis`` carries the run-level metrics; ``assignment`` carries the final operational assignment row;
-``done`` carries the final status, summary path, and summary detail; ``error`` carries the tail of
-stderr. The
+rolling-horizon ``progress`` adds a ``window`` object with ``start_day``/``end_day``; every event
+carries its ``domain``. ``done`` carries the final status, summary path, and summary detail;
+``error`` carries the tail of stderr. The
 stream is throttled to at most 2 Hz, closes after ten minutes so EventSource reconnects, and returns
 **204** for a finished run rather than a short stream. The Run panel starts the same allowlisted run
 types and falls back to status polling when EventSource is unavailable.

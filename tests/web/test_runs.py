@@ -28,6 +28,8 @@ elif "--out" in args:
     out = Path(value("--out")).parent
 elif "--out-json" in args:
     out = Path(value("--out-json")).parent
+elif "--shift-out" in args:
+    out = Path(value("--shift-out")).parent
 else:
     out = Path.cwd()
 out.mkdir(parents=True, exist_ok=True)
@@ -130,7 +132,31 @@ def test_events_stream_progress_and_done(tmp_path: Path) -> None:
     assert "event: kpis" in text
     assert "event: assignment" in text
     assert "objective" in text
+    assert '"domain": "operational"' in text
     assert client.get(f"/api/runs/{run_id}/events").status_code == 204
+
+
+def test_event_disconnect_does_not_stop_or_leak_run(tmp_path: Path) -> None:
+    client = _client(tmp_path, _write_script(tmp_path, "slow_cli.py", SLOW_CLI))
+    response = client.post(
+        "/api/runs",
+        json={
+            "domain": "operational",
+            "run_type": "solve_heur",
+            "scenario": "scenario.yaml",
+            "options": {"iterations": 10, "seed": 1},
+        },
+    )
+    run_id = response.json()["run_id"]
+    with client.stream("GET", f"/api/runs/{run_id}/events") as stream:
+        assert stream.status_code == 200
+        for line in stream.iter_lines():
+            if line:
+                break
+    running = client.get(f"/api/runs/{run_id}/status").json()
+    assert running["finished"] is False
+    client.post(f"/api/runs/{run_id}/control", json={"action": "stop"})
+    assert _wait_for(client, run_id)["status"] == "stopped"
 
 
 def test_control_pause_resume_stop(tmp_path: Path) -> None:
@@ -235,6 +261,161 @@ def test_start_run_all_three_domains(tmp_path: Path) -> None:
         manifest = json.loads((tmp_path / "runs" / run_id / "run.json").read_text(encoding="utf-8"))
         assert manifest["domain"] == domain
         assert manifest["run_type"] == run_type
+
+
+def test_start_run_covers_allowlisted_run_types(tmp_path: Path) -> None:
+    client = _client(tmp_path, _write_script(tmp_path, "fake_cli.py", FAKE_CLI))
+    (tmp_path / "assignments.csv").write_text(
+        "machine_id,block_id,day,shift_id\\nH1,b1,1,S1\\n", encoding="utf-8"
+    )
+    (tmp_path / "summary.json").write_text('{"status": "ok"}', encoding="utf-8")
+    cases = [
+        ("operational", "solve_heur", {}),
+        ("operational", "solve_ils", {}),
+        ("operational", "solve_tabu", {}),
+        ("operational", "solve_mip_operational", {}),
+        ("operational", "eval_playback", {"assignments": "assignments.csv"}),
+        (
+            "operational",
+            "plan_rolling",
+            {"solver": "sa", "master_days": 4, "sub_days": 2, "lock_days": 1},
+        ),
+        ("hauling", "haul_plan", {}),
+        ("hauling", "haul_schedule", {"day": 1, "solver": "sa"}),
+        ("hauling", "haul_solve", {"day": 1, "solver": "sa"}),
+        ("tactical_operational", "tactical_operational", {"time_limit": 10}),
+        ("tactical_operational", "tactical_report", {"result_json": "summary.json"}),
+    ]
+    for domain, run_type, options in cases:
+        response = client.post(
+            "/api/runs",
+            json={
+                "domain": domain,
+                "run_type": run_type,
+                "scenario": "scenario.yaml",
+                "options": options,
+            },
+        )
+        assert response.status_code == 200, (run_type, response.text)
+        run_id = response.json()["run_id"]
+        status = _wait_for(client, run_id)
+        assert status["status"] == "ok", (run_type, status)
+        manifest = json.loads((tmp_path / "runs" / run_id / "run.json").read_text(encoding="utf-8"))
+        assert manifest["domain"] == domain
+        assert manifest["run_type"] == run_type
+
+
+def test_build_command_covers_extended_run_types(tmp_path: Path) -> None:
+    scenario = tmp_path / "scenario.yaml"
+    scenario.write_text("name: test\\n", encoding="utf-8")
+    assignments = tmp_path / "assignments.csv"
+    assignments.write_text("machine_id,block_id,day,shift_id\\nH1,b1,1,S1\\n", encoding="utf-8")
+    summary = tmp_path / "summary.json"
+    summary.write_text("{}", encoding="utf-8")
+    (tmp_path / "flows").mkdir()
+    out = tmp_path / "out"
+
+    for run_type, cli_name in (("solve_ils", "solve-ils"), ("solve_tabu", "solve-tabu")):
+        command = build_command(
+            RunRequest(
+                domain="operational",
+                run_type=run_type,
+                scenario="scenario.yaml",
+                options={"iterations": 7, "seed": 2},
+            ),
+            scenario=scenario,
+            out_dir=out,
+            cli_command=("fhops",),
+            workspace=tmp_path,
+            run_root=tmp_path,
+        )
+        assert command[1] == cli_name
+        assert command[command.index("--iters") + 1] == "7"
+
+    playback = build_command(
+        RunRequest(
+            domain="operational",
+            run_type="eval_playback",
+            scenario="scenario.yaml",
+            options={"assignments": "assignments.csv", "samples": 2},
+        ),
+        scenario=scenario,
+        out_dir=out,
+        cli_command=("fhops",),
+        workspace=tmp_path,
+        run_root=tmp_path,
+    )
+    assert playback[1] == "eval-playback"
+    assert playback[playback.index("--assignments") + 1] == str(assignments)
+    assert playback[playback.index("--samples") + 1] == "2"
+
+    rolling = build_command(
+        RunRequest(
+            domain="operational",
+            run_type="plan_rolling",
+            scenario="scenario.yaml",
+            options={"solver": "sa", "master_days": 12, "sub_days": 6, "lock_days": 3},
+        ),
+        scenario=scenario,
+        out_dir=out,
+        cli_command=("fhops",),
+        workspace=tmp_path,
+        run_root=tmp_path,
+    )
+    assert rolling[1:3] == ["plan", "rolling"]
+    assert rolling[rolling.index("--master-days") + 1] == "12"
+    assert rolling[rolling.index("--out-iterations-jsonl") + 1] == str(out / "iterations.jsonl")
+
+    haul_plan = build_command(
+        RunRequest(
+            domain="hauling",
+            run_type="haul_plan",
+            scenario="scenario.yaml",
+            options={"objective": "workload", "solver": "highs", "gap": 0.01},
+        ),
+        scenario=scenario,
+        out_dir=out,
+        cli_command=("fhops",),
+        workspace=tmp_path,
+        run_root=tmp_path,
+    )
+    assert haul_plan[1:3] == ["haul", "plan"]
+    assert haul_plan[haul_plan.index("--objective") + 1] == "workload"
+    assert haul_plan[haul_plan.index("--gap") + 1] == "0.01"
+
+    haul_schedule = build_command(
+        RunRequest(
+            domain="hauling",
+            run_type="haul_schedule",
+            scenario="scenario.yaml",
+            options={"day": 4, "solver": "sa", "flow_dir": "flows"},
+        ),
+        scenario=scenario,
+        out_dir=out,
+        cli_command=("fhops",),
+        workspace=tmp_path,
+        run_root=tmp_path,
+    )
+    assert haul_schedule[1:3] == ["haul", "schedule"]
+    assert haul_schedule[haul_schedule.index("--day") + 1] == "4"
+    assert haul_schedule[haul_schedule.index("--flow-dir") + 1] == str(tmp_path / "flows")
+
+    report = build_command(
+        RunRequest(
+            domain="tactical_operational",
+            run_type="tactical_report",
+            scenario="scenario.yaml",
+            options={"result_json": "summary.json", "formats": "csv"},
+        ),
+        scenario=scenario,
+        out_dir=out,
+        cli_command=("fhops",),
+        workspace=tmp_path,
+        run_root=tmp_path,
+    )
+    assert report[1:3] == ["report", "tactical"]
+    assert report[report.index("--out-dir") + 1] == str(out)
+    assert report[report.index("--formats") + 1] == "csv"
 
 
 def test_build_command_covers_all_three_domains(tmp_path: Path) -> None:

@@ -4,23 +4,25 @@ Part of P12 (#171) on `feature/p12-web-ui`.
 
 - `POST /api/runs` starts an allowlisted operational, hauling, or tactical–operational CLI run as
   a subprocess, with the scenario resolved under `--workspace` and output under the first run root.
+  The allowlist covers `solve-heur`/`solve-ils`/`solve-tabu`/`solve-mip-operational`, playback and
+  rolling horizon; `haul plan`/`schedule`/`solve`; and tactical solve/report.
 - `GET /api/runs/{id}/status`, `POST /api/runs/{id}/control` (`pause`/`resume`/`stop`), and a
   named-event SSE endpoint at `GET /api/runs/{id}/events`.
-- SSE reads the run's own telemetry (`telemetry.jsonl` and `steps/*.jsonl`), emits `progress`,
-  `kpis`, `assignment`, `done`, and `error`, is throttled to at most 2 Hz, closes after ten minutes,
-  and returns 204 for a finished run.
+- SSE reads the run's own telemetry (`telemetry.jsonl`, `steps/*.jsonl`, and rolling
+  `iterations.jsonl`), emits domain-tagged `progress`, `kpis`, `assignment`, `done`, and `error`,
+  is throttled to at most 2 Hz, closes after ten minutes, and returns 204 for a finished run.
 - Run-panel UI for the three planner skins: scenario/options form, start, objective sparkline,
   status, and pause/resume/stop, with status polling when EventSource is unavailable.
 - Process manager writes a running manifest immediately and refreshes it with the final status;
   output directories are bounded and CLI crashes cannot take the API down.
 - CLI `fhops web --workspace` selects the scenario/process working directory.
-- Tests cover subprocess startup for all three domains, expected command construction, SSE
-  progress/kpis/assignment/done, finished-run 204, path/type/option rejection, and
-  pause/resume/stop.
+- Tests cover subprocess startup for all three domains, expected command construction for every
+  allowlisted run type, SSE progress/kpis/assignment/done, finished-run 204, client disconnect,
+  path/type/option rejection, and pause/resume/stop.
 - SPA cache-bust bumped to `?v=8`; docs cover live runs and the workspace boundary.
 
 Verification:
-- `PYTHONPATH=src pytest -q tests/web` -> 33 passed.
+- `PYTHONPATH=src pytest -q tests/web` -> 36 passed.
 - `ruff format --check`, `ruff check`, `mypy src` -> clean.
 - `sphinx-build -b html docs <build> -W` -> build succeeded.
 - Headless DOM harness: the Run tab renders in the planner skins and a UI-started operational run

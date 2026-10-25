@@ -1122,10 +1122,32 @@ function renderRunPanel() {
       ? state.run.manifest.scenario
       : defaults[domain] || "";
   const runTypes = {
-    operational: [["Heuristic SA", "solve_heur"], ["Operational MIP", "solve_mip_operational"]],
-    hauling: [["Haul solve", "haul_solve"]],
-    tactical_operational: [["Tactical-operational", "tactical_operational"]],
+    operational: [
+      ["Heuristic SA", "solve_heur"],
+      ["Iterated local search", "solve_ils"],
+      ["Tabu search", "solve_tabu"],
+      ["Operational MIP", "solve_mip_operational"],
+      ["Playback", "eval_playback"],
+      ["Rolling horizon", "plan_rolling"],
+    ],
+    hauling: [
+      ["Haul solve", "haul_solve"],
+      ["Phase I plan", "haul_plan"],
+      ["Phase II/III schedule", "haul_schedule"],
+    ],
+    tactical_operational: [
+      ["Tactical-operational", "tactical_operational"],
+      ["Tactical report", "tactical_report"],
+    ],
   }[domain];
+  const currentAssignments =
+    state.run?.domain === "operational" && state.run?.files?.assignments
+      ? `${state.run.path}/${state.run.files.assignments}`
+      : "";
+  const currentSummary =
+    state.run?.domain === "tactical_operational" && state.run?.files?.summary
+      ? `${state.run.path}/${state.run.files.summary}`
+      : "";
 
   const form = el("div", null, "run-form");
   const scenarioLabel = el("label", "Scenario");
@@ -1145,6 +1167,26 @@ function renderRunPanel() {
   }
   typeLabel.appendChild(runType);
   form.appendChild(typeLabel);
+
+  const assignmentsLabel = el("label", "Assignments CSV");
+  const assignments = document.createElement("input");
+  assignments.type = "text";
+  assignments.value = currentAssignments;
+  assignments.size = 48;
+  assignments.placeholder = "assignments.csv";
+  assignmentsLabel.appendChild(assignments);
+  assignmentsLabel.hidden = true;
+  form.appendChild(assignmentsLabel);
+
+  const resultLabel = el("label", "Result JSON");
+  const resultJson = document.createElement("input");
+  resultJson.type = "text";
+  resultJson.value = currentSummary;
+  resultJson.size = 48;
+  resultJson.placeholder = "summary.json";
+  resultLabel.appendChild(resultJson);
+  resultLabel.hidden = true;
+  form.appendChild(resultLabel);
 
   const iterationsLabel = el("label", "Iterations");
   const iterations = document.createElement("input");
@@ -1171,13 +1213,35 @@ function renderRunPanel() {
 
   const solverLabel = el("label", "Solver");
   const solver = document.createElement("select");
-  for (const value of ["sa", "mip"]) {
-    const option = el("option", value);
-    option.value = value;
-    solver.appendChild(option);
-  }
   solverLabel.appendChild(solver);
   form.appendChild(solverLabel);
+
+  const masterLabel = el("label", "Master days");
+  const masterDays = document.createElement("input");
+  masterDays.type = "number";
+  masterDays.value = "84";
+  masterDays.min = "1";
+  masterLabel.appendChild(masterDays);
+  masterLabel.hidden = true;
+  form.appendChild(masterLabel);
+
+  const subLabel = el("label", "Window days");
+  const subDays = document.createElement("input");
+  subDays.type = "number";
+  subDays.value = "28";
+  subDays.min = "1";
+  subLabel.appendChild(subDays);
+  subLabel.hidden = true;
+  form.appendChild(subLabel);
+
+  const lockLabel = el("label", "Lock days");
+  const lockDays = document.createElement("input");
+  lockDays.type = "number";
+  lockDays.value = "14";
+  lockDays.min = "1";
+  lockLabel.appendChild(lockDays);
+  lockLabel.hidden = true;
+  form.appendChild(lockLabel);
 
   const timeLabel = el("label", "Time limit (s)");
   const timeLimit = document.createElement("input");
@@ -1186,6 +1250,34 @@ function renderRunPanel() {
   timeLimit.placeholder = "none";
   timeLabel.appendChild(timeLimit);
   form.appendChild(timeLabel);
+
+  const solverChoices = (type) => {
+    if (type === "haul_plan") return ["highs"];
+    if (type === "plan_rolling") return ["sa", "mip", "stub"];
+    return ["sa", "mip"];
+  };
+  const setSolverChoices = () => {
+    const previous = solver.value;
+    solver.innerHTML = "";
+    for (const value of solverChoices(runType.value)) {
+      const option = el("option", value);
+      option.value = value;
+      solver.appendChild(option);
+    }
+    if ([...solver.options].some((option) => option.value === previous)) solver.value = previous;
+  };
+  const updateVisibility = () => {
+    const type = runType.value;
+    assignmentsLabel.hidden = type !== "eval_playback";
+    resultLabel.hidden = type !== "tactical_report";
+    const rolling = type === "plan_rolling";
+    masterLabel.hidden = !rolling;
+    subLabel.hidden = !rolling;
+    lockLabel.hidden = !rolling;
+    setSolverChoices();
+  };
+  runType.addEventListener("change", updateVisibility);
+  updateVisibility();
 
   const start = el("button", "Start run");
   start.type = "button";
@@ -1253,7 +1345,8 @@ function renderRunPanel() {
     if (payload.objective !== undefined && payload.objective !== null) {
       points.push(payload);
       if (points.length > 400) points.shift();
-      objectiveText = `step ${payload.iteration ?? payload.step ?? "—"} · objective ${payload.objective} · best ${payload.best ?? "—"}`;
+      const label = payload.window ? `window ${payload.iteration ?? "—"}` : `step ${payload.iteration ?? payload.step ?? "—"}`;
+      objectiveText = `${label} · objective ${payload.objective} · best ${payload.best ?? "—"}`;
       renderMetrics();
       drawSpark();
     } else if (payload.elapsed_seconds !== undefined && !objectiveText) {
@@ -1336,8 +1429,13 @@ function renderRunPanel() {
       seed: Number(seed.value) || 42,
       day: Number(day.value) || 1,
       solver: solver.value,
+      master_days: Number(masterDays.value) || 84,
+      sub_days: Number(subDays.value) || 28,
+      lock_days: Number(lockDays.value) || 14,
     };
     if (timeLimit.value) options.time_limit = Number(timeLimit.value);
+    if (assignments.value) options.assignments = assignments.value;
+    if (resultJson.value) options.result_json = resultJson.value;
     setStatus("starting…", "running");
     start.disabled = true;
     try {
