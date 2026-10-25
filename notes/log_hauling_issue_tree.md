@@ -42,7 +42,7 @@ issue type. The parent carries the `Feature` issue type. The repository did not 
   close-out report are on the phase branch. PR #185 is queued for approval.
 - 2026-10-25: #187 marine/barge extension implemented on `issue-187-marine-haul`: contract,
   Phase I marine flow, barge-cycle scheduler, CLI artefacts, docs, and the Sunshine Coast →
-  Howe Sound fixture.
+  Howe Sound fixture. PR #195 opened against `main`.
 
 ## Activation checklist
 

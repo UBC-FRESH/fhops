@@ -27,6 +27,8 @@ Verification:
 - `fhops haul solve examples/hauling_marine/scenario.yaml --day 1 --solver sa --sa-iters 200`
   -> feasible, 8 loads, 1 barge trip.
 
+PR #195 opened against `main`; no merge, tag, or release is performed without maintainer approval.
+
 # 2026-10-25 — P11.6: validation, formulation sync, and close-out (#177)
 
 Final task of P11 (#170) on `feature/p11-log-hauling`.
