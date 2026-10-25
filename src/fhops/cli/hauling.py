@@ -53,6 +53,15 @@ def validate_hauling(
     table.add_row("Contractors", str(len(config.contractors)))
     table.add_row("Truck types", str(len(config.truck_types)))
     table.add_row("Trucks", str(len(config.trucks)))
+    table.add_row("Barge types", str(len(config.barge_types)))
+    table.add_row("Barges", str(len(config.barges)))
+    table.add_row("Ports", str(len(config.ports)))
+    table.add_row("Water arcs", str(len(config.water_arcs)))
+    table.add_row("Marine routes", str(len(config.marine_routes)))
+    table.add_row(
+        "Transport modes",
+        "road+water" if config.marine_routes else "road",
+    )
     table.add_row("Sort yards", str(len(config.sort_yards)))
     table.add_row("Supply rows", str(len(config.supply)))
     table.add_row("Demand rows", str(len(config.demand)))
@@ -308,10 +317,23 @@ def _load_or_solve_flow(
     if not path.exists():
         raise typer.BadParameter(f"Missing {path}")
     frame = pd.read_csv(path)
+    marine_truckloads = _read_optional_csv(flow_dir / FLOW_FILES["marine_truckloads"])
+    barge_trips = _read_optional_csv(flow_dir / FLOW_FILES["barge_trips"])
+    marine_flows = _read_optional_csv(flow_dir / FLOW_FILES["marine_flows"])
     return FlowSolveResult(
         status="optimal",
         objective=None,
         cost_objective=None,
         workload_objective=None,
         truckloads=frame,
+        marine_truckloads=marine_truckloads,
+        barge_trips=barge_trips,
+        marine_flows=marine_flows,
     )
+
+
+def _read_optional_csv(path: Path) -> pd.DataFrame:
+    """Read a CSV artefact when it exists, otherwise return an empty frame."""
+    if not path.exists():
+        return pd.DataFrame()
+    return pd.read_csv(path)

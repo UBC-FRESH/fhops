@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pandas as pd
 import pyomo.environ as pyo
@@ -31,6 +31,9 @@ from pyomo.contrib.solver.common.util import NoFeasibleSolutionError
 from pyomo.opt import SolverFactory
 
 from fhops.hauling.network import ScheduleProblem, Truckload
+
+if TYPE_CHECKING:
+    from fhops.hauling.marine import BargeScheduleResult, MarineScheduleProblem
 
 __all__ = [
     "SchedulePlan",
@@ -123,6 +126,8 @@ class ScheduleSolveResult:
         Objective components.
     schedule / truck_summary / loader_summary:
         DataFrames with the documented schemas.
+    barge_schedule / barge_summary:
+        Barge-trip and barge-level tables for a marine day; empty for road-only days.
     plan:
         The route and loader-order plan, when a solution exists.
     solver / termination / runtime_seconds / solver_error:
@@ -141,6 +146,10 @@ class ScheduleSolveResult:
     loader_summary: pd.DataFrame = field(
         default_factory=lambda: pd.DataFrame(columns=_LOADER_COLUMNS)
     )
+    barge_schedule: pd.DataFrame = field(default_factory=pd.DataFrame)
+    barge_summary: pd.DataFrame = field(default_factory=pd.DataFrame)
+    barge_objective: float | None = None
+    barge_fixed_cost: float = 0.0
     plan: SchedulePlan | None = None
     solver: str = "highs"
     termination: str = ""
@@ -567,6 +576,25 @@ def solve_schedule(
         Schedule, truck summary, loader summary, plan, objective components, and solver
         provenance.
     """
+    barge_result = _solve_barges(problem)
+    if not problem.loads:
+        if barge_result is None:
+            raise ValueError("ScheduleProblem has no loads")
+        return ScheduleSolveResult(
+            status="feasible",
+            objective=0.0,
+            fixed_cost=0.0,
+            variable_cost=0.0,
+            overtime_cost=0.0,
+            barge_schedule=barge_result.schedule,
+            barge_summary=barge_result.summary,
+            barge_objective=barge_result.objective,
+            barge_fixed_cost=barge_result.fixed_cost,
+            solver=solver,
+            termination="marine-only",
+            runtime_seconds=barge_result.runtime_seconds,
+        )
+
     model = build_schedule_model(problem)
     solve_start = time.perf_counter()
     try:
@@ -632,7 +660,25 @@ def solve_schedule(
             runtime_seconds=runtime,
             solver_error=str(message) if message else None,
         )
-    return _extract_schedule_result(problem, model, status, termination, solver, runtime)
+    return _extract_schedule_result(
+        problem,
+        model,
+        status,
+        termination,
+        solver,
+        runtime,
+        barge_result,
+    )
+
+
+def _solve_barges(problem: ScheduleProblem) -> BargeScheduleResult | None:
+    """Schedule barge trips when the problem carries marine data."""
+    marine: MarineScheduleProblem | None = getattr(problem, "marine", None)
+    if marine is None:
+        return None
+    from fhops.hauling.marine import schedule_barge_trips
+
+    return schedule_barge_trips(marine)
 
 
 def _extract_schedule_result(
@@ -642,6 +688,7 @@ def _extract_schedule_result(
     termination: str,
     solver: str,
     runtime: float,
+    barge_result: BargeScheduleResult | None = None,
 ) -> ScheduleSolveResult:
     """Convert a solved scheduling model into a :class:`ScheduleSolveResult`."""
     loads = {load.load_id: load for load in problem.loads}
@@ -815,6 +862,9 @@ def _extract_schedule_result(
         schedule=schedule,
         truck_summary=truck_summary,
         loader_summary=loader_summary,
+        barge_schedule=(barge_result.schedule if barge_result is not None else pd.DataFrame()),
+        barge_summary=(barge_result.summary if barge_result is not None else pd.DataFrame()),
+        barge_objective=(barge_result.objective if barge_result is not None else None),
         plan=plan,
         solver=solver,
         termination=termination,

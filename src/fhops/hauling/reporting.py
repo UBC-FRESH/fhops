@@ -33,6 +33,10 @@ FLOW_FILES = {
     "yard_inventory": "haul_yard_inventory.csv",
     "block_inventory": "haul_block_inventory.csv",
     "contractor_workload": "haul_contractor_workload.csv",
+    "marine_flows": "haul_marine_flows.csv",
+    "marine_truckloads": "haul_marine_truckloads.csv",
+    "barge_trips": "haul_barge_trips.csv",
+    "port_inventory": "haul_port_inventory.csv",
     "kpis": "haul_kpis.json",
     "summary": "haul_summary.json",
 }
@@ -40,6 +44,8 @@ SCHEDULE_FILES = {
     "schedule": "haul_schedule.csv",
     "truck_summary": "haul_truck_summary.csv",
     "loader_summary": "haul_loader_summary.csv",
+    "barge_schedule": "haul_barge_schedule.csv",
+    "barge_summary": "haul_barge_summary.csv",
     "kpis": "haul_kpis.json",
     "summary": "haul_summary.json",
 }
@@ -81,6 +87,10 @@ def write_flow_run(
     result.yard_inventory.to_csv(paths["yard_inventory"], index=False)
     result.block_inventory.to_csv(paths["block_inventory"], index=False)
     result.contractor_workload.to_csv(paths["contractor_workload"], index=False)
+    result.marine_flows.to_csv(paths["marine_flows"], index=False)
+    result.marine_truckloads.to_csv(paths["marine_truckloads"], index=False)
+    result.barge_trips.to_csv(paths["barge_trips"], index=False)
+    result.port_inventory.to_csv(paths["port_inventory"], index=False)
     kpis = _flow_kpis(result)
     _write_json(paths["kpis"], kpis)
     summary = {
@@ -135,6 +145,12 @@ def write_schedule_run(
     result.schedule.to_csv(paths["schedule"], index=False)
     result.truck_summary.to_csv(paths["truck_summary"], index=False)
     result.loader_summary.to_csv(paths["loader_summary"], index=False)
+    if hasattr(result, "barge_schedule"):
+        result.barge_schedule.to_csv(paths["barge_schedule"], index=False)
+        result.barge_summary.to_csv(paths["barge_summary"], index=False)
+    else:
+        pd.DataFrame().to_csv(paths["barge_schedule"], index=False)
+        pd.DataFrame().to_csv(paths["barge_summary"], index=False)
     kpis = _schedule_kpis(result)
     _write_json(paths["kpis"], kpis)
     summary = {
@@ -245,6 +261,32 @@ def _flow_kpis(result: FlowSolveResult) -> dict[str, Any]:
         )
         ending_unsorted = float(ending["unsorted_inventory_m3"].sum())
         ending_water = float(ending["water_inventory_m3"].sum())
+    marine_water = (
+        float(result.marine_flows["water_m3"].sum()) if not result.marine_flows.empty else 0.0
+    )
+    barge_trips = (
+        int(result.barge_trips["barge_trips"].sum()) if not result.barge_trips.empty else 0
+    )
+    terminal_handling = (
+        float(result.marine_flows["origin_handling_m3"].sum())
+        + float(result.marine_flows["destination_handling_m3"].sum())
+        if not result.marine_flows.empty
+        else 0.0
+    )
+    marine_drayage_cost = (
+        float(result.marine_flows["drayage_cost"].sum()) if not result.marine_flows.empty else 0.0
+    )
+    barge_variable_cost = (
+        float(result.marine_flows["barge_variable_cost"].sum())
+        if not result.marine_flows.empty
+        else 0.0
+    )
+    terminal_handling_cost = (
+        float(result.marine_flows["origin_handling_cost"].sum())
+        + float(result.marine_flows["destination_handling_cost"].sum())
+        if not result.marine_flows.empty
+        else 0.0
+    )
     return {
         "status": result.status,
         "cost_objective": result.cost_objective,
@@ -258,6 +300,12 @@ def _flow_kpis(result: FlowSolveResult) -> dict[str, Any]:
         "total_truckloads": sorted_loads + unsorted_loads,
         "ending_unsorted_inventory_m3": ending_unsorted,
         "ending_water_inventory_m3": ending_water,
+        "marine_water_m3": marine_water,
+        "barge_trips": barge_trips,
+        "terminal_handling_m3": terminal_handling,
+        "marine_drayage_cost": marine_drayage_cost,
+        "barge_variable_cost": barge_variable_cost,
+        "terminal_handling_cost": terminal_handling_cost,
     }
 
 
@@ -280,6 +328,8 @@ def _schedule_kpis(result: ScheduleSolveResult | HaulingSAResult) -> dict[str, A
         if not result.loader_summary.empty
         else 0.0
     )
+    barge_schedule = getattr(result, "barge_schedule", pd.DataFrame())
+    barge_summary = getattr(result, "barge_summary", pd.DataFrame())
     return {
         "status": result.status,
         "objective": result.objective,
@@ -293,6 +343,13 @@ def _schedule_kpis(result: ScheduleSolveResult | HaulingSAResult) -> dict[str, A
         "regular_minutes": regular,
         "overtime_minutes": overtime,
         "loader_busy_minutes": busy,
+        "barge_trips": len(barge_schedule),
+        "barge_volume_m3": (
+            float(barge_schedule["volume_m3"].sum()) if not barge_schedule.empty else 0.0
+        ),
+        "barge_objective": getattr(result, "barge_objective", None),
+        "barge_fixed_cost": getattr(result, "barge_fixed_cost", 0.0),
+        "barges_used": len(barge_summary),
     }
 
 
@@ -345,14 +402,21 @@ def build_markdown_report(run_dir: Path) -> str:
     for title, filename in (
         ("Flows", FLOW_FILES["flows"]),
         ("Truckloads", FLOW_FILES["truckloads"]),
+        ("Marine flows", FLOW_FILES["marine_flows"]),
+        ("Barge trips", FLOW_FILES["barge_trips"]),
+        ("Port inventory", FLOW_FILES["port_inventory"]),
         ("Schedule", SCHEDULE_FILES["schedule"]),
         ("Truck summary", SCHEDULE_FILES["truck_summary"]),
         ("Loader summary", SCHEDULE_FILES["loader_summary"]),
+        ("Barge schedule", SCHEDULE_FILES["barge_schedule"]),
+        ("Barge summary", SCHEDULE_FILES["barge_summary"]),
     ):
         path = run_dir / filename
         if not path.exists():
             continue
         frame = pd.read_csv(path)
+        if frame.empty:
+            continue
         lines.extend([f"## {title}", ""])
         lines.extend(_markdown_table(frame, max_rows=12))
         if len(frame) > 12:

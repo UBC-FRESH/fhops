@@ -197,6 +197,36 @@ Next: #179, the read-only API for operational/hauling/tactical runs, SPA shell, 
 - P12 child issues #178-#183 remain linked. The first task is #178 (service skeleton, run manifest,
   artefact discovery, and CLI entry).
 - No tag, release, or PyPI publication is part of this close-out.
+# 2026-10-25 — P11.7: marine/barge haul legs (#187)
+
+Adds an explicit marine transport path to the log-hauling layer instead of aliasing a barge as a
+`TruckType`.
+
+- Contract: `TransportMode`, `BargeType`, `Barge`, `Port`, `WaterArc`, `PortLeg`, `MarineRoute`,
+  `LoaderLocationKind.PORT`, and `HaulArc.mode`. Validation rejects barge-named truck types,
+  non-road haul arcs, marine entities without a route, and routes without matching port legs,
+  barge, or drayage truck. Adds `port_inventory_penalty_per_m3`.
+- Phase I: pickup/water/delivery drayage volumes, barge-trip integer linking, port inventory,
+  storage/handling caps, barge fleet capacity, and `marine_flows` / `barge_trips` /
+  `port_inventory` / `marine_truckloads` outputs and artefacts.
+- Phase II/III: marine drayage loads in the truck/loader MIP; new `fhops.hauling.marine`
+  deterministic barge-cycle scheduler with port-loader assignment and synchronized road windows;
+  barge results attached to exact and SA schedules and written as stable CSVs.
+- CLI/reporting: marine dimensions in `haul validate`, marine artefact writers, KPIs, and Markdown
+  sections.
+- Fixture/docs/tests: `examples/hauling_marine/` Sunshine Coast → Howe Sound case; how-to,
+  reference, API, roadmap, note, and issue-tree updates; contract/flow/schedule/example/CLI tests.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 76 passed.
+- `fhops haul validate examples/hauling_marine/scenario.yaml` -> valid, zero supply/demand residual.
+- `fhops haul plan examples/hauling_marine/scenario.yaml --out-dir <dir> --time-limit 30` -> optimal.
+- `fhops haul schedule examples/hauling_marine/scenario.yaml --flow-dir <dir> --day 1 --solver mip`
+  -> optimal, 8 drayage loads, 1 barge trip, zero truck/barge validation errors.
+- `fhops haul solve examples/hauling_marine/scenario.yaml --day 1 --solver sa --sa-iters 200`
+  -> feasible, 8 loads, 1 barge trip.
+
+PR #195 opened against `main`; no merge, tag, or release is performed without maintainer approval.
 
 # 2026-10-25 — P11.6: validation, formulation sync, and close-out (#177)
 

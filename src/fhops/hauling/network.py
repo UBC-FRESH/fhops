@@ -8,13 +8,14 @@ continuous-time MIP in :mod:`fhops.hauling.schedule` solves.
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
 
 from fhops.hauling.contract import Contractor, HaulingConfig, LoaderLocationKind, Truck, TruckType
 
 if TYPE_CHECKING:
     from fhops.hauling.flow import FlowSolveResult
+    from fhops.hauling.marine import MarineScheduleProblem
     from fhops.scenario.contract import Scenario
 
 __all__ = [
@@ -48,6 +49,11 @@ class Truckload:
     volume_m3:
         Nominal load volume. Phase II uses it for reporting; the scheduling constraints use the
         truck type's capacity and the load count, not the exact partial volume.
+    leg:
+        ``road`` for a direct block-to-yard haul, ``pickup`` for the block-to-origin-port drayage
+        leg, or ``delivery`` for the destination-port-to-yard drayage leg.
+    marine_route_id:
+        Marine route identifier for drayage loads; ``None`` for road loads.
     """
 
     load_id: str
@@ -58,6 +64,8 @@ class Truckload:
     truck_type_id: str
     sorted: bool
     volume_m3: float
+    leg: str = "road"
+    marine_route_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,6 +103,9 @@ class ScheduleProblem:
     overtime_violation_penalty_per_minute:
         Soft penalty per minute above ``regular_minutes + max_overtime_minutes`` used by the SA
         solver. The exact MIP treats the limit as hard.
+    marine:
+        Optional marine scheduling data for barge cycles and port loaders. ``None`` for road-only
+        days.
     """
 
     scenario_name: str
@@ -116,6 +127,7 @@ class ScheduleProblem:
     regular_minutes: float
     max_overtime_minutes: float
     overtime_violation_penalty_per_minute: float
+    marine: MarineScheduleProblem | None = None
 
     def load_by_id(self, load_id: str) -> Truckload:
         """Return a load by id."""
@@ -152,8 +164,25 @@ class ScheduleProblem:
         return self.block_to_yard[(load.block_id, load.yard_id, load.truck_type_id)]
 
     def empty_travel_minutes(self, previous: Truckload, following: Truckload) -> float:
-        """Return the empty travel time from ``previous``'s yard to ``following``'s block."""
-        return self.yard_to_block[(previous.yard_id, following.block_id, following.truck_type_id)]
+        """Return the empty travel time from ``previous``'s yard to ``following``'s block.
+
+        Marine drayage stages are separate physical movements: a truck that delivers to the
+        destination port cannot carry a pickup load from the origin block without a deadhead that
+        the first release does not model. Missing cross-stage pairs receive a synthetic
+        full-day deadhead so the MIP can express the transition as infeasible rather than raising
+        a key error; a schedule that uses one is reported as a validation warning.
+        """
+        key = (previous.yard_id, following.block_id, following.truck_type_id)
+        if key in self.yard_to_block:
+            return self.yard_to_block[key]
+        marine_legs = {"pickup", "delivery"}
+        if previous.leg in marine_legs or following.leg in marine_legs:
+            return self.horizon_minutes
+        raise KeyError(
+            "No road leg from "
+            f"{previous.yard_id} to {following.block_id} for truck type "
+            f"{following.truck_type_id}"
+        )
 
     def depot_to_load_minutes(self, load: Truckload) -> float:
         """Return the depot-to-pickup travel time."""
@@ -204,7 +233,15 @@ def build_schedule_problem(
     else:
         day_rows = rows[rows["day"] == day]
         loads = _expand_loads(config, day_rows.to_dict("records"))
-    return build_schedule_problem_from_loads(scenario, loads, day)
+    marine_rows = getattr(flow_result, "marine_truckloads", None)
+    if marine_rows is not None and not marine_rows.empty:
+        marine_day_rows = marine_rows[marine_rows["day"] == day]
+        loads.extend(_expand_marine_loads(config, marine_day_rows.to_dict("records")))
+    problem = build_schedule_problem_from_loads(scenario, loads, day)
+    from fhops.hauling.marine import build_marine_schedule_problem
+
+    marine_problem = build_marine_schedule_problem(scenario, flow_result, day)
+    return replace(problem, marine=marine_problem)
 
 
 def build_schedule_problem_from_loads(
@@ -263,11 +300,17 @@ def build_schedule_problem_from_loads(
     for loader in config.loader_locations:
         service = loader.service_minutes or config.default_loader_service_minutes
         loader_service[loader.loader_id] = service
-        target = (
-            pickup_loaders
-            if loader.location_kind is LoaderLocationKind.PICKUP
-            else delivery_loaders
-        )
+        if loader.location_kind is LoaderLocationKind.PICKUP:
+            target = pickup_loaders
+        elif loader.location_kind is LoaderLocationKind.DELIVERY:
+            target = delivery_loaders
+        else:
+            # A port loader handles both the inbound drayage drop and the outbound barge/drayage
+            # service at the same terminal.
+            for port_target in (pickup_loaders, delivery_loaders):
+                current = port_target.get(loader.location_id, ())
+                port_target[loader.location_id] = (*current, loader.loader_id)
+            continue
         current = target.get(loader.location_id, ())
         target[loader.location_id] = (*current, loader.loader_id)
 
@@ -304,15 +347,24 @@ def build_schedule_problem_from_loads(
         block_id, yard_id, truck_type_id = arc_key
         block_to_yard[arc_key] = arc.travel_minutes
         yard_to_block[(yard_id, block_id, truck_type_id)] = arc.empty_travel_minutes()
+    for leg in config.port_legs:
+        if leg.side.value == "origin":
+            forward = (leg.location_id, leg.port_id, leg.truck_type_id)
+            reverse = (leg.port_id, leg.location_id, leg.truck_type_id)
+        else:
+            forward = (leg.port_id, leg.location_id, leg.truck_type_id)
+            reverse = (leg.location_id, leg.port_id, leg.truck_type_id)
+        block_to_yard[forward] = leg.travel_minutes
+        yard_to_block[reverse] = leg.empty_travel_minutes()
     for (location_id, truck_type_id), minutes in depot_legs.items():
         depot_to_block[(location_id, truck_type_id)] = minutes
         yard_to_depot[(location_id, truck_type_id)] = minutes
 
     for load in loads:
         arc_key = (load.block_id, load.yard_id, load.truck_type_id)
-        if arc_key not in haul_arcs:
+        if arc_key not in block_to_yard:
             raise ValueError(
-                "No haul arc for load "
+                "No road or port leg for load "
                 f"{load.load_id}: block_id={load.block_id}, yard_id={load.yard_id}, "
                 f"truck_type_id={load.truck_type_id}"
             )
@@ -394,6 +446,47 @@ def _expand_loads(config: HaulingConfig, rows: Iterable[Any]) -> list[Truckload]
                         truck_type_id=truck_type_id,
                         sorted=is_sorted,
                         volume_m3=capacity,
+                    )
+                )
+    return loads
+
+
+def _expand_marine_loads(config: HaulingConfig, rows: Iterable[Any]) -> list[Truckload]:
+    """Expand Phase I marine drayage counts into individual truckload records."""
+    truck_types = {truck_type.id: truck_type for truck_type in config.truck_types}
+    loads: list[Truckload] = []
+    counters: dict[tuple[str, str, str, str, str, bool], int] = {}
+    for record in rows:
+        day = int(record["day"])
+        route_id = str(record["marine_route_id"])
+        leg = str(record["leg"])
+        block_id = str(record["block_id"])
+        yard_id = str(record["yard_id"])
+        contractor_id = str(record["contractor_id"])
+        truck_type_id = str(record["truck_type_id"])
+        sorted_count = int(record["sorted_truckloads"])
+        unsorted_count = int(record["unsorted_truckloads"])
+        capacity = truck_types[truck_type_id].capacity_m3
+        for is_sorted, count in ((True, sorted_count), (False, unsorted_count)):
+            for _ in range(count):
+                key = (str(day), route_id, leg, contractor_id, truck_type_id, is_sorted)
+                index = counters.get(key, 0) + 1
+                counters[key] = index
+                kind = "s" if is_sorted else "u"
+                loads.append(
+                    Truckload(
+                        load_id=(
+                            f"d{day}-{route_id}-{leg}-{contractor_id}-{truck_type_id}-{kind}{index}"
+                        ),
+                        day=day,
+                        block_id=block_id,
+                        yard_id=yard_id,
+                        contractor_id=contractor_id,
+                        truck_type_id=truck_type_id,
+                        sorted=is_sorted,
+                        volume_m3=capacity,
+                        leg=leg,
+                        marine_route_id=route_id,
                     )
                 )
     return loads

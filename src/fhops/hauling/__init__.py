@@ -6,6 +6,8 @@ P11.1 lands the contract; later tasks add the models and solver.
 """
 
 from .contract import (
+    Barge,
+    BargeType,
     ContractCompatibility,
     Contractor,
     ContractorBlock,
@@ -19,13 +21,20 @@ from .contract import (
     LoaderLocation,
     LoaderLocationKind,
     LogSort,
+    MarineRoute,
+    Port,
+    PortLeg,
+    PortSide,
     SortYard,
+    TransportMode,
     Truck,
     TruckType,
+    WaterArc,
 )
 from .flow import (
     FlowSolveResult,
     HaulingFlowProblem,
+    MarineLane,
     build_flow_model,
     build_flow_problem,
     solve_flow,
@@ -46,6 +55,15 @@ from .integration import (
     residual_report,
     scenario_from_operational_plan,
     scenario_from_tactical_plan,
+)
+from .marine import (
+    BargeSchedulePlan,
+    BargeScheduleResult,
+    MarineScheduleProblem,
+    MarineTripRequest,
+    build_marine_schedule_problem,
+    schedule_barge_trips,
+    validate_barge_schedule,
 )
 from .network import (
     ScheduleProblem,
@@ -71,6 +89,8 @@ from .schedule import (
 )
 
 __all__ = [
+    "Barge",
+    "BargeType",
     "ContractCompatibility",
     "Contractor",
     "ContractorBlock",
@@ -84,11 +104,18 @@ __all__ = [
     "LoaderLocation",
     "LoaderLocationKind",
     "LogSort",
+    "MarineRoute",
+    "Port",
+    "PortLeg",
+    "PortSide",
     "SortYard",
+    "TransportMode",
     "Truck",
     "TruckType",
+    "WaterArc",
     "FlowSolveResult",
     "HaulingFlowProblem",
+    "MarineLane",
     "build_flow_model",
     "build_flow_problem",
     "solve_flow",
@@ -97,6 +124,13 @@ __all__ = [
     "Truckload",
     "build_schedule_problem",
     "build_schedule_problem_from_loads",
+    "BargeSchedulePlan",
+    "BargeScheduleResult",
+    "MarineScheduleProblem",
+    "MarineTripRequest",
+    "build_marine_schedule_problem",
+    "schedule_barge_trips",
+    "validate_barge_schedule",
     "SchedulePlan",
     "ScheduleSolveResult",
     "build_schedule_model",

@@ -149,6 +149,8 @@ class HaulingSAResult:
         Best-solution overtime violation.
     schedule / truck_summary / loader_summary / plan:
         Best-solution artefacts.
+    barge_schedule / barge_summary / barge_objective:
+        Barge-cycle tables for a marine day; empty for road-only days.
     iterations / accepted / runtime_seconds / seed:
         Search provenance.
     history:
@@ -171,6 +173,10 @@ class HaulingSAResult:
     runtime_seconds: float
     seed: int
     history: pd.DataFrame
+    barge_schedule: pd.DataFrame = field(default_factory=pd.DataFrame)
+    barge_summary: pd.DataFrame = field(default_factory=pd.DataFrame)
+    barge_objective: float | None = None
+    barge_fixed_cost: float = 0.0
     solver_error: str | None = None
 
 
@@ -604,6 +610,37 @@ def solve_sa(
     rng = random.Random(config.seed)
     start = time.perf_counter()
     history: list[dict[str, Any]] = []
+    marine = getattr(problem, "marine", None)
+    barge_result = None
+    if marine is not None:
+        from fhops.hauling.marine import schedule_barge_trips
+
+        barge_result = schedule_barge_trips(marine)
+    if not problem.loads:
+        if barge_result is None:
+            raise ValueError("ScheduleProblem has no loads")
+        return HaulingSAResult(
+            status="feasible",
+            objective=0.0,
+            fixed_cost=0.0,
+            variable_cost=0.0,
+            overtime_cost=0.0,
+            violation_cost=0.0,
+            violation_minutes=0.0,
+            schedule=pd.DataFrame(),
+            truck_summary=pd.DataFrame(),
+            loader_summary=pd.DataFrame(),
+            plan=None,
+            iterations=0,
+            accepted=0,
+            runtime_seconds=time.perf_counter() - start,
+            seed=config.seed,
+            history=pd.DataFrame(columns=_HISTORY_COLUMNS),
+            barge_schedule=barge_result.schedule,
+            barge_summary=barge_result.summary,
+            barge_objective=barge_result.objective,
+            barge_fixed_cost=barge_result.fixed_cost,
+        )
     try:
         current = initial_solution(problem, rng)
         current_eval = evaluate_routes(problem, current, config)
@@ -688,6 +725,9 @@ def solve_sa(
         runtime_seconds=time.perf_counter() - start,
         seed=config.seed,
         history=pd.DataFrame(history, columns=_HISTORY_COLUMNS),
+        barge_schedule=(barge_result.schedule if barge_result is not None else pd.DataFrame()),
+        barge_summary=(barge_result.summary if barge_result is not None else pd.DataFrame()),
+        barge_objective=(barge_result.objective if barge_result is not None else None),
     )
 
 

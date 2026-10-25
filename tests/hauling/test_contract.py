@@ -9,6 +9,8 @@ import yaml
 from pydantic import ValidationError
 
 from fhops.hauling import (
+    Barge,
+    BargeType,
     Contractor,
     ContractorBlock,
     Depot,
@@ -21,9 +23,15 @@ from fhops.hauling import (
     LoaderLocation,
     LoaderLocationKind,
     LogSort,
+    MarineRoute,
+    Port,
+    PortLeg,
+    PortSide,
     SortYard,
+    TransportMode,
     Truck,
     TruckType,
+    WaterArc,
 )
 from fhops.scenario.contract.models import (
     SUPPORTED_SCHEMA_VERSIONS,
@@ -325,3 +333,129 @@ def test_haul_arc_empty_return_defaults_to_loaded_time() -> None:
     assert arc.empty_travel_minutes() == 120.0
     faster_empty = arc.model_copy(update={"return_travel_minutes": 90.0})
     assert faster_empty.empty_travel_minutes() == 90.0
+
+
+def test_marine_fixture_exposes_the_water_path() -> None:
+    scenario = load_scenario(Path("examples/hauling_marine/scenario.yaml"))
+    config = scenario.hauling
+    assert config is not None
+    assert config.port_ids() == {"sechelt", "howe_sound"}
+    assert config.barge_type_ids() == {"log_barge"}
+    assert config.barge_ids() == {"c1_b1"}
+    assert config.marine_route_ids() == {"sc_hs_y1"}
+    route = config.marine_route("sc_hs_y1")
+    assert route.origin_port_id == "sechelt"
+    assert route.destination_port_id == "howe_sound"
+    assert config.port_leg_for(route, PortSide.ORIGIN) is not None
+    assert config.port_leg_for(route, PortSide.DESTINATION) is not None
+    assert config.water_arc("sc_hs").barge_type_id == "log_barge"
+
+
+def test_barge_named_truck_type_is_rejected() -> None:
+    with pytest.raises(ValidationError, match="looks like a marine vessel"):
+        TruckType(id="log_barge", capacity_m3=3000.0)
+
+
+def test_haul_arc_rejects_a_water_mode() -> None:
+    with pytest.raises(ValidationError, match="HaulArc supports only mode=road"):
+        HaulArc(
+            block_id="b1",
+            yard_id="y1",
+            truck_type_id="highway",
+            travel_minutes=150.0,
+            mode=TransportMode.WATER,
+        )
+
+
+def test_marine_route_requires_matching_port_legs() -> None:
+    with pytest.raises(ValidationError, match="destination PortLeg"):
+        _config(
+            barge_types=[BargeType(id="barge_type", capacity_m3=3000.0)],
+            barges=[Barge(id="barge1", contractor_id="c1", barge_type_id="barge_type")],
+            ports=[Port(id="p1"), Port(id="p2")],
+            water_arcs=[
+                WaterArc(
+                    id="water1",
+                    origin_port_id="p1",
+                    destination_port_id="p2",
+                    barge_type_id="barge_type",
+                    travel_minutes=200.0,
+                )
+            ],
+            port_legs=[
+                PortLeg(
+                    port_id="p1",
+                    location_id="b1",
+                    side=PortSide.ORIGIN,
+                    truck_type_id="highway",
+                    travel_minutes=20.0,
+                )
+            ],
+            marine_routes=[
+                MarineRoute(
+                    id="r1",
+                    block_id="b1",
+                    yard_id="y1",
+                    origin_port_id="p1",
+                    destination_port_id="p2",
+                    water_arc_id="water1",
+                    contractor_id="c1",
+                    truck_type_id="highway",
+                )
+            ],
+            haul_arcs=[],
+        )
+
+
+def test_port_loader_must_point_at_a_port() -> None:
+    with pytest.raises(ValidationError, match="unknown port"):
+        _config(
+            barge_types=[BargeType(id="barge_type", capacity_m3=3000.0)],
+            barges=[Barge(id="barge1", contractor_id="c1", barge_type_id="barge_type")],
+            ports=[Port(id="p1"), Port(id="p2")],
+            water_arcs=[
+                WaterArc(
+                    id="water1",
+                    origin_port_id="p1",
+                    destination_port_id="p2",
+                    barge_type_id="barge_type",
+                    travel_minutes=200.0,
+                )
+            ],
+            port_legs=[
+                PortLeg(
+                    port_id="p1",
+                    location_id="b1",
+                    side=PortSide.ORIGIN,
+                    truck_type_id="highway",
+                    travel_minutes=20.0,
+                ),
+                PortLeg(
+                    port_id="p2",
+                    location_id="y1",
+                    side=PortSide.DESTINATION,
+                    truck_type_id="highway",
+                    travel_minutes=20.0,
+                ),
+            ],
+            marine_routes=[
+                MarineRoute(
+                    id="r1",
+                    block_id="b1",
+                    yard_id="y1",
+                    origin_port_id="p1",
+                    destination_port_id="p2",
+                    water_arc_id="water1",
+                    contractor_id="c1",
+                    truck_type_id="highway",
+                )
+            ],
+            loader_locations=[
+                LoaderLocation(
+                    loader_id="loader_b1",
+                    location_id="missing_port",
+                    location_kind=LoaderLocationKind.PORT,
+                )
+            ],
+            haul_arcs=[],
+        )
