@@ -25,6 +25,10 @@ from fhops.scenario.lidar import (
     FemicLidarError,
     validate_femic_lidar_bundle,
 )
+from fhops.scenario.lidar_mapping import (
+    FemicLidarMappingError,
+    map_femic_lidar_to_scenario,
+)
 from fhops.scenario.lidar_registration import (
     FemicLidarRegistrationError,
     register_femic_lidar_bundle,
@@ -50,6 +54,62 @@ def lidar_validate(
     typer.echo(json.dumps(report.to_dict(), indent=2))
     if not report.is_valid:
         raise typer.Exit(1)
+
+
+@lidar_app.command("map")
+def lidar_map(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a pinned bundle."),
+    bundle: Path = typer.Argument(..., help="FEMIC LidarBC bundle directory."),
+    product: list[str] | None = typer.Option(
+        None,
+        "--product",
+        help="Repeatable FIELD=PRODUCT mapping, e.g. slope_percent=slope. Known products map automatically when omitted.",
+    ),
+    statistic: str = typer.Option(
+        "mean", "--statistic", help="Aggregation: mean, p95, min, or max."
+    ),
+    include_blocks: bool = typer.Option(True, "--include-blocks/--no-include-blocks"),
+    include_landings: bool = typer.Option(True, "--include-landings/--no-include-landings"),
+    roads_geojson: Path | None = typer.Option(
+        None, "--roads-geojson", help="Optional road support polygons."
+    ),
+    road_id_field: str = typer.Option("road_id", "--road-id-field"),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Print rows without writing the scenario."
+    ),
+) -> None:
+    """Summarize FEMIC terrain/canopy products into scenario lidar_support rows."""
+    products: dict[str, str] | None = None
+    if product:
+        products = {}
+        for item in product:
+            if "=" not in item:
+                typer.echo(f"Expected FIELD=PRODUCT, got {item!r}", err=True)
+                raise typer.Exit(1)
+            field, product_name = (part.strip() for part in item.split("=", 1))
+            if not field or not product_name:
+                typer.echo(f"Expected FIELD=PRODUCT, got {item!r}", err=True)
+                raise typer.Exit(1)
+            if product_name in products and products[product_name] != field:
+                typer.echo(f"Product {product_name!r} mapped to two fields", err=True)
+                raise typer.Exit(1)
+            products[product_name] = field
+    try:
+        result = map_femic_lidar_to_scenario(
+            scenario,
+            bundle,
+            products=products,
+            statistic=statistic,
+            include_blocks=include_blocks,
+            include_landings=include_landings,
+            roads_geojson=roads_geojson,
+            road_id_field=road_id_field,
+            dry_run=dry_run,
+        )
+    except FemicLidarMappingError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(json.dumps(result.to_dict(), indent=2))
 
 
 @lidar_app.command("register")

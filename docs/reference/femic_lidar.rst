@@ -104,6 +104,20 @@ the bundle product CRS, records the block-GeoJSON AOI bbox when present, writes 
 per-product checksums, and reloads the scenario through the normal loader before replacing it.
 Use ``--dry-run`` to print the pin without writing. No source tile is downloaded or materialized.
 
+Map native-resolution products to block and landing support::
+
+   fhops scenario lidar map scenarios/tfl6/scenario.yaml \
+     data/femic/lidarbc-tfl6-2026.10 \
+     --statistic mean \
+     --product slope_percent=slope \
+     --product canopy_height_m=chm
+
+Known product names (``slope``, ``aspect``, ``roughness``, ``canopy_cover``, ``canopy_height``,
+``chm``, ``vertical_structure``) map automatically. Each output row keeps the product name,
+native resolution, valid-pixel count, support area (for projected CRS), aggregation, and
+provenance. Block/landing polygons must already match the product CRS; ``--roads-geojson`` adds
+optional road support. Nothing is resampled. ``--dry-run`` prints rows without writing.
+
 Shared Parity
 -------------
 
