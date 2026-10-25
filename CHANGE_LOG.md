@@ -1,3 +1,10 @@
+# 2026-10-25 — P12.3 CI fix: pyproj typing and GeoJSON newline
+
+- Added the mypy override for optional `pyproj` imports so the pre-commit/CI mypy gate passes
+  without pyproj stubs.
+- Normalised the generated `examples/hauling_scale/blocks.geojson` end-of-file newline.
+- No runtime behaviour changed; the WGS84 transformation itself landed in `741a983`.
+
 # 2026-10-25 — P12.3 fix: transform projected geometry to WGS84 for MapLibre
 
 - MapLibre rejects projected coordinates (BC Albers, EPSG:3005) as invalid lng/lat. The map service
