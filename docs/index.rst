@@ -34,6 +34,7 @@ ensembles.
    howto/rolling_horizon
    howto/tactical_operational
    howto/hauling
+   howto/web
 
 .. toctree::
    :maxdepth: 2
@@ -45,6 +46,7 @@ ensembles.
    reference/harvest_systems
    reference/hauling
    reference/hauling_formulation
+   reference/web
    reference/telemetry
    reference/dashboards
    reference/source_bibliography

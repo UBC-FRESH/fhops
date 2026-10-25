@@ -27,6 +27,7 @@ from fhops.hauling.reporting import (
 from fhops.hauling.schedule import ScheduleSolveResult, solve_schedule
 from fhops.scenario.contract import Scenario
 from fhops.scenario.io import load_scenario
+from fhops.web.discovery import write_run_manifest
 
 hauling_app = typer.Typer(add_completion=False, no_args_is_help=True)
 console = Console()
@@ -107,6 +108,15 @@ def plan_hauling(
         scenario_name=scenario.name,
         start_day=scenario.hauling.start_day,
     )
+    write_run_manifest(
+        out_dir,
+        domain="hauling",
+        run_type="haul_plan",
+        command=f"fhops haul plan {scenario_path}",
+        scenario=str(scenario_path),
+        solver=solver,
+        status=result.status,
+    )
     console.print(f"\nWrote {len(paths)} files under {out_dir}")
 
 
@@ -148,6 +158,16 @@ def schedule_hauling(
             scenario_name=scenario.name,
             day=day,
         )
+        write_run_manifest(
+            out_dir,
+            domain="hauling",
+            run_type="haul_schedule",
+            command=f"fhops haul schedule {scenario_path}",
+            scenario=str(scenario_path),
+            solver="sa",
+            seed=sa_seed,
+            status=sa_result.status,
+        )
     elif solver == "mip":
         mip_result = solve_schedule(
             problem,
@@ -167,6 +187,15 @@ def schedule_hauling(
             out_dir,
             scenario_name=scenario.name,
             day=day,
+        )
+        write_run_manifest(
+            out_dir,
+            domain="hauling",
+            run_type="haul_schedule",
+            command=f"fhops haul schedule {scenario_path}",
+            scenario=str(scenario_path),
+            solver="highs",
+            status=mip_result.status,
         )
     else:
         console.print("[red]--solver must be mip or sa[/red]")
@@ -233,6 +262,16 @@ def solve_hauling(
         scenario_name=scenario.name,
         start_day=scenario.hauling.start_day,
         day=day,
+    )
+    write_run_manifest(
+        out_dir,
+        domain="hauling",
+        run_type="haul_solve",
+        command=f"fhops haul solve {scenario_path}",
+        scenario=str(scenario_path),
+        solver=solver,
+        seed=sa_seed if solver == "sa" else None,
+        status=schedule_result.status,
     )
     console.print(f"\nWrote {len(paths)} files under {out_dir}")
 

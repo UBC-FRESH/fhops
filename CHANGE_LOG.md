@@ -1,3 +1,32 @@
+# 2026-10-25 — P12.1: service skeleton, three-domain discovery, and `fhops web` (#178)
+
+First implementation task of P12 (#171) on `feature/p12-web-ui`.
+
+- Added `src/fhops/web/discovery.py`: run discovery under configured roots, three-domain
+  classification (`operational`, `hauling`, `tactical_operational`), `run.json` build/write, and
+  status inference from summary artefacts.
+- Added `src/fhops/web/app.py`: FastAPI factory with `/api/health`, `/api/runs`,
+  `/api/runs/{run_id}`, the static shell, loopback/remote-bind guard, and `--root-path` support.
+- Added the minimal static shell (`index.html`, `style.css`, `app.js`) with a run browser and domain
+  badges. Domain panels, maps, Gantt, reports, live SSE, and editing remain P12.2-P12.6.
+- Added `fhops web` (serve), `fhops web manifest`, and `fhops web discover`.
+- `fhops haul plan/schedule/solve` now write `run.json` automatically.
+- Added the optional `fhops[web]` extra (`fastapi`, `uvicorn`) and web/httpx to dev dependencies.
+- Added web how-to/reference/API docs and the CLI reference section.
+- Confirmed the wheel includes `fhops/web/static/*`; a clean-venv wheel+`[web]` install imports
+  FastAPI and creates the app.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 12 passed.
+- `PYTHONPATH=src pytest -q tests/hauling/test_cli.py` -> 5 passed (includes `run.json` assertions).
+- `fhops web --help`, `fhops web manifest`, and `fhops web discover` succeed.
+- `hatch build -t wheel` + clean-venv `pip install '<wheel>[web]'` imports `fhops.web.app`.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #179, the read-only API for operational/hauling/tactical runs, SPA shell, and skin loader.
+
 # 2026-10-25 — P12 scope clarified: three planning lenses
 
 - The web UI must cover all three FHOPS planning domains in one application:

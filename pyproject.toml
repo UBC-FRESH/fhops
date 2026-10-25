@@ -40,7 +40,14 @@ dev = [
   "pandas-stubs>=2.2.0",
   "types-PyYAML>=6.0.12",
   "pdfplumber>=0.10.3",
-  "tabulate>=0.9.0"
+  "tabulate>=0.9.0",
+  "fastapi>=0.110",
+  "uvicorn>=0.29",
+  "httpx>=0.27"
+]
+web = [
+  "fastapi>=0.110",
+  "uvicorn>=0.29"
 ]
 geo = [
   "geopandas>=0.14.0"
@@ -100,6 +107,10 @@ python_version = "3.11"
 strict = false
 warn_unused_ignores = true
 exclude = ["examples"]
+
+[[tool.mypy.overrides]]
+module = ["fastapi", "fastapi.*", "uvicorn", "uvicorn.*"]
+ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = [

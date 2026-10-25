@@ -12,11 +12,11 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 - Parent issue: [#171 - P12: FHOPS web application (WS4-style artefact reader)](https://github.com/UBC-FRESH/fhops/issues/171)
 - Phase branch: `feature/p12-web-ui` (active from `main` at `52462d2`)
 - Planning PR: #184 (draft)
-- Status: active (2026-10-25)
+- Status: active (2026-10-25); #178 complete, #179 next
 
 | Issue | Task | Child branch |
 |---:|---|---|
-| [#178](https://github.com/UBC-FRESH/fhops/issues/178) | P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry | `issue-178-web-service` |
+| [#178](https://github.com/UBC-FRESH/fhops/issues/178) | P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry — complete | `feature/p12-web-ui` |
 | [#179](https://github.com/UBC-FRESH/fhops/issues/179) | P12.2 Read-only API, SPA shell, and skin loader | `issue-179-web-api` |
 | [#180](https://github.com/UBC-FRESH/fhops/issues/180) | P12.3 Map, layer tree, and day/period control | `issue-180-web-map` |
 | [#181](https://github.com/UBC-FRESH/fhops/issues/181) | P12.4 Schedule/Gantt, KPI, report, and comparison panels | `issue-181-web-panels` |
@@ -48,7 +48,7 @@ The issue bodies carry the domain-specific additions from the 2026-10-25 scope c
 - [x] Create `feature/p12-web-ui` from `main` at `52462d2`.
 - [x] Update `ROADMAP.md` status from `queued` to `active` and record the activation date (`2026-10-25`).
 - [x] Post an activation comment on #171.
-- [ ] Start #178.
+- [x] Start #178 (complete).
 - [ ] Re-read the WS4 design note and `ws4/web/app.py` before the first service line.
 
 ## Ongoing hygiene

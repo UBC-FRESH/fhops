@@ -202,7 +202,7 @@ flows/truckloads, Phase II/III truck/loader schedule, yard inventory, contractor
 KPIs), and TOPM-style tactical-operational planning (period harvest decisions, product flows,
 facility demand/inventory, roads, silviculture, fleet). It adds map/layer tree, domain Gantt/tables,
 reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
-- [ ] #178 P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry.
+- [x] #178 P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry.
 - [ ] #179 P12.2 Read-only API, SPA shell, and skin loader.
 - [ ] #180 P12.3 Map, layer tree, and day/period control.
 - [ ] #181 P12.4 Schedule/Gantt, KPI, report, and comparison panels.
@@ -314,10 +314,10 @@ reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
     - Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,
       following the WS4 web UI design: map/layer tree, schedule, KPIs, reports, comparison, live SSE
       runs, skins, and an opt-in assistant.
-    - Child issues #178-#183 are linked as sub-issues; the phase is active on `feature/p12-web-ui`.
+    - Child issues #178-#183 are linked as sub-issues; #178 is complete and the phase is active on `feature/p12-web-ui`.
     - P12.1 freezes the artefact contract (including a new `run.json`) before the API and UI work.
       P11 hauling outputs are optional; missing layers are named, not invented.
-    - #178 (service skeleton, run manifest, artefact discovery) is the first task; re-read the WS4 design note and `ws4/web/app.py` before the first service line.
+    - #178 (service skeleton, run manifest, three-domain discovery) is complete; #179 (read-only API, SPA shell, skin loader) is next.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
