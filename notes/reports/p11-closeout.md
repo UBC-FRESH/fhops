@@ -124,8 +124,7 @@ loader symmetry. Symmetry breaking and an SA-derived MIP start are recorded foll
 ## CI evidence
 
 - P11.5 head `5143743`: workflow run `40163945291`, `lint-test-docs` **pass** (11m53s).
-- P11.6 head `fb7c6ce`: workflow run `TBD`, `lint-test-docs`
-  TBD.
+- P11.6 head `fb7c6ce`: workflow run `40172980773`, `lint-test-docs` **pass** (11m20s).
 - `deploy-history` is skipped on pull-request events by configuration.
 
 ## Deviations and risks
