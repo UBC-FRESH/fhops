@@ -523,6 +523,15 @@ refused so older readers cannot silently ignore it.
 
 See :doc:`hauling` for the entity rules, units, and a complete example.
 
+LidarBC Products
+----------------
+
+Scenarios may optionally pin FEMIC-compiled LidarBC bundles and record aggregated block/landing/
+road support evidence. Both sections are optional; existing scenarios without them remain valid.
+FHOPS consumes the FEMIC bundle and never discovers or materializes source tiles. See
+:doc:`../reference/femic_lidar` for the bundle, pin, support, aggregation, and OGL-BC attribution
+contract.
+
 Authoring Checklist
 -------------------
 
@@ -532,6 +541,8 @@ Authoring Checklist
 3. Use ``crew_assignments`` and ``geo`` only when you have supporting data.
 4. Run ``fhops validate <scenario.yaml>`` to confirm the scenario satisfies the contract.
 5. Add a ``hauling:`` section only when the scenario needs log transport; see :doc:`hauling`.
+6. Add ``lidar_products``/``lidar_support`` only when consuming a FEMIC bundle; see
+   :doc:`../reference/femic_lidar`.
 
 Fixture Gallery
 ---------------

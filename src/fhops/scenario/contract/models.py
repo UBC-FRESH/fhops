@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_va
 
 from fhops.costing.machine_rates import compose_default_rental_rate_for_role, normalize_machine_role
 from fhops.hauling.contract import HaulingConfig
+from fhops.scenario.contract.lidar import LidarProductRef, LidarSupport
 from fhops.scheduling import MobilisationConfig, TimelineConfig
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
@@ -659,6 +660,14 @@ class Scenario(BaseModel):
         Optional :class:`ObjectiveWeights` overriding default solver weights.
     road_construction:
         Optional list of :class:`RoadConstruction` entries used by telemetry/costing exports.
+    lidar_products:
+        Optional pins to FEMIC-compiled LidarBC bundle versions. A pin records the bundle id,
+        version, manifest checksum, licence, and optional manifest path. FHOPS consumes the FEMIC
+        bundle; it never discovers or materializes source tiles itself.
+    lidar_support:
+        Optional aggregated LidarBC evidence for blocks, landings, and roads. Each row states the
+        FEMIC product, native resolution, aggregation, support footprint, and provenance; existing
+        scenarios without LiDAR fields remain valid.
     hauling:
         Optional :class:`~fhops.hauling.contract.HaulingConfig` with log sorts, contractors,
         truck types and trucks, depots, sort yards, haul arcs, loader bindings, and the driver
@@ -700,6 +709,8 @@ class Scenario(BaseModel):
     road_construction: list[RoadConstruction] | None = None
     initial_state: ScenarioInitialState | None = None
     hauling: HaulingConfig | None = None
+    lidar_products: list[LidarProductRef] | None = None
+    lidar_support: list[LidarSupport] | None = None
 
     @field_validator("num_days")
     @classmethod
@@ -886,6 +897,60 @@ class Scenario(BaseModel):
                 machine_ids=machine_ids,
                 num_days=self.num_days,
             )
+
+        pinned_products: set[tuple[str, str]] = set()
+        if self.lidar_products:
+            for product in self.lidar_products:
+                product_key = (product.bundle_id, product.bundle_version)
+                if product_key in pinned_products:
+                    raise ValueError(
+                        f"Duplicate LidarProductRef pin: {product_key[0]}@{product_key[1]}"
+                    )
+                pinned_products.add(product_key)
+        if self.lidar_support:
+            road_ids = {road.id for road in self.road_construction or []}
+            seen_support: set[tuple[str, str, str, str]] = set()
+            for support in self.lidar_support:
+                support_key = (
+                    support.support_unit,
+                    support.support_id,
+                    support.bundle_id,
+                    support.bundle_version,
+                )
+                if support_key in seen_support:
+                    raise ValueError(
+                        "Duplicate LidarSupport row for "
+                        f"{support.support_unit}:{support.support_id}"
+                    )
+                seen_support.add(support_key)
+                if support.support_unit == "block" and support.support_id not in block_ids:
+                    raise ValueError(
+                        f"LidarSupport references unknown block_id={support.support_id}"
+                    )
+                if support.support_unit == "landing" and support.support_id not in landing_ids:
+                    raise ValueError(
+                        f"LidarSupport references unknown landing_id={support.support_id}"
+                    )
+                if (
+                    support.support_unit == "road"
+                    and self.road_construction is not None
+                    and support.support_id not in road_ids
+                ):
+                    raise ValueError(
+                        f"LidarSupport references unknown road id={support.support_id}"
+                    )
+                if (
+                    pinned_products
+                    and (
+                        support.bundle_id,
+                        support.bundle_version,
+                    )
+                    not in pinned_products
+                ):
+                    raise ValueError(
+                        "LidarSupport references an unpinned FEMIC bundle "
+                        f"{support.bundle_id}@{support.bundle_version}"
+                    )
 
         return self
 

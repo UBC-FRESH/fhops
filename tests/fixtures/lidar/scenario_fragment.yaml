@@ -1,0 +1,58 @@
+lidar_products:
+  - bundle_id: lidarbc-tfl6-2026.10
+    bundle_version: 2026.10.0-tfl6
+    manifest_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    licence_id: OGL-BC
+    manifest_path: lidarbc-tfl6-2026.10/manifest.json
+lidar_support:
+  - support_unit: block
+    support_id: B01
+    bundle_id: lidarbc-tfl6-2026.10
+    bundle_version: 2026.10.0-tfl6
+    product: slope
+    aggregation: area_weighted_mean
+    native_resolution_m: 1.0
+    support_area_m2: 12000.0
+    valid_pixels: 12000
+    slope_percent: 8.2
+    aspect_degrees: 135.0
+    roughness_m: 0.12
+    canopy_cover_percent: 62.0
+    canopy_height_m: 24.5
+    vertical_structure_index: 0.47
+    vertical_structure_class: multi_layer
+    provenance: synthetic contract fixture
+  - support_unit: landing
+    support_id: L1
+    bundle_id: lidarbc-tfl6-2026.10
+    bundle_version: 2026.10.0-tfl6
+    product: chm
+    aggregation: mean
+    native_resolution_m: 1.0
+    support_area_m2: 2500.0
+    valid_pixels: 2500
+    slope_percent: 6.4
+    aspect_degrees: 140.0
+    roughness_m: 0.08
+    canopy_cover_percent: 0.0
+    canopy_height_m: 0.0
+    vertical_structure_index: 0.0
+    vertical_structure_class: cleared
+    provenance: synthetic contract fixture
+  - support_unit: road
+    support_id: R1
+    bundle_id: lidarbc-tfl6-2026.10
+    bundle_version: 2026.10.0-tfl6
+    product: terrain_derivatives
+    aggregation: mean
+    native_resolution_m: 1.0
+    support_area_m2: 1800.0
+    valid_pixels: 1800
+    slope_percent: 5.1
+    aspect_degrees: 150.0
+    roughness_m: 0.2
+    canopy_cover_percent: 0.0
+    canopy_height_m: 0.0
+    vertical_structure_index: 0.0
+    vertical_structure_class: cleared
+    provenance: synthetic contract fixture
