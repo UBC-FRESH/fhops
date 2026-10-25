@@ -19,9 +19,9 @@ repos:
         exclude: "^src/fhops/web/static/vendor/"
       - id: check-merge-conflict
       - id: end-of-file-fixer
-        exclude: "^\\.continue/|^notes/reference/|^data/"
+        exclude: "^\\.continue/|^notes/reference/|^data/|^src/fhops/web/static/vendor/"
       - id: trailing-whitespace
-        exclude: "^\\.continue/|^notes/reference/|^data/"
+        exclude: "^\\.continue/|^notes/reference/|^data/|^src/fhops/web/static/vendor/"
   - repo: local
     hooks:
       - id: require-changelog-update

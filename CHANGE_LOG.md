@@ -1,3 +1,10 @@
+# 2026-10-25 — P12.3 CI fix: vendored MapLibre excluded from text hooks
+
+- `check-added-large-files`, `end-of-file-fixer`, and `trailing-whitespace` now exclude
+  `src/fhops/web/static/vendor/`. The vendored MapLibre bundle is 785 KB and upstream-formatted;
+  the text hooks must not rewrite it.
+- No application behaviour changed. The map code and tests are the P12.3 commit `01f3d41`.
+
 # 2026-10-25 — P12.3: map, layer tree, and day/shift/period control (#180)
 
 Part of P12 (#171) on `feature/p12-web-ui`.
