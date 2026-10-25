@@ -135,3 +135,31 @@ code { background:#eef2f6; padding:0 .15rem; border-radius:.2rem; }
 .run-controls { display:flex; gap:.4rem; margin-bottom:.4rem; }
 .sparkline { width:20rem; height:4rem; background:var(--panel); border:1px solid var(--line);
              border-radius:.35rem; }
+
+/* Scenario editing */
+.scenario-head { font-size:.78rem; color:var(--muted); margin:.2rem 0 .7rem; word-break:break-all; }
+.edit-form { display:flex; flex-wrap:wrap; gap:.55rem .9rem; align-items:flex-end; padding:.55rem .65rem;
+             border:1px solid var(--line); border-radius:.4rem; background:var(--panel); margin:.3rem 0 .8rem; }
+.edit-form label { display:flex; flex-direction:column; gap:.15rem; font-size:.68rem; color:var(--muted);
+                   text-transform:uppercase; letter-spacing:.04em; }
+.edit-form input { font:inherit; font-size:.8rem; padding:.2rem .3rem; border:1px solid var(--line);
+                   border-radius:.3rem; text-transform:none; letter-spacing:normal; }
+.edit-form button { padding:.3rem .65rem; }
+.edit-controls { display:flex; gap:.45rem; margin:.45rem 0 .8rem; }
+.edit-controls button { padding:.3rem .6rem; }
+.edit-status { min-height:1.2rem; font-size:.78rem; color:var(--muted); margin:.35rem 0; }
+.edit-status.ok { color:#2f7d4f; }
+.edit-status.error { color:#9b2c2c; }
+.edit-table { max-height:22rem; display:block; overflow:auto; }
+.edit-table td, .edit-table th { padding:.18rem .28rem; white-space:nowrap; }
+.edit-table input { width:5.2rem; font:inherit; font-size:.76rem; padding:.12rem .2rem; }
+.tactical-edit-table input { width:5rem; }
+
+/* Optional assistant */
+.assistant { margin-top:1rem; padding-top:.7rem; border-top:1px solid var(--line); }
+.assistant h3 { font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:.2rem 0 .4rem; }
+.assistant textarea { width:100%; box-sizing:border-box; font:inherit; font-size:.78rem; resize:vertical;
+                      border:1px solid var(--line); border-radius:.35rem; padding:.35rem; }
+.assistant button { margin:.35rem 0; padding:.28rem .65rem; }
+.assistant-output { max-height:12rem; overflow:auto; white-space:pre-wrap; font-size:.74rem; color:var(--ink);
+                     background:var(--panel); border:1px solid var(--line); border-radius:.35rem; padding:.35rem; }

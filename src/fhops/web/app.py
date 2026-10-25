@@ -17,9 +17,19 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 
 import fhops
+from fhops.web.agent import AgentError, AgentRequest, run_agent
 from fhops.web.discovery import RunRecord, discover_runs
+from fhops.web.editing import (
+    ScenarioEditError,
+    read_editable,
+    save_tactical_overlay,
+    update_hauling,
+    update_locks,
+    update_objective,
+)
 from fhops.web.mapdata import layer_registry, load_block_geometry, map_payload, time_payload
 from fhops.web.runs import RunControlRequest, RunManager, RunRequest
 from fhops.web.skins import load_skins
@@ -56,6 +66,13 @@ class ServiceConfig:
     cli_command:
         Command prefix used to invoke FHOPS. Defaults to the current Python interpreter running
         ``-m fhops.cli.main``.
+    allow_agent:
+        Enable the optional local assistant. Off by default; the assistant runs the installed
+        ``opencode`` CLI with the service user's shell permissions.
+    agent_command:
+        Command prefix for the assistant.
+    agent_timeout:
+        Assistant subprocess timeout in seconds.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -70,6 +87,34 @@ class ServiceConfig:
     cli_command: tuple[str, ...] = field(
         default_factory=lambda: (sys.executable, "-m", "fhops.cli.main")
     )
+    allow_agent: bool = False
+    agent_command: tuple[str, ...] = ("opencode", "run", "--format", "json")
+    agent_timeout: float = 120.0
+
+
+class ObjectiveUpdate(BaseModel):
+    """Objective-weight edit payload."""
+
+    weights: dict[str, float] = Field(default_factory=dict)
+
+
+class LocksUpdate(BaseModel):
+    """Schedule-lock replacement payload."""
+
+    locks: list[dict[str, object]] = Field(default_factory=list)
+
+
+class HaulingUpdate(BaseModel):
+    """Hauling driver/contractor edit payload."""
+
+    driver_policy: dict[str, object] | None = None
+    contractors: list[dict[str, object]] | None = None
+
+
+class TacticalOverlayUpdate(BaseModel):
+    """Sparse tactical overlay payload."""
+
+    overlay: dict[str, object] = Field(default_factory=dict)
 
 
 def is_loopback(host: str) -> bool:
@@ -119,6 +164,27 @@ def create_app(config: ServiceConfig) -> FastAPI:
 
     app = FastAPI(title=config.title, version=fhops.__version__, lifespan=lifespan)
 
+    def _scenario_target(scenario_id: str) -> tuple[Path, str | None, RunRecord]:
+        record = _find_run(roots, scenario_id)
+        if record is None:
+            raise HTTPException(status_code=404, detail=f"Unknown scenario/run id={scenario_id}")
+        manifest = record.manifest or {}
+        value = manifest.get("scenario")
+        if not value:
+            raise HTTPException(
+                status_code=404, detail=f"Run {scenario_id} has no scenario path in run.json"
+            )
+        raw = Path(str(value)).expanduser()
+        candidates = [raw] if raw.is_absolute() else [config.workspace / raw, record.path / raw]
+        path = next((candidate for candidate in candidates if candidate.is_file()), candidates[0])
+        path = path.resolve()
+        allowed = [config.workspace.resolve(), *roots]
+        if not any(path.is_relative_to(root) for root in allowed):
+            raise HTTPException(status_code=403, detail="Scenario path escapes the allowed roots")
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail=f"Scenario not found: {value}")
+        return path, record.domain or manifest.get("domain"), record
+
     @app.get("/api/health")
     def health() -> dict[str, object]:
         return {
@@ -127,6 +193,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
             "roots": [str(root) for root in roots],
             "domain_count": 3,
             "skins": [skin.id for skin in load_skins()],
+            "agent_enabled": config.allow_agent,
         }
 
     @app.get("/api/runs")
@@ -195,6 +262,79 @@ def create_app(config: ServiceConfig) -> FastAPI:
                 "X-Accel-Buffering": "no",
             },
         )
+
+    @app.get("/api/scenarios/{scenario_id}")
+    def scenario_detail(scenario_id: str) -> dict[str, object]:
+        path, domain, record = _scenario_target(scenario_id)
+        payload = read_editable(path, domain=domain, overlay_root=roots[0])
+        payload["scenario_id"] = scenario_id
+        payload["run_id"] = record.run_id
+        return payload
+
+    @app.put("/api/scenarios/{scenario_id}/objective")
+    def scenario_objective(scenario_id: str, update: ObjectiveUpdate) -> dict[str, object]:
+        path, _, record = _scenario_target(scenario_id)
+        try:
+            payload = update_objective(path, update.weights)
+        except ScenarioEditError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        payload["scenario_id"] = scenario_id
+        payload["run_id"] = record.run_id
+        return payload
+
+    @app.put("/api/scenarios/{scenario_id}/locks")
+    def scenario_locks(scenario_id: str, update: LocksUpdate) -> dict[str, object]:
+        path, _, record = _scenario_target(scenario_id)
+        try:
+            payload = update_locks(path, update.locks)
+        except ScenarioEditError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        payload["scenario_id"] = scenario_id
+        payload["run_id"] = record.run_id
+        return payload
+
+    @app.put("/api/scenarios/{scenario_id}/hauling")
+    def scenario_hauling(scenario_id: str, update: HaulingUpdate) -> dict[str, object]:
+        path, _, record = _scenario_target(scenario_id)
+        try:
+            payload = update_hauling(
+                path,
+                driver_policy=update.driver_policy,
+                contractors=update.contractors,
+            )
+        except ScenarioEditError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        payload["scenario_id"] = scenario_id
+        payload["run_id"] = record.run_id
+        return payload
+
+    @app.put("/api/scenarios/{scenario_id}/tactical")
+    def scenario_tactical(scenario_id: str, update: TacticalOverlayUpdate) -> dict[str, object]:
+        path, _, record = _scenario_target(scenario_id)
+        try:
+            payload = save_tactical_overlay(path, update.overlay, overlay_root=roots[0])
+        except ScenarioEditError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        payload["scenario_id"] = scenario_id
+        payload["run_id"] = record.run_id
+        return payload
+
+    @app.post("/api/agent")
+    def assistant(request: AgentRequest) -> dict[str, object]:
+        if not config.allow_agent:
+            raise HTTPException(
+                status_code=403,
+                detail="Assistant is disabled; start fhops web with --allow-agent to enable it.",
+            )
+        try:
+            return run_agent(
+                request,
+                workspace=config.workspace,
+                command=config.agent_command,
+                timeout=config.agent_timeout,
+            )
+        except AgentError as exc:
+            raise HTTPException(status_code=502, detail=str(exc)) from exc
 
     @app.get("/api/runs/{run_id}")
     def run_detail(run_id: str) -> dict[str, object]:

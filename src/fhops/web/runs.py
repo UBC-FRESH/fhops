@@ -112,7 +112,7 @@ class RunManager:
             raise ValueError(
                 f"Unsupported run_type={request.run_type!r} for domain={request.domain!r}"
             )
-        scenario = _resolve_scenario(request.scenario, workspace)
+        scenario = _resolve_scenario(request.scenario, workspace, run_root)
         run_id = _make_run_id(request.run_type, scenario)
         out_dir = (run_root / run_id).resolve()
         command = build_command(
@@ -600,14 +600,16 @@ def _required_text(options: dict[str, Any], key: str) -> str:
     return value
 
 
-def _resolve_scenario(value: str, workspace: Path) -> Path:
+def _resolve_scenario(value: str, workspace: Path, run_root: Path | None = None) -> Path:
     path = Path(value).expanduser()
     if not path.is_absolute():
         path = workspace / path
     path = path.resolve()
-    workspace = workspace.resolve()
-    if not path.is_relative_to(workspace):
-        raise ValueError(f"Scenario escapes the configured workspace: {value}")
+    roots = [workspace.resolve()]
+    if run_root is not None:
+        roots.append(run_root.resolve())
+    if not any(path.is_relative_to(root) for root in roots):
+        raise ValueError(f"Scenario escapes the configured workspace and run roots: {value}")
     if not path.is_file():
         raise ValueError(f"Scenario not found: {value}")
     return path

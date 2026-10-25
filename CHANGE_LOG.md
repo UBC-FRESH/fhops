@@ -1,3 +1,39 @@
+# 2026-10-25 — P12.6: editing, assistant, packaging, security, and close-out (#183)
+
+Part of P12 (#171) on `feature/p12-web-ui`.
+
+- `GET /api/scenarios/{run_id}` and validated `PUT` endpoints for operational objective weights and
+  schedule locks, inline hauling driver policy/contractor preferences, and tactical demand
+  envelopes.
+- Operational/hauling edits replace top-level YAML sections and validate a temporary file with
+  `load_scenario` before the original is replaced; comments elsewhere are preserved. Invalid edits
+  return the loader's message and leave the file untouched.
+- Tactical edits write a validated sparse overlay and a derived merged scenario under the first run
+  root; the base tactical bundle is never rewritten. The Scenario tab can pass the derived path to
+  the Run tab.
+- Scenario tab for the three planner skins: objective/lock form and table, driver policy/contractor
+  table, and demand-envelope table with overlay validation.
+- Optional local assistant (`--allow-agent`, `--agent-timeout`) calling the installed `opencode` CLI
+  without a shell; off by default, hidden in the UI unless enabled, and guarded by `/api/agent`.
+- Packaging verification: wheel contains the SPA, vendor assets, and four skins; `fhops[web]`
+  installs in a clean venv; a core-only install has no FastAPI/uvicorn and still runs the CLI.
+- Security tests for loopback/remote bind, static/scenario traversal, scenario-root allowlists,
+  reviewer read-only actions, assistant opt-in, and request bounds.
+- Docs cover scenario editing, overlays, assistant risk, and packaging; SPA cache-bust is `?v=9`.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 50 passed.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+- `tests/web/test_packaging.py`: wheel contains `fhops/web/static/*`, vendor files, and all four
+  skins; the `web` extra metadata is present.
+- Clean-venv `pip install 'fhops[web]'` wheel smoke: `/api/health` and `/` served with `?v=9`.
+- Core-only clean venv: `fhops --help` works and FastAPI/uvicorn are absent.
+- Headless DOM: Scenario panels render for all three planner skins; a UI objective save preserved
+  the scenario comment and reloaded through `load_scenario`; reviewer hides Scenario/Run.
+
+Next: `notes/reports/p12-closeout.md` and the phase PR close-out.
+
 # 2026-10-25 — P12.5: live runs, SSE, and run control (#182)
 
 Part of P12 (#171) on `feature/p12-web-ui`.

@@ -50,6 +50,16 @@ def web(
         "--workspace",
         help="Working directory for CLI subprocesses and scenario paths.",
     ),
+    allow_agent: bool = typer.Option(
+        False,
+        "--allow-agent",
+        help="Enable the optional local assistant (installed opencode CLI).",
+    ),
+    agent_timeout: float = typer.Option(
+        120.0,
+        "--agent-timeout",
+        help="Assistant subprocess timeout in seconds.",
+    ),
 ) -> None:
     """Start the web service when no subcommand is given."""
     if ctx.invoked_subcommand is not None:
@@ -71,6 +81,8 @@ def web(
         geometry=geometry,
         geometry_crs=geometry_crs,
         workspace=workspace,
+        allow_agent=allow_agent,
+        agent_timeout=agent_timeout,
     )
     try:
         run_server(config)

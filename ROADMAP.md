@@ -196,7 +196,7 @@ and a thesis-calibrated SA solver.
   barge-cycle scheduling with port-load synchronization; Sunshine Coast → Howe Sound fixture and
   contract/flow/schedule/CLI tests.
 
-## Phase 12 — FHOPS Web Application (WS4-Style) — active
+## Phase 12 — FHOPS Web Application (WS4-Style) — complete
 Parent #171; branch `feature/p12-web-ui` (active from 2026-10-25); plan
 `notes/web_ui_expansion_plan.md`; issue tree `notes/web_ui_issue_tree.md`.
 Adds an optional FastAPI + vanilla-ES-module web surface over the CLI's artefacts, following the
@@ -211,7 +211,7 @@ reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
 - [x] #180 P12.3 Map, layer tree, and day/period control.
 - [x] #181 P12.4 Schedule/Gantt, KPI, report, and comparison panels.
 - [x] #182 P12.5 Live runs, SSE, and run control.
-- [ ] #183 P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out.
+- [x] #183 P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out.
 
 ## Detailed Next Steps
 0. **Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**
@@ -318,15 +318,15 @@ reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
     - Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,
       following the WS4 web UI design: map/layer tree, schedule, KPIs, reports, comparison, live SSE
       runs, skins, and an opt-in assistant.
-    - Child issues #178-#183 are linked as sub-issues; #178-#182 are complete and the phase is active on `feature/p12-web-ui`.
+    - Child issues #178-#183 are linked as sub-issues; all six are complete on `feature/p12-web-ui`.
     - P12.1 freezes the artefact contract (including a new `run.json`) before the API and UI work.
       P11 hauling outputs are optional; missing layers are named, not invented.
-    - #178-#182 (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison, live runs/SSE/control) are complete; #183 (editing, assistant, packaging, security, close-out) is next.
+    - #178-#183 (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison, live runs/SSE/control, editing/assistant/packaging/security/close-out) are complete.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
-- [ ] Scenario authoring UI and schema validators for web clients (queued as P12, #171).
+- [x] Scenario authoring UI and schema validators for web clients (P12.6, #183).
 - [ ] Cloud execution harness for large-scale heuristics.
 - [ ] DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
 - [ ] Jaffray MASc thesis alignment checkpoints (`notes/thesis_alignment.md` TBD).

@@ -23,6 +23,18 @@ imported only when the optional ``fhops[web]`` extra is installed.
    :show-inheritance:
    :noindex:
 
+.. automodule:: fhops.web.editing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+.. automodule:: fhops.web.agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
 Key objects
 -----------
 
@@ -35,6 +47,9 @@ Key objects
   geometry CRS, workspace, and CLI command prefix.
 - :class:`fhops.web.runs.RunManager` / :class:`fhops.web.runs.RunRequest` – start, monitor, stream,
   and control CLI subprocesses without importing the optimizer.
+- :func:`fhops.web.editing.update_objective` / ``update_locks`` / ``update_hauling`` /
+  ``save_tactical_overlay`` – validated edits through the existing loader.
+- :func:`fhops.web.agent.run_agent` – opt-in bridge to the installed ``opencode`` CLI.
 - :func:`fhops.web.app.create_app` – FastAPI factory.
 - :func:`fhops.web.app.validate_bind` – loopback/remote-bind guard.
 - :func:`fhops.web.skins.load_skins` / :func:`fhops.web.skins.validate_skin` – skin registry.
@@ -51,5 +66,6 @@ CLI
 .. code-block:: bash
 
    fhops web --runs runs/ --workspace /path/to/fhops-checkout
+   fhops web --runs runs/ --allow-agent
    fhops web manifest runs/run-a --status optimal
    fhops web discover runs/

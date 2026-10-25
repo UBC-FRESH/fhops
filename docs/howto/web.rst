@@ -19,8 +19,9 @@ P12.2 adds the read-only artefact API for all three domains, the navigable SPA s
 loader. P12.3 adds the map, layer tree, and day/shift/period control (MapLibre with an SVG
 fallback). P12.4 adds the domain panels: operational shift Gantt, hauling truck/loader Gantt and
 charts, tactical period Gantt, KPI cards, report builder, and run comparison. P12.5 adds live
-operational, hauling, and tactical runs, SSE progress, and pause/resume/stop control. Editing lands
-in P12.6.
+operational, hauling, and tactical runs, SSE progress, and pause/resume/stop control. P12.6 adds
+validated scenario editing, the optional assistant, packaging and security hardening, and the phase
+close-out.
 
 Install and run
 ---------------
@@ -42,6 +43,7 @@ Useful options:
    fhops web --runs runs/ --root-path /user/me/proxy/8765
    fhops web --runs runs/ --geometry examples/hauling/blocks.geojson --geometry-crs EPSG:3005
    fhops web --runs runs/ --workspace /path/to/fhops-checkout
+   fhops web --runs runs/ --allow-agent --agent-timeout 120
 
 ``--root-path`` makes the SPA and API prefix-relative, so a notebook proxy can publish the service
 under a subpath. ``--workspace`` is the working directory for CLI subprocesses and the allowed root
@@ -114,6 +116,8 @@ The service API provides:
 - ``GET /api/runs`` and ``GET /api/runs/{run_id}``
 - ``POST /api/runs``, ``GET /api/runs/{run_id}/status``, ``POST /api/runs/{run_id}/control``
 - ``GET /api/runs/{run_id}/events`` (SSE)
+- ``GET /api/scenarios/{run_id}`` and ``PUT /api/scenarios/{run_id}/{objective,locks,hauling,tactical}``
+- ``POST /api/agent`` (only when ``--allow-agent`` is set)
 - ``GET /api/runs/{run_id}/summary`` and ``/kpis``
 - ``GET /api/runs/{run_id}/assignments`` and ``/playback``
 - ``GET /api/runs/{run_id}/hauling/{flows,truckloads,schedule,yard-inventory,contractor-workload,trucks,loaders}``
@@ -125,8 +129,8 @@ The service API provides:
 Table endpoints return ``columns``, ``rows``, ``total``, and ``returned``. Filters are optional
 query parameters; an unknown filter column is a 400, and a missing artefact is a 404 naming the
 logical file. The SPA shell selects a skin and run, shows the skin's tabs, and renders the selected
-domain table/KPI/report from the API. The map, full Gantt, comparison, and live SSE are in place;
-editing lands in P12.6.
+domain table/KPI/report from the API. The Scenario tab round-trips edits through the existing
+loader; the map, full Gantt, comparison, and live SSE read only the artefacts the CLI wrote.
 
 Map and layers
 --------------
@@ -214,6 +218,22 @@ stream is throttled to at most 2 Hz, closes after ten minutes so EventSource rec
 **204** for a finished run rather than a short stream. The Run panel starts the same allowlisted run
 types and falls back to status polling when EventSource is unavailable.
 
+Scenario editing
+----------------
+
+The Scenario tab uses a run id to resolve the scenario recorded in ``run.json``. The path must be
+under ``--workspace`` or one of the ``--runs`` roots. The service edits YAML in place for operational
+objective weights and schedule locks, and for inline hauling driver policy/contractor preferences.
+A temporary file is loaded with ``load_scenario`` before the original is replaced, so an invalid
+weight, lock, or contractor value is refused with the loader's own message and the original file is
+left untouched. Top-level sections are replaced in place, which preserves comments elsewhere in the
+scenario; comments inside the edited section may be normalised.
+
+Tactical demand envelopes are different: the service validates a sparse overlay with
+``load_tactical_overlay_scenario`` and writes both the overlay and a derived merged scenario under
+the first ``--runs`` root (``_scenarios/``). The base tactical bundle is never rewritten. The
+Scenario tab's **Use derived scenario in Run** button puts the derived path into the Run tab.
+
 Skins
 -----
 
@@ -221,10 +241,24 @@ Skins are JSON manifests in ``src/fhops/web/skins/``. The loader validates every
 action against a registry; an unknown name is refused with the name. ``read_only`` removes every
 mutating action. The shipped skins are:
 
-- ``operational-planner`` – schedule, objectives/locks, run control, KPIs, reports.
-- ``hauling-planner`` – hauling flows/schedule/inventory, driver policy, run control, KPIs.
-- ``tactical-planner`` – tactical decisions/flows/inventory, overlays, run control, KPIs.
-- ``reviewer`` – read-only access to schedule/haul/tactical, KPIs, reports, and comparison.
+- ``operational-planner`` – schedule, objective/lock editing, run control, KPIs, reports.
+- ``hauling-planner`` – hauling flows/schedule/inventory, driver/contractor editing, run control,
+  KPIs.
+- ``tactical-planner`` – tactical decisions/flows/inventory, demand-envelope overlays, run control,
+  KPIs.
+- ``reviewer`` – read-only access to schedule/haul/tactical, KPIs, reports, and comparison; it has
+  no Scenario or Run tab and no mutating action.
+
+The Scenario tab is hidden from the reviewer skin and from any manifest with ``read_only: true``.
+
+Assistant
+---------
+
+The lower-left assistant is hidden unless the service is started with ``--allow-agent``. It sends a
+text prompt to the installed ``opencode`` CLI as a subprocess in ``--workspace``; provider keys stay
+with that CLI. The assistant has the service user's shell permissions, so enable it only on a
+workstation you control. ``--agent-timeout`` bounds a request. Without the flag, ``POST /api/agent``
+is a 403 and the UI does not show the panel.
 
 Security and limits
 -------------------
@@ -232,8 +266,11 @@ Security and limits
 - Loopback only by default; ``--allow-remote`` is an explicit operator decision.
 - No authentication in this release.
 - Run roots are allowlisted; the service does not serve arbitrary paths.
-- Scenario paths for live runs must resolve under ``--workspace``; output directories are created
-  under the first run root, and run types are allowlisted.
+- Scenario paths for live runs must resolve under ``--workspace`` or a run root; output directories
+  are created under the first run root, and run types are allowlisted.
+- Scenario editing resolves through the run manifest and rejects paths outside those roots.
+- The optional assistant is off by default, uses no shell, and inherits the service user's CLI
+  permissions when enabled.
 - The service is a reader. It does not import the optimizer into the request process; live runs are
   CLI subprocesses.
-- The assistant is not part of P12.1; it lands opt-in in P12.6.
+- The assistant is opt-in and local-only; it is not a substitute for authentication.

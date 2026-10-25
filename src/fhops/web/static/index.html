@@ -21,6 +21,12 @@
       <nav id="tabs" class="tabs"></nav>
       <p id="skin-meta" class="hint"></p>
       <div id="run-meta" class="run-meta"></div>
+      <section id="assistant" class="assistant" hidden>
+        <h3>Assistant</h3>
+        <textarea id="assistant-input" rows="3" placeholder="Ask about this scenario or run…"></textarea>
+        <button id="assistant-ask" type="button">Ask</button>
+        <pre id="assistant-output" class="assistant-output"></pre>
+      </section>
       <p id="empty" class="hint" hidden>No runs found. Pass <code>--runs &lt;dir&gt;</code> to the service.</p>
     </aside>
     <section class="panel">
@@ -29,6 +35,6 @@
     </section>
   </main>
   <script src="static/vendor/maplibre-gl.js"></script>
-  <script type="module" src="static/app.js?v=8"></script>
+  <script type="module" src="static/app.js?v=9"></script>
 </body>
 </html>

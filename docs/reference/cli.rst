@@ -196,6 +196,7 @@ The optional web service adds:
 .. code-block:: bash
 
    fhops web --runs runs/ --port 8765
+   fhops web --runs runs/ --allow-agent --agent-timeout 120
    fhops web manifest runs/run-a --status optimal
    fhops web discover runs/
 

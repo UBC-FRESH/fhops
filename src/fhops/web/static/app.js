@@ -10,6 +10,10 @@ const els = {
   skinMeta: document.getElementById("skin-meta"),
   runMeta: document.getElementById("run-meta"),
   empty: document.getElementById("empty"),
+  assistant: document.getElementById("assistant"),
+  assistantInput: document.getElementById("assistant-input"),
+  assistantAsk: document.getElementById("assistant-ask"),
+  assistantOutput: document.getElementById("assistant-output"),
   title: document.getElementById("panel-title"),
   body: document.getElementById("panel-body"),
 };
@@ -39,6 +43,23 @@ const DOMAIN_SKINS = {
 
 function api(path) {
   return new URL(path, document.baseURI).toString();
+}
+
+async function putJson(path, payload) {
+  const response = await fetch(api(path), {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    let detail = `HTTP ${response.status}`;
+    try {
+      const body = await response.json();
+      if (body.detail) detail = body.detail;
+    } catch (_error) { /* keep status */ }
+    throw new Error(detail);
+  }
+  return response.json();
 }
 
 async function postJson(path, payload) {
@@ -186,7 +207,7 @@ function renderPanel() {
     case "compare":
       return renderCompare(encoded);
     case "scenario":
-      return renderPlaceholder("Scenario editing", "Validated operational/hauling/tactical edits arrive in P12.6.");
+      return renderScenario(encoded);
     case "run":
       return renderRunPanel();
     case "map":
@@ -463,6 +484,7 @@ function chooseSkinForRun(run) {
 
 function selectRun(runId) {
   state.run = state.runs.find((run) => run.run_id === runId) || null;
+  state.runScenarioOverride = null;
   renderRuns();
   renderRunMeta();
   chooseSkinForRun(state.run);
@@ -483,11 +505,35 @@ function selectSkin(skinId) {
   renderPanel().catch((error) => showError(error));
 }
 
+function renderAssistant() {
+  if (!els.assistant || !els.assistantAsk) return;
+  els.assistantAsk.addEventListener("click", async () => {
+    const message = els.assistantInput.value.trim();
+    if (!message) return;
+    els.assistantAsk.disabled = true;
+    els.assistantOutput.textContent = "thinking…";
+    try {
+      const response = await postJson("api/agent", { message });
+      els.assistantOutput.textContent = response.response || "(empty response)";
+    } catch (error) {
+      els.assistantOutput.textContent = error.message;
+    } finally {
+      els.assistantAsk.disabled = false;
+    }
+  });
+}
+
 async function boot() {
   try {
-    const [skins, runs] = await Promise.all([fetchJson("api/skins"), fetchJson("api/runs")]);
+    const [skins, runs, health] = await Promise.all([
+      fetchJson("api/skins"),
+      fetchJson("api/runs"),
+      fetchJson("api/health"),
+    ]);
     state.skins = skins;
     state.runs = runs;
+    state.health = health;
+    if (els.assistant) els.assistant.hidden = !health.agent_enabled;
     state.skin = skins.find((skin) => skin.id === "operational-planner") || skins[0] || null;
     state.run = runs[0] || null;
     state.panel = (state.run && DOMAIN_PANELS[state.run.domain]) || (state.skin && state.skin.panels[0]) || "legend";
@@ -1103,6 +1149,293 @@ function barColor(key) {
   return palette[Math.abs(hash) % palette.length];
 }
 
+
+function editStatus() {
+  return el("div", "", "edit-status");
+}
+
+function setEditStatus(node, text, kind = "") {
+  node.textContent = text;
+  node.className = `edit-status ${kind}`.trim();
+}
+
+function numberInput(value, step = "any") {
+  const input = document.createElement("input");
+  input.type = "number";
+  input.step = step;
+  if (value !== undefined && value !== null) input.value = String(value);
+  return input;
+}
+
+function textInput(value, size = 18) {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = value ?? "";
+  input.size = size;
+  return input;
+}
+
+function labelInput(label, input) {
+  const wrapper = el("label", label);
+  wrapper.appendChild(input);
+  return wrapper;
+}
+
+async function renderScenario(encoded) {
+  const payload = await fetchJson(`api/scenarios/${encoded}`);
+  const domain = payload.domain || domainForSkin();
+  const head = el("div", "", "scenario-head");
+  head.appendChild(el("b", "Scenario: "));
+  head.appendChild(document.createTextNode(payload.path));
+  els.body.appendChild(head);
+  if (state.skin?.read_only) {
+    els.body.appendChild(el("p", "This skin is read-only.", "hint"));
+    return;
+  }
+  if (domain === "operational") return renderOperationalScenario(encoded, payload);
+  if (domain === "hauling") return renderHaulingScenario(encoded, payload);
+  if (domain === "tactical_operational") return renderTacticalScenario(encoded, payload);
+  els.body.appendChild(el("p", "No editor is available for this scenario.", "hint"));
+}
+
+function renderOperationalScenario(encoded, payload) {
+  const status = editStatus();
+  const weights = payload.objective_weights || {
+    production: 1.0,
+    mobilisation: 1.0,
+    transitions: 0.0,
+    landing_surplus: 0.0,
+  };
+  const objectiveForm = el("div", null, "edit-form");
+  const objectiveInputs = {};
+  for (const key of ["production", "mobilisation", "transitions", "landing_surplus"]) {
+    objectiveInputs[key] = numberInput(weights[key] ?? 0);
+    objectiveForm.appendChild(labelInput(key, objectiveInputs[key]));
+  }
+  const saveObjective = el("button", "Save objective");
+  saveObjective.type = "button";
+  objectiveForm.appendChild(saveObjective);
+  els.body.appendChild(el("h3", "Objective weights"));
+  els.body.appendChild(objectiveForm);
+  els.body.appendChild(status);
+  saveObjective.addEventListener("click", async () => {
+    const weightsPayload = {};
+    for (const [key, input] of Object.entries(objectiveInputs)) weightsPayload[key] = Number(input.value);
+    try {
+      await putJson(`api/scenarios/${encoded}/objective`, { weights: weightsPayload });
+      setEditStatus(status, "Objective saved.", "ok");
+    } catch (error) {
+      setEditStatus(status, error.message, "error");
+    }
+  });
+
+  let locks = (payload.locked_assignments || []).map((lock) => ({ ...lock }));
+  els.body.appendChild(el("h3", "Schedule locks"));
+  const table = el("table", null, "data-table edit-table");
+  table.innerHTML = "<thead><tr><th>Machine</th><th>Block</th><th>Day</th><th>Shift</th><th>Production</th><th></th></tr></thead><tbody></tbody>";
+  const tbody = table.querySelector("tbody");
+  const addLockRow = (lock = {}) => {
+    const row = document.createElement("tr");
+    const machine = textInput(lock.machine_id, 10);
+    const block = textInput(lock.block_id, 10);
+    const day = numberInput(lock.day, "1");
+    const shift = textInput(lock.shift_id, 6);
+    const production = numberInput(lock.production);
+    for (const input of [machine, block, day, shift, production]) {
+      const cell = document.createElement("td");
+      cell.appendChild(input);
+      row.appendChild(cell);
+    }
+    const remove = el("button", "Remove");
+    remove.type = "button";
+    remove.addEventListener("click", () => row.remove());
+    const cell = document.createElement("td");
+    cell.appendChild(remove);
+    row.appendChild(cell);
+    tbody.appendChild(row);
+  };
+  locks.forEach(addLockRow);
+  els.body.appendChild(table);
+  const lockControls = el("div", null, "edit-controls");
+  const addLock = el("button", "Add lock");
+  addLock.type = "button";
+  addLock.addEventListener("click", () => addLockRow());
+  const saveLocks = el("button", "Save locks");
+  saveLocks.type = "button";
+  saveLocks.addEventListener("click", async () => {
+    const rows = [];
+    for (const row of tbody.querySelectorAll("tr")) {
+      const inputs = row.querySelectorAll("input");
+      if (!inputs[0].value || !inputs[1].value || !inputs[2].value) continue;
+      rows.push({
+        machine_id: inputs[0].value,
+        block_id: inputs[1].value,
+        day: Number(inputs[2].value),
+        shift_id: inputs[3].value || null,
+        production: inputs[4].value === "" ? null : Number(inputs[4].value),
+      });
+    }
+    try {
+      await putJson(`api/scenarios/${encoded}/locks`, { locks: rows });
+      setEditStatus(status, "Locks saved.", "ok");
+    } catch (error) {
+      setEditStatus(status, error.message, "error");
+    }
+  });
+  lockControls.appendChild(addLock);
+  lockControls.appendChild(saveLocks);
+  els.body.appendChild(lockControls);
+}
+
+function renderHaulingScenario(encoded, payload) {
+  const status = editStatus();
+  const hauling = payload.hauling;
+  if (!hauling) {
+    els.body.appendChild(el("p", "This scenario has no hauling section.", "hint"));
+    return;
+  }
+  const policy = hauling.driver_policy || {};
+  const policyForm = el("div", null, "edit-form");
+  const policyInputs = {
+    regular_minutes: numberInput(policy.regular_minutes ?? 510),
+    max_overtime_minutes: numberInput(policy.max_overtime_minutes ?? 150),
+    overtime_violation_penalty_per_minute: numberInput(policy.overtime_violation_penalty_per_minute ?? 0),
+  };
+  for (const [key, input] of Object.entries(policyInputs)) {
+    policyForm.appendChild(labelInput(key, input));
+  }
+  const savePolicy = el("button", "Save driver policy");
+  savePolicy.type = "button";
+  policyForm.appendChild(savePolicy);
+  els.body.appendChild(el("h3", "Driver policy"));
+  els.body.appendChild(policyForm);
+  els.body.appendChild(status);
+
+  const contractors = (hauling.contractors || []).map((row) => ({ ...row }));
+  const table = el("table", null, "data-table edit-table");
+  table.innerHTML = "<thead><tr><th>Contractor</th><th>Name</th><th>Preferred truckloads/day</th></tr></thead><tbody></tbody>";
+  const tbody = table.querySelector("tbody");
+  for (const contractor of contractors) {
+    const row = document.createElement("tr");
+    const id = textInput(contractor.id, 10);
+    id.disabled = true;
+    const name = textInput(contractor.name, 18);
+    const preferred = numberInput(contractor.preferred_daily_truckloads);
+    for (const input of [id, name, preferred]) {
+      const cell = document.createElement("td");
+      cell.appendChild(input);
+      row.appendChild(cell);
+    }
+    tbody.appendChild(row);
+  }
+  els.body.appendChild(el("h3", "Contractor preferences"));
+  els.body.appendChild(table);
+  const saveAll = el("button", "Save hauling edits");
+  saveAll.type = "button";
+  saveAll.addEventListener("click", async () => {
+    const contractorRows = [];
+    for (const row of tbody.querySelectorAll("tr")) {
+      const inputs = row.querySelectorAll("input");
+      contractorRows.push({
+        id: inputs[0].value,
+        name: inputs[1].value,
+        preferred_daily_truckloads: inputs[2].value === "" ? null : Number(inputs[2].value),
+      });
+    }
+    try {
+      await putJson(`api/scenarios/${encoded}/hauling`, {
+        driver_policy: {
+          regular_minutes: Number(policyInputs.regular_minutes.value),
+          max_overtime_minutes: Number(policyInputs.max_overtime_minutes.value),
+          overtime_violation_penalty_per_minute: Number(policyInputs.overtime_violation_penalty_per_minute.value),
+        },
+        contractors: contractorRows,
+      });
+      setEditStatus(status, "Hauling edits saved.", "ok");
+    } catch (error) {
+      setEditStatus(status, error.message, "error");
+    }
+  });
+  els.body.appendChild(saveAll);
+}
+
+function renderTacticalScenario(encoded, payload) {
+  const status = editStatus();
+  const tactical = payload.tactical || {};
+  els.body.appendChild(el("p", "Demand envelopes are written as a validated overlay; the base tactical bundle is not modified.", "hint"));
+  const rows = (tactical.facility_demand || []).map((row) => ({ ...row }));
+  const table = el("table", null, "data-table edit-table tactical-edit-table");
+  table.innerHTML = "<thead><tr><th>Facility</th><th>Product</th><th>Period</th><th>Minimum m³</th><th>Target m³</th><th>Maximum m³</th><th>Value/m³</th></tr></thead><tbody></tbody>";
+  const tbody = table.querySelector("tbody");
+  for (const row of rows) {
+    const tr = document.createElement("tr");
+    const identity = [row.facility_id, row.product_id, row.period_id];
+    identity.forEach((value) => {
+      const cell = document.createElement("td");
+      cell.textContent = value ?? "";
+      tr.appendChild(cell);
+    });
+    for (const key of ["minimum_m3", "target_m3", "maximum_m3", "value_per_m3"]) {
+      const cell = document.createElement("td");
+      const input = numberInput(row[key]);
+      input.dataset.key = key;
+      cell.appendChild(input);
+      tr.appendChild(cell);
+    }
+    tbody.appendChild(tr);
+  }
+  els.body.appendChild(table);
+  const controls = el("div", null, "edit-controls");
+  const save = el("button", "Validate and save overlay");
+  save.type = "button";
+  const useDerived = el("button", "Use derived scenario in Run");
+  useDerived.type = "button";
+  useDerived.disabled = true;
+  useDerived.addEventListener("click", () => {
+    if (!state.runScenarioOverride) return;
+    setPanel("run");
+  });
+  controls.appendChild(save);
+  controls.appendChild(useDerived);
+  els.body.appendChild(controls);
+  els.body.appendChild(status);
+
+  const overlayRows = () => {
+    const output = [];
+    for (const tr of tbody.querySelectorAll("tr")) {
+      const cells = tr.querySelectorAll("td");
+      const row = {
+        facility_id: cells[0].textContent,
+        product_id: cells[1].textContent,
+        period_id: cells[2].textContent,
+      };
+      for (const input of tr.querySelectorAll("input")) {
+        row[input.dataset.key] = input.value === "" ? null : Number(input.value);
+      }
+      output.push(row);
+    }
+    return output;
+  };
+
+  save.addEventListener("click", async () => {
+    try {
+      const response = await putJson(`api/scenarios/${encoded}/tactical`, {
+        overlay: { facility_demand: overlayRows() },
+      });
+      const tactical = response.tactical || {};
+      state.runScenarioOverride = tactical.derived_path || null;
+      useDerived.disabled = !state.runScenarioOverride;
+      setEditStatus(
+        status,
+        `Overlay saved: ${tactical.overlay_path}. Derived scenario: ${tactical.derived_path}`,
+        "ok",
+      );
+    } catch (error) {
+      setEditStatus(status, error.message, "error");
+    }
+  });
+}
+
 function domainForSkin() {
   if (!state.skin) return "operational";
   if (state.skin.id === "hauling-planner") return "hauling";
@@ -1118,9 +1451,10 @@ function renderRunPanel() {
     tactical_operational: "tests/fixtures/tactical_operational/practitioner-case/scenario.yaml",
   };
   const scenarioDefault =
-    state.run?.domain === domain && state.run?.manifest?.scenario
+    state.runScenarioOverride ||
+    (state.run?.domain === domain && state.run?.manifest?.scenario
       ? state.run.manifest.scenario
-      : defaults[domain] || "";
+      : defaults[domain] || "");
   const runTypes = {
     operational: [
       ["Heuristic SA", "solve_heur"],
@@ -1476,3 +1810,5 @@ async function refreshRuns() {
   state.runs = await fetchJson("api/runs");
   renderRuns();
 }
+
+renderAssistant();
