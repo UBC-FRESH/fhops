@@ -1,3 +1,20 @@
+# 2026-10-25 — P12.3 fix: reset the MapLibre instance when switching panels/runs
+
+- Switching from hauling to operational/tactical (or clicking Map while the map was already
+  rendering) could reuse a MapLibre instance whose container had been replaced. The map then stayed
+  on "loading map…" or was blank.
+- `renderMap` now destroys the previous map instance and uses a render token so stale async
+  responses cannot install a map into a detached container. Leaving the Map panel also destroys the
+  instance.
+- Added a static regression check for the teardown/token path and bumped the SPA cache-bust to
+  `?v=5`.
+
+Verification:
+- Headless DOM harness against the live service: operational 6 features, hauling 3, tactical 5; one
+  live map instance per mode; no JS errors.
+- `PYTHONPATH=src pytest -q tests/web` -> 25 passed.
+- `node --check src/fhops/web/static/app.js` -> clean.
+
 # 2026-10-25 — P12.3 CI fix: pyproj typing and GeoJSON newline
 
 - Added the mypy override for optional `pyproj` imports so the pre-commit/CI mypy gate passes

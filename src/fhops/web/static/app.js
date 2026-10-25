@@ -136,8 +136,17 @@ function showError(error) {
   els.body.appendChild(el("p", error.message, "warnings"));
 }
 
+function destroyMap() {
+  if (!state.mapInstance) return;
+  try {
+    state.mapInstance.remove();
+  } catch (_error) { /* already gone */ }
+  state.mapInstance = null;
+}
+
 function renderPanel() {
   if (!state.run || !state.skin) return Promise.resolve();
+  if (state.panel !== "map") destroyMap();
   els.body.innerHTML = "";
   els.title.textContent = PANEL_LABELS[state.panel] || state.panel;
   const run = state.run;
@@ -371,10 +380,16 @@ els.refresh.addEventListener("click", boot);
 boot();
 
 async function renderMap(encoded) {
+  // The panel body is replaced on every skin/run/panel change. Drop the previous MapLibre
+  // instance so the new container gets a live map instead of a detached one.
+  destroyMap();
+  const token = (state.mapRenderToken || 0) + 1;
+  state.mapRenderToken = token;
   const [time, layerPayload] = await Promise.all([
     fetchJson(`api/runs/${encoded}/time`),
     fetchJson(`api/runs/${encoded}/layers`),
   ]);
+  if (token !== state.mapRenderToken) return;
   state.mapTime = time;
   state.mapLayers = layerPayload.layers;
   state.mapSelected = new Set(
@@ -480,6 +495,7 @@ async function renderMap(encoded) {
   };
 
   const refreshMap = async () => {
+    if (token !== state.mapRenderToken) return;
     renderTree();
     note.textContent = "loading map…";
     const params = new URLSearchParams();
@@ -489,11 +505,13 @@ async function renderMap(encoded) {
     if (state.mapSelected.size) params.set("layers", Array.from(state.mapSelected).join(","));
     try {
       const data = await fetchJson(`api/runs/${encoded}/map?${params.toString()}`);
+      if (token !== state.mapRenderToken) return;
       state.mapData = data;
       note.textContent = `${data.features.length} feature(s)`;
       detail.hidden = true;
       if (state.mapRenderer === "maplibre" && window.maplibregl) {
-        await updateMapLibre(data, detail);
+        await updateMapLibre(data, detail, token);
+        if (token !== state.mapRenderToken) return;
         svg.classList.add("hidden");
         mapDiv.classList.remove("hidden");
       } else {
@@ -505,7 +523,7 @@ async function renderMap(encoded) {
         svg.classList.remove("hidden");
       }
     } catch (error) {
-      note.textContent = error.message;
+      if (token === state.mapRenderToken) note.textContent = error.message;
     }
   };
 
@@ -638,8 +656,8 @@ function featureBounds(data) {
   return [minX, minY, maxX, maxY];
 }
 
-async function updateMapLibre(data, detail) {
-  if (!window.maplibregl) return;
+async function updateMapLibre(data, detail, token) {
+  if (!window.maplibregl || token !== state.mapRenderToken) return;
   if (!state.mapInstance) {
     state.mapInstance = new maplibregl.Map({
       container: "maplibre-map",
@@ -665,8 +683,9 @@ async function updateMapLibre(data, detail) {
     });
   }
   const map = state.mapInstance;
+  window.requestAnimationFrame(() => map.resize());
   if (!map.isStyleLoaded()) {
-    map.once("load", () => updateMapLibre(data, detail));
+    map.once("load", () => updateMapLibre(data, detail, token));
     return;
   }
   if (!map.getSource("features")) {

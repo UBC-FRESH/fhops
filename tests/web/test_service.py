@@ -282,6 +282,8 @@ def test_spa_avoids_readonly_svg_classname_assignment() -> None:
     source = Path("src/fhops/web/static/app.js").read_text(encoding="utf-8")
     assert "svg.className" not in source
     assert 'svg.setAttribute("class"' in source
+    assert "state.mapInstance.remove()" in source
+    assert "mapRenderToken" in source
 
 
 def test_projected_geometry_is_transformed_for_maplibre(tmp_path: Path) -> None:
