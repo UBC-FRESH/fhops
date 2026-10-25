@@ -1,3 +1,17 @@
+# 2026-10-25 — P13 close-out: multi-day marine barge cycles (#197)
+
+- P13.1 (#196) recorded the one-day limitation, compared formulations, and added the Quatsino Sound
+  → Ladysmith regression fixture plus a strict xfail (`65b0d2b1`).
+- P13.2 (#199, PR #200) implemented explicit arrival lag, in-transit volume, arrival-day port and
+  demand timing, sliding-window barge occupancy, late-departure cutoff, and additive marine flow/trip
+  reporting (`afa52c8`).
+- Regression: one barge, 62,771.667 CAD, departure day 1, arrival day 5, occupancy 8 days, demand
+  day 8; demand before arrival is infeasible; two barges cover the 20,000 m³ case; day-trip marine
+  behaviour is unchanged.
+- Close-out report: `notes/reports/p13-closeout.md`.
+
+Next: P14 — consume FEMIC-compiled LidarBC products (#188).
+
 # 2026-10-25 — P12.6: editing, assistant, packaging, security, and close-out (#183)
 
 Part of P12 (#171) on `feature/p12-web-ui`.
@@ -3878,6 +3892,14 @@ PY
   day-trip marine behaviour is unchanged; the solver change is left for P13.2.
 - 2026-10-25: P13.1 merged as `65b0d2b1` (PR #198); issue #196 closed. P13 remains active for the P13.2 solver implementation.
 
+- 2026-10-25: P13.2 (#199, parent #197) implements multi-day marine voyages in Phase I. The model
+  derives `arrival_lag_days` and `occupancy_days`, shifts destination inventory/delivery to the
+  arrival day, links delivery to departure volume, caps barge occupancy with a sliding window, and
+  disallows departures that cannot finish inside the horizon. The Quatsino -> Ladysmith fixture now
+  solves with one barge, arrival on day 5, occupancy through day 8, and demand on day 8; the
+  Sunshine Coast -> Howe Sound day-trip fixture is unchanged. Marine flow/trip outputs report
+  departure/arrival and transit/occupancy days.
+- Verification for P13.2: ruff/ruff format clean, `mypy src` clean, full `pytest` passed, pre-commit passed, Sphinx clean; `fhops haul plan` on the multiday fixture is optimal (62,771.667 CAD).
 - 2026-10-25: P14.1 added `fhops.scenario.lidar` to pin FEMIC LidarBC bundles,
   validate manifest schema, OGL-BC licence, checksums, CRS, resolution, vertical
   datum, and source-tile membership, and summarize slope/CHM rasters over

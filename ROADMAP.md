@@ -213,12 +213,14 @@ reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
 - [x] #182 P12.5 Live runs, SSE, and run control.
 - [x] #183 P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out.
 
-## Phase 13 — Multi-day Marine Barge Cycles — active
+## Phase 13 — Multi-day Marine Barge Cycles — complete
 Parent #197; branch `feature/phase13-multiday-marine`; design
 `notes/multiday_marine_cycles.md`.
 Extends the P11.7 marine path so a barge voyage can span more than one day
 without adding dummy barges or relaxing capacity checks.
 - [x] #196 P13.1 Design multi-day marine cycles and add the failing regression fixture.
+- [x] #199 P13.2 Implement multi-day marine departure/arrival timing.
+- [x] Close-out report: `notes/reports/p13-closeout.md`.
 
 ## Detailed Next Steps
 0. **Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**

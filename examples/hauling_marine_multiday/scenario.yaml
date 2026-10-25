@@ -55,6 +55,46 @@ hauling:
     - {id: c1_h18, contractor_id: c1, truck_type_id: highway}
     - {id: c1_h19, contractor_id: c1, truck_type_id: highway}
     - {id: c1_h20, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h21, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h22, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h23, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h24, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h25, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h26, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h27, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h28, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h29, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h30, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h31, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h32, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h33, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h34, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h35, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h36, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h37, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h38, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h39, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h40, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h41, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h42, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h43, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h44, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h45, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h46, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h47, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h48, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h49, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h50, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h51, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h52, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h53, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h54, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h55, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h56, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h57, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h58, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h59, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h60, contractor_id: c1, truck_type_id: highway}
   depots:
     - id: depot
       name: Synthetic north-island depot
