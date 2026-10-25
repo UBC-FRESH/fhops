@@ -51,7 +51,7 @@ issue type. The parent carries the `Feature` issue type. The repository did not 
 - Branch: `feature/phase13-multiday-marine`
 - Design: `notes/multiday_marine_cycles.md`
 - Regression fixture: `examples/hauling_marine_multiday/`
-- Status: design and failing regression fixture complete; solver change queued for P13.2.
+- Status: P13.1 merged as `65b0d2b1`; solver change queued for P13.2.
 
 ## Activation checklist
 
