@@ -4,7 +4,7 @@ Date: 2026-10-25
 Parent issue: #171
 Phase branch: `feature/p12-web-ui`
 Evidence commit: `5b1dfa3` (P12.6 code/docs); this report is committed immediately after it.
-Pull request: #186 (draft phase PR)
+Pull request: #186 (ready for review; CI run 40231935231 passed)
 
 ## Outcome
 
