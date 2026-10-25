@@ -3616,3 +3616,5 @@ PY
   Sunshine Coast -> Howe Sound day-trip fixture is unchanged. Marine flow/trip outputs report
   departure/arrival and transit/occupancy days.
 - Verification for P13.2: ruff/ruff format clean, `mypy src` clean, full `pytest` passed, pre-commit passed, Sphinx clean; `fhops haul plan` on the multiday fixture is optimal (62,771.667 CAD).
+- P13.2 is `pr-open` in PR #200. The P13 close-out report is queued at
+  `notes/reports/p13-closeout.md`; no release, tag, or published transport switch is authorized.
