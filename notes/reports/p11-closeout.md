@@ -4,7 +4,7 @@ Phase: P11 — Log Hauling and Mill Delivery Optimization (Ghotb-Inspired)
 Parent issue: #170
 Phase branch: `feature/p11-log-hauling`
 Pull request: #185 (`feature/p11-log-hauling` into `main`)
-Evidence head: `<P11.6 evidence head>`
+Evidence head: `fb7c6ce`
 Report commit: this commit (adds this report)
 Date: 2026-10-25
 Status: queued for approval. Nothing is merged, tagged, released, or changed in repository settings.
@@ -124,8 +124,8 @@ loader symmetry. Symmetry breaking and an SA-derived MIP start are recorded foll
 ## CI evidence
 
 - P11.5 head `5143743`: workflow run `40163945291`, `lint-test-docs` **pass** (11m53s).
-- P11.6 head `<P11.6 evidence head>`: workflow run `<P11.6 CI run>`, `lint-test-docs`
-  `<result>`.
+- P11.6 head `fb7c6ce`: workflow run `TBD`, `lint-test-docs`
+  TBD.
 - `deploy-history` is skipped on pull-request events by configuration.
 
 ## Deviations and risks
