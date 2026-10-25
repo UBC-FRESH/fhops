@@ -1,3 +1,36 @@
+# 2026-10-25 — P11.6: validation, formulation sync, and close-out (#177)
+
+Final task of P11 (#170) on `feature/p11-log-hauling`.
+
+- Added the canonical hauling formulation
+  `docs/softwarex/manuscript/sections/includes/fhops_hauling_formulation.md` and generated
+  `fhops_hauling_formulation.tex` + `docs/includes/softwarex/fhops_hauling_formulation.rst` through
+  the existing exporter. `scripts/check_formulation_assets.py` now covers them; it reports the
+  assets synchronized.
+- Added `docs/reference/hauling_formulation.rst` to the Sphinx reference tree.
+- Added `scripts/validate_hauling_parity.py` and `notes/reports/p11-validation.md`:
+  - 9-load synthetic thesis-shaped case: exact MIP and SA both **1350.00**, zero violations.
+  - 10-12 loads: SA finds feasible schedules (1500/1620/1770) with zero violations; the exact MIP
+    returns no incumbent within 60 s. This is recorded as a tractability limitation.
+  - `examples/hauling_scale/` day 1 (92 loads): Phase I feasible at 30 s, SA zero violations.
+- Updated how-to, reference, CLI, API, roadmap, plan, issue tree, and changelog.
+- Wrote `notes/reports/p11-closeout.md` with the phase evidence, workflow compliance, deviations,
+  and the merge/closure recommendation.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 64 passed.
+- `python scripts/validate_hauling_parity.py` -> parity/scale table written; 9-load exact parity.
+- `python scripts/check_formulation_assets.py` (pandoc 3.1.3) -> synchronized.
+- `ruff format --check src tests scripts/generate_hauling_scale_case.py scripts/validate_hauling_parity.py`
+  / `ruff check` -> clean.
+- `mypy src` -> no issues.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures remain.
+- `pre-commit run --files <changed files>` -> passed.
+
+The phase PR #185 is queued for approval. No merge, tag, release, or parent-issue closure is
+performed without the maintainer's approval.
+
 # 2026-10-25 — P11.5: integration, CLI, reporting, and scale example (#176)
 
 Part of #170. Makes the hauling stack usable from FHOPS on `feature/p11-log-hauling`.

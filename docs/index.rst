@@ -44,6 +44,7 @@ ensembles.
    reference/playback_aggregates
    reference/harvest_systems
    reference/hauling
+   reference/hauling_formulation
    reference/telemetry
    reference/dashboards
    reference/source_bibliography

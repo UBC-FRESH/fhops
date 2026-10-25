@@ -1,7 +1,7 @@
 # Log Hauling and Mill Delivery Expansion Plan (Ghotb-Inspired)
 
 Date: 2026-10-25
-Status: active (P11.5)
+Status: close-out queued (P11.6; PR #185)
 Phase: P11
 Branch: `feature/p11-log-hauling` (created from `main` at activation)
 Parent issue: #170
@@ -618,7 +618,8 @@ Names are provisional; P11.1 fixes the public surface and docstrings.
 - **#173 P11.2** Phase I monthly flow MILP and goal programming. Complete (`77aea82`).
 - **#174 P11.3** Phase II daily routing and scheduling MILP. Complete (`3bb621c`).
 - **#175 P11.4** SA solution approach, SPT decoder, and calibration. Complete (`d06c3be`).
-- **#176 P11.5** FHOPS integration, CLI, reporting, and example case. Complete.
+- **#176 P11.5** FHOPS integration, CLI, reporting, and example case. Complete (`5143743`).
+- **#177 P11.6** Validation, documentation, formulation sync, and close-out. Complete; see `notes/reports/p11-closeout.md`.
 - **#177 P11.6** Validation, documentation, formulation sync, and close-out.
 
 The detailed issue bodies carry the subtasks, acceptance criteria, and verification commands.

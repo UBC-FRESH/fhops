@@ -465,3 +465,21 @@ The integration layer is in `src/fhops/hauling/integration.py`, the writers in
 8. **Limit terminations.** `solve_flow` and `solve_schedule` map `maxTimeLimit`/`maxIterations`
    terminations with an incumbent to `status="feasible"`, not `error`. That is what makes a
    time-limited scale run useful.
+
+## 12. P11.6 validation and close-out decisions
+
+- The canonical formulation source is
+  `docs/softwarex/manuscript/sections/includes/fhops_hauling_formulation.md`; the exporter generates
+  `fhops_hauling_formulation.tex` and `docs/includes/softwarex/fhops_hauling_formulation.rst`, and
+  `scripts/check_formulation_assets.py` includes them in the drift check.
+- `notes/reports/p11-validation.md` records synthetic thesis-shaped parity cases (9-12 loads, one
+  block/yard, three trucks) and the `examples/hauling_scale/` day-1 scale case.
+- The 9-load parity case reaches exact objective parity (1350.00). The exact MIP returns no incumbent
+  within 60 s for 10-12 loads on this synthetic case; the SA schedules are feasible and validated.
+  This is recorded as an exact-MIP tractability limitation, not hidden. The thesis reports MIP
+  intractability at 13 loads; our synthetic case is harder because of fleet/loader symmetry and the
+  big-M timing formulation. Symmetry breaking and an SA-derived MIP start are the follow-ups.
+- The scale case uses 300 overtime minutes to keep the synthetic day feasible; it is a stress case,
+  not a thesis-data reproduction.
+- The close-out report is `notes/reports/p11-closeout.md`. The parent issue #170 stays open until the
+  phase PR #185 is approved, merged, and the report is accepted.

@@ -10,7 +10,7 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 - Parent issue: [#170 - P11: Log hauling and mill delivery optimization (Ghotb decomposition)](https://github.com/UBC-FRESH/fhops/issues/170)
 - Phase branch: `feature/p11-log-hauling` (reserved; created from `main` at activation)
 - Planning PR: #184 (draft)
-- Status: active (2026-10-25); #172-#176 complete, #177 next
+- Status: close-out queued (2026-10-25); #172-#177 complete; PR #185 awaits approval
 
 | Issue | Task | Child branch |
 |---:|---|---|
@@ -19,7 +19,7 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 | [#174](https://github.com/UBC-FRESH/fhops/issues/174) | P11.3 Phase II daily routing and scheduling MILP — complete | `feature/p11-log-hauling` |
 | [#175](https://github.com/UBC-FRESH/fhops/issues/175) | P11.4 SA solution approach, SPT decoder, and calibration — complete | `feature/p11-log-hauling` |
 | [#176](https://github.com/UBC-FRESH/fhops/issues/176) | P11.5 FHOPS integration, CLI, reporting, and example case — complete | `feature/p11-log-hauling` |
-| [#177](https://github.com/UBC-FRESH/fhops/issues/177) | P11.6 Validation, documentation, formulation sync, and close-out | `issue-177-hauling-closeout` |
+| [#177](https://github.com/UBC-FRESH/fhops/issues/177) | P11.6 Validation, documentation, formulation sync, and close-out — complete | `feature/p11-log-hauling` |
 
 All six child issues are linked to parent #170 through GitHub sub-issues and assigned the `Task`
 issue type. The parent carries the `Feature` issue type. The repository did not previously carry
@@ -36,7 +36,9 @@ issue type. The parent carries the `Feature` issue type. The repository did not 
 - 2026-10-25: #175 complete. Route-permutation SA, SPT decoder, operators, calibration/benchmark
   script, and MIP parity (2992.50) are on the phase branch.
 - 2026-10-25: #176 complete. Operational/tactical bridges, `fhops haul` CLI, stable artefact
-  writers, Markdown report, and the generated scale case are on the phase branch. #177 is next.
+  writers, Markdown report, and the generated scale case are on the phase branch.
+- 2026-10-25: #177 complete. Parity/scale evidence, canonical formulation assets, docs, and the
+  close-out report are on the phase branch. PR #185 is queued for approval.
 
 ## Activation checklist
 
