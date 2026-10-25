@@ -1,7 +1,7 @@
 # FHOPS Web Application Expansion Plan (WS4-Style)
 
 Date: 2026-10-24
-Status: queued
+Status: active (P12)
 Phase: P12
 Branch: `feature/p12-web-ui` (created from `main` at activation)
 Parent issue: #171

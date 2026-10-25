@@ -1,7 +1,7 @@
 # Log Hauling and Mill Delivery Expansion Plan (Ghotb-Inspired)
 
 Date: 2026-10-25
-Status: close-out queued (P11.6; PR #185)
+Status: complete; PR #185 merged as `52462d2`; parent #170 closed.
 Phase: P11
 Branch: `feature/p11-log-hauling` (created from `main` at activation)
 Parent issue: #170

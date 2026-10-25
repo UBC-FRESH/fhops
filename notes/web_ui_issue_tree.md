@@ -10,9 +10,9 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 ## Live GitHub structure
 
 - Parent issue: [#171 - P12: FHOPS web application (WS4-style artefact reader)](https://github.com/UBC-FRESH/fhops/issues/171)
-- Phase branch: `feature/p12-web-ui` (reserved; created from `main` at activation)
+- Phase branch: `feature/p12-web-ui` (active from `main` at `52462d2`)
 - Planning PR: #184 (draft)
-- Status: queued
+- Status: active (2026-10-25)
 
 | Issue | Task | Child branch |
 |---:|---|---|
@@ -38,9 +38,9 @@ issue type. The parent carries the `Feature` issue type.
 
 ## Activation checklist
 
-- [ ] Create `feature/p12-web-ui` from the then-current `main`.
-- [ ] Update `ROADMAP.md` status from `queued` to `active` and record the activation date.
-- [ ] Post an activation comment on #171.
+- [x] Create `feature/p12-web-ui` from `main` at `52462d2`.
+- [x] Update `ROADMAP.md` status from `queued` to `active` and record the activation date (`2026-10-25`).
+- [x] Post an activation comment on #171.
 - [ ] Start #178.
 - [ ] Re-read the WS4 design note and `ws4/web/app.py` before the first service line.
 

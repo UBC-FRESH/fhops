@@ -1,3 +1,14 @@
+# 2026-10-25 — P11 close-out and P12 activation
+
+- P11 (#170) is complete. PR #185 squash-merged as `52462d2`; branch
+  `feature/p11-log-hauling` deleted locally and remotely; parent #170 closed with the close-out
+  report `notes/reports/p11-closeout.md`.
+- P12 (#171) is active on `feature/p12-web-ui`, cut from `main` at `52462d2`. The roadmap, log
+  hauling plan, web UI plan, and issue trees are updated to the new status.
+- P12 child issues #178-#183 remain linked. The first task is #178 (service skeleton, run manifest,
+  artefact discovery, and CLI entry).
+- No tag, release, or PyPI publication is part of this close-out.
+
 # 2026-10-25 — P11.6: validation, formulation sync, and close-out (#177)
 
 Final task of P11 (#170) on `feature/p11-log-hauling`.
