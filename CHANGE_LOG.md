@@ -1,3 +1,17 @@
+# 2026-10-25 — P13 close-out: multi-day marine barge cycles (#197)
+
+- P13.1 (#196) recorded the one-day limitation, compared formulations, and added the Quatsino Sound
+  → Ladysmith regression fixture plus a strict xfail (`65b0d2b1`).
+- P13.2 (#199, PR #200) implemented explicit arrival lag, in-transit volume, arrival-day port and
+  demand timing, sliding-window barge occupancy, late-departure cutoff, and additive marine flow/trip
+  reporting (`afa52c8`).
+- Regression: one barge, 62,771.667 CAD, departure day 1, arrival day 5, occupancy 8 days, demand
+  day 8; demand before arrival is infeasible; two barges cover the 20,000 m³ case; day-trip marine
+  behaviour is unchanged.
+- Close-out report: `notes/reports/p13-closeout.md`.
+
+Next: P14 — consume FEMIC-compiled LidarBC products (#188).
+
 # 2026-10-25 — P12.6: editing, assistant, packaging, security, and close-out (#183)
 
 Part of P12 (#171) on `feature/p12-web-ui`.
