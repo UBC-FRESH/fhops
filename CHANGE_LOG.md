@@ -1,3 +1,29 @@
+# 2026-10-25 — P14.2: register FEMIC bundles against scenario AOIs (#190)
+
+Part of P14 (#188) on `feature/phase14-lidar-products`.
+
+- Added `fhops.scenario.lidar_registration.register_femic_lidar_bundle` and
+  `fhops scenario lidar validate|register`.
+- Registration validates the FEMIC bundle, checks scenario `geo.crs` against the product CRS,
+  records the block-GeoJSON AOI bbox when present, writes the stable bundle/version/manifest pin,
+  per-product checksums, selection, and product CRS/resolution/vertical datum, then reloads the
+  scenario through the normal loader before replacing it.
+- Failed or corrupt bundles, mixed product CRS values, CRS mismatches, missing AOI geometry, and
+  already-pinned bundles with a different checksum fail explicitly; `--dry-run` prints the pin
+  without writing.
+- Extended `LidarProductRef` with CRS, AOI bbox, selection, and per-product pins; existing
+  scenarios remain valid.
+- Added registration/CLI tests for AOI pinning, dry-run, CRS mismatch, corrupt bundles, and the
+  operator workflow; no source-tile discovery or download was added.
+
+Verification:
+- `pytest -q tests/scenario` -> 16 passed with `fhops[lidar]` installed; the two polygon-summary
+  tests skip cleanly when optional geo/raster dependencies are absent.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #191 P14.3 map FEMIC terrain/canopy products into FHOPS scenarios.
+
 # 2026-10-25 — P13 close-out: multi-day marine barge cycles (#197)
 
 - P13.1 (#196) recorded the one-day limitation, compared formulations, and added the Quatsino Sound

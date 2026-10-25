@@ -5,6 +5,7 @@ from .contract import (
     CalendarEntry,
     Day,
     Landing,
+    LidarProductPin,
     LidarProductRef,
     LidarSupport,
     Machine,
@@ -24,6 +25,7 @@ from .lidar import (
     summarize_femic_lidar_for_polygons,
     validate_femic_lidar_bundle,
 )
+from .lidar_registration import RegistrationResult, register_femic_lidar_bundle
 
 __all__ = [
     "Day",
@@ -34,6 +36,7 @@ __all__ = [
     "ProductionRate",
     "Scenario",
     "Problem",
+    "LidarProductPin",
     "LidarProductRef",
     "LidarSupport",
     "load_scenario",
@@ -47,4 +50,6 @@ __all__ = [
     "load_femic_lidar_bundle",
     "summarize_femic_lidar_for_polygons",
     "validate_femic_lidar_bundle",
+    "RegistrationResult",
+    "register_femic_lidar_bundle",
 ]

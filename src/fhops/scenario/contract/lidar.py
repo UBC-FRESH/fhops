@@ -10,13 +10,32 @@ from __future__ import annotations
 import re
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
-__all__ = ["LidarProductRef", "LidarSupport", "LidarSupportUnit"]
+__all__ = ["LidarProductPin", "LidarProductRef", "LidarSupport", "LidarSupportUnit"]
 
 LidarSupportUnit = Literal["block", "landing", "road"]
 AggregationMethod = Literal["mean", "area_weighted_mean", "median", "minimum", "maximum", "p95"]
 _CHECKSUM = re.compile(r"^[0-9a-fA-F]{64}$")
+
+
+class LidarProductPin(BaseModel):
+    """One product file recorded in a scenario bundle pin."""
+
+    product: str = Field(min_length=1)
+    relative_path: str = Field(min_length=1)
+    sha256: str
+    crs: str = Field(min_length=1)
+    resolution_m: float | None = Field(default=None, gt=0)
+    vertical_datum: str = Field(min_length=1)
+    source_tile_ids: list[str] = Field(default_factory=list)
+
+    @field_validator("sha256")
+    @classmethod
+    def _checksum(cls, value: str) -> str:
+        if not _CHECKSUM.fullmatch(value):
+            raise ValueError("LidarProductPin.sha256 must be a SHA-256 digest")
+        return value.lower()
 
 
 class LidarProductRef(BaseModel):
@@ -31,6 +50,10 @@ class LidarProductRef(BaseModel):
     manifest_sha256: str | None = None
     licence_id: str | None = None
     manifest_path: str | None = None
+    crs: str | None = None
+    aoi_bbox: tuple[float, float, float, float] | None = None
+    selection: dict[str, object] | None = None
+    products: list[LidarProductPin] | None = None
 
     @field_validator("bundle_id", "bundle_version")
     @classmethod
@@ -45,6 +68,18 @@ class LidarProductRef(BaseModel):
         if value is not None and not _CHECKSUM.fullmatch(value):
             raise ValueError("LidarProductRef.manifest_sha256 must be a SHA-256 digest")
         return value.lower() if value else None
+
+    @model_validator(mode="after")
+    def _aoi_and_products(self) -> LidarProductRef:
+        if self.aoi_bbox is not None:
+            west, south, east, north = self.aoi_bbox
+            if east <= west or north <= south:
+                raise ValueError("LidarProductRef.aoi_bbox must be west,south,east,north")
+        if self.products is not None:
+            names = [product.product for product in self.products]
+            if len(names) != len(set(names)):
+                raise ValueError("LidarProductRef.products names must be unique")
+        return self
 
 
 class LidarSupport(BaseModel):

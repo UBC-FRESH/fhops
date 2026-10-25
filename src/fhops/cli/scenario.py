@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Annotated
 
@@ -20,9 +21,70 @@ from fhops.planning.tactical_operational.scenario import (
     solve_tactical_batch_manifest,
     write_tactical_scenario_yaml,
 )
+from fhops.scenario.lidar import (
+    FemicLidarError,
+    validate_femic_lidar_bundle,
+)
+from fhops.scenario.lidar_registration import (
+    FemicLidarRegistrationError,
+    register_femic_lidar_bundle,
+)
 
 console = Console()
 scenario_app = typer.Typer(add_completion=False, no_args_is_help=True)
+lidar_app = typer.Typer(add_completion=False, no_args_is_help=True)
+scenario_app.add_typer(lidar_app, name="lidar", help="Register and validate FEMIC LidarBC bundles.")
+
+
+@lidar_app.command("validate")
+def lidar_validate(
+    bundle: Path = typer.Argument(..., help="FEMIC LidarBC bundle directory."),
+    verify_checksums: bool = typer.Option(
+        True,
+        "--verify-checksums/--no-verify-checksums",
+        help="Verify every product SHA-256 and byte size.",
+    ),
+) -> None:
+    """Validate a FEMIC bundle without modifying a scenario."""
+    report = validate_femic_lidar_bundle(bundle, verify_checksums=verify_checksums)
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
+
+
+@lidar_app.command("register")
+def lidar_register(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML to pin the bundle in."),
+    bundle: Path = typer.Argument(..., help="FEMIC LidarBC bundle directory."),
+    expected_bundle_id: str | None = typer.Option(
+        None, "--expected-bundle-id", help="Require this FEMIC bundle id."
+    ),
+    expected_bundle_version: str | None = typer.Option(
+        None, "--expected-bundle-version", help="Require this FEMIC bundle version."
+    ),
+    verify_checksums: bool = typer.Option(
+        True,
+        "--verify-checksums/--no-verify-checksums",
+        help="Verify every product SHA-256 and byte size.",
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the pin without writing the scenario."
+    ),
+) -> None:
+    """Validate a FEMIC bundle, check the scenario AOI, and write its bundle pin."""
+    try:
+        result = register_femic_lidar_bundle(
+            scenario,
+            bundle,
+            expected_bundle_id=expected_bundle_id,
+            expected_bundle_version=expected_bundle_version,
+            verify_checksums=verify_checksums,
+            dry_run=dry_run,
+        )
+    except (FemicLidarError, FemicLidarRegistrationError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(json.dumps(result.to_dict(), indent=2))
 
 
 @scenario_app.command("overlay")
