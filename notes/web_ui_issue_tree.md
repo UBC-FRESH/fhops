@@ -26,6 +26,13 @@ Workflow contract: `AGENTS.md`; UBC-FRESH dev workflow issue standard
 All six child issues are linked to parent #171 through GitHub sub-issues and assigned the `Task`
 issue type. The parent carries the `Feature` issue type.
 
+## Domain coverage
+
+The UI is one application with three lenses: shift-level operational, Ghotb-derived log hauling,
+and TOPM-style tactical-operational. A run manifest carries `domain` and `run_type`; the lens
+selects the time control (day/shift vs period), layers, panels, KPIs, reports, and editable fields.
+The issue bodies carry the domain-specific additions from the 2026-10-25 scope clarification.
+
 ## Dependencies
 
 - P12.1 freezes the artefact contract and must land before the API or UI work.

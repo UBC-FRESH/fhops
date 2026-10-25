@@ -1,3 +1,19 @@
+# 2026-10-25 — P12 scope clarified: three planning lenses
+
+- The web UI must cover all three FHOPS planning domains in one application:
+  - shift-level operational planning (`solve-heur`/`solve-ils`/`solve-tabu`/`solve-mip-operational`,
+    `eval-playback`, `plan rolling`);
+  - Ghotb-derived log hauling (`haul plan`/`haul schedule`/`haul solve`, Phase I flows, Phase II/III
+    truck and loader schedules, yard inventory, contractor workload, haul KPIs);
+  - TOPM-style tactical–operational planning (`plan tactical-operational`, period harvest decisions,
+    production, product flows, facility demand/inventory, roads, silviculture, fleet).
+- `notes/web_ui_expansion_plan.md` now specifies the three lenses, domain API endpoints, map/layer
+  and time-control differences, domain panels, and domain skins (Operational planner, Hauling
+  planner, Tactical planner, read-only Reviewer).
+- Parent issue #171 and child issues #178-#183 carry the corresponding domain coverage. `run.json`
+  must record `domain` and `run_type`, with file-based fallback and no cross-domain mixing.
+- No code has changed.
+
 # 2026-10-25 — P11 close-out and P12 activation
 
 - P11 (#170) is complete. PR #185 squash-merged as `52462d2`; branch

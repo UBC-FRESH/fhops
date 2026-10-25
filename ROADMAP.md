@@ -196,8 +196,12 @@ and a thesis-calibrated SA solver.
 Parent #171; branch `feature/p12-web-ui` (active from 2026-10-25); plan
 `notes/web_ui_expansion_plan.md`; issue tree `notes/web_ui_issue_tree.md`.
 Adds an optional FastAPI + vanilla-ES-module web surface over the CLI's artefacts, following the
-WS4 web UI design: map/layer tree, schedule/Gantt, KPIs, reports, comparison, live SSE runs, skins,
-and an opt-in assistant.
+WS4 web UI design. The same application covers three lenses: shift-level operational planning
+(machine/crew day-shift Gantt, assignments, playback, KPIs), Ghotb-derived log hauling (Phase I
+flows/truckloads, Phase II/III truck/loader schedule, yard inventory, contractor workload, haul
+KPIs), and TOPM-style tactical-operational planning (period harvest decisions, product flows,
+facility demand/inventory, roads, silviculture, fleet). It adds map/layer tree, domain Gantt/tables,
+reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
 - [ ] #178 P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry.
 - [ ] #179 P12.2 Read-only API, SPA shell, and skin loader.
 - [ ] #180 P12.3 Map, layer tree, and day/period control.
