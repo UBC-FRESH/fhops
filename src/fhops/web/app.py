@@ -45,6 +45,9 @@ class ServiceConfig:
     geometry:
         Optional block GeoJSON path. When omitted, the service tries the scenario's
         ``geo_block_path`` and a ``blocks.geojson`` file inside the run directory.
+    geometry_crs:
+        Optional source CRS for the geometry. When omitted, the scenario ``geo_crs`` or the
+        GeoJSON ``crs`` member is used; coordinates are transformed to WGS84 for MapLibre.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -54,6 +57,7 @@ class ServiceConfig:
     allow_remote: bool = False
     title: str = "FHOPS Web"
     geometry: Path | None = None
+    geometry_crs: str | None = None
 
 
 def is_loopback(host: str) -> bool:
@@ -390,7 +394,10 @@ def create_app(config: ServiceConfig) -> FastAPI:
     @app.get("/api/runs/{run_id}/layers")
     def run_layers(run_id: str) -> dict[str, Any]:
         record = run_or_404(run_id)
-        geometry = load_block_geometry(record, config.geometry)
+        try:
+            geometry = load_block_geometry(record, config.geometry, config.geometry_crs)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {
             "run_id": record.run_id,
             "domain": record.domain,
@@ -407,7 +414,10 @@ def create_app(config: ServiceConfig) -> FastAPI:
         layers: str | None = Query(None, description="Comma-separated layer names."),
     ) -> dict[str, Any]:
         record = run_or_404(run_id)
-        geometry = load_block_geometry(record, config.geometry)
+        try:
+            geometry = load_block_geometry(record, config.geometry, config.geometry_crs)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
         if not geometry:
             raise HTTPException(
                 status_code=404,

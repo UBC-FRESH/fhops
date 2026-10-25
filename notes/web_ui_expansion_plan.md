@@ -234,7 +234,9 @@ Reuse the WS4 design language:
   source attribute (for example harvest system or block status).
 - Click a block for its attributes, assigned machines, production, and KPI contribution.
 - MapLibre is the default renderer; the dependency-free SVG shell remains a fallback and is
-  switchable in the layer tree.
+  switchable in the layer tree. The service transforms block geometry to EPSG:4326 with
+  ``pyproj``; the source CRS comes from ``--geometry-crs``, the scenario ``geo_crs``, the GeoJSON
+  ``crs`` member, or EPSG:4326.
 
 ### Schedule
 

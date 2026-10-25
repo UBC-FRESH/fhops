@@ -25,7 +25,8 @@ Key objects
   tactical runs.
 - :func:`fhops.web.discovery.build_run_manifest` / :func:`fhops.web.discovery.write_run_manifest` –
   build or write ``run.json``.
-- :class:`fhops.web.app.ServiceConfig` – roots, bind, proxy prefix, and remote-bind opt-in.
+- :class:`fhops.web.app.ServiceConfig` – roots, bind, proxy prefix, remote-bind opt-in, geometry,
+  and geometry CRS.
 - :func:`fhops.web.app.create_app` – FastAPI factory.
 - :func:`fhops.web.app.validate_bind` – loopback/remote-bind guard.
 - :func:`fhops.web.skins.load_skins` / :func:`fhops.web.skins.validate_skin` – skin registry.

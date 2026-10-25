@@ -1,3 +1,19 @@
+# 2026-10-25 — P12.3 fix: transform projected geometry to WGS84 for MapLibre
+
+- MapLibre rejects projected coordinates (BC Albers, EPSG:3005) as invalid lng/lat. The map service
+  now transforms geometry to EPSG:4326 with `pyproj` before returning the FeatureCollection.
+- CRS priority: `--geometry-crs`, scenario `geo_crs`, GeoJSON `crs` member, then EPSG:4326. Invalid
+  or out-of-range coordinates raise a named 400 instead of reaching MapLibre.
+- Added `pyproj` to the `fhops[web]` extra and dev dependencies; added a projected-geometry test.
+- Fixed the committed example and demo geometries to valid BC Albers coordinates.
+- The map endpoint now returns lng/lat; the SVG renderer uses the same WGS84 payload.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 25 passed.
+- The live hauling map returns `[-123.24, 49.48]` for a BC Albers block.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- `ruff format --check`, `ruff check`, `mypy src` -> clean.
+
 # 2026-10-25 — P12.3 fix: SVG class assignment broke the map panel
 
 - The map panel threw `Attempted to assign to readonly property` because `SVGElement.className`

@@ -282,3 +282,43 @@ def test_spa_avoids_readonly_svg_classname_assignment() -> None:
     source = Path("src/fhops/web/static/app.js").read_text(encoding="utf-8")
     assert "svg.className" not in source
     assert 'svg.setAttribute("class"' in source
+
+
+def test_projected_geometry_is_transformed_for_maplibre(tmp_path: Path) -> None:
+    _operational_run(tmp_path)
+    projected = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {"block_id": "b1"},
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [1200000, 500000],
+                            [1201000, 500000],
+                            [1201000, 501000],
+                            [1200000, 501000],
+                            [1200000, 500000],
+                        ]
+                    ],
+                },
+            }
+        ],
+    }
+    geometry = tmp_path / "projected.geojson"
+    geometry.write_text(__import__("json").dumps(projected), encoding="utf-8")
+    app = create_app(
+        ServiceConfig(
+            roots=[tmp_path],
+            host="127.0.0.1",
+            geometry=geometry,
+            geometry_crs="EPSG:3005",
+        )
+    )
+    client = TestClient(app)
+    payload = client.get("/api/runs/op/map?layers=blocks").json()
+    coordinates = payload["features"][0]["geometry"]["coordinates"][0][0]
+    assert -180 <= coordinates[0] <= 180
+    assert -90 <= coordinates[1] <= 90

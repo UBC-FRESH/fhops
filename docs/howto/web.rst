@@ -37,7 +37,7 @@ Useful options:
 
    fhops web --runs runs/ --runs examples/ --port 9000
    fhops web --runs runs/ --root-path /user/me/proxy/8765
-   fhops web --runs runs/ --geometry examples/hauling/blocks.geojson
+   fhops web --runs runs/ --geometry examples/hauling/blocks.geojson --geometry-crs EPSG:3005
 
 ``--root-path`` makes the SPA and API prefix-relative, so a notebook proxy can publish the service
 under a subpath.
@@ -132,6 +132,11 @@ Block geometry is resolved in this order:
 1. ``--geometry path/to/blocks.geojson`` passed to ``fhops web``;
 2. the scenario's ``geo_block_path``, read through the run manifest's ``scenario`` path;
 3. a ``blocks.geojson`` file inside the run directory.
+
+MapLibre expects WGS84 longitude/latitude. The service transforms projected coordinates with
+``pyproj`` before returning the FeatureCollection. The source CRS comes from ``--geometry-crs``, the
+scenario ``geo_crs``, the GeoJSON ``crs`` member, or EPSG:4326 in that order. Invalid or
+out-of-range coordinates are a named 400, not a MapLibre crash.
 
 The first cut draws block geometry, operational treatments/machines, hauling block flow volumes, and
 tactical harvested areas. Roads, mills/sort yards, haul routes, and tactical facilities are reported

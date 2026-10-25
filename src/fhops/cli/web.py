@@ -40,6 +40,11 @@ def web(
         "--geometry",
         help="Optional block GeoJSON for map layers.",
     ),
+    geometry_crs: str | None = typer.Option(
+        None,
+        "--geometry-crs",
+        help="Source CRS for --geometry/run-local GeoJSON (e.g. EPSG:3005).",
+    ),
 ) -> None:
     """Start the web service when no subcommand is given."""
     if ctx.invoked_subcommand is not None:
@@ -59,6 +64,7 @@ def web(
         root_path=root_path,
         allow_remote=allow_remote,
         geometry=geometry,
+        geometry_crs=geometry_crs,
     )
     try:
         run_server(config)

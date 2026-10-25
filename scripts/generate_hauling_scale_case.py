@@ -129,8 +129,8 @@ def _write_geometry() -> None:
     for index, block in enumerate(BLOCKS):
         column = index % 5
         row = index // 5
-        x0 = 500000.0 + column * 1200.0
-        y0 = 5500000.0 + row * 1200.0
+        x0 = 1200000.0 + column * 1200.0
+        y0 = 500000.0 + row * 1200.0
         features.append(
             {
                 "type": "Feature",

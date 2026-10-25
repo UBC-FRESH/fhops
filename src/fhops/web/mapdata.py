@@ -8,6 +8,7 @@ reported as unavailable until a geometry source is supplied.
 from __future__ import annotations
 
 import json
+import math
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -40,6 +41,7 @@ LAYER_DEFINITIONS = (
 def load_block_geometry(
     record: RunRecord,
     geometry_path: Path | None = None,
+    geometry_crs: str | None = None,
 ) -> dict[str, dict[str, Any]]:
     """Load block geometry indexed by ``block_id``.
 
@@ -49,6 +51,10 @@ def load_block_geometry(
         Discovered run.
     geometry_path:
         Optional GeoJSON path from ``--geometry``.
+    geometry_crs:
+        Optional source CRS for ``--geometry`` or a run-local GeoJSON. When omitted, the scenario
+        ``geo_crs`` or the GeoJSON top-level ``crs`` is used; the default is EPSG:4326. Coordinates
+        are transformed to EPSG:4326 for MapLibre.
 
     Returns
     -------
@@ -65,14 +71,26 @@ def load_block_geometry(
             payload = json.loads(candidate.read_text(encoding="utf-8"))
             if payload.get("type") != "FeatureCollection":
                 raise ValueError(f"{candidate} must be a GeoJSON FeatureCollection")
+            source_crs = (
+                geometry_crs
+                or _scenario_crs(record)
+                or (payload.get("crs") or {}).get("properties", {}).get("name")
+                or "EPSG:4326"
+            )
+            transformer = _transformer(source_crs)
             geometry: dict[str, dict[str, Any]] = {}
             for feature in payload.get("features", []):
                 props = feature.get("properties") or {}
                 block_id = props.get("block_id") or feature.get("id")
                 if block_id is None:
                     continue
+                feature_geometry = feature.get("geometry")
+                if feature_geometry is not None:
+                    if transformer is not None:
+                        feature_geometry = _transform_geometry(feature_geometry, transformer)
+                    _validate_wgs84(feature_geometry, block_id, source_crs)
                 geometry[str(block_id)] = {
-                    "geometry": feature.get("geometry"),
+                    "geometry": feature_geometry,
                     "properties": {key: value for key, value in props.items() if key != "block_id"},
                 }
             return geometry
@@ -99,6 +117,76 @@ def _geometry_candidates(
     candidates.extend(sorted(record.path.glob("blocks.geojson")))
     candidates.extend(sorted(record.path.glob("block*.geojson")))
     return candidates
+
+
+def _scenario_crs(record: RunRecord) -> str | None:
+    scenario_path = _scenario_path(record)
+    if scenario_path is None or not scenario_path.exists():
+        return None
+    try:
+        meta = yaml.safe_load(scenario_path.read_text(encoding="utf-8")) or {}
+    except (OSError, yaml.YAMLError):
+        return None
+    data = meta.get("data") or {}
+    return meta.get("geo_crs") or data.get("geo_crs")
+
+
+def _transformer(source_crs: str):
+    """Return a pyproj transformer to EPSG:4326, or None for WGS84 input."""
+    normalized = str(source_crs).strip().upper()
+    if normalized in {"EPSG:4326", "CRS84", "WGS84", "OGC:CRS84"}:
+        return None
+    try:
+        from pyproj import Transformer
+    except ModuleNotFoundError as exc:  # pragma: no cover - optional dependency
+        raise ValueError(
+            "The map geometry is not WGS84 and pyproj is not installed. "
+            "Install the web extra: pip install 'fhops[web]'"
+        ) from exc
+    return Transformer.from_crs(source_crs, "EPSG:4326", always_xy=True)
+
+
+def _transform_geometry(geometry: dict[str, Any], transformer: Any) -> dict[str, Any]:
+    """Transform every coordinate in a GeoJSON geometry to WGS84."""
+    transformed = dict(geometry)
+    coordinates = geometry.get("coordinates")
+    if coordinates is not None:
+        transformed["coordinates"] = _transform_coordinates(coordinates, transformer)
+    return transformed
+
+
+def _validate_wgs84(geometry: dict[str, Any], block_id: str, source_crs: str) -> None:
+    """Reject coordinates outside WGS84 lng/lat instead of handing them to MapLibre."""
+    coordinates = geometry.get("coordinates")
+
+    def check(value: Any) -> None:
+        if not value:
+            return
+        if isinstance(value[0], int | float):
+            x, y = float(value[0]), float(value[1])
+            if (
+                not math.isfinite(x)
+                or not math.isfinite(y)
+                or not (-180 <= x <= 180 and -90 <= y <= 90)
+            ):
+                raise ValueError(
+                    f"Block {block_id} has coordinates outside WGS84 after CRS {source_crs}; "
+                    "check --geometry-crs and the source geometry."
+                )
+            return
+        for item in value:
+            check(item)
+
+    check(coordinates)
+
+
+def _transform_coordinates(coordinates: Any, transformer: Any) -> Any:
+    if not coordinates:
+        return coordinates
+    if isinstance(coordinates[0], int | float):
+        x, y = transformer.transform(coordinates[0], coordinates[1])
+        return [x, y, *coordinates[2:]]
+    return [_transform_coordinates(item, transformer) for item in coordinates]
 
 
 def _scenario_path(record: RunRecord) -> Path | None:
