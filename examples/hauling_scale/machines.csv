@@ -1,0 +1,17 @@
+id,crew,daily_hours,operating_cost,role
+ldr_b01,load,10,0,loader
+ldr_b02,load,10,0,loader
+ldr_b03,load,10,0,loader
+ldr_b04,load,10,0,loader
+ldr_b05,load,10,0,loader
+ldr_b06,load,10,0,loader
+ldr_b07,load,10,0,loader
+ldr_b08,load,10,0,loader
+ldr_b09,load,10,0,loader
+ldr_b10,load,10,0,loader
+ldr_b11,load,10,0,loader
+ldr_b12,load,10,0,loader
+ldr_b13,load,10,0,loader
+ldr_y1,yard,10,0,loader
+ldr_y2,yard,10,0,loader
+ldr_y3,yard,10,0,loader

@@ -1,0 +1,7 @@
+id,crew,daily_hours,operating_cost,role
+h1,harvest,10,0,feller_buncher
+h2,harvest,10,0,feller_buncher
+ldr_b1,load,10,0,loader
+ldr_b2,load,10,0,loader
+ldr_b3,load,10,0,loader
+ldr_y1,yard,10,0,loader

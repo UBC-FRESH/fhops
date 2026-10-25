@@ -11,6 +11,7 @@ import pandas as pd
 import yaml
 from pydantic import TypeAdapter
 
+from fhops.hauling.contract import HaulingConfig
 from fhops.scenario.contract.models import (
     Block,
     CalendarEntry,
@@ -235,6 +236,7 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     base_fields: dict[str, object] = {
         "name": meta["name"],
         "num_days": int(meta["num_days"]),
+        "schema_version": str(meta.get("schema_version", "1.0.0")),
         "start_date": meta.get("start_date"),
         "blocks": blocks,
         "machines": machines,
@@ -309,6 +311,15 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
         extras["locked_assignments"] = TypeAdapter(list[ScheduleLock]).validate_python(
             meta["locked_assignments"]
         )
+
+    hauling_payload: dict[str, object] | None = None
+    if "hauling" in data_section:
+        with require("hauling").open("r", encoding="utf-8") as handle:
+            hauling_payload = yaml.safe_load(handle) or {}
+    elif "hauling" in meta:
+        hauling_payload = meta["hauling"]
+    if hauling_payload is not None:
+        extras["hauling"] = TypeAdapter(HaulingConfig).validate_python(hauling_payload)
 
     if "objective_weights" in meta:
         extras["objective_weights"] = TypeAdapter(ObjectiveWeights).validate_python(

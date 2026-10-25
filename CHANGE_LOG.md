@@ -1,3 +1,225 @@
+# 2026-10-25 — P11.6: validation, formulation sync, and close-out (#177)
+
+Final task of P11 (#170) on `feature/p11-log-hauling`.
+
+- Added the canonical hauling formulation
+  `docs/softwarex/manuscript/sections/includes/fhops_hauling_formulation.md` and generated
+  `fhops_hauling_formulation.tex` + `docs/includes/softwarex/fhops_hauling_formulation.rst` through
+  the existing exporter. `scripts/check_formulation_assets.py` now covers them; it reports the
+  assets synchronized.
+- Added `docs/reference/hauling_formulation.rst` to the Sphinx reference tree.
+- Added `scripts/validate_hauling_parity.py` and `notes/reports/p11-validation.md`:
+  - 9-load synthetic thesis-shaped case: exact MIP and SA both **1350.00**, zero violations.
+  - 10-12 loads: SA finds feasible schedules (1500/1620/1770) with zero violations; the exact MIP
+    returns no incumbent within 60 s. This is recorded as a tractability limitation.
+  - `examples/hauling_scale/` day 1 (92 loads): Phase I feasible at 30 s, SA zero violations.
+- Updated how-to, reference, CLI, API, roadmap, plan, issue tree, and changelog.
+- Wrote `notes/reports/p11-closeout.md` with the phase evidence, workflow compliance, deviations,
+  and the merge/closure recommendation.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 64 passed.
+- `python scripts/validate_hauling_parity.py` -> parity/scale table written; 9-load exact parity.
+- `python scripts/check_formulation_assets.py` (pandoc 3.1.3) -> synchronized.
+- `ruff format --check src tests scripts/generate_hauling_scale_case.py scripts/validate_hauling_parity.py`
+  / `ruff check` -> clean.
+- `mypy src` -> no issues.
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures remain.
+- `pre-commit run --files <changed files>` -> passed.
+
+The phase PR #185 is queued for approval. No merge, tag, release, or parent-issue closure is
+performed without the maintainer's approval.
+
+# 2026-10-25 — P11.5: integration, CLI, reporting, and scale example (#176)
+
+Part of #170. Makes the hauling stack usable from FHOPS on `feature/p11-log-hauling`.
+
+- `src/fhops/hauling/integration.py`: operational assignment -> block/sort supply (with explicit
+  `sort_shares` or a warned equal split); tactical production -> supply and facility demand ->
+  yard demand (with a warned even spread over the day horizon); `residual_report` for pre-solve
+  supply/demand gaps.
+- `src/fhops/hauling/reporting.py`: stable Phase I/II/III artefact writers, merged solve summaries,
+  JSON KPIs, and a Markdown report with no optional `tabulate` dependency.
+- `src/fhops/cli/hauling.py` and `fhops haul validate|plan|schedule|solve|report`. `plan` runs
+  Phase I, `schedule` reads a Phase I run or solves in memory, `solve` runs both, and `report`
+  renders the run.
+- Stable artefacts: `haul_flows.csv`, `haul_truckloads.csv`, `haul_yard_inventory.csv`,
+  `haul_block_inventory.csv`, `haul_contractor_workload.csv`, `haul_schedule.csv`,
+  `haul_truck_summary.csv`, `haul_loader_summary.csv`, `haul_kpis.json`, `haul_summary.json`.
+- `scripts/generate_hauling_scale_case.py` and `examples/hauling_scale/`: 13 blocks, 3 yards,
+  4 contractors, 60 trucks, 3 log sorts, block GeoJSON, and ~90 truckloads/day. It allows 300
+  overtime minutes so the full day remains feasible; Phase I can return a time-limited feasible
+  incumbent rather than a proven optimum.
+- `solve_flow` and `solve_schedule` now map `maxTimeLimit`/`maxIteration` terminations with an
+  incumbent to `status="feasible"` instead of `error`.
+- Docs: CLI reference, operational/tactical handoff, stable artefacts, and the scale case.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 64 passed.
+- `fhops haul validate examples/hauling/scenario.yaml` -> valid, residuals zero.
+- `fhops haul plan ... --time-limit 30`, `haul schedule ... --solver sa`, `haul solve ... --solver
+  mip`, and `haul report ...` all succeed on the small example.
+- `examples/hauling_scale/` validates; Phase I returns feasible at 30 s; SA day 1 (92 loads) reaches
+  zero violation.
+- `ruff format --check src tests scripts/generate_hauling_scale_case.py` / `ruff check` -> clean.
+- `mypy src` -> no issues (137 files).
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures remain.
+- `pre-commit run --files <changed files>` -> passed.
+
+Next: #177, validation, documentation, formulation sync, and close-out.
+
+# 2026-10-25 — P11.4: simulated annealing, SPT decoder, and calibration (#175)
+
+Part of #170. Adds the third Ghotb decomposition phase on `feature/p11-log-hauling`.
+
+- `src/fhops/hauling/heuristic.py`: route-permutation SA with an SPT decoder, swap/reversion/
+  insertion operators, Metropolis acceptance, geometric cooling, determinism, and the thesis
+  Taguchi defaults (`T0=300`, `Tmin=0.0005*T0`, `alpha=0.95`, 90 moves per temperature).
+- The decoder assigns each load to the fastest loader at its location, derives loader orders from
+  projected arrival times, and reuses `simulate_plan`; `evaluate_routes` computes fixed, variable,
+  overtime, and soft overtime-violation costs.
+- `SAConfig`, `SolutionEvaluation`, `HaulingSAResult`, and `summarize_sa_result`.
+- `scripts/benchmark_hauling.py`: Phase I/II/III benchmark and a compact Taguchi-style calibration
+  sweep (`--calibrate`).
+- Found and fixed a Phase II loader-order bug: the one-direction `pick_before` equality forced the
+  lexicographically smaller load to be first at every loader. Removing it lets the MIP choose any
+  loader order. The example day-1 MIP objective fell from 4464.20 to **2992.50**, exactly matching
+  the SA result.
+- Docs: Phase III Python API, decoder/operator semantics, calibration commands, and formulation-
+  audit implementation decisions.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 53 passed.
+- Example day-1: MIP and SA both **2992.50**; `validate_schedule` empty for both.
+- `python scripts/benchmark_hauling.py --solver both --sa-iters 100` -> Phase I optimal, MIP and SA
+  both 2992.50, no violations.
+- `ruff format --check src tests` / `ruff check src tests` -> clean.
+- `mypy src` -> no issues (134 files).
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures remain.
+- `pre-commit run --files <changed files>` -> passed.
+
+Next: #176, FHOPS integration, CLI, reporting, and the example case.
+
+# 2026-10-25 — P11.3: Phase II continuous-time truck routing and scheduling (#174)
+
+Part of #170. Adds the second Ghotb decomposition phase on `feature/p11-log-hauling`.
+
+- `src/fhops/hauling/network.py`: expands Phase I truckload counts into individual `Truckload`
+  records, resolves the central depot, pickup/delivery loaders, service times, loaded/empty travel,
+  and depot legs. Missing loaders or travel legs fail with a named diagnostic.
+- `src/fhops/hauling/schedule.py`: continuous-time pickup-and-delivery MIP with compatible-truck
+  assignment, start/end routes, MTZ subtour elimination, loader assignment and total order at each
+  pickup/delivery, truck-loader synchronization, empty return travel, and separate regular/overtime
+  minutes.
+- Objective: fixed dispatch cost + variable regular-minute cost + overtime cost.
+- `HaulArc.return_travel_minutes` is an optional empty yard-to-block leg; the loaded time is the
+  fallback.
+- `simulate_plan` recomputes the earliest schedule for a fixed route/loader order by max-plus
+  fixed-point iteration; `validate_schedule` checks compatibility, synchronization, loader overlap,
+  route travel, and return times.
+- Found and fixed a big-M defect: the time-relaxation constant must exceed the horizon, otherwise
+  feasible routes near the end of the day are cut off. The Phase II model now uses `2 * horizon`.
+- The example day-1 schedule (6 loads) solves optimally; the simulator matches the MIP times to
+  about `1e-12`.
+- Docs: Phase II Python API, output schemas, assumptions, and limitations; formulation-audit
+  implementation decisions.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 42 passed.
+- `examples/hauling` day 1 -> 6 loads, optimal; `validate_schedule` empty; simulator parity.
+- `ruff format --check src tests` / `ruff check src tests` -> clean.
+- `mypy src` -> no issues (133 files).
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures remain; no hauling code
+  touches that path.
+- `pre-commit run --files <changed files>` -> passed.
+
+Next: #175, the SA solution approach, SPT decoder, and calibration.
+
+# 2026-10-25 — P11.2: Phase I monthly flow MILP and goal programming (#173)
+
+Part of #170. Adds the first Ghotb decomposition phase on `feature/p11-log-hauling`.
+
+- `src/fhops/hauling/flow.py`: a sparse Pyomo model for daily sorted/unsorted flows from blocks to
+  sort yards, with supply balance, truckload linking, contractor workload deviation, yard
+  inventory, storage/processing capacities, and fleet capacity.
+- Objectives: Ghotb's cost objective `Z1`, the workload objective `Z2`, and a goal-programming
+  solve with normalized positive deviations.
+- Compatibility is enforced by index restriction rather than big-M; the absolute workload deviation
+  is linearised; goal deviations are non-negative continuous variables.
+- A goal solve with no explicit goals runs cost-only first, uses its objective as `Goal1`, sets
+  `Goal2 = 0`, and derives preferred daily truckloads from the cost plan.
+- `FlowSolveResult` carries flows, truckloads, yard and block inventory, contractor workload,
+  objective values, goal deviations, solver provenance, and diagnostics. `summarize_flow_result`
+  gives a compact CLI/notebook summary.
+- HiGHS is the default; Gurobi is accepted. Infeasible HiGHS solves are reported as `infeasible`,
+  not as a generic error.
+- The `examples/hauling/` supply/demand was reduced to a feasible five-day demo (300/250/250 m3
+  supply and 60/50/50 m3/day demand) and the preferred workloads were set to 4/3.
+- Docs: Phase I Python API, output schemas, assumptions, and the formulation-audit implementation
+  decisions.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/hauling` -> 31 passed.
+- `examples/hauling/scenario.yaml` -> cost solve optimal; flows, truckloads, and workload populated.
+- `ruff format --check src tests` / `ruff check src tests` -> clean.
+- `mypy src` -> no issues (131 files).
+- `sphinx-build -b html docs <build> -W` -> build succeeded.
+- Full `pytest -q` -> only the two pre-existing HiGHS option-error failures (`iteration_count` vs
+  `threads`) remain; no hauling code touches that path.
+- `pre-commit run --files <changed files>` -> passed.
+
+Next: #174, the Phase II daily routing and scheduling MILP.
+
+# 2026-10-25 — P11.1: hauling contract, schema 1.1.0, and formulation audit (#172)
+
+Activated P11 (`feature/p11-log-hauling`, from `main` at `d130fed`) and completed its first child,
+#172 (part of #170).
+
+- Added `src/fhops/hauling/` with the optional `hauling:` contract: log sorts, contractors, truck
+  types, individual trucks, depots, depot legs, sort yards, loader location bindings, sorted and
+  unsorted supply, daily demand, haul arcs, contractor-block eligibility, compatibility overrides,
+  and the driver/roadside-inventory/loader-cost policy.
+- `Scenario` now accepts the optional `hauling` section and schema `1.1.0`; `1.0.0` scenarios still
+  load unchanged, while a `1.0.0` file that contains `hauling:` is refused. The loader now passes
+  the YAML `schema_version` through (it previously defaulted every file to `1.0.0`), and it accepts
+  either an inline section or a `data.hauling` YAML file.
+- Cross-validation covers unknown block/machine/yard/truck/contractor/log-sort references, duplicate
+  records, truck ownership and type links, loader kind/location agreement, yard capacity
+  consistency, horizon overflow, and required fleet/depot/arc presence.
+- `fhops validate` now reports hauling dimensions when the section is present.
+- Added `examples/hauling/` (3 blocks, 2 contractors, 6 trucks, 3 log sorts, 1 sort yard, 5-day
+  hauling horizon) and `notes/hauling_formulation_audit.md`, the equation-level bridge for
+  P11.2-P11.4, including the thesis transcription issues (4-14 `N1`/`N2`, 4-15 `e+`/`e-`, the
+  synchronization sum, absolute-value linearisation, goal-deviation domains).
+- Added `docs/howto/hauling.rst`, `docs/reference/hauling.rst`, the `fhops.hauling` API stub, and a
+  data-contract cross-link.
+- Fixed a pre-existing mypy failure in `src/fhops/planning/tactical_operational/io.py` by replacing
+  `DataFrame.where(..., None)` with an explicit `pd.isna` record scrub; runtime values are
+  unchanged.
+
+Verification:
+- `PYTHONPATH=src python -m pytest -q tests/hauling` -> 17 passed.
+- `PYTHONPATH=src python -m pytest -q tests/planning/test_tactical_operational_scenario.py
+  tests/planning/test_tactical_operational_contract.py tests/cli/test_scenario_reporting_cli.py` ->
+  9 passed.
+- `ruff format src tests` and `ruff check src tests` -> clean.
+- `mypy src` -> no issues (130 files).
+- `PYTHONPATH=src python -m fhops.cli.main validate examples/hauling/scenario.yaml` -> valid, with
+  hauling dimensions.
+- `PATH=/tmp/opencode/pandoc-3.1.3/bin:$PATH PYTHONPATH=src python -m sphinx -b html docs
+  /tmp/opencode/fhops-p11-sphinx7 -W` -> build succeeded.
+- Full `pytest -q` still has two pre-existing environment failures in the HiGHS option-error tests
+  (`tests/model/test_milp_driver_robustness.py`,
+  `tests/test_legacy_mip_driver.py`); highspy reports an `iteration_count` error rather than the
+  `threads` error the test expects. No hauling code touches that path. The third pre-existing
+  failure (missing `jinja2`) was fixed by installing the declared dev dependency.
+
+Next: #173, the Phase I monthly flow MILP and goal programming.
+
 # 2026-10-24 — Queue P11 log hauling and P12 web UI expansion phases (#170, #171)
 
 - Opened the two queued parent issues and their child issue trees:

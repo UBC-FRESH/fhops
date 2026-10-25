@@ -179,18 +179,18 @@ Phases 6–7 (tactical–operational 1.1.0a line) live on `main`; this phase is 
 - [x] #152 Labelled canonical operational formulation: OBJ/OBJ2/E1–E13 (E8a–c)/INIT/D1 labels, Block → Pyomo mapping table, docs page anchor `operational-milp-formulation` for citation, drift test (no code change).
 - [x] #147 Final SoftwareX asset regeneration on the final 1.0.1 code (50e6f9b, incl. the #151 performance fix): one sequential full pipeline run on an idle host (2 h 57 min; `assets_hash` 5e069c58…, recipe v2, `asset_hash.py verify` passes), tables/figures rebuilt, asset audit 0 failures, plans/objectives identical to the superseded a0b2799 run (#150); manuscript values manuscript → committed → new in `notes/v101_maintenance_plan.md` §8.28.
 
-## Phase 11 — Log Hauling and Mill Delivery Optimization (Ghotb-Inspired) — queued
-Parent #170; branch `feature/p11-log-hauling` (created at activation); plan
+## Phase 11 — Log Hauling and Mill Delivery Optimization (Ghotb-Inspired) — close-out queued
+Parent #170; branch `feature/p11-log-hauling` (active from 2026-10-25); plan
 `notes/log_hauling_expansion_plan.md`; issue tree `notes/log_hauling_issue_tree.md`.
 Adds the operational log-hauling layer missing between harvest and mill demand: Phase I monthly
 daily-flow MIP with contractor workload balance, Phase II continuous-time truck/loader scheduling,
 and a thesis-calibrated SA solver.
-- [ ] #172 P11.1 Provenance, hauling contract, and formulation audit.
-- [ ] #173 P11.2 Phase I monthly flow MILP and goal programming.
-- [ ] #174 P11.3 Phase II daily routing and scheduling MILP.
-- [ ] #175 P11.4 SA solution approach, SPT decoder, and calibration.
-- [ ] #176 P11.5 FHOPS integration, CLI, reporting, and example case.
-- [ ] #177 P11.6 Validation, documentation, formulation sync, and close-out.
+- [x] #172 P11.1 Provenance, hauling contract, and formulation audit.
+- [x] #173 P11.2 Phase I monthly flow MILP and goal programming.
+- [x] #174 P11.3 Phase II daily routing and scheduling MILP.
+- [x] #175 P11.4 SA solution approach, SPT decoder, and calibration.
+- [x] #176 P11.5 FHOPS integration, CLI, reporting, and example case.
+- [x] #177 P11.6 Validation, documentation, formulation sync, and close-out.
 
 ## Phase 12 — FHOPS Web Application (WS4-Style) — queued
 Parent #171; branch `feature/p12-web-ui` (created at activation); plan
@@ -300,11 +300,11 @@ and an opt-in assistant.
     - Queued as P11. The phase adds the operational hauling layer between harvest and mill demand:
       Ghotb's Phase I monthly daily-flow MIP with contractor workload balance, Phase II
       continuous-time truck/loader scheduling, and the SA solver with an SPT decoder.
-    - Child issues #172-#177 are linked as sub-issues; the phase branch is reserved until activation.
+    - Child issues #172-#177 are linked as sub-issues; the phase branch `feature/p11-log-hauling` is in close-out review (PR #185).
     - The thesis case data is confidential, so acceptance uses structural fidelity, MIP-versus-SA
       parity on thesis-shaped synthetic instances, and the published qualitative findings. Exact
       company-dollar reproduction is explicitly not claimed.
-    - Start with #172 (contract and formulation audit); it gates the models and solver.
+    - #172-#176 are complete. #177 is complete; the phase close-out report is queued for approval (PR #185).
 
 17. **FHOPS Web Application (#171; `notes/web_ui_expansion_plan.md`, `notes/web_ui_issue_tree.md`)**
     - Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,

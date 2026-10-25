@@ -1,0 +1,131 @@
+name: Hauling demo
+num_days: 20
+schema_version: 1.1.0
+start_date: 2026-11-02
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: production_rates.csv
+hauling:
+  planning_horizon_days: 5
+  start_day: 1
+  log_sorts:
+    - id: fir_saw
+      product_id: fir_saw
+      sorted: true
+      description: Sorted fir sawlogs
+    - id: hemlock_pulp
+      product_id: hemlock_pulp
+      sorted: true
+      description: Sorted hemlock pulp logs
+    - id: mixed_unsorted
+      sorted: false
+      description: Unsorted mixed logs for yard processing
+  contractors:
+    - id: c1
+      name: Contractor One
+      preferred_daily_truckloads: 4
+    - id: c2
+      name: Contractor Two
+      preferred_daily_truckloads: 3
+  truck_types:
+    - id: highway
+      capacity_m3: 45
+      fixed_cost: 120.0
+      variable_cost_per_minute: 1.20
+      overtime_cost_per_minute: 1.80
+      can_carry_sorted: true
+      can_carry_unsorted: true
+    - id: offhighway
+      capacity_m3: 60
+      fixed_cost: 180.0
+      variable_cost_per_minute: 1.50
+      overtime_cost_per_minute: 2.20
+      can_carry_sorted: false
+      can_carry_unsorted: true
+  trucks:
+    - id: c1_h1
+      contractor_id: c1
+      truck_type_id: highway
+    - id: c1_h2
+      contractor_id: c1
+      truck_type_id: highway
+    - id: c1_o1
+      contractor_id: c1
+      truck_type_id: offhighway
+    - id: c2_h1
+      contractor_id: c2
+      truck_type_id: highway
+    - id: c2_h2
+      contractor_id: c2
+      truck_type_id: highway
+    - id: c2_o1
+      contractor_id: c2
+      truck_type_id: offhighway
+  depots:
+    - id: depot
+      name: Central depot
+  depot_legs:
+    - {depot_id: depot, location_id: b1, truck_type_id: highway, travel_minutes: 35}
+    - {depot_id: depot, location_id: b2, truck_type_id: highway, travel_minutes: 42}
+    - {depot_id: depot, location_id: b3, truck_type_id: highway, travel_minutes: 48}
+    - {depot_id: depot, location_id: y1, truck_type_id: highway, travel_minutes: 30}
+    - {depot_id: depot, location_id: b1, truck_type_id: offhighway, travel_minutes: 40}
+    - {depot_id: depot, location_id: b2, truck_type_id: offhighway, travel_minutes: 47}
+    - {depot_id: depot, location_id: b3, truck_type_id: offhighway, travel_minutes: 53}
+    - {depot_id: depot, location_id: y1, truck_type_id: offhighway, travel_minutes: 34}
+  sort_yards:
+    - id: y1
+      facility_id: mill_a
+      unsorted_storage_m3: 5000
+      sorted_processing_m3_per_day: 1500
+      unsorted_processing_m3_per_day: 800
+      total_processing_m3_per_day: 2000
+      initial_unsorted_inventory_m3: 0
+      initial_water_inventory_m3: 0
+  loader_locations:
+    - {loader_id: ldr_b1, location_id: b1, location_kind: pickup, service_minutes: 22}
+    - {loader_id: ldr_b2, location_id: b2, location_kind: pickup, service_minutes: 22}
+    - {loader_id: ldr_b3, location_id: b3, location_kind: pickup, service_minutes: 22}
+    - {loader_id: ldr_y1, location_id: y1, location_kind: delivery, service_minutes: 18}
+  supply:
+    - {block_id: b1, log_sort_id: fir_saw, sorted_m3: 300, unsorted_m3: 0}
+    - {block_id: b2, log_sort_id: hemlock_pulp, sorted_m3: 250, unsorted_m3: 0}
+    - {block_id: b3, log_sort_id: mixed_unsorted, sorted_m3: 0, unsorted_m3: 250}
+  demand:
+    - {yard_id: y1, log_sort_id: fir_saw, day: 1, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 2, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 3, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 4, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: fir_saw, day: 5, volume_m3: 60}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 1, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 2, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 3, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 4, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: hemlock_pulp, day: 5, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 1, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 2, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 3, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 4, volume_m3: 50}
+    - {yard_id: y1, log_sort_id: mixed_unsorted, day: 5, volume_m3: 50}
+  haul_arcs:
+    - {block_id: b1, yard_id: y1, truck_type_id: highway, travel_minutes: 150, distance_km: 92}
+    - {block_id: b1, yard_id: y1, truck_type_id: offhighway, travel_minutes: 165, distance_km: 92}
+    - {block_id: b2, yard_id: y1, truck_type_id: highway, travel_minutes: 175, distance_km: 108}
+    - {block_id: b2, yard_id: y1, truck_type_id: offhighway, travel_minutes: 190, distance_km: 108}
+    - {block_id: b3, yard_id: y1, truck_type_id: highway, travel_minutes: 195, distance_km: 121}
+    - {block_id: b3, yard_id: y1, truck_type_id: offhighway, travel_minutes: 210, distance_km: 121}
+  contractor_blocks:
+    - {contractor_id: c1, block_id: b1}
+    - {contractor_id: c1, block_id: b2}
+    - {contractor_id: c2, block_id: b2}
+    - {contractor_id: c2, block_id: b3}
+  driver_policy:
+    regular_minutes: 510
+    max_overtime_minutes: 150
+    overtime_violation_penalty_per_minute: 10
+  roadside_inventory_penalty_per_m3: 25
+  loader_travel_cost_per_km: 0
+  default_loader_service_minutes: 20

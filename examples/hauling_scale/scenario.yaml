@@ -1,0 +1,975 @@
+name: Hauling scale case
+num_days: 2
+schema_version: 1.1.0
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: production_rates.csv
+geo_block_path: blocks.geojson
+geo_crs: EPSG:3005
+hauling:
+  planning_horizon_days: 2
+  start_day: 1
+  log_sorts:
+  - id: fir_saw
+    product_id: fir_saw
+    sorted: true
+  - id: hemlock_pulp
+    product_id: hemlock_pulp
+    sorted: true
+  - id: mixed_unsorted
+    product_id: mixed_unsorted
+    sorted: false
+  contractors:
+  - id: c1
+    preferred_daily_truckloads: 20.0
+  - id: c2
+    preferred_daily_truckloads: 20.0
+  - id: c3
+    preferred_daily_truckloads: 20.0
+  - id: c4
+    preferred_daily_truckloads: 20.0
+  truck_types:
+  - id: highway
+    capacity_m3: 45.0
+    fixed_cost: 120.0
+    variable_cost_per_minute: 1.2
+    overtime_cost_per_minute: 1.8
+    can_carry_sorted: true
+    can_carry_unsorted: true
+  - id: offhighway
+    capacity_m3: 60.0
+    fixed_cost: 180.0
+    variable_cost_per_minute: 1.5
+    overtime_cost_per_minute: 2.2
+    can_carry_sorted: false
+    can_carry_unsorted: true
+  trucks:
+  - id: c1_h1
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h2
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h3
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h4
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h5
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h6
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h7
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h8
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h9
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h10
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_o1
+    contractor_id: c1
+    truck_type_id: offhighway
+  - id: c1_o2
+    contractor_id: c1
+    truck_type_id: offhighway
+  - id: c1_o3
+    contractor_id: c1
+    truck_type_id: offhighway
+  - id: c1_o4
+    contractor_id: c1
+    truck_type_id: offhighway
+  - id: c1_o5
+    contractor_id: c1
+    truck_type_id: offhighway
+  - id: c2_h1
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_h2
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_h3
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_h4
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_h5
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_h6
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_h7
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_h8
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_h9
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_h10
+    contractor_id: c2
+    truck_type_id: highway
+  - id: c2_o1
+    contractor_id: c2
+    truck_type_id: offhighway
+  - id: c2_o2
+    contractor_id: c2
+    truck_type_id: offhighway
+  - id: c2_o3
+    contractor_id: c2
+    truck_type_id: offhighway
+  - id: c2_o4
+    contractor_id: c2
+    truck_type_id: offhighway
+  - id: c2_o5
+    contractor_id: c2
+    truck_type_id: offhighway
+  - id: c3_h1
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_h2
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_h3
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_h4
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_h5
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_h6
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_h7
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_h8
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_h9
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_h10
+    contractor_id: c3
+    truck_type_id: highway
+  - id: c3_o1
+    contractor_id: c3
+    truck_type_id: offhighway
+  - id: c3_o2
+    contractor_id: c3
+    truck_type_id: offhighway
+  - id: c3_o3
+    contractor_id: c3
+    truck_type_id: offhighway
+  - id: c3_o4
+    contractor_id: c3
+    truck_type_id: offhighway
+  - id: c3_o5
+    contractor_id: c3
+    truck_type_id: offhighway
+  - id: c4_h1
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_h2
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_h3
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_h4
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_h5
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_h6
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_h7
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_h8
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_h9
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_h10
+    contractor_id: c4
+    truck_type_id: highway
+  - id: c4_o1
+    contractor_id: c4
+    truck_type_id: offhighway
+  - id: c4_o2
+    contractor_id: c4
+    truck_type_id: offhighway
+  - id: c4_o3
+    contractor_id: c4
+    truck_type_id: offhighway
+  - id: c4_o4
+    contractor_id: c4
+    truck_type_id: offhighway
+  - id: c4_o5
+    contractor_id: c4
+    truck_type_id: offhighway
+  depots:
+  - id: depot
+    name: Central depot
+  depot_legs:
+  - depot_id: depot
+    location_id: b01
+    truck_type_id: highway
+    travel_minutes: 15
+  - depot_id: depot
+    location_id: b02
+    truck_type_id: highway
+    travel_minutes: 18
+  - depot_id: depot
+    location_id: b03
+    truck_type_id: highway
+    travel_minutes: 21
+  - depot_id: depot
+    location_id: b04
+    truck_type_id: highway
+    travel_minutes: 24
+  - depot_id: depot
+    location_id: b05
+    truck_type_id: highway
+    travel_minutes: 27
+  - depot_id: depot
+    location_id: b06
+    truck_type_id: highway
+    travel_minutes: 15
+  - depot_id: depot
+    location_id: b07
+    truck_type_id: highway
+    travel_minutes: 18
+  - depot_id: depot
+    location_id: b08
+    truck_type_id: highway
+    travel_minutes: 21
+  - depot_id: depot
+    location_id: b09
+    truck_type_id: highway
+    travel_minutes: 24
+  - depot_id: depot
+    location_id: b10
+    truck_type_id: highway
+    travel_minutes: 27
+  - depot_id: depot
+    location_id: b11
+    truck_type_id: highway
+    travel_minutes: 15
+  - depot_id: depot
+    location_id: b12
+    truck_type_id: highway
+    travel_minutes: 18
+  - depot_id: depot
+    location_id: b13
+    truck_type_id: highway
+    travel_minutes: 21
+  - depot_id: depot
+    location_id: y1
+    truck_type_id: highway
+    travel_minutes: 12
+  - depot_id: depot
+    location_id: y2
+    truck_type_id: highway
+    travel_minutes: 16
+  - depot_id: depot
+    location_id: y3
+    truck_type_id: highway
+    travel_minutes: 20
+  - depot_id: depot
+    location_id: b01
+    truck_type_id: offhighway
+    travel_minutes: 15
+  - depot_id: depot
+    location_id: b02
+    truck_type_id: offhighway
+    travel_minutes: 18
+  - depot_id: depot
+    location_id: b03
+    truck_type_id: offhighway
+    travel_minutes: 21
+  - depot_id: depot
+    location_id: b04
+    truck_type_id: offhighway
+    travel_minutes: 24
+  - depot_id: depot
+    location_id: b05
+    truck_type_id: offhighway
+    travel_minutes: 27
+  - depot_id: depot
+    location_id: b06
+    truck_type_id: offhighway
+    travel_minutes: 15
+  - depot_id: depot
+    location_id: b07
+    truck_type_id: offhighway
+    travel_minutes: 18
+  - depot_id: depot
+    location_id: b08
+    truck_type_id: offhighway
+    travel_minutes: 21
+  - depot_id: depot
+    location_id: b09
+    truck_type_id: offhighway
+    travel_minutes: 24
+  - depot_id: depot
+    location_id: b10
+    truck_type_id: offhighway
+    travel_minutes: 27
+  - depot_id: depot
+    location_id: b11
+    truck_type_id: offhighway
+    travel_minutes: 15
+  - depot_id: depot
+    location_id: b12
+    truck_type_id: offhighway
+    travel_minutes: 18
+  - depot_id: depot
+    location_id: b13
+    truck_type_id: offhighway
+    travel_minutes: 21
+  - depot_id: depot
+    location_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 12
+  - depot_id: depot
+    location_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 16
+  - depot_id: depot
+    location_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 20
+  sort_yards:
+  - id: y1
+    facility_id: mill_y1
+    unsorted_storage_m3: 20000
+    sorted_processing_m3_per_day: 5000
+    unsorted_processing_m3_per_day: 3000
+    total_processing_m3_per_day: 8000
+    initial_unsorted_inventory_m3: 0
+    initial_water_inventory_m3: 0
+  - id: y2
+    facility_id: mill_y2
+    unsorted_storage_m3: 20000
+    sorted_processing_m3_per_day: 5000
+    unsorted_processing_m3_per_day: 3000
+    total_processing_m3_per_day: 8000
+    initial_unsorted_inventory_m3: 0
+    initial_water_inventory_m3: 0
+  - id: y3
+    facility_id: mill_y3
+    unsorted_storage_m3: 20000
+    sorted_processing_m3_per_day: 5000
+    unsorted_processing_m3_per_day: 3000
+    total_processing_m3_per_day: 8000
+    initial_unsorted_inventory_m3: 0
+    initial_water_inventory_m3: 0
+  loader_locations:
+  - loader_id: ldr_b01
+    location_id: b01
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b02
+    location_id: b02
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b03
+    location_id: b03
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b04
+    location_id: b04
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b05
+    location_id: b05
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b06
+    location_id: b06
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b07
+    location_id: b07
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b08
+    location_id: b08
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b09
+    location_id: b09
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b10
+    location_id: b10
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b11
+    location_id: b11
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b12
+    location_id: b12
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_b13
+    location_id: b13
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_y1
+    location_id: y1
+    location_kind: delivery
+    service_minutes: 18
+  - loader_id: ldr_y2
+    location_id: y2
+    location_kind: delivery
+    service_minutes: 18
+  - loader_id: ldr_y3
+    location_id: y3
+    location_kind: delivery
+    service_minutes: 18
+  supply:
+  - block_id: b01
+    log_sort_id: fir_saw
+    sorted_m3: 480.0
+    unsorted_m3: 0
+  - block_id: b02
+    log_sort_id: fir_saw
+    sorted_m3: 480.0
+    unsorted_m3: 0
+  - block_id: b03
+    log_sort_id: fir_saw
+    sorted_m3: 480.0
+    unsorted_m3: 0
+  - block_id: b04
+    log_sort_id: fir_saw
+    sorted_m3: 480.0
+    unsorted_m3: 0
+  - block_id: b05
+    log_sort_id: fir_saw
+    sorted_m3: 480.0
+    unsorted_m3: 0
+  - block_id: b06
+    log_sort_id: hemlock_pulp
+    sorted_m3: 600.0
+    unsorted_m3: 0
+  - block_id: b07
+    log_sort_id: hemlock_pulp
+    sorted_m3: 600.0
+    unsorted_m3: 0
+  - block_id: b08
+    log_sort_id: hemlock_pulp
+    sorted_m3: 600.0
+    unsorted_m3: 0
+  - block_id: b09
+    log_sort_id: hemlock_pulp
+    sorted_m3: 600.0
+    unsorted_m3: 0
+  - block_id: b10
+    log_sort_id: mixed_unsorted
+    sorted_m3: 0
+    unsorted_m3: 600.0
+  - block_id: b11
+    log_sort_id: mixed_unsorted
+    sorted_m3: 0
+    unsorted_m3: 600.0
+  - block_id: b12
+    log_sort_id: mixed_unsorted
+    sorted_m3: 0
+    unsorted_m3: 600.0
+  - block_id: b13
+    log_sort_id: mixed_unsorted
+    sorted_m3: 0
+    unsorted_m3: 600.0
+  demand:
+  - yard_id: y1
+    log_sort_id: fir_saw
+    day: 1
+    volume_m3: 400.0
+  - yard_id: y1
+    log_sort_id: fir_saw
+    day: 2
+    volume_m3: 400.0
+  - yard_id: y1
+    log_sort_id: hemlock_pulp
+    day: 1
+    volume_m3: 400.0
+  - yard_id: y1
+    log_sort_id: hemlock_pulp
+    day: 2
+    volume_m3: 400.0
+  - yard_id: y1
+    log_sort_id: mixed_unsorted
+    day: 1
+    volume_m3: 400.0
+  - yard_id: y1
+    log_sort_id: mixed_unsorted
+    day: 2
+    volume_m3: 400.0
+  - yard_id: y2
+    log_sort_id: fir_saw
+    day: 1
+    volume_m3: 400.0
+  - yard_id: y2
+    log_sort_id: fir_saw
+    day: 2
+    volume_m3: 400.0
+  - yard_id: y2
+    log_sort_id: hemlock_pulp
+    day: 1
+    volume_m3: 400.0
+  - yard_id: y2
+    log_sort_id: hemlock_pulp
+    day: 2
+    volume_m3: 400.0
+  - yard_id: y2
+    log_sort_id: mixed_unsorted
+    day: 1
+    volume_m3: 400.0
+  - yard_id: y2
+    log_sort_id: mixed_unsorted
+    day: 2
+    volume_m3: 400.0
+  - yard_id: y3
+    log_sort_id: fir_saw
+    day: 1
+    volume_m3: 400.0
+  - yard_id: y3
+    log_sort_id: fir_saw
+    day: 2
+    volume_m3: 400.0
+  - yard_id: y3
+    log_sort_id: hemlock_pulp
+    day: 1
+    volume_m3: 400.0
+  - yard_id: y3
+    log_sort_id: hemlock_pulp
+    day: 2
+    volume_m3: 400.0
+  - yard_id: y3
+    log_sort_id: mixed_unsorted
+    day: 1
+    volume_m3: 400.0
+  - yard_id: y3
+    log_sort_id: mixed_unsorted
+    day: 2
+    volume_m3: 400.0
+  haul_arcs:
+  - block_id: b01
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 30
+    distance_km: 25.0
+  - block_id: b01
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 30
+    distance_km: 25.0
+  - block_id: b01
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 38
+    distance_km: 31.7
+  - block_id: b01
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 38
+    distance_km: 31.7
+  - block_id: b01
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 46
+    distance_km: 38.3
+  - block_id: b01
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 46
+    distance_km: 38.3
+  - block_id: b02
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 32
+    distance_km: 26.7
+  - block_id: b02
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 32
+    distance_km: 26.7
+  - block_id: b02
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 40
+    distance_km: 33.3
+  - block_id: b02
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 40
+    distance_km: 33.3
+  - block_id: b02
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 48
+    distance_km: 40.0
+  - block_id: b02
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 48
+    distance_km: 40.0
+  - block_id: b03
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 34
+    distance_km: 28.3
+  - block_id: b03
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 34
+    distance_km: 28.3
+  - block_id: b03
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 42
+    distance_km: 35.0
+  - block_id: b03
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 42
+    distance_km: 35.0
+  - block_id: b03
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 50
+    distance_km: 41.7
+  - block_id: b03
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 50
+    distance_km: 41.7
+  - block_id: b04
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 36
+    distance_km: 30.0
+  - block_id: b04
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 36
+    distance_km: 30.0
+  - block_id: b04
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 44
+    distance_km: 36.7
+  - block_id: b04
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 44
+    distance_km: 36.7
+  - block_id: b04
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 52
+    distance_km: 43.3
+  - block_id: b04
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 52
+    distance_km: 43.3
+  - block_id: b05
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 38
+    distance_km: 31.7
+  - block_id: b05
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 38
+    distance_km: 31.7
+  - block_id: b05
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 46
+    distance_km: 38.3
+  - block_id: b05
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 46
+    distance_km: 38.3
+  - block_id: b05
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 54
+    distance_km: 45.0
+  - block_id: b05
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 54
+    distance_km: 45.0
+  - block_id: b06
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 40
+    distance_km: 33.3
+  - block_id: b06
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 40
+    distance_km: 33.3
+  - block_id: b06
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 48
+    distance_km: 40.0
+  - block_id: b06
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 48
+    distance_km: 40.0
+  - block_id: b06
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 56
+    distance_km: 46.7
+  - block_id: b06
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 56
+    distance_km: 46.7
+  - block_id: b07
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 42
+    distance_km: 35.0
+  - block_id: b07
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 42
+    distance_km: 35.0
+  - block_id: b07
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 50
+    distance_km: 41.7
+  - block_id: b07
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 50
+    distance_km: 41.7
+  - block_id: b07
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 58
+    distance_km: 48.3
+  - block_id: b07
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 58
+    distance_km: 48.3
+  - block_id: b08
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 44
+    distance_km: 36.7
+  - block_id: b08
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 44
+    distance_km: 36.7
+  - block_id: b08
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 52
+    distance_km: 43.3
+  - block_id: b08
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 52
+    distance_km: 43.3
+  - block_id: b08
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 60
+    distance_km: 50.0
+  - block_id: b08
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 60
+    distance_km: 50.0
+  - block_id: b09
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 46
+    distance_km: 38.3
+  - block_id: b09
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 46
+    distance_km: 38.3
+  - block_id: b09
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 54
+    distance_km: 45.0
+  - block_id: b09
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 54
+    distance_km: 45.0
+  - block_id: b09
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 62
+    distance_km: 51.7
+  - block_id: b09
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 62
+    distance_km: 51.7
+  - block_id: b10
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 48
+    distance_km: 40.0
+  - block_id: b10
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 48
+    distance_km: 40.0
+  - block_id: b10
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 56
+    distance_km: 46.7
+  - block_id: b10
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 56
+    distance_km: 46.7
+  - block_id: b10
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 64
+    distance_km: 53.3
+  - block_id: b10
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 64
+    distance_km: 53.3
+  - block_id: b11
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 50
+    distance_km: 41.7
+  - block_id: b11
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 50
+    distance_km: 41.7
+  - block_id: b11
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 58
+    distance_km: 48.3
+  - block_id: b11
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 58
+    distance_km: 48.3
+  - block_id: b11
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 66
+    distance_km: 55.0
+  - block_id: b11
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 66
+    distance_km: 55.0
+  - block_id: b12
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 52
+    distance_km: 43.3
+  - block_id: b12
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 52
+    distance_km: 43.3
+  - block_id: b12
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 60
+    distance_km: 50.0
+  - block_id: b12
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 60
+    distance_km: 50.0
+  - block_id: b12
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 68
+    distance_km: 56.7
+  - block_id: b12
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 68
+    distance_km: 56.7
+  - block_id: b13
+    yard_id: y1
+    truck_type_id: highway
+    travel_minutes: 54
+    distance_km: 45.0
+  - block_id: b13
+    yard_id: y1
+    truck_type_id: offhighway
+    travel_minutes: 54
+    distance_km: 45.0
+  - block_id: b13
+    yard_id: y2
+    truck_type_id: highway
+    travel_minutes: 62
+    distance_km: 51.7
+  - block_id: b13
+    yard_id: y2
+    truck_type_id: offhighway
+    travel_minutes: 62
+    distance_km: 51.7
+  - block_id: b13
+    yard_id: y3
+    truck_type_id: highway
+    travel_minutes: 70
+    distance_km: 58.3
+  - block_id: b13
+    yard_id: y3
+    truck_type_id: offhighway
+    travel_minutes: 70
+    distance_km: 58.3
+  driver_policy:
+    regular_minutes: 510
+    max_overtime_minutes: 300
+    overtime_violation_penalty_per_minute: 1000
+  roadside_inventory_penalty_per_m3: 25
+  loader_travel_cost_per_km: 0
+  default_loader_service_minutes: 20
