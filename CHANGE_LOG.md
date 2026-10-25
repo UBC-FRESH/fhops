@@ -3600,3 +3600,9 @@ PY
 - Rebased the synthetic tier presets on 16-week (112-day) horizons with three 8-hour shifts/day, regenerated every published bundle (`examples/synthetic/*`, `docs/softwarex/assets/data/datasets/*`, `docs/softwarex/assets/data/scaling/*`), and patched the HiGHS driver to tolerate zero-assignment solutions so MIP runtimes are recorded for the enlarged tiers.
 - Introduced a telemetry watcher API (`fhops.telemetry.watch.Snapshot`, `WatchConfig`, `SnapshotBus`) and a Rich-based prototype (`scripts/watch_cli_prototype.py`) that replays JSONL telemetry as a live dashboard, laying the groundwork for a `fhops bench suite --watch` mode.
 - Added a reusable CLI dashboard (`fhops.cli.watch_dashboard.LiveWatch`), wired `fhops bench suite` and all tuning commands with `--watch/--watch-refresh` flags that launch the Rich display when running in a TTY, extended `solve_sa` to emit live `Snapshot` telemetry, and covered the new plumbing with unit tests (`tests/test_telemetry_watch.py` + fixtures).
+
+- 2026-10-25: P13.1 (#196, parent #197) added the multi-day marine design note
+  `notes/multiday_marine_cycles.md` and the synthetic Quatsino Sound -> Ladysmith regression fixture
+  `examples/hauling_marine_multiday/`. The strict xfail test documents the current Phase I
+  infeasibility: a 3,955-minute barge cycle cannot fit the 510-minute daily fleet budget. Existing
+  day-trip marine behaviour is unchanged; the solver change is left for P13.2.

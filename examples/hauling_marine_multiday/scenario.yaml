@@ -1,0 +1,142 @@
+# Synthetic multi-day marine regression fixture for FHOPS #196.
+#
+# One barge, 10,000 m3, Quatsino Sound -> Ladysmith Harbour. The 1,910-minute
+# loaded leg and 1,910-minute return make a 3,955-minute barge cycle, which
+# exceeds the Phase I daily regular-minutes budget. The fixture is deliberately
+# small so the current infeasibility is attributable to the barge fleet, not
+# truck capacity or demand.
+name: "Multi-day marine regression: Quatsino to Ladysmith"
+num_days: 8
+schema_version: 1.1.0
+start_date: 2026-11-02
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: production_rates.csv
+hauling:
+  planning_horizon_days: 8
+  start_day: 1
+  log_sorts:
+    - id: coastal_mixed
+      sorted: true
+      description: Synthetic coastal mixed sawlogs
+  contractors:
+    - id: c1
+      name: Synthetic coast contractor
+      preferred_daily_truckloads: 8
+  truck_types:
+    - id: highway
+      capacity_m3: 45
+      fixed_cost: 120.0
+      variable_cost_per_minute: 1.20
+      overtime_cost_per_minute: 1.80
+      can_carry_sorted: true
+      can_carry_unsorted: true
+  trucks:
+    - {id: c1_h1, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h2, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h3, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h4, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h5, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h6, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h7, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h8, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h9, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h10, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h11, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h12, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h13, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h14, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h15, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h16, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h17, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h18, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h19, contractor_id: c1, truck_type_id: highway}
+    - {id: c1_h20, contractor_id: c1, truck_type_id: highway}
+  depots:
+    - id: depot
+      name: Synthetic north-island depot
+  depot_legs:
+    - {depot_id: depot, location_id: b_quatsino, truck_type_id: highway, travel_minutes: 60}
+    - {depot_id: depot, location_id: quatsino, truck_type_id: highway, travel_minutes: 45}
+    - {depot_id: depot, location_id: ladysmith, truck_type_id: highway, travel_minutes: 20}
+    - {depot_id: depot, location_id: y1, truck_type_id: highway, travel_minutes: 15}
+  barge_types:
+    - id: log_barge
+      capacity_m3: 10000
+      fixed_cost: 1500.0
+      variable_cost_per_minute: 5.0
+      overtime_cost_per_minute: 7.5
+      load_minutes: 30
+      unload_minutes: 30
+      can_carry_sorted: true
+      can_carry_unsorted: true
+  barges:
+    - {id: c1_b1, contractor_id: c1, barge_type_id: log_barge}
+  ports:
+    - id: quatsino
+      name: Synthetic Quatsino load terminal
+      storage_m3: 100000
+      initial_inventory_m3: 0
+      handling_minutes_per_trip: 30
+      handling_cost_per_trip: 150
+      daily_handling_m3: 20000
+    - id: ladysmith
+      name: Synthetic Ladysmith dump terminal
+      storage_m3: 100000
+      initial_inventory_m3: 0
+      handling_minutes_per_trip: 45
+      handling_cost_per_trip: 180
+      daily_handling_m3: 20000
+  water_arcs:
+    - id: quatsino_ladysmith
+      origin_port_id: quatsino
+      destination_port_id: ladysmith
+      barge_type_id: log_barge
+      travel_minutes: 1910
+      distance_km: 589
+      return_travel_minutes: 1910
+      load_minutes: 30
+      unload_minutes: 30
+  port_legs:
+    - {port_id: quatsino, location_id: b_quatsino, side: origin, truck_type_id: highway, travel_minutes: 60, distance_km: 50, return_travel_minutes: 60}
+    - {port_id: ladysmith, location_id: y1, side: destination, truck_type_id: highway, travel_minutes: 20, distance_km: 10, return_travel_minutes: 20}
+  marine_routes:
+    - id: quatsino_ladysmith_yard
+      block_id: b_quatsino
+      yard_id: y1
+      origin_port_id: quatsino
+      destination_port_id: ladysmith
+      water_arc_id: quatsino_ladysmith
+      contractor_id: c1
+      truck_type_id: highway
+  sort_yards:
+    - id: y1
+      facility_id: synthetic_ladysmith
+      unsorted_storage_m3: 100000
+      sorted_processing_m3_per_day: 20000
+      unsorted_processing_m3_per_day: 20000
+      total_processing_m3_per_day: 20000
+      initial_unsorted_inventory_m3: 0
+      initial_water_inventory_m3: 0
+  loader_locations:
+    - {loader_id: loader_block, location_id: b_quatsino, location_kind: pickup, service_minutes: 20}
+    - {loader_id: loader_quatsino, location_id: quatsino, location_kind: port, service_minutes: 35}
+    - {loader_id: loader_ladysmith, location_id: ladysmith, location_kind: port, service_minutes: 45}
+    - {loader_id: loader_yard, location_id: y1, location_kind: delivery, service_minutes: 25}
+  supply:
+    - {block_id: b_quatsino, log_sort_id: coastal_mixed, sorted_m3: 10000, unsorted_m3: 0}
+  demand:
+    - {yard_id: y1, log_sort_id: coastal_mixed, day: 8, volume_m3: 10000}
+  haul_arcs: []
+  contractor_blocks:
+    - {contractor_id: c1, block_id: b_quatsino}
+  driver_policy:
+    regular_minutes: 510
+    max_overtime_minutes: 150
+    overtime_violation_penalty_per_minute: 10
+  roadside_inventory_penalty_per_m3: 100
+  port_inventory_penalty_per_m3: 100
+  default_loader_service_minutes: 20

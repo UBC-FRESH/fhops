@@ -209,6 +209,13 @@ and an opt-in assistant.
 - [ ] #182 P12.5 Live runs, SSE, and run control.
 - [ ] #183 P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out.
 
+## Phase 13 — Multi-day Marine Barge Cycles — active
+Parent #197; branch `feature/phase13-multiday-marine`; design
+`notes/multiday_marine_cycles.md`.
+Extends the P11.7 marine path so a barge voyage can span more than one day
+without adding dummy barges or relaxing capacity checks.
+- [x] #196 P13.1 Design multi-day marine cycles and add the failing regression fixture.
+
 ## Detailed Next Steps
 0. **Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**
    - 2026-10-06: #91 (`issue-91-initial-state-contract`) adds optional `Scenario.initial_state` and `ScheduleLock.shift_id`, honoured by the operational MILP (first-slot inventory/head-start, role-remaining cap, boundary move, lock constraints), heuristics, and playback, with v1.0.0 regression parity tests. Next: #92 rolling-horizon carry-forward builds on this contract.
