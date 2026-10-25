@@ -1,3 +1,15 @@
+# 2026-10-25 — P12.3 fix: SVG class assignment broke the map panel
+
+- The map panel threw `Attempted to assign to readonly property` because `SVGElement.className`
+  is read-only. The shell now uses `svg.setAttribute("class", ...)`.
+- Added a regression test that rejects `svg.className` assignments in `app.js`.
+- Added a cache-busting `?v=3` to the SPA script reference so the fixed module is loaded.
+
+Verification:
+- `PYTHONPATH=src pytest -q tests/web` -> 24 passed.
+- `node --check src/fhops/web/static/app.js` -> clean.
+- The live demo at port 8765 serves the updated module without a restart.
+
 # 2026-10-25 — P12.3 CI fix: vendored MapLibre excluded from text hooks
 
 - `check-added-large-files`, `end-of-file-fixer`, and `trailing-whitespace` now exclude

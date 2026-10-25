@@ -275,3 +275,10 @@ def test_remote_bind_is_refused_without_opt_in() -> None:
     validate_bind("0.0.0.0", allow_remote=True)
     with pytest.raises(ValueError, match="non-loopback"):
         create_app(ServiceConfig(roots=[Path.cwd()], host="0.0.0.0"))
+
+
+def test_spa_avoids_readonly_svg_classname_assignment() -> None:
+    """SVGElement.className is read-only; the map must use setAttribute."""
+    source = Path("src/fhops/web/static/app.js").read_text(encoding="utf-8")
+    assert "svg.className" not in source
+    assert 'svg.setAttribute("class"' in source

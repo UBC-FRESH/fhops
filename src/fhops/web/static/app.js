@@ -440,11 +440,11 @@ async function renderMap(encoded) {
   const tree = el("div", null, "layer-tree");
   const mapWrap = el("div", null, "map-wrap");
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.id = "svg-map";
+  svg.setAttribute("id", "svg-map");
   const mapDiv = el("div");
   mapDiv.id = "maplibre-map";
   mapDiv.className = state.mapRenderer === "maplibre" ? "" : "hidden";
-  svg.className = state.mapRenderer === "svg" ? "" : "hidden";
+  svg.setAttribute("class", state.mapRenderer === "svg" ? "" : "hidden");
   const detail = el("div", null, "map-detail");
   detail.hidden = true;
   mapWrap.appendChild(svg);
