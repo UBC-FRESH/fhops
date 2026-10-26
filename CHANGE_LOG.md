@@ -4130,3 +4130,10 @@ PY
   `lidar_products`/`lidar_support` fields record the bundle pin and aggregated
   slope/canopy/vertical-structure evidence; the loader validates block/landing/road ids, duplicate
   rows, and unpinned bundles while leaving existing scenarios unchanged.
+
+- 2026-10-26: created Phase 15 (parent #218) to consume FEMIC hydrology
+  response bundles in FHOPS. Added child issues #219-#224, the planned roadmap
+  section, and the authoritative note `notes/phase15_hydrology_consumer.md`.
+  Scope is a read-only bundle consumer, explicit crosswalk, schedule-bound
+  exposure, and one-schedule screening. No code, real watershed result, or
+  optimizer-integrated flood exposure was added.
