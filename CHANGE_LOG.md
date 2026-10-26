@@ -1,3 +1,14 @@
+# 2026-10-26 — P12.6 fix: repeated web list-section edits
+
+- Fixed `fhops.web.editing._replace_top_level_section` so a repeated `PUT /api/scenarios/{id}/locks`
+  replaces the existing `locked_assignments` list (yaml.safe_dump writes unindented list items)
+  instead of leaving the old list in place and duplicating rows.
+- Added a regression test that writes the same lock twice and reloads the scenario.
+
+Verification:
+- `pytest -q tests/web/test_edit.py tests/web/test_runs.py` -> 18 passed.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+
 # 2026-10-26 — P14.6: validate, document, and close out P14 (#194)
 
 Part of P14 (#188) on `feature/p14.6-closeout`.
