@@ -149,6 +149,16 @@ def test_map_products_to_block_and_landing_support(tmp_path: Path) -> None:
     assert len(loaded.lidar_support) == 8
 
 
+def test_map_twice_replaces_rows_without_duplicates(tmp_path: Path) -> None:
+    scenario_path = _scenario(tmp_path)
+    bundle = _bundle(tmp_path)
+    register_femic_lidar_bundle(scenario_path, bundle)
+    first = map_femic_lidar_to_scenario(scenario_path, bundle)
+    second = map_femic_lidar_to_scenario(scenario_path, bundle)
+    assert len(first.rows) == len(second.rows) == 8
+    assert len(load_scenario(scenario_path).lidar_support or []) == 8
+
+
 def test_map_dry_run_preserves_scenario(tmp_path: Path) -> None:
     scenario_path = _scenario(tmp_path)
     bundle = _bundle(tmp_path)

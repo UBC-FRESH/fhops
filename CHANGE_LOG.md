@@ -1,3 +1,25 @@
+# 2026-10-26 — P14.6: validate, document, and close out P14 (#194)
+
+Part of P14 (#188) on `p14-closeout` (based on `main` after P14.5).
+
+- Validated the public TFL 6 fixture end to end: loader, operability, and SA smoke solve.
+- Recorded performance/storage evidence: fixture apparent size 35,740 bytes / 11 files; scenario
+  load 0.037 s; operability 0.0025 s; 20-iteration in-process solve 0.080 s; end-to-end CLI 1.79 s /
+  ~147 MB peak RSS; 200-iteration smoke objective 1434.900, production 1717.5 m³, 0 violations.
+- Recorded OGL-BC attribution and the no-source-raster commitment.
+- Fixed the repeated-edit top-level YAML list writer for `lidar_support` and `locked_assignments`
+  and added regression tests for repeated lidar mapping and lock edits.
+- Added close-out report `notes/reports/p14-closeout.md` and updated the fixture reference page.
+
+Verification:
+- `pytest -q tests/scenario` -> 32 passed.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+- `scripts/dashboard.py` and `scripts/check_workflow.py` are not present in this repository; the
+  equivalent FHOPS checks above were used.
+
+Next: no queued phase; P14 is complete.
+
 # 2026-10-26 — P14.5: public TFL 6 LidarBC fixture (#193)
 
 Part of P14 (#188) on `feature/p14.5-lidar-fixture` (based on the P14.4 main merge).

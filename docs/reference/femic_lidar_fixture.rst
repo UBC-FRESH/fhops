@@ -127,3 +127,21 @@ six-decimal precision (maximum absolute difference ``0.0``). The fixture is not 
 scenario, does not include the source rasters or bundle, and does not claim field accuracy,
 calibrated cost, or production readiness. Cable/helicopter recommendations stay advisory; the
 fixture intentionally supplies only ground-based machines so the mismatch is visible.
+
+Performance, Storage, And Licence
+---------------------------------
+
+Measured on 2026-10-26 with ``fhops[lidar]`` installed:
+
+- fixture apparent size: ``35,740`` bytes across 11 files;
+- scenario load: ``0.037 s``;
+- advisory operability report: ``0.0025 s``;
+- SA smoke solve (20 iterations): ``0.080 s`` in-process, ``1.79 s`` end-to-end CLI,
+  ~147 MB peak RSS;
+- full 200-iteration CLI smoke: objective ``1434.900``, production ``1717.5 m³``, zero sequencing
+  violations.
+
+The FEMIC bundle and source rasters are not committed; the fixture carries their checksums,
+selection metadata, and OGL-BC attribution in ``provenance.json``. The planning tables are
+synthetic and labelled. See ``notes/reports/p14.5-fixture-validation.md`` and
+``notes/reports/p14-closeout.md``.

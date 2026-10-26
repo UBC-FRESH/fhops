@@ -332,7 +332,7 @@ without adding dummy barges or relaxing capacity checks.
       P11 hauling outputs are optional; missing layers are named, not invented.
     - #178-#183 (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison, live runs/SSE/control, editing/assistant/packaging/security/close-out) are complete.
 
-## Phase 14 — Consume FEMIC-compiled LidarBC Products — active
+## Phase 14 — Consume FEMIC-compiled LidarBC Products — complete
 
 Parent issue: #188. Branch: `feature/phase14-lidar-products`.
 
@@ -363,6 +363,10 @@ reimplementing discovery or materialization.
   - [x] Record bundle/product provenance, licence, and synthetic-table labels
   - [x] Add regeneration script, fixture tests, and cross-repo WS4 parity
   - [x] Record operability and schedule smoke results with limits
+- [x] P14.6 Validate, document, and close out P14 (#194)
+  - [x] End-to-end fixture validation and WS4/FEMIC parity evidence
+  - [x] Performance/storage/licence audit
+  - [x] Close-out report `notes/reports/p14-closeout.md`
 
 Acceptance:
 
