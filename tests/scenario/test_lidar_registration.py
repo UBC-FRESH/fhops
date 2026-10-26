@@ -117,6 +117,17 @@ def test_corrupt_bundle_is_rejected(tmp_path: Path) -> None:
         register_femic_lidar_bundle(scenario_path, bundle)
 
 
+def test_register_is_idempotent(tmp_path: Path) -> None:
+    scenario_path = _scenario(tmp_path)
+    bundle = _bundle(tmp_path)
+    register_femic_lidar_bundle(scenario_path, bundle)
+    register_femic_lidar_bundle(scenario_path, bundle)
+    loaded = load_scenario(scenario_path)
+    assert loaded.lidar_products is not None
+    assert len(loaded.lidar_products) == 1
+    assert scenario_path.read_text(encoding="utf-8").count("\nlidar_products:") == 1
+
+
 def test_cli_validate_and_register(tmp_path: Path) -> None:
     scenario_path = _scenario(tmp_path)
     bundle = _bundle(tmp_path)

@@ -229,9 +229,16 @@ def _replace_top_level_section(text: str, key: str, value: Any) -> str:
     end = start + 1
     while end < len(lines):
         line = lines[end]
-        if line.strip() and line[0] not in " \t":
-            break
-        end += 1
+        stripped = line.strip()
+        if not stripped:
+            end += 1
+            continue
+        # ``yaml.safe_dump`` emits top-level list items without indentation, so they belong to
+        # the section until the next top-level key.
+        if line[0] in " \t" or stripped.startswith("-"):
+            end += 1
+            continue
+        break
     return "\n".join(lines[:start] + rendered + [""] + lines[end:]).rstrip("\n") + "\n"
 
 

@@ -1,3 +1,27 @@
+# 2026-10-26 — P14.6: validate, document, and close out P14 (#194)
+
+Part of P14 (#188) on `feature/p14.6-closeout`.
+
+- Validated the real bundle (`lidarbc-995fb1f771f4d7fe` / `2026.10.0-tfl6-pilot`), re-mapped the
+  public seven-block fixture (18 support rows, 0 warnings), ran the P14.4 operability assessment
+  (5 ground / 2 cable), and ran a 200-iteration smoke solve (objective `1434.9`, production
+  `1717.5 m³`, 0 sequencing violations).
+- Fixed repeated-section duplication in the shared top-level YAML writer; repeated
+  `scenario lidar register`/`map` now replaces sections instead of appending duplicates. Added
+  idempotent registration and remapping regressions.
+- Recorded bundle validation/mapping/operability/solve timings, 12.8 MiB bundle storage, 35.7 KiB
+  fixture storage, OGL-BC attribution, and WS4/FEMIC parity `0.0` in
+  `notes/reports/p14-validation.json` and `notes/reports/p14-closeout.md`.
+- Updated the reference docs and phase roadmap; no production dataset switch, release, or tag.
+
+Verification:
+- Full `pytest` -> green in this environment.
+- `pytest -q tests/scenario` -> green with optional LiDAR dependencies.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+
+P14 merged: P14.1 `81aae50d`, P14.2 `54545d79`, P14.3 `94c577de`, P14.4 `b9cdf56f`,
+P14.5 `9026968d`, P14.6 close-out.
+
 # 2026-10-26 — P14.5: public TFL 6 LidarBC fixture (#193)
 
 Part of P14 (#188) on `feature/p14.5-lidar-fixture` (based on the P14.4 main merge).
