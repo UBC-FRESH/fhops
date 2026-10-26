@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
+  <div id="app-loading" class="app-loading">Loading FHOPS…</div>
   <header>
     <strong>FHOPS</strong><span class="build">web</span>
     <label>Skin <select id="skin"></select></label>
@@ -16,9 +17,10 @@
     <span id="status">loading…</span>
     <button id="refresh" type="button">Refresh</button>
   </header>
+  <nav id="workspaces" class="workspaces" role="tablist" aria-label="Workspaces"></nav>
   <main>
     <aside>
-      <nav id="tabs" class="tabs"></nav>
+      <nav id="tabs" class="tabs" role="tablist" aria-label="Panels"></nav>
       <p id="skin-meta" class="hint"></p>
       <div id="run-meta" class="run-meta"></div>
       <section id="assistant" class="assistant" hidden>
@@ -31,10 +33,11 @@
     </aside>
     <section class="panel">
       <h2 id="panel-title">Runs</h2>
-      <div id="panel-body"></div>
+      <div id="panel-loading" class="panel-loading" hidden>Loading…</div>
+      <div id="panel-body" role="tabpanel" aria-live="polite"></div>
     </section>
   </main>
   <script src="static/vendor/maplibre-gl.js"></script>
-  <script type="module" src="static/app.js?v=12"></script>
+  <script type="module" src="static/app.js?v=13"></script>
 </body>
 </html>

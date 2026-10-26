@@ -23,6 +23,25 @@ operational, hauling, and tactical runs, SSE progress, and pause/resume/stop con
 validated scenario editing, the optional assistant, packaging and security hardening, and the phase
 close-out.
 
+Shell and navigation
+--------------------
+
+The SPA uses four primary workspaces: **Map**, **Plan**, **Results**, and **Data**. A skin selects
+which workspaces and sub-panels are available; the sidebar shows only the panels in the current
+workspace. Typical panels are:
+
+- Map: Map, Legend
+- Plan: Schedule, Haul, Tactical, Scenario, Run
+- Results: KPIs, Reports, Compare
+- Data: LiDAR
+
+The selected skin, run, workspace, and panel are reflected in the URL
+(``?skin=&run=&view=&panel=``), so reload, bookmark, and browser Back/Forward restore the view. The
+workspace and panel tabs use ``role=tab``/``aria-selected``/``aria-controls``; Left/Right/Up/Down and
+Home/End move between tabs. The shell targets desktop and iPad-landscape widths (1024 px and up); the
+header and sidebar tighten below 1200 px, and the page does not scroll horizontally. A loading state
+covers the initial app load, panel transitions, and map fetch instead of showing a blank canvas.
+
 Install and run
 ---------------
 
