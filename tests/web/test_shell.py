@@ -32,6 +32,10 @@ def test_shell_script_has_url_and_tab_behavior(tmp_path: Path) -> None:
     assert "wireTabKeyboard" in script
     assert "aria-selected" in script
     assert "applyURLState" in script
+    assert "sort-button" in script
+    assert "selected-block-line" in script
+    assert "MAP_COLORS" in script
+    assert 'state.panel === "map"' in script
 
 
 def test_shell_css_has_responsive_rules(tmp_path: Path) -> None:

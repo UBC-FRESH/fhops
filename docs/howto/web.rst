@@ -42,6 +42,10 @@ Home/End move between tabs. The shell targets desktop and iPad-landscape widths 
 header and sidebar tighten below 1200 px, and the page does not scroll horizontally. A loading state
 covers the initial app load, panel transitions, and map fetch instead of showing a blank canvas.
 
+Tables use a shared sortable table shell with empty states, row counts, and CSV export. Map layers use
+a colour-blind-aware palette; clicking a block highlights it in both the SVG and MapLibre renderers
+and opens its attribute detail.
+
 Install and run
 ---------------
 
