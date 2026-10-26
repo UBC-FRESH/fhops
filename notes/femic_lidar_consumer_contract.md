@@ -68,6 +68,11 @@ the block-GeoJSON bbox, writes the bundle pin/product checksums/selection, and r
 through the normal loader before replacement. `--dry-run` prints the pin without writing. No source
 tiles are downloaded.
 
+`fhops scenario lidar map` summarizes slope/aspect/roughness/canopy/vertical-structure products over
+block and landing polygons, preserves native resolution and valid-pixel counts, records support area
+for projected CRS, and writes one `lidar_support` row per support unit/product. It requires matching
+CRS and never resamples; optional road support is supplied with `--roads-geojson`.
+
 ## Support Mapping
 
 `summarize_femic_lidar_for_polygons` maps a bundle raster to block/landing

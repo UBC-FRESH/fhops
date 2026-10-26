@@ -1,3 +1,26 @@
+# 2026-10-25 — P14.3: map FEMIC products into FHOPS scenarios (#191)
+
+Part of P14 (#188) on `feature/phase14-lidar-products`.
+
+- Added `fhops.scenario.lidar_mapping.map_femic_lidar_to_scenario` and
+  `fhops scenario lidar map`.
+- Maps DTM/DSM/CHM/terrain/canopy/vertical-structure products to block and landing support (and
+  optional road polygons), producing one `lidar_support` row per support unit/product.
+- Each row records the FEMIC product, native resolution, valid-pixel count, support area for
+  projected CRS, aggregation, and provenance; slope/aspect/roughness/canopy/vertical-structure
+  values are taken from the bundle summary without resampling or reprojection.
+- Requires a registered bundle pin and matching CRS; supports mean/p95/min/max aggregation,
+  explicit field→product mappings, block/landing toggles, optional road GeoJSON, and `--dry-run`.
+- Added mapping/CLI tests covering block+landing rows, aggregation, support metadata, dry-run,
+  missing pins, missing products, and CLI invocation; docs cover the operator workflow and limits.
+
+Verification:
+- `pytest -q tests/scenario` -> 21 passed with `fhops[lidar]` installed.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+
+Next: #192 P14.4 integrate terrain/canopy with harvest-system operability and cost.
+
 # 2026-10-25 — P14.2: register FEMIC bundles against scenario AOIs (#190)
 
 Part of P14 (#188) on `feature/phase14-lidar-products`.

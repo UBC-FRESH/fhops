@@ -346,6 +346,14 @@ reimplementing discovery or materialization.
   - [x] Add polygon support summaries without reprojection
   - [x] Add optional scenario `lidar_products`/`lidar_support` pins and loader validation
   - [x] Validate shared slope/CHM parity with WS4
+- [x] P14.2 Register and consume FEMIC-packaged products for scenario AOIs (#190)
+  - [x] Validate bundles and write stable bundle/manifest/product pins
+  - [x] Record scenario AOI bbox and CRS compatibility
+  - [x] Add `fhops scenario lidar validate|register` and operator docs
+- [x] P14.3 Map FEMIC terrain and canopy products into FHOPS scenarios (#191)
+  - [x] Summarize native-resolution products over block/landing/road support
+  - [x] Record product, aggregation, resolution, valid pixels, support area, and provenance
+  - [x] Add `fhops scenario lidar map` and mapping tests
 
 Acceptance:
 

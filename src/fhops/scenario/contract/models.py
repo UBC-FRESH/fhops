@@ -909,18 +909,19 @@ class Scenario(BaseModel):
                 pinned_products.add(product_key)
         if self.lidar_support:
             road_ids = {road.id for road in self.road_construction or []}
-            seen_support: set[tuple[str, str, str, str]] = set()
+            seen_support: set[tuple[str, str, str, str, str]] = set()
             for support in self.lidar_support:
                 support_key = (
                     support.support_unit,
                     support.support_id,
                     support.bundle_id,
                     support.bundle_version,
+                    support.product,
                 )
                 if support_key in seen_support:
                     raise ValueError(
                         "Duplicate LidarSupport row for "
-                        f"{support.support_unit}:{support.support_id}"
+                        f"{support.support_unit}:{support.support_id} product:{support.product}"
                     )
                 seen_support.add(support_key)
                 if support.support_unit == "block" and support.support_id not in block_ids:

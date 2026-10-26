@@ -25,6 +25,7 @@ from .lidar import (
     summarize_femic_lidar_for_polygons,
     validate_femic_lidar_bundle,
 )
+from .lidar_mapping import MappingResult, map_femic_lidar_to_scenario
 from .lidar_registration import RegistrationResult, register_femic_lidar_bundle
 
 __all__ = [
@@ -50,6 +51,8 @@ __all__ = [
     "load_femic_lidar_bundle",
     "summarize_femic_lidar_for_polygons",
     "validate_femic_lidar_bundle",
+    "MappingResult",
+    "map_femic_lidar_to_scenario",
     "RegistrationResult",
     "register_femic_lidar_bundle",
 ]
