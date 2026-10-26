@@ -30,6 +30,7 @@ from fhops.web.editing import (
     update_locks,
     update_objective,
 )
+from fhops.web.lidarview import lidar_payload
 from fhops.web.mapdata import layer_registry, load_block_geometry, map_payload, time_payload
 from fhops.web.runs import RunControlRequest, RunManager, RunRequest
 from fhops.web.skins import load_skins
@@ -615,6 +616,11 @@ def create_app(config: ServiceConfig) -> FastAPI:
     def run_time(run_id: str) -> dict[str, Any]:
         return time_payload(run_or_404(run_id))
 
+    @app.get("/api/runs/{run_id}/lidar")
+    def run_lidar(run_id: str) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        return lidar_payload(record, config.workspace)
+
     @app.get("/api/runs/{run_id}/layers")
     def run_layers(run_id: str) -> dict[str, Any]:
         record = run_or_404(run_id)
@@ -626,7 +632,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
             "run_id": record.run_id,
             "domain": record.domain,
             "geometry_available": bool(geometry),
-            "layers": layer_registry(record, geometry),
+            "layers": layer_registry(record, geometry, workspace=config.workspace),
         }
 
     @app.get("/api/runs/{run_id}/map")
@@ -659,6 +665,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
                 period=period,
                 shift=shift,
                 layers=requested,
+                workspace=config.workspace,
             )
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc

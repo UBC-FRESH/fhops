@@ -17,6 +17,7 @@ import pandas as pd
 import yaml
 
 from fhops.web.discovery import RunRecord
+from fhops.web.lidarview import lidar_map_values
 
 __all__ = [
     "LAYER_DEFINITIONS",
@@ -35,6 +36,9 @@ LAYER_DEFINITIONS = (
     ("mills", "Mills", "hauling"),
     ("haul_routes", "Haul routes", "hauling"),
     ("facilities", "Facilities", "tactical_operational"),
+    ("lidar_slope", "LiDAR slope", "all"),
+    ("lidar_canopy", "LiDAR canopy height", "all"),
+    ("lidar_operability", "LiDAR operability class", "all"),
 )
 
 
@@ -204,10 +208,14 @@ def _scenario_path(record: RunRecord) -> Path | None:
 def layer_registry(
     record: RunRecord,
     geometry: dict[str, dict[str, Any]],
+    *,
+    workspace: Path | None = None,
 ) -> list[dict[str, Any]]:
     """Return every known layer with availability and a legend/reason."""
     files = record.files
     has_geometry = bool(geometry)
+    lidar_values = lidar_map_values(record, workspace)
+    has_lidar = any(item.get("has_support") for item in lidar_values.values())
     availability = {
         "blocks": (
             has_geometry,
@@ -238,6 +246,24 @@ def layer_registry(
         "mills": (False, "no mill/sort-yard coordinates in the contract; map follow-up"),
         "haul_routes": (False, "needs sort-yard/depot coordinates; map follow-up"),
         "facilities": (False, "no facility coordinates in the tactical contract; map follow-up"),
+        "lidar_slope": (
+            has_geometry and has_lidar,
+            "block lidar_support slope rows + block geometry"
+            if has_geometry and has_lidar
+            else "needs block lidar_support slope rows and block geometry",
+        ),
+        "lidar_canopy": (
+            has_geometry and has_lidar,
+            "block lidar_support canopy rows + block geometry"
+            if has_geometry and has_lidar
+            else "needs block lidar_support canopy rows and block geometry",
+        ),
+        "lidar_operability": (
+            has_geometry and has_lidar,
+            "advisory terrain class + block geometry"
+            if has_geometry and has_lidar
+            else "needs lidar_support evidence and block geometry",
+        ),
     }
     layers = []
     for name, label, domain in LAYER_DEFINITIONS:
@@ -265,6 +291,9 @@ def _legend(name: str) -> str:
         "mills": "mills and sort yards",
         "haul_routes": "loaded/empty haul routes",
         "facilities": "tactical facilities",
+        "lidar_slope": "mean slope (%) from native-resolution LiDAR support",
+        "lidar_canopy": "mean canopy height (m) from native-resolution LiDAR support",
+        "lidar_operability": "advisory ground / cable / helicopter class",
     }.get(name, "")
 
 
@@ -325,6 +354,7 @@ def map_payload(
     period: str | None = None,
     shift: str | None = None,
     layers: list[str] | None = None,
+    workspace: Path | None = None,
 ) -> dict[str, Any]:
     """Build a GeoJSON FeatureCollection for the requested layers.
 
@@ -333,7 +363,9 @@ def map_payload(
     ValueError
         When a requested layer is unknown or unavailable.
     """
-    registry = {layer["name"]: layer for layer in layer_registry(record, geometry)}
+    registry = {
+        layer["name"]: layer for layer in layer_registry(record, geometry, workspace=workspace)
+    }
     requested = layers or [name for name, layer in registry.items() if layer["available"]]
     features: list[dict[str, Any]] = []
     for name in requested:
@@ -350,6 +382,8 @@ def map_payload(
             features.extend(_machine_features(record, geometry, day=day, shift=shift))
         elif name == "tactical_units":
             features.extend(_tactical_features(record, geometry, period=period))
+        elif name.startswith("lidar_"):
+            features.extend(_lidar_features(record, geometry, name, workspace=workspace))
     return {
         "type": "FeatureCollection",
         "features": features,
@@ -498,6 +532,50 @@ def _machine_features(
                     "shift_id": str(row.get("shift_id", "")),
                     "production": float(row.get("production", 0.0) or 0.0),
                 },
+            }
+        )
+    return features
+
+
+def _lidar_features(
+    record: RunRecord,
+    geometry: dict[str, dict[str, Any]],
+    layer_name: str,
+    *,
+    workspace: Path | None,
+) -> list[dict[str, Any]]:
+    values = lidar_map_values(record, workspace)
+    features = []
+    for block_id, item in sorted(geometry.items()):
+        evidence = values.get(block_id, {})
+        properties = {
+            "layer": layer_name,
+            "block_id": block_id,
+            "has_support": evidence.get("has_support", False),
+            "terrain_class": evidence.get("terrain_class"),
+            "slope_percent": evidence.get("slope_percent"),
+            "canopy_height_m": evidence.get("canopy_height_m"),
+            "current_system_id": evidence.get("current_system_id"),
+            "current_system_compatible": evidence.get("current_system_compatible"),
+            "recommended_system_id": evidence.get("recommended_system_id"),
+            "fallbacks": ",".join(evidence.get("fallbacks") or []),
+            "native_resolution_m": evidence.get("native_resolution_m"),
+            "provenance": evidence.get("provenance"),
+        }
+        if layer_name == "lidar_slope":
+            properties["value"] = evidence.get("slope_percent")
+            properties["unit"] = "%"
+        elif layer_name == "lidar_canopy":
+            properties["value"] = evidence.get("canopy_height_m")
+            properties["unit"] = "m"
+        else:
+            properties["value"] = evidence.get("terrain_class")
+        features.append(
+            {
+                "type": "Feature",
+                "id": f"{layer_name}:{block_id}",
+                "geometry": item["geometry"],
+                "properties": properties,
             }
         )
     return features
