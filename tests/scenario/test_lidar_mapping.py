@@ -149,6 +149,19 @@ def test_map_products_to_block_and_landing_support(tmp_path: Path) -> None:
     assert len(loaded.lidar_support) == 8
 
 
+def test_remap_replaces_existing_support_rows(tmp_path: Path) -> None:
+    scenario_path = _scenario(tmp_path)
+    bundle = _bundle(tmp_path)
+    register_femic_lidar_bundle(scenario_path, bundle)
+    first = map_femic_lidar_to_scenario(scenario_path, bundle)
+    second = map_femic_lidar_to_scenario(scenario_path, bundle)
+    assert len(first.rows) == len(second.rows) == 8
+    loaded = load_scenario(scenario_path)
+    assert loaded.lidar_support is not None
+    assert len(loaded.lidar_support) == 8
+    assert scenario_path.read_text(encoding="utf-8").count("\nlidar_support:") == 1
+
+
 def test_map_dry_run_preserves_scenario(tmp_path: Path) -> None:
     scenario_path = _scenario(tmp_path)
     bundle = _bundle(tmp_path)

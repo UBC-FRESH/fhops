@@ -332,7 +332,7 @@ without adding dummy barges or relaxing capacity checks.
       P11 hauling outputs are optional; missing layers are named, not invented.
     - #178-#183 (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison, live runs/SSE/control, editing/assistant/packaging/security/close-out) are complete.
 
-## Phase 14 — Consume FEMIC-compiled LidarBC Products — active
+## Phase 14 — Consume FEMIC-compiled LidarBC Products — complete
 
 Parent issue: #188. Branch: `feature/phase14-lidar-products`.
 
@@ -363,12 +363,18 @@ reimplementing discovery or materialization.
   - [x] Record bundle/product provenance, licence, and synthetic-table labels
   - [x] Add regeneration script, fixture tests, and cross-repo WS4 parity
   - [x] Record operability and schedule smoke results with limits
+- [x] P14.6 Validate, document, and close out P14 (#194)
+  - [x] Run the real-bundle validate/map/operability/smoke-solve path
+  - [x] Record WS4 parity, timings, storage, and OGL-BC evidence
+  - [x] Fix repeated-section YAML duplication with regression tests
+  - [x] Write `notes/reports/p14-closeout.md` and `notes/reports/p14-validation.json`
 
 Acceptance:
 
 - FHOPS can validate and pin a FEMIC bundle.
 - Polygon support summaries preserve the product CRS and native resolution.
 - Shared-AOI slope/CHM values match WS4 within the documented tolerance.
+- The public fixture validates, runs, and records licence/provenance and limits.
 - No discovery or materialization is reimplemented in FHOPS.
 
 ## Backlog & Ideas

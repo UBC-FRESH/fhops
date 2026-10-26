@@ -138,3 +138,17 @@ Shared Parity
 The FHOPS and WS4 consumer contracts were validated against FEMIC bundle
 ``lidarbc-995fb1f771f4d7fe`` over seven shared TFL 6 polygons. Slope and CHM
 mean/p95 values matched exactly (maximum absolute difference ``0.0``).
+
+Phase Close-Out
+---------------
+
+P14 is complete. The end-to-end run validated the real bundle, mapped the public seven-block TFL 6
+fixture (18 support rows, no warnings), classified 5 ground and 2 cable blocks, and returned a
+200-iteration smoke-solve objective of ``1434.9`` with ``1717.5 m³`` production and zero sequencing
+violations. WS4/FHOPS block slope/CHM parity was ``0.0``; the bundle is 12.8 MiB and the committed
+fixture is 35.7 KiB. OGL-BC attribution and bundle/product checksums are preserved in
+``examples/lidar_tfl6/provenance.json``.
+
+Reports: ``notes/reports/p14-closeout.md`` and ``notes/reports/p14-validation.json``. Operability
+thresholds and cost context remain planning assumptions, not field-validated or calibrated
+production constraints.

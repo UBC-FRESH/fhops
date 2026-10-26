@@ -1,0 +1,28 @@
+{
+  "bundle_id": "lidarbc-995fb1f771f4d7fe",
+  "bundle_valid": true,
+  "bundle_errors": [],
+  "bundle_bytes": 13406981,
+  "fixture_bytes": 35740,
+  "fixture_support_rows": 18,
+  "mapped_rows": 18,
+  "mapped_warnings": [],
+  "operability_rows": 7,
+  "terrain_classes": {
+    "T6_23339490": "ground",
+    "T6_23339461": "cable",
+    "T6_23339462": "ground",
+    "T6_23339458": "ground",
+    "T6_16625195": "cable",
+    "T6_16624698": "ground",
+    "T6_19212607": "ground"
+  },
+  "parity_max_abs_diff": 0.0,
+  "validate_seconds": 0.0432,
+  "map_seconds": 0.598,
+  "operability_seconds": 0.027,
+  "solve_seconds": 0.633,
+  "solve_objective": 1434.9,
+  "solve_assigned_slots": 26,
+  "solve_total_production_m3": 1717.5
+}
