@@ -60,6 +60,16 @@ def web(
         "--agent-timeout",
         help="Assistant subprocess timeout in seconds.",
     ),
+    lidar_bundles: list[Path] | None = typer.Option(
+        None,
+        "--lidar-bundles",
+        help="Bundle root containing FEMIC LiDAR directories (repeatable).",
+    ),
+    lidar_timeout: float = typer.Option(
+        300.0,
+        "--lidar-timeout",
+        help="LiDAR mapping subprocess timeout in seconds.",
+    ),
 ) -> None:
     """Start the web service when no subcommand is given."""
     if ctx.invoked_subcommand is not None:
@@ -83,6 +93,8 @@ def web(
         workspace=workspace,
         allow_agent=allow_agent,
         agent_timeout=agent_timeout,
+        lidar_bundles=lidar_bundles or [],
+        lidar_timeout=lidar_timeout,
     )
     try:
         run_server(config)

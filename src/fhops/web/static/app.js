@@ -1241,11 +1241,19 @@ function labelInput(label, input) {
 }
 
 async function renderLidarPanel(encoded) {
-  const payload = await fetchJson(`api/runs/${encoded}/lidar`);
+  const [payload, bundles] = await Promise.all([
+    fetchJson(`api/runs/${encoded}/lidar`),
+    fetchJson("api/lidar/bundles"),
+  ]);
   const warnings = payload.warnings || [];
+  const canWorkflow = !state.skin?.read_only;
+  const renderWorkflow = () => renderLidarWorkflow(encoded, bundles, () => {
+    if (state.panel === "lidar") renderPanel().catch((error) => showError(error));
+  });
   if (!payload.available) {
     els.body.appendChild(el("p", "No LiDAR evidence is recorded for this run's scenario.", "hint"));
     for (const warning of warnings) els.body.appendChild(el("p", warning, "lidar-warning"));
+    if (canWorkflow) els.body.appendChild(renderWorkflow());
     return;
   }
   const coverage = payload.coverage || {};
@@ -1319,6 +1327,90 @@ async function renderLidarPanel(encoded) {
   els.body.appendChild(table);
   els.body.appendChild(detail);
   els.body.appendChild(el("p", "Operability thresholds and cost context are advisory; the solver does not apply them automatically.", "hint"));
+  if (canWorkflow) els.body.appendChild(renderWorkflow());
+}
+
+function renderLidarWorkflow(encoded, payload, refresh) {
+  const box = el("section", null, "lidar-workflow");
+  box.appendChild(el("h3", "Bundle workflow"));
+  const bundles = payload.bundles || [];
+  if (!bundles.length) {
+    box.appendChild(el("p", "No LiDAR bundle roots are configured. Start fhops web with --lidar-bundles <dir>.", "hint"));
+    return box;
+  }
+  const form = el("div", null, "edit-form");
+  const bundleLabel = el("label", "Bundle");
+  const bundle = document.createElement("select");
+  for (const entry of bundles) {
+    const option = el("option", entry.name);
+    option.value = entry.name;
+    bundle.appendChild(option);
+  }
+  bundleLabel.appendChild(bundle);
+  form.appendChild(bundleLabel);
+  const expectedId = textInput("");
+  expectedId.placeholder = "expected bundle id (optional)";
+  form.appendChild(labelInput("Expected id", expectedId));
+  const expectedVersion = textInput("");
+  expectedVersion.placeholder = "expected version (optional)";
+  form.appendChild(labelInput("Expected version", expectedVersion));
+  const statisticLabel = el("label", "Aggregation");
+  const statistic = document.createElement("select");
+  for (const value of ["mean", "p95", "min", "max"]) {
+    const option = el("option", value);
+    option.value = value;
+    statistic.appendChild(option);
+  }
+  statisticLabel.appendChild(statistic);
+  form.appendChild(statisticLabel);
+  const roads = textInput("roads.geojson", 26);
+  roads.placeholder = "roads.geojson (optional)";
+  form.appendChild(labelInput("Roads GeoJSON", roads));
+  const validate = el("button", "Validate bundle");
+  const register = el("button", "Register pin");
+  const map = el("button", "Map products");
+  for (const button of [validate, register, map]) {
+    button.type = "button";
+    form.appendChild(button);
+  }
+  box.appendChild(form);
+  const status = el("div", "", "edit-status");
+  const output = el("pre", "", "feature-detail");
+  output.hidden = true;
+  box.appendChild(status);
+  box.appendChild(output);
+  const setBusy = (busy) => {
+    for (const button of [validate, register, map]) button.disabled = busy;
+  };
+  const request = () => ({
+    bundle: bundle.value,
+    expected_bundle_id: expectedId.value || null,
+    expected_bundle_version: expectedVersion.value || null,
+  });
+  const run = async (action, path, body) => {
+    setBusy(true);
+    setEditStatus(status, action + "…", "running");
+    output.hidden = true;
+    try {
+      const result = await postJson(`api/runs/${encoded}/lidar/${path}`, body);
+      setEditStatus(status, action + " complete.", "ok");
+      output.textContent = JSON.stringify(result, null, 2);
+      output.hidden = false;
+      if (path !== "validate") setTimeout(refresh, 1500);
+    } catch (error) {
+      setEditStatus(status, error.message, "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+  validate.addEventListener("click", () => run("Validation", "validate", request()));
+  register.addEventListener("click", () => run("Registration", "register", request()));
+  map.addEventListener("click", () => run("Mapping", "map", {
+    ...request(),
+    statistic: statistic.value,
+    roads_geojson: roads.value.trim() || null,
+  }));
+  return box;
 }
 
 async function renderScenario(encoded) {

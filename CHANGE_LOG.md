@@ -9,7 +9,13 @@
   geometry. The default planner selection uses `lidar_operability`; slope/canopy are toggleable.
 - The service reads committed `lidar_support` rows only; it does not discover/download/process
   source rasters or import GeoPandas/rasterio. A missing bundle manifest is reported explicitly.
-- Added the `lidar-tfl6` demo run and API/map/skin tests; SPA cache-bust is `?v=10`.
+- Added the `lidar-tfl6` demo run and API/map/skin tests; SPA cache-bust is `?v=11`.
+- Added `--lidar-bundles` allowlisted roots and LiDAR workflow endpoints:
+  `GET /api/lidar/bundles`, `POST /api/runs/{id}/lidar/validate|register|map`.
+- Validate/register run in-process; map products runs `fhops scenario lidar map` as a bounded
+  subprocess so the request process does not import GeoPandas/rasterio. The LiDAR tab exposes
+  bundle selection, expected pin fields, aggregation, optional roads GeoJSON, and validate/register/
+  map actions.
 
 Verification:
 - `pytest -q tests/web` -> 55 passed.

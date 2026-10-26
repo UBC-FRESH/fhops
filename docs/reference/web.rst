@@ -35,6 +35,12 @@ imported only when the optional ``fhops[web]`` extra is installed.
    :show-inheritance:
    :noindex:
 
+.. automodule:: fhops.web.lidarworkflow
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
 .. automodule:: fhops.web.agent
    :members:
    :undoc-members:
@@ -57,6 +63,8 @@ Key objects
   ``save_tactical_overlay`` – validated edits through the existing loader.
 - :func:`fhops.web.lidarview.lidar_payload` – read-only scenario LiDAR evidence for the panel.
 - :func:`fhops.web.lidarview.lidar_map_values` – block values for LiDAR map layers.
+- :func:`fhops.web.lidarworkflow.resolve_bundle` / ``validate_bundle`` / ``register_bundle`` /
+  ``map_bundle_products`` – allowlisted LiDAR workflow actions.
 - :func:`fhops.web.agent.run_agent` – opt-in bridge to the installed ``opencode`` CLI.
 - :func:`fhops.web.app.create_app` – FastAPI factory.
 - :func:`fhops.web.app.validate_bind` – loopback/remote-bind guard.
@@ -75,5 +83,6 @@ CLI
 
    fhops web --runs runs/ --workspace /path/to/fhops-checkout
    fhops web --runs runs/ --allow-agent
+   fhops web --runs runs/ --lidar-bundles /path/to/femic/bundles
    fhops web manifest runs/run-a --status optimal
    fhops web discover runs/

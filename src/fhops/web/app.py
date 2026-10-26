@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import sys
+import threading
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -31,6 +32,18 @@ from fhops.web.editing import (
     update_objective,
 )
 from fhops.web.lidarview import lidar_payload
+from fhops.web.lidarworkflow import (
+    LidarBundleRequest,
+    LidarMapRequest,
+    LidarRegisterRequest,
+    LidarWorkflowError,
+    list_bundles,
+    map_bundle_products,
+    register_bundle,
+    resolve_bundle,
+    scenario_for_run,
+    validate_bundle,
+)
 from fhops.web.mapdata import layer_registry, load_block_geometry, map_payload, time_payload
 from fhops.web.runs import RunControlRequest, RunManager, RunRequest
 from fhops.web.skins import load_skins
@@ -74,6 +87,10 @@ class ServiceConfig:
         Command prefix for the assistant.
     agent_timeout:
         Assistant subprocess timeout in seconds.
+    lidar_bundles:
+        Allowlisted roots containing FEMIC LiDAR bundle directories.
+    lidar_timeout:
+        Timeout for LiDAR mapping subprocesses.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -91,6 +108,8 @@ class ServiceConfig:
     allow_agent: bool = False
     agent_command: tuple[str, ...] = ("opencode", "run", "--format", "json")
     agent_timeout: float = 120.0
+    lidar_bundles: list[Path] = field(default_factory=list)
+    lidar_timeout: float = 300.0
 
 
 class ObjectiveUpdate(BaseModel):
@@ -155,6 +174,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
     validate_bind(config.host, allow_remote=config.allow_remote)
     roots = [root.expanduser().resolve() for root in config.roots]
     run_manager = RunManager()
+    lidar_lock = threading.Lock()
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
@@ -620,6 +640,68 @@ def create_app(config: ServiceConfig) -> FastAPI:
     def run_lidar(run_id: str) -> dict[str, Any]:
         record = run_or_404(run_id)
         return lidar_payload(record, config.workspace)
+
+    @app.get("/api/lidar/bundles")
+    def lidar_bundle_list() -> dict[str, Any]:
+        return list_bundles(config.lidar_bundles)
+
+    @app.post("/api/runs/{run_id}/lidar/validate")
+    def lidar_validate(run_id: str, request: LidarBundleRequest) -> dict[str, Any]:
+        run_or_404(run_id)
+        try:
+            bundle = resolve_bundle(request.bundle, config.lidar_bundles)
+            return validate_bundle(
+                bundle,
+                expected_bundle_id=request.expected_bundle_id,
+                expected_bundle_version=request.expected_bundle_version,
+            )
+        except LidarWorkflowError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.post("/api/runs/{run_id}/lidar/register")
+    def lidar_register(run_id: str, request: LidarRegisterRequest) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        try:
+            bundle = resolve_bundle(request.bundle, config.lidar_bundles)
+            scenario = scenario_for_run(record, config.workspace, roots)
+            with lidar_lock:
+                return register_bundle(
+                    scenario,
+                    bundle,
+                    expected_bundle_id=request.expected_bundle_id,
+                    expected_bundle_version=request.expected_bundle_version,
+                    dry_run=request.dry_run,
+                )
+        except LidarWorkflowError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.post("/api/runs/{run_id}/lidar/map")
+    def lidar_map(run_id: str, request: LidarMapRequest) -> dict[str, Any]:
+        record = run_or_404(run_id)
+        try:
+            bundle = resolve_bundle(request.bundle, config.lidar_bundles)
+            scenario = scenario_for_run(record, config.workspace, roots)
+            resolved_request = request
+            if request.roads_geojson:
+                roads = Path(request.roads_geojson).expanduser()
+                if not roads.is_absolute():
+                    roads = scenario.parent / roads
+                roads = roads.resolve()
+                allowed = [scenario.parent.resolve(), config.workspace.resolve(), *roots]
+                if not any(roads.is_relative_to(root) for root in allowed):
+                    raise LidarWorkflowError("Roads GeoJSON escapes the allowed roots.")
+                resolved_request = request.model_copy(update={"roads_geojson": str(roads)})
+            with lidar_lock:
+                return map_bundle_products(
+                    scenario,
+                    bundle,
+                    workspace=config.workspace,
+                    cli_command=config.cli_command,
+                    request=resolved_request,
+                    timeout=config.lidar_timeout,
+                )
+        except LidarWorkflowError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @app.get("/api/runs/{run_id}/layers")
     def run_layers(run_id: str) -> dict[str, Any]:
