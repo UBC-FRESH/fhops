@@ -22,6 +22,10 @@ from fhops.planning.tactical_operational.scenario import (
     solve_tactical_batch_manifest,
     write_tactical_scenario_yaml,
 )
+from fhops.scenario.hydrology import (
+    FemicHydrologyError,
+    validate_femic_hydrology_bundle,
+)
 from fhops.scenario.io import load_scenario
 from fhops.scenario.lidar import (
     FemicLidarError,
@@ -41,6 +45,43 @@ console = Console()
 scenario_app = typer.Typer(add_completion=False, no_args_is_help=True)
 lidar_app = typer.Typer(add_completion=False, no_args_is_help=True)
 scenario_app.add_typer(lidar_app, name="lidar", help="Register and validate FEMIC LidarBC bundles.")
+hydrology_app = typer.Typer(add_completion=False, no_args_is_help=True)
+scenario_app.add_typer(
+    hydrology_app,
+    name="hydrology",
+    help="Validate and consume FEMIC hydrology response bundles.",
+)
+
+
+@hydrology_app.command("validate")
+def hydrology_validate(
+    bundle: Path = typer.Argument(..., help="FEMIC hydrology bundle directory."),
+    expected_bundle_id: str | None = typer.Option(
+        None, "--expected-bundle-id", help="Require this FEMIC bundle id."
+    ),
+    expected_bundle_version: str | None = typer.Option(
+        None, "--expected-bundle-version", help="Require this FEMIC bundle version."
+    ),
+    verify_checksums: bool = typer.Option(
+        True,
+        "--verify-checksums/--no-verify-checksums",
+        help="Verify every artifact SHA-256 and byte size.",
+    ),
+) -> None:
+    """Validate a FEMIC hydrology bundle without modifying a scenario."""
+    try:
+        report = validate_femic_hydrology_bundle(
+            bundle,
+            expected_bundle_id=expected_bundle_id,
+            expected_bundle_version=expected_bundle_version,
+            verify_checksums=verify_checksums,
+        )
+    except FemicHydrologyError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
 
 
 @lidar_app.command("validate")

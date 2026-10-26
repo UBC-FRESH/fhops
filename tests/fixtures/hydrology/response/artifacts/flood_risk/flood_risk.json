@@ -1,0 +1,25 @@
+{
+  "baseline_name": "baseline",
+  "caveats": [
+    "Screening only; synthetic fixture."
+  ],
+  "generated_utc": "2026-10-26T00:00:00+00:00",
+  "rows": [
+    {
+      "baseline_peak_flow_m3s": 120.0,
+      "exceedance_probability": 0.01,
+      "expected_annual_damage": 42000.0,
+      "ratio": 1.25,
+      "receptor_id": "receptor-1",
+      "return_period": 100.0,
+      "scenario_peak_flow_m3s": 150.0,
+      "watershed_id": "watershed-1"
+    }
+  ],
+  "schema_version": "femic.hydrology.flood_risk.v1",
+  "source_surface_id": "fixture-surface",
+  "summary": {
+    "row_count": 1
+  },
+  "table_id": "hydro-risk-fixture"
+}

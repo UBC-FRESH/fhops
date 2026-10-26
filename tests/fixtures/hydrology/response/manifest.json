@@ -1,0 +1,127 @@
+{
+  "applicability_domain": {
+    "feature_names": [
+      "harvest_fraction"
+    ],
+    "max_distance": 3.0,
+    "max_values": {
+      "harvest_fraction": 0.6
+    },
+    "mean_values": {
+      "harvest_fraction": 0.3
+    },
+    "min_values": {
+      "harvest_fraction": 0.0
+    },
+    "scale_values": {
+      "harvest_fraction": 0.2
+    }
+  },
+  "artifacts": [
+    {
+      "artifact_id": "response_surface:fixture",
+      "description": "Synthetic response_surface fixture",
+      "media_type": "application/json",
+      "relative_path": "artifacts/response_surface/response_surface.json",
+      "role": "response_surface",
+      "schema_version": "femic.hydrology.flood_response.v1",
+      "sha256": "c187163a8359f5b26463151fdbc03c545548b19ca35106aea23c840dfe22ad80",
+      "size_bytes": 1367
+    },
+    {
+      "artifact_id": "flood_risk:fixture",
+      "description": "Synthetic flood_risk fixture",
+      "media_type": "application/json",
+      "relative_path": "artifacts/flood_risk/flood_risk.json",
+      "role": "flood_risk",
+      "schema_version": "femic.hydrology.flood_risk.v1",
+      "sha256": "0928826d5fffab3410e3c87697e1c1cbe4de0c60b5826ae21d37016cd6dc63ae",
+      "size_bytes": 621
+    },
+    {
+      "artifact_id": "domain:fixture",
+      "description": "Synthetic domain fixture",
+      "media_type": "application/json",
+      "relative_path": "artifacts/domain/domain.json",
+      "role": "domain",
+      "schema_version": "femic.hydrology.domain.v1",
+      "sha256": "edbd2767783b9a07f5ab80ed65d4c73b7817ad9c1fbdd18bc69337d466561f9b",
+      "size_bytes": 247
+    },
+    {
+      "artifact_id": "disturbance_ledger:fixture",
+      "description": "Synthetic disturbance_ledger fixture",
+      "media_type": "application/json",
+      "relative_path": "artifacts/disturbance_ledger/disturbance_ledger.json",
+      "role": "disturbance_ledger",
+      "schema_version": "femic.hydrology.disturbance.v1",
+      "sha256": "d278fdffec4eaa7dfc0b629e3520cdce1e9aa34bb53e261bb1468f6a737b1375",
+      "size_bytes": 216
+    },
+    {
+      "artifact_id": "validation_report:fixture",
+      "description": "Synthetic validation_report fixture",
+      "media_type": "application/json",
+      "relative_path": "artifacts/validation_report/validation_report.json",
+      "role": "validation_report",
+      "schema_version": "femic.hydrology.validation.v1",
+      "sha256": "14bab859435014a04fc39bbe7bf17fe65ba8f9a08ad8f0efb8210697cef21ecd",
+      "size_bytes": 432
+    },
+    {
+      "artifact_id": "model_card:fixture",
+      "description": "Synthetic model_card fixture",
+      "media_type": "application/json",
+      "relative_path": "artifacts/model_card/model_card.json",
+      "role": "model_card",
+      "schema_version": "femic.hydrology.model_card.v1",
+      "sha256": "c10a80fef4fdb322b5c803cb7f1de6b55ea6249698229179b001eea8932c9d3c",
+      "size_bytes": 457
+    }
+  ],
+  "bundle_id": "hydro-response-test00000001",
+  "bundle_name": "hydro-response-test00000001-2026.10.0",
+  "bundle_version": "2026.10.0",
+  "caveats": [
+    "Screening only; not a regulatory flood map.",
+    "Hydrologist review is required before operational use."
+  ],
+  "consumer_contract": {
+    "applicability_rule": "Refuse outside the domain.",
+    "consumer_phases": {
+      "fhops": "P15",
+      "ws4": "P62"
+    },
+    "manifest_path": "manifest.json",
+    "native_units_rule": "Preserve native units and CRS.",
+    "pin_rule": "Pin identity and verify checksums.",
+    "read_order": [
+      "manifest.json"
+    ]
+  },
+  "domain_id": "fixture-domain",
+  "flood_risk": {
+    "baseline_name": "baseline",
+    "row_count": 1,
+    "table_id": "hydro-risk-fixture"
+  },
+  "generated_utc": "2026-10-26T00:00:00+00:00",
+  "ledger_id": "fixture-ledger",
+  "provenance": {
+    "producer": "synthetic-test"
+  },
+  "response_surface": {
+    "baseline_name": "baseline",
+    "return_periods": [
+      2.0,
+      100.0
+    ],
+    "surface_id": "fixture-surface"
+  },
+  "response_surface_id": "fixture-surface",
+  "schema_version": "femic.hydrology.response.v1",
+  "uncertainty": {
+    "basis": "synthetic",
+    "interval": "95%"
+  }
+}

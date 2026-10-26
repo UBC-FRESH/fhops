@@ -52,6 +52,7 @@ ensembles.
    reference/source_bibliography
    reference/femic_lidar
    reference/femic_lidar_fixture
+   reference/femic_hydrology
 
 .. toctree::
    :maxdepth: 1

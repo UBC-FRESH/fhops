@@ -175,6 +175,17 @@ licence-restricted data need the applicable governance decision before use.
 - Docs and the FHOPS quality suite are green.
 - No real watershed or regulatory result is claimed.
 
+## P15.1 contract decision
+
+The consumer lives in `fhops.scenario.hydrology` and validates the FEMIC
+manifest without importing WS4. It checks required roles, path containment,
+declared sizes and SHA-256, role schemas, response/flood-risk/domain/ledger
+identities, and optional readiness evidence. The CLI entry is
+`fhops scenario hydrology validate`.
+
+The committed synthetic bundle is `tests/fixtures/hydrology/response`. It is a
+contract fixture, not a real watershed.
+
 ## Open decisions and recommended defaults
 
 - **Exposure schema:** reuse `ws4.hydrology.exposure.v1` rather than create a
