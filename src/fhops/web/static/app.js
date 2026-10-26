@@ -1,4 +1,4 @@
-const state = { runs: [], skins: [], skin: null, run: null, panel: null };
+const state = { runs: [], skins: [], skin: null, run: null, panel: null, workspace: null };
 
 const els = {
   skin: document.getElementById("skin"),
@@ -6,7 +6,10 @@ const els = {
   domain: document.getElementById("domain"),
   status: document.getElementById("status"),
   refresh: document.getElementById("refresh"),
+  workspaces: document.getElementById("workspaces"),
   tabs: document.getElementById("tabs"),
+  appLoading: document.getElementById("app-loading"),
+  panelLoading: document.getElementById("panel-loading"),
   skinMeta: document.getElementById("skin-meta"),
   runMeta: document.getElementById("run-meta"),
   empty: document.getElementById("empty"),
@@ -36,6 +39,12 @@ const DOMAIN_PANELS = {
   hauling: "haul",
   tactical_operational: "tactical",
 };
+const WORKSPACE_DEFS = [
+  { id: "map", label: "Map", panels: ["map", "legend"] },
+  { id: "plan", label: "Plan", panels: ["schedule", "haul", "tactical", "scenario", "run"] },
+  { id: "results", label: "Results", panels: ["kpis", "reports", "compare"] },
+  { id: "data", label: "Data", panels: ["lidar"] },
+];
 const DOMAIN_SKINS = {
   operational: "operational-planner",
   hauling: "hauling-planner",
@@ -107,6 +116,62 @@ function badge(domain) {
   return node;
 }
 
+function availableWorkspaces() {
+  const panels = new Set(state.skin?.panels || []);
+  return WORKSPACE_DEFS.filter((workspace) => workspace.panels.some((panel) => panels.has(panel)));
+}
+
+function workspaceForPanel(panel) {
+  return WORKSPACE_DEFS.find((workspace) => workspace.panels.includes(panel))?.id || null;
+}
+
+function defaultPanel() {
+  const panels = new Set(state.skin?.panels || []);
+  if (panels.has("map")) return "map";
+  const workspace = availableWorkspaces()[0];
+  return workspace?.panels.find((panel) => panels.has(panel)) || state.skin?.panels?.[0] || "legend";
+}
+
+function wireTabKeyboard(container) {
+  container.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
+    const tabs = [...container.querySelectorAll("[role=tab]:not(:disabled)")];
+    if (!tabs.length) return;
+    const index = tabs.indexOf(document.activeElement);
+    if (index < 0) return;
+    event.preventDefault();
+    let next = index;
+    if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = tabs.length - 1;
+    else if (["ArrowRight", "ArrowDown"].includes(event.key)) next = (index + 1) % tabs.length;
+    else next = (index - 1 + tabs.length) % tabs.length;
+    tabs[next].focus();
+    tabs[next].click();
+  });
+}
+
+function renderWorkspaces() {
+  els.workspaces.innerHTML = "";
+  if (!state.skin) return;
+  const workspaces = availableWorkspaces();
+  if (!workspaces.some((workspace) => workspace.id === state.workspace)) {
+    state.workspace = workspaces[0]?.id || null;
+  }
+  for (const workspace of workspaces) {
+    const button = el("button", workspace.label, "workspace-tab");
+    button.type = "button";
+    button.setAttribute("role", "tab");
+    button.setAttribute("aria-label", workspace.label + " workspace");
+    button.setAttribute("aria-selected", workspace.id === state.workspace ? "true" : "false");
+    button.setAttribute("aria-controls", "panel-body");
+    button.tabIndex = workspace.id === state.workspace ? 0 : -1;
+    if (workspace.id === state.workspace) button.classList.add("active");
+    button.addEventListener("click", () => setWorkspace(workspace.id));
+    els.workspaces.appendChild(button);
+  }
+  els.workspaces.hidden = workspaces.length === 0;
+}
+
 function renderSkins() {
   els.skin.innerHTML = "";
   for (const skin of state.skins) {
@@ -131,9 +196,15 @@ function renderRuns() {
 function renderTabs() {
   els.tabs.innerHTML = "";
   if (!state.skin) return;
-  for (const panel of state.skin.panels) {
+  const workspace = WORKSPACE_DEFS.find((item) => item.id === state.workspace);
+  const panels = (workspace?.panels || state.skin.panels).filter((panel) => state.skin.panels.includes(panel));
+  for (const panel of panels) {
     const button = el("button", PANEL_LABELS[panel] || panel);
     button.type = "button";
+    button.setAttribute("role", "tab");
+    button.setAttribute("aria-selected", panel === state.panel ? "true" : "false");
+    button.setAttribute("aria-controls", "panel-body");
+    button.tabIndex = panel === state.panel ? 0 : -1;
     button.className = panel === state.panel ? "active" : "";
     button.addEventListener("click", () => setPanel(panel));
     els.tabs.appendChild(button);
@@ -156,6 +227,7 @@ function renderRunMeta() {
   line("domain", run.domain);
   line("type", run.run_type);
   line("status", run.status);
+  line("scenario", run.manifest?.scenario || "—");
   line("path", run.path);
   if (run.warnings && run.warnings.length) {
     const warning = el("div", run.warnings.join(" "), "warnings");
@@ -163,12 +235,73 @@ function renderRunMeta() {
   }
   els.domain.className = `badge ${run.domain || "unknown"}`;
   els.domain.textContent = run.domain === "tactical_operational" ? "tactical" : (run.domain || "unknown");
+  document.title = run
+    ? `${run.run_id} · ${state.skin?.title || "FHOPS"} · FHOPS`
+    : "FHOPS Web";
+}
+
+function setWorkspace(workspaceId) {
+  const workspace = availableWorkspaces().find((item) => item.id === workspaceId);
+  if (!workspace) return;
+  state.workspace = workspace.id;
+  if (!workspace.panels.includes(state.panel)) {
+    state.panel = workspace.panels.find((panel) => state.skin?.panels.includes(panel)) || state.panel;
+  }
+  renderWorkspaces();
+  renderTabs();
+  renderPanel().catch((error) => showError(error));
+  updateURL();
 }
 
 function setPanel(panel) {
   state.panel = panel;
+  state.workspace = workspaceForPanel(panel) || state.workspace;
+  renderWorkspaces();
   renderTabs();
   renderPanel().catch((error) => showError(error));
+  updateURL();
+}
+
+function updateURL(push = true) {
+  const params = new URLSearchParams();
+  if (state.skin) params.set("skin", state.skin.id);
+  if (state.run) params.set("run", state.run.run_id);
+  if (state.workspace) params.set("view", state.workspace);
+  if (state.panel) params.set("panel", state.panel);
+  const url = `${location.pathname}${params.toString() ? `?${params}` : ""}${location.hash}`;
+  if (push) history.pushState({}, "", url);
+  else history.replaceState({}, "", url);
+}
+
+function applyURLState() {
+  const params = new URLSearchParams(location.search);
+  const skinId = params.get("skin");
+  const runId = params.get("run");
+  const view = params.get("view");
+  const panel = params.get("panel");
+  const skin = state.skins.find((item) => item.id === skinId);
+  const run = state.runs.find((item) => item.run_id === runId);
+  state.skin = skin || state.skin || state.skins[0] || null;
+  state.run = run || state.run || state.runs[0] || null;
+  if (state.run) chooseSkinForRun(state.run);
+  const workspaces = availableWorkspaces();
+  state.workspace = workspaces.some((item) => item.id === view) ? view : null;
+  if (panel && state.skin?.panels.includes(panel)) {
+    state.panel = panel;
+    state.workspace = workspaceForPanel(panel);
+  } else {
+    const workspace = workspaces.find((item) => item.id === state.workspace) || workspaces[0];
+    state.workspace = workspace?.id || null;
+    state.panel = workspace?.panels.find((item) => state.skin?.panels.includes(item)) || defaultPanel();
+  }
+  renderSkins();
+  renderRuns();
+  renderRunMeta();
+  renderWorkspaces();
+  renderTabs();
+  const result = renderPanel().catch((error) => showError(error));
+  updateURL(false);
+  return result;
 }
 
 function showError(error) {
@@ -185,6 +318,10 @@ function destroyMap() {
   state.mapInstance = null;
 }
 
+function setPanelLoading(active) {
+  if (els.panelLoading) els.panelLoading.hidden = !active;
+}
+
 function renderPanel() {
   if (!state.run || !state.skin) return Promise.resolve();
   if (state.panel !== "map") destroyMap();
@@ -192,32 +329,46 @@ function renderPanel() {
   els.title.textContent = PANEL_LABELS[state.panel] || state.panel;
   const run = state.run;
   const encoded = encodeURIComponent(run.run_id);
+  setPanelLoading(state.panel !== "map");
+  let result;
   switch (state.panel) {
     case "legend":
-      return renderLegend(run);
+      result = renderLegend(run);
+      break;
     case "schedule":
-      return renderSchedule(encoded);
+      result = renderSchedule(encoded);
+      break;
     case "haul":
-      return renderHaul(encoded);
+      result = renderHaul(encoded);
+      break;
     case "tactical":
-      return renderTactical(encoded);
+      result = renderTactical(encoded);
+      break;
     case "kpis":
-      return renderKpis(encoded);
+      result = renderKpis(encoded);
+      break;
     case "reports":
-      return renderReports(encoded);
+      result = renderReports(encoded);
+      break;
     case "compare":
-      return renderCompare(encoded);
+      result = renderCompare(encoded);
+      break;
     case "scenario":
-      return renderScenario(encoded);
+      result = renderScenario(encoded);
+      break;
     case "run":
-      return renderRunPanel();
+      result = renderRunPanel();
+      break;
     case "lidar":
-      return renderLidarPanel(encoded);
+      result = renderLidarPanel(encoded);
+      break;
     case "map":
-      return renderMap(encoded);
+      result = renderMap(encoded);
+      break;
     default:
-      return renderPlaceholder("Panel", "This panel is not implemented yet.");
+      result = renderPlaceholder("Panel", "This panel is not implemented yet.");
   }
+  return Promise.resolve(result).finally(() => setPanelLoading(false));
 }
 
 function renderLegend(run) {
@@ -481,6 +632,7 @@ function chooseSkinForRun(run) {
   if (skin) {
     state.skin = skin;
     els.skin.value = skin.id;
+    renderWorkspaces();
     renderTabs();
   }
 }
@@ -489,23 +641,30 @@ function selectRun(runId) {
   state.run = state.runs.find((run) => run.run_id === runId) || null;
   state.runScenarioOverride = null;
   renderRuns();
-  renderRunMeta();
   chooseSkinForRun(state.run);
+  renderRunMeta();
   if (state.run && state.skin && !state.skin.panels.includes(state.panel)) {
-    state.panel = DOMAIN_PANELS[state.run.domain] || state.skin.panels[0] || "legend";
+    state.panel = defaultPanel();
   }
+  state.workspace = workspaceForPanel(state.panel) || availableWorkspaces()[0]?.id || null;
+  renderWorkspaces();
   renderTabs();
   renderPanel().catch((error) => showError(error));
+  updateURL();
 }
 
 function selectSkin(skinId) {
   state.skin = state.skins.find((skin) => skin.id === skinId) || state.skins[0] || null;
   if (state.skin) els.skin.value = state.skin.id;
   if (!state.skin || !state.skin.panels.includes(state.panel)) {
-    state.panel = (state.run && DOMAIN_PANELS[state.run.domain]) || (state.skin && state.skin.panels[0]) || "legend";
+    state.panel = defaultPanel();
   }
+  state.workspace = workspaceForPanel(state.panel) || availableWorkspaces()[0]?.id || null;
+  renderWorkspaces();
   renderTabs();
+  renderRunMeta();
   renderPanel().catch((error) => showError(error));
+  updateURL();
 }
 
 function renderAssistant() {
@@ -539,27 +698,27 @@ async function boot() {
     if (els.assistant) els.assistant.hidden = !health.agent_enabled;
     state.skin = skins.find((skin) => skin.id === "operational-planner") || skins[0] || null;
     state.run = runs[0] || null;
-    state.panel = (state.run && DOMAIN_PANELS[state.run.domain]) || (state.skin && state.skin.panels[0]) || "legend";
     renderSkins();
     renderRuns();
     renderRunMeta();
-    renderTabs();
-    if (state.run) chooseSkinForRun(state.run);
-    if (!state.skin || !state.skin.panels.includes(state.panel)) {
-      state.panel = (state.skin && state.skin.panels[0]) || "legend";
-      renderTabs();
-    }
+    await applyURLState();
     els.status.textContent = `${runs.length} run(s)`;
-    await renderPanel();
   } catch (error) {
     els.status.textContent = "error";
     showError(error);
+  } finally {
+    if (els.appLoading) els.appLoading.hidden = true;
   }
 }
 
 els.skin.addEventListener("change", () => selectSkin(els.skin.value));
 els.run.addEventListener("change", () => selectRun(els.run.value));
 els.refresh.addEventListener("click", boot);
+wireTabKeyboard(els.workspaces);
+wireTabKeyboard(els.tabs);
+window.addEventListener("popstate", () => {
+  applyURLState().catch((error) => showError(error));
+});
 boot();
 
 async function renderMap(encoded) {
@@ -645,9 +804,11 @@ async function renderMap(encoded) {
   svg.setAttribute("class", state.mapRenderer === "svg" ? "" : "hidden");
   const detail = el("div", null, "map-detail");
   detail.hidden = true;
+  const mapLoading = el("div", "Loading map…", "map-loading");
   mapWrap.appendChild(svg);
   mapWrap.appendChild(mapDiv);
   mapWrap.appendChild(detail);
+  mapWrap.appendChild(mapLoading);
   layout.appendChild(tree);
   layout.appendChild(mapWrap);
   els.body.appendChild(layout);
@@ -715,6 +876,7 @@ async function renderMap(encoded) {
     if (token !== state.mapRenderToken) return;
     renderTree();
     note.textContent = "loading map…";
+    mapLoading.hidden = false;
     const params = new URLSearchParams();
     if (time.unit === "period") params.set("period", state.mapStep);
     else params.set("day", state.mapStep);
@@ -727,6 +889,7 @@ async function renderMap(encoded) {
       note.textContent = "0 feature(s)";
       detail.hidden = true;
       renderMapLegend(legendHost);
+      mapLoading.hidden = true;
       if (state.mapRenderer === "maplibre" && window.maplibregl) {
         await updateMapLibre(empty, detail, token, false);
         mapDiv.classList.remove("hidden");
@@ -744,6 +907,7 @@ async function renderMap(encoded) {
       state.mapData = data;
       note.textContent = `${data.features.length} feature(s)`;
       detail.hidden = true;
+      mapLoading.hidden = true;
       renderMapLegend(legendHost);
       if (state.mapRenderer === "maplibre" && window.maplibregl) {
         await updateMapLibre(data, detail, token, shouldFit);
@@ -759,6 +923,7 @@ async function renderMap(encoded) {
         svg.classList.remove("hidden");
       }
     } catch (error) {
+      mapLoading.hidden = true;
       if (token === state.mapRenderToken) note.textContent = error.message;
     }
   };

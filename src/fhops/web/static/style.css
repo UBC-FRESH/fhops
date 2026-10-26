@@ -2,6 +2,7 @@
         --operational:#2f7d4f; --hauling:#b45309; --tactical:#1f6feb; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+html, body { max-width:100%; overflow-x:hidden; }
 body { margin:0; font:14px/1.45 system-ui, sans-serif; color:var(--ink); background:var(--bg);
        min-height:100vh; display:flex; flex-direction:column; }
 header { display:flex; gap:.7rem; align-items:center; padding:.55rem .9rem; background:var(--panel);
@@ -14,14 +15,14 @@ header select { max-width:15rem; font:inherit; font-size:.8rem; }
 button { padding:.3rem .7rem; border:1px solid var(--line); border-radius:.35rem; background:#eef2f6;
          cursor:pointer; font:inherit; font-size:.8rem; }
 button:hover { background:#e3e9ef; }
-main { flex:1; display:grid; grid-template-columns:18rem 1fr; min-height:0; }
+main { flex:1; display:grid; grid-template-columns:minmax(14rem, 18rem) minmax(0, 1fr); min-height:0; }
 aside { background:var(--panel); border-right:1px solid var(--line); padding:.7rem; overflow:auto; }
 .tabs { display:flex; flex-direction:column; gap:.2rem; }
 .tabs button { text-align:left; border-color:transparent; background:transparent; padding:.3rem .4rem; }
 .tabs button.active { background:var(--ink); color:#fff; }
 .run-meta { margin-top:1rem; font-size:.78rem; color:var(--muted); line-height:1.5; }
 .run-meta b { color:var(--ink); }
-.panel { padding:1rem 1.2rem; overflow:auto; }
+.panel { padding:1rem 1.2rem; overflow:auto; min-width:0; position:relative; }
 .panel h2 { margin:.1rem 0 .6rem; }
 .hint { color:var(--muted); font-size:.85rem; }
 table { border-collapse:collapse; font-size:.78rem; width:100%; }
@@ -51,7 +52,7 @@ a { color:#1f6feb; }
 code { background:#eef2f6; padding:0 .15rem; border-radius:.2rem; }
 
 /* Map panel */
-.map-layout { display:grid; grid-template-columns:15rem 1fr; gap:.8rem; height:calc(100vh - 9rem); min-height:26rem; }
+.map-layout { display:grid; grid-template-columns:15rem minmax(0,1fr); gap:.8rem; height:calc(100vh - 11rem); min-height:26rem; }
 .layer-tree { border:1px solid var(--line); border-radius:.45rem; background:var(--panel); padding:.55rem; overflow:auto; }
 .layer-tree h3 { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:.2rem 0 .4rem; }
 .layer-option { display:flex; gap:.35rem; align-items:flex-start; margin:.15rem 0; font-size:.78rem; }
@@ -180,3 +181,37 @@ code { background:#eef2f6; padding:0 .15rem; border-radius:.2rem; }
 .layer-actions button { padding:.15rem .45rem; font-size:.7rem; }
 .layer-group-title { margin:.6rem 0 .2rem; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em;
                       color:var(--muted); border-top:1px solid var(--line); padding-top:.4rem; }
+
+
+/* Workspaces, accessibility, and responsive shell */
+.workspaces { display:flex; gap:.2rem; padding:.35rem .9rem; background:var(--panel);
+              border-bottom:1px solid var(--line); overflow-x:auto; }
+.workspace-tab { border:1px solid transparent; background:transparent; padding:.35rem .75rem;
+                 min-height:2.25rem; font-weight:600; color:var(--muted); }
+.workspace-tab.active { background:var(--ink); color:#fff; }
+.workspace-tab:focus-visible, .tabs button:focus-visible, button:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline:2px solid #1f6feb; outline-offset:2px;
+}
+.app-loading { position:fixed; inset:0; z-index:1000; display:flex; align-items:center;
+               justify-content:center; background:var(--bg); color:var(--muted); font-size:.95rem; }
+.panel-loading { position:absolute; top:.8rem; right:1rem; z-index:2; padding:.2rem .45rem;
+                 border-radius:999px; background:#eef2f6; color:var(--muted); font-size:.72rem;
+                 border:1px solid var(--line); }
+@media (max-width: 1200px) {
+  header { gap:.5rem; }
+  header select { max-width:11rem; }
+  #status { margin-left:0; }
+  main { grid-template-columns:minmax(12rem, 16rem) minmax(0, 1fr); }
+  .map-layout { grid-template-columns:minmax(10rem, 13rem) minmax(0, 1fr); }
+  .map-layout { height:calc(100vh - 11rem); }
+  .tabs button, .workspace-tab { min-height:2.5rem; }
+}
+@media (max-width: 900px) {
+  main { grid-template-columns:minmax(11rem, 14rem) minmax(0, 1fr); }
+  .panel { padding:.7rem .8rem; }
+  .map-layout { grid-template-columns:minmax(9rem, 11rem) minmax(0, 1fr); }
+}
+.map-loading { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+               background:rgba(247,249,251,.82); color:var(--muted); font-size:.85rem; z-index:3;
+               pointer-events:none; }
