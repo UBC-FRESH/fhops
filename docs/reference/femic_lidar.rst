@@ -86,6 +86,20 @@ Rules:
 - native resolution, aggregation, support area, valid pixels, and provenance record how the FEMIC
   summary was made; FHOPS does not compute or resample those values in P14.1.
 
+Operability Report
+------------------
+
+After mapping support rows, report advisory system compatibility::
+
+   fhops scenario lidar operability scenarios/tfl6/scenario.yaml --json
+
+The report classifies each block as ``ground``, ``cable``, or ``helicopter`` from block/landing
+slope, roughness, and canopy evidence. It compares the scenario's current ``harvest_system_id``
+with the terrain class, recommends a class-compatible registered system, and labels any fallback
+source (``block.ground_slope_percent`` or class-average roughness). Move-in, landing, and road cost
+multipliers are advisory and are not applied by the solver in P14.4. Thresholds are planning
+assumptions, not field-validated rules; see ``notes/p14_operability_validation.md``.
+
 Operator Workflow
 -----------------
 

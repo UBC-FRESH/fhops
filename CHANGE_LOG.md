@@ -1,3 +1,26 @@
+# 2026-10-26 — P14.4: terrain/canopy operability integration (#192)
+
+Part of P14 (#188) on `feature/phase14-lidar-products`.
+
+- Added `fhops.scenario.lidar_operability`: advisory ground/cable/helicopter classification from
+  block/landing `lidar_support`, with explicit slope/roughness thresholds and labelled
+  block-field/class-average fallbacks.
+- Compares the scenario's current `harvest_system_id` with the terrain class, recommends a compatible
+  registered system, and reports explicit cable/helicopter classes and reasons.
+- Exposes advisory move-in/landing/road cost multipliers; they are not applied by the solver in
+  P14.4.
+- Added `fhops scenario lidar operability` (table/JSON), block filters, and tests for cable/ground/
+  helicopter classification, landing evidence, fallbacks, custom thresholds, and CLI output.
+- Added `notes/p14_operability_validation.md`: mapped tiny7 smoke scenario, 20-iteration heuristic
+  solve completed with objective 4295.775, production 4414.703 m³, and 0 sequencing violations.
+
+Verification:
+- `pytest -q tests/scenario` -> 27 passed with `fhops[lidar]` installed.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+
+Next: #193 P14.5 build and validate a precision-forestry scenario fixture.
+
 # 2026-10-25 — P14.3: map FEMIC products into FHOPS scenarios (#191)
 
 Part of P14 (#188) on `feature/phase14-lidar-products`.
