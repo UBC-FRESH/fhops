@@ -1100,6 +1100,7 @@ function featureBounds(data) {
 
 async function updateMapLibre(data, detail, token, fit = true) {
   if (!window.maplibregl || token !== state.mapRenderToken) return;
+  const created = !state.mapInstance;
   if (!state.mapInstance) {
     state.mapInstance = new maplibregl.Map({
       container: "maplibre-map",
@@ -1186,7 +1187,7 @@ async function updateMapLibre(data, detail, token, fit = true) {
     filter: ["==", ["get", "layer"], "lidar_slope"],
     paint: {
       "fill-color": ["case",
-        ["==", ["get", "value"], None], "#d9e2ec",
+        ["==", ["get", "value"], null], "#d9e2ec",
         ["step", ["get", "value"], "#2f7d4f", 20, "#e6b800", 35, "#d97706", 60, "#c0392b"]],
       "fill-opacity": 0.66,
     },
@@ -1196,7 +1197,7 @@ async function updateMapLibre(data, detail, token, fit = true) {
     filter: ["==", ["get", "layer"], "lidar_canopy"],
     paint: {
       "fill-color": ["case",
-        ["==", ["get", "value"], None], "#d9e2ec",
+        ["==", ["get", "value"], null], "#d9e2ec",
         ["interpolate", ["linear"], ["get", "value"], 0, "#eef8f1", 10, "#74c476", 25, "#238b45", 40, "#00441b"]],
       "fill-opacity": 0.66,
     },
@@ -1206,7 +1207,7 @@ async function updateMapLibre(data, detail, token, fit = true) {
     filter: ["==", ["get", "layer"], "tactical_units"],
     paint: { "fill-color": "#1f6feb", "fill-opacity": 0.55 },
   });
-  if (fit) fitMapLibre(data);
+  if (fit || created) fitMapLibre(data);
 }
 
 function fitMapLibre(data) {
@@ -1558,7 +1559,9 @@ async function renderLidarPanel(encoded) {
     });
     tbody.appendChild(row);
   }
-  els.body.appendChild(table);
+  const tableWrap = el("div", null, "table-wrap lidar-table-wrap");
+  tableWrap.appendChild(table);
+  els.body.appendChild(tableWrap);
   els.body.appendChild(detail);
   els.body.appendChild(el("p", "Operability thresholds and cost context are advisory; the solver does not apply them automatically.", "hint"));
   if (canWorkflow) els.body.appendChild(renderWorkflow());
