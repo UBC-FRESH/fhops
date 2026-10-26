@@ -1,3 +1,25 @@
+# 2026-10-26 — P14.5: public TFL 6 LidarBC fixture (#193)
+
+Part of P14 (#188) on `feature/p14.5-lidar-fixture` (based on the P14.4 main merge).
+
+- Added `examples/lidar_tfl6`: seven clipped VRI polygons (about 100 ha), one landing, one road
+  job, seven ground-based machines, native 1 m block/landing slope/CHM support rows, bundle/product
+  checksums, OGL-BC attribution, and labelled synthetic planning tables.
+- Added `scripts/build_p14_lidar_fixture.py` to regenerate the deterministic fixture from the FEMIC
+  bundle and clipped VRI layer, then validate it through the normal FHOPS loader.
+- Added fixture tests for shape, bundle/provenance, cross-repo WS4 parity, operability mismatch/
+  fallback reporting, and a 20-iteration smoke solve.
+- Added a reference page and `notes/reports/p14.5-fixture-validation.md` recording parity,
+  operability, licence, smoke results, and limits.
+
+Verification:
+- Fixture values match WS4 P52 / FEMIC P79.9 to six decimals (maximum absolute difference `0.0`).
+- `pytest -q tests/scenario` -> green with `fhops[lidar]`.
+- Full `pytest` -> green in this environment.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+
+Next: #194 P14.6 validate, document, and close out P14.
+
 # 2026-10-26 — P14.4: terrain/canopy operability integration (#192)
 
 Part of P14 (#188) on `feature/phase14-lidar-products`.
