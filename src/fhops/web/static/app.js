@@ -1396,7 +1396,10 @@ function renderLidarWorkflow(encoded, payload, refresh) {
       setEditStatus(status, action + " complete.", "ok");
       output.textContent = JSON.stringify(result, null, 2);
       output.hidden = false;
-      if (path !== "validate") setTimeout(refresh, 1500);
+      if (path !== "validate") {
+        els.status.textContent = `${action} complete`;
+        setTimeout(refresh, 1500);
+      }
     } catch (error) {
       setEditStatus(status, error.message, "error");
     } finally {
