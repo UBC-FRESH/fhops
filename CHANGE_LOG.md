@@ -8,6 +8,9 @@
   keyboard navigation, focus-visible styling, and a visible app/panel/map loading state.
 - Added responsive shell rules for 1024 px iPad-landscape widths and up, a viewport-aware sidebar,
   and a two-column map layout that shrinks without horizontal page scroll.
+- Fixed two MapLibre regressions surfaced by the visual check: an invalid JavaScript `None` literal
+  in the LiDAR fill expressions prevented later layers/fitting from running, and the initial map
+  fit is now guaranteed when the map instance is created.
 - Added run scenario provenance to the sidebar and kept the read-only reviewer behavior.
 - SPA cache-bust is `?v=13`.
 
@@ -15,6 +18,9 @@ Verification:
 - `pytest -q tests/web` -> 61 passed.
 - Headless DOM: Map/Plan/Results/Data render; URL updates on workspace/panel change; Back/Forward and
   keyboard navigation restore the view; no JS page errors.
+- Playwright at 1024×768, 1194×834, 1366×1024, and 1500×1000: `body.scrollWidth == viewport`,
+  map widths 573/743/787/921 px; URL/keyboard/back-forward and LiDAR Data panel pass with no page
+  errors.
 - `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
 
 # 2026-10-26 — Web UI: read-only LiDAR evidence integration

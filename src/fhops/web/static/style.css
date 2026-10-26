@@ -52,7 +52,7 @@ a { color:#1f6feb; }
 code { background:#eef2f6; padding:0 .15rem; border-radius:.2rem; }
 
 /* Map panel */
-.map-layout { display:grid; grid-template-columns:15rem minmax(0,1fr); gap:.8rem; height:calc(100vh - 11rem); min-height:26rem; }
+.map-layout { display:grid; grid-template-columns:15rem minmax(0,1fr); gap:.8rem; height:calc(100vh - 15rem); min-height:26rem; }
 .layer-tree { border:1px solid var(--line); border-radius:.45rem; background:var(--panel); padding:.55rem; overflow:auto; }
 .layer-tree h3 { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:.2rem 0 .4rem; }
 .layer-option { display:flex; gap:.35rem; align-items:flex-start; margin:.15rem 0; font-size:.78rem; }
@@ -202,9 +202,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   header { gap:.5rem; }
   header select { max-width:11rem; }
   #status { margin-left:0; }
-  main { grid-template-columns:minmax(12rem, 16rem) minmax(0, 1fr); }
-  .map-layout { grid-template-columns:minmax(10rem, 13rem) minmax(0, 1fr); }
-  .map-layout { height:calc(100vh - 11rem); }
+  main { grid-template-columns:minmax(12rem, 14rem) minmax(0, 1fr); }
+  .map-layout { grid-template-columns:minmax(9rem, 11rem) minmax(0, 1fr); }
+  .map-layout { height:calc(100vh - 15rem); }
   .tabs button, .workspace-tab { min-height:2.5rem; }
 }
 @media (max-width: 900px) {
@@ -215,3 +215,4 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .map-loading { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
                background:rgba(247,249,251,.82); color:var(--muted); font-size:.85rem; z-index:3;
                pointer-events:none; }
+.lidar-table-wrap { max-height:none; }
