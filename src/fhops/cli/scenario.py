@@ -8,6 +8,7 @@ from typing import Annotated
 
 import typer
 from rich.console import Console
+from rich.table import Table
 
 from fhops.planning.tactical_operational.io import load_tactical_operational_scenario
 from fhops.planning.tactical_operational.scale import (
@@ -21,6 +22,7 @@ from fhops.planning.tactical_operational.scenario import (
     solve_tactical_batch_manifest,
     write_tactical_scenario_yaml,
 )
+from fhops.scenario.io import load_scenario
 from fhops.scenario.lidar import (
     FemicLidarError,
     validate_femic_lidar_bundle,
@@ -29,6 +31,7 @@ from fhops.scenario.lidar_mapping import (
     FemicLidarMappingError,
     map_femic_lidar_to_scenario,
 )
+from fhops.scenario.lidar_operability import assess_scenario_operability
 from fhops.scenario.lidar_registration import (
     FemicLidarRegistrationError,
     register_femic_lidar_bundle,
@@ -54,6 +57,59 @@ def lidar_validate(
     typer.echo(json.dumps(report.to_dict(), indent=2))
     if not report.is_valid:
         raise typer.Exit(1)
+
+
+@lidar_app.command("operability")
+def lidar_operability(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with LiDAR support."),
+    block: list[str] | None = typer.Option(None, "--block", help="Repeatable block id filter."),
+    json_output: bool = typer.Option(False, "--json", help="Print JSON instead of a table."),
+) -> None:
+    """Report advisory ground/cable/helicopter compatibility from terrain/canopy evidence."""
+    try:
+        loaded = load_scenario(scenario)
+        rows = assess_scenario_operability(loaded)
+    except (KeyError, ValueError, FileNotFoundError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    if block:
+        selected = set(block)
+        rows = tuple(row for row in rows if row.block_id in selected)
+    if json_output:
+        typer.echo(json.dumps([row.to_dict() for row in rows], indent=2))
+        return
+    table = Table(
+        title="Advisory LiDAR operability",
+        show_lines=False,
+        header_style="bold",
+    )
+    table.add_column("Block")
+    table.add_column("Landing")
+    table.add_column("Class")
+    table.add_column("Current")
+    table.add_column("Compatible")
+    table.add_column("Recommended")
+    table.add_column("Slope %", justify="right")
+    table.add_column("Roughness", justify="right")
+    table.add_column("Canopy %", justify="right")
+    table.add_column("Fallbacks")
+    for row in rows:
+        table.add_row(
+            row.block_id,
+            row.landing_id,
+            row.terrain_class,
+            row.current_system_id or "—",
+            "—"
+            if row.current_system_compatible is None
+            else ("yes" if row.current_system_compatible else "NO"),
+            row.recommended_system_id,
+            f"{row.slope_percent:.1f}",
+            f"{row.roughness_m:.3f}",
+            "—" if row.canopy_cover_percent is None else f"{row.canopy_cover_percent:.1f}",
+            ", ".join(row.fallbacks) or "—",
+        )
+    console.print(table)
+    console.print("Cost multipliers are advisory and are not applied by the solver in P14.4.")
 
 
 @lidar_app.command("map")
