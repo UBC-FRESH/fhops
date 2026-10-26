@@ -651,12 +651,30 @@ async function renderMap(encoded) {
   layout.appendChild(tree);
   layout.appendChild(mapWrap);
   els.body.appendChild(layout);
-  els.body.appendChild(renderMapLegend());
+  const legendHost = el("div", null, "map-legend");
+  els.body.appendChild(legendHost);
 
   const renderTree = () => {
     tree.innerHTML = "";
-    tree.appendChild(el("h3", "Layers"));
-    for (const layer of state.mapLayers) {
+    const head = el("div", null, "layer-head");
+    head.appendChild(el("h3", "Layers"));
+    const actions = el("div", null, "layer-actions");
+    const all = el("button", "All");
+    const clear = el("button", "Clear");
+    for (const button of [all, clear]) button.type = "button";
+    all.addEventListener("click", () => {
+      for (const layer of state.mapLayers) if (layer.available) state.mapSelected.add(layer.name);
+      refreshMap();
+    });
+    clear.addEventListener("click", () => {
+      state.mapSelected.clear();
+      refreshMap();
+    });
+    actions.appendChild(all);
+    actions.appendChild(clear);
+    head.appendChild(actions);
+    tree.appendChild(head);
+    const addRow = (layer) => {
       const row = el("label", null, "layer-option" + (layer.available ? "" : " disabled"));
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
@@ -674,6 +692,22 @@ async function renderMap(encoded) {
       row.appendChild(checkbox);
       row.appendChild(text);
       tree.appendChild(row);
+    };
+    const groups = [
+      ["Base", ["blocks", "treatments", "machines", "tactical_units"]],
+      ["LiDAR", ["lidar_operability", "lidar_slope", "lidar_canopy"]],
+    ];
+    const grouped = new Set(groups.flatMap(([, names]) => names));
+    for (const [title, names] of groups) {
+      const rows = state.mapLayers.filter((layer) => names.includes(layer.name));
+      if (!rows.length) continue;
+      tree.appendChild(el("h4", title, "layer-group-title"));
+      rows.forEach(addRow);
+    }
+    const other = state.mapLayers.filter((layer) => !grouped.has(layer.name));
+    if (other.length) {
+      tree.appendChild(el("h4", "Other", "layer-group-title"));
+      other.forEach(addRow);
     }
   };
 
@@ -686,14 +720,33 @@ async function renderMap(encoded) {
     else params.set("day", state.mapStep);
     if (state.mapShift) params.set("shift", state.mapShift);
     if (state.mapSelected.size) params.set("layers", Array.from(state.mapSelected).join(","));
+    const shouldFit = !state.mapData || !state.mapInstance;
+    if (!state.mapSelected.size) {
+      const empty = {type: "FeatureCollection", features: []};
+      state.mapData = empty;
+      note.textContent = "0 feature(s)";
+      detail.hidden = true;
+      renderMapLegend(legendHost);
+      if (state.mapRenderer === "maplibre" && window.maplibregl) {
+        await updateMapLibre(empty, detail, token, false);
+        mapDiv.classList.remove("hidden");
+        svg.classList.add("hidden");
+      } else {
+        renderSVG(empty, svg, detail);
+        mapDiv.classList.add("hidden");
+        svg.classList.remove("hidden");
+      }
+      return;
+    }
     try {
       const data = await fetchJson(`api/runs/${encoded}/map?${params.toString()}`);
       if (token !== state.mapRenderToken) return;
       state.mapData = data;
       note.textContent = `${data.features.length} feature(s)`;
       detail.hidden = true;
+      renderMapLegend(legendHost);
       if (state.mapRenderer === "maplibre" && window.maplibregl) {
-        await updateMapLibre(data, detail, token);
+        await updateMapLibre(data, detail, token, shouldFit);
         if (token !== state.mapRenderToken) return;
         svg.classList.add("hidden");
         mapDiv.classList.remove("hidden");
@@ -734,26 +787,42 @@ async function renderMap(encoded) {
   await refreshMap();
 }
 
-function renderMapLegend() {
-  const legend = el("div", null, "map-legend");
-  const entries = [
-    ["#c0392b", "current / treated"],
-    ["#d9a066", "earlier cumulative"],
-    ["#2f7d4f", "untreated / ground"],
-    ["#1f6feb", "machine / tactical unit"],
-  ];
-  if ((state.mapLayers || []).some((layer) => layer.name.startsWith("lidar_"))) {
-    entries.push(["#b45309", "LiDAR cable"], ["#1f6feb", "LiDAR helicopter"], ["#d9e2ec", "no LiDAR evidence"]);
-  }
-  for (const [color, label] of entries) {
+function renderMapLegend(host) {
+  if (!host) return;
+  host.innerHTML = "";
+  const selected = state.mapSelected || new Set();
+  const add = (color, label) => {
     const item = el("span");
     const swatch = el("span", null, "swatch");
     swatch.style.background = color;
     item.appendChild(swatch);
     item.appendChild(document.createTextNode(label));
-    legend.appendChild(item);
+    host.appendChild(item);
+  };
+  if (selected.has("blocks")) add("#2f7d4f", "block / untreated");
+  if (selected.has("treatments")) {
+    add("#c0392b", "current");
+    add("#d9a066", "earlier cumulative");
   }
-  return legend;
+  if (selected.has("machines") || selected.has("tactical_units")) add("#1f6feb", "machine / tactical unit");
+  if (selected.has("lidar_operability")) {
+    add("#2f7d4f", "LiDAR ground");
+    add("#b45309", "LiDAR cable");
+    add("#1f6feb", "LiDAR helicopter");
+    add("#d9e2ec", "no LiDAR evidence");
+  }
+  if (selected.has("lidar_slope")) {
+    add("#2f7d4f", "slope <20%");
+    add("#e6b800", "20–35%");
+    add("#d97706", "35–60%");
+    add("#c0392b", ">=60%");
+  }
+  if (selected.has("lidar_canopy")) {
+    add("#eef8f1", "CHM <5 m");
+    add("#74c476", "5–15 m");
+    add("#238b45", "15–30 m");
+    add("#00441b", ">=30 m");
+  }
 }
 
 function renderSVG(data, svg, detail) {
@@ -864,7 +933,7 @@ function featureBounds(data) {
   return [minX, minY, maxX, maxY];
 }
 
-async function updateMapLibre(data, detail, token) {
+async function updateMapLibre(data, detail, token, fit = true) {
   if (!window.maplibregl || token !== state.mapRenderToken) return;
   if (!state.mapInstance) {
     state.mapInstance = new maplibregl.Map({
@@ -972,7 +1041,7 @@ async function updateMapLibre(data, detail, token) {
     filter: ["==", ["get", "layer"], "tactical_units"],
     paint: { "fill-color": "#1f6feb", "fill-opacity": 0.55 },
   });
-  fitMapLibre(data);
+  if (fit) fitMapLibre(data);
 }
 
 function fitMapLibre(data) {
