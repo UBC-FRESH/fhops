@@ -1,3 +1,23 @@
+# 2026-10-26 — Web UI polish: tables, map selection, palette, and URL time state
+
+- Replaced the table renderer with a shared sortable table shell: accessible column sort buttons,
+  `aria-sort`, empty states, row counts, and CSV export using the displayed columns.
+- Added selected-block highlighting in both SVG and MapLibre, with block detail on click.
+- Moved map colours to a colour-blind-aware Okabe-Ito-style palette for blocks, treatments,
+  machines, LiDAR classes, and LiDAR slope/canopy scales; the legend tracks selected layers.
+- Added map `day`/`shift` or `period` to the URL and restored it on reload/Back/Forward, including
+  the MapLibre fit path.
+- Kept the LiDAR evidence table inside a scroll container so wide fallback/provenance columns do not
+  clip the page.
+- SPA cache-bust remains `?v=13`.
+
+Verification:
+- `pytest -q tests/web` -> 61 passed.
+- Playwright 1024×768: day URL restore, SVG block selection, table sort, no JS errors.
+- Playwright 1024/1194/1366/1500: no horizontal page scroll, map widths 573/743/787/921 px.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain; ruff, mypy, Sphinx
+  clean.
+
 # 2026-10-26 — Web shell foundation: workspaces, URL state, and accessibility
 
 - Rebuilt the FHOPS web shell around Map / Plan / Results / Data workspaces; skins now filter which

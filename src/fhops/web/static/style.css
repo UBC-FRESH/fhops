@@ -216,3 +216,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
                background:rgba(247,249,251,.82); color:var(--muted); font-size:.85rem; z-index:3;
                pointer-events:none; }
 .lidar-table-wrap { max-height:none; }
+.table-block { min-width:0; }
+.sort-button { border:0; background:transparent; padding:0; font:inherit; font-weight:600;
+               color:var(--muted); cursor:pointer; text-align:left; }
+.sort-button:hover { color:var(--ink); text-decoration:underline; }

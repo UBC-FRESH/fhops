@@ -45,6 +45,15 @@ const WORKSPACE_DEFS = [
   { id: "results", label: "Results", panels: ["kpis", "reports", "compare"] },
   { id: "data", label: "Data", panels: ["lidar"] },
 ];
+const MAP_COLORS = {
+  current: "#D55E00",
+  cumulative: "#E69F00",
+  base: "#009E73",
+  machine: "#0072B2",
+  cable: "#CC79A7",
+  helicopter: "#56B4E9",
+  noEvidence: "#D9E2EC",
+};
 const DOMAIN_SKINS = {
   operational: "operational-planner",
   hauling: "hauling-planner",
@@ -268,6 +277,18 @@ function updateURL(push = true) {
   if (state.run) params.set("run", state.run.run_id);
   if (state.workspace) params.set("view", state.workspace);
   if (state.panel) params.set("panel", state.panel);
+  if (state.panel === "map") {
+    if (state.mapTime) {
+      if (state.mapTime.unit === "period") params.set("period", state.mapStep);
+      else params.set("day", state.mapStep);
+      if (state.mapShift) params.set("shift", state.mapShift);
+    } else {
+      const current = new URLSearchParams(location.search);
+      for (const key of ["day", "period", "shift"]) {
+        if (current.has(key)) params.set(key, current.get(key));
+      }
+    }
+  }
   const url = `${location.pathname}${params.toString() ? `?${params}` : ""}${location.hash}`;
   if (push) history.pushState({}, "", url);
   else history.replaceState({}, "", url);
@@ -479,43 +500,79 @@ function renderDataset(path, title) {
   });
 }
 
-function renderTable(payload) {
-  const wrap = el("div", null, "table-wrap");
-  const table = document.createElement("table");
-  const thead = document.createElement("thead");
-  const headRow = document.createElement("tr");
-  for (const column of payload.columns || []) headRow.appendChild(el("th", column));
-  thead.appendChild(headRow);
-  table.appendChild(thead);
-  const tbody = document.createElement("tbody");
-  const rows = payload.rows || [];
-  for (const row of rows.slice(0, 500)) {
-    const tr = document.createElement("tr");
-    for (const column of payload.columns || []) {
-      const value = row[column];
-      const td = el("td", value === null || value === undefined ? "—" : value);
-      td.title = value === null || value === undefined ? "" : String(value);
-      tr.appendChild(td);
-    }
-    tbody.appendChild(tr);
-  }
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  const note = el(
-    "p",
-    `${payload.returned ?? rows.length} shown of ${payload.total ?? rows.length} rows` +
-      (rows.length > 500 ? " (first 500 rendered)" : ""),
-    "hint",
-  );
-  const container = el("div");
+function renderTable(payload, options = {}) {
+  const rows = [...(payload.rows || [])];
+  const columns = payload.columns || Object.keys(rows[0] || {});
+  const limit = options.limit || 500;
+  const container = el("div", null, "table-block");
   const head = el("div", null, "table-head");
+  let sort = { column: null, direction: 1 };
+  const note = el("p", "", "hint");
   head.appendChild(note);
   const exportButton = el("button", "Download CSV", "export-button");
   exportButton.type = "button";
-  exportButton.addEventListener("click", () => downloadCsv(payload));
+  exportButton.addEventListener("click", () => downloadCsv(payload, { columns }));
   head.appendChild(exportButton);
   container.appendChild(head);
+  if (!rows.length || !columns.length) {
+    note.textContent = options.emptyMessage || "No rows returned.";
+    exportButton.disabled = true;
+    return container;
+  }
+  const wrap = el("div", null, "table-wrap");
   container.appendChild(wrap);
+  const draw = () => {
+    const visible = sort.column
+      ? [...rows].sort((a, b) => {
+          const av = a[sort.column];
+          const bv = b[sort.column];
+          const an = Number(av);
+          const bn = Number(bv);
+          if (av !== null && av !== "" && bv !== null && bv !== "" &&
+              Number.isFinite(an) && Number.isFinite(bn)) return (an - bn) * sort.direction;
+          return String(av ?? "").localeCompare(String(bv ?? "")) * sort.direction;
+        })
+      : rows;
+    note.textContent = `${Math.min(visible.length, limit)} shown of ${payload.total ?? visible.length} rows` +
+      (visible.length > limit ? ` (first ${limit} rendered)` : "");
+    wrap.innerHTML = "";
+    const table = document.createElement("table");
+    table.className = "data-table";
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    for (const column of columns) {
+      const th = document.createElement("th");
+      const button = el("button", column, "sort-button");
+      button.type = "button";
+      button.setAttribute("aria-label", `Sort by ${column}`);
+      if (sort.column === column) {
+        th.setAttribute("aria-sort", sort.direction === 1 ? "ascending" : "descending");
+      }
+      button.addEventListener("click", () => {
+        if (sort.column === column) sort.direction *= -1;
+        else sort = { column, direction: 1 };
+        draw();
+      });
+      th.appendChild(button);
+      headRow.appendChild(th);
+    }
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+    const tbody = document.createElement("tbody");
+    for (const row of visible.slice(0, limit)) {
+      const tr = document.createElement("tr");
+      for (const column of columns) {
+        const value = row[column];
+        const td = el("td", value === null || value === undefined ? "—" : value);
+        td.title = value === null || value === undefined ? "" : String(value);
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+  };
+  draw();
   return container;
 }
 
@@ -529,8 +586,8 @@ function renderKeyValues(payload) {
   return grid;
 }
 
-function downloadCsv(payload) {
-  const columns = payload.columns || Object.keys(payload.rows?.[0] || {});
+function downloadCsv(payload, options = {}) {
+  const columns = options.columns || payload.columns || Object.keys(payload.rows?.[0] || {});
   const escape = (value) => {
     if (value === null || value === undefined) return "";
     const text = String(value);
@@ -725,6 +782,7 @@ async function renderMap(encoded) {
   // The panel body is replaced on every skin/run/panel change. Drop the previous MapLibre
   // instance so the new container gets a live map instead of a detached one.
   destroyMap();
+  state.selectedBlock = null;
   const token = (state.mapRenderToken || 0) + 1;
   state.mapRenderToken = token;
   const [time, layerPayload] = await Promise.all([
@@ -742,9 +800,18 @@ async function renderMap(encoded) {
   if (!state.mapSelected.size) {
     layerPayload.layers.filter((layer) => layer.available).forEach((layer) => state.mapSelected.add(layer.name));
   }
-  state.mapStep = time.unit === "period" ? time.values[0] : time.min;
-  state.mapShift = (time.shifts && time.shifts[0]) || "";
+  const urlParams = new URLSearchParams(location.search);
+  const values = (time.values || []).map(String);
+  const requestedStep = time.unit === "period" ? urlParams.get("period") : urlParams.get("day");
+  state.mapStep = requestedStep && values.includes(String(requestedStep))
+    ? (time.unit === "period" ? requestedStep : Number(requestedStep))
+    : (time.unit === "period" ? time.values[0] : time.min);
+  const requestedShift = urlParams.get("shift");
+  state.mapShift = requestedShift && (time.shifts || []).includes(requestedShift)
+    ? requestedShift
+    : ((time.shifts && time.shifts[0]) || "");
   state.mapData = null;
+  updateURL(false);
   els.body.innerHTML = "";
 
   const controls = el("div", null, "controls");
@@ -930,11 +997,13 @@ async function renderMap(encoded) {
 
   timeSelect.addEventListener("change", () => {
     state.mapStep = timeSelect.value;
+    updateURL(false);
     refreshMap();
   });
   if (shiftSelect) {
     shiftSelect.addEventListener("change", () => {
       state.mapShift = shiftSelect.value;
+      updateURL(false);
       refreshMap();
     });
   }
@@ -964,29 +1033,29 @@ function renderMapLegend(host) {
     item.appendChild(document.createTextNode(label));
     host.appendChild(item);
   };
-  if (selected.has("blocks")) add("#2f7d4f", "block / untreated");
+  if (selected.has("blocks")) add(MAP_COLORS.base, "block / untreated");
   if (selected.has("treatments")) {
-    add("#c0392b", "current");
-    add("#d9a066", "earlier cumulative");
+    add(MAP_COLORS.current, "current");
+    add(MAP_COLORS.cumulative, "earlier cumulative");
   }
-  if (selected.has("machines") || selected.has("tactical_units")) add("#1f6feb", "machine / tactical unit");
+  if (selected.has("machines") || selected.has("tactical_units")) add(MAP_COLORS.machine, "machine / tactical unit");
   if (selected.has("lidar_operability")) {
-    add("#2f7d4f", "LiDAR ground");
-    add("#b45309", "LiDAR cable");
-    add("#1f6feb", "LiDAR helicopter");
-    add("#d9e2ec", "no LiDAR evidence");
+    add(MAP_COLORS.base, "LiDAR ground");
+    add(MAP_COLORS.cable, "LiDAR cable");
+    add(MAP_COLORS.helicopter, "LiDAR helicopter");
+    add(MAP_COLORS.noEvidence, "no LiDAR evidence");
   }
   if (selected.has("lidar_slope")) {
-    add("#2f7d4f", "slope <20%");
-    add("#e6b800", "20–35%");
-    add("#d97706", "35–60%");
-    add("#c0392b", ">=60%");
+    add(MAP_COLORS.base, "slope <20%");
+    add(MAP_COLORS.cumulative, "20–35%");
+    add(MAP_COLORS.current, "35–60%");
+    add(MAP_COLORS.cable, ">=60%");
   }
   if (selected.has("lidar_canopy")) {
-    add("#eef8f1", "CHM <5 m");
-    add("#74c476", "5–15 m");
-    add("#238b45", "15–30 m");
-    add("#00441b", ">=30 m");
+    add("#E5F5E0", "CHM <5 m");
+    add("#74C476", "5–15 m");
+    add("#238B45", "15–30 m");
+    add("#005A32", ">=30 m");
   }
 }
 
@@ -1017,8 +1086,10 @@ function renderSVG(data, svg, detail) {
           path.setAttribute("d", d);
           path.setAttribute("fill", layerColor(layer, props));
           path.setAttribute("fill-opacity", layer === "blocks" || layer === "tactical_units" ? ".6" : ".85");
-          path.setAttribute("stroke", "#1f2933");
-          path.setAttribute("stroke-width", ".6");
+          const selected = props.block_id !== undefined && String(props.block_id) === state.selectedBlock;
+          path.setAttribute("stroke", selected ? "#111827" : "#1f2933");
+          path.setAttribute("stroke-width", selected ? "2.4" : ".6");
+          if (selected) path.setAttribute("data-selected", "true");
           path.addEventListener("click", () => showFeatureDetail(detail, props));
           svg.appendChild(path);
         }
@@ -1046,32 +1117,32 @@ function renderSVG(data, svg, detail) {
 }
 
 function layerColor(layer, props) {
-  if (layer === "machines") return "#1f6feb";
+  if (layer === "machines") return MAP_COLORS.machine;
   if (layer === "lidar_operability") {
-    if (props.terrain_class === "helicopter") return "#1f6feb";
-    if (props.terrain_class === "cable") return "#b45309";
-    if (props.terrain_class === "ground") return "#2f7d4f";
-    return "#d9e2ec";
+    if (props.terrain_class === "helicopter") return MAP_COLORS.helicopter;
+    if (props.terrain_class === "cable") return MAP_COLORS.cable;
+    if (props.terrain_class === "ground") return MAP_COLORS.base;
+    return MAP_COLORS.noEvidence;
   }
   if (layer === "lidar_slope") {
     const value = Number(props.value);
-    if (!Number.isFinite(value)) return "#d9e2ec";
-    if (value >= 60) return "#c0392b";
-    if (value >= 35) return "#d97706";
-    if (value >= 20) return "#e6b800";
-    return "#2f7d4f";
+    if (!Number.isFinite(value)) return MAP_COLORS.noEvidence;
+    if (value >= 60) return MAP_COLORS.cable;
+    if (value >= 35) return MAP_COLORS.current;
+    if (value >= 20) return MAP_COLORS.cumulative;
+    return MAP_COLORS.base;
   }
   if (layer === "lidar_canopy") {
     const value = Number(props.value);
-    if (!Number.isFinite(value)) return "#d9e2ec";
-    if (value >= 30) return "#00441b";
-    if (value >= 15) return "#238b45";
-    if (value >= 5) return "#74c476";
-    return "#eef8f1";
+    if (!Number.isFinite(value)) return MAP_COLORS.noEvidence;
+    if (value >= 30) return "#005A32";
+    if (value >= 15) return "#238B45";
+    if (value >= 5) return "#74C476";
+    return "#E5F5E0";
   }
-  if (layer === "tactical_units") return props.harvested_area_ha > 0 ? "#1f6feb" : "#2f7d4f";
-  if (layer === "treatments") return props.current ? "#c0392b" : (props.cumulative ? "#d9a066" : "#2f7d4f");
-  return props.treated ? "#c0392b" : "#2f7d4f";
+  if (layer === "tactical_units") return props.harvested_area_ha > 0 ? MAP_COLORS.machine : MAP_COLORS.base;
+  if (layer === "treatments") return props.current ? MAP_COLORS.current : (props.cumulative ? MAP_COLORS.cumulative : MAP_COLORS.base);
+  return props.treated ? MAP_COLORS.current : MAP_COLORS.base;
 }
 
 function showFeatureDetail(detail, props) {
@@ -1079,6 +1150,21 @@ function showFeatureDetail(detail, props) {
   detail.textContent = Object.entries(props)
     .map(([key, value]) => `${key}: ${value}`)
     .join("\n");
+  if (props.block_id !== undefined && props.block_id !== null) {
+    state.selectedBlock = String(props.block_id);
+    refreshMapSelection(detail);
+  }
+}
+
+function refreshMapSelection(detail) {
+  if (state.mapRenderer !== "svg" && state.mapInstance && state.mapInstance.getLayer("selected-block-line")) {
+    state.mapInstance.setFilter("selected-block-line", [
+      "==", ["get", "block_id"], state.selectedBlock || "__none__",
+    ]);
+    return;
+  }
+  const svg = document.getElementById("svg-map");
+  if (svg && state.mapData) renderSVG(state.mapData, svg, detail);
 }
 
 function featureBounds(data) {
@@ -1147,7 +1233,7 @@ async function updateMapLibre(data, detail, token, fit = true) {
     id: "blocks-fill", type: "fill", source: "features",
     filter: ["==", ["get", "layer"], "blocks"],
     paint: {
-      "fill-color": ["case", ["==", ["get", "treated"], true], "#c0392b", "#2f7d4f"],
+      "fill-color": ["case", ["==", ["get", "treated"], true], MAP_COLORS.current, MAP_COLORS.base],
       "fill-opacity": 0.55,
     },
   });
@@ -1160,15 +1246,15 @@ async function updateMapLibre(data, detail, token, fit = true) {
     id: "treatments-fill", type: "fill", source: "features",
     filter: ["==", ["get", "layer"], "treatments"],
     paint: {
-      "fill-color": ["case", ["==", ["get", "current"], true], "#c0392b",
-        ["==", ["get", "cumulative"], true], "#d9a066", "#2f7d4f"],
+      "fill-color": ["case", ["==", ["get", "current"], true], MAP_COLORS.current,
+        ["==", ["get", "cumulative"], true], MAP_COLORS.cumulative, MAP_COLORS.base],
       "fill-opacity": 0.6,
     },
   });
   ensureLayer("machines-circle", {
     id: "machines-circle", type: "circle", source: "features",
     filter: ["==", ["get", "layer"], "machines"],
-    paint: { "circle-radius": 5, "circle-color": "#1f6feb", "circle-stroke-color": "#fff",
+    paint: { "circle-radius": 5, "circle-color": MAP_COLORS.machine, "circle-stroke-color": "#fff",
              "circle-stroke-width": 1 },
   });
   ensureLayer("lidar-operability-fill", {
@@ -1176,9 +1262,9 @@ async function updateMapLibre(data, detail, token, fit = true) {
     filter: ["==", ["get", "layer"], "lidar_operability"],
     paint: {
       "fill-color": ["case",
-        ["==", ["get", "terrain_class"], "helicopter"], "#1f6feb",
-        ["==", ["get", "terrain_class"], "cable"], "#b45309",
-        ["==", ["get", "terrain_class"], "ground"], "#2f7d4f", "#d9e2ec"],
+        ["==", ["get", "terrain_class"], "helicopter"], MAP_COLORS.helicopter,
+        ["==", ["get", "terrain_class"], "cable"], MAP_COLORS.cable,
+        ["==", ["get", "terrain_class"], "ground"], MAP_COLORS.base, MAP_COLORS.noEvidence],
       "fill-opacity": 0.66,
     },
   });
@@ -1188,7 +1274,7 @@ async function updateMapLibre(data, detail, token, fit = true) {
     paint: {
       "fill-color": ["case",
         ["==", ["get", "value"], null], "#d9e2ec",
-        ["step", ["get", "value"], "#2f7d4f", 20, "#e6b800", 35, "#d97706", 60, "#c0392b"]],
+        ["step", ["get", "value"], MAP_COLORS.base, 20, MAP_COLORS.cumulative, 35, MAP_COLORS.current, 60, MAP_COLORS.cable]],
       "fill-opacity": 0.66,
     },
   });
@@ -1198,14 +1284,19 @@ async function updateMapLibre(data, detail, token, fit = true) {
     paint: {
       "fill-color": ["case",
         ["==", ["get", "value"], null], "#d9e2ec",
-        ["interpolate", ["linear"], ["get", "value"], 0, "#eef8f1", 10, "#74c476", 25, "#238b45", 40, "#00441b"]],
+        ["interpolate", ["linear"], ["get", "value"], 0, "#E5F5E0", 10, "#74C476", 25, "#238B45", 40, "#005A32"]],
       "fill-opacity": 0.66,
     },
+  });
+  ensureLayer("selected-block-line", {
+    id: "selected-block-line", type: "line", source: "features",
+    filter: ["==", ["get", "block_id"], state.selectedBlock || "__none__"],
+    paint: { "line-color": "#111827", "line-width": 3 },
   });
   ensureLayer("tactical-fill", {
     id: "tactical-fill", type: "fill", source: "features",
     filter: ["==", ["get", "layer"], "tactical_units"],
-    paint: { "fill-color": "#1f6feb", "fill-opacity": 0.55 },
+    paint: { "fill-color": MAP_COLORS.machine, "fill-opacity": 0.55 },
   });
   if (fit || created) fitMapLibre(data);
 }
