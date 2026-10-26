@@ -67,7 +67,7 @@
     }
   },
   "machine_roles": {
-    "harvester": 1,
-    "forwarder": 1
+    "hand_faller": 1,
+    "skyline_hi_skid": 1
   }
 }

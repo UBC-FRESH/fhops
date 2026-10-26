@@ -2,4 +2,4 @@ scenario,best_algorithm_softwarex,best_value_softwarex
 FHOPS Medium42,random,22317.855282
 FHOPS Small21,grid,15551.80882
 FHOPS Tiny7,bayes,4338.516752
-synthetic-small,bayes,-39.791
+synthetic-small,bayes,39.791

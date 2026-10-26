@@ -310,3 +310,41 @@ def test_sampling_config_override_merges(tmp_path: Path):
     assert sampling.samples == 20
     assert sampling.downtime.enabled is True
     assert sampling.downtime.probability == 0.5
+
+
+@pytest.mark.parametrize("tier", ["small", "medium", "large"])
+def test_tier_fleet_roles_cover_every_block_system(tier: str, tmp_path: Path) -> None:
+    # #158: machines used to keep the ``role_pool`` roles (harvester/forwarder), which no system
+    # of the tier mixes used, so the synthetic tiers delivered nothing.
+    from fhops.cli.synthetic import TIER_PRESETS, TIER_SEEDS
+    from fhops.optimization.operational_problem import (
+        blocks_without_fleet_roles,
+        build_operational_problem,
+    )
+    from fhops.scenario.contract import Problem
+
+    systems = dict(default_system_registry())
+    bundle = generate_random_dataset(TIER_PRESETS[tier], seed=TIER_SEEDS[tier], systems=systems)
+    assert bundle.metadata is not None
+    fleet_roles = set(bundle.metadata["fleet_roles"])
+    assert list(bundle.machines["role"]) == [machine.role for machine in bundle.scenario.machines]
+    assert set(bundle.machines["role"]) == fleet_roles
+    for block in bundle.scenario.blocks:
+        assert block.harvest_system_id in bundle.metadata["fleet_systems"]
+        system_roles = {job.machine_role for job in systems[block.harvest_system_id].jobs}
+        assert system_roles <= fleet_roles
+    loaded = load_scenario(bundle.write(tmp_path / tier))
+    ctx = build_operational_problem(Problem.from_scenario(loaded))
+    assert blocks_without_fleet_roles(ctx) == {}
+
+
+def test_fleet_falls_back_to_smallest_system_when_none_fits() -> None:
+    systems = dict(default_system_registry())
+    config = SyntheticDatasetConfig(
+        name="one-machine", num_blocks=3, num_days=4, num_machines=1, system_mix={"ctl": 1.0}
+    )
+    bundle = generate_random_dataset(config, seed=5, systems=systems)
+    assert bundle.metadata is not None
+    assert bundle.metadata["fleet_systems"] == ["ctl"]
+    assert {block.harvest_system_id for block in bundle.scenario.blocks} == {"ctl"}
+    assert list(bundle.machines["role"]) == ["single_grip_harvester"]

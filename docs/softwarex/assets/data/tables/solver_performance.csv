@@ -8,6 +8,6 @@ Small21 (ground-based),TABU,15595.28,315.61,90,15966.97,1815.92
 Med42 (ground-based),SA,24130.32,911.22,214,32984.91,7292.52
 Med42 (ground-based),ILS,24329.17,1212.70,214,33361.75,8402.20
 Med42 (ground-based),TABU,24163.37,5387.72,218,33463.63,9141.32
-Synthetic-small,SA,-39.79,62.53,69,0.00,0.00
-Synthetic-small,ILS,-39.79,44.46,69,0.00,0.00
-Synthetic-small,TABU,-39.79,460.96,69,0.00,0.00
+Synthetic-small,SA,39.79,39.40,10,39.79,0.00
+Synthetic-small,ILS,39.79,39.60,10,39.79,0.00
+Synthetic-small,TABU,39.79,356.55,10,39.79,0.00

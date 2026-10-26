@@ -53,8 +53,11 @@ class SequencingTracker:
       an idle slot: the head-start and truckload thresholds only apply to a role that produces
       (the MILP's ``role_active``), so it is never a ``missing_prereq`` violation (#125; e.g. a
       machine locked to a block that the MILP leaves idle because nothing is staged yet). Role
-      violations (``unknown_role`` / ``forbidden_role``) are still reported. The heuristics always
-      propose the machine's rate, so they are unaffected.
+      violations (``unknown_role`` / ``forbidden_role``) are still reported.
+    * A locked slot replayed without planned production (``process(..., locked=True)``: the
+      heuristics, and playback rows without a ``production`` value) produces what its staged input
+      allows, up to the proposed volume, and idles when a threshold is not met, without a
+      violation (#158). Unlocked heuristic slots propose the machine's rate.
 
     Calls without ``shift_id`` treat each day as one slot (v1.0.0 behaviour).
 
@@ -151,6 +154,8 @@ class SequencingTracker:
         block_id: str,
         proposed_production: float,
         shift_id: str | None = None,
+        *,
+        locked: bool = False,
     ) -> SequencingResult:
         """Advance the sequencing state for a single assignment.
 
@@ -166,6 +171,12 @@ class SequencingTracker:
         shift_id:
             Shift label. Staged output is released when ``(day, shift_id)`` changes; omit it to
             treat the whole day as one slot.
+        locked:
+            ``True`` for a locked slot (``ScheduleLock``) without planned production: the slot
+            produces what its staged input allows, up to ``proposed_production``, and idles when
+            the head-start or truckload threshold is not met, without a ``missing_prereq``
+            violation (#158; as the operational MILP, whose locks fix the assignment but not the
+            production, E13). Role violations are still reported.
 
         Returns
         -------
@@ -191,6 +202,11 @@ class SequencingTracker:
                 violation_reason = "forbidden_role"
 
         prereq_set = prereq_roles.get((block_id, role)) if role is not None else None
+        if locked and prereq_set and proposed_production > SEQUENCING_TOLERANCE:
+            assert role is not None
+            proposed_production = self._locked_production(
+                block_id, role, prereq_set, proposed_production
+            )
         # Idle slot (no planned production): thresholds only bind a producing role (#125).
         idle = proposed_production <= SEQUENCING_TOLERANCE
 
@@ -303,6 +319,32 @@ class SequencingTracker:
             violation_reason=violation_reason,
             block_completed=block_completed,
         )
+
+    def _locked_production(
+        self, block_id: str, role: str, prereq_set: frozenset[str], proposed: float
+    ) -> float:
+        """Production a locked slot can make without a sequencing violation (0 = idle, #158)."""
+
+        if block_id not in self.ctx.blocks_with_explicit_system:
+            return proposed
+        buffer_volume = self.ctx.role_headstart_volume.get((block_id, role), 0.0)
+        if buffer_volume > 0.0 and not self._upstream_exhausted(block_id, prereq_set):
+            if self._slot_start_volume(block_id, prereq_set) + SEQUENCING_TOLERANCE < buffer_volume:
+                return 0.0
+        if (block_id, role) in self.ctx.loader_roles:
+            loader_requirement = min(
+                self.ctx.loader_batch_volume.get(block_id, 0.0),
+                self.remaining_work.get(block_id, 0.0),
+            )
+            if (
+                loader_requirement > 0.0
+                and self._slot_start_volume(block_id, prereq_set) + SEQUENCING_TOLERANCE
+                < loader_requirement
+            ):
+                return 0.0
+        available = min(self.role_inventory[(block_id, upstream)] for upstream in prereq_set)
+        production = min(proposed, available)
+        return production if production > SEQUENCING_TOLERANCE else 0.0
 
     def _slot_start_volume(self, block_id: str, prereq_set: frozenset[str]) -> float:
         """Staged upstream volume available at the start of the current slot (min over roles)."""

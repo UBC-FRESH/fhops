@@ -46,6 +46,11 @@ system_mix:
   cable_micro_hi_skid: 0.08695652173913045
   cable_running_sr54: 0.04347826086956522
   cable_running_tr75_bunched: 0.04347826086956522
+fleet_systems:
+- cable_micro_hi_skid
+fleet_roles:
+- hand_faller
+- skyline_hi_skid
 blackout_biases: []
 sampling_config:
   samples: 6

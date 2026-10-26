@@ -113,6 +113,13 @@ system_mix:
   cable_standing_tr125_strip: 0.015873015873015872
   cable_partial_tr127_block1: 0.015873015873015872
   cable_partial_tr127_block5: 0.015873015873015872
+fleet_systems:
+- steep_tethered
+fleet_roles:
+- tethered_harvester
+- tethered_shovel_or_skidder
+- processor
+- loader
 blackout_biases:
 - start_day: 8
   end_day: 10
@@ -125,7 +132,6 @@ sampling_config:
   base_seed: 123
   downtime:
     enabled: true
-    seed_offset: 0
     probability: 0.12
     mean_duration_hours: 3.0
     std_duration_hours: 1.0
@@ -133,19 +139,16 @@ sampling_config:
     target_machine_roles: null
   weather:
     enabled: true
-    seed_offset: 0
     day_probability: 0.25
     severity_levels:
       light: 0.1
       moderate: 0.6
       severe: 0.4
-    correlated_days: true
     impact_window_days: 2
     affected_shifts: null
   landing:
     enabled: true
-    seed_offset: 0
-    probability: 0.18
+    probability: 0.025
     capacity_multiplier_range:
     - 0.45
     - 0.75

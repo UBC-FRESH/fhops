@@ -1,5 +1,5 @@
 Scenario,Tuner,Best Objective,$\Delta$ vs SA default,Mean Runtime (s),Budget,Key Settings
 Tiny7 (ground-based),Bayes,4338.52,42.74,0.33,8 trials $\times$ 120 iters,"batch\_size=3; operator weights block\_insertion=1.44, coverage\_injection=0.65, cross\_exchange=0.72"
-Small21 (ground-based),ILS,15584.30,0.14,3.64,1 run $\times$ 160 iters,perturbation\_strength=3; stall\_limit=10
-Med42 (ground-based),Tabu,23139.82,-990.50,41.49,1 run $\times$ 900 iters,stall\_limit=150
-Synthetic-small,Bayes,-39.79,0.00,0.97,8 trials $\times$ 120 iters,"batch\_size=3; operator weights block\_insertion=1.10, coverage\_injection=1.44, cross\_exchange=0.85"
+Small21 (ground-based),ILS,15584.30,0.14,3.78,1 run $\times$ 160 iters,perturbation\_strength=3; stall\_limit=10
+Med42 (ground-based),Tabu,23139.82,-990.50,42.65,1 run $\times$ 900 iters,stall\_limit=150
+Synthetic-small,Bayes,39.79,0.00,0.65,8 trials $\times$ 120 iters,"batch\_size=3; operator weights block\_insertion=1.10, coverage\_injection=1.44, cross\_exchange=0.85"

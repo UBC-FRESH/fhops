@@ -7,7 +7,6 @@ data:
   landings: data/landings.csv
   calendar: data/calendar.csv
   prod_rates: data/prod_rates.csv
-  road_construction: data/road_construction.csv
   crew_assignments: data/crew_assignments.csv
 timeline:
   shifts:

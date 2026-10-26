@@ -270,7 +270,31 @@ machine whose input is already staged would take, and that machine's landing pla
 machines of earlier roles ("pull" allocation: staged volume is moved on before more is produced).
 The same chain now delivers 500 m³ (the MILP optimum), with no landing overloads and no sequencing
 violations. The prediction depends only on the state at the start of the slot, so the repair stays
-idempotent and the reported objective remains a fresh evaluation of the plan.
+idempotent and the reported objective remains a fresh evaluation of the plan. The reservation is a
+heuristic, not a guarantee: a plan can still deliver less than the MILP when the reservation or a
+lock sends a machine to the wrong place, but it does not create hard violations.
+
+**Locked slots (#158).** A locked slot (``ScheduleLock``) always keeps its block, but it produces
+only what its staged input allows, as in the operational MILP (constraint E13 fixes the assignment,
+not the production) and in playback: a downstream role locked to a slot with no staged upstream
+volume, or below its head-start or truckload threshold, simply idles, and a slot with some input
+produces that much. ``ScheduleLock.production``, when set, caps the slot's production (``0`` keeps
+it idle; a day-level lock's value applies to each of its slots); the heuristics, the evaluator and
+playback of a table without a ``production`` column use the same rule
+(``SequencingTracker.process(..., locked=True)``). Before #158 the heuristics proposed the full rate
+for every locked slot and charged a hard violation when the input was missing, so an unlocked
+downstream machine that the repair sent to the block earlier (for example through the landing
+reservation above) could make a later locked slot a violation: a feller → skidder → loader chain
+with the skidder locked on day 3 scored −2200 (two violations) instead of the MILP's −200. Locks
+only cause hard violations now when they contradict a hard rule themselves (for example more
+locked machines on a landing than its hard capacity; the MILP plan pays the same penalty).
+
+**Blocks the fleet cannot work (#158).** A block whose harvest system has none of its roles in the
+fleet admits no machine (``OperationalProblem.allowed_roles`` is an empty set): the heuristics, the
+sanitizer and the MILP leave it unworked and its volume counts as leftover. Before #158 such a block
+had no role restriction, so any machine could work it and playback credited production that no
+terminal role ever delivered. ``fhops validate`` prints a warning for these blocks, and for blocks
+whose system's terminal role (e.g. the loader) has no machine.
 
 Next Steps
 ----------
