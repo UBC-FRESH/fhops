@@ -12,6 +12,7 @@ This directory contains FHOPS example scenarios and the onboarding notebook seri
 | `synthetic/small/` | 112 days | variable | variable | Synthetic ground-based scenario. |
 | `synthetic/medium/` | 112 days | variable | variable | Synthetic medium scenario. |
 | `synthetic/large/` | 112 days | variable | variable | Synthetic large scenario. |
+| `lidar_precision_forestry/` | 7 days | 2 | 9 | Synthetic FEMIC/LidarBC precision-forestry fixture over a public GNN AOI subset. |
 
 All scenarios use Lahrsen-aligned stand attributes and FHOPS productivity
 regressions (Lahrsen harvesters, ADV6N7 grapple skidders, Berry 2019

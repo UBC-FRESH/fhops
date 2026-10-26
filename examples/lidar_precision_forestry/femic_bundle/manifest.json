@@ -1,0 +1,68 @@
+{
+  "schema_version": "femic.lidar.product.v1",
+  "layout_version": "femic.lidar.bundle.v1",
+  "bundle_id": "lidarbc-p14-precision-fixture",
+  "bundle_version": "2026.10.0-synthetic",
+  "source": {
+    "source_id": "synthetic-lidarbc-contract",
+    "licence_id": "OGL-BC",
+    "native_crs": "EPSG:3005"
+  },
+  "selection": {
+    "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "tile_ids": [
+      "synthetic:p14:fixture"
+    ],
+    "products": [
+      "slope",
+      "chm"
+    ],
+    "aoi": "1 km GNN AOI demo subset; synthetic values"
+  },
+  "processing": {
+    "version": "p14.5-synthetic"
+  },
+  "summary": {
+    "product_count": 2,
+    "total_bytes": 820
+  },
+  "products": [
+    {
+      "product": "slope",
+      "relative_path": "products/slope.tif",
+      "sha256": "95c425e57d33a2d2d9361c0d7d7157afc3080046d3178e84bae303727bf3ee51",
+      "size_bytes": 410,
+      "crs": "EPSG:3005",
+      "resolution_m": 1.0,
+      "vertical_datum": "CGVD2013",
+      "licence_id": "OGL-BC",
+      "source_tile_ids": [
+        "synthetic:p14:fixture"
+      ],
+      "derived": true,
+      "lineage": [
+        "Synthetic P14.5 demonstration values over a 1 km GNN AOI subset; not a LidarBC extraction."
+      ]
+    },
+    {
+      "product": "chm",
+      "relative_path": "products/chm.tif",
+      "sha256": "e7191dd1d76c016d8a42bd1c50ded8df6114dab0c69d3bf7a88ae69a3340f41b",
+      "size_bytes": 410,
+      "crs": "EPSG:3005",
+      "resolution_m": 1.0,
+      "vertical_datum": "CGVD2013",
+      "licence_id": "OGL-BC",
+      "source_tile_ids": [
+        "synthetic:p14:fixture"
+      ],
+      "derived": true,
+      "lineage": [
+        "Synthetic P14.5 demonstration values over a 1 km GNN AOI subset; not a LidarBC extraction."
+      ]
+    }
+  ],
+  "consumer_contract": {
+    "manifest_path": "manifest.json"
+  }
+}

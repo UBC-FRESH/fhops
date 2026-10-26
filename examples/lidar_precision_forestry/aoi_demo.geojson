@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "aoi_demo",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::3005" } },
+"features": [
+{ "type": "Feature", "properties": { "name": "GNN AOI 1 km demo subset" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 900367.540186464553699, 681992.830450000241399 ], [ 900367.540186464553699, 682992.830450000241399 ], [ 899367.540186464553699, 682992.830450000241399 ], [ 899367.540186464553699, 681992.830450000241399 ], [ 900367.540186464553699, 681992.830450000241399 ] ] ] } }
+]
+}

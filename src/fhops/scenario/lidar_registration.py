@@ -229,7 +229,12 @@ def _replace_top_level_section(text: str, key: str, value: Any) -> str:
     end = start + 1
     while end < len(lines):
         line = lines[end]
-        if line.strip() and line[0] not in " \t":
+        if (
+            line.strip()
+            and line[0] not in " \t"
+            and not line.lstrip().startswith("-")
+            and not line.lstrip().startswith("#")
+        ):
             break
         end += 1
     return "\n".join(lines[:start] + rendered + [""] + lines[end:]).rstrip("\n") + "\n"

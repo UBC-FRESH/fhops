@@ -355,6 +355,7 @@ reimplementing discovery or materialization.
   - [x] Record product, aggregation, resolution, valid pixels, support area, and provenance
   - [x] Add `fhops scenario lidar map` and mapping tests
 - [x] P14.4 Integrate terrain/canopy with harvest-system operability and cost (#192)
+- [x] P14.5 Build and validate a precision-forestry scenario fixture (#193)
   - [x] Add advisory ground/cable/helicopter classification and fallbacks
   - [x] Compare current systems and recommend class-compatible systems
   - [x] Add advisory move-in/landing/road cost context and validation note

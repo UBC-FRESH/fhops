@@ -34,6 +34,7 @@ ensembles.
    howto/rolling_horizon
    howto/tactical_operational
    howto/hauling
+   howto/lidar_precision_fixture
    howto/web
 
 .. toctree::

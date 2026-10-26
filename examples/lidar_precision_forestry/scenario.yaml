@@ -1,0 +1,216 @@
+name: FHOPS precision-forestry LiDAR fixture (synthetic)
+num_days: 7
+start_date: '2025-01-01'
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+  harvest_systems: data/harvest_systems.yaml
+  mobilisation_distances: tiny7_block_distances.csv
+mobilisation:
+  default_walk_threshold_m: 900
+  distance_csv: tiny7_block_distances.csv
+  machine_params:
+  - machine_id: H1
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H2
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H3
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H4
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H5
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H6
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H7
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H8
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+  - machine_id: H9
+    walk_cost_per_meter: 0.02
+    move_cost_flat: 320
+    walk_threshold_m: 850
+    setup_cost: 50
+objective_weights:
+  production: 1.0
+  mobilisation: 0.5
+geo_block_path: blocks.geojson
+geo_landing_path: landings.geojson
+geo_crs: EPSG:3005
+
+lidar_products:
+- bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  manifest_sha256: 35c1943c4c97b6b0d474e14d10f2fe9c86e0ca37e588f1455986fc488cfe2567
+  licence_id: OGL-BC
+  manifest_path: femic_bundle/manifest.json
+  crs: EPSG:3005
+  aoi_bbox:
+  - 899667.5401864646
+  - 682292.8304500002
+  - 899670.5401864646
+  - 682295.8304500002
+  selection:
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+    tile_ids:
+    - synthetic:p14:fixture
+    products:
+    - slope
+    - chm
+    aoi: 1 km GNN AOI demo subset; synthetic values
+  products:
+  - product: chm
+    relative_path: products/chm.tif
+    sha256: e7191dd1d76c016d8a42bd1c50ded8df6114dab0c69d3bf7a88ae69a3340f41b
+    crs: EPSG:3005
+    resolution_m: 1.0
+    vertical_datum: CGVD2013
+    source_tile_ids:
+    - synthetic:p14:fixture
+  - product: slope
+    relative_path: products/slope.tif
+    sha256: 95c425e57d33a2d2d9361c0d7d7157afc3080046d3178e84bae303727bf3ee51
+    crs: EPSG:3005
+    resolution_m: 1.0
+    vertical_datum: CGVD2013
+    source_tile_ids:
+    - synthetic:p14:fixture
+
+lidar_support:
+- support_unit: block
+  support_id: B01
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 9.0
+  valid_pixels: 9
+  slope_percent: 40.888888888888886
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic slope mean from products/slope.tif
+- support_unit: block
+  support_id: B01
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 9.0
+  valid_pixels: 9
+  canopy_height_m: 25.0
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic chm mean from products/chm.tif
+- support_unit: block
+  support_id: B02
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 1.0
+  valid_pixels: 1
+  slope_percent: 8.0
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic slope mean from products/slope.tif
+- support_unit: block
+  support_id: B02
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 1.0
+  valid_pixels: 1
+  canopy_height_m: 25.0
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic chm mean from products/chm.tif
+- support_unit: landing
+  support_id: L1
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 1.0
+  valid_pixels: 1
+  slope_percent: 45.0
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic slope mean from products/slope.tif
+- support_unit: landing
+  support_id: L1
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 1.0
+  valid_pixels: 1
+  canopy_height_m: 25.0
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic chm mean from products/chm.tif
+- support_unit: landing
+  support_id: L2
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 1.0
+  valid_pixels: 1
+  slope_percent: 8.0
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic slope mean from products/slope.tif
+- support_unit: landing
+  support_id: L2
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 1.0
+  valid_pixels: 1
+  canopy_height_m: 25.0
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic chm mean from products/chm.tif
+- support_unit: road
+  support_id: R1
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 3.0
+  valid_pixels: 3
+  slope_percent: 45.0
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic slope mean from products/slope.tif
+- support_unit: road
+  support_id: R1
+  bundle_id: lidarbc-p14-precision-fixture
+  bundle_version: 2026.10.0-synthetic
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 3.0
+  valid_pixels: 3
+  canopy_height_m: 25.0
+  provenance: lidarbc-p14-precision-fixture@2026.10.0-synthetic chm mean from products/chm.tif

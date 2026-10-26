@@ -1,3 +1,29 @@
+# 2026-10-26 — P14.5: precision-forestry LiDAR fixture (#193)
+
+Part of P14 (#188) on `feature/phase14-lidar-products`.
+
+- Added `examples/lidar_precision_forestry/`: a two-block scenario, EPSG:3005 block/landing/road
+  support polygons, a synthetic 1 m slope/CHM bundle with OGL-BC contract metadata and checksums,
+  a bundle pin, ten support rows, and a heuristic smoke solve.
+- Recorded public AOI provenance from `femic-gnn-instance` (`gnn_full.gpkg`) as a 1 km subset with
+  the proposed Statement of Intent boundary caveat; the raster values are explicitly synthetic and
+  are not a LidarBC extraction.
+- Documented the fixture, commands, provenance, expected smoke result, and limits. B01 demonstrates
+  an explicit cable classification against the current ground system; B02 is ground-compatible.
+- Added tests for pin/bundle/support integrity, AOI provenance, operability classes, validation, and
+  a heuristic solve.
+- Fixed the top-level YAML section writer for column-zero list values (`lidar_support`,
+  `locked_assignments`), which previously left the old list in place and duplicated rows on a
+  second edit; added regression tests for repeated mapping and repeated lock edits.
+
+Verification:
+- `pytest -q tests/scenario/test_lidar_precision_fixture.py` -> 4 passed.
+- `fhops validate` and `fhops solve-heur` (20 iterations) passed; objective -2620.193, production
+  937.185 m³, 0 sequencing violations.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+
+Next: #194 P14.6 validate, document, and close out.
+
 # 2026-10-26 — P14.4: terrain/canopy operability integration (#192)
 
 Part of P14 (#188) on `feature/phase14-lidar-products`.

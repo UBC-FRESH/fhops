@@ -109,6 +109,18 @@ def test_locks_round_trip_and_rejection(tmp_path: Path) -> None:
     assert "day" in bad.json()["detail"].lower()
 
 
+def test_lock_edit_twice_does_not_duplicate_section(tmp_path: Path) -> None:
+    scenario = _copy_tiny7(tmp_path)
+    _register_run(tmp_path, "run-a", "operational", scenario)
+    client = _app_client(tmp_path)
+    payload = {"locks": [{"machine_id": "H1", "block_id": "B01", "day": 1}]}
+    assert client.put("/api/scenarios/run-a/locks", json=payload).status_code == 200
+    assert client.put("/api/scenarios/run-a/locks", json=payload).status_code == 200
+    loaded = load_scenario(scenario)
+    assert loaded.locked_assignments is not None
+    assert len(loaded.locked_assignments) == 1
+
+
 def test_hauling_edit_round_trip(tmp_path: Path) -> None:
     target = tmp_path / "hauling"
     shutil.copytree(Path("examples/hauling"), target)

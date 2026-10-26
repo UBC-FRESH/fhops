@@ -1,0 +1,21 @@
+{
+  "soi_name": "Gwa'Sala-'Nakwaxda'xw Nation (proposed)",
+  "soi_area_ha": 703417.95,
+  "gnn_full_area_ha": 682155.05,
+  "tsa46_overlap_ha": 292930.08,
+  "tsa47_overlap_ha": 389226.32,
+  "outside_both_ha": 21262.91,
+  "crs": "EPSG:3005",
+  "boundary_caveat": "Proposed Statement of Intent boundary; not a final treaty boundary or legal title determination. Confirm with GNN before public or operational use.",
+  "fixture_subset": "1 km square inside gnn_full.gpkg for P14.5",
+  "fixture_bounds_epsg3005": [
+    899367.5401864646,
+    681992.8304500002,
+    900367.5401864646,
+    682992.8304500002
+  ],
+  "source_repository": "https://github.com/UBC-FRESH/femic-gnn-instance",
+  "source_file": "data/source/aoi/gnn_full.gpkg",
+  "source_layer_provenance": "https://maps.gov.bc.ca/arcgis/rest/services/whse/bcgw_pub_reg_legal_and_admin_boundaries/MapServer/1",
+  "caveat": "Proposed Statement of Intent boundary; not a final treaty or legal title determination. Product rasters are synthetic P14.5 values, not a LidarBC extraction."
+}
