@@ -29,6 +29,7 @@ const PANEL_LABELS = {
   compare: "Compare",
   scenario: "Scenario",
   run: "Run",
+  lidar: "LiDAR",
 };
 const DOMAIN_PANELS = {
   operational: "schedule",
@@ -210,6 +211,8 @@ function renderPanel() {
       return renderScenario(encoded);
     case "run":
       return renderRunPanel();
+    case "lidar":
+      return renderLidarPanel(encoded);
     case "map":
       return renderMap(encoded);
     default:
@@ -736,9 +739,12 @@ function renderMapLegend() {
   const entries = [
     ["#c0392b", "current / treated"],
     ["#d9a066", "earlier cumulative"],
-    ["#2f7d4f", "untreated"],
+    ["#2f7d4f", "untreated / ground"],
     ["#1f6feb", "machine / tactical unit"],
   ];
+  if ((state.mapLayers || []).some((layer) => layer.name.startsWith("lidar_"))) {
+    entries.push(["#b45309", "LiDAR cable"], ["#1f6feb", "LiDAR helicopter"], ["#d9e2ec", "no LiDAR evidence"]);
+  }
   for (const [color, label] of entries) {
     const item = el("span");
     const swatch = el("span", null, "swatch");
@@ -807,6 +813,28 @@ function renderSVG(data, svg, detail) {
 
 function layerColor(layer, props) {
   if (layer === "machines") return "#1f6feb";
+  if (layer === "lidar_operability") {
+    if (props.terrain_class === "helicopter") return "#1f6feb";
+    if (props.terrain_class === "cable") return "#b45309";
+    if (props.terrain_class === "ground") return "#2f7d4f";
+    return "#d9e2ec";
+  }
+  if (layer === "lidar_slope") {
+    const value = Number(props.value);
+    if (!Number.isFinite(value)) return "#d9e2ec";
+    if (value >= 60) return "#c0392b";
+    if (value >= 35) return "#d97706";
+    if (value >= 20) return "#e6b800";
+    return "#2f7d4f";
+  }
+  if (layer === "lidar_canopy") {
+    const value = Number(props.value);
+    if (!Number.isFinite(value)) return "#d9e2ec";
+    if (value >= 30) return "#00441b";
+    if (value >= 15) return "#238b45";
+    if (value >= 5) return "#74c476";
+    return "#eef8f1";
+  }
   if (layer === "tactical_units") return props.harvested_area_ha > 0 ? "#1f6feb" : "#2f7d4f";
   if (layer === "treatments") return props.current ? "#c0392b" : (props.cumulative ? "#d9a066" : "#2f7d4f");
   return props.treated ? "#c0392b" : "#2f7d4f";
@@ -907,6 +935,37 @@ async function updateMapLibre(data, detail, token) {
     filter: ["==", ["get", "layer"], "machines"],
     paint: { "circle-radius": 5, "circle-color": "#1f6feb", "circle-stroke-color": "#fff",
              "circle-stroke-width": 1 },
+  });
+  ensureLayer("lidar-operability-fill", {
+    id: "lidar-operability-fill", type: "fill", source: "features",
+    filter: ["==", ["get", "layer"], "lidar_operability"],
+    paint: {
+      "fill-color": ["case",
+        ["==", ["get", "terrain_class"], "helicopter"], "#1f6feb",
+        ["==", ["get", "terrain_class"], "cable"], "#b45309",
+        ["==", ["get", "terrain_class"], "ground"], "#2f7d4f", "#d9e2ec"],
+      "fill-opacity": 0.66,
+    },
+  });
+  ensureLayer("lidar-slope-fill", {
+    id: "lidar-slope-fill", type: "fill", source: "features",
+    filter: ["==", ["get", "layer"], "lidar_slope"],
+    paint: {
+      "fill-color": ["case",
+        ["==", ["get", "value"], None], "#d9e2ec",
+        ["step", ["get", "value"], "#2f7d4f", 20, "#e6b800", 35, "#d97706", 60, "#c0392b"]],
+      "fill-opacity": 0.66,
+    },
+  });
+  ensureLayer("lidar-canopy-fill", {
+    id: "lidar-canopy-fill", type: "fill", source: "features",
+    filter: ["==", ["get", "layer"], "lidar_canopy"],
+    paint: {
+      "fill-color": ["case",
+        ["==", ["get", "value"], None], "#d9e2ec",
+        ["interpolate", ["linear"], ["get", "value"], 0, "#eef8f1", 10, "#74c476", 25, "#238b45", 40, "#00441b"]],
+      "fill-opacity": 0.66,
+    },
   });
   ensureLayer("tactical-fill", {
     id: "tactical-fill", type: "fill", source: "features",
@@ -1179,6 +1238,87 @@ function labelInput(label, input) {
   const wrapper = el("label", label);
   wrapper.appendChild(input);
   return wrapper;
+}
+
+async function renderLidarPanel(encoded) {
+  const payload = await fetchJson(`api/runs/${encoded}/lidar`);
+  const warnings = payload.warnings || [];
+  if (!payload.available) {
+    els.body.appendChild(el("p", "No LiDAR evidence is recorded for this run's scenario.", "hint"));
+    for (const warning of warnings) els.body.appendChild(el("p", warning, "lidar-warning"));
+    return;
+  }
+  const coverage = payload.coverage || {};
+  const cards = el("div", null, "cards");
+  const card = (label, value) => {
+    const node = el("div", null, "card");
+    node.appendChild(el("span", label, "card-label"));
+    node.appendChild(el("strong", value ?? "—", "card-value"));
+    cards.appendChild(node);
+  };
+  card("blocks with support", `${coverage.blocks_with_support ?? 0}/${coverage.blocks ?? 0}`);
+  card("support rows", coverage.support_rows ?? 0);
+  card("fallback blocks", coverage.fallback_blocks ?? 0);
+  card("bundle version", payload.bundle?.bundle_version || "—");
+  els.body.appendChild(cards);
+
+  const bundle = payload.bundle || {};
+  const provenance = el("div", null, "provenance");
+  const line = (label, value) => {
+    const node = el("span", `${label}: ${value ?? "—"}`);
+    provenance.appendChild(node);
+  };
+  provenance.appendChild(el("b", "FEMIC bundle provenance"));
+  line("bundle", bundle.bundle_id);
+  line("version", bundle.bundle_version);
+  line("licence", bundle.licence_id);
+  line("CRS", bundle.crs || payload.scenario_crs);
+  line("manifest", bundle.manifest_available ? "available" : bundle.manifest_status || "not available");
+  line("manifest sha256", bundle.manifest_sha256);
+  line("products", (bundle.products || []).map((item) => item.product).join(", "));
+  if (bundle.attribution) provenance.appendChild(el("span", bundle.attribution, "hint"));
+  els.body.appendChild(provenance);
+
+  for (const warning of warnings) els.body.appendChild(el("p", warning, "lidar-warning"));
+  const table = el("table", null, "data-table lidar-table");
+  table.innerHTML = "<thead><tr><th>Block</th><th>Landing</th><th>Slope %</th><th>CHM m</th><th>Class</th><th>Current system</th><th>Compatible</th><th>Recommended</th><th>Fallbacks</th></tr></thead><tbody></tbody>";
+  const tbody = table.querySelector("tbody");
+  const detail = el("pre", "", "feature-detail");
+  detail.hidden = true;
+  for (const block of payload.blocks || []) {
+    const op = block.operability || {};
+    const row = document.createElement("tr");
+    const values = [
+      block.block_id,
+      block.landing_id,
+      block.slope_percent === null || block.slope_percent === undefined ? "—" : Number(block.slope_percent).toFixed(2),
+      block.canopy_height_m === null || block.canopy_height_m === undefined ? "—" : Number(block.canopy_height_m).toFixed(2),
+      block.terrain_class || "—",
+      op.current_system_id || "—",
+      op.current_system_compatible === null || op.current_system_compatible === undefined
+        ? "—"
+        : (op.current_system_compatible ? "yes" : "NO"),
+      op.recommended_system_id || "—",
+      (op.fallbacks || []).join(", ") || "—",
+    ];
+    for (const value of values) {
+      const cell = document.createElement("td");
+      cell.textContent = String(value);
+      row.appendChild(cell);
+    }
+    row.addEventListener("click", () => {
+      detail.hidden = false;
+      detail.textContent = JSON.stringify(
+        {block_id: block.block_id, support: block.support, landing_support: block.landing_support, operability: op},
+        null,
+        2,
+      );
+    });
+    tbody.appendChild(row);
+  }
+  els.body.appendChild(table);
+  els.body.appendChild(detail);
+  els.body.appendChild(el("p", "Operability thresholds and cost context are advisory; the solver does not apply them automatically.", "hint"));
 }
 
 async function renderScenario(encoded) {

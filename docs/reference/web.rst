@@ -29,6 +29,12 @@ imported only when the optional ``fhops[web]`` extra is installed.
    :show-inheritance:
    :noindex:
 
+.. automodule:: fhops.web.lidarview
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
 .. automodule:: fhops.web.agent
    :members:
    :undoc-members:
@@ -49,6 +55,8 @@ Key objects
   and control CLI subprocesses without importing the optimizer.
 - :func:`fhops.web.editing.update_objective` / ``update_locks`` / ``update_hauling`` /
   ``save_tactical_overlay`` – validated edits through the existing loader.
+- :func:`fhops.web.lidarview.lidar_payload` – read-only scenario LiDAR evidence for the panel.
+- :func:`fhops.web.lidarview.lidar_map_values` – block values for LiDAR map layers.
 - :func:`fhops.web.agent.run_agent` – opt-in bridge to the installed ``opencode`` CLI.
 - :func:`fhops.web.app.create_app` – FastAPI factory.
 - :func:`fhops.web.app.validate_bind` – loopback/remote-bind guard.

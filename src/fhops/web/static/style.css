@@ -163,3 +163,12 @@ code { background:#eef2f6; padding:0 .15rem; border-radius:.2rem; }
 .assistant button { margin:.35rem 0; padding:.28rem .65rem; }
 .assistant-output { max-height:12rem; overflow:auto; white-space:pre-wrap; font-size:.74rem; color:var(--ink);
                      background:var(--panel); border:1px solid var(--line); border-radius:.35rem; padding:.35rem; }
+
+/* LiDAR evidence */
+.lidar-warning { color:#9a3412; background:#fff7ed; border:1px solid #fed7aa; border-radius:.35rem;
+                 padding:.3rem .5rem; font-size:.8rem; }
+.lidar-table tbody tr { cursor:pointer; }
+.lidar-table tbody tr:hover { background:#f5f7fa; }
+.feature-detail { max-height:18rem; overflow:auto; white-space:pre-wrap; font-size:.74rem;
+                  background:var(--panel); border:1px solid var(--line); border-radius:.35rem;
+                  padding:.5rem; margin-top:.6rem; }

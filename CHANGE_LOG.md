@@ -1,3 +1,23 @@
+# 2026-10-26 — Web UI: read-only LiDAR evidence integration
+
+- Added `GET /api/runs/{run_id}/lidar`: scenario bundle pins/products, block and landing support,
+  coverage counts, OGL-BC provenance, warnings, and the P14.4 advisory ground/cable/helicopter
+  operability report.
+- Added the LiDAR tab to the operational, hauling, tactical, and reviewer skins. It shows bundle
+  provenance, coverage cards, fallback labels, and a block table; reviewer stays read-only.
+- Added map layers `lidar_slope`, `lidar_canopy`, and `lidar_operability` joined to existing block
+  geometry. The default planner selection uses `lidar_operability`; slope/canopy are toggleable.
+- The service reads committed `lidar_support` rows only; it does not discover/download/process
+  source rasters or import GeoPandas/rasterio. A missing bundle manifest is reported explicitly.
+- Added the `lidar-tfl6` demo run and API/map/skin tests; SPA cache-bust is `?v=10`.
+
+Verification:
+- `pytest -q tests/web` -> 55 passed.
+- `pytest -q tests/web/test_lidar.py` -> 4 passed; headless DOM harness renders 7 table rows and
+  the three LiDAR map layers with no JS errors.
+- Full `pytest` -> only the two pre-existing HiGHS option-error failures remain.
+- `ruff format --check`, `ruff check`, `mypy src`, `sphinx-build -W` -> clean.
+
 # 2026-10-26 — P12.6 fix: repeated web list-section edits
 
 - Fixed `fhops.web.editing._replace_top_level_section` so a repeated `PUT /api/scenarios/{id}/locks`

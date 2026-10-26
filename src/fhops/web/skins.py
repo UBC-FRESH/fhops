@@ -35,6 +35,7 @@ PANELS = frozenset(
         "compare",
         "scenario",
         "run",
+        "lidar",
     }
 )
 LAYERS = frozenset(
@@ -47,6 +48,9 @@ LAYERS = frozenset(
         "haul_routes",
         "tactical_units",
         "facilities",
+        "lidar_slope",
+        "lidar_canopy",
+        "lidar_operability",
     }
 )
 ACTIONS = frozenset(

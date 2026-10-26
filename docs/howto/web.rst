@@ -116,6 +116,7 @@ The service API provides:
 - ``GET /api/runs`` and ``GET /api/runs/{run_id}``
 - ``POST /api/runs``, ``GET /api/runs/{run_id}/status``, ``POST /api/runs/{run_id}/control``
 - ``GET /api/runs/{run_id}/events`` (SSE)
+- ``GET /api/runs/{run_id}/lidar``
 - ``GET /api/scenarios/{run_id}`` and ``PUT /api/scenarios/{run_id}/{objective,locks,hauling,tactical}``
 - ``POST /api/agent`` (only when ``--allow-agent`` is set)
 - ``GET /api/runs/{run_id}/summary`` and ``/kpis``
@@ -163,6 +164,10 @@ The renderer is MapLibre GL JS with an OpenStreetMap raster basemap; SVG is the 
 switchable in the panel. The time control is day/shift for operational and hauling and period for
 tactical.
 
+LiDAR block layers are added when the scenario has support rows: ``lidar_slope``,
+``lidar_canopy``, and ``lidar_operability``. They join committed support values to the existing
+block geometry; the map does not read source rasters. The LiDAR panel and layers are read-only.
+
 Domain panels
 --------------
 
@@ -179,6 +184,9 @@ Domain panels
 - **Compare:** two run selectors, summaries, and a KPI table with `B − A` deltas.
 - **Run:** start a domain-appropriate CLI run, watch its objective trajectory, and pause, resume, or
   stop it.
+- **LiDAR:** provenance card, bundle/product pins, block support coverage, and the advisory
+  ground/cable/helicopter operability table. This is read-only evidence from the scenario's
+  ``lidar_products``/``lidar_support`` sections; it does not run LiDAR discovery or mapping.
 
 Live runs
 ---------
@@ -245,9 +253,9 @@ mutating action. The shipped skins are:
 - ``hauling-planner`` – hauling flows/schedule/inventory, driver/contractor editing, run control,
   KPIs.
 - ``tactical-planner`` – tactical decisions/flows/inventory, demand-envelope overlays, run control,
-  KPIs.
-- ``reviewer`` – read-only access to schedule/haul/tactical, KPIs, reports, and comparison; it has
-  no Scenario or Run tab and no mutating action.
+  KPIs, LiDAR.
+- ``reviewer`` – read-only access to schedule/haul/tactical, KPIs, reports, comparison, and LiDAR;
+  it has no Scenario or Run tab and no mutating action.
 
 The Scenario tab is hidden from the reviewer skin and from any manifest with ``read_only: true``.
 
@@ -272,5 +280,6 @@ Security and limits
 - The optional assistant is off by default, uses no shell, and inherits the service user's CLI
   permissions when enabled.
 - The service is a reader. It does not import the optimizer into the request process; live runs are
-  CLI subprocesses.
+  CLI subprocesses. The LiDAR panel reads the scenario's committed support rows and does not
+  discover, download, or process source rasters.
 - The assistant is opt-in and local-only; it is not a substitute for authentication.
