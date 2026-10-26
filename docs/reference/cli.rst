@@ -197,6 +197,7 @@ The optional web service adds:
 
    fhops web --runs runs/ --port 8765
    fhops web --runs runs/ --allow-agent --agent-timeout 120
+   fhops web --runs runs/ --lidar-bundles /path/to/femic/bundles
    fhops web manifest runs/run-a --status optimal
    fhops web discover runs/
 

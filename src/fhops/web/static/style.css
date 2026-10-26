@@ -172,3 +172,5 @@ code { background:#eef2f6; padding:0 .15rem; border-radius:.2rem; }
 .feature-detail { max-height:18rem; overflow:auto; white-space:pre-wrap; font-size:.74rem;
                   background:var(--panel); border:1px solid var(--line); border-radius:.35rem;
                   padding:.5rem; margin-top:.6rem; }
+.lidar-workflow { margin-top:1.2rem; padding-top:.7rem; border-top:1px solid var(--line); }
+.lidar-workflow h3 { margin:.2rem 0 .5rem; font-size:.9rem; }

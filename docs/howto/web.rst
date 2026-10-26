@@ -44,6 +44,7 @@ Useful options:
    fhops web --runs runs/ --geometry examples/hauling/blocks.geojson --geometry-crs EPSG:3005
    fhops web --runs runs/ --workspace /path/to/fhops-checkout
    fhops web --runs runs/ --allow-agent --agent-timeout 120
+   fhops web --runs runs/ --lidar-bundles /path/to/femic/bundles
 
 ``--root-path`` makes the SPA and API prefix-relative, so a notebook proxy can publish the service
 under a subpath. ``--workspace`` is the working directory for CLI subprocesses and the allowed root
@@ -117,6 +118,8 @@ The service API provides:
 - ``POST /api/runs``, ``GET /api/runs/{run_id}/status``, ``POST /api/runs/{run_id}/control``
 - ``GET /api/runs/{run_id}/events`` (SSE)
 - ``GET /api/runs/{run_id}/lidar``
+- ``GET /api/lidar/bundles``
+- ``POST /api/runs/{run_id}/lidar/{validate,register,map}``
 - ``GET /api/scenarios/{run_id}`` and ``PUT /api/scenarios/{run_id}/{objective,locks,hauling,tactical}``
 - ``POST /api/agent`` (only when ``--allow-agent`` is set)
 - ``GET /api/runs/{run_id}/summary`` and ``/kpis``
@@ -166,7 +169,15 @@ tactical.
 
 LiDAR block layers are added when the scenario has support rows: ``lidar_slope``,
 ``lidar_canopy``, and ``lidar_operability``. They join committed support values to the existing
-block geometry; the map does not read source rasters. The LiDAR panel and layers are read-only.
+block geometry; the map does not read source rasters. The evidence table and map layers are
+read-only; the bundle workflow can write a validated pin or support rows through the standard
+scenario writer.
+
+The LiDAR panel also exposes a bundle workflow. ``--lidar-bundles`` allowlists roots containing
+FEMIC bundle directories (each with ``manifest.json``). Validate and register run in the service;
+map products runs ``fhops scenario lidar map`` as a subprocess, so the request process does not
+import GeoPandas/rasterio. Mapping needs the optional ``fhops[lidar]`` environment. Bundle and
+roads paths are constrained to the configured roots and scenario directory.
 
 Domain panels
 --------------
@@ -276,6 +287,8 @@ Security and limits
 - Run roots are allowlisted; the service does not serve arbitrary paths.
 - Scenario paths for live runs must resolve under ``--workspace`` or a run root; output directories
   are created under the first run root, and run types are allowlisted.
+- LiDAR bundle paths must resolve under ``--lidar-bundles`` roots; mapping runs as a bounded CLI
+  subprocess and writes only through the validated scenario writer.
 - Scenario editing resolves through the run manifest and rejects paths outside those roots.
 - The optional assistant is off by default, uses no shell, and inherits the service user's CLI
   permissions when enabled.
