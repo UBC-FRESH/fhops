@@ -358,6 +358,11 @@ reimplementing discovery or materialization.
   - [x] Add advisory ground/cable/helicopter classification and fallbacks
   - [x] Compare current systems and recommend class-compatible systems
   - [x] Add advisory move-in/landing/road cost context and validation note
+- [x] P14.5 Build and validate a precision-forestry scenario fixture (#193)
+  - [x] Commit the public TFL 6 fixture with block/landing/road terrain/canopy support
+  - [x] Record bundle/product provenance, licence, and synthetic-table labels
+  - [x] Add regeneration script, fixture tests, and cross-repo WS4 parity
+  - [x] Record operability and schedule smoke results with limits
 
 Acceptance:
 
