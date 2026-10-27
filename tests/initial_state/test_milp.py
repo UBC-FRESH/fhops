@@ -103,9 +103,9 @@ def test_role_remaining_caps_upstream_output() -> None:
 
 
 def test_role_remaining_above_work_required_uses_min_r_w() -> None:
-    # Scenario/Problem validation rejects role_remaining (90) > work_required (40) since #118, so
-    # the inconsistent value is injected into the MILP bundle directly to exercise the defensive
-    # cap: the MILP caps the feller at min(R, W) = 40 (#115).
+    # A single-terminal chain without staged inventory still rejects role_remaining > W. The
+    # MILP also keeps its defensive min(R, W) cap (#115); #157/N3 relaxes validation only for
+    # multi-terminal systems or carried staged inventory.
     with pytest.raises(ValueError, match="above the block's work_required"):
         chain_scenario(num_days=2, work_b1=40.0, initial_state=_staged(0.0, remaining=90.0))
     pb = Problem.from_scenario(

@@ -992,6 +992,16 @@ Equal to the sequencing tracker's volume tolerance, so rolling-horizon carry-for
 from solver plans (which carry ~1e-7 m³ of solver noise) are not rejected."""
 
 
+def _terminal_roles_for_system(system: HarvestSystem) -> set[str]:
+    """Return roles whose jobs are not prerequisites of another job."""
+    prerequisites = {name for job in system.jobs for name in job.prerequisites}
+    return {
+        job.machine_role
+        for job in system.jobs
+        if job.machine_role and job.name not in prerequisites
+    }
+
+
 def _harvest_system_registry(scenario: Scenario) -> dict[str, HarvestSystem]:
     """Return the default harvest-system registry overlaid with ``scenario.harvest_systems``."""
 
@@ -1069,9 +1079,10 @@ def validate_initial_state(scenario: Scenario) -> None:
     ValueError
         If a block/machine id is unknown, a ``last_block_id`` is not a scenario block, a block with
         role-keyed state has no ``harvest_system_id``, a role key is not a role of the block's
-        harvest system, or a ``role_remaining`` value exceeds the block's ``work_required`` by more
-        than ``ROLE_REMAINING_TOLERANCE`` (1e-6 m³; an upstream role can never have more left
-        to output than the terminal volume still to deliver). Harvest systems are looked up in
+        harvest system, or a terminal ``role_remaining`` value exceeds the block's
+        ``work_required`` by more than ``ROLE_REMAINING_TOLERANCE`` (1e-6 m³). Non-terminal roles
+        may exceed the terminal remainder in multi-terminal systems or when staged inventory is
+        carried (#157/N3). Harvest systems are looked up in
         ``scenario.harvest_systems`` (falling back to
         :func:`fhops.scheduling.systems.default_system_registry`, mirroring
         :meth:`Problem.from_scenario`).
@@ -1114,11 +1125,21 @@ def validate_initial_state(scenario: Scenario) -> None:
                 f"roles of harvest system {system.system_id} "
                 f"({', '.join(sorted(system_roles))})"
             )
+        terminal_roles = _terminal_roles_for_system(system)
+        allow_non_terminal_overshoot = len(terminal_roles) > 1 or any(
+            volume > ROLE_REMAINING_TOLERANCE for volume in block_state.staged_inventory.values()
+        )
         for role, remaining in sorted(block_state.role_remaining.items()):
-            if remaining > block.work_required + ROLE_REMAINING_TOLERANCE:
+            # A terminal role delivers the block's terminal volume, so it cannot exceed
+            # work_required. An upstream role can legitimately exceed the terminal remainder in
+            # a multi-terminal system or when staged inventory is carried: the rolling
+            # carry-forward state must reproduce that replay state exactly (#157/N3).
+            if remaining > block.work_required + ROLE_REMAINING_TOLERANCE and (
+                role in terminal_roles or not allow_non_terminal_overshoot
+            ):
                 raise ValueError(
                     f"initial_state for block {block.id} sets role_remaining[{role!r}]={remaining} "
-                    f"above the block's work_required={block.work_required}; a role cannot have "
+                    f"above the block's work_required={block.work_required}; the role cannot have "
                     "more volume left to output than the block still has to deliver"
                 )
 
