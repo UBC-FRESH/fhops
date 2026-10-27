@@ -484,10 +484,10 @@ P17 is the active tree-scale phase, so this phase uses P18.
 
 Authoritative note: `notes/phase18_hydrology_docs_reproducibility.md`.
 
-- [ ] P18.1 Audit hydrology documentation and reproducibility gaps (#261)
-  - [ ] Inventory FEMIC, WS4, and FHOPS hydrology docs
-  - [ ] Record gaps, owners, and data/review blockers
-  - [ ] Separate documentation gaps from capability gaps
+- [x] P18.1 Audit hydrology documentation and reproducibility gaps (#261)
+  - [x] Inventory FEMIC, WS4, and FHOPS hydrology docs
+  - [x] Record gaps, owners, and data/review blockers
+  - [x] Separate documentation gaps from capability gaps
 - [ ] P18.2 Publish the pinned cross-repo quickstart (#262)
   - [ ] Pin package versions and environment
   - [ ] Run the synthetic FEMIC/WS4/FHOPS path

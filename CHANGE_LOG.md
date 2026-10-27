@@ -4314,3 +4314,10 @@ PY
   Scope is an audit, pinned cross-repo quickstart, contract index, executable
   docs checks, and closeout. No hydrology capability or real watershed result
   was added.
+
+- 2026-10-27: P18.1 (#261, parent #260) completed the hydrology documentation
+  and reproducibility audit. It inventories the FEMIC guides, WS4 reference,
+  FHOPS reference, fixtures, and closeouts; records the missing quickstart,
+  version matrix, contract index, expected outputs, and executable docs checks;
+  and separates documentation gaps from real-data/review blockers. No code,
+  data, or watershed result was added.
