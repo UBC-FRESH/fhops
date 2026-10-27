@@ -347,6 +347,7 @@ def load_hydrology_mapping(path: Path) -> HydrologyMapping:
     if not isinstance(rows_payload, list):
         raise FemicHydrologyMappingError("Hydrology mapping rows must be a list.")
     rows: list[HydrologyMappingRow] = []
+    seen: set[tuple[str, str]] = set()
     for index, item in enumerate(rows_payload, start=1):
         if not isinstance(item, Mapping):
             raise FemicHydrologyMappingError(f"Mapping row {index} must be an object.")
@@ -355,12 +356,15 @@ def load_hydrology_mapping(path: Path) -> HydrologyMapping:
             raise FemicHydrologyMappingError(
                 f"Mapping row {index} has unsupported support_unit {unit!r}."
             )
+        support_id = _required_text(item.get("support_id"), f"mapping row {index} support_id")
+        key = (unit, support_id)
+        if key in seen:
+            raise FemicHydrologyMappingError(f"Duplicate mapping row for {unit} {support_id!r}.")
+        seen.add(key)
         rows.append(
             HydrologyMappingRow(
                 support_unit=unit,
-                support_id=_required_text(
-                    item.get("support_id"), f"mapping row {index} support_id"
-                ),
+                support_id=support_id,
                 unit_id=_required_text(item.get("unit_id"), f"mapping row {index} unit_id"),
                 watershed_id=_required_text(
                     item.get("watershed_id"), f"mapping row {index} watershed_id"

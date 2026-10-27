@@ -4,18 +4,28 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 from pathlib import Path
 
 import pytest
-from test_hydrology_mapping import _rows, _scenario, _write_crosswalk, _write_metadata
+from test_hydrology_mapping import (
+    SCENARIO,
+    _rows,
+    _scenario,
+    _write_crosswalk,
+    _write_metadata,
+)
 from typer.testing import CliRunner
 
 from fhops.cli.main import app
 from fhops.scenario.hydrology import FemicHydrologyReadiness
 from fhops.scenario.hydrology_mapping import (
+    FemicHydrologyMappingError,
+    load_hydrology_mapping,
     map_femic_hydrology_to_scenario,
     write_hydrology_mapping,
 )
+from fhops.scenario.hydrology_registration import register_femic_hydrology_bundle
 from fhops.scenario.hydrology_screen import (
     FemicHydrologyScreenError,
     enforce_hydrology_readiness,
@@ -136,6 +146,8 @@ def test_screen_schedule_produces_rows_and_exposure_features(tmp_path: Path) -> 
     assert screen.rows[1]["road_used_km"] == pytest.approx(2.0)
     assert screen.rows[0]["screening_peak_flow_m3s"] == pytest.approx(120.0)
     assert screen.coverage["exposure_used"] is True
+    assert screen.to_dict()["exposure_sha256"]
+    assert "Synthetic exposure fixture only." in screen.caveats
 
     paths = write_hydrology_screen(screen, tmp_path / "screen")
     assert paths["rows"].is_file()
@@ -143,7 +155,86 @@ def test_screen_schedule_produces_rows_and_exposure_features(tmp_path: Path) -> 
     manifest = json.loads(paths["manifest"].read_text(encoding="utf-8"))
     assert manifest["schema_version"] == "fhops.hydrology.screen.v1"
     assert manifest["row_count"] == 2
+    assert manifest["exposure_sha256"] == screen.exposure_sha256
     assert manifest["coverage"]["exposure_used"] is True
+    assert "Synthetic exposure fixture only." in manifest["caveats"]
+
+
+def test_screen_selects_high_response_scenario(tmp_path: Path) -> None:
+    scenario = _scenario(tmp_path)
+    mapping = _mapping(tmp_path, scenario)
+    schedule = tmp_path / "assignments.csv"
+    schedule.write_text(
+        "machine_id,block_id,day,shift_id\nM1,T6_23339458,1,S1\n",
+        encoding="utf-8",
+    )
+    exposure = _exposure(tmp_path, schedule)
+
+    screen = screen_fhops_hydrology(
+        scenario,
+        BUNDLE,
+        mapping,
+        schedule,
+        exposure,
+        scenario_tolerance=0.3,
+    )
+
+    assert screen.rows[0]["scenario_name"] == "high"
+    assert screen.rows[0]["response_ratio"] == pytest.approx(1.25)
+    assert screen.rows[0]["screening_peak_flow_m3s"] == pytest.approx(150.0)
+
+
+def test_screen_refuses_mapping_from_another_scenario(tmp_path: Path) -> None:
+    scenario = _scenario(tmp_path)
+    mapping = _mapping(tmp_path, scenario)
+    other = tmp_path / "other"
+    shutil.copytree(SCENARIO.parent, other)
+    register_femic_hydrology_bundle(other / "scenario.yaml", BUNDLE)
+    schedule = _schedule(tmp_path)
+    exposure = _exposure(tmp_path, schedule)
+
+    with pytest.raises(FemicHydrologyScreenError, match="different scenario"):
+        screen_fhops_hydrology(
+            other / "scenario.yaml",
+            BUNDLE,
+            mapping,
+            schedule,
+            exposure,
+        )
+
+
+def test_mapping_loader_refuses_duplicate_rows(tmp_path: Path) -> None:
+    scenario = _scenario(tmp_path)
+    mapping = _mapping(tmp_path, scenario)
+    payload = json.loads(mapping.read_text(encoding="utf-8"))
+    payload["rows"].append(dict(payload["rows"][0]))
+    duplicate = tmp_path / "duplicate-mapping.json"
+    duplicate.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(FemicHydrologyMappingError, match="Duplicate mapping row"):
+        load_hydrology_mapping(duplicate)
+
+
+def test_screen_refuses_schedule_beyond_horizon_and_unknown_blocks(tmp_path: Path) -> None:
+    scenario = _scenario(tmp_path)
+    mapping = _mapping(tmp_path, scenario)
+    late = tmp_path / "late.csv"
+    late.write_text(
+        "machine_id,block_id,day,shift_id\nM1,T6_19212607,99,S1\n",
+        encoding="utf-8",
+    )
+    late_exposure = _exposure(tmp_path, late, periods=(0, 98))
+    with pytest.raises(FemicHydrologyScreenError, match="exceeds the scenario horizon"):
+        screen_fhops_hydrology(scenario, BUNDLE, mapping, late, late_exposure)
+
+    unknown = tmp_path / "unknown.csv"
+    unknown.write_text(
+        "machine_id,block_id,day,shift_id\nM1,B99,1,S1\n",
+        encoding="utf-8",
+    )
+    unknown_exposure = _exposure(tmp_path, unknown)
+    with pytest.raises(FemicHydrologyScreenError, match="unknown block"):
+        screen_fhops_hydrology(scenario, BUNDLE, mapping, unknown, unknown_exposure)
 
 
 def test_screen_refuses_schedule_hash_mismatch(tmp_path: Path) -> None:

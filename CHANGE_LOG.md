@@ -4179,7 +4179,8 @@ PY
   `fhops scenario hydrology screen`. The one-schedule screen computes
   cumulative block area by watershed, uses block GeoJSON/LiDAR area evidence,
   applies the schedule-bound exposure features, selects the response scenario,
-  and emits per-watershed/receptor/period rows and refusals. It enforces
+  and emits per-watershed/receptor/period rows and refusals. The manifest keeps
+  the exposure digest and propagates producer caveats. It enforces
   `allow_provisional`, `require_reviewed`, and `require_ready`, requires reviewed
   mapping/exposure under reviewed policies, and writes CSV plus a manifest.
   Added screen, refusal, policy, and CLI tests plus docs/design updates. The

@@ -105,6 +105,7 @@ class HydrologyScreen:
     manifest_sha256: str
     mapping_id: str
     exposure_id: str
+    exposure_sha256: str
     schedule_sha256: str
     readiness_status: str
     policy: str
@@ -132,6 +133,7 @@ class HydrologyScreen:
             "manifest_sha256": self.manifest_sha256,
             "mapping_id": self.mapping_id,
             "exposure_id": self.exposure_id,
+            "exposure_sha256": self.exposure_sha256,
             "schedule_sha256": self.schedule_sha256,
             "readiness_status": self.readiness_status,
             "policy": self.policy,
@@ -251,6 +253,8 @@ def screen_fhops_hydrology(
     ) as exc:
         raise FemicHydrologyScreenError(str(exc)) from exc
     _require_scenario_pin(scenario, bundle)
+    if mapping.scenario_path.expanduser().resolve() != scenario_file:
+        raise FemicHydrologyScreenError("Hydrology mapping was built for a different scenario.")
     if (
         mapping.bundle_id != bundle.bundle_id
         or mapping.bundle_version != bundle.bundle_version
@@ -271,6 +275,19 @@ def screen_fhops_hydrology(
                 f"Exposure review status {exposure.review_status!r} is not reviewed."
             )
     schedule = _read_schedule(schedule_file)
+    if max(schedule) > scenario.num_days:
+        raise FemicHydrologyScreenError(
+            f"Assignments day {max(schedule)} exceeds the scenario horizon "
+            f"({scenario.num_days} days)."
+        )
+    scenario_blocks = set(scenario.block_ids())
+    unknown_blocks = {
+        block_id for blocks in schedule.values() for block_id in blocks
+    } - scenario_blocks
+    if unknown_blocks:
+        raise FemicHydrologyScreenError(
+            "Assignments reference unknown block(s): " + ", ".join(sorted(unknown_blocks)) + "."
+        )
     block_areas = _block_areas(scenario, scenario_file)
     block_mapping = {row.support_id: row for row in mapping.rows if row.support_unit == "block"}
     watershed_areas = _watershed_areas(bundle)
@@ -287,6 +304,7 @@ def screen_fhops_hydrology(
         warnings.append("Exposure is not reviewed; screening is provisional.")
     if readiness.status != "ready":
         warnings.append(f"Bundle readiness is {readiness.status!r}.")
+    warnings.extend(readiness.warnings)
     rows: list[dict[str, object]] = []
     refusals: list[dict[str, object]] = []
     screened_watersheds: set[str] = set()
@@ -479,7 +497,9 @@ def screen_fhops_hydrology(
         "bundle_id": bundle.bundle_id,
         "mapping_id": mapping.mapping_id,
         "exposure_id": exposure.exposure_id,
+        "exposure_sha256": exposure.sha256,
         "schedule_sha256": exposure.schedule_sha256,
+        "readiness_status": readiness.status,
         "rows": rows,
         "refusals": refusals,
         "policy": policy,
@@ -510,6 +530,7 @@ def screen_fhops_hydrology(
         manifest_sha256=bundle.manifest_sha256,
         mapping_id=mapping.mapping_id,
         exposure_id=exposure.exposure_id,
+        exposure_sha256=exposure.sha256,
         schedule_sha256=exposure.schedule_sha256,
         readiness_status=readiness.status,
         policy=policy,
@@ -517,11 +538,18 @@ def screen_fhops_hydrology(
         refusals=tuple(refusals),
         coverage=coverage,
         warnings=tuple(warnings),
-        caveats=(
-            "One-schedule screening only; not a process simulation or flood map.",
-            "Response ratios and baseline flows come from the pinned FEMIC bundle.",
-            "Exposure is an explicit schedule-bound input, not inferred from geometry.",
-            "Hydrologist review and a real-watershed pilot remain required.",
+        caveats=tuple(
+            dict.fromkeys(
+                (
+                    "One-schedule screening only; not a process simulation or flood map.",
+                    "Response ratios and baseline flows come from the pinned FEMIC bundle.",
+                    "Exposure is an explicit schedule-bound input, not inferred from geometry.",
+                    "Hydrologist review and a real-watershed pilot remain required.",
+                    *bundle.caveats,
+                    *mapping.caveats,
+                    *exposure.caveats,
+                )
+            )
         ),
     )
 
@@ -645,12 +673,20 @@ def _block_areas(scenario: object, scenario_path: Path) -> dict[str, float]:
                 continue
             block_id = props.get("block_id") or feature.get("id")
             area = props.get("area_ha") or props.get("AREA_HA")
-            if isinstance(block_id, str) and isinstance(area, (int, float)):
-                areas[block_id] = float(area)
+            if (
+                isinstance(block_id, str)
+                and isinstance(area, (int, float))
+                and not isinstance(area, bool)
+            ):
+                numeric = float(area)
+                if math.isfinite(numeric) and numeric > 0:
+                    areas[block_id] = numeric
     for support in getattr(scenario, "lidar_support", None) or []:
         if support.support_unit != "block" or support.support_area_m2 is None:
             continue
-        areas.setdefault(support.support_id, support.support_area_m2 / 10000.0)
+        numeric = float(support.support_area_m2) / 10000.0
+        if math.isfinite(numeric) and numeric > 0:
+            areas.setdefault(support.support_id, numeric)
     if not areas:
         raise FemicHydrologyScreenError(
             "Screening requires block area evidence from GeoJSON area_ha or LiDAR support."
@@ -669,8 +705,14 @@ def _watershed_areas(bundle: FemicHydrologyBundle) -> dict[str, float]:
             continue
         watershed_id = item.get("watershed_id")
         area = item.get("area_km2")
-        if isinstance(watershed_id, str) and isinstance(area, (int, float)) and area > 0:
-            result[watershed_id] = float(area) * 100.0
+        if (
+            isinstance(watershed_id, str)
+            and isinstance(area, (int, float))
+            and not isinstance(area, bool)
+        ):
+            numeric = float(area)
+            if math.isfinite(numeric) and numeric > 0:
+                result[watershed_id] = numeric * 100.0
     return result
 
 

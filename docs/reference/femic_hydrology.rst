@@ -241,8 +241,9 @@ refusals; without ``--allow-refused`` the command exits non-zero.
 Outputs are ``hydrology_screen.csv`` and ``hydrology_screen.json``. Every row
 carries the harvest fraction, exposure features, selected scenario, response
 ratio, baseline flow, screening peak flow, and any producer receptor values.
-The manifest carries bundle/mapping/exposure identities, schedule digest,
-readiness, coverage, refusals, warnings, and screening-only caveats.
+The manifest carries bundle/mapping/exposure identities, exposure and schedule
+digests, readiness, coverage, refusals, warnings, and the producer plus
+screening-only caveats.
 
 This is a one-schedule CLI screen. The optimizer does not consume a fixed
 exposure table; schedule-derived exposure for each candidate remains deferred.

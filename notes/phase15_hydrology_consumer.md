@@ -223,8 +223,8 @@ mapping, exposure period, scenario, or flood-risk row is a refusal.
 
 `require_reviewed` requires a reviewed bundle, crosswalk, and exposure table;
 `require_ready` requires the bundle to be fully ready. A tail-check block always
-refuses. The screen writes a CSV and manifest and is not wired into the
-optimizer.
+refuses. The screen writes a CSV and manifest, carries the exposure digest and
+the producer caveats, and is not wired into the optimizer.
 
 ## Open decisions and recommended defaults
 
