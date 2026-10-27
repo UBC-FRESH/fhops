@@ -4153,3 +4153,13 @@ PY
   and a changed manifest checksum is rejected. Added contract, registration,
   duplicate-pin, tamper, and CLI tests plus reference docs. No crosswalk,
   exposure, screening, or real watershed result was added.
+
+- 2026-10-27: P15.3 (#221, parent #218) added explicit hydrology crosswalk
+  loading and mapping. The crosswalk maps blocks, landings, and road-construction
+  ids to FEMIC units, watersheds, and optional receptors; review metadata is a
+  separate checksummed JSON document. Mapping validates all ids and the
+  ledger's unit-to-watershed assignment, requires complete coverage unless
+  `--allow-partial` records gaps, and writes `hydrology_mapping.csv` plus a
+  manifest. Added `fhops scenario hydrology map`, tests, docs, and the
+  authoritative-note decision. No spatial inference, exposure, screening, or
+  real watershed result was added.

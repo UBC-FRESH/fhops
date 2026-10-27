@@ -101,6 +101,56 @@ checksum is rejected. Existing scenarios without the section remain valid.
 
 Use ``--dry-run`` to validate and print the pin without writing the scenario.
 
+Support Mapping
+---------------
+
+Hydrology mapping is an explicit crosswalk. A CSV row names exactly one FHOPS
+support key and one FEMIC unit/watershed/receptor:
+
+.. code-block:: text
+
+   block_id,landing_id,road_id,unit_id,watershed_id,receptor_id,notes
+   B01,,,unit-1,watershed-1,receptor-1,block review
+   ,L01,,unit-1,watershed-1,receptor-1,landing review
+   ,,R01,unit-1,watershed-1,receptor-1,road review
+
+Review metadata is a separate JSON document:
+
+.. code-block:: json
+
+   {
+     "schema_version": "fhops.hydrology.crosswalk.v1",
+     "crosswalk_id": "crosswalk-example",
+     "created_utc": "2026-10-27T00:00:00+00:00",
+     "review_status": "reviewed",
+     "reviewed_by": "reviewer-id",
+     "method": "Manual block/landing/road review",
+     "source": "Reviewed FEMIC domain bundle",
+     "caveats": ["Screening crosswalk only."]
+   }
+
+The optional ``crosswalk_sha256`` field pins the CSV. Missing metadata is
+recorded as ``not_reviewed`` and the mapping is provisional.
+
+Map the scenario:
+
+.. code-block:: bash
+
+   fhops scenario hydrology map scenarios/example/scenario.yaml \
+     data/femic/hydrology-response-2026.10.0 \
+     reviewed-crosswalk.csv \
+     --metadata reviewed-crosswalk.meta.json \
+     --out build/hydrology_mapping
+
+The command requires the bundle to be pinned in the scenario. It checks every
+FHOPS block, landing, and road-construction id, every FEMIC unit/watershed/
+receptor id, and the unit-to-watershed assignment. Complete coverage is required
+unless ``--allow-partial`` records the gaps. The output is
+``hydrology_mapping.csv`` plus ``hydrology_mapping.json`` with the bundle pin,
+crosswalk checksum, review state, rows, coverage, warnings, and caveats.
+
+No centroid, buffer, nearest-watershed, or nearest-road operation is performed.
+
 CLI
 ---
 

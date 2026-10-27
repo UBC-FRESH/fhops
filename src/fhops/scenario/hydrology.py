@@ -396,6 +396,54 @@ def bundle_pin(bundle: FemicHydrologyBundle) -> dict[str, object]:
     }
 
 
+def read_femic_hydrology_domain(bundle: FemicHydrologyBundle) -> dict[str, object]:
+    """Return the pinned FEMIC domain artifact.
+
+    Parameters
+    ----------
+    bundle : FemicHydrologyBundle
+        Validated bundle.
+
+    Returns
+    -------
+    dict[str, object]
+        Domain payload with watersheds and receptors.
+
+    Raises
+    ------
+    FemicHydrologyError
+        If the domain artifact is missing or malformed.
+    """
+    payload = _optional_payload(bundle, "domain")
+    if payload is None:
+        raise FemicHydrologyError("Hydrology bundle has no domain artifact.")
+    return payload
+
+
+def read_femic_hydrology_ledger(bundle: FemicHydrologyBundle) -> dict[str, object]:
+    """Return the pinned FEMIC disturbance-ledger artifact.
+
+    Parameters
+    ----------
+    bundle : FemicHydrologyBundle
+        Validated bundle.
+
+    Returns
+    -------
+    dict[str, object]
+        Ledger payload with units and watershed assignments.
+
+    Raises
+    ------
+    FemicHydrologyError
+        If the ledger artifact is missing or malformed.
+    """
+    payload = _optional_payload(bundle, "disturbance_ledger")
+    if payload is None:
+        raise FemicHydrologyError("Hydrology bundle has no disturbance-ledger artifact.")
+    return payload
+
+
 def assess_femic_hydrology_readiness(
     bundle: FemicHydrologyBundle,
 ) -> FemicHydrologyReadiness:

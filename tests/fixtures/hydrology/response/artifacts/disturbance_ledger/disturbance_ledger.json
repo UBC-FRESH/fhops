@@ -6,6 +6,10 @@
     {
       "unit_id": "unit-1",
       "watershed_id": "watershed-1"
+    },
+    {
+      "unit_id": "unit-2",
+      "watershed_id": "watershed-2"
     }
   ]
 }

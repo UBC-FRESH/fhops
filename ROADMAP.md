@@ -398,10 +398,10 @@ Authoritative note: `notes/phase15_hydrology_consumer.md`.
   - [x] Add the scenario pin and readiness fields
   - [x] Add idempotent registration and stale-manifest rejection
   - [x] Add `fhops scenario hydrology register`, tests, and docs
-- [ ] P15.3 Map FHOPS support to watersheds and receptors (#221)
-  - [ ] Define the explicit crosswalk and review metadata
-  - [ ] Enforce complete coverage or recorded gaps
-  - [ ] Add `fhops scenario hydrology map`, tests, and docs
+- [x] P15.3 Map FHOPS support to watersheds and receptors (#221)
+  - [x] Define the explicit crosswalk and review metadata
+  - [x] Enforce complete coverage or recorded gaps
+  - [x] Add `fhops scenario hydrology map`, tests, and docs
 - [ ] P15.4 Load schedule-bound road/culvert exposure (#222)
   - [ ] Consume the shared `ws4.hydrology.exposure.v1` contract
   - [ ] Bind the table to one schedule hash and refuse missing/duplicate rows
