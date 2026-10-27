@@ -4231,6 +4231,6 @@ PY
   and one-schedule screening, plus fail-closed cases for a tampered bundle,
   blocked readiness, an unreviewed crosswalk, partial mapping, missing exposure,
   and a schedule-hash mismatch. Added `notes/reports/p15-closeout.md`, updated
-  the roadmap to `pr-open`, and recorded the phase closeout. The final phase PR
-  is #232 and is queued for maintainer approval. No real watershed result was
-  produced.
+  the roadmap to `pr-open`, and recorded the phase closeout. Final phase PR #232
+  merged as `3b404414`; the phase branch was deleted and #218 closed. No real
+  watershed result was produced.

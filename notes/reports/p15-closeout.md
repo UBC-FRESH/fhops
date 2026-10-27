@@ -3,27 +3,24 @@
 Phase: P15 Consume FEMIC hydrology response bundles
 Parent issue: #218
 Pull request: #232
+Merge commit: `3b404414`
 Evidence head: `0a2cd678` (P15.6 test matrix and closeout report)
 Date: 2026-10-27
-Status: queued for approval. Not merged.
+Status: complete after PR merge.
 
 ## Recommendation
 
-Approve these actions. The agent carries them out in this order, and reads back
-each result.
+Completed after maintainer approval:
 
-1. Treat the phase pull request as the single P15 pull request.
-2. Squash-merge it into `main` and delete `feature/phase15-hydrology-consumer`.
-3. Close the P15.6 issue and parent issue #218 with closeout comments that cite
-   the merge commit.
-4. Do not start a real watershed pilot. Keep optimizer-integrated exposure
+1. The final phase PR was squash-merged into `main` as `3b404414`.
+2. `feature/phase15-hydrology-consumer` was deleted.
+3. P15.6 and parent issue #218 were closed with closeout comments citing the
+   merge commit.
+4. No real watershed pilot was started. Optimizer-integrated exposure remains
    deferred until a reviewed bundle, receptor evidence, and a schedule-derived
    road-state contract exist.
 
-Settings changes, each with its exact command. Each one runs only after its own
-approval.
-
-- None.
+Settings changes: none.
 
 ## 1. Objectives and acceptance
 
@@ -48,11 +45,12 @@ approval.
 - Child PRs: #225, #227, #229, #230, #231. #230 included a maintainer follow-up
   adding CLI exposure validation and digest preservation. #231 included a
   maintainer hardening commit for provenance and validation.
-- Final phase PR: #232, based on `main`.
+- Final phase PR: #232, merged to `main` as `3b404414`; the phase branch was
+  deleted.
 - Commit messages use P15 task prefixes where applicable.
 - Roadmap, the authoritative note, changelog, and issue bodies were kept in
   step.
-- One final phase pull request carries the phase branch into `main`.
+- One final phase pull request carried the phase branch into `main`.
 - No tag, release, visibility, or settings change is included.
 
 ## 3. Gate evidence
@@ -97,7 +95,7 @@ Child CI runs:
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| 40475758493 | `0a2cd678` | green | Final phase PR CI against `main` (pytest, ruff, mypy, pre-commit, docs, packaging checks). The report-only follow-up reruns CI. |
+| 40475758493 | `0a2cd678` | green | Final phase PR CI against `main` (pytest, ruff, mypy, pre-commit, docs, packaging checks). Merge commit: `3b404414`. |
 
 ## 5. Deviations
 
@@ -125,5 +123,7 @@ Until then, the one-schedule consumer is the supported surface.
 
 ## 7. Decision
 
-- [ ] Approve as written.
+- [x] Approve as written.
 - [ ] Approve with the changes stated here: <changes>.
+
+Approved by merging #232 as `3b404414`.
