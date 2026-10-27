@@ -26,6 +26,13 @@ from .hydrology import (
 from .hydrology import (
     bundle_pin as hydrology_bundle_pin,
 )
+from .hydrology_registration import (
+    FemicHydrologyRegistrationError,
+    register_femic_hydrology_bundle,
+)
+from .hydrology_registration import (
+    RegistrationResult as HydrologyRegistrationResult,
+)
 from .io import load_scenario, read_csv
 from .lidar import (
     FemicLidarBundle,
@@ -87,4 +94,7 @@ __all__ = [
     "hydrology_bundle_pin",
     "load_femic_hydrology_bundle",
     "validate_femic_hydrology_bundle",
+    "FemicHydrologyRegistrationError",
+    "HydrologyRegistrationResult",
+    "register_femic_hydrology_bundle",
 ]

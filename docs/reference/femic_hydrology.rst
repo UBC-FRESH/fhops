@@ -63,6 +63,44 @@ Missing evidence is reported as missing, never approved. A checksum pass is not
 a hydrologic validation. Phase 15 uses these states for screening policy; the
 validator itself does not grant operational use.
 
+Scenario Pin
+------------
+
+Register a validated bundle in a scenario without copying it::
+
+   fhops scenario hydrology register scenarios/example/scenario.yaml \
+     data/femic/hydrology-response-2026.10.0
+
+The scenario gains an optional ``hydrology_products`` section::
+
+   hydrology_products:
+     - bundle_id: hydro-response-example
+       bundle_version: 2026.10.0
+       manifest_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+       domain_id: example-domain
+       ledger_id: example-ledger
+       response_surface_id: example-surface
+       manifest_path: ../../data/femic/hydrology-response-2026.10.0/manifest.json
+       readiness_status: ready
+       readiness_evidence_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+       artifacts:
+         - role: response_surface
+           relative_path: artifacts/response_surface/response_surface.json
+           schema_version: femic.hydrology.flood_response.v1
+           media_type: application/json
+           size_bytes: 1234
+           sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+       caveats:
+         - Screening only; not a regulatory flood map.
+
+The pin records the bundle identity, manifest and artifact checksums, domain,
+ledger, response surface, readiness state, and caveats. It is a reference; the
+bundle is not copied into the scenario or repository. Re-registering the same
+pin is idempotent; reusing the same bundle id/version with a different manifest
+checksum is rejected. Existing scenarios without the section remain valid.
+
+Use ``--dry-run`` to validate and print the pin without writing the scenario.
+
 CLI
 ---
 
