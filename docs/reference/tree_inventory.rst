@@ -126,6 +126,6 @@ Limits
 
 P17.1 defines and validates only the inventory contract. It does not map trees to
 a scenario, derive stem volume or bucking, simulate machines, or export 3D
-scenes. The current FEMIC/LidarBC bundle contract has no individual-tree product;
+scenes. See :doc:`stem_models` for the P17.3 stem layer. The current FEMIC/LidarBC bundle contract has no individual-tree product;
 a real tree list must be supplied by a producer and reviewed before any
 operational tree map is claimed.
