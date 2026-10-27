@@ -80,6 +80,7 @@ def rolling_plan(
         int,
         typer.Option(
             "--mip-time-limit",
+            min=0,
             help="MILP time limit in seconds when --solver mip",
         ),
     ] = 300,
@@ -388,7 +389,7 @@ def tactical_operational_plan(
     ] = "highs",
     time_limit: Annotated[
         int | None,
-        typer.Option("--time-limit", help="Solver time limit in seconds."),
+        typer.Option("--time-limit", min=0, help="Solver time limit in seconds."),
     ] = None,
     gap: Annotated[
         float | None,

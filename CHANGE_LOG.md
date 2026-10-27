@@ -1,3 +1,42 @@
+# 2026-10-27 — FHOPS 1.1.0 release
+
+- Bumped the package version to `1.1.0` and documented the stable release in
+  `docs/releases/v1.1.0.md`.
+- Includes the complete 1.1 line: corrected operational core, tactical–operational planning, log
+  hauling and multi-day marine cycles, the optional web application, FEMIC LidarBC consumption, and
+  the third-audit MILP/rolling/heuristic fixes.
+- Updated README and import-version checks for `fhops==1.1.0`.
+
+Verification:
+- Full CI suite green before tagging; local `pytest` retains only the two pre-existing HiGHS
+  option-error failures; ruff, mypy, pre-commit, and Sphinx clean.
+
+# 2026-10-26 — Phase 8.31: third-audit MILP/rolling fixes (#157, part of #90)
+
+- **Calendar AND (#157/N1).** `machine_slot_available` now requires both the day-calendar and
+  shift-calendar flags, matching formulation E1, the heuristics, warm-start derivation, and rolling
+  day-lock expansion.
+- **Earliness integrality (#157/N2).** `_extract_assignments` only exports rows with `x >= 0.5`;
+  fractional phantom assignments no longer appear, exported production is summed from the exported
+  rows, and the HiGHS earliness stage uses a tighter MIP feasibility tolerance.
+- **Carry-forward state (#157/N3).** `carry_forward_state` no longer clamps upstream
+  `role_remaining` to terminal remaining volume; non-terminal roles may exceed it, while terminal
+  roles are still capped by the scenario validation.
+- **Empty-window flag (#157/N4).** `--fail-on-empty-window` now ignores lock spans with no
+  available block window, machine calendar, or shift slot.
+- **Limits/options (#157/N5).** Negative time limits and out-of-range gaps are rejected in the
+  driver; CLI time options use `min=0`; option-related solver log warnings are surfaced in the
+  result warnings.
+- Added regression tests for calendar AND, fractional export, non-terminal carry state, lock-span
+  capacity, solver limits/options; updated the pre-existing initial-state test for the new
+  non-terminal validation.
+- Docs: data contract calendar AND note and 1.0.1 release notes.
+
+Verification:
+- `pytest -q tests/initial_state tests/planning tests/model` -> all pass except the two known
+  pre-existing HiGHS option-error failures.
+- Full `pytest` -> only those two known failures remain; ruff, mypy, Sphinx clean.
+
 # 2026-10-26 — Web UI polish: tables, map selection, palette, and URL time state
 
 - Replaced the table renderer with a shared sortable table shell: accessible column sort buttons,

@@ -9,7 +9,6 @@
 
 from __future__ import annotations
 
-import dataclasses
 import random
 from dataclasses import replace
 
@@ -348,17 +347,11 @@ def test_role_remaining_above_work_required_is_capped() -> None:
             initial_state=state,
         )
 
-    with pytest.raises(ValueError, match="above the block's work_required"):
-        build(state_with(69.392))
-    pb = Problem.from_scenario(build(state_with(53.992)))
+    # #157/N3: staged inventory lets a non-terminal role carry more remaining output than the
+    # terminal remainder, so the scenario is valid and the MILP's defensive cap still applies.
+    pb = Problem.from_scenario(build(state_with(69.392)))
     ctx = build_operational_problem(pb)
-    bundle = dataclasses.replace(
-        ctx.bundle,
-        initial_role_remaining={
-            **ctx.bundle.initial_role_remaining,
-            ("B1", "feller_buncher"): 69.392,
-        },
-    )
+    bundle = ctx.bundle
     result = solve_operational_milp(bundle, solver="highs", time_limit=60)
     _assert_clean_replay(pb, result)
     frame = result["assignments"]

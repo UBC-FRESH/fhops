@@ -181,8 +181,6 @@ class RunManager:
             status = "stopped"
         elif record.process.returncode not in (0, None):
             status = "failed"
-        record.status = status
-        record.finished = True
         try:
             build_run_manifest(
                 record.out_dir,
@@ -198,6 +196,12 @@ class RunManager:
             # The process result is still available; a manifest refresh failure should not crash
             # the monitor thread.
             pass
+        finally:
+            # Publish ``finished`` only after the final manifest is written. Otherwise a status poll
+            # can observe the run as finished while a reader still sees a partially written
+            # ``run.json``.
+            record.status = status
+            record.finished = True
 
     def get(self, run_id: str) -> RunProcess | None:
         """Return a live run by id."""

@@ -10,7 +10,7 @@ forest harvesting operations plans. It provides:
 ## Installation
 
 ```bash
-pip install fhops==1.1.0b1
+pip install fhops==1.1.0
 ```
 
 FHOPS 1.0.1 requires Python ≥ 3.11 and, among others, `pyomo>=6.9.2` (HiGHS resolution and MILP

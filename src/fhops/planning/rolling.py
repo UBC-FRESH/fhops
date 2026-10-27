@@ -369,9 +369,6 @@ def carry_forward_state(
             if key in tracker.role_remaining:
                 value = float(tracker.role_remaining[key])
                 value = 0.0 if value <= BLOCK_EPSILON else value
-                # Float noise must not leave a role with more to do than the block's remaining
-                # terminal volume (contract: role_remaining <= work_required).
-                value = min(value, remaining_work[block_id])
                 if abs(value - remaining_work[block_id]) > 1e-9:
                     role_remaining[role] = value
             inventory = float(tracker.role_inventory.get(key, 0.0))
@@ -1212,6 +1209,7 @@ def _run_iteration(
         else sum(block.work_required for block in base.blocks)
     )
     window_work = sum(block.work_required for block in sliced.blocks)
+    lock_span_has_capacity = _lock_span_has_capacity(sliced, window_problem, plan)
 
     iteration_warnings: list[str] = []
     policy_messages: list[str] = []
@@ -1265,8 +1263,10 @@ def _run_iteration(
     carry_after = carry_forward_state(base, locked_base, through_day=lock_end)
     locked_delivered = max(0.0, remaining_start - sum(carry_after.remaining_work.values()))
 
-    empty = window_work > BLOCK_EPSILON and (
-        locked_production <= BLOCK_EPSILON or planned_delivered <= BLOCK_EPSILON
+    empty = (
+        window_work > BLOCK_EPSILON
+        and lock_span_has_capacity
+        and (locked_production <= BLOCK_EPSILON or planned_delivered <= BLOCK_EPSILON)
     )
     if empty and status == "solved":
         policy_messages.append(
@@ -1298,6 +1298,49 @@ def _run_iteration(
         error=error,
     )
     return summary, carry_after
+
+
+def _lock_span_has_capacity(sliced: Scenario, problem: Problem, plan: RollingIterationPlan) -> bool:
+    """Return whether the lock span has any available machine/block capacity.
+
+    A lock span that is entirely blacked out, outside every block window, or outside the machine
+    calendars is legitimately empty; ``--fail-on-empty-window`` must not abort on it (#157/N4).
+    """
+    lock_days = set(range(1, plan.lock_days + 1))
+    blocks = [block for block in sliced.blocks if block.work_required > BLOCK_EPSILON]
+    if not blocks:
+        return False
+    if not any(
+        (block.earliest_start or 1) <= plan.lock_days
+        and (block.latest_finish or sliced.num_days) >= 1
+        for block in blocks
+    ):
+        return False
+    shifts = [shift for shift in problem.shifts if shift.day in lock_days]
+    if not shifts:
+        return False
+    machines = sliced.machines
+    if not machines:
+        return False
+    if sliced.calendar:
+        day_available = {
+            (entry.machine_id, entry.day) for entry in sliced.calendar if entry.available == 1
+        }
+        if not any((machine.id, day) in day_available for machine in machines for day in lock_days):
+            return False
+    if sliced.shift_calendar:
+        shift_available = {
+            (entry.machine_id, entry.day, entry.shift_id)
+            for entry in sliced.shift_calendar
+            if entry.available == 1
+        }
+        if not any(
+            (machine.id, shift.day, shift.shift_id) in shift_available
+            for machine in machines
+            for shift in shifts
+        ):
+            return False
+    return True
 
 
 def _validate_user_lock_windows(base: Scenario) -> None:

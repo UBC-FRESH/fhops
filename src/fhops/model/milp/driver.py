@@ -65,6 +65,11 @@ _HIGHS_START_REJECTED = re.compile(
 )
 _HIGHS_START_LINE = re.compile(r"MIP start|user-supplied", re.IGNORECASE)
 _HIGHS_ERROR_LINE = re.compile(r"^ERROR\b", re.IGNORECASE)
+_OPTION_WARNING_LINE = re.compile(
+    r"(option.*(unknown|invalid|unrecognized|not recognized|warning|error)|"
+    r"(warning|error).*option)",
+    re.IGNORECASE,
+)
 _SOLVED_TERMINATIONS = frozenset({"optimal", "feasible", "locallyoptimal", "globallyoptimal"})
 _INFEASIBLE_TERMINATIONS = frozenset({"infeasible", "infeasibleorunbounded", "unbounded"})
 _ERROR_TERMINATIONS = frozenset(
@@ -328,6 +333,12 @@ def solve_operational_milp(
     returned plan. The cost is a second solve (at most ``earliness_time_limit``).
     """
 
+    _validate_solver_limits(
+        time_limit=time_limit,
+        gap=gap,
+        earliness_time_limit=earliness_time_limit,
+        feasible_start_time_limit=feasible_start_time_limit,
+    )
     if solver.strip().lower() == "auto":
         return _solve_auto(
             bundle,
@@ -421,7 +432,7 @@ def solve_operational_milp(
     objective_value: float | None = None
     if has_solution:
         assignments = _extract_assignments(model)
-        prod = float(sum(max(0.0, pyo.value(model.prod[idx])) for idx in model.prod))
+        prod = float(assignments["production"].sum()) if not assignments.empty else 0.0
         objective_value = float(pyo.value(model.objective))
     else:
         assignments = pd.DataFrame(columns=ASSIGNMENT_COLUMNS)
@@ -441,7 +452,7 @@ def solve_operational_milp(
             earliness_info = stage2.info
             if stage2.applied:
                 assignments = _extract_assignments(model)
-                prod = float(sum(max(0.0, pyo.value(model.prod[idx])) for idx in model.prod))
+                prod = float(assignments["production"].sum()) if not assignments.empty else 0.0
                 objective_value = float(pyo.value(model.objective))
         else:
             earliness_info = {"status": "skipped"}
@@ -462,7 +473,7 @@ def solve_operational_milp(
         "solver_status": status,
         "termination_condition": termination,
         "solver_error": solver_error,
-        "warnings": model_warnings,
+        "warnings": model_warnings + _solver_option_warnings(run.log_lines),
         "warm_start": warm_info,
         "solver": solver,
         "earliness": earliness_info,
@@ -473,6 +484,30 @@ def solve_operational_milp(
 class _EarlinessStage:
     applied: bool
     info: dict[str, Any]
+
+
+def _validate_solver_limits(
+    *,
+    time_limit: int | None,
+    gap: float | None,
+    earliness_time_limit: int | None,
+    feasible_start_time_limit: float | None,
+) -> None:
+    """Reject invalid solver limits before a backend can accept them silently."""
+    for name, value in (
+        ("time_limit", time_limit),
+        ("earliness_time_limit", earliness_time_limit),
+        ("feasible_start_time_limit", feasible_start_time_limit),
+    ):
+        if value is not None and value < 0:
+            raise ValueError(f"{name} must be non-negative")
+    if gap is not None and not 0.0 <= gap <= 1.0:
+        raise ValueError("gap must be between 0 and 1")
+
+
+def _solver_option_warnings(log_lines: list[str]) -> list[str]:
+    """Return option-related solver log lines so typos are visible in ``warnings``."""
+    return [line.strip() for line in log_lines if _OPTION_WARNING_LINE.search(line)]
 
 
 def _solve_earliness_stage(
@@ -519,6 +554,9 @@ def _solve_earliness_stage(
             opt.options["mipgap"] = gap
             if not any(name in solver.lower() for name in ("gurobi", "cplex")):
                 opt.options["mip_rel_gap"] = gap
+        if any(name in solver.lower() for name in ("highs", "appsi_highs")):
+            # Stage 2 is a lexicographic tie-break; keep it from treating x≈1e-7 as assignment.
+            opt.options.setdefault("mip_feasibility_tolerance", 1e-9)
         for key, value in (solver_options or {}).items():
             opt.options[str(key)] = value
         solve_kwargs: dict[str, object] = {"tee": tee, "load_solutions": False}
@@ -934,14 +972,14 @@ def _extract_assignments(model: pyo.ConcreteModel) -> pd.DataFrame:
         production_value = max(
             0.0, float(pyo.value(model.prod[machine_id, block_id, (day, shift_id)]))
         )
-        if assigned_value > 0.5 or production_value > 1e-6:
+        if assigned_value >= 0.5:
             rows.append(
                 {
                     "machine_id": machine_id,
                     "block_id": block_id,
                     "day": int(day),
                     "shift_id": shift_id,
-                    "assigned": int(assigned_value > 0.5),
+                    "assigned": 1,
                     "production": float(production_value),
                 }
             )

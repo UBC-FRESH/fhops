@@ -236,17 +236,18 @@ def machine_slot_available(
     Returns
     -------
     bool
-        ``False`` in timeline blackout slots; otherwise the shift-calendar flag when the slot has
-        one, else the day-calendar flag (default available).
+        ``False`` in timeline blackout slots or when either the day calendar or the shift
+        calendar marks the slot unavailable. The two calendars are combined with AND, matching
+        the heuristics, operational problem, warm-start derivation, and formulation E1.
     """
 
     blocked = blackout_slots if blackout_slots is not None else frozenset(bundle.blackout_slots)
     if (machine_id, day, shift_id) in blocked:
         return False
+    if bundle.availability_day.get((machine_id, day), 1) != 1:
+        return False
     flag = bundle.availability_shift.get((machine_id, day, shift_id))
-    if flag is not None:
-        return flag == 1
-    return bundle.availability_day.get((machine_id, day), 1) == 1
+    return flag is None or flag == 1
 
 
 def resolve_locked_slots(
