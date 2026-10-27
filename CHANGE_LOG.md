@@ -4241,3 +4241,10 @@ PY
   schedule-bound exposure, one-schedule screen, fail-closed integration matrix,
   and closeout evidence are recorded in `notes/reports/p15-closeout.md`. No real
   watershed or regulatory result was produced.
+
+- 2026-10-27: created Phase 16 (parent #235) for flood-aware operational
+  constraints. Added child issues #236-#240, the planned roadmap section, and
+  `notes/phase16_flood_operational_constraints.md`. Scope is fixed hazard
+  windows, explicit road/culvert assets, schedule exposure checks, and only
+  fixed-scenario solver constraints. No watershed flood-response optimization
+  or per-candidate hydrology was added.

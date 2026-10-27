@@ -431,6 +431,47 @@ Acceptance:
 
 Closeout: `notes/reports/p15-closeout.md`; final PR #232 merged as `3b404414`.
 
+## Phase 16 — Flood-aware operational constraints — active
+
+Parent issue: #235. Branch: `feature/phase16-flood-operational-constraints`.
+
+Goal: manage operational flood exposure against a fixed external hazard, not
+optimize watershed flood response. FHOPS checks and constrains schedule activity
+inside watch, warning, and closure windows by watershed and explicit assets.
+
+Authoritative note: `notes/phase16_flood_operational_constraints.md`.
+
+- [ ] P16.1 Define and implement the operational hazard-window contract (#236)
+  - [ ] Validate schema, watershed ids, review metadata, day ranges, and overlaps
+  - [ ] Add severity lookup and validation report
+  - [ ] Add `fhops scenario hydrology hazard validate`, tests, and docs
+- [ ] P16.2 Load road/culvert asset evidence (#237)
+  - [ ] Define explicit asset ids, types, watersheds, and review metadata
+  - [ ] Reject unknown/duplicate assets without geometry inference
+  - [ ] Add tests and docs
+- [ ] P16.3 Check a schedule for hazard-window violations (#238)
+  - [ ] Map block activity to watersheds through the P15 crosswalk
+  - [ ] Emit watch/warning/closure events and closure violations
+  - [ ] Add the constraint-check CLI, CSV/JSON output, tests, and docs
+- [ ] P16.4 Integrate fixed hazard constraints where supported (#239)
+  - [ ] Audit solver decision variables for block/day/shift constraints
+  - [ ] Add fixed closure/warning handling where supportable
+  - [ ] Record any road-work timing limitation explicitly
+- [ ] P16.5 Prove, document, and close out P16 (#240)
+  - [ ] Add the synthetic/public fixture and fail-closed matrix
+  - [ ] Update docs, roadmap, note, and changelog
+  - [ ] Write the closeout report and queue the phase PR
+
+Acceptance:
+
+- Hazard windows and assets validate explicit ids and review metadata.
+- A schedule reports watch, warning, and closure events.
+- Closure activity fails by default; warning failure is an explicit policy.
+- Missing evidence refuses.
+- Solver integration, if present, is fixed-scenario only.
+- No real watershed, flood map, or regulatory result is claimed.
+- FHOPS quality suite and docs build are green.
+
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
