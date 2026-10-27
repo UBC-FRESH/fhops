@@ -4241,3 +4241,11 @@ PY
   schedule-bound exposure, one-schedule screen, fail-closed integration matrix,
   and closeout evidence are recorded in `notes/reports/p15-closeout.md`. No real
   watershed or regulatory result was produced.
+
+- 2026-10-27: #168 closed the cuOpt MIP exploration with
+  `notes/cuopt_milp_pilot.md`. The memo consolidates the existing #168 pilot
+  results, #169 `feasible_start`, and the CJFR equal-total evidence; no new GPU
+  runs were made. Recommendation: reject cuOpt and keep the CPU-only
+  Gurobi/HiGHS + heuristic + `feasible_start` path. The memo records the Nibi
+  versus Sockeye, `tiny7` omission, and cuOpt-as-seed-source deviations. No
+  production backend, manuscript change, or release was added.
