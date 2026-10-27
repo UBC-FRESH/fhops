@@ -73,6 +73,14 @@ synthetic workspace shared by WS4 and FHOPS. The script does not run the CLIs;
 the page lists exact commands and expected counts. Versions are recorded in the
 generated `quickstart.json`.
 
+## P18.3 contract-index decision
+
+The contract index is `docs/reference/hydrology_contract_index.rst`. It groups
+producer, landscape-consumer, and operational-consumer contracts; lists required
+content and refusal behavior; and treats the shared exposure table as a
+WS4-owned contract consumed by FHOPS. Detailed field lists remain in the linked
+reference pages.
+
 ## Tasks
 
 - P18.1: documentation and reproducibility audit.

@@ -492,9 +492,9 @@ Authoritative note: `notes/phase18_hydrology_docs_reproducibility.md`.
   - [x] Pin package versions and environment
   - [x] Run the synthetic FEMIC/WS4/FHOPS path
   - [x] Record expected outputs and unsupported steps
-- [ ] P18.3 Publish the contract and schema index (#263)
-  - [ ] List every hydrology, crosswalk, exposure, hazard, and asset contract
-  - [ ] Record required fields, ownership, and refusal behavior
+- [x] P18.3 Publish the contract and schema index (#263)
+  - [x] List every hydrology, crosswalk, exposure, hazard, and asset contract
+  - [x] Record required fields, ownership, and refusal behavior
 - [ ] P18.4 Add executable hydrology docs checks (#264)
   - [ ] Check links and runnable snippets
   - [ ] Run the synthetic quickstart in CI
