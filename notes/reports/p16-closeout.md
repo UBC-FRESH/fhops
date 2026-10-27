@@ -3,9 +3,9 @@
 Phase: P16 Flood-aware operational constraints
 Parent issue: #235
 Pull request: #255, `feature/phase16-flood-operational-constraints` into `main`
-Evidence head: `339d35b4` (P16.5 plus the `origin/main` cuOpt-memo merge)
+Evidence head: `339d35b4` (P16.5 plus the `origin/main` cuOpt-memo merge); merge commit `b850275d`
 Date: 2026-10-27
-Status: queued for approval. Not merged.
+Status: merged on 2026-10-27 as `b850275d`.
 
 ## Recommendation
 
@@ -75,7 +75,7 @@ Child CI runs:
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | report commit | not yet run | CI runs on #255 after the report update. |
+| 40571486203 | `860990ed` | success | All CI jobs passed before the phase merge. |
 
 ## 5. Deviations
 
