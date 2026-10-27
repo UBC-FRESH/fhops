@@ -7,6 +7,16 @@ from pathlib import Path
 
 import typer
 
+from fhops.stem import (
+    DEFAULT_FORM_FACTOR,
+    DEFAULT_LOG_LENGTH_M,
+    DEFAULT_SAWLOG_MIN_DBH_CM,
+    DEFAULT_STUMP_HEIGHT_M,
+    ReferenceStemModel,
+    StemModelError,
+    build_stem_inventory,
+    write_stem_inventory,
+)
 from fhops.tree_inventory import validate_tree_inventory
 from fhops.tree_mapping import (
     DEFAULT_RECONCILIATION_TOLERANCE,
@@ -98,6 +108,62 @@ def tree_map(
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
     payload = mapping.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
+
+
+@tree_app.command("stems")
+def tree_stems(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Stem output directory. Print only when omitted."
+    ),
+    tolerance: float = typer.Option(
+        DEFAULT_RECONCILIATION_TOLERANCE,
+        "--tolerance",
+        help="Relative tolerance for merchantable-volume reconciliation.",
+    ),
+    strict: bool = typer.Option(
+        False, "--strict", help="Refuse when a block volume reconciliation warns."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the manifest without writing outputs."
+    ),
+    form_factor: float = typer.Option(
+        DEFAULT_FORM_FACTOR, "--form-factor", help="Reference model form factor."
+    ),
+    log_length: float = typer.Option(
+        DEFAULT_LOG_LENGTH_M, "--log-length", help="Target log length in metres."
+    ),
+    stump_height: float = typer.Option(
+        DEFAULT_STUMP_HEIGHT_M, "--stump-height", help="Stump height in metres."
+    ),
+    sawlog_min_dbh: float = typer.Option(
+        DEFAULT_SAWLOG_MIN_DBH_CM,
+        "--sawlog-min-dbh",
+        help="Minimum DBH in centimetres for the sawlog product class.",
+    ),
+) -> None:
+    """Derive stem volumes and bucked logs for a pinned tree inventory."""
+    try:
+        model = ReferenceStemModel(
+            form_factor=form_factor,
+            log_length_m=log_length,
+            stump_height_m=stump_height,
+            sawlog_min_dbh_cm=sawlog_min_dbh,
+        )
+        result = build_stem_inventory(
+            scenario,
+            model=model,
+            tolerance=tolerance,
+            require_reconciled=strict,
+        )
+        paths = None if dry_run or out is None else write_stem_inventory(result, out)
+    except StemModelError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
     if paths is not None:
         payload["paths"] = {key: str(value) for key, value in paths.items()}
     typer.echo(json.dumps(payload, indent=2))

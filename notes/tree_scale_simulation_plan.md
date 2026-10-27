@@ -179,3 +179,17 @@ gross-volume proxy** against `work_required`. The proxy (`0.5 × basal area ×
 height`) is explicitly not merchantable volume; P17.3 replaces it with a stem
 model. The default reconciliation tolerance is 25 percent. `--strict` refuses
 warnings. No simulation or 3D export is included.
+
+## P17.3 stem-model decision
+
+The stem layer is a pluggable `StemModel` protocol with a reference
+form-factor model. The reference model uses basal area × height × form factor,
+removes stump height from the merchantable length, and bucks the merchantable
+stem into fixed-length logs. It labels logs as sawlog or pulp by DBH and
+preserves producer grade hints. All constants are explicitly placeholders; the
+model is not an operational species-specific taper or grade-recovery system.
+
+`fhops tree stems` evaluates every tree, writes log and block CSVs plus a
+manifest, and reconciles merchantable volume with `work_required`. `--strict`
+refuses warnings. The model is a scaffold for P17.4/P17.5, not a claim of
+statistical defensibility.

@@ -452,10 +452,10 @@ Closeout: `notes/reports/p17-closeout.md` (to be written).
   - [x] Add the scenario reference and checksum validation
   - [x] Resolve trees to blocks and reconcile block evidence
   - [x] Add the map CLI, manifest, tests, and docs
-- [ ] P17.3 Derive stem volume and bucking (#250)
-  - [ ] Define the pluggable stem model
-  - [ ] Produce volume, logs, products, and block totals
-  - [ ] Add the CLI, synthetic model, tests, and docs
+- [x] P17.3 Derive stem volume and bucking (#250)
+  - [x] Define the pluggable stem model
+  - [x] Produce volume, logs, products, and block totals
+  - [x] Add the CLI, synthetic model, tests, and docs
 - [ ] P17.4 Simulate one machine processing trees in one block (#251)
   - [ ] Implement reach, terrain, and deterministic tree selection
   - [ ] Emit per-tree cycle events and block totals

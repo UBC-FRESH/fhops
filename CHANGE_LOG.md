@@ -4271,3 +4271,10 @@ PY
   density and gross-volume-proxy reconciliation, CSV/JSON mapping manifests,
   tests, and reference docs. The proxy is explicitly not merchantable volume;
   no stem model, machine simulation, or 3D export was added.
+
+- 2026-10-27: P17.3 (#250, parent #247) added the pluggable `StemModel`
+  protocol and `ReferenceStemModel` form-factor volume/bucking scaffold,
+  `fhops tree stems`, per-tree logs, block stem summaries, merchantable-volume
+  reconciliation, CSV/JSON outputs, tests, and reference docs. The model and
+  products are explicitly non-operational; no machine simulation or 3D export
+  was added.
