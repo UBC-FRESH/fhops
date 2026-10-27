@@ -12,6 +12,7 @@ import yaml
 from pydantic import TypeAdapter
 
 from fhops.hauling.contract import HaulingConfig
+from fhops.scenario.contract.hydrology import HydrologyBundleRef
 from fhops.scenario.contract.lidar import LidarProductRef, LidarSupport
 from fhops.scenario.contract.models import (
     Block,
@@ -335,6 +336,11 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     if "lidar_support" in meta:
         extras["lidar_support"] = TypeAdapter(list[LidarSupport]).validate_python(
             meta["lidar_support"]
+        )
+
+    if "hydrology_products" in meta:
+        extras["hydrology_products"] = TypeAdapter(list[HydrologyBundleRef]).validate_python(
+            meta["hydrology_products"]
         )
 
     if meta.get("initial_state") is not None:

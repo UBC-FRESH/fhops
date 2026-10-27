@@ -186,6 +186,14 @@ identities, and optional readiness evidence. The CLI entry is
 The committed synthetic bundle is `tests/fixtures/hydrology/response`. It is a
 contract fixture, not a real watershed.
 
+## P15.2 registration decision
+
+The scenario pin lives in `hydrology_products` and records the bundle identity,
+manifest checksum, domain/ledger/response-surface ids, manifest path,
+readiness state, artifact checksums, caveats, and the producer consumer
+contract. Registration is idempotent and rejects the same bundle id/version
+with a different manifest checksum. The bundle is referenced, not copied.
+
 ## Open decisions and recommended defaults
 
 - **Exposure schema:** reuse `ws4.hydrology.exposure.v1` rather than create a

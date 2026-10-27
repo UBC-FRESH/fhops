@@ -4144,3 +4144,12 @@ PY
   readiness. Added `fhops scenario hydrology validate`, the synthetic response
   fixture, contract/CLI tests, and the hydrology reference page. No crosswalk,
   exposure, screening, real watershed result, or optimizer change was added.
+
+- 2026-10-27: P15.2 (#220, parent #218) added optional
+  `Scenario.hydrology_products` pins, a Pydantic hydrology bundle/artifact pin
+  contract, loader support, and `fhops scenario hydrology register`. Registration
+  records readiness, caveats, manifest/artifact checksums, and domain/ledger/
+  surface identities without copying the bundle; re-registration is idempotent
+  and a changed manifest checksum is rejected. Added contract, registration,
+  duplicate-pin, tamper, and CLI tests plus reference docs. No crosswalk,
+  exposure, screening, or real watershed result was added.

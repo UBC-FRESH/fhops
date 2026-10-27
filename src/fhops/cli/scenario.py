@@ -26,6 +26,10 @@ from fhops.scenario.hydrology import (
     FemicHydrologyError,
     validate_femic_hydrology_bundle,
 )
+from fhops.scenario.hydrology_registration import (
+    FemicHydrologyRegistrationError,
+    register_femic_hydrology_bundle,
+)
 from fhops.scenario.io import load_scenario
 from fhops.scenario.lidar import (
     FemicLidarError,
@@ -82,6 +86,41 @@ def hydrology_validate(
     typer.echo(json.dumps(report.to_dict(), indent=2))
     if not report.is_valid:
         raise typer.Exit(1)
+
+
+@hydrology_app.command("register")
+def hydrology_register(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML to pin the bundle in."),
+    bundle: Path = typer.Argument(..., help="FEMIC hydrology bundle directory."),
+    expected_bundle_id: str | None = typer.Option(
+        None, "--expected-bundle-id", help="Require this FEMIC bundle id."
+    ),
+    expected_bundle_version: str | None = typer.Option(
+        None, "--expected-bundle-version", help="Require this FEMIC bundle version."
+    ),
+    verify_checksums: bool = typer.Option(
+        True,
+        "--verify-checksums/--no-verify-checksums",
+        help="Verify every artifact SHA-256 and byte size.",
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the pin without writing the scenario."
+    ),
+) -> None:
+    """Validate a FEMIC hydrology bundle and write its scenario pin."""
+    try:
+        result = register_femic_hydrology_bundle(
+            scenario,
+            bundle,
+            expected_bundle_id=expected_bundle_id,
+            expected_bundle_version=expected_bundle_version,
+            verify_checksums=verify_checksums,
+            dry_run=dry_run,
+        )
+    except (FemicHydrologyError, FemicHydrologyRegistrationError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(json.dumps(result.to_dict(), indent=2))
 
 
 @lidar_app.command("validate")

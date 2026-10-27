@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_va
 
 from fhops.costing.machine_rates import compose_default_rental_rate_for_role, normalize_machine_role
 from fhops.hauling.contract import HaulingConfig
+from fhops.scenario.contract.hydrology import HydrologyBundleRef
 from fhops.scenario.contract.lidar import LidarProductRef, LidarSupport
 from fhops.scheduling import MobilisationConfig, TimelineConfig
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
@@ -668,6 +669,10 @@ class Scenario(BaseModel):
         Optional pins to FEMIC-compiled LidarBC bundle versions. A pin records the bundle id,
         version, manifest checksum, licence, and optional manifest path. FHOPS consumes the FEMIC
         bundle; it never discovers or materializes source tiles itself.
+    hydrology_products:
+        Optional pins to FEMIC hydrology response bundles. A pin records the bundle id, version,
+        manifest checksum, domain/ledger/response-surface ids, artifact checksums, readiness state,
+        and caveats. FHOPS consumes the bundle; it does not copy or re-run FEMIC.
     lidar_support:
         Optional aggregated LidarBC evidence for blocks, landings, and roads. Each row states the
         FEMIC product, native resolution, aggregation, support footprint, and provenance; existing
@@ -715,6 +720,7 @@ class Scenario(BaseModel):
     hauling: HaulingConfig | None = None
     lidar_products: list[LidarProductRef] | None = None
     lidar_support: list[LidarSupport] | None = None
+    hydrology_products: list[HydrologyBundleRef] | None = None
 
     @field_validator("num_days")
     @classmethod
@@ -902,10 +908,19 @@ class Scenario(BaseModel):
                 num_days=self.num_days,
             )
 
+        pinned_hydrology: set[tuple[str, str]] = set()
+        if self.hydrology_products:
+            for hydrology_pin in self.hydrology_products:
+                product_key = (hydrology_pin.bundle_id, hydrology_pin.bundle_version)
+                if product_key in pinned_hydrology:
+                    raise ValueError(
+                        f"Duplicate HydrologyBundleRef pin: {product_key[0]}@{product_key[1]}"
+                    )
+                pinned_hydrology.add(product_key)
         pinned_products: set[tuple[str, str]] = set()
         if self.lidar_products:
-            for product in self.lidar_products:
-                product_key = (product.bundle_id, product.bundle_version)
+            for lidar_pin in self.lidar_products:
+                product_key = (lidar_pin.bundle_id, lidar_pin.bundle_version)
                 if product_key in pinned_products:
                     raise ValueError(
                         f"Duplicate LidarProductRef pin: {product_key[0]}@{product_key[1]}"

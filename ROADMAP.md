@@ -394,10 +394,10 @@ Authoritative note: `notes/phase15_hydrology_consumer.md`.
   - [x] Validate the bundle manifest, roles, checksums, identity, and caveats
   - [x] Read optional validation-report and model-card readiness evidence
   - [x] Add `fhops scenario hydrology validate`, tests, and docs
-- [ ] P15.2 Register and pin a hydrology bundle in a scenario (#220)
-  - [ ] Add the scenario pin and readiness fields
-  - [ ] Add idempotent registration and stale-manifest rejection
-  - [ ] Add `fhops scenario hydrology register`, tests, and docs
+- [x] P15.2 Register and pin a hydrology bundle in a scenario (#220)
+  - [x] Add the scenario pin and readiness fields
+  - [x] Add idempotent registration and stale-manifest rejection
+  - [x] Add `fhops scenario hydrology register`, tests, and docs
 - [ ] P15.3 Map FHOPS support to watersheds and receptors (#221)
   - [ ] Define the explicit crosswalk and review metadata
   - [ ] Enforce complete coverage or recorded gaps
