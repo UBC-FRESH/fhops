@@ -34,6 +34,7 @@ ensembles.
    howto/rolling_horizon
    howto/tactical_operational
    howto/hauling
+   howto/hydrology_quickstart
    howto/web
 
 .. toctree::

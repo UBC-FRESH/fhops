@@ -65,6 +65,14 @@ individual producer and consumer references exist, but the cross-repo quickstart
 version matrix, contract index, expected outputs, and executable docs checks do
 not. Real watershed work remains blocked by data and review, not by missing docs.
 
+## P18.2 quickstart decision
+
+The quickstart is hosted in `docs/howto/hydrology_quickstart.rst` and uses a
+generator script, `scripts/build_hydrology_quickstart.py`, to create one
+synthetic workspace shared by WS4 and FHOPS. The script does not run the CLIs;
+the page lists exact commands and expected counts. Versions are recorded in the
+generated `quickstart.json`.
+
 ## Tasks
 
 - P18.1: documentation and reproducibility audit.
