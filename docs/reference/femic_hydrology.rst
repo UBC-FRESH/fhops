@@ -395,6 +395,31 @@ watershed must appear in the hydrology mapping. Validate and map with:
 The command reports asset count, mapped road jobs, watersheds, warnings, and
 caveats. No asset is converted into a damage curve or a flood-risk finding.
 
+Operational Constraint Check
+----------------------------
+
+Check one assignments schedule against fixed hazard windows:
+
+.. code-block:: bash
+
+   fhops scenario hydrology constraint-check scenarios/example/scenario.yaml \
+     build/hydrology_mapping \
+     assignments.csv \
+     hazard.json \
+     --assets assets.json \
+     --out build/hydrology_constraint_check
+
+The check maps each scheduled block to a FEMIC watershed, looks up watch/
+warning/closure severity for the day, and emits one event per activity. Assets in
+the same watershed are attached as context. Closure activity fails by default;
+`--no-fail-on-closure` reports it without failing. Warning activity is
+informational unless `--fail-on-warning` is set.
+
+Outputs are `hydrology_constraint_events.csv` and
+`hydrology_constraint_check.json`. Missing block mapping, hazard evidence, or
+asset mapping refuses. This is an operational exposure check against a fixed
+hazard, not a watershed flood model.
+
 End-to-End Path
 ---------------
 

@@ -39,6 +39,13 @@ from .hydrology_assets import (
     map_hydrology_assets,
     validate_hydrology_assets,
 )
+from .hydrology_constraint_check import (
+    FemicHydrologyConstraintError,
+    HydrologyConstraintCheck,
+    HydrologyConstraintEvent,
+    check_fhops_hydrology_constraints,
+    write_hydrology_constraint_check,
+)
 from .hydrology_exposure import (
     FemicHydrologyExposureError,
     HydrologyExposure,
@@ -185,4 +192,9 @@ __all__ = [
     "load_hydrology_assets",
     "map_hydrology_assets",
     "validate_hydrology_assets",
+    "FemicHydrologyConstraintError",
+    "HydrologyConstraintCheck",
+    "HydrologyConstraintEvent",
+    "check_fhops_hydrology_constraints",
+    "write_hydrology_constraint_check",
 ]
