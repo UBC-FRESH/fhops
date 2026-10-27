@@ -415,7 +415,7 @@ Closeout: pull request #232 squash-merged as `3b404414`; the phase report is
 - [x] P15.6 Validate, document, and close out P15 (#224)
   - [x] Add the synthetic/public fixture and fail-closed matrix
   - [x] Update docs, roadmap, note, and changelog
-  - [x] Write the closeout report and queue the phase PR
+  - [x] Write the closeout report and merge the phase PR (#232)
 
 Acceptance:
 
@@ -429,7 +429,7 @@ Acceptance:
 - No real watershed or regulatory result is claimed.
 - FHOPS quality suite and docs build are green.
 
-Closeout: `notes/reports/p15-closeout.md`.
+Closeout: `notes/reports/p15-closeout.md`; final PR #232 merged as `3b404414`.
 
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.

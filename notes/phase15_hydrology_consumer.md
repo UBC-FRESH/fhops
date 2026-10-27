@@ -1,8 +1,8 @@
 # Phase 15 — Consume FEMIC hydrology response bundles
 
-Status: planned (2026-10-26)
+Status: complete (merged 2026-10-27)
 Parent issue: #218
-Branch: `feature/phase15-hydrology-consumer`
+Branch: `feature/phase15-hydrology-consumer` (merged and deleted)
 Roadmap: `ROADMAP.md`, section "Phase 15 — Consume FEMIC hydrology response bundles"
 
 ## Context
@@ -231,8 +231,8 @@ the producer caveats, and is not wired into the optimizer.
 The end-to-end integration test runs the CLI path from bundle validation through
 registration, mapping, exposure validation, and one-schedule screening. It also
 covers tampered-bundle, blocked-readiness, unreviewed-crosswalk, partial-mapping,
-missing-exposure, and schedule-mismatch refusals. The phase is queued for
-approval with `notes/reports/p15-closeout.md`. No real watershed result is
+missing-exposure, and schedule-mismatch refusals. P15 merged as #232
+(`3b404414`) with `notes/reports/p15-closeout.md`. No real watershed result is
 claimed. Optimizer-integrated exposure remains deferred until a reviewed bundle
 and schedule-derived road-state contract exist.
 

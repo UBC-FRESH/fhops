@@ -4231,8 +4231,9 @@ PY
   and one-schedule screening, plus fail-closed cases for a tampered bundle,
   blocked readiness, an unreviewed crosswalk, partial mapping, missing exposure,
   and a schedule-hash mismatch. Added `notes/reports/p15-closeout.md`, updated
-  the roadmap to `pr-open`, and recorded the phase closeout. The final phase PR
-  is queued for maintainer approval. No real watershed result was produced.
+  the roadmap to `pr-open`, and recorded the phase closeout. Final phase PR #232
+  merged as `3b404414`; the phase branch was deleted and #218 closed. No real
+  watershed result was produced.
 
 - 2026-10-27: P15 close-out: pull request #232 squash-merged as `3b404414`;
   parent #218 and tasks #219/#220/#221/#222/#223/#224 closed; Phase 15 set to
