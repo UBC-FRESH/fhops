@@ -4321,3 +4321,10 @@ PY
   version matrix, contract index, expected outputs, and executable docs checks;
   and separates documentation gaps from real-data/review blockers. No code,
   data, or watershed result was added.
+
+- 2026-10-27: P18.2 (#262, parent #260) added the pinned cross-repo hydrology
+  quickstart and its workspace generator. The generator creates a shared
+  synthetic bundle, WS4 dataset/crosswalk/schedule/exposure, and FHOPS
+  scenario/crosswalk/exposure/hazard/assets. The docs list exact WS4 and FHOPS
+  commands, expected row counts, closure failure, version matrix, troubleshooting,
+  and the synthetic/real-data boundary. Added generator and FHOPS-path tests.

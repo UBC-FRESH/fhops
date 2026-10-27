@@ -488,10 +488,10 @@ Authoritative note: `notes/phase18_hydrology_docs_reproducibility.md`.
   - [x] Inventory FEMIC, WS4, and FHOPS hydrology docs
   - [x] Record gaps, owners, and data/review blockers
   - [x] Separate documentation gaps from capability gaps
-- [ ] P18.2 Publish the pinned cross-repo quickstart (#262)
-  - [ ] Pin package versions and environment
-  - [ ] Run the synthetic FEMIC/WS4/FHOPS path
-  - [ ] Record expected outputs and unsupported steps
+- [x] P18.2 Publish the pinned cross-repo quickstart (#262)
+  - [x] Pin package versions and environment
+  - [x] Run the synthetic FEMIC/WS4/FHOPS path
+  - [x] Record expected outputs and unsupported steps
 - [ ] P18.3 Publish the contract and schema index (#263)
   - [ ] List every hydrology, crosswalk, exposure, hazard, and asset contract
   - [ ] Record required fields, ownership, and refusal behavior
