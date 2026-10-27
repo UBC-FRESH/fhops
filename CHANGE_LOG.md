@@ -4288,3 +4288,11 @@ PY
   `notes/reports/p16-closeout.md`, set Phase 16 to `pr-open`, and recorded the
   closeout. The final phase PR is queued for maintainer approval. No solver
   constraint, watershed flood model, or regulatory result was added.
+
+- 2026-10-27: #168 closed the cuOpt MIP exploration with
+  `notes/cuopt_milp_pilot.md`. The memo consolidates the existing #168 pilot
+  results, #169 `feasible_start`, and the CJFR equal-total evidence; no new GPU
+  runs were made. Recommendation: reject cuOpt and keep the CPU-only
+  Gurobi/HiGHS + heuristic + `feasible_start` path. The memo records the Nibi
+  versus Sockeye, `tiny7` omission, and cuOpt-as-seed-source deviations. No
+  production backend, manuscript change, or release was added.

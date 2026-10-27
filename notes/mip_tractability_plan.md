@@ -27,6 +27,11 @@ Key observations:
 - Large84 currently runs with a single active thread during presolve despite `Threads=36`. Gurobi drops to one thread when the LP formulation is too large for multi-threaded presolve, so splitting the problem or switching formulations may be mandatory if we want meaningful progress before the time limit.
 
 ### [ ] 2. Heuristic warm starts (prereq for sweeps)
+
+> **Superseded (2026-10-20):** #169 and `notes/cuopt_milp_pilot.md` replace the
+> earlier "not yet practically useful" conclusion. `feasible_start` now derives
+> a complete MIP-feasible point from a heuristic plan; equal-total CJFR evidence
+> shows that seeding buys early feasibility, not final quality or scale.
 - [x] 2.1 Add support for feeding heuristic assignments as a MIP start (e.g., `--incumbent assignments.csv`) by mapping the CSV produced by `fhops solve-heur ... --out` onto Pyomo `x`/`prod` before invoking Gurobi. *(Done via `solve_operational_milp(..., incumbent_assignments=...)`; CLI exposes `--incumbent`, and docs/tests confirm the workflow.)*
 - [x] 2.2 Run back-to-back med42 solves (no start vs greedy start vs 60 s SA start) with identical solver budgets to quantify incumbent quality, gap trajectory, and runtime impact. *(Completed 2025-12-04: all three runs converged to the same 36 247 objective with ~5.4 % gap after 120 s because Gurobi immediately replaced the seed. Added log references + commentary below.)*
 - [x] 2.3 Document the warm-start behaviour (limitations, required CSV schema) in the notes/CLI docs so sweeps can assume access to a seeded incumbent. *(Docs/reference/cli.rst and :doc:`howto/mip_warm_starts` now frame the feature as operational but not yet practically useful beyond tiny7/small21.)*
