@@ -1,0 +1,11 @@
+{
+  "domain_id": "fixture-domain",
+  "ledger_id": "fixture-ledger",
+  "schema_version": "femic.hydrology.disturbance.v1",
+  "units": [
+    {
+      "unit_id": "unit-1",
+      "watershed_id": "watershed-1"
+    }
+  ]
+}

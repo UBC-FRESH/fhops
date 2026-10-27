@@ -1,0 +1,91 @@
+FEMIC Hydrology Response Bundles
+================================
+
+FHOPS consumes versioned FEMIC hydrology response bundles. It does not run
+FEMIC discovery, frequency fitting, surrogate training, or flood-risk
+calculation, and it does not import WS4 at runtime.
+
+Bundle Contract
+---------------
+
+A FEMIC hydrology bundle contains ``manifest.json`` and
+``artifacts/<role>/<role>.json``. FHOPS validates and pins:
+
+- ``bundle_id`` and ``bundle_version``;
+- the manifest SHA-256;
+- every artifact role, schema, media type, size, and SHA-256;
+- path containment inside the bundle;
+- the response-surface, flood-risk, domain, and disturbance-ledger identities;
+- the producer caveats and consumer contract; and
+- optional validation-report and model-card evidence.
+
+Required roles are ``response_surface``, ``flood_risk``, ``domain``, and
+``disturbance_ledger``. Optional roles include the validation report, model
+card, pilot run, frequency fits, and surrogate artifacts.
+
+Python Usage
+------------
+
+.. code-block:: python
+
+   from pathlib import Path
+
+   from fhops.scenario.hydrology import (
+       assess_femic_hydrology_readiness,
+       bundle_pin,
+       load_femic_hydrology_bundle,
+   )
+
+   bundle = load_femic_hydrology_bundle(
+       Path("data/femic/hydrology-response-2026.10.0"),
+       expected_bundle_id="hydro-response-example",
+       expected_bundle_version="2026.10.0",
+   )
+   pin = bundle_pin(bundle)
+   readiness = assess_femic_hydrology_readiness(bundle)
+
+   print(pin["manifest_sha256"])
+   print(readiness.status)
+
+Readiness
+---------
+
+``assess_femic_hydrology_readiness`` reports:
+
+- ``not_available``: no validation report or model card is packaged;
+- ``provisional``: evidence exists but the model card is not reviewed;
+- ``conditionally_ready``: reviewed with conditions;
+- ``ready``: reviewed, with a recorded hydrologist review and no tail-check
+  failures;
+- ``blocked``: a tail-check failure is recorded.
+
+Missing evidence is reported as missing, never approved. A checksum pass is not
+a hydrologic validation. Phase 15 uses these states for screening policy; the
+validator itself does not grant operational use.
+
+CLI
+---
+
+Validate a delivered bundle without modifying a scenario::
+
+   fhops scenario hydrology validate data/femic/hydrology-response-2026.10.0
+
+   fhops scenario hydrology validate data/femic/hydrology-response-2026.10.0 \
+     --expected-bundle-id hydro-response-example \
+     --expected-bundle-version 2026.10.0
+
+The command emits a deterministic JSON report and exits non-zero on an invalid
+bundle. Use ``--no-verify-checksums`` only for a diagnostic inspection; the
+default verifies every size and SHA-256.
+
+Limits
+------
+
+P15.1 validates structure and pins producer evidence. It does not map FHOPS
+blocks, landings, or roads to FEMIC watersheds, does not screen a schedule, and
+does not create a flood map or regulatory result. The committed synthetic
+fixture is ``tests/fixtures/hydrology/response`` and is not a real watershed or
+gauge record.
+
+Later Phase 15 tasks add scenario registration, an explicit crosswalk,
+schedule-bound road/culvert exposure, and one-schedule screening.

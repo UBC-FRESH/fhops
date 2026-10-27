@@ -1,0 +1,68 @@
+{
+  "baseline_name": "baseline",
+  "caveats": [
+    "Synthetic fixture only."
+  ],
+  "diagnostics": {},
+  "generated_utc": "2026-10-26T00:00:00+00:00",
+  "method": "nonstationary_gev",
+  "return_periods": [
+    2.0,
+    100.0
+  ],
+  "rows": [
+    {
+      "baseline_quantile": 120.0,
+      "difference": 0.0,
+      "quantile": 120.0,
+      "ratio": 1.0,
+      "return_period": 2.0,
+      "scenario_name": "baseline"
+    },
+    {
+      "baseline_quantile": 120.0,
+      "difference": 0.0,
+      "quantile": 120.0,
+      "ratio": 1.0,
+      "return_period": 100.0,
+      "scenario_name": "baseline"
+    },
+    {
+      "baseline_quantile": 120.0,
+      "difference": 30.0,
+      "quantile": 150.0,
+      "ratio": 1.25,
+      "return_period": 2.0,
+      "scenario_name": "high"
+    },
+    {
+      "baseline_quantile": 120.0,
+      "difference": 30.0,
+      "quantile": 150.0,
+      "ratio": 1.25,
+      "return_period": 100.0,
+      "scenario_name": "high"
+    }
+  ],
+  "scenarios": [
+    {
+      "covariates": {
+        "harvest_fraction": 0.0
+      },
+      "name": "baseline"
+    },
+    {
+      "covariates": {
+        "harvest_fraction": 0.5
+      },
+      "name": "high"
+    }
+  ],
+  "schema_version": "femic.hydrology.flood_response.v1",
+  "station_id": "fixture-station",
+  "summary": {
+    "row_count": 4
+  },
+  "surface_id": "fixture-surface",
+  "warnings": []
+}

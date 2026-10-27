@@ -4137,3 +4137,10 @@ PY
   Scope is a read-only bundle consumer, explicit crosswalk, schedule-bound
   exposure, and one-schedule screening. No code, real watershed result, or
   optimizer-integrated flood exposure was added.
+
+- 2026-10-26: P15.1 (#219, parent #218) added
+  `fhops.scenario.hydrology` with FEMIC bundle validation, artifact pinning,
+  identity checks, caveat preservation, and optional validation/model-card
+  readiness. Added `fhops scenario hydrology validate`, the synthetic response
+  fixture, contract/CLI tests, and the hydrology reference page. No crosswalk,
+  exposure, screening, real watershed result, or optimizer change was added.

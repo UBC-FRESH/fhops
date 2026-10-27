@@ -379,7 +379,7 @@ Acceptance:
 - The public fixture validates, runs, and records licence/provenance and limits.
 - No discovery or materialization is reimplemented in FHOPS.
 
-## Phase 15 — Consume FEMIC hydrology response bundles — planned
+## Phase 15 — Consume FEMIC hydrology response bundles — active
 
 Parent issue: #218. Branch: `feature/phase15-hydrology-consumer`.
 
@@ -390,10 +390,10 @@ consumer and screening phase, not a flood model or real watershed pilot.
 
 Authoritative note: `notes/phase15_hydrology_consumer.md`.
 
-- [ ] P15.1 Define the FHOPS hydrology consumer contract (#219)
-  - [ ] Validate the bundle manifest, roles, checksums, identity, and caveats
-  - [ ] Read optional validation-report and model-card readiness evidence
-  - [ ] Add `fhops scenario hydrology validate`, tests, and docs
+- [x] P15.1 Define the FHOPS hydrology consumer contract (#219)
+  - [x] Validate the bundle manifest, roles, checksums, identity, and caveats
+  - [x] Read optional validation-report and model-card readiness evidence
+  - [x] Add `fhops scenario hydrology validate`, tests, and docs
 - [ ] P15.2 Register and pin a hydrology bundle in a scenario (#220)
   - [ ] Add the scenario pin and readiness fields
   - [ ] Add idempotent registration and stale-manifest rejection

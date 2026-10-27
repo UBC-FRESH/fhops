@@ -1,0 +1,20 @@
+{
+  "caveats": [
+    "Synthetic readiness fixture."
+  ],
+  "model_card_id": "fixture-card",
+  "review_status": "reviewed",
+  "schema_version": "femic.hydrology.model_card.v1",
+  "validation_report_id": "fixture-validation",
+  "validation_summary": {
+    "full_process_pilot_ready": true,
+    "hydrologist_review_recorded": true,
+    "tail_check_failures": {},
+    "usable_fits": {
+      "fixture-station": [
+        "gev",
+        "lp3"
+      ]
+    }
+  }
+}

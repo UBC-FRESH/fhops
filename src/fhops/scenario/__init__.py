@@ -13,6 +13,19 @@ from .contract import (
     ProductionRate,
     Scenario,
 )
+from .hydrology import (
+    FemicHydrologyArtifact,
+    FemicHydrologyBundle,
+    FemicHydrologyError,
+    FemicHydrologyReadiness,
+    FemicHydrologyValidation,
+    assess_femic_hydrology_readiness,
+    load_femic_hydrology_bundle,
+    validate_femic_hydrology_bundle,
+)
+from .hydrology import (
+    bundle_pin as hydrology_bundle_pin,
+)
 from .io import load_scenario, read_csv
 from .lidar import (
     FemicLidarBundle,
@@ -65,4 +78,13 @@ __all__ = [
     "map_femic_lidar_to_scenario",
     "RegistrationResult",
     "register_femic_lidar_bundle",
+    "FemicHydrologyArtifact",
+    "FemicHydrologyBundle",
+    "FemicHydrologyError",
+    "FemicHydrologyReadiness",
+    "FemicHydrologyValidation",
+    "assess_femic_hydrology_readiness",
+    "hydrology_bundle_pin",
+    "load_femic_hydrology_bundle",
+    "validate_femic_hydrology_bundle",
 ]
