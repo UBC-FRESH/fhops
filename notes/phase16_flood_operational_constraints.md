@@ -113,6 +113,14 @@ Every asset watershed must appear in the P15 crosswalk. The CLI validates an
 inventory alone or maps it against a scenario and mapping. No asset becomes a
 damage curve.
 
+## P16.3 constraint-check decision
+
+The one-schedule check maps block activity to watersheds, looks up fixed
+hazard severity by day, and emits watch/warning/closure events with any
+same-watershed assets. Closure activity fails by default; warning failure is an
+explicit policy. The check writes an events CSV and manifest and does not change
+the schedule or run a hydrology model.
+
 ## Solver integration
 
 P16.4 audits the operational MILP and heuristics. It may add a fixed

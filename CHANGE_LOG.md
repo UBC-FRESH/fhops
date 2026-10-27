@@ -4265,3 +4265,12 @@ PY
   duplicate assets fail. Added `fhops scenario hydrology assets validate`,
   fixture/tests, reference docs, and the authoritative-note decision. No schedule
   check, solver constraint, or real watershed result was added.
+
+- 2026-10-27: P16.3 (#238, parent #235) added
+  `fhops.scenario.hydrology_constraint_check` and
+  `fhops scenario hydrology constraint-check`. The check maps scheduled block
+  activity to FEMIC watersheds, looks up fixed watch/warning/closure windows,
+  attaches same-watershed assets, and emits events plus a manifest. Closure
+  activity fails by default; warning failure is an explicit policy. Added
+  fixture-backed tests, reference docs, and the authoritative-note decision. No
+  solver constraint or real watershed result was added.

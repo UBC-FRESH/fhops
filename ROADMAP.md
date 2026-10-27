@@ -449,10 +449,10 @@ Authoritative note: `notes/phase16_flood_operational_constraints.md`.
   - [x] Define explicit asset ids, types, watersheds, and review metadata
   - [x] Reject unknown/duplicate assets without geometry inference
   - [x] Add tests and docs
-- [ ] P16.3 Check a schedule for hazard-window violations (#238)
-  - [ ] Map block activity to watersheds through the P15 crosswalk
-  - [ ] Emit watch/warning/closure events and closure violations
-  - [ ] Add the constraint-check CLI, CSV/JSON output, tests, and docs
+- [x] P16.3 Check a schedule for hazard-window violations (#238)
+  - [x] Map block activity to watersheds through the P15 crosswalk
+  - [x] Emit watch/warning/closure events and closure violations
+  - [x] Add the constraint-check CLI, CSV/JSON output, tests, and docs
 - [ ] P16.4 Integrate fixed hazard constraints where supported (#239)
   - [ ] Audit solver decision variables for block/day/shift constraints
   - [ ] Add fixed closure/warning handling where supportable
