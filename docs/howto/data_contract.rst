@@ -545,6 +545,16 @@ FHOPS consumes the FEMIC bundle and never discovers or materializes source tiles
 :doc:`../reference/femic_lidar` for the bundle, pin, support, aggregation, and OGL-BC attribution
 contract.
 
+Tree Inventories
+----------------
+
+Scenarios may optionally reference a validated individual-tree inventory in the
+top-level ``tree_inventory`` section. The inventory is referenced, not copied;
+the pin records the CSV and metadata checksums, CRS, review state, producer,
+method, tree count, and block memberships. See
+:doc:`../reference/tree_inventory` for the contract, registration, block map,
+and reconciliation rules.
+
 Authoring Checklist
 -------------------
 
@@ -556,6 +566,8 @@ Authoring Checklist
 5. Add a ``hauling:`` section only when the scenario needs log transport; see :doc:`hauling`.
 6. Add ``lidar_products``/``lidar_support`` only when consuming a FEMIC bundle; see
    :doc:`../reference/femic_lidar`.
+7. Add ``tree_inventory`` only for a validated individual-tree inventory; see
+   :doc:`../reference/tree_inventory`.
 
 Fixture Gallery
 ---------------

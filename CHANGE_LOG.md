@@ -4264,3 +4264,10 @@ PY
   individual-tree product in the current FHOPS/FEMIC bundle data; the fixture is
   explicitly synthetic and no tree map or operational claim is made. No
   segmentation, stem model, machine simulation, or 3D export was added.
+
+- 2026-10-27: P17.2 (#249, parent #247) added the optional
+  `tree_inventory` scenario pin, inventory/metadata checksum and review
+  validation, `fhops tree register`, `fhops tree map`, block tree summaries,
+  density and gross-volume-proxy reconciliation, CSV/JSON mapping manifests,
+  tests, and reference docs. The proxy is explicitly not merchantable volume;
+  no stem model, machine simulation, or 3D export was added.
