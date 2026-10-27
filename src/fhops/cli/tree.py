@@ -41,6 +41,12 @@ from fhops.tree_replay import (
     replay_tree_schedule,
     write_tree_replay,
 )
+from fhops.tree_scene import (
+    DEFAULT_LOD_THRESHOLD,
+    DEFAULT_MAX_LOG_NODES,
+    TreeSceneError,
+    write_tree_scene,
+)
 
 tree_app = typer.Typer(add_completion=False, no_args_is_help=True)
 inventory_app = typer.Typer(add_completion=False, no_args_is_help=True)
@@ -297,3 +303,61 @@ def tree_replay(
     if paths is not None:
         payload["paths"] = {key: str(value) for key, value in paths.items()}
     typer.echo(json.dumps(payload, indent=2))
+
+
+@tree_app.command("scene")
+def tree_scene(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    assignments: Path = typer.Argument(..., help="Assignments CSV."),
+    out: Path = typer.Option(..., "--out", help="Scene output directory."),
+    lod_threshold: int = typer.Option(
+        DEFAULT_LOD_THRESHOLD,
+        "--lod-threshold",
+        help="Use simple tree geometry above this tree count.",
+    ),
+    max_log_nodes: int = typer.Option(
+        DEFAULT_MAX_LOG_NODES,
+        "--max-log-nodes",
+        help="Maximum individual log nodes.",
+    ),
+    obstacle: list[str] | None = typer.Option(
+        None,
+        "--obstacle",
+        help="Circular obstacle as x,y,radius_m. Repeat for multiple obstacles.",
+    ),
+    strict: bool = typer.Option(
+        False, "--strict", help="Refuse when the replay has any discrepancy."
+    ),
+) -> None:
+    """Export a deterministic glTF/GLB tree scene."""
+    try:
+        obstacles = tuple(_parse_obstacle(value) for value in (obstacle or []))
+        result = write_tree_scene(
+            scenario,
+            assignments,
+            out,
+            lod_threshold=lod_threshold,
+            max_log_nodes=max_log_nodes,
+            obstacles=obstacles,
+            require_complete=strict,
+        )
+    except (TreeSceneError, ValueError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "scene_id": result.scene_id,
+                "gltf": str(result.gltf_path),
+                "glb": str(result.glb_path),
+                "manifest": str(result.manifest_path),
+                "camera_path": str(result.camera_path),
+                "viewer": str(result.viewer_path),
+                "tree_count": result.tree_count,
+                "processed_count": result.processed_count,
+                "log_count": result.log_count,
+                "lod": result.lod,
+            },
+            indent=2,
+        )
+    )

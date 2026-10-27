@@ -63,5 +63,5 @@ Limits
   forwarding/landing inventory, and system-level interactions are deferred.
 - Production targets come from the assignments CSV; if absent, the daily-hour
   limit is the only bound.
-- The underlying stem and machine models remain reference scaffolds. No 3D scene
-  is produced.
+- The underlying stem and machine models remain reference scaffolds.
+- The replay feeds :doc:`tree_scene` for glTF/GLB export.

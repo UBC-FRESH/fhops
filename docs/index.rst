@@ -57,6 +57,7 @@ ensembles.
    reference/stem_models
    reference/tree_simulation
    reference/tree_replay
+   reference/tree_scene
 
 .. toctree::
    :maxdepth: 1

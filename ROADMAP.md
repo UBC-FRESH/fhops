@@ -464,10 +464,10 @@ Closeout: `notes/reports/p17-closeout.md` (to be written).
   - [x] Drive the simulator from assignments
   - [x] Track tree consumption, leftovers, and discrepancies
   - [x] Add the replay CLI, manifest, tests, and docs
-- [ ] P17.6 Export a 3D scene and viewer (#253)
-  - [ ] Export deterministic glTF/GLB terrain, trees, paths, and logs
-  - [ ] Add LOD, viewer/import docs, and a camera path
-  - [ ] Add scene tests
+- [x] P17.6 Export a 3D scene and viewer (#253)
+  - [x] Export deterministic glTF/GLB terrain, trees, paths, and logs
+  - [x] Add LOD, viewer/import docs, and a camera path
+  - [x] Add scene tests
 - [ ] P17.7 Validate, document, and close out P17 (#254)
   - [ ] Add the end-to-end synthetic fixture and fail-closed matrix
   - [ ] Run the quality suite and docs build

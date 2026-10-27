@@ -219,3 +219,15 @@ systems, and leftover trees are explicit discrepancies. `--strict` refuses them.
 
 The replay does not rewrite the schedule, model cross-block travel, or model full
 multi-machine interactions. Those remain separate work.
+
+## P17.6 scene-export decision
+
+`fhops tree scene` builds a deterministic glTF 2.0 scene and a GLB counterpart
+from a tree-scale replay. It exports procedural species meshes, tree nodes with
+identity/DBH/height/processed metadata, a flat ground plane, a machine-path
+polyline, optional log nodes, a camera keyframe path, a small Three.js viewer,
+and a scene manifest.
+
+The scene is not a renderer or a surveyed tree map. Ground is a flat plane, not a
+DEM; tree/machine geometry is procedural; video rendering is external. The
+viewer loads Three.js and `scene.gltf` from a CDN and should be served over HTTP.
