@@ -158,6 +158,13 @@ restriction to one solver path now would create inconsistent plans.
 - P16.4: fixed solver constraints where supported.
 - P16.5: fixture, docs, and closeout.
 
+## P16.5 closeout decision
+
+The end-to-end integration test runs hazard validation, asset mapping, and the
+one-schedule constraint check through the CLI. The phase is queued for approval
+with `notes/reports/p16-closeout.md`. No watershed flood model, solver-side
+closure constraint, flood map, or regulatory result is claimed.
+
 ## Acceptance
 
 - Hazard windows and assets validate review metadata and explicit ids.

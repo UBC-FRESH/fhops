@@ -4281,3 +4281,10 @@ PY
   not a solver decision variable. The supported constraint remains
   `fhops scenario hydrology constraint-check`; no partial solver patch was
   added. The limitation and the future integration condition are documented.
+
+- 2026-10-27: P16.5 (#240, parent #235) added the end-to-end operational
+  constraint integration test covering hazard validation, asset mapping, and
+  watch/warning/closure checks through the CLI. Added
+  `notes/reports/p16-closeout.md`, set Phase 16 to `pr-open`, and recorded the
+  closeout. The final phase PR is queued for maintainer approval. No solver
+  constraint, watershed flood model, or regulatory result was added.

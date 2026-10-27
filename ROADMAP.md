@@ -431,7 +431,7 @@ Acceptance:
 
 Closeout: `notes/reports/p15-closeout.md`; final PR #232 merged as `3b404414`.
 
-## Phase 16 — Flood-aware operational constraints — active
+## Phase 16 — Flood-aware operational constraints — pr-open
 
 Parent issue: #235. Branch: `feature/phase16-flood-operational-constraints`.
 
@@ -440,6 +440,7 @@ optimize watershed flood response. FHOPS checks and constrains schedule activity
 inside watch, warning, and closure windows by watershed and explicit assets.
 
 Authoritative note: `notes/phase16_flood_operational_constraints.md`.
+Closeout report: `notes/reports/p16-closeout.md`.
 
 - [x] P16.1 Define and implement the operational hazard-window contract (#236)
   - [x] Validate schema, watershed ids, review metadata, day ranges, and overlaps
@@ -457,10 +458,10 @@ Authoritative note: `notes/phase16_flood_operational_constraints.md`.
   - [x] Audit solver decision variables for block/day/shift constraints
   - [x] Keep enforcement at the one-schedule check layer
   - [x] Record the missing shared solver hook and road-work timing limitation
-- [ ] P16.5 Prove, document, and close out P16 (#240)
-  - [ ] Add the synthetic/public fixture and fail-closed matrix
-  - [ ] Update docs, roadmap, note, and changelog
-  - [ ] Write the closeout report and queue the phase PR
+- [x] P16.5 Prove, document, and close out P16 (#240)
+  - [x] Add the synthetic/public fixture and fail-closed matrix
+  - [x] Update docs, roadmap, note, and changelog
+  - [x] Write the closeout report and queue the phase PR
 
 Acceptance:
 
