@@ -12,6 +12,7 @@ from fhops.costing.machine_rates import compose_default_rental_rate_for_role, no
 from fhops.hauling.contract import HaulingConfig
 from fhops.scenario.contract.hydrology import HydrologyBundleRef
 from fhops.scenario.contract.lidar import LidarProductRef, LidarSupport
+from fhops.scenario.contract.tree import TreeInventoryRef
 from fhops.scheduling import MobilisationConfig, TimelineConfig
 from fhops.scheduling.systems import HarvestSystem, default_system_registry
 
@@ -673,6 +674,10 @@ class Scenario(BaseModel):
         Optional pins to FEMIC hydrology response bundles. A pin records the bundle id, version,
         manifest checksum, domain/ledger/response-surface ids, artifact checksums, readiness state,
         and caveats. FHOPS consumes the bundle; it does not copy or re-run FEMIC.
+    tree_inventory:
+        Optional reference to a validated individual-tree inventory. The reference records the
+        inventory and metadata checksums, CRS, review state, producer, method, tree count, block
+        memberships, and caveats. The inventory is referenced, not copied.
     lidar_support:
         Optional aggregated LidarBC evidence for blocks, landings, and roads. Each row states the
         FEMIC product, native resolution, aggregation, support footprint, and provenance; existing
@@ -721,6 +726,7 @@ class Scenario(BaseModel):
     lidar_products: list[LidarProductRef] | None = None
     lidar_support: list[LidarSupport] | None = None
     hydrology_products: list[HydrologyBundleRef] | None = None
+    tree_inventory: TreeInventoryRef | None = None
 
     @field_validator("num_days")
     @classmethod

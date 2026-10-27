@@ -448,10 +448,10 @@ Closeout: `notes/reports/p17-closeout.md` (to be written).
   - [x] Record the tree-level data-source audit
   - [x] Define `fhops.tree.inventory.v1` and metadata
   - [x] Add validation, CLI, synthetic fixture, tests, and docs
-- [ ] P17.2 Pin inventory to scenario and build block tree maps (#249)
-  - [ ] Add the scenario reference and checksum validation
-  - [ ] Resolve trees to blocks and reconcile block evidence
-  - [ ] Add the map CLI, manifest, tests, and docs
+- [x] P17.2 Pin inventory to scenario and build block tree maps (#249)
+  - [x] Add the scenario reference and checksum validation
+  - [x] Resolve trees to blocks and reconcile block evidence
+  - [x] Add the map CLI, manifest, tests, and docs
 - [ ] P17.3 Derive stem volume and bucking (#250)
   - [ ] Define the pluggable stem model
   - [ ] Produce volume, logs, products, and block totals

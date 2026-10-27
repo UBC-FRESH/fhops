@@ -58,6 +58,50 @@ metadata, duplicate tree IDs, unknown blocks, non-finite dimensions, negative
 DBH/height/crown values, confidence outside 0–1, or a tree outside the declared
 block set fail.
 
+Scenario Pin and Block Map
+--------------------------
+
+Register a validated inventory in a scenario without copying it::
+
+   fhops tree register scenarios/example/scenario.yaml \
+     tests/fixtures/tree_inventory/synthetic_block/inventory.csv \
+     --metadata tests/fixtures/tree_inventory/synthetic_block/inventory.meta.json
+
+The scenario gains an optional ``tree_inventory`` section::
+
+   tree_inventory:
+     inventory_id: synthetic-block-001
+     inventory_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+     metadata_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+     inventory_path: ../../trees/inventory.csv
+     metadata_path: ../../trees/inventory.meta.json
+     crs: EPSG:3005
+     review_status: reviewed
+     reviewed_by: reviewer
+     source_id: synthetic-tree-fixture
+     producer: FHOPS synthetic fixture
+     method: Deterministic synthetic point list; not an ITD/ITC run.
+     tree_count: 12
+     block_ids: [SYNTH_B01]
+     caveats:
+       - Synthetic contract fixture; not a real tree map.
+
+The pin records both checksums, review state, producer provenance, tree count,
+and block memberships. Re-registering the same inventory is idempotent; changing
+the inventory or metadata under the same identity is rejected. The inventory is
+referenced, not copied.
+
+Map the pinned inventory to blocks and reconcile block evidence::
+
+   fhops tree map scenarios/example/scenario.yaml --out build/tree_map
+
+The command requires a scenario pin. It resolves every tree to a scenario block,
+reports blocks without trees, and compares tree count and a crude gross-volume
+proxy with ``stem_density_per_ha`` and ``work_required``. The proxy is not
+merchantable volume; stem-level volume is P17.3. Use ``--strict`` to refuse when
+reconciliation warns. Outputs are ``tree_inventory_map.csv`` and
+``tree_inventory_map.json``.
+
 CLI
 ---
 

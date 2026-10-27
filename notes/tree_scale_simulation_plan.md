@@ -164,3 +164,18 @@ The loader validates required columns, duplicate IDs, finite dimensions,
 positive DBH/height/crown values, confidence, status, metadata schema, units,
 CRS, review metadata, declared block membership, row count, and optional CSV
 digest. A real producer inventory and review remain a separate gate.
+
+## P17.2 registration and mapping decision
+
+The scenario pin is a single optional `tree_inventory` section. It records the
+inventory and metadata checksums, relative paths, CRS, review state, reviewer,
+producer, method, tree count, block memberships, and caveats. The inventory is
+referenced, not copied. Re-registering the same identity and checksums is
+idempotent; a changed inventory under the same identity is rejected.
+
+`fhops tree map` resolves every tree to a scenario block, reports blocks without
+trees, and compares tree count against `stem_density_per_ha` and a **crude
+gross-volume proxy** against `work_required`. The proxy (`0.5 × basal area ×
+height`) is explicitly not merchantable volume; P17.3 replaces it with a stem
+model. The default reconciliation tolerance is 25 percent. `--strict` refuses
+warnings. No simulation or 3D export is included.
