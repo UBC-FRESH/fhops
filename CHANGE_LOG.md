@@ -4291,3 +4291,9 @@ PY
   volume checks, block leftover reporting, unknown/unsupported/discrepancy
   handling, flat event and block outputs, replay JSON, tests, and reference
   docs. The replay does not rewrite the schedule or model cross-block travel.
+
+- 2026-10-27: P17.6 (#253, parent #247) added deterministic glTF/GLB tree
+  scene export, procedural species meshes, tree/machine/log nodes, a flat ground
+  plane, LOD, a camera path, a Three.js viewer, a scene manifest, `fhops tree
+  scene`, tests, and reference docs. The output is a portable scene, not a
+  renderer or surveyed tree map; no video is encoded.
