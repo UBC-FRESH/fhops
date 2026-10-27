@@ -4296,3 +4296,7 @@ PY
   Gurobi/HiGHS + heuristic + `feasible_start` path. The memo records the Nibi
   versus Sockeye, `tiny7` omission, and cuOpt-as-seed-source deviations. No
   production backend, manuscript change, or release was added.
+
+- 2026-10-27: P16.5 merged `origin/main` after the cuOpt MIP memo, resolved the
+  changelog conflict, and reran the full test, docs, and pre-commit gates. No
+  behavior or result changed.
