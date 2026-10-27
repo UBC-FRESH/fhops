@@ -4328,3 +4328,10 @@ PY
   scenario/crosswalk/exposure/hazard/assets. The docs list exact WS4 and FHOPS
   commands, expected row counts, closure failure, version matrix, troubleshooting,
   and the synthetic/real-data boundary. Added generator and FHOPS-path tests.
+
+- 2026-10-27: P18.3 (#263, parent #260) added the cross-repo hydrology
+  contract/schema index and failure matrix. It groups FEMIC producer, WS4
+  landscape-consumer, and FHOPS operational-consumer contracts; records key
+  required content, ownership, refusal behavior, the shared exposure contract,
+  and the boundary between a contract and a watershed result. Linked from the
+  quickstart and hydrology reference.

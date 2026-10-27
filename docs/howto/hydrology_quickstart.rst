@@ -192,6 +192,8 @@ Troubleshooting
 Further Reference
 -----------------
 
+- :doc:`../reference/hydrology_contract_index`
+
 - :doc:`../reference/femic_hydrology`
 - FEMIC hydrology guides in the FEMIC repository.
 - WS4 ``docs/reference/femic-hydrology.rst``.
