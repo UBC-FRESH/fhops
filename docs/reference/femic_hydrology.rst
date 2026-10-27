@@ -102,7 +102,7 @@ checksum is rejected. Existing scenarios without the section remain valid.
 Use ``--dry-run`` to validate and print the pin without writing the scenario.
 
 Support Mapping
---------------
+---------------
 
 Hydrology mapping is an explicit crosswalk. A CSV row names exactly one FHOPS
 support key and one FEMIC unit/watershed/receptor:
