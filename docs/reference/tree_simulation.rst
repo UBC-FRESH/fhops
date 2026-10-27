@@ -67,3 +67,5 @@ Limits
 - Processing time uses an existing harvester regression and the reference stem
   model; it is not a field-validated productivity claim.
 - No 3D scene or video is produced in this task.
+
+See :doc:`tree_replay` for the schedule-coupled replay.

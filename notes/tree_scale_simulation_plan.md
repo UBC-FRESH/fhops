@@ -207,3 +207,15 @@ reference stem model; travel uses a constant speed.
 not alter the inventory, stem results, or scenario. It is a reference execution
 layer, not a field-validated routing or physics model, and it is not coupled to
 the operational schedule yet.
+
+## P17.5 replay decision
+
+`fhops tree replay` reads an assignments CSV and drives the P17.4 simulator for
+the scheduled machine/block/day rows. It consumes trees deterministically across
+assignments, using the scheduled `production` as a volume target when present
+and the machine's daily-hour limit as a time bound. Tree consumption, remaining
+volume, under/over production, unreachable trees, unknown IDs, unsupported
+systems, and leftover trees are explicit discrepancies. `--strict` refuses them.
+
+The replay does not rewrite the schedule, model cross-block travel, or model full
+multi-machine interactions. Those remain separate work.

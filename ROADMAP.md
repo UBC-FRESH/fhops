@@ -460,10 +460,10 @@ Closeout: `notes/reports/p17-closeout.md` (to be written).
   - [x] Implement reach, terrain, and deterministic tree selection
   - [x] Emit per-tree cycle events and block totals
   - [x] Add the CLI, tests, and docs
-- [ ] P17.5 Replay an existing schedule at tree scale (#252)
-  - [ ] Drive the simulator from assignments
-  - [ ] Track tree consumption, leftovers, and discrepancies
-  - [ ] Add the replay CLI, manifest, tests, and docs
+- [x] P17.5 Replay an existing schedule at tree scale (#252)
+  - [x] Drive the simulator from assignments
+  - [x] Track tree consumption, leftovers, and discrepancies
+  - [x] Add the replay CLI, manifest, tests, and docs
 - [ ] P17.6 Export a 3D scene and viewer (#253)
   - [ ] Export deterministic glTF/GLB terrain, trees, paths, and logs
   - [ ] Add LOD, viewer/import docs, and a camera path
