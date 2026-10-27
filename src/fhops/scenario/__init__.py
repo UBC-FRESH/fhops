@@ -28,6 +28,15 @@ from .hydrology import (
 from .hydrology import (
     bundle_pin as hydrology_bundle_pin,
 )
+from .hydrology_exposure import (
+    FemicHydrologyExposureError,
+    HydrologyExposure,
+    HydrologyExposureRow,
+    HydrologyExposureValidation,
+    load_hydrology_exposure,
+    schedule_sha256,
+    validate_hydrology_exposure,
+)
 from .hydrology_mapping import (
     FemicHydrologyMappingError,
     HydrologyCrosswalk,
@@ -121,4 +130,11 @@ __all__ = [
     "load_hydrology_crosswalk",
     "map_femic_hydrology_to_scenario",
     "write_hydrology_mapping",
+    "FemicHydrologyExposureError",
+    "HydrologyExposure",
+    "HydrologyExposureRow",
+    "HydrologyExposureValidation",
+    "load_hydrology_exposure",
+    "schedule_sha256",
+    "validate_hydrology_exposure",
 ]

@@ -402,10 +402,10 @@ Authoritative note: `notes/phase15_hydrology_consumer.md`.
   - [x] Define the explicit crosswalk and review metadata
   - [x] Enforce complete coverage or recorded gaps
   - [x] Add `fhops scenario hydrology map`, tests, and docs
-- [ ] P15.4 Load schedule-bound road/culvert exposure (#222)
-  - [ ] Consume the shared `ws4.hydrology.exposure.v1` contract
-  - [ ] Bind the table to one schedule hash and refuse missing/duplicate rows
-  - [ ] Add raw/derived features, tests, and docs
+- [x] P15.4 Load schedule-bound road/culvert exposure (#222)
+  - [x] Consume the shared `ws4.hydrology.exposure.v1` contract
+  - [x] Bind the table to one schedule hash and refuse missing/duplicate rows
+  - [x] Add raw/derived features, tests, and docs
 - [ ] P15.5 Screen a schedule and gate on readiness (#223)
   - [ ] Emit per-watershed/receptor/period rows and refusals
   - [ ] Apply `allow_provisional`, `require_reviewed`, and `require_ready`

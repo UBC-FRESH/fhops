@@ -151,6 +151,65 @@ crosswalk checksum, review state, rows, coverage, warnings, and caveats.
 
 No centroid, buffer, nearest-watershed, or nearest-road operation is performed.
 
+Schedule-Bound Exposure
+-----------------------
+
+Road and culvert exposure is an explicit table shared with WS4. FHOPS validates
+the `ws4.hydrology.exposure.v1` contract independently and binds it to one
+assignments CSV.
+
+.. code-block:: json
+
+   {
+     "schema_version": "ws4.hydrology.exposure.v1",
+     "exposure_id": "exposure-2026-001",
+     "generated_utc": "2026-10-27T00:00:00+00:00",
+     "source_id": "reviewed-road-and-culvert-inventory",
+     "review_status": "reviewed",
+     "reviewer_id": "reviewer-id",
+     "schedule_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "watershed_ids": ["watershed-1"],
+     "periods": [0, 1],
+     "rows": [
+       {
+         "watershed_id": "watershed-1",
+         "period": 0,
+         "road_built_km": 0.0,
+         "road_used_km": 1.25,
+         "road_decommissioned_km": 0.0,
+         "culvert_count": 4,
+         "culvert_exposed_count": 1
+       },
+       {
+         "watershed_id": "watershed-1",
+         "period": 1,
+         "road_built_km": 0.5,
+         "road_used_km": 1.75,
+         "road_decommissioned_km": 0.0,
+         "culvert_count": 4,
+         "culvert_exposed_count": 2
+       }
+     ],
+     "caveats": ["Screening input only."]
+   }
+
+The declared watershed/period grid must be complete. Missing, duplicate,
+undeclared, negative, or non-finite rows fail. Reviewed metadata requires a
+reviewer. The `schedule_sha256` must match the assignments CSV.
+
+Use ``fhops.scenario.hydrology_exposure.load_hydrology_exposure`` with the
+assignments CSV. The loader preserves the file digest, source, review state,
+schedule binding, and raw features. ``features_for`` adds the calculated
+densities when a positive FEMIC watershed area is supplied:
+
+- ``road_built_density_km_per_km2``;
+- ``road_used_density_km_per_km2``;
+- ``road_decommissioned_density_km_per_km2``;
+- ``culvert_exposure_per_km2``.
+
+FHOPS does not derive road state or culvert locations from geometry. A table
+bound to one schedule is not reused for another schedule.
+
 CLI
 ---
 
