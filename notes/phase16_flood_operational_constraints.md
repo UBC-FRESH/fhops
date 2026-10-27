@@ -97,6 +97,14 @@ Exit behavior:
 - `--fail-on-warning` optionally fails on warning activity;
 - watch events are informational.
 
+## P16.1 hazard-window decision
+
+The hazard table lives in `fhops.scenario.hydrology_hazard` and is validated
+independently of FEMIC bundles. Windows are inclusive by day and use three
+severities. Overlapping same-severity windows are rejected; different severities
+are allowed and the highest applies. The CLI entry is
+`fhops scenario hydrology hazard validate`.
+
 ## Solver integration
 
 P16.4 audits the operational MILP and heuristics. It may add a fixed

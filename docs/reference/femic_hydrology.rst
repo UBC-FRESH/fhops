@@ -285,6 +285,68 @@ fixtures are not real watershed, road, culvert, or gauge records.
 Later Phase 15 tasks add scenario registration, an explicit crosswalk,
 schedule-bound road/culvert exposure, and one-schedule screening.
 
+Operational Hazard Windows
+--------------------------
+
+Phase 16 adds a separate operational hazard contract. It is not a FEMIC
+response bundle and does not run a hydrology model.
+
+.. code-block:: json
+
+   {
+     "schema_version": "fhops.hydrology.hazard.v1",
+     "hazard_id": "hazard-2026-001",
+     "generated_utc": "2026-10-27T00:00:00+00:00",
+     "source_id": "reviewed-operational-forecast",
+     "review_status": "reviewed",
+     "reviewer_id": "reviewer-id",
+     "windows": [
+       {
+         "watershed_id": "watershed-1",
+         "start_day": 1,
+         "end_day": 2,
+         "severity": "watch",
+         "return_period_years": 2.0,
+         "source_id": "reviewed-operational-forecast",
+         "notes": "Watch window."
+       },
+       {
+         "watershed_id": "watershed-1",
+         "start_day": 3,
+         "end_day": 4,
+         "severity": "warning",
+         "return_period_years": 10.0,
+         "source_id": "reviewed-operational-forecast",
+         "notes": "Warning window."
+       },
+       {
+         "watershed_id": "watershed-1",
+         "start_day": 5,
+         "end_day": 5,
+         "severity": "closure",
+         "return_period_years": 50.0,
+         "source_id": "reviewed-operational-forecast",
+         "notes": "Closure window."
+       }
+     ],
+     "caveats": ["Operational screening only."]
+   }
+
+Severity ranks are ``closure`` > ``warning`` > ``watch``. A lookup returns the
+highest severity covering a watershed/day, or nothing outside the declared
+windows. Overlapping windows of the same severity are rejected; overlapping
+windows of different severity are allowed with a warning that the highest
+severity applies.
+
+Validate the table with:
+
+.. code-block:: bash
+
+   fhops scenario hydrology hazard validate hazard.json
+
+The command emits JSON and exits non-zero on an invalid table. FHOPS does not
+derive hazard windows from weather or hydrology at runtime.
+
 End-to-End Path
 ---------------
 
