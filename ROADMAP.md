@@ -379,6 +379,57 @@ Acceptance:
 - The public fixture validates, runs, and records licence/provenance and limits.
 - No discovery or materialization is reimplemented in FHOPS.
 
+## Phase 15 — Consume FEMIC hydrology response bundles — pr-open
+
+Parent issue: #218. Branch: `feature/phase15-hydrology-consumer`.
+
+Goal: pin and validate a FEMIC hydrology bundle, map FHOPS blocks/landings/roads
+through an explicit reviewed crosswalk, consume a schedule-bound road/culvert
+exposure table, and screen one operational schedule. This is a read-only
+consumer and screening phase, not a flood model or real watershed pilot.
+
+Authoritative note: `notes/phase15_hydrology_consumer.md`.
+Closeout report: `notes/reports/p15-closeout.md`.
+
+- [x] P15.1 Define the FHOPS hydrology consumer contract (#219)
+  - [x] Validate the bundle manifest, roles, checksums, identity, and caveats
+  - [x] Read optional validation-report and model-card readiness evidence
+  - [x] Add `fhops scenario hydrology validate`, tests, and docs
+- [x] P15.2 Register and pin a hydrology bundle in a scenario (#220)
+  - [x] Add the scenario pin and readiness fields
+  - [x] Add idempotent registration and stale-manifest rejection
+  - [x] Add `fhops scenario hydrology register`, tests, and docs
+- [x] P15.3 Map FHOPS support to watersheds and receptors (#221)
+  - [x] Define the explicit crosswalk and review metadata
+  - [x] Enforce complete coverage or recorded gaps
+  - [x] Add `fhops scenario hydrology map`, tests, and docs
+- [x] P15.4 Load schedule-bound road/culvert exposure (#222)
+  - [x] Consume the shared `ws4.hydrology.exposure.v1` contract
+  - [x] Bind the table to one schedule hash and refuse missing/duplicate rows
+  - [x] Add raw/derived features, tests, and docs
+- [x] P15.5 Screen a schedule and gate on readiness (#223)
+  - [x] Emit per-watershed/receptor/period rows and refusals
+  - [x] Apply `allow_provisional`, `require_reviewed`, and `require_ready`
+  - [x] Refuse fixed exposure in optimizer use and document the boundary
+- [x] P15.6 Validate, document, and close out P15 (#224)
+  - [x] Add the synthetic/public fixture and fail-closed matrix
+  - [x] Update docs, roadmap, note, and changelog
+  - [x] Write the closeout report and queue the phase PR
+
+Acceptance:
+
+- A valid bundle pins every required artifact by checksum and size.
+- A scenario pin reloads only when the manifest and artifacts still match.
+- Every in-scope support maps explicitly or records a gap.
+- Exposure is reviewed and bound to one schedule.
+- Screening emits deterministic rows and explicit refusals.
+- Missing, unreviewed, or blocked evidence refuses.
+- The fixture covers success and fail-closed paths.
+- No real watershed or regulatory result is claimed.
+- FHOPS quality suite and docs build are green.
+
+Closeout: `notes/reports/p15-closeout.md`.
+
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
@@ -392,5 +443,6 @@ Acceptance:
 - [ ] `pre-commit` autoupdate (especially `pre-commit-hooks`) plus workflow wiring so stage deprecation warnings are resolved before upstream removal.
 - [x] Full `pre-commit run --all-files` notebook debt: cleaned/approved under issues #66–#70 so `main` CI publishes docs again.
 - [ ] Post-Phase 6 validation scale-up: full 5-year/500+ block tactical benchmark, practitioner case validation, guided planner notebooks, and decomposition only if profiling shows a bottleneck.
+- [ ] Hydrology optimizer integration: derive exposure per candidate schedule and gate it on reviewed evidence. Deferred until a route-state contract and a reviewed response surface exist.
 - [ ] Dataset inspection + data-quality polish (see `notes/dataset_inspection_plan.md`)
   - [ ] Enforce/document 24 h/day machine availability in docs + sample datasets, and flag deviations via the inspector CLI.

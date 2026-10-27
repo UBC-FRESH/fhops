@@ -1,0 +1,303 @@
+FEMIC Hydrology Response Bundles
+================================
+
+FHOPS consumes versioned FEMIC hydrology response bundles. It does not run
+FEMIC discovery, frequency fitting, surrogate training, or flood-risk
+calculation, and it does not import WS4 at runtime.
+
+Bundle Contract
+---------------
+
+A FEMIC hydrology bundle contains ``manifest.json`` and
+``artifacts/<role>/<role>.json``. FHOPS validates and pins:
+
+- ``bundle_id`` and ``bundle_version``;
+- the manifest SHA-256;
+- every artifact role, schema, media type, size, and SHA-256;
+- path containment inside the bundle;
+- the response-surface, flood-risk, domain, and disturbance-ledger identities;
+- the producer caveats and consumer contract; and
+- optional validation-report and model-card evidence.
+
+Required roles are ``response_surface``, ``flood_risk``, ``domain``, and
+``disturbance_ledger``. Optional roles include the validation report, model
+card, pilot run, frequency fits, and surrogate artifacts.
+
+Python Usage
+------------
+
+.. code-block:: python
+
+   from pathlib import Path
+
+   from fhops.scenario.hydrology import (
+       assess_femic_hydrology_readiness,
+       bundle_pin,
+       load_femic_hydrology_bundle,
+   )
+
+   bundle = load_femic_hydrology_bundle(
+       Path("data/femic/hydrology-response-2026.10.0"),
+       expected_bundle_id="hydro-response-example",
+       expected_bundle_version="2026.10.0",
+   )
+   pin = bundle_pin(bundle)
+   readiness = assess_femic_hydrology_readiness(bundle)
+
+   print(pin["manifest_sha256"])
+   print(readiness.status)
+
+Readiness
+---------
+
+``assess_femic_hydrology_readiness`` reports:
+
+- ``not_available``: no validation report or model card is packaged;
+- ``provisional``: evidence exists but the model card is not reviewed;
+- ``conditionally_ready``: reviewed with conditions;
+- ``ready``: reviewed, with a recorded hydrologist review and no tail-check
+  failures;
+- ``blocked``: a tail-check failure is recorded.
+
+Missing evidence is reported as missing, never approved. A checksum pass is not
+a hydrologic validation. Phase 15 uses these states for screening policy; the
+validator itself does not grant operational use.
+
+Scenario Pin
+------------
+
+Register a validated bundle in a scenario without copying it::
+
+   fhops scenario hydrology register scenarios/example/scenario.yaml \
+     data/femic/hydrology-response-2026.10.0
+
+The scenario gains an optional ``hydrology_products`` section::
+
+   hydrology_products:
+     - bundle_id: hydro-response-example
+       bundle_version: 2026.10.0
+       manifest_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+       domain_id: example-domain
+       ledger_id: example-ledger
+       response_surface_id: example-surface
+       manifest_path: ../../data/femic/hydrology-response-2026.10.0/manifest.json
+       readiness_status: ready
+       readiness_evidence_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+       artifacts:
+         - role: response_surface
+           relative_path: artifacts/response_surface/response_surface.json
+           schema_version: femic.hydrology.flood_response.v1
+           media_type: application/json
+           size_bytes: 1234
+           sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+       caveats:
+         - Screening only; not a regulatory flood map.
+
+The pin records the bundle identity, manifest and artifact checksums, domain,
+ledger, response surface, readiness state, and caveats. It is a reference; the
+bundle is not copied into the scenario or repository. Re-registering the same
+pin is idempotent; reusing the same bundle id/version with a different manifest
+checksum is rejected. Existing scenarios without the section remain valid.
+
+Use ``--dry-run`` to validate and print the pin without writing the scenario.
+
+Support Mapping
+---------------
+
+Hydrology mapping is an explicit crosswalk. A CSV row names exactly one FHOPS
+support key and one FEMIC unit/watershed/receptor:
+
+.. code-block:: text
+
+   block_id,landing_id,road_id,unit_id,watershed_id,receptor_id,notes
+   B01,,,unit-1,watershed-1,receptor-1,block review
+   ,L01,,unit-1,watershed-1,receptor-1,landing review
+   ,,R01,unit-1,watershed-1,receptor-1,road review
+
+Review metadata is a separate JSON document:
+
+.. code-block:: json
+
+   {
+     "schema_version": "fhops.hydrology.crosswalk.v1",
+     "crosswalk_id": "crosswalk-example",
+     "created_utc": "2026-10-27T00:00:00+00:00",
+     "review_status": "reviewed",
+     "reviewed_by": "reviewer-id",
+     "method": "Manual block/landing/road review",
+     "source": "Reviewed FEMIC domain bundle",
+     "caveats": ["Screening crosswalk only."]
+   }
+
+The optional ``crosswalk_sha256`` field pins the CSV. Missing metadata is
+recorded as ``not_reviewed`` and the mapping is provisional.
+
+Map the scenario:
+
+.. code-block:: bash
+
+   fhops scenario hydrology map scenarios/example/scenario.yaml \
+     data/femic/hydrology-response-2026.10.0 \
+     reviewed-crosswalk.csv \
+     --metadata reviewed-crosswalk.meta.json \
+     --out build/hydrology_mapping
+
+The command requires the bundle to be pinned in the scenario. It checks every
+FHOPS block, landing, and road-construction id, every FEMIC unit/watershed/
+receptor id, and the unit-to-watershed assignment. Complete coverage is required
+unless ``--allow-partial`` records the gaps. The output is
+``hydrology_mapping.csv`` plus ``hydrology_mapping.json`` with the bundle pin,
+crosswalk checksum, review state, rows, coverage, warnings, and caveats.
+
+No centroid, buffer, nearest-watershed, or nearest-road operation is performed.
+
+Schedule-Bound Exposure
+-----------------------
+
+Road and culvert exposure is an explicit table shared with WS4. FHOPS validates
+the `ws4.hydrology.exposure.v1` contract independently and binds it to one
+assignments CSV.
+
+.. code-block:: json
+
+   {
+     "schema_version": "ws4.hydrology.exposure.v1",
+     "exposure_id": "exposure-2026-001",
+     "generated_utc": "2026-10-27T00:00:00+00:00",
+     "source_id": "reviewed-road-and-culvert-inventory",
+     "review_status": "reviewed",
+     "reviewer_id": "reviewer-id",
+     "schedule_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "watershed_ids": ["watershed-1"],
+     "periods": [0, 1],
+     "rows": [
+       {
+         "watershed_id": "watershed-1",
+         "period": 0,
+         "road_built_km": 0.0,
+         "road_used_km": 1.25,
+         "road_decommissioned_km": 0.0,
+         "culvert_count": 4,
+         "culvert_exposed_count": 1
+       },
+       {
+         "watershed_id": "watershed-1",
+         "period": 1,
+         "road_built_km": 0.5,
+         "road_used_km": 1.75,
+         "road_decommissioned_km": 0.0,
+         "culvert_count": 4,
+         "culvert_exposed_count": 2
+       }
+     ],
+     "caveats": ["Screening input only."]
+   }
+
+The declared watershed/period grid must be complete. Missing, duplicate,
+undeclared, negative, or non-finite rows fail. Reviewed metadata requires a
+reviewer. The `schedule_sha256` must match the assignments CSV.
+
+Use ``fhops.scenario.hydrology_exposure.load_hydrology_exposure`` with the
+assignments CSV. The loader preserves the file digest, source, review state,
+schedule binding, and raw features. ``features_for`` adds the calculated
+densities when a positive FEMIC watershed area is supplied:
+
+- ``road_built_density_km_per_km2``;
+- ``road_used_density_km_per_km2``;
+- ``road_decommissioned_density_km_per_km2``;
+- ``culvert_exposure_per_km2``.
+
+FHOPS does not derive road state or culvert locations from geometry. A table
+bound to one schedule is not reused for another schedule.
+
+Screening
+---------
+
+Screen one assignments schedule against the pinned bundle, explicit mapping,
+and schedule-bound exposure:
+
+.. code-block:: bash
+
+   fhops scenario hydrology screen scenarios/example/scenario.yaml \
+     data/femic/hydrology-response-2026.10.0 \
+     build/hydrology_mapping \
+     assignments.csv \
+     schedule-exposure.json \
+     --policy require_reviewed \
+     --out build/hydrology_screen
+
+The screen computes cumulative block area by FEMIC watershed for each schedule
+day, converts the day to the zero-based exposure period (``day - 1``), selects
+the applicable response scenario, and applies the pinned flood-risk baseline and
+response ratio. Block areas come from the scenario block GeoJSON ``area_ha``
+field, falling back to LiDAR block support area when necessary.
+
+Readiness policies are ``allow_provisional``, ``require_reviewed``, and
+``require_ready``. A tail-check block always refuses. Under a reviewed policy,
+the crosswalk and exposure table must also be reviewed. Missing mapping,
+exposure periods, block areas, scenarios, or flood-risk rows produce explicit
+refusals; without ``--allow-refused`` the command exits non-zero.
+
+Outputs are ``hydrology_screen.csv`` and ``hydrology_screen.json``. Every row
+carries the harvest fraction, exposure features, selected scenario, response
+ratio, baseline flow, screening peak flow, and any producer receptor values.
+The manifest carries bundle/mapping/exposure identities, exposure and schedule
+digests, readiness, coverage, refusals, warnings, and the producer plus
+screening-only caveats.
+
+This is a one-schedule CLI screen. The optimizer does not consume a fixed
+exposure table; schedule-derived exposure for each candidate remains deferred.
+
+CLI
+---
+
+Validate a delivered bundle without modifying a scenario::
+
+   fhops scenario hydrology validate data/femic/hydrology-response-2026.10.0
+
+   fhops scenario hydrology validate data/femic/hydrology-response-2026.10.0 \
+     --expected-bundle-id hydro-response-example \
+     --expected-bundle-version 2026.10.0
+
+The command emits a deterministic JSON report and exits non-zero on an invalid
+bundle. Use ``--no-verify-checksums`` only for a diagnostic inspection; the
+default verifies every size and SHA-256.
+
+Validate a schedule-bound exposure table and, optionally, its assignments CSV::
+
+   fhops scenario hydrology exposure build/exposure.json
+
+   fhops scenario hydrology exposure build/exposure.json \
+     --schedule build/assignments.csv
+
+The command emits the validation report and exits non-zero when the table is
+invalid or its declared schedule hash does not match.
+
+Limits
+------
+
+P15.4 validates the response bundle, maps an explicit crosswalk, and loads a
+schedule-bound exposure table. It does not screen a schedule, produce
+per-watershed risk rows, integrate flood exposure into the optimizer, or create
+a flood map or regulatory result. The committed synthetic bundle and exposure
+fixtures are not real watershed, road, culvert, or gauge records.
+
+Later Phase 15 tasks add scenario registration, an explicit crosswalk,
+schedule-bound road/culvert exposure, and one-schedule screening.
+
+End-to-End Path
+---------------
+
+The P15.6 integration test runs the complete synthetic path through the CLI:
+
+.. code-block:: bash
+
+   fhops scenario hydrology validate BUNDLE
+   fhops scenario hydrology register SCENARIO BUNDLE
+   fhops scenario hydrology map SCENARIO BUNDLE CROSSWALK --out MAPPING
+   fhops scenario hydrology exposure EXPOSURE --schedule ASSIGNMENTS
+   fhops scenario hydrology screen SCENARIO BUNDLE MAPPING ASSIGNMENTS EXPOSURE --out SCREEN
+
+The test also covers a tampered bundle, a schedule-hash mismatch, and the
+reviewed-policy failures. It is synthetic and makes no real watershed or
+regulatory claim.

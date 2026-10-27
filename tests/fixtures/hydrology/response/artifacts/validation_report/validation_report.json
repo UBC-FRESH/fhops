@@ -1,0 +1,19 @@
+{
+  "schema_version": "femic.hydrology.validation.v1",
+  "summary": {
+    "benchmark_cases": 1,
+    "benchmark_failed": 0,
+    "benchmark_not_evaluated": 0,
+    "benchmark_passed": 1,
+    "full_process_pilot_ready": true,
+    "hydrologist_review_recorded": true,
+    "tail_check_failures": {},
+    "usable_fits": {
+      "fixture-station": [
+        "gev",
+        "lp3"
+      ]
+    }
+  },
+  "validation_id": "fixture-validation"
+}

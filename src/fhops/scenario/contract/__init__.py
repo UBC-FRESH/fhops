@@ -1,5 +1,6 @@
 """Scenario contract models (Pydantic schemas, validators)."""
 
+from .hydrology import HydrologyArtifactPin, HydrologyBundleRef, HydrologyReadinessStatus
 from .lidar import LidarProductPin, LidarProductRef, LidarSupport
 from .models import (
     SUPPORTED_SCHEMA_VERSIONS,
@@ -37,6 +38,9 @@ __all__ = [
     "LidarProductPin",
     "LidarProductRef",
     "LidarSupport",
+    "HydrologyArtifactPin",
+    "HydrologyBundleRef",
+    "HydrologyReadinessStatus",
     "BlockInitialState",
     "MachineInitialState",
     "ScenarioInitialState",

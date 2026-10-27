@@ -4169,3 +4169,67 @@ PY
   `lidar_products`/`lidar_support` fields record the bundle pin and aggregated
   slope/canopy/vertical-structure evidence; the loader validates block/landing/road ids, duplicate
   rows, and unpinned bundles while leaving existing scenarios unchanged.
+
+- 2026-10-26: created Phase 15 (parent #218) to consume FEMIC hydrology
+  response bundles in FHOPS. Added child issues #219-#224, the planned roadmap
+  section, and the authoritative note `notes/phase15_hydrology_consumer.md`.
+  Scope is a read-only bundle consumer, explicit crosswalk, schedule-bound
+  exposure, and one-schedule screening. No code, real watershed result, or
+  optimizer-integrated flood exposure was added.
+
+- 2026-10-26: P15.1 (#219, parent #218) added
+  `fhops.scenario.hydrology` with FEMIC bundle validation, artifact pinning,
+  identity checks, caveat preservation, and optional validation/model-card
+  readiness. Added `fhops scenario hydrology validate`, the synthetic response
+  fixture, contract/CLI tests, and the hydrology reference page. No crosswalk,
+  exposure, screening, real watershed result, or optimizer change was added.
+
+- 2026-10-27: P15.2 (#220, parent #218) added optional
+  `Scenario.hydrology_products` pins, a Pydantic hydrology bundle/artifact pin
+  contract, loader support, and `fhops scenario hydrology register`. Registration
+  records readiness, caveats, manifest/artifact checksums, and domain/ledger/
+  surface identities without copying the bundle; re-registration is idempotent
+  and a changed manifest checksum is rejected. Added contract, registration,
+  duplicate-pin, tamper, and CLI tests plus reference docs. No crosswalk,
+  exposure, screening, or real watershed result was added.
+
+- 2026-10-27: P15.3 (#221, parent #218) added explicit hydrology crosswalk
+  loading and mapping. The crosswalk maps blocks, landings, and road-construction
+  ids to FEMIC units, watersheds, and optional receptors; review metadata is a
+  separate checksummed JSON document. Mapping validates all ids and the
+  ledger's unit-to-watershed assignment, requires complete coverage unless
+  `--allow-partial` records gaps, and writes `hydrology_mapping.csv` plus a
+  manifest. Added `fhops scenario hydrology map`, tests, docs, and the
+  authoritative-note decision. No spatial inference, exposure, screening, or
+  real watershed result was added.
+
+- 2026-10-27: P15.4 (#222, parent #218) added
+  `fhops.scenario.hydrology_exposure` for the shared
+  `ws4.hydrology.exposure.v1` contract. The loader validates the complete
+  watershed/period grid, review metadata, and schedule hash against a FHOPS
+  assignments CSV. It preserves raw features and calculates road/culvert
+  densities from a supplied FEMIC watershed area. Added
+  `fhops scenario hydrology exposure`, validation-report and feature tests, plus
+  reference-doc and authoritative-note updates. No geometry inference,
+  screening, or real watershed result was added.
+
+- 2026-10-27: P15.5 (#223, parent #218) added
+  `fhops.scenario.hydrology_screen` and
+  `fhops scenario hydrology screen`. The one-schedule screen computes
+  cumulative block area by watershed, uses block GeoJSON/LiDAR area evidence,
+  applies the schedule-bound exposure features, selects the response scenario,
+  and emits per-watershed/receptor/period rows and refusals. The manifest keeps
+  the exposure digest and propagates producer caveats. It enforces
+  `allow_provisional`, `require_reviewed`, and `require_ready`, requires reviewed
+  mapping/exposure under reviewed policies, and writes CSV plus a manifest.
+  Added screen, refusal, policy, and CLI tests plus docs/design updates. The
+  optimizer still refuses fixed exposure; schedule-derived integration is
+  deferred.
+
+- 2026-10-27: P15.6 (#224, parent #218) added the end-to-end CLI integration
+  test covering bundle validation, registration, mapping, exposure validation,
+  and one-schedule screening, plus fail-closed cases for a tampered bundle,
+  blocked readiness, an unreviewed crosswalk, partial mapping, missing exposure,
+  and a schedule-hash mismatch. Added `notes/reports/p15-closeout.md`, updated
+  the roadmap to `pr-open`, and recorded the phase closeout. The final phase PR
+  is queued for maintainer approval. No real watershed result was produced.

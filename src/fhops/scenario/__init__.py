@@ -13,6 +13,58 @@ from .contract import (
     ProductionRate,
     Scenario,
 )
+from .hydrology import (
+    FemicHydrologyArtifact,
+    FemicHydrologyBundle,
+    FemicHydrologyError,
+    FemicHydrologyReadiness,
+    FemicHydrologyValidation,
+    assess_femic_hydrology_readiness,
+    load_femic_hydrology_bundle,
+    read_femic_hydrology_domain,
+    read_femic_hydrology_flood_risk,
+    read_femic_hydrology_ledger,
+    read_femic_hydrology_response_surface,
+    validate_femic_hydrology_bundle,
+)
+from .hydrology import (
+    bundle_pin as hydrology_bundle_pin,
+)
+from .hydrology_exposure import (
+    FemicHydrologyExposureError,
+    HydrologyExposure,
+    HydrologyExposureRow,
+    HydrologyExposureValidation,
+    load_hydrology_exposure,
+    schedule_sha256,
+    validate_hydrology_exposure,
+)
+from .hydrology_mapping import (
+    FemicHydrologyMappingError,
+    HydrologyCrosswalk,
+    HydrologyCrosswalkMetadata,
+    HydrologyCrosswalkRow,
+    HydrologyMapping,
+    HydrologyMappingRow,
+    load_hydrology_crosswalk,
+    load_hydrology_mapping,
+    map_femic_hydrology_to_scenario,
+    write_hydrology_mapping,
+)
+from .hydrology_registration import (
+    FemicHydrologyRegistrationError,
+    register_femic_hydrology_bundle,
+)
+from .hydrology_registration import (
+    RegistrationResult as HydrologyRegistrationResult,
+)
+from .hydrology_screen import (
+    FemicHydrologyScreenError,
+    HydrologyScreen,
+    enforce_hydrology_readiness,
+    screen_fhops_hydrology,
+    write_hydrology_screen,
+)
 from .io import load_scenario, read_csv
 from .lidar import (
     FemicLidarBundle,
@@ -65,4 +117,42 @@ __all__ = [
     "map_femic_lidar_to_scenario",
     "RegistrationResult",
     "register_femic_lidar_bundle",
+    "FemicHydrologyArtifact",
+    "FemicHydrologyBundle",
+    "FemicHydrologyError",
+    "FemicHydrologyReadiness",
+    "FemicHydrologyValidation",
+    "assess_femic_hydrology_readiness",
+    "hydrology_bundle_pin",
+    "load_femic_hydrology_bundle",
+    "read_femic_hydrology_domain",
+    "read_femic_hydrology_flood_risk",
+    "read_femic_hydrology_ledger",
+    "read_femic_hydrology_response_surface",
+    "validate_femic_hydrology_bundle",
+    "FemicHydrologyRegistrationError",
+    "HydrologyRegistrationResult",
+    "register_femic_hydrology_bundle",
+    "FemicHydrologyMappingError",
+    "HydrologyCrosswalk",
+    "HydrologyCrosswalkMetadata",
+    "HydrologyCrosswalkRow",
+    "HydrologyMapping",
+    "HydrologyMappingRow",
+    "load_hydrology_crosswalk",
+    "load_hydrology_mapping",
+    "map_femic_hydrology_to_scenario",
+    "write_hydrology_mapping",
+    "FemicHydrologyScreenError",
+    "HydrologyScreen",
+    "enforce_hydrology_readiness",
+    "screen_fhops_hydrology",
+    "write_hydrology_screen",
+    "FemicHydrologyExposureError",
+    "HydrologyExposure",
+    "HydrologyExposureRow",
+    "HydrologyExposureValidation",
+    "load_hydrology_exposure",
+    "schedule_sha256",
+    "validate_hydrology_exposure",
 ]

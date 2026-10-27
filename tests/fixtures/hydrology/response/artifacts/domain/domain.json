@@ -1,0 +1,22 @@
+{
+  "domain_id": "fixture-domain",
+  "receptors": [
+    {
+      "receptor_id": "receptor-1"
+    },
+    {
+      "receptor_id": "receptor-2"
+    }
+  ],
+  "schema_version": "femic.hydrology.domain.v1",
+  "watersheds": [
+    {
+      "area_km2": 1.0,
+      "watershed_id": "watershed-1"
+    },
+    {
+      "area_km2": 2.0,
+      "watershed_id": "watershed-2"
+    }
+  ]
+}

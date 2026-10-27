@@ -22,6 +22,26 @@ from fhops.planning.tactical_operational.scenario import (
     solve_tactical_batch_manifest,
     write_tactical_scenario_yaml,
 )
+from fhops.scenario.hydrology import (
+    FemicHydrologyError,
+    validate_femic_hydrology_bundle,
+)
+from fhops.scenario.hydrology_exposure import validate_hydrology_exposure
+from fhops.scenario.hydrology_mapping import (
+    FemicHydrologyMappingError,
+    map_femic_hydrology_to_scenario,
+    write_hydrology_mapping,
+)
+from fhops.scenario.hydrology_registration import (
+    FemicHydrologyRegistrationError,
+    register_femic_hydrology_bundle,
+)
+from fhops.scenario.hydrology_screen import (
+    HYDROLOGY_READINESS_POLICIES,
+    FemicHydrologyScreenError,
+    screen_fhops_hydrology,
+    write_hydrology_screen,
+)
 from fhops.scenario.io import load_scenario
 from fhops.scenario.lidar import (
     FemicLidarError,
@@ -41,6 +61,179 @@ console = Console()
 scenario_app = typer.Typer(add_completion=False, no_args_is_help=True)
 lidar_app = typer.Typer(add_completion=False, no_args_is_help=True)
 scenario_app.add_typer(lidar_app, name="lidar", help="Register and validate FEMIC LidarBC bundles.")
+hydrology_app = typer.Typer(add_completion=False, no_args_is_help=True)
+scenario_app.add_typer(
+    hydrology_app,
+    name="hydrology",
+    help="Validate and consume FEMIC hydrology response bundles.",
+)
+
+
+@hydrology_app.command("validate")
+def hydrology_validate(
+    bundle: Path = typer.Argument(..., help="FEMIC hydrology bundle directory."),
+    expected_bundle_id: str | None = typer.Option(
+        None, "--expected-bundle-id", help="Require this FEMIC bundle id."
+    ),
+    expected_bundle_version: str | None = typer.Option(
+        None, "--expected-bundle-version", help="Require this FEMIC bundle version."
+    ),
+    verify_checksums: bool = typer.Option(
+        True,
+        "--verify-checksums/--no-verify-checksums",
+        help="Verify every artifact SHA-256 and byte size.",
+    ),
+) -> None:
+    """Validate a FEMIC hydrology bundle without modifying a scenario."""
+    try:
+        report = validate_femic_hydrology_bundle(
+            bundle,
+            expected_bundle_id=expected_bundle_id,
+            expected_bundle_version=expected_bundle_version,
+            verify_checksums=verify_checksums,
+        )
+    except FemicHydrologyError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
+
+
+@hydrology_app.command("register")
+def hydrology_register(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML to pin the bundle in."),
+    bundle: Path = typer.Argument(..., help="FEMIC hydrology bundle directory."),
+    expected_bundle_id: str | None = typer.Option(
+        None, "--expected-bundle-id", help="Require this FEMIC bundle id."
+    ),
+    expected_bundle_version: str | None = typer.Option(
+        None, "--expected-bundle-version", help="Require this FEMIC bundle version."
+    ),
+    verify_checksums: bool = typer.Option(
+        True,
+        "--verify-checksums/--no-verify-checksums",
+        help="Verify every artifact SHA-256 and byte size.",
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the pin without writing the scenario."
+    ),
+) -> None:
+    """Validate a FEMIC hydrology bundle and write its scenario pin."""
+    try:
+        result = register_femic_hydrology_bundle(
+            scenario,
+            bundle,
+            expected_bundle_id=expected_bundle_id,
+            expected_bundle_version=expected_bundle_version,
+            verify_checksums=verify_checksums,
+            dry_run=dry_run,
+        )
+    except (FemicHydrologyError, FemicHydrologyRegistrationError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(json.dumps(result.to_dict(), indent=2))
+
+
+@hydrology_app.command("exposure")
+def hydrology_exposure(
+    exposure: Path = typer.Argument(..., help="Shared road/culvert exposure JSON."),
+    schedule: Path | None = typer.Option(
+        None, "--schedule", help="FHOPS assignments CSV bound to the exposure table."
+    ),
+) -> None:
+    """Validate a schedule-bound road/culvert exposure table."""
+    report = validate_hydrology_exposure(exposure, schedule_path=schedule)
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
+
+
+@hydrology_app.command("map")
+def hydrology_map(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a hydrology pin."),
+    bundle: Path = typer.Argument(..., help="FEMIC hydrology bundle directory."),
+    crosswalk: Path = typer.Argument(..., help="Explicit crosswalk CSV."),
+    metadata: Path | None = typer.Option(
+        None, "--metadata", help="Crosswalk review metadata JSON."
+    ),
+    out: Path | None = typer.Option(
+        None, "--out", help="Mapping output directory. Print only when omitted."
+    ),
+    allow_partial: bool = typer.Option(
+        False, "--allow-partial", help="Record unmapped supports instead of failing."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the mapping without writing outputs."
+    ),
+) -> None:
+    """Map scenario support to FEMIC watersheds and receptors."""
+    try:
+        result = map_femic_hydrology_to_scenario(
+            scenario,
+            bundle,
+            crosswalk,
+            metadata_path=metadata,
+            allow_partial=allow_partial,
+        )
+        paths = None if dry_run or out is None else write_hydrology_mapping(result, out)
+    except FemicHydrologyMappingError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
+
+
+@hydrology_app.command("screen")
+def hydrology_screen(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a hydrology pin."),
+    bundle: Path = typer.Argument(..., help="FEMIC hydrology bundle directory."),
+    mapping: Path = typer.Argument(..., help="Hydrology mapping directory or manifest."),
+    schedule: Path = typer.Argument(..., help="FHOPS assignments CSV."),
+    exposure: Path = typer.Argument(..., help="Schedule-bound exposure JSON."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Screening output directory. Print only when omitted."
+    ),
+    policy: str = typer.Option(
+        "require_reviewed",
+        "--policy",
+        help="Readiness policy: " + ", ".join(HYDROLOGY_READINESS_POLICIES),
+    ),
+    scenario_tolerance: float = typer.Option(
+        0.05,
+        "--scenario-tolerance",
+        min=0.000001,
+        help="Maximum feature difference for response-scenario selection.",
+    ),
+    allow_refused: bool = typer.Option(
+        False, "--allow-refused", help="Write inside-domain rows plus refusals."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the screen without writing outputs."
+    ),
+) -> None:
+    """Screen one assignments schedule against pinned hydrology evidence."""
+    try:
+        result = screen_fhops_hydrology(
+            scenario,
+            bundle,
+            mapping,
+            schedule,
+            exposure,
+            policy=policy,
+            scenario_tolerance=scenario_tolerance,
+            allow_refused=allow_refused,
+        )
+        paths = None if dry_run or out is None else write_hydrology_screen(result, out)
+    except FemicHydrologyScreenError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
 
 
 @lidar_app.command("validate")
