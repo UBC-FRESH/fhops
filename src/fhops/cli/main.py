@@ -736,7 +736,7 @@ def solve_mip_operational_cmd(
     out: Path = typer.Option(..., "--out", help="Output CSV path"),
     solver: str = typer.Option("highs", help="MILP solver backend (default: highs)."),
     time_limit: int | None = typer.Option(
-        None, "--time-limit", help="Optional wall-clock time limit (seconds)."
+        None, "--time-limit", min=0, help="Optional wall-clock time limit (seconds)."
     ),
     gap: float | None = typer.Option(None, "--gap", help="Optional relative MIP gap target (0-1)."),
     solver_option: list[str] | None = typer.Option(
@@ -1450,6 +1450,7 @@ def solve_ils_cmd(
     hybrid_mip_time_limit: int = typer.Option(
         60,
         "--hybrid-mip-time-limit",
+        min=0,
         help="Seconds to spend on the hybrid MIP warm start when enabled.",
     ),
     operator: list[str] | None = typer.Option(

@@ -187,8 +187,10 @@ machines), add a ``shift_calendar`` CSV and reference it under ``data.shift_cale
 rejects unknown labels or days outside ``num_days``. Supplying multiple rows for the same
 machine/day lets you model overlapping shifts with different availability flags, and you can
 leave individual rows at ``available=0`` to block a specific crew without editing the base
-timeline. When a ``shift_calendar`` is omitted entirely, FHOPS synthesises a single shift named
-``S1`` for every day so legacy day-indexed scenarios continue to work without edits.
+timeline. Day entries and shift entries combine with **AND**: a machine must be available in both
+the day calendar and the shift calendar. When a ``shift_calendar`` is omitted entirely, FHOPS
+synthesises a single shift named ``S1`` for every day so legacy day-indexed scenarios continue to
+work without edits.
 
 Run ``fhops validate`` to confirm the calendar files and shift labels line up before solving:
 
