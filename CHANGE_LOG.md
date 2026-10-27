@@ -4242,6 +4242,53 @@ PY
   and closeout evidence are recorded in `notes/reports/p15-closeout.md`. No real
   watershed or regulatory result was produced.
 
+- 2026-10-27: created Phase 16 (parent #235) for flood-aware operational
+  constraints. Added child issues #236-#240, the planned roadmap section, and
+  `notes/phase16_flood_operational_constraints.md`. Scope is fixed hazard
+  windows, explicit road/culvert assets, schedule exposure checks, and only
+  fixed-scenario solver constraints. No watershed flood-response optimization
+  or per-candidate hydrology was added.
+
+- 2026-10-27: P16.1 (#236, parent #235) added
+  `fhops.scenario.hydrology_hazard` and the
+  `fhops.hydrology.hazard.v1` contract. It validates reviewed hazard windows,
+  inclusive day ranges, severity, overlaps, and caveats, and exposes a
+  highest-severity lookup. Added `fhops scenario hydrology hazard validate`,
+  fixture/tests, reference docs, and the authoritative-note decision. No
+  schedule check, asset inventory, solver constraint, or real watershed result
+  was added.
+
+- 2026-10-27: P16.2 (#237, parent #235) added
+  `fhops.scenario.hydrology_assets` and the `fhops.hydrology.assets.v1`
+  contract. Explicit road/culvert assets are validated and mapped to scenario
+  road jobs and FEMIC watersheds without geometry inference; unknown or
+  duplicate assets fail. Added `fhops scenario hydrology assets validate`,
+  fixture/tests, reference docs, and the authoritative-note decision. No schedule
+  check, solver constraint, or real watershed result was added.
+
+- 2026-10-27: P16.3 (#238, parent #235) added
+  `fhops.scenario.hydrology_constraint_check` and
+  `fhops scenario hydrology constraint-check`. The check maps scheduled block
+  activity to FEMIC watersheds, looks up fixed watch/warning/closure windows,
+  attaches same-watershed assets, and emits events plus a manifest. Closure
+  activity fails by default; warning failure is an explicit policy. Added
+  fixture-backed tests, reference docs, and the authoritative-note decision. No
+  solver constraint or real watershed result was added.
+
+- 2026-10-27: P16.4 (#239, parent #235) audited solver integration. Block/day/
+  shift variables exist, but there is no single shared availability hook across
+  the MILP, heuristics, playback, and rolling horizon, and road-work timing is
+  not a solver decision variable. The supported constraint remains
+  `fhops scenario hydrology constraint-check`; no partial solver patch was
+  added. The limitation and the future integration condition are documented.
+
+- 2026-10-27: P16.5 (#240, parent #235) added the end-to-end operational
+  constraint integration test covering hazard validation, asset mapping, and
+  watch/warning/closure checks through the CLI. Added
+  `notes/reports/p16-closeout.md`, set Phase 16 to `pr-open`, and recorded the
+  closeout. The final phase PR is queued for maintainer approval. No solver
+  constraint, watershed flood model, or regulatory result was added.
+
 - 2026-10-27: #168 closed the cuOpt MIP exploration with
   `notes/cuopt_milp_pilot.md`. The memo consolidates the existing #168 pilot
   results, #169 `feasible_start`, and the CJFR equal-total evidence; no new GPU
@@ -4249,3 +4296,7 @@ PY
   Gurobi/HiGHS + heuristic + `feasible_start` path. The memo records the Nibi
   versus Sockeye, `tiny7` omission, and cuOpt-as-seed-source deviations. No
   production backend, manuscript change, or release was added.
+
+- 2026-10-27: P16.5 merged `origin/main` after the cuOpt MIP memo, resolved the
+  changelog conflict, and reran the full test, docs, and pre-commit gates. No
+  behavior or result changed.

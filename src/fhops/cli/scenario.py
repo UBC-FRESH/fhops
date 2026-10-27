@@ -26,7 +26,18 @@ from fhops.scenario.hydrology import (
     FemicHydrologyError,
     validate_femic_hydrology_bundle,
 )
+from fhops.scenario.hydrology_assets import (
+    FemicHydrologyAssetError,
+    map_hydrology_assets,
+    validate_hydrology_assets,
+)
+from fhops.scenario.hydrology_constraint_check import (
+    FemicHydrologyConstraintError,
+    check_fhops_hydrology_constraints,
+    write_hydrology_constraint_check,
+)
 from fhops.scenario.hydrology_exposure import validate_hydrology_exposure
+from fhops.scenario.hydrology_hazard import validate_hydrology_hazard
 from fhops.scenario.hydrology_mapping import (
     FemicHydrologyMappingError,
     map_femic_hydrology_to_scenario,
@@ -97,6 +108,108 @@ def hydrology_validate(
         raise typer.Exit(1) from exc
     typer.echo(json.dumps(report.to_dict(), indent=2))
     if not report.is_valid:
+        raise typer.Exit(1)
+
+
+hazard_app = typer.Typer(add_completion=False, no_args_is_help=True)
+hydrology_app.add_typer(
+    hazard_app,
+    name="hazard",
+    help="Validate operational flood-hazard windows.",
+)
+
+
+@hazard_app.command("validate")
+def hydrology_hazard_validate(
+    hazard: Path = typer.Argument(..., help="Operational hazard-window JSON."),
+) -> None:
+    """Validate a reviewed operational hazard-window table."""
+    report = validate_hydrology_hazard(hazard)
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
+
+
+assets_app = typer.Typer(add_completion=False, no_args_is_help=True)
+hydrology_app.add_typer(
+    assets_app,
+    name="assets",
+    help="Validate and map explicit road/culvert assets.",
+)
+
+
+@assets_app.command("validate")
+def hydrology_assets_validate(
+    assets: Path = typer.Argument(..., help="Road/culvert asset JSON."),
+    scenario: Path | None = typer.Option(
+        None, "--scenario", help="Map assets against this scenario."
+    ),
+    mapping: Path | None = typer.Option(
+        None, "--mapping", help="Hydrology mapping directory or manifest."
+    ),
+) -> None:
+    """Validate an asset table, optionally mapping it to a scenario."""
+    if (scenario is None) != (mapping is None):
+        typer.echo("Provide both --scenario and --mapping, or neither.", err=True)
+        raise typer.Exit(1)
+    try:
+        if scenario is not None and mapping is not None:
+            result = map_hydrology_assets(scenario, mapping, assets)
+            typer.echo(json.dumps(result.to_dict(), indent=2))
+            return
+    except FemicHydrologyAssetError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    report = validate_hydrology_assets(assets)
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
+
+
+@hydrology_app.command("constraint-check")
+def hydrology_constraint_check(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML."),
+    mapping: Path = typer.Argument(..., help="Hydrology mapping directory or manifest."),
+    schedule: Path = typer.Argument(..., help="FHOPS assignments CSV."),
+    hazard: Path = typer.Argument(..., help="Operational hazard-window JSON."),
+    assets: Path | None = typer.Option(None, "--assets", help="Optional road/culvert asset JSON."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Output directory. Print only when omitted."
+    ),
+    fail_on_closure: bool = typer.Option(
+        True,
+        "--fail-on-closure/--no-fail-on-closure",
+        help="Exit non-zero on closure-window activity.",
+    ),
+    fail_on_warning: bool = typer.Option(
+        False,
+        "--fail-on-warning/--no-fail-on-warning",
+        help="Exit non-zero on warning-window activity.",
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print without writing outputs."
+    ),
+) -> None:
+    """Check one schedule for operational hazard-window exposure."""
+    try:
+        result = check_fhops_hydrology_constraints(
+            scenario,
+            mapping,
+            schedule,
+            hazard,
+            assets_path=assets,
+            fail_on_closure=fail_on_closure,
+            fail_on_warning=fail_on_warning,
+        )
+        paths = None if dry_run or out is None else write_hydrology_constraint_check(result, out)
+    except FemicHydrologyConstraintError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
+    if result.failed:
         raise typer.Exit(1)
 
 
