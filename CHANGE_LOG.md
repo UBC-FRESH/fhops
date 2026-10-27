@@ -4335,3 +4335,10 @@ PY
   required content, ownership, refusal behavior, the shared exposure contract,
   and the boundary between a contract and a watershed result. Linked from the
   quickstart and hydrology reference.
+
+- 2026-10-27: P18.4 (#264, parent #260) added
+  `scripts/check_hydrology_docs.py` and CI wiring. The checker validates local
+  `:doc:` references, FHOPS-owned schema mentions, external FEMIC/WS4 GitHub
+  links, and the generated FHOPS quickstart path. It fails on a broken link,
+  stale schema mention, or quickstart row-count mismatch. The WS4 CLI path stays
+  manually verified because FHOPS CI does not install WS4. Added checker tests.

@@ -81,6 +81,13 @@ content and refusal behavior; and treats the shared exposure table as a
 WS4-owned contract consumed by FHOPS. Detailed field lists remain in the linked
 reference pages.
 
+## P18.4 docs-check decision
+
+`scripts/check_hydrology_docs.py` checks local `:doc:` references, FHOPS-owned
+schema mentions in the contract index, external FEMIC/WS4 GitHub references, and
+the generated FHOPS quickstart path. It runs in CI after the Sphinx build. The
+WS4 CLI path remains manually verified because FHOPS CI does not install WS4.
+
 ## Tasks
 
 - P18.1: documentation and reproducibility audit.

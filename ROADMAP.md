@@ -495,9 +495,9 @@ Authoritative note: `notes/phase18_hydrology_docs_reproducibility.md`.
 - [x] P18.3 Publish the contract and schema index (#263)
   - [x] List every hydrology, crosswalk, exposure, hazard, and asset contract
   - [x] Record required fields, ownership, and refusal behavior
-- [ ] P18.4 Add executable hydrology docs checks (#264)
-  - [ ] Check links and runnable snippets
-  - [ ] Run the synthetic quickstart in CI
+- [x] P18.4 Add executable hydrology docs checks (#264)
+  - [x] Check links and runnable snippets
+  - [x] Run the synthetic quickstart in CI
 - [ ] P18.5 Close out the documentation phase (#265)
   - [ ] Verify docs and gates
   - [ ] Record synthetic/real-data limits and close out

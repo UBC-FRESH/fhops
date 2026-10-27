@@ -164,6 +164,19 @@ What This Does Not Prove
   operational exposure control against a fixed hazard.
 - The WS4 landscape path is a screening consumer, not a regulatory determination.
 
+Docs Check
+----------
+
+The FHOPS CI job runs:
+
+.. code-block:: bash
+
+   python scripts/check_hydrology_docs.py --check-external
+
+It checks local documentation references, FHOPS-owned schema mentions, external
+FEMIC/WS4 GitHub links, and the generated FHOPS quickstart path. The WS4 CLI path
+is verified manually because FHOPS CI does not install WS4.
+
 Troubleshooting
 ---------------
 
