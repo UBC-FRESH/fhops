@@ -4278,3 +4278,10 @@ PY
   reconciliation, CSV/JSON outputs, tests, and reference docs. The model and
   products are explicitly non-operational; no machine simulation or 3D export
   was added.
+
+- 2026-10-27: P17.4 (#251, parent #247) added the deterministic single-machine
+  tree simulator, `fhops tree simulate`, reach/terrain/obstacle refusals,
+  per-tree processing events, ADV6N10-based processing time, block volume
+  reconciliation, event/manifest outputs, tests, and reference docs. The
+  simulator is one machine on one block and is not coupled to the operational
+  schedule or a 3D scene.

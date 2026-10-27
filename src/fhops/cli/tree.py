@@ -7,6 +7,15 @@ from pathlib import Path
 
 import typer
 
+from fhops.spatial_machine import (
+    DEFAULT_MAX_SLOPE_PERCENT,
+    DEFAULT_REACH_RADIUS_M,
+    DEFAULT_TRAVEL_SPEED_M_PER_S,
+    Obstacle,
+    SpatialMachineError,
+    simulate_block,
+    write_spatial_simulation,
+)
 from fhops.stem import (
     DEFAULT_FORM_FACTOR,
     DEFAULT_LOG_LENGTH_M,
@@ -167,3 +176,74 @@ def tree_stems(
     if paths is not None:
         payload["paths"] = {key: str(value) for key, value in paths.items()}
     typer.echo(json.dumps(payload, indent=2))
+
+
+@tree_app.command("simulate")
+def tree_simulate(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    block: str = typer.Option(..., "--block", help="Block id to simulate."),
+    machine: str = typer.Option(..., "--machine", help="Scenario machine id."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Simulation output directory. Print only when omitted."
+    ),
+    start_x: float | None = typer.Option(None, "--start-x", help="Machine start easting (m)."),
+    start_y: float | None = typer.Option(None, "--start-y", help="Machine start northing (m)."),
+    start_z: float | None = typer.Option(None, "--start-z", help="Machine start elevation (m)."),
+    reach_radius: float = typer.Option(
+        DEFAULT_REACH_RADIUS_M, "--reach-radius", help="Processing reach in metres."
+    ),
+    travel_speed: float = typer.Option(
+        DEFAULT_TRAVEL_SPEED_M_PER_S,
+        "--travel-speed",
+        help="Travel speed in metres per second.",
+    ),
+    max_slope: float = typer.Option(
+        DEFAULT_MAX_SLOPE_PERCENT,
+        "--max-slope",
+        help="Maximum absolute terrain slope percent.",
+    ),
+    obstacle: list[str] | None = typer.Option(
+        None,
+        "--obstacle",
+        help="Circular obstacle as x,y,radius_m. Repeat for multiple obstacles.",
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the simulation without writing outputs."
+    ),
+) -> None:
+    """Simulate one machine processing trees in one block."""
+    try:
+        obstacles = tuple(_parse_obstacle(value) for value in (obstacle or []))
+        result = simulate_block(
+            scenario,
+            block_id=block,
+            machine_id=machine,
+            start_x_m=start_x,
+            start_y_m=start_y,
+            start_z_m=start_z,
+            reach_radius_m=reach_radius,
+            travel_speed_m_per_s=travel_speed,
+            max_slope_percent=max_slope,
+            obstacles=obstacles,
+        )
+        paths = None if dry_run or out is None else write_spatial_simulation(result, out)
+    except (SpatialMachineError, ValueError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
+
+
+def _parse_obstacle(value: str) -> Obstacle:
+    parts = [part.strip() for part in value.split(",")]
+    if len(parts) != 3:
+        raise ValueError(f"Obstacle {value!r} must be x,y,radius_m.")
+    try:
+        x, y, radius = (float(part) for part in parts)
+    except ValueError as exc:
+        raise ValueError(f"Obstacle {value!r} must contain three numbers.") from exc
+    if radius <= 0:
+        raise ValueError("Obstacle radius must be positive.")
+    return Obstacle(x_m=x, y_m=y, radius_m=radius)

@@ -55,6 +55,7 @@ ensembles.
    reference/femic_hydrology
    reference/tree_inventory
    reference/stem_models
+   reference/tree_simulation
 
 .. toctree::
    :maxdepth: 1
