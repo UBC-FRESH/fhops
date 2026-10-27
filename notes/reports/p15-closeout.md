@@ -2,10 +2,10 @@
 
 Phase: P15 Consume FEMIC hydrology response bundles
 Parent issue: #218
-Pull request: to be opened
-Evidence head: `ee33794f` (P15.6 plus the `origin/main` 1.1.0 merge)
+Pull request: #232, `issue-224-hydrology-closeout` into `main`
+Evidence head: `ee33794f` (P15.6 plus the `origin/main` 1.1.0 merge); merge commit `3b404414`
 Date: 2026-10-27
-Status: queued for approval. Not merged.
+Status: merged on 2026-10-27 as `3b404414`.
 
 ## Recommendation
 
@@ -96,7 +96,7 @@ Child CI runs:
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | closeout commit | not yet run | The final phase PR runs CI after the report commit. |
+| 40475758493 | `0a2cd678` | success | All CI jobs passed before the phase merge. |
 
 ## 5. Deviations
 
