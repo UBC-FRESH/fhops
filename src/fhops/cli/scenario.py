@@ -26,6 +26,11 @@ from fhops.scenario.hydrology import (
     FemicHydrologyError,
     validate_femic_hydrology_bundle,
 )
+from fhops.scenario.hydrology_mapping import (
+    FemicHydrologyMappingError,
+    map_femic_hydrology_to_scenario,
+    write_hydrology_mapping,
+)
 from fhops.scenario.hydrology_registration import (
     FemicHydrologyRegistrationError,
     register_femic_hydrology_bundle,
@@ -121,6 +126,43 @@ def hydrology_register(
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
     typer.echo(json.dumps(result.to_dict(), indent=2))
+
+
+@hydrology_app.command("map")
+def hydrology_map(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a hydrology pin."),
+    bundle: Path = typer.Argument(..., help="FEMIC hydrology bundle directory."),
+    crosswalk: Path = typer.Argument(..., help="Explicit crosswalk CSV."),
+    metadata: Path | None = typer.Option(
+        None, "--metadata", help="Crosswalk review metadata JSON."
+    ),
+    out: Path | None = typer.Option(
+        None, "--out", help="Mapping output directory. Print only when omitted."
+    ),
+    allow_partial: bool = typer.Option(
+        False, "--allow-partial", help="Record unmapped supports instead of failing."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the mapping without writing outputs."
+    ),
+) -> None:
+    """Map scenario support to FEMIC watersheds and receptors."""
+    try:
+        result = map_femic_hydrology_to_scenario(
+            scenario,
+            bundle,
+            crosswalk,
+            metadata_path=metadata,
+            allow_partial=allow_partial,
+        )
+        paths = None if dry_run or out is None else write_hydrology_mapping(result, out)
+    except FemicHydrologyMappingError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
 
 
 @lidar_app.command("validate")

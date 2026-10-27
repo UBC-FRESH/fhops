@@ -45,8 +45,8 @@
       "relative_path": "artifacts/domain/domain.json",
       "role": "domain",
       "schema_version": "femic.hydrology.domain.v1",
-      "sha256": "edbd2767783b9a07f5ab80ed65d4c73b7817ad9c1fbdd18bc69337d466561f9b",
-      "size_bytes": 247
+      "sha256": "fa45b4e9f5fa2853be9286a397b8e0606c804ff80520a2a7984fd8eda09a9469",
+      "size_bytes": 366
     },
     {
       "artifact_id": "disturbance_ledger:fixture",
@@ -55,8 +55,8 @@
       "relative_path": "artifacts/disturbance_ledger/disturbance_ledger.json",
       "role": "disturbance_ledger",
       "schema_version": "femic.hydrology.disturbance.v1",
-      "sha256": "d278fdffec4eaa7dfc0b629e3520cdce1e9aa34bb53e261bb1468f6a737b1375",
-      "size_bytes": 216
+      "sha256": "46c353838711b1006b8d65feca62abc3bfc7ad50d38069b5cb68e4a87692bd6f",
+      "size_bytes": 292
     },
     {
       "artifact_id": "validation_report:fixture",

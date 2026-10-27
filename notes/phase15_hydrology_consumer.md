@@ -194,6 +194,15 @@ readiness state, artifact checksums, caveats, and the producer consumer
 contract. Registration is idempotent and rejects the same bundle id/version
 with a different manifest checksum. The bundle is referenced, not copied.
 
+## P15.3 crosswalk decision
+
+Mapping is an explicit CSV crosswalk with one FHOPS support key per row and a
+separate review-metadata document. The mapper checks block/landing/road ids,
+FEMIC unit/watershed/receptor ids, and the ledger's unit-to-watershed
+assignment. Complete coverage is required unless `--allow-partial` records the
+gaps. The output is a row CSV plus a manifest; it is not a spatial join and is
+not written into the scenario.
+
 ## Open decisions and recommended defaults
 
 - **Exposure schema:** reuse `ws4.hydrology.exposure.v1` rather than create a
