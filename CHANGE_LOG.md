@@ -4257,3 +4257,11 @@ PY
   fixture/tests, reference docs, and the authoritative-note decision. No
   schedule check, asset inventory, solver constraint, or real watershed result
   was added.
+
+- 2026-10-27: P16.2 (#237, parent #235) added
+  `fhops.scenario.hydrology_assets` and the `fhops.hydrology.assets.v1`
+  contract. Explicit road/culvert assets are validated and mapped to scenario
+  road jobs and FEMIC watersheds without geometry inference; unknown or
+  duplicate assets fail. Added `fhops scenario hydrology assets validate`,
+  fixture/tests, reference docs, and the authoritative-note decision. No schedule
+  check, solver constraint, or real watershed result was added.

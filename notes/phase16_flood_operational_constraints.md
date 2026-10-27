@@ -105,6 +105,14 @@ severities. Overlapping same-severity windows are rejected; different severities
 are allowed and the highest applies. The CLI entry is
 `fhops scenario hydrology hazard validate`.
 
+## P16.2 asset decision
+
+Assets live in `fhops.scenario.hydrology_assets` with explicit ids and types.
+Road assets require a scenario road-job id; culverts carry no inferred geometry.
+Every asset watershed must appear in the P15 crosswalk. The CLI validates an
+inventory alone or maps it against a scenario and mapping. No asset becomes a
+damage curve.
+
 ## Solver integration
 
 P16.4 audits the operational MILP and heuristics. It may add a fixed

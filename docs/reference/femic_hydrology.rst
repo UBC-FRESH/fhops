@@ -347,6 +347,54 @@ Validate the table with:
 The command emits JSON and exits non-zero on an invalid table. FHOPS does not
 derive hazard windows from weather or hydrology at runtime.
 
+Road and Culvert Assets
+-----------------------
+
+Phase 16 asset evidence is explicit; FHOPS does not infer assets from geometry.
+
+.. code-block:: json
+
+   {
+     "schema_version": "fhops.hydrology.assets.v1",
+     "inventory_id": "assets-2026-001",
+     "generated_utc": "2026-10-27T00:00:00+00:00",
+     "source_id": "reviewed-road-culvert-inventory",
+     "review_status": "reviewed",
+     "reviewer_id": "reviewer-id",
+     "assets": [
+       {
+         "asset_id": "R1",
+         "asset_type": "road",
+         "watershed_id": "watershed-1",
+         "road_job_id": "R1",
+         "vulnerability_class": "high",
+         "notes": "Road asset."
+       },
+       {
+         "asset_id": "C1",
+         "asset_type": "culvert",
+         "watershed_id": "watershed-1",
+         "road_job_id": null,
+         "vulnerability_class": "moderate",
+         "notes": "Culvert asset."
+       }
+     ],
+     "caveats": ["Operational screening only."]
+   }
+
+Road assets require a scenario ``road_job_id``; culverts do not. Every asset
+watershed must appear in the hydrology mapping. Validate and map with:
+
+.. code-block:: bash
+
+   fhops scenario hydrology assets validate assets.json
+   fhops scenario hydrology assets validate assets.json \
+     --scenario scenarios/example/scenario.yaml \
+     --mapping build/hydrology_mapping
+
+The command reports asset count, mapped road jobs, watersheds, warnings, and
+caveats. No asset is converted into a damage curve or a flood-risk finding.
+
 End-to-End Path
 ---------------
 
