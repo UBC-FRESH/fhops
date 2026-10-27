@@ -4281,3 +4281,22 @@ PY
   not a solver decision variable. The supported constraint remains
   `fhops scenario hydrology constraint-check`; no partial solver patch was
   added. The limitation and the future integration condition are documented.
+
+- 2026-10-27: P16.5 (#240, parent #235) added the end-to-end operational
+  constraint integration test covering hazard validation, asset mapping, and
+  watch/warning/closure checks through the CLI. Added
+  `notes/reports/p16-closeout.md`, set Phase 16 to `pr-open`, and recorded the
+  closeout. The final phase PR is queued for maintainer approval. No solver
+  constraint, watershed flood model, or regulatory result was added.
+
+- 2026-10-27: #168 closed the cuOpt MIP exploration with
+  `notes/cuopt_milp_pilot.md`. The memo consolidates the existing #168 pilot
+  results, #169 `feasible_start`, and the CJFR equal-total evidence; no new GPU
+  runs were made. Recommendation: reject cuOpt and keep the CPU-only
+  Gurobi/HiGHS + heuristic + `feasible_start` path. The memo records the Nibi
+  versus Sockeye, `tiny7` omission, and cuOpt-as-seed-source deviations. No
+  production backend, manuscript change, or release was added.
+
+- 2026-10-27: P16.5 merged `origin/main` after the cuOpt MIP memo, resolved the
+  changelog conflict, and reran the full test, docs, and pre-commit gates. No
+  behavior or result changed.

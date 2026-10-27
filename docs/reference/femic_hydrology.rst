@@ -445,3 +445,19 @@ FHOPS solvers do not consume hazard windows. The supported enforcement point is
 reports warning/watch exposure. A solver-side closure constraint is deferred
 until a single shared block/day availability hook is honoured by the MILP,
 heuristics, playback, and rolling-horizon paths.
+
+Operational End-to-End Path
+---------------------------
+
+The P16 integration test runs the operational path through the CLI:
+
+.. code-block:: bash
+
+   fhops scenario hydrology hazard validate HAZARD
+   fhops scenario hydrology assets validate ASSETS --scenario SCENARIO --mapping MAPPING
+   fhops scenario hydrology constraint-check SCENARIO MAPPING ASSIGNMENTS HAZARD \
+     --assets ASSETS --out CHECK
+
+It covers watch/warning/closure reporting, default closure failure, an explicit
+no-fail policy, a tampered hazard, and an unknown road asset. It is synthetic
+and makes no watershed or regulatory claim.
