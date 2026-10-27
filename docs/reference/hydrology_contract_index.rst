@@ -22,7 +22,7 @@ Contract Layers
    * - Landscape consumer
      - WS4
      - Bundle pin, crosswalk, mapping, preflight, screening, exposure
-     - :doc:`femic-hydrology`
+     - WS4 ``docs/reference/femic-hydrology.rst``
    * - Operational consumer
      - FHOPS
      - Bundle pin, crosswalk, exposure, hazard, assets, screening, checks
