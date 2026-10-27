@@ -456,10 +456,10 @@ Closeout: `notes/reports/p17-closeout.md` (to be written).
   - [x] Define the pluggable stem model
   - [x] Produce volume, logs, products, and block totals
   - [x] Add the CLI, synthetic model, tests, and docs
-- [ ] P17.4 Simulate one machine processing trees in one block (#251)
-  - [ ] Implement reach, terrain, and deterministic tree selection
-  - [ ] Emit per-tree cycle events and block totals
-  - [ ] Add the CLI, tests, and docs
+- [x] P17.4 Simulate one machine processing trees in one block (#251)
+  - [x] Implement reach, terrain, and deterministic tree selection
+  - [x] Emit per-tree cycle events and block totals
+  - [x] Add the CLI, tests, and docs
 - [ ] P17.5 Replay an existing schedule at tree scale (#252)
   - [ ] Drive the simulator from assignments
   - [ ] Track tree consumption, leftovers, and discrepancies

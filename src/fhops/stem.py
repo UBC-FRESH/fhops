@@ -146,6 +146,12 @@ class StemResult:
         Diameter at breast height.
     height_m : float
         Total height.
+    x_m : float
+        Tree easting in the inventory CRS.
+    y_m : float
+        Tree northing in the inventory CRS.
+    elevation_m : float | None
+        Tree ground elevation, when supplied.
     gross_volume_m3 : float
         Gross stem volume.
     merchantable_volume_m3 : float
@@ -165,6 +171,9 @@ class StemResult:
     species_code: str
     dbh_cm: float
     height_m: float
+    x_m: float
+    y_m: float
+    elevation_m: float | None
     gross_volume_m3: float
     merchantable_volume_m3: float
     logs: tuple[LogRecord, ...]
@@ -180,6 +189,9 @@ class StemResult:
             "species_code": self.species_code,
             "dbh_cm": self.dbh_cm,
             "height_m": self.height_m,
+            "x_m": self.x_m,
+            "y_m": self.y_m,
+            "elevation_m": self.elevation_m,
             "gross_volume_m3": self.gross_volume_m3,
             "merchantable_volume_m3": self.merchantable_volume_m3,
             "log_count": len(self.logs),
@@ -382,6 +394,9 @@ class ReferenceStemModel:
             species_code=tree.species_code,
             dbh_cm=tree.dbh_cm,
             height_m=tree.height_m,
+            x_m=tree.x_m,
+            y_m=tree.y_m,
+            elevation_m=tree.elevation_m,
             gross_volume_m3=gross,
             merchantable_volume_m3=merchantable,
             logs=logs,

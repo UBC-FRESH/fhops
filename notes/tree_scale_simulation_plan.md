@@ -193,3 +193,17 @@ model is not an operational species-specific taper or grade-recovery system.
 manifest, and reconciles merchantable volume with `work_required`. `--strict`
 refuses warnings. The model is a scaffold for P17.4/P17.5, not a claim of
 statistical defensibility.
+
+## P17.4 single-machine decision
+
+The simulator is one machine on one block, with a deterministic nearest-feasible
+tree policy. Reach and terrain are explicit parameters. The machine starts at an
+explicit point or the first tree; automatic landing geometry is deferred. Trees
+inside optional circular obstacles or above the slope limit are recorded as
+unreachable. Processing time uses the ADV6N10 harvester regression and the
+reference stem model; travel uses a constant speed.
+
+`fhops tree simulate` writes per-tree events and a manifest. The simulator does
+not alter the inventory, stem results, or scenario. It is a reference execution
+layer, not a field-validated routing or physics model, and it is not coupled to
+the operational schedule yet.
