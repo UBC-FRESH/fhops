@@ -3,7 +3,7 @@
 Phase: P16 Flood-aware operational constraints
 Parent issue: #235
 Pull request: to be opened
-Evidence head: `7a0146f4` (P16.4) plus the P16.5 closeout commit
+Evidence head: `339d35b4` (P16.5 plus the `origin/main` cuOpt-memo merge)
 Date: 2026-10-27
 Status: queued for approval. Not merged.
 
@@ -84,6 +84,7 @@ Child CI runs:
 | Solver-side closure constraints were not implemented. | No single shared block/day availability hook exists across MILP, heuristics, playback, and rolling horizon; road-work timing is not a decision variable. | Kept enforcement at the tested `constraint-check` layer and documented the condition for future integration. |
 | No real watershed or weather forecast. | The work is an operational exposure contract, not a hydrology model. | Used a synthetic reviewed hazard/asset fixture. |
 | No asset condition or damage curve. | The phase records exposure context, not vulnerability economics. | Asset vulnerability class is descriptive only. |
+| `main` advanced with the cuOpt memo during closeout. | Independent work merged while P16 was active. | Merged `origin/main` at `339d35b4`, reran the gates, and kept both changelog entries. |
 
 ## 6. Next phase
 
