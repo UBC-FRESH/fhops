@@ -406,10 +406,10 @@ Authoritative note: `notes/phase15_hydrology_consumer.md`.
   - [x] Consume the shared `ws4.hydrology.exposure.v1` contract
   - [x] Bind the table to one schedule hash and refuse missing/duplicate rows
   - [x] Add raw/derived features, tests, and docs
-- [ ] P15.5 Screen a schedule and gate on readiness (#223)
-  - [ ] Emit per-watershed/receptor/period rows and refusals
-  - [ ] Apply `allow_provisional`, `require_reviewed`, and `require_ready`
-  - [ ] Refuse fixed exposure in optimizer use and document the boundary
+- [x] P15.5 Screen a schedule and gate on readiness (#223)
+  - [x] Emit per-watershed/receptor/period rows and refusals
+  - [x] Apply `allow_provisional`, `require_reviewed`, and `require_ready`
+  - [x] Refuse fixed exposure in optimizer use and document the boundary
 - [ ] P15.6 Validate, document, and close out P15 (#224)
   - [ ] Add the synthetic/public fixture and fail-closed matrix
   - [ ] Update docs, roadmap, note, and changelog
@@ -442,5 +442,6 @@ Closeout: `notes/reports/p15-closeout.md`.
 - [ ] `pre-commit` autoupdate (especially `pre-commit-hooks`) plus workflow wiring so stage deprecation warnings are resolved before upstream removal.
 - [x] Full `pre-commit run --all-files` notebook debt: cleaned/approved under issues #66–#70 so `main` CI publishes docs again.
 - [ ] Post-Phase 6 validation scale-up: full 5-year/500+ block tactical benchmark, practitioner case validation, guided planner notebooks, and decomposition only if profiling shows a bottleneck.
+- [ ] Hydrology optimizer integration: derive exposure per candidate schedule and gate it on reviewed evidence. Deferred until a route-state contract and a reviewed response surface exist.
 - [ ] Dataset inspection + data-quality polish (see `notes/dataset_inspection_plan.md`)
   - [ ] Enforce/document 24 h/day machine availability in docs + sample datasets, and flag deviations via the inspector CLI.

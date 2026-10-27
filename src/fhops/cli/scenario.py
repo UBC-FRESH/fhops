@@ -36,6 +36,12 @@ from fhops.scenario.hydrology_registration import (
     FemicHydrologyRegistrationError,
     register_femic_hydrology_bundle,
 )
+from fhops.scenario.hydrology_screen import (
+    HYDROLOGY_READINESS_POLICIES,
+    FemicHydrologyScreenError,
+    screen_fhops_hydrology,
+    write_hydrology_screen,
+)
 from fhops.scenario.io import load_scenario
 from fhops.scenario.lidar import (
     FemicLidarError,
@@ -172,6 +178,56 @@ def hydrology_map(
         )
         paths = None if dry_run or out is None else write_hydrology_mapping(result, out)
     except FemicHydrologyMappingError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
+
+
+@hydrology_app.command("screen")
+def hydrology_screen(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a hydrology pin."),
+    bundle: Path = typer.Argument(..., help="FEMIC hydrology bundle directory."),
+    mapping: Path = typer.Argument(..., help="Hydrology mapping directory or manifest."),
+    schedule: Path = typer.Argument(..., help="FHOPS assignments CSV."),
+    exposure: Path = typer.Argument(..., help="Schedule-bound exposure JSON."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Screening output directory. Print only when omitted."
+    ),
+    policy: str = typer.Option(
+        "require_reviewed",
+        "--policy",
+        help="Readiness policy: " + ", ".join(HYDROLOGY_READINESS_POLICIES),
+    ),
+    scenario_tolerance: float = typer.Option(
+        0.05,
+        "--scenario-tolerance",
+        min=0.000001,
+        help="Maximum feature difference for response-scenario selection.",
+    ),
+    allow_refused: bool = typer.Option(
+        False, "--allow-refused", help="Write inside-domain rows plus refusals."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the screen without writing outputs."
+    ),
+) -> None:
+    """Screen one assignments schedule against pinned hydrology evidence."""
+    try:
+        result = screen_fhops_hydrology(
+            scenario,
+            bundle,
+            mapping,
+            schedule,
+            exposure,
+            policy=policy,
+            scenario_tolerance=scenario_tolerance,
+            allow_refused=allow_refused,
+        )
+        paths = None if dry_run or out is None else write_hydrology_screen(result, out)
+    except FemicHydrologyScreenError as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
     payload = result.to_dict()
