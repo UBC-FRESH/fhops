@@ -4169,6 +4169,7 @@ PY
   `ws4.hydrology.exposure.v1` contract. The loader validates the complete
   watershed/period grid, review metadata, and schedule hash against a FHOPS
   assignments CSV. It preserves raw features and calculates road/culvert
-  densities from a supplied FEMIC watershed area. Added validation-report and
-  feature tests plus reference-doc and authoritative-note updates. No geometry
-  inference, screening, or real watershed result was added.
+  densities from a supplied FEMIC watershed area. Added
+  `fhops scenario hydrology exposure`, validation-report and feature tests, plus
+  reference-doc and authoritative-note updates. No geometry inference,
+  screening, or real watershed result was added.

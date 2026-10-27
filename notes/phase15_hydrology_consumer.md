@@ -209,7 +209,9 @@ FHOPS consumes the shared `ws4.hydrology.exposure.v1` table and validates it
 independently. The table declares a complete watershed/period grid, review
 metadata, and a schedule hash. FHOPS binds it to an assignments CSV and refuses
 a mismatch. Raw features are preserved; density features are calculated from
-the FEMIC watershed area. No road or culvert geometry is inferred.
+the FEMIC watershed area. The `fhops scenario hydrology exposure` command
+validates the table against an optional assignments CSV. No road or culvert
+geometry is inferred.
 
 ## Open decisions and recommended defaults
 

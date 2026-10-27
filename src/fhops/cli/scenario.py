@@ -26,6 +26,7 @@ from fhops.scenario.hydrology import (
     FemicHydrologyError,
     validate_femic_hydrology_bundle,
 )
+from fhops.scenario.hydrology_exposure import validate_hydrology_exposure
 from fhops.scenario.hydrology_mapping import (
     FemicHydrologyMappingError,
     map_femic_hydrology_to_scenario,
@@ -126,6 +127,20 @@ def hydrology_register(
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
     typer.echo(json.dumps(result.to_dict(), indent=2))
+
+
+@hydrology_app.command("exposure")
+def hydrology_exposure(
+    exposure: Path = typer.Argument(..., help="Shared road/culvert exposure JSON."),
+    schedule: Path | None = typer.Option(
+        None, "--schedule", help="FHOPS assignments CSV bound to the exposure table."
+    ),
+) -> None:
+    """Validate a schedule-bound road/culvert exposure table."""
+    report = validate_hydrology_exposure(exposure, schedule_path=schedule)
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
 
 
 @hydrology_app.command("map")

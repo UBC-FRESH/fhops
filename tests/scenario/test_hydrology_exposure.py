@@ -8,7 +8,9 @@ import math
 from pathlib import Path
 
 import pytest
+from typer.testing import CliRunner
 
+from fhops.cli.main import app
 from fhops.scenario.hydrology_exposure import (
     HYDROLOGY_EXPOSURE_SCHEMA,
     FemicHydrologyExposureError,
@@ -92,6 +94,7 @@ def test_load_exposure_and_features(tmp_path: Path) -> None:
     )
 
     assert exposure.exposure_id == "exposure-fixture-001"
+    assert exposure.to_dict()["exposure_sha256"] == exposure.sha256
     assert exposure.review_status == "reviewed"
     assert exposure.schedule_sha256 == schedule_sha256(schedule)
     assert exposure.periods == (0, 1)
@@ -220,3 +223,36 @@ def test_validation_report_reports_errors(tmp_path: Path) -> None:
     assert report.is_valid is False
     assert report.errors
     assert report.schedule_sha256 == hashlib.sha256(schedule.read_bytes()).hexdigest()
+
+
+def test_blank_watershed_ids_are_rejected(tmp_path: Path) -> None:
+    schedule = _schedule(tmp_path)
+    payload = _payload(schedule)
+    payload["watershed_ids"] = ["watershed-1", ""]
+    with pytest.raises(FemicHydrologyExposureError, match="non-empty strings"):
+        load_hydrology_exposure(_write(tmp_path / "blank.json", payload))
+
+
+def test_cli_exposure_reports_schedule_mismatch(tmp_path: Path) -> None:
+    schedule = _schedule(tmp_path)
+    other = tmp_path / "other.csv"
+    other.write_text("machine_id,block_id,day,shift_id\nM1,B01,2,S1\n", encoding="utf-8")
+    path = _write(tmp_path / "exposure.json", _payload(schedule))
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "scenario",
+            "hydrology",
+            "exposure",
+            str(path),
+            "--schedule",
+            str(other),
+        ],
+        prog_name="fhops",
+    )
+
+    assert result.exit_code == 1
+    payload = json.loads(result.output)
+    assert payload["is_valid"] is False
+    assert any("schedule hash" in error for error in payload["errors"])

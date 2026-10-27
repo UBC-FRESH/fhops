@@ -243,6 +243,7 @@ class HydrologyExposure:
             "periods": list(self.periods),
             "rows": [row.to_dict() for row in self.rows],
             "caveats": list(self.caveats),
+            "exposure_sha256": self.sha256,
         }
 
 
@@ -656,9 +657,12 @@ def _text_list(
     value: object, field: str, errors: list[str], *, allow_empty: bool
 ) -> tuple[str, ...]:
     if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
-        errors.append(f"{field} must be a list of strings.")
+        errors.append(f"{field} must be a list of non-empty strings.")
         return ()
-    items = tuple(item.strip() for item in value if item.strip())
+    items = tuple(item.strip() for item in value)
+    if any(not item for item in items):
+        errors.append(f"{field} must be a list of non-empty strings.")
+        return ()
     if not allow_empty and not items:
         errors.append(f"{field} must not be empty.")
     return items

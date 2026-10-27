@@ -225,14 +225,24 @@ The command emits a deterministic JSON report and exits non-zero on an invalid
 bundle. Use ``--no-verify-checksums`` only for a diagnostic inspection; the
 default verifies every size and SHA-256.
 
+Validate a schedule-bound exposure table and, optionally, its assignments CSV::
+
+   fhops scenario hydrology exposure build/exposure.json
+
+   fhops scenario hydrology exposure build/exposure.json \
+     --schedule build/assignments.csv
+
+The command emits the validation report and exits non-zero when the table is
+invalid or its declared schedule hash does not match.
+
 Limits
 ------
 
-P15.1 validates structure and pins producer evidence. It does not map FHOPS
-blocks, landings, or roads to FEMIC watersheds, does not screen a schedule, and
-does not create a flood map or regulatory result. The committed synthetic
-fixture is ``tests/fixtures/hydrology/response`` and is not a real watershed or
-gauge record.
+P15.4 validates the response bundle, maps an explicit crosswalk, and loads a
+schedule-bound exposure table. It does not screen a schedule, produce
+per-watershed risk rows, integrate flood exposure into the optimizer, or create
+a flood map or regulatory result. The committed synthetic bundle and exposure
+fixtures are not real watershed, road, culvert, or gauge records.
 
 Later Phase 15 tasks add scenario registration, an explicit crosswalk,
 schedule-bound road/culvert exposure, and one-schedule screening.
