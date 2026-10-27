@@ -4163,3 +4163,13 @@ PY
   manifest. Added `fhops scenario hydrology map`, tests, docs, and the
   authoritative-note decision. No spatial inference, exposure, screening, or
   real watershed result was added.
+
+- 2026-10-27: P15.4 (#222, parent #218) added
+  `fhops.scenario.hydrology_exposure` for the shared
+  `ws4.hydrology.exposure.v1` contract. The loader validates the complete
+  watershed/period grid, review metadata, and schedule hash against a FHOPS
+  assignments CSV. It preserves raw features and calculates road/culvert
+  densities from a supplied FEMIC watershed area. Added
+  `fhops scenario hydrology exposure`, validation-report and feature tests, plus
+  reference-doc and authoritative-note updates. No geometry inference,
+  screening, or real watershed result was added.
