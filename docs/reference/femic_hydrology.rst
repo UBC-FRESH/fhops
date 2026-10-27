@@ -436,3 +436,12 @@ The P15.6 integration test runs the complete synthetic path through the CLI:
 The test also covers a tampered bundle, a schedule-hash mismatch, and the
 reviewed-policy failures. It is synthetic and makes no real watershed or
 regulatory claim.
+
+Solver Boundary
+---------------
+
+FHOPS solvers do not consume hazard windows. The supported enforcement point is
+``fhops scenario hydrology constraint-check``, which fails closure activity and
+reports warning/watch exposure. A solver-side closure constraint is deferred
+until a single shared block/day availability hook is honoured by the MILP,
+heuristics, playback, and rolling-horizon paths.

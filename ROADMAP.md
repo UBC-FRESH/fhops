@@ -453,10 +453,10 @@ Authoritative note: `notes/phase16_flood_operational_constraints.md`.
   - [x] Map block activity to watersheds through the P15 crosswalk
   - [x] Emit watch/warning/closure events and closure violations
   - [x] Add the constraint-check CLI, CSV/JSON output, tests, and docs
-- [ ] P16.4 Integrate fixed hazard constraints where supported (#239)
-  - [ ] Audit solver decision variables for block/day/shift constraints
-  - [ ] Add fixed closure/warning handling where supportable
-  - [ ] Record any road-work timing limitation explicitly
+- [x] P16.4 Integrate fixed hazard constraints where supported (#239)
+  - [x] Audit solver decision variables for block/day/shift constraints
+  - [x] Keep enforcement at the one-schedule check layer
+  - [x] Record the missing shared solver hook and road-work timing limitation
 - [ ] P16.5 Prove, document, and close out P16 (#240)
   - [ ] Add the synthetic/public fixture and fail-closed matrix
   - [ ] Update docs, roadmap, note, and changelog
