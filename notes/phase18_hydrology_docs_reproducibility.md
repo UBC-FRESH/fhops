@@ -58,6 +58,13 @@ is documentation and reproducibility work, not a new hydrology capability.
 5. Run the P16 hazard/asset/constraint-check path.
 6. Understand which steps are synthetic and which need real data or review.
 
+## P18.1 audit
+
+The detailed gap matrix is `notes/p18_hydrology_docs_audit.md`. Summary: the
+individual producer and consumer references exist, but the cross-repo quickstart,
+version matrix, contract index, expected outputs, and executable docs checks do
+not. Real watershed work remains blocked by data and review, not by missing docs.
+
 ## Tasks
 
 - P18.1: documentation and reproducibility audit.
