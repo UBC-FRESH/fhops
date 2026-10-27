@@ -2,8 +2,8 @@
 
 Phase: P15 Consume FEMIC hydrology response bundles
 Parent issue: #218
-Pull request: to be opened
-Evidence head: `ee33794f` (P15.6 plus the `origin/main` 1.1.0 merge)
+Pull request: #232
+Evidence head: `0a2cd678` (P15.6 test matrix and closeout report)
 Date: 2026-10-27
 Status: queued for approval. Not merged.
 
@@ -48,6 +48,7 @@ approval.
 - Child PRs: #225, #227, #229, #230, #231. #230 included a maintainer follow-up
   adding CLI exposure validation and digest preservation. #231 included a
   maintainer hardening commit for provenance and validation.
+- Final phase PR: #232, based on `main`.
 - Commit messages use P15 task prefixes where applicable.
 - Roadmap, the authoritative note, changelog, and issue bodies were kept in
   step.
@@ -96,7 +97,7 @@ Child CI runs:
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | closeout commit | not yet run | The final phase PR runs CI after the report commit. |
+| 40475758493 | `0a2cd678` | green | Final phase PR CI against `main` (pytest, ruff, mypy, pre-commit, docs, packaging checks). The report-only follow-up reruns CI. |
 
 ## 5. Deviations
 

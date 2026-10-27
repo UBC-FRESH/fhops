@@ -4232,4 +4232,5 @@ PY
   blocked readiness, an unreviewed crosswalk, partial mapping, missing exposure,
   and a schedule-hash mismatch. Added `notes/reports/p15-closeout.md`, updated
   the roadmap to `pr-open`, and recorded the phase closeout. The final phase PR
-  is queued for maintainer approval. No real watershed result was produced.
+  is #232 and is queued for maintainer approval. No real watershed result was
+  produced.
