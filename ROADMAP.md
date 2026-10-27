@@ -444,10 +444,10 @@ authority. FHOPS does not implement LiDAR segmentation.
 Authoritative note: `notes/tree_scale_simulation_plan.md`.
 Closeout: `notes/reports/p17-closeout.md` (to be written).
 
-- [ ] P17.1 Define tree inventory contract and synthetic fixture (#248)
-  - [ ] Record the tree-level data-source audit
-  - [ ] Define `fhops.tree.inventory.v1` and metadata
-  - [ ] Add validation, CLI, synthetic fixture, tests, and docs
+- [x] P17.1 Define tree inventory contract and synthetic fixture (#248)
+  - [x] Record the tree-level data-source audit
+  - [x] Define `fhops.tree.inventory.v1` and metadata
+  - [x] Add validation, CLI, synthetic fixture, tests, and docs
 - [ ] P17.2 Pin inventory to scenario and build block tree maps (#249)
   - [ ] Add the scenario reference and checksum validation
   - [ ] Resolve trees to blocks and reconcile block evidence

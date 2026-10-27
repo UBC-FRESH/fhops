@@ -4257,3 +4257,10 @@ PY
   inventory; it does not implement LiDAR segmentation. No implementation or
   real-data claim is included yet.
 
+- 2026-10-27: P17.1 (#248, parent #247) added the
+  `fhops.tree.inventory.v1` tree-inventory contract, CSV/metadata loader and
+  validator, `fhops tree inventory validate`, a deterministic synthetic
+  one-block fixture, tests, and reference docs. The source audit found no
+  individual-tree product in the current FHOPS/FEMIC bundle data; the fixture is
+  explicitly synthetic and no tree map or operational claim is made. No
+  segmentation, stem model, machine simulation, or 3D export was added.
