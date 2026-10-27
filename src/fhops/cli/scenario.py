@@ -26,6 +26,11 @@ from fhops.scenario.hydrology import (
     FemicHydrologyError,
     validate_femic_hydrology_bundle,
 )
+from fhops.scenario.hydrology_assets import (
+    FemicHydrologyAssetError,
+    map_hydrology_assets,
+    validate_hydrology_assets,
+)
 from fhops.scenario.hydrology_exposure import validate_hydrology_exposure
 from fhops.scenario.hydrology_hazard import validate_hydrology_hazard
 from fhops.scenario.hydrology_mapping import (
@@ -115,6 +120,42 @@ def hydrology_hazard_validate(
 ) -> None:
     """Validate a reviewed operational hazard-window table."""
     report = validate_hydrology_hazard(hazard)
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
+
+
+assets_app = typer.Typer(add_completion=False, no_args_is_help=True)
+hydrology_app.add_typer(
+    assets_app,
+    name="assets",
+    help="Validate and map explicit road/culvert assets.",
+)
+
+
+@assets_app.command("validate")
+def hydrology_assets_validate(
+    assets: Path = typer.Argument(..., help="Road/culvert asset JSON."),
+    scenario: Path | None = typer.Option(
+        None, "--scenario", help="Map assets against this scenario."
+    ),
+    mapping: Path | None = typer.Option(
+        None, "--mapping", help="Hydrology mapping directory or manifest."
+    ),
+) -> None:
+    """Validate an asset table, optionally mapping it to a scenario."""
+    if (scenario is None) != (mapping is None):
+        typer.echo("Provide both --scenario and --mapping, or neither.", err=True)
+        raise typer.Exit(1)
+    try:
+        if scenario is not None and mapping is not None:
+            result = map_hydrology_assets(scenario, mapping, assets)
+            typer.echo(json.dumps(result.to_dict(), indent=2))
+            return
+    except FemicHydrologyAssetError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    report = validate_hydrology_assets(assets)
     typer.echo(json.dumps(report.to_dict(), indent=2))
     if not report.is_valid:
         raise typer.Exit(1)

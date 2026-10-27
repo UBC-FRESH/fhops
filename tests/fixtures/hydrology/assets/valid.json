@@ -1,0 +1,29 @@
+{
+  "schema_version": "fhops.hydrology.assets.v1",
+  "inventory_id": "assets-fixture-001",
+  "generated_utc": "2026-10-27T00:00:00+00:00",
+  "source_id": "synthetic-road-culvert-inventory",
+  "review_status": "reviewed",
+  "reviewer_id": "reviewer-1",
+  "assets": [
+    {
+      "asset_id": "R1",
+      "asset_type": "road",
+      "watershed_id": "watershed-1",
+      "road_job_id": "R1",
+      "vulnerability_class": "high",
+      "notes": "Synthetic road asset."
+    },
+    {
+      "asset_id": "C1",
+      "asset_type": "culvert",
+      "watershed_id": "watershed-1",
+      "road_job_id": null,
+      "vulnerability_class": "moderate",
+      "notes": "Synthetic culvert asset."
+    }
+  ],
+  "caveats": [
+    "Synthetic asset fixture only; no field inventory is represented."
+  ]
+}

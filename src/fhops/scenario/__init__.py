@@ -30,6 +30,15 @@ from .hydrology import (
 from .hydrology import (
     bundle_pin as hydrology_bundle_pin,
 )
+from .hydrology_assets import (
+    FemicHydrologyAssetError,
+    HydrologyAsset,
+    HydrologyAssetMapping,
+    HydrologyAssetValidation,
+    load_hydrology_assets,
+    map_hydrology_assets,
+    validate_hydrology_assets,
+)
 from .hydrology_exposure import (
     FemicHydrologyExposureError,
     HydrologyExposure,
@@ -169,4 +178,11 @@ __all__ = [
     "HydrologyHazardWindow",
     "load_hydrology_hazard",
     "validate_hydrology_hazard",
+    "FemicHydrologyAssetError",
+    "HydrologyAsset",
+    "HydrologyAssetMapping",
+    "HydrologyAssetValidation",
+    "load_hydrology_assets",
+    "map_hydrology_assets",
+    "validate_hydrology_assets",
 ]
