@@ -121,15 +121,25 @@ same-watershed assets. Closure activity fails by default; warning failure is an
 explicit policy. The check writes an events CSV and manifest and does not change
 the schedule or run a hydrology model.
 
-## Solver integration
+## P16.4 solver decision
 
-P16.4 audits the operational MILP and heuristics. It may add a fixed
-closure-window prohibition and warning-window penalty if block/day/shift
-variables are sufficient. If road-work timing is not a decision variable, that
-limit is recorded and road/culvert constraints remain at the one-schedule check
-layer.
+P16.4 audited the operational MILP and heuristics. Block/day/shift assignment
+variables exist, but there is no single shared hook for a fixed hazard-window
+restriction across the MILP, SA, ILS, Tabu, playback, and rolling-horizon paths.
+Road-work timing is also not a solver decision variable in the current model.
 
-The solver must never call a per-candidate hydrology model.
+The smallest correct integration is therefore the **schedule check layer**, not
+a partial solver patch:
+
+- `fhops scenario hydrology constraint-check` is the supported enforcement point;
+- a closure event fails the plan by default;
+- warning events are reported and can fail under an explicit policy;
+- the solver does not consume hazard windows and must not run a per-candidate
+  hydrology model.
+
+A later phase may add a solver constraint only after a single shared block/day
+availability hook exists and all solvers and playback honour it. Adding the
+restriction to one solver path now would create inconsistent plans.
 
 ## Data preconditions for a real application
 

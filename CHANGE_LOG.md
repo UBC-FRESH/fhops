@@ -4274,3 +4274,10 @@ PY
   activity fails by default; warning failure is an explicit policy. Added
   fixture-backed tests, reference docs, and the authoritative-note decision. No
   solver constraint or real watershed result was added.
+
+- 2026-10-27: P16.4 (#239, parent #235) audited solver integration. Block/day/
+  shift variables exist, but there is no single shared availability hook across
+  the MILP, heuristics, playback, and rolling horizon, and road-work timing is
+  not a solver decision variable. The supported constraint remains
+  `fhops scenario hydrology constraint-check`; no partial solver patch was
+  added. The limitation and the future integration condition are documented.
