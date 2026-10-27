@@ -4307,3 +4307,10 @@ PY
   check, the solver-boundary decision, and the end-to-end matrix are recorded in
   `notes/reports/p16-closeout.md`. No watershed flood model, flood map, or
   regulatory result was produced.
+
+- 2026-10-27: created Phase 18 (parent #260) for hydrology documentation and
+  reproducibility. P17 is the active tree-scale phase, so the docs phase uses
+  P18. Added child issues #261-#265, the roadmap section, and the phase plan.
+  Scope is an audit, pinned cross-repo quickstart, contract index, executable
+  docs checks, and closeout. No hydrology capability or real watershed result
+  was added.

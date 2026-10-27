@@ -474,6 +474,42 @@ Acceptance:
 - No real watershed, flood map, or regulatory result is claimed.
 - FHOPS quality suite and docs build are green.
 
+## Phase 18 — Hydrology documentation and reproducibility — active
+
+Parent issue: #260. Branch: `feature/phase18-hydrology-docs`.
+
+Goal: make the FEMIC → WS4 → FHOPS hydrology path reproducible for a new user.
+This is documentation and reproducibility work, not a new hydrology capability.
+P17 is the active tree-scale phase, so this phase uses P18.
+
+Authoritative note: `notes/phase18_hydrology_docs_reproducibility.md`.
+
+- [ ] P18.1 Audit hydrology documentation and reproducibility gaps (#261)
+  - [ ] Inventory FEMIC, WS4, and FHOPS hydrology docs
+  - [ ] Record gaps, owners, and data/review blockers
+  - [ ] Separate documentation gaps from capability gaps
+- [ ] P18.2 Publish the pinned cross-repo quickstart (#262)
+  - [ ] Pin package versions and environment
+  - [ ] Run the synthetic FEMIC/WS4/FHOPS path
+  - [ ] Record expected outputs and unsupported steps
+- [ ] P18.3 Publish the contract and schema index (#263)
+  - [ ] List every hydrology, crosswalk, exposure, hazard, and asset contract
+  - [ ] Record required fields, ownership, and refusal behavior
+- [ ] P18.4 Add executable hydrology docs checks (#264)
+  - [ ] Check links and runnable snippets
+  - [ ] Run the synthetic quickstart in CI
+- [ ] P18.5 Close out the documentation phase (#265)
+  - [ ] Verify docs and gates
+  - [ ] Record synthetic/real-data limits and close out
+
+Acceptance:
+
+- Every gap has an owner.
+- The quickstart names versions, fixtures, commands, and expected outputs.
+- The contract index covers every schema in the workflow.
+- Docs checks pass in CI.
+- No new hydrology capability or real watershed result is claimed.
+
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
