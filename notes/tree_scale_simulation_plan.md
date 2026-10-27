@@ -146,3 +146,21 @@ performance case, update docs/roadmap/note/changelog, and write
   rendering are mandatory. CI does not render video.
 - **No optimizer integration:** tree-scale decisions are not fed back into the
   MILP in this phase.
+
+## P17.1 contract decision
+
+The tree inventory is a UTF-8 CSV plus a JSON metadata sidecar. The contract is
+`fhops.tree.inventory.v1`; records are validated by
+`fhops.tree_inventory.load_tree_inventory` and
+`validate_tree_inventory`, with the CLI `fhops tree inventory validate`.
+
+The source audit found no individual-tree product in the current FHOPS consumer
+contract or the mounted FEMIC/LidarBC bundle data. The committed fixture
+`tests/fixtures/tree_inventory/synthetic_block` is therefore synthetic: 12
+fabricated trees in a 1 ha EPSG:3005 block, with explicit metadata and a CSV
+checksum. It is a contract fixture, not a real tree map.
+
+The loader validates required columns, duplicate IDs, finite dimensions,
+positive DBH/height/crown values, confidence, status, metadata schema, units,
+CRS, review metadata, declared block membership, row count, and optional CSV
+digest. A real producer inventory and review remain a separate gate.

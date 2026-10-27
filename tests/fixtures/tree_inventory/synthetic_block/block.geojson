@@ -1,0 +1,39 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              881700.0,
+              627500.0
+            ],
+            [
+              881800.0,
+              627500.0
+            ],
+            [
+              881800.0,
+              627600.0
+            ],
+            [
+              881700.0,
+              627600.0
+            ],
+            [
+              881700.0,
+              627500.0
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "properties": {
+        "area_ha": 1.0,
+        "block_id": "SYNTH_B01"
+      },
+      "type": "Feature"
+    }
+  ],
+  "type": "FeatureCollection"
+}
