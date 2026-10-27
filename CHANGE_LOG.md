@@ -1,3 +1,16 @@
+# 2026-10-27 — FHOPS 1.1.0 release
+
+- Bumped the package version to `1.1.0` and documented the stable release in
+  `docs/releases/v1.1.0.md`.
+- Includes the complete 1.1 line: corrected operational core, tactical–operational planning, log
+  hauling and multi-day marine cycles, the optional web application, FEMIC LidarBC consumption, and
+  the third-audit MILP/rolling/heuristic fixes.
+- Updated README and import-version checks for `fhops==1.1.0`.
+
+Verification:
+- Full CI suite green before tagging; local `pytest` retains only the two pre-existing HiGHS
+  option-error failures; ruff, mypy, pre-commit, and Sphinx clean.
+
 # 2026-10-26 — Phase 8.31: third-audit MILP/rolling fixes (#157, part of #90)
 
 - **Calendar AND (#157/N1).** `machine_slot_available` now requires both the day-calendar and
