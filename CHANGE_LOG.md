@@ -4248,3 +4248,12 @@ PY
   windows, explicit road/culvert assets, schedule exposure checks, and only
   fixed-scenario solver constraints. No watershed flood-response optimization
   or per-candidate hydrology was added.
+
+- 2026-10-27: P16.1 (#236, parent #235) added
+  `fhops.scenario.hydrology_hazard` and the
+  `fhops.hydrology.hazard.v1` contract. It validates reviewed hazard windows,
+  inclusive day ranges, severity, overlaps, and caveats, and exposes a
+  highest-severity lookup. Added `fhops scenario hydrology hazard validate`,
+  fixture/tests, reference docs, and the authoritative-note decision. No
+  schedule check, asset inventory, solver constraint, or real watershed result
+  was added.

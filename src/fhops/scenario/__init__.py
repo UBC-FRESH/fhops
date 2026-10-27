@@ -39,6 +39,14 @@ from .hydrology_exposure import (
     schedule_sha256,
     validate_hydrology_exposure,
 )
+from .hydrology_hazard import (
+    FemicHydrologyHazardError,
+    HydrologyHazard,
+    HydrologyHazardValidation,
+    HydrologyHazardWindow,
+    load_hydrology_hazard,
+    validate_hydrology_hazard,
+)
 from .hydrology_mapping import (
     FemicHydrologyMappingError,
     HydrologyCrosswalk,
@@ -155,4 +163,10 @@ __all__ = [
     "load_hydrology_exposure",
     "schedule_sha256",
     "validate_hydrology_exposure",
+    "FemicHydrologyHazardError",
+    "HydrologyHazard",
+    "HydrologyHazardValidation",
+    "HydrologyHazardWindow",
+    "load_hydrology_hazard",
+    "validate_hydrology_hazard",
 ]

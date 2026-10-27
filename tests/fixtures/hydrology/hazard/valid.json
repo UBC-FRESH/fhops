@@ -1,0 +1,49 @@
+{
+  "schema_version": "fhops.hydrology.hazard.v1",
+  "hazard_id": "hazard-fixture-001",
+  "generated_utc": "2026-10-27T00:00:00+00:00",
+  "source_id": "synthetic-operational-forecast",
+  "review_status": "reviewed",
+  "reviewer_id": "reviewer-1",
+  "windows": [
+    {
+      "watershed_id": "watershed-1",
+      "start_day": 1,
+      "end_day": 2,
+      "severity": "watch",
+      "return_period_years": 2.0,
+      "source_id": "synthetic-operational-forecast",
+      "notes": "Watch window."
+    },
+    {
+      "watershed_id": "watershed-1",
+      "start_day": 3,
+      "end_day": 4,
+      "severity": "warning",
+      "return_period_years": 10.0,
+      "source_id": "synthetic-operational-forecast",
+      "notes": "Warning window."
+    },
+    {
+      "watershed_id": "watershed-1",
+      "start_day": 5,
+      "end_day": 5,
+      "severity": "closure",
+      "return_period_years": 50.0,
+      "source_id": "synthetic-operational-forecast",
+      "notes": "Closure window."
+    },
+    {
+      "watershed_id": "watershed-2",
+      "start_day": 2,
+      "end_day": 3,
+      "severity": "warning",
+      "return_period_years": 10.0,
+      "source_id": "synthetic-operational-forecast",
+      "notes": "Warning window."
+    }
+  ],
+  "caveats": [
+    "Synthetic hazard fixture only; no weather or hydrology model is represented."
+  ]
+}

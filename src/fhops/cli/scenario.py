@@ -27,6 +27,7 @@ from fhops.scenario.hydrology import (
     validate_femic_hydrology_bundle,
 )
 from fhops.scenario.hydrology_exposure import validate_hydrology_exposure
+from fhops.scenario.hydrology_hazard import validate_hydrology_hazard
 from fhops.scenario.hydrology_mapping import (
     FemicHydrologyMappingError,
     map_femic_hydrology_to_scenario,
@@ -95,6 +96,25 @@ def hydrology_validate(
     except FemicHydrologyError as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
+
+
+hazard_app = typer.Typer(add_completion=False, no_args_is_help=True)
+hydrology_app.add_typer(
+    hazard_app,
+    name="hazard",
+    help="Validate operational flood-hazard windows.",
+)
+
+
+@hazard_app.command("validate")
+def hydrology_hazard_validate(
+    hazard: Path = typer.Argument(..., help="Operational hazard-window JSON."),
+) -> None:
+    """Validate a reviewed operational hazard-window table."""
+    report = validate_hydrology_hazard(hazard)
     typer.echo(json.dumps(report.to_dict(), indent=2))
     if not report.is_valid:
         raise typer.Exit(1)

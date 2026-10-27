@@ -441,10 +441,10 @@ inside watch, warning, and closure windows by watershed and explicit assets.
 
 Authoritative note: `notes/phase16_flood_operational_constraints.md`.
 
-- [ ] P16.1 Define and implement the operational hazard-window contract (#236)
-  - [ ] Validate schema, watershed ids, review metadata, day ranges, and overlaps
-  - [ ] Add severity lookup and validation report
-  - [ ] Add `fhops scenario hydrology hazard validate`, tests, and docs
+- [x] P16.1 Define and implement the operational hazard-window contract (#236)
+  - [x] Validate schema, watershed ids, review metadata, day ranges, and overlaps
+  - [x] Add severity lookup and validation report
+  - [x] Add `fhops scenario hydrology hazard validate`, tests, and docs
 - [ ] P16.2 Load road/culvert asset evidence (#237)
   - [ ] Define explicit asset ids, types, watersheds, and review metadata
   - [ ] Reject unknown/duplicate assets without geometry inference
