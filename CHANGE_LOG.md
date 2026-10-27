@@ -4173,3 +4173,16 @@ PY
   `fhops scenario hydrology exposure`, validation-report and feature tests, plus
   reference-doc and authoritative-note updates. No geometry inference,
   screening, or real watershed result was added.
+
+- 2026-10-27: P15.5 (#223, parent #218) added
+  `fhops.scenario.hydrology_screen` and
+  `fhops scenario hydrology screen`. The one-schedule screen computes
+  cumulative block area by watershed, uses block GeoJSON/LiDAR area evidence,
+  applies the schedule-bound exposure features, selects the response scenario,
+  and emits per-watershed/receptor/period rows and refusals. The manifest keeps
+  the exposure digest and propagates producer caveats. It enforces
+  `allow_provisional`, `require_reviewed`, and `require_ready`, requires reviewed
+  mapping/exposure under reviewed policies, and writes CSV plus a manifest.
+  Added screen, refusal, policy, and CLI tests plus docs/design updates. The
+  optimizer still refuses fixed exposure; schedule-derived integration is
+  deferred.

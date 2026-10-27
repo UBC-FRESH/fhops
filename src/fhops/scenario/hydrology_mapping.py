@@ -40,6 +40,7 @@ __all__ = [
     "HydrologyMapping",
     "HydrologyMappingRow",
     "load_hydrology_crosswalk",
+    "load_hydrology_mapping",
     "map_femic_hydrology_to_scenario",
     "write_hydrology_mapping",
 ]
@@ -314,6 +315,92 @@ def load_hydrology_crosswalk(
         sha256=digest,
         rows=rows,
         metadata=metadata,
+    )
+
+
+def load_hydrology_mapping(path: Path) -> HydrologyMapping:
+    """Load a mapping manifest written by :func:`write_hydrology_mapping`.
+
+    Parameters
+    ----------
+    path : Path
+        Mapping directory or ``hydrology_mapping.json``.
+
+    Returns
+    -------
+    HydrologyMapping
+        Loaded mapping with rows, coverage, and review state.
+
+    Raises
+    ------
+    FemicHydrologyMappingError
+        If the manifest is missing, malformed, or inconsistent.
+    """
+    resolved = path.expanduser().resolve()
+    manifest_path = resolved / "hydrology_mapping.json" if resolved.is_dir() else resolved
+    payload = _read_json_object(manifest_path, "hydrology mapping manifest")
+    if payload.get("schema_version") != HYDROLOGY_MAPPING_SCHEMA:
+        raise FemicHydrologyMappingError(
+            f"Unsupported hydrology mapping schema {payload.get('schema_version')!r}."
+        )
+    rows_payload = payload.get("rows")
+    if not isinstance(rows_payload, list):
+        raise FemicHydrologyMappingError("Hydrology mapping rows must be a list.")
+    rows: list[HydrologyMappingRow] = []
+    seen: set[tuple[str, str]] = set()
+    for index, item in enumerate(rows_payload, start=1):
+        if not isinstance(item, Mapping):
+            raise FemicHydrologyMappingError(f"Mapping row {index} must be an object.")
+        unit = _required_text(item.get("support_unit"), f"mapping row {index} support_unit")
+        if unit not in SUPPORT_UNITS:
+            raise FemicHydrologyMappingError(
+                f"Mapping row {index} has unsupported support_unit {unit!r}."
+            )
+        support_id = _required_text(item.get("support_id"), f"mapping row {index} support_id")
+        key = (unit, support_id)
+        if key in seen:
+            raise FemicHydrologyMappingError(f"Duplicate mapping row for {unit} {support_id!r}.")
+        seen.add(key)
+        rows.append(
+            HydrologyMappingRow(
+                support_unit=unit,
+                support_id=support_id,
+                unit_id=_required_text(item.get("unit_id"), f"mapping row {index} unit_id"),
+                watershed_id=_required_text(
+                    item.get("watershed_id"), f"mapping row {index} watershed_id"
+                ),
+                receptor_id=_optional_text(item.get("receptor_id")),
+                notes=_optional_text(item.get("notes")) or "",
+            )
+        )
+    row_count = payload.get("row_count")
+    if isinstance(row_count, int) and row_count != len(rows):
+        raise FemicHydrologyMappingError("Hydrology mapping row_count does not match rows.")
+    coverage = payload.get("coverage")
+    if not isinstance(coverage, Mapping):
+        raise FemicHydrologyMappingError("Hydrology mapping coverage must be an object.")
+    warnings = payload.get("warnings", [])
+    caveats = payload.get("caveats", [])
+    if not isinstance(warnings, list) or not all(isinstance(item, str) for item in warnings):
+        raise FemicHydrologyMappingError("Hydrology mapping warnings must be strings.")
+    if not isinstance(caveats, list) or not all(isinstance(item, str) for item in caveats):
+        raise FemicHydrologyMappingError("Hydrology mapping caveats must be strings.")
+    return HydrologyMapping(
+        mapping_id=_required_text(payload.get("mapping_id"), "mapping_id"),
+        generated_utc=_required_text(payload.get("generated_utc"), "generated_utc"),
+        scenario_path=Path(
+            _required_text(payload.get("scenario_path"), "scenario_path")
+        ).expanduser(),
+        bundle_id=_required_text(payload.get("bundle_id"), "bundle_id"),
+        bundle_version=_required_text(payload.get("bundle_version"), "bundle_version"),
+        manifest_sha256=_required_text(payload.get("manifest_sha256"), "manifest_sha256"),
+        crosswalk_id=_required_text(payload.get("crosswalk_id"), "crosswalk_id"),
+        crosswalk_sha256=_required_text(payload.get("crosswalk_sha256"), "crosswalk_sha256"),
+        review_status=_required_text(payload.get("review_status"), "review_status"),
+        rows=tuple(rows),
+        coverage={str(key): value for key, value in coverage.items()},
+        warnings=tuple(item for item in warnings if item),
+        caveats=tuple(item for item in caveats if item),
     )
 
 

@@ -210,6 +210,44 @@ densities when a positive FEMIC watershed area is supplied:
 FHOPS does not derive road state or culvert locations from geometry. A table
 bound to one schedule is not reused for another schedule.
 
+Screening
+---------
+
+Screen one assignments schedule against the pinned bundle, explicit mapping,
+and schedule-bound exposure:
+
+.. code-block:: bash
+
+   fhops scenario hydrology screen scenarios/example/scenario.yaml \
+     data/femic/hydrology-response-2026.10.0 \
+     build/hydrology_mapping \
+     assignments.csv \
+     schedule-exposure.json \
+     --policy require_reviewed \
+     --out build/hydrology_screen
+
+The screen computes cumulative block area by FEMIC watershed for each schedule
+day, converts the day to the zero-based exposure period (``day - 1``), selects
+the applicable response scenario, and applies the pinned flood-risk baseline and
+response ratio. Block areas come from the scenario block GeoJSON ``area_ha``
+field, falling back to LiDAR block support area when necessary.
+
+Readiness policies are ``allow_provisional``, ``require_reviewed``, and
+``require_ready``. A tail-check block always refuses. Under a reviewed policy,
+the crosswalk and exposure table must also be reviewed. Missing mapping,
+exposure periods, block areas, scenarios, or flood-risk rows produce explicit
+refusals; without ``--allow-refused`` the command exits non-zero.
+
+Outputs are ``hydrology_screen.csv`` and ``hydrology_screen.json``. Every row
+carries the harvest fraction, exposure features, selected scenario, response
+ratio, baseline flow, screening peak flow, and any producer receptor values.
+The manifest carries bundle/mapping/exposure identities, exposure and schedule
+digests, readiness, coverage, refusals, warnings, and the producer plus
+screening-only caveats.
+
+This is a one-schedule CLI screen. The optimizer does not consume a fixed
+exposure table; schedule-derived exposure for each candidate remains deferred.
+
 CLI
 ---
 

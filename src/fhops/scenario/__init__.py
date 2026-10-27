@@ -22,7 +22,9 @@ from .hydrology import (
     assess_femic_hydrology_readiness,
     load_femic_hydrology_bundle,
     read_femic_hydrology_domain,
+    read_femic_hydrology_flood_risk,
     read_femic_hydrology_ledger,
+    read_femic_hydrology_response_surface,
     validate_femic_hydrology_bundle,
 )
 from .hydrology import (
@@ -45,6 +47,7 @@ from .hydrology_mapping import (
     HydrologyMapping,
     HydrologyMappingRow,
     load_hydrology_crosswalk,
+    load_hydrology_mapping,
     map_femic_hydrology_to_scenario,
     write_hydrology_mapping,
 )
@@ -54,6 +57,13 @@ from .hydrology_registration import (
 )
 from .hydrology_registration import (
     RegistrationResult as HydrologyRegistrationResult,
+)
+from .hydrology_screen import (
+    FemicHydrologyScreenError,
+    HydrologyScreen,
+    enforce_hydrology_readiness,
+    screen_fhops_hydrology,
+    write_hydrology_screen,
 )
 from .io import load_scenario, read_csv
 from .lidar import (
@@ -116,7 +126,9 @@ __all__ = [
     "hydrology_bundle_pin",
     "load_femic_hydrology_bundle",
     "read_femic_hydrology_domain",
+    "read_femic_hydrology_flood_risk",
     "read_femic_hydrology_ledger",
+    "read_femic_hydrology_response_surface",
     "validate_femic_hydrology_bundle",
     "FemicHydrologyRegistrationError",
     "HydrologyRegistrationResult",
@@ -128,8 +140,14 @@ __all__ = [
     "HydrologyMapping",
     "HydrologyMappingRow",
     "load_hydrology_crosswalk",
+    "load_hydrology_mapping",
     "map_femic_hydrology_to_scenario",
     "write_hydrology_mapping",
+    "FemicHydrologyScreenError",
+    "HydrologyScreen",
+    "enforce_hydrology_readiness",
+    "screen_fhops_hydrology",
+    "write_hydrology_screen",
     "FemicHydrologyExposureError",
     "HydrologyExposure",
     "HydrologyExposureRow",

@@ -213,6 +213,19 @@ the FEMIC watershed area. The `fhops scenario hydrology exposure` command
 validates the table against an optional assignments CSV. No road or culvert
 geometry is inferred.
 
+## P15.5 screening decision
+
+Screening is one schedule at a time. It computes cumulative block area from the
+schedule assignments and block GeoJSON/LiDAR support area, maps it to FEMIC
+watershed area, uses the zero-based exposure period (`day - 1`), and selects the
+response scenario from harvest plus exposure features. Missing block area,
+mapping, exposure period, scenario, or flood-risk row is a refusal.
+
+`require_reviewed` requires a reviewed bundle, crosswalk, and exposure table;
+`require_ready` requires the bundle to be fully ready. A tail-check block always
+refuses. The screen writes a CSV and manifest, carries the exposure digest and
+the producer caveats, and is not wired into the optimizer.
+
 ## Open decisions and recommended defaults
 
 - **Exposure schema:** reuse `ws4.hydrology.exposure.v1` rather than create a

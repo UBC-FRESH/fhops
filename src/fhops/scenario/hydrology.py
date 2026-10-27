@@ -444,6 +444,54 @@ def read_femic_hydrology_ledger(bundle: FemicHydrologyBundle) -> dict[str, objec
     return payload
 
 
+def read_femic_hydrology_response_surface(bundle: FemicHydrologyBundle) -> dict[str, object]:
+    """Return the pinned FEMIC response-surface artifact.
+
+    Parameters
+    ----------
+    bundle : FemicHydrologyBundle
+        Validated bundle.
+
+    Returns
+    -------
+    dict[str, object]
+        Response-surface payload with scenarios and rows.
+
+    Raises
+    ------
+    FemicHydrologyError
+        If the artifact is missing or malformed.
+    """
+    payload = _optional_payload(bundle, "response_surface")
+    if payload is None:
+        raise FemicHydrologyError("Hydrology bundle has no response-surface artifact.")
+    return payload
+
+
+def read_femic_hydrology_flood_risk(bundle: FemicHydrologyBundle) -> dict[str, object]:
+    """Return the pinned FEMIC flood-risk artifact.
+
+    Parameters
+    ----------
+    bundle : FemicHydrologyBundle
+        Validated bundle.
+
+    Returns
+    -------
+    dict[str, object]
+        Flood-risk payload with receptor rows.
+
+    Raises
+    ------
+    FemicHydrologyError
+        If the artifact is missing or malformed.
+    """
+    payload = _optional_payload(bundle, "flood_risk")
+    if payload is None:
+        raise FemicHydrologyError("Hydrology bundle has no flood-risk artifact.")
+    return payload
+
+
 def assess_femic_hydrology_readiness(
     bundle: FemicHydrologyBundle,
 ) -> FemicHydrologyReadiness:
