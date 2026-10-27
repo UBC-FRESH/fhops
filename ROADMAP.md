@@ -379,7 +379,7 @@ Acceptance:
 - The public fixture validates, runs, and records licence/provenance and limits.
 - No discovery or materialization is reimplemented in FHOPS.
 
-## Phase 15 — Consume FEMIC hydrology response bundles — active
+## Phase 15 — Consume FEMIC hydrology response bundles — pr-open
 
 Parent issue: #218. Branch: `feature/phase15-hydrology-consumer`.
 
@@ -389,6 +389,7 @@ exposure table, and screen one operational schedule. This is a read-only
 consumer and screening phase, not a flood model or real watershed pilot.
 
 Authoritative note: `notes/phase15_hydrology_consumer.md`.
+Closeout report: `notes/reports/p15-closeout.md`.
 
 - [x] P15.1 Define the FHOPS hydrology consumer contract (#219)
   - [x] Validate the bundle manifest, roles, checksums, identity, and caveats
@@ -410,10 +411,10 @@ Authoritative note: `notes/phase15_hydrology_consumer.md`.
   - [x] Emit per-watershed/receptor/period rows and refusals
   - [x] Apply `allow_provisional`, `require_reviewed`, and `require_ready`
   - [x] Refuse fixed exposure in optimizer use and document the boundary
-- [ ] P15.6 Validate, document, and close out P15 (#224)
-  - [ ] Add the synthetic/public fixture and fail-closed matrix
-  - [ ] Update docs, roadmap, note, and changelog
-  - [ ] Write the closeout report and queue the phase PR
+- [x] P15.6 Validate, document, and close out P15 (#224)
+  - [x] Add the synthetic/public fixture and fail-closed matrix
+  - [x] Update docs, roadmap, note, and changelog
+  - [x] Write the closeout report and queue the phase PR
 
 Acceptance:
 

@@ -284,3 +284,20 @@ fixtures are not real watershed, road, culvert, or gauge records.
 
 Later Phase 15 tasks add scenario registration, an explicit crosswalk,
 schedule-bound road/culvert exposure, and one-schedule screening.
+
+End-to-End Path
+---------------
+
+The P15.6 integration test runs the complete synthetic path through the CLI:
+
+.. code-block:: bash
+
+   fhops scenario hydrology validate BUNDLE
+   fhops scenario hydrology register SCENARIO BUNDLE
+   fhops scenario hydrology map SCENARIO BUNDLE CROSSWALK --out MAPPING
+   fhops scenario hydrology exposure EXPOSURE --schedule ASSIGNMENTS
+   fhops scenario hydrology screen SCENARIO BUNDLE MAPPING ASSIGNMENTS EXPOSURE --out SCREEN
+
+The test also covers a tampered bundle, a schedule-hash mismatch, and the
+reviewed-policy failures. It is synthetic and makes no real watershed or
+regulatory claim.

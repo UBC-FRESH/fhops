@@ -4186,3 +4186,9 @@ PY
   Added screen, refusal, policy, and CLI tests plus docs/design updates. The
   optimizer still refuses fixed exposure; schedule-derived integration is
   deferred.
+
+- 2026-10-27: P15.6 (#224, parent #218) added the end-to-end CLI integration
+  test covering bundle validation, registration, mapping, exposure validation,
+  and one-schedule screening. Added `notes/reports/p15-closeout.md`, updated the
+  roadmap to `pr-open`, and recorded the phase closeout. The final phase PR is
+  queued for maintainer approval. No real watershed result was produced.

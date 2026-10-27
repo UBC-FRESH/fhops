@@ -226,6 +226,14 @@ mapping, exposure period, scenario, or flood-risk row is a refusal.
 refuses. The screen writes a CSV and manifest, carries the exposure digest and
 the producer caveats, and is not wired into the optimizer.
 
+## P15.6 closeout decision
+
+The end-to-end integration test runs the CLI path from bundle validation through
+registration, mapping, exposure validation, and one-schedule screening. The
+phase is queued for approval with `notes/reports/p15-closeout.md`. No real
+watershed result is claimed. Optimizer-integrated exposure remains deferred
+until a reviewed bundle and schedule-derived road-state contract exist.
+
 ## Open decisions and recommended defaults
 
 - **Exposure schema:** reuse `ws4.hydrology.exposure.v1` rather than create a
