@@ -4249,3 +4249,11 @@ PY
   Gurobi/HiGHS + heuristic + `feasible_start` path. The memo records the Nibi
   versus Sockeye, `tiny7` omission, and cuOpt-as-seed-source deviations. No
   production backend, manuscript change, or release was added.
+
+- 2026-10-27: Planned P17 (tree-scale inventory and spatial harvesting
+  simulation) in `notes/tree_scale_simulation_plan.md`, added the P17 roadmap
+  section and issue tree (#247 and #248-#254), and created the
+  `feature/p17-tree-scale` phase branch. P17 consumes a producer-neutral tree
+  inventory; it does not implement LiDAR segmentation. No implementation or
+  real-data claim is included yet.
+

@@ -431,6 +431,62 @@ Acceptance:
 
 Closeout: `notes/reports/p15-closeout.md`; final PR #232 merged as `3b404414`.
 
+## Phase 17 — Tree-scale inventory and spatial harvesting simulation — active
+
+Parent issue: #247. Branch: `feature/p17-tree-scale`.
+
+Goal: consume a validated individual-tree inventory for FHOPS blocks, derive
+stem-level volume and bucking, simulate one machine processing actual stems,
+replay an existing schedule at tree scale, and export a deterministic 3D scene.
+This is a tree-scale execution layer; the block/day MILP remains the planning
+authority. FHOPS does not implement LiDAR segmentation.
+
+Authoritative note: `notes/tree_scale_simulation_plan.md`.
+Closeout: `notes/reports/p17-closeout.md` (to be written).
+
+- [ ] P17.1 Define tree inventory contract and synthetic fixture (#248)
+  - [ ] Record the tree-level data-source audit
+  - [ ] Define `fhops.tree.inventory.v1` and metadata
+  - [ ] Add validation, CLI, synthetic fixture, tests, and docs
+- [ ] P17.2 Pin inventory to scenario and build block tree maps (#249)
+  - [ ] Add the scenario reference and checksum validation
+  - [ ] Resolve trees to blocks and reconcile block evidence
+  - [ ] Add the map CLI, manifest, tests, and docs
+- [ ] P17.3 Derive stem volume and bucking (#250)
+  - [ ] Define the pluggable stem model
+  - [ ] Produce volume, logs, products, and block totals
+  - [ ] Add the CLI, synthetic model, tests, and docs
+- [ ] P17.4 Simulate one machine processing trees in one block (#251)
+  - [ ] Implement reach, terrain, and deterministic tree selection
+  - [ ] Emit per-tree cycle events and block totals
+  - [ ] Add the CLI, tests, and docs
+- [ ] P17.5 Replay an existing schedule at tree scale (#252)
+  - [ ] Drive the simulator from assignments
+  - [ ] Track tree consumption, leftovers, and discrepancies
+  - [ ] Add the replay CLI, manifest, tests, and docs
+- [ ] P17.6 Export a 3D scene and viewer (#253)
+  - [ ] Export deterministic glTF/GLB terrain, trees, paths, and logs
+  - [ ] Add LOD, viewer/import docs, and a camera path
+  - [ ] Add scene tests
+- [ ] P17.7 Validate, document, and close out P17 (#254)
+  - [ ] Add the end-to-end synthetic fixture and fail-closed matrix
+  - [ ] Run the quality suite and docs build
+  - [ ] Write the closeout report and queue the phase PR
+
+Acceptance:
+
+- A valid inventory loads and every tree resolves to one block.
+- Unsafe contracts fail explicitly.
+- Tree totals reconcile with block evidence or report a mismatch.
+- One machine produces deterministic per-tree events.
+- A schedule replay exposes leftovers and discrepancies.
+- The 3D scene is deterministic and opens in a standard glTF viewer.
+- No real tree map, operational decision, or regulatory claim is made.
+- FHOPS quality suite and docs build are green.
+
+> Phase 16 is a separately owned flood-aware operational phase and is not part
+> of this branch. P17 does not modify its issue tree or scope.
+
 ## Backlog & Ideas
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
