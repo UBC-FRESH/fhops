@@ -4300,3 +4300,10 @@ PY
 - 2026-10-27: P16.5 merged `origin/main` after the cuOpt MIP memo, resolved the
   changelog conflict, and reran the full test, docs, and pre-commit gates. No
   behavior or result changed.
+
+- 2026-10-27: P16 close-out: pull request #255 squash-merged as `b850275d`;
+  parent #235 and tasks #236/#237/#238/#239/#240 closed; Phase 16 set to
+  complete. Fixed hazard windows, explicit assets, the one-schedule constraint
+  check, the solver-boundary decision, and the end-to-end matrix are recorded in
+  `notes/reports/p16-closeout.md`. No watershed flood model, flood map, or
+  regulatory result was produced.
