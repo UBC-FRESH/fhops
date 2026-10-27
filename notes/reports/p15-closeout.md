@@ -56,14 +56,31 @@ approval.
 
 ## 3. Gate evidence
 
-Local gates on the phase branch:
+Local gates on the closeout branch:
 
-- Full `pytest -q`: exit 0.
+- Full `pytest -q`: not fully green locally because of the two pre-existing
+  HiGHS option-error tests
+  (`test_milp_driver_robustness.py::test_highs_option_error_is_reported_as_solver_error`
+  and `test_legacy_mip_driver.py::test_highs_option_error_is_reported_as_solver_error[highs-exec]`).
+  Every other test passes; CI is green and is authoritative.
 - `ruff format --check src tests`: clean.
 - `ruff check src tests`: clean.
 - `mypy src`: clean.
-- `pre-commit run --all-files`: passed.
+- `pre-commit run --all-files` via `python -m pre_commit`: passed.
 - `sphinx-build -b html docs _build/html -W`: succeeded.
+
+### Fail-closed matrix
+
+`tests/scenario/test_hydrology_integration.py` exercises the unmodified CLI:
+
+| Case | Test | Observed |
+| --- | --- | --- |
+| Tampered FEMIC bundle | `test_end_to_end_rejects_tampered_bundle` | Registration exits 1 with a checksum mismatch. |
+| Blocked readiness | `test_end_to_end_rejects_blocked_readiness` | `--policy allow_provisional` still refuses on the tail-check block. |
+| Unreviewed crosswalk | `test_end_to_end_rejects_unreviewed_crosswalk` | Default `require_reviewed` screen exits 1. |
+| Partial mapping | `test_end_to_end_rejects_partial_mapping` | A scheduled unmapped block produces a refusal and exits 1. |
+| Missing exposure | `test_end_to_end_rejects_missing_exposure_file` | Screen exits 1 before emitting rows. |
+| Schedule mismatch | `test_end_to_end_rejects_schedule_mismatch` | Screen exits 1 on the exposure schedule hash. |
 
 Child CI runs:
 

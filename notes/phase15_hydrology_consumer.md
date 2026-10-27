@@ -229,10 +229,12 @@ the producer caveats, and is not wired into the optimizer.
 ## P15.6 closeout decision
 
 The end-to-end integration test runs the CLI path from bundle validation through
-registration, mapping, exposure validation, and one-schedule screening. The
-phase is queued for approval with `notes/reports/p15-closeout.md`. No real
-watershed result is claimed. Optimizer-integrated exposure remains deferred
-until a reviewed bundle and schedule-derived road-state contract exist.
+registration, mapping, exposure validation, and one-schedule screening. It also
+covers tampered-bundle, blocked-readiness, unreviewed-crosswalk, partial-mapping,
+missing-exposure, and schedule-mismatch refusals. The phase is queued for
+approval with `notes/reports/p15-closeout.md`. No real watershed result is
+claimed. Optimizer-integrated exposure remains deferred until a reviewed bundle
+and schedule-derived road-state contract exist.
 
 ## Open decisions and recommended defaults
 
