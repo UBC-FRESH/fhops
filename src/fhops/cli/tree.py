@@ -35,6 +35,12 @@ from fhops.tree_mapping import (
     register_tree_inventory,
     write_tree_mapping,
 )
+from fhops.tree_replay import (
+    DEFAULT_REPLAY_TOLERANCE,
+    TreeReplayError,
+    replay_tree_schedule,
+    write_tree_replay,
+)
 
 tree_app = typer.Typer(add_completion=False, no_args_is_help=True)
 inventory_app = typer.Typer(add_completion=False, no_args_is_help=True)
@@ -247,3 +253,47 @@ def _parse_obstacle(value: str) -> Obstacle:
     if radius <= 0:
         raise ValueError("Obstacle radius must be positive.")
     return Obstacle(x_m=x, y_m=y, radius_m=radius)
+
+
+@tree_app.command("replay")
+def tree_replay(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    assignments: Path = typer.Argument(..., help="Assignments CSV."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Replay output directory. Print only when omitted."
+    ),
+    tolerance: float = typer.Option(
+        DEFAULT_REPLAY_TOLERANCE,
+        "--tolerance",
+        help="Relative tolerance for scheduled-versus-simulated volume.",
+    ),
+    obstacle: list[str] | None = typer.Option(
+        None,
+        "--obstacle",
+        help="Circular obstacle as x,y,radius_m. Repeat for multiple obstacles.",
+    ),
+    strict: bool = typer.Option(
+        False, "--strict", help="Refuse when any replay discrepancy is recorded."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the replay without writing outputs."
+    ),
+) -> None:
+    """Replay an existing assignments schedule at tree scale."""
+    try:
+        obstacles = tuple(_parse_obstacle(value) for value in (obstacle or []))
+        result = replay_tree_schedule(
+            scenario,
+            assignments,
+            tolerance=tolerance,
+            obstacles=obstacles,
+            require_complete=strict,
+        )
+        paths = None if dry_run or out is None else write_tree_replay(result, out)
+    except (TreeReplayError, ValueError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))

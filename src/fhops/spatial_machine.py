@@ -276,12 +276,15 @@ def simulate_block(
     block_id: str,
     machine_id: str,
     stem_inventory: StemInventory | None = None,
+    tree_ids: set[str] | None = None,
     start_x_m: float | None = None,
     start_y_m: float | None = None,
     start_z_m: float | None = None,
     reach_radius_m: float = DEFAULT_REACH_RADIUS_M,
     travel_speed_m_per_s: float = DEFAULT_TRAVEL_SPEED_M_PER_S,
     max_slope_percent: float = DEFAULT_MAX_SLOPE_PERCENT,
+    max_total_time_s: float | None = None,
+    target_merchantable_volume_m3: float | None = None,
     obstacles: tuple[Obstacle, ...] = (),
     generated_utc: str | None = None,
 ) -> SpatialSimulation:
@@ -303,6 +306,8 @@ def simulate_block(
         Scenario machine identifier.
     stem_inventory : StemInventory | None, optional
         Precomputed stem inventory. Defaults to building one.
+    tree_ids : set[str] | None, optional
+        Restrict the simulation to these tree identifiers.
     start_x_m, start_y_m, start_z_m : float | None, optional
         Starting position. Defaults to the first tree.
     reach_radius_m : float, optional
@@ -311,6 +316,10 @@ def simulate_block(
         Travel speed.
     max_slope_percent : float, optional
         Maximum absolute terrain slope.
+    max_total_time_s : float | None, optional
+        Stop after this elapsed time unless no tree has been processed yet.
+    target_merchantable_volume_m3 : float | None, optional
+        Stop after this merchantable volume has been processed.
     obstacles : tuple[Obstacle, ...], optional
         Circular exclusion zones.
     generated_utc : str | None, optional
@@ -334,6 +343,14 @@ def simulate_block(
     ):
         if not math.isfinite(value) or value <= 0:
             raise SpatialMachineError(f"{field} must be positive and finite.")
+    for field, optional_value in (
+        ("max_total_time_s", max_total_time_s),
+        ("target_merchantable_volume_m3", target_merchantable_volume_m3),
+    ):
+        if optional_value is not None and (
+            not math.isfinite(optional_value) or optional_value <= 0
+        ):
+            raise SpatialMachineError(f"{field} must be positive and finite when supplied.")
     scenario_file = Path(scenario_path).expanduser().resolve()
     try:
         scenario = load_scenario(scenario_file)
@@ -346,6 +363,8 @@ def simulate_block(
         raise SpatialMachineError(f"Unknown machine {machine_id!r}.")
     block = next(item for item in scenario.blocks if item.id == block_id)
     trees = [tree for tree in stems.trees if tree.block_id == block_id]
+    if tree_ids is not None:
+        trees = [tree for tree in trees if tree.tree_id in tree_ids]
     if not trees:
         raise SpatialMachineError(f"Block {block_id!r} has no tree records.")
     first = trees[0]
@@ -362,6 +381,8 @@ def simulate_block(
         reach_radius_m=reach_radius_m,
         travel_speed_m_per_s=travel_speed_m_per_s,
         max_slope_percent=max_slope_percent,
+        max_total_time_s=max_total_time_s,
+        target_merchantable_volume_m3=target_merchantable_volume_m3,
         obstacles=obstacles,
     )
     processed = [event for event in events if event.status == "processed"]
@@ -485,14 +506,24 @@ def _simulate_events(
     reach_radius_m: float,
     travel_speed_m_per_s: float,
     max_slope_percent: float,
+    max_total_time_s: float | None,
+    target_merchantable_volume_m3: float | None,
     obstacles: tuple[Obstacle, ...],
 ) -> list[SpatialEvent]:
     remaining = {tree.tree_id: tree for tree in trees}
     current_x, current_y, current_z = start
     elapsed = 0.0
     events: list[SpatialEvent] = []
+    processed_volume = 0.0
     sequence = 1
     while remaining:
+        if max_total_time_s is not None and events and elapsed >= max_total_time_s:
+            break
+        if (
+            target_merchantable_volume_m3 is not None
+            and processed_volume >= target_merchantable_volume_m3
+        ):
+            break
 
         def feasible(tree: StemResult) -> tuple[bool, str | None]:
             x = tree.x_m
@@ -589,6 +620,7 @@ def _simulate_events(
             )
         )
         current_x, current_y, current_z = approach_x, approach_y, terrain_z
+        processed_volume += target.merchantable_volume_m3
         remaining.pop(target.tree_id)
         sequence += 1
     return events

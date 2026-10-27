@@ -4285,3 +4285,9 @@ PY
   reconciliation, event/manifest outputs, tests, and reference docs. The
   simulator is one machine on one block and is not coupled to the operational
   schedule or a 3D scene.
+
+- 2026-10-27: P17.5 (#252, parent #247) added `fhops tree replay`,
+  deterministic schedule-coupled tree consumption, scheduled-versus-simulated
+  volume checks, block leftover reporting, unknown/unsupported/discrepancy
+  handling, flat event and block outputs, replay JSON, tests, and reference
+  docs. The replay does not rewrite the schedule or model cross-block travel.
