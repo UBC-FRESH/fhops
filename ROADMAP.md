@@ -474,7 +474,7 @@ Acceptance:
 - No real watershed, flood map, or regulatory result is claimed.
 - FHOPS quality suite and docs build are green.
 
-## Phase 17 — Tree-scale inventory and spatial harvesting simulation — active
+## Phase 17 — Tree-scale inventory and spatial harvesting simulation — complete
 
 Parent issue: #247. Branch: `feature/p17-tree-scale`.
 
@@ -485,7 +485,7 @@ This is a tree-scale execution layer; the block/day MILP remains the planning
 authority. FHOPS does not implement LiDAR segmentation.
 
 Authoritative note: `notes/tree_scale_simulation_plan.md`.
-Closeout: `notes/reports/p17-closeout.md`.
+Closeout: `notes/reports/p17-closeout.md`; final PR #275.
 
 - [x] P17.1 Define tree inventory contract and synthetic fixture (#248)
   - [x] Record the tree-level data-source audit

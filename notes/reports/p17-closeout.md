@@ -6,8 +6,7 @@ Parent issue: #247
 
 Phase branch: `feature/p17-tree-scale`
 
-Status: P17.1-P17.7 are merged into the phase branch. The final phase PR to
-`main` is the remaining maintainer-approval gate.
+Status: P17.1-P17.7 are complete. Final phase PR #275 merges the phase to `main`.
 
 ## Scope delivered
 
@@ -148,5 +147,5 @@ performance guarantee.
 
 ## Approval gate
 
-Do not merge the final P17 phase PR to `main` or close #247 until the maintainer
-has reviewed this closeout. P16 issues are out of scope and were not modified.
+The maintainer approved the phase closeout; PR #275 is the final merge to `main`.
+P16 issues were out of scope and were not modified.
