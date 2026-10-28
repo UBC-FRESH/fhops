@@ -2,7 +2,7 @@
 
 Phase: P18 Hydrology documentation and reproducibility
 Parent issue: #260
-Pull request: to be opened
+Pull request: #276, `feature/phase18-hydrology-docs` into `main`
 Evidence head: `fa83574d` (P18.4)
 Date: 2026-10-28
 Status: queued for approval. Not merged.
@@ -80,7 +80,7 @@ The P18.2 WS4 path was additionally run manually in the workspace:
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | closeout commit | not yet run | The final phase PR runs CI after the report commit. |
+| pending | report commit | not yet run | CI runs on #276 after the report update. |
 
 ## 5. Deviations
 
