@@ -231,3 +231,14 @@ and a scene manifest.
 The scene is not a renderer or a surveyed tree map. Ground is a flat plane, not a
 DEM; tree/machine geometry is procedural; video rendering is external. The
 viewer loads Three.js and `scene.gltf` from a CDN and should be served over HTTP.
+
+## P17.7 closeout decision
+
+The synthetic end-to-end fixture under `tests/fixtures/tree_scale/` exercises
+validation, registration, mapping, stems, one-machine simulation, replay, and
+scene export. The fail-closed matrix is in
+`tests/tree/test_tree_scale_fail_closed.py`; the closeout report is
+`notes/reports/p17-closeout.md`.
+
+The 600-tree smoke case is a bounded performance check, not a production-scale
+claim. The final phase PR to `main` still requires maintainer approval.

@@ -180,6 +180,7 @@ class StemResult:
     model_name: str
     model_version: str
     model_provenance: str
+    crown_radius_m: float | None = None
 
     def to_dict(self) -> dict[str, object]:
         """Return the tree result as a JSON-serializable mapping."""
@@ -199,6 +200,7 @@ class StemResult:
             "model_name": self.model_name,
             "model_version": self.model_version,
             "model_provenance": self.model_provenance,
+            "crown_radius_m": self.crown_radius_m,
         }
 
 
@@ -403,6 +405,7 @@ class ReferenceStemModel:
             model_name=self.name,
             model_version=self.version,
             model_provenance=self.provenance,
+            crown_radius_m=tree.crown_radius_m,
         )
 
     def _buck(
