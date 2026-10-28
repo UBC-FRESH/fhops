@@ -1,6 +1,6 @@
 # Ground-based system simulation notes
 
-Status: prototype implementation on `feature/tree-ground-system`; not merged. The CLI exposes feller/skidder/loader rate controls.
+Status: merged to `main` via PR #278. The CLI exposes feller/skidder/loader rate controls.
 
 The module `fhops.ground_system` adds a deterministic multi-machine event layer
 for one block:
