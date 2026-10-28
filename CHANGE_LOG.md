@@ -4360,3 +4360,44 @@ PY
   check, the solver-boundary decision, and the end-to-end matrix are recorded in
   `notes/reports/p16-closeout.md`. No watershed flood model, flood map, or
   regulatory result was produced.
+
+- 2026-10-27: created Phase 18 (parent #260) for hydrology documentation and
+  reproducibility. P17 is the active tree-scale phase, so the docs phase uses
+  P18. Added child issues #261-#265, the roadmap section, and the phase plan.
+  Scope is an audit, pinned cross-repo quickstart, contract index, executable
+  docs checks, and closeout. No hydrology capability or real watershed result
+  was added.
+
+- 2026-10-27: P18.1 (#261, parent #260) completed the hydrology documentation
+  and reproducibility audit. It inventories the FEMIC guides, WS4 reference,
+  FHOPS reference, fixtures, and closeouts; records the missing quickstart,
+  version matrix, contract index, expected outputs, and executable docs checks;
+  and separates documentation gaps from real-data/review blockers. No code,
+  data, or watershed result was added.
+
+- 2026-10-27: P18.2 (#262, parent #260) added the pinned cross-repo hydrology
+  quickstart and its workspace generator. The generator creates a shared
+  synthetic bundle, WS4 dataset/crosswalk/schedule/exposure, and FHOPS
+  scenario/crosswalk/exposure/hazard/assets. The docs list exact WS4 and FHOPS
+  commands, expected row counts, closure failure, version matrix, troubleshooting,
+  and the synthetic/real-data boundary. Added generator and FHOPS-path tests.
+
+- 2026-10-27: P18.3 (#263, parent #260) added the cross-repo hydrology
+  contract/schema index and failure matrix. It groups FEMIC producer, WS4
+  landscape-consumer, and FHOPS operational-consumer contracts; records key
+  required content, ownership, refusal behavior, the shared exposure contract,
+  and the boundary between a contract and a watershed result. Linked from the
+  quickstart and hydrology reference.
+
+- 2026-10-27: P18.4 (#264, parent #260) added
+  `scripts/check_hydrology_docs.py` and CI wiring. The checker validates local
+  `:doc:` references, FHOPS-owned schema mentions, external FEMIC/WS4 GitHub
+  links, and the generated FHOPS quickstart path. It fails on a broken link,
+  stale schema mention, or quickstart row-count mismatch. The WS4 CLI path stays
+  manually verified because FHOPS CI does not install WS4. Added checker tests.
+
+- 2026-10-28: P18.5 (#265, parent #260) added the documentation phase closeout.
+  The report records the audit, quickstart, contract index, executable docs
+  checks, manual WS4 verification, CI evidence, and remaining data/review
+  blockers. Phase 18 is `pr-open`; the final phase PR is queued for maintainer
+  approval. No new hydrology capability or real watershed result was added.

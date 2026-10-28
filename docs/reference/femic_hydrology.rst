@@ -1,6 +1,11 @@
 FEMIC Hydrology Response Bundles
 ================================
 
+For a pinned synthetic FEMIC → WS4 → FHOPS walkthrough, see
+:doc:`../howto/hydrology_quickstart`.
+For the cross-repo contract index and failure matrix, see
+:doc:`hydrology_contract_index`.
+
 FHOPS consumes versioned FEMIC hydrology response bundles. It does not run
 FEMIC discovery, frequency fitting, surrogate training, or flood-risk
 calculation, and it does not import WS4 at runtime.

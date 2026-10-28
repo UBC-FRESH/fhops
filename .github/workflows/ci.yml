@@ -138,6 +138,9 @@ jobs:
       - name: Build documentation
         run: sphinx-build -b html docs _build/html -W
 
+      - name: Hydrology docs check
+        run: python scripts/check_hydrology_docs.py --check-external
+
       - name: Prepare Pages bundle
         run: |
           site_dir=tmp/pages

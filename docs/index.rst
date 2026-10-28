@@ -35,6 +35,7 @@ ensembles.
    howto/rolling_horizon
    howto/tactical_operational
    howto/hauling
+   howto/hydrology_quickstart
    howto/web
 
 .. toctree::
@@ -54,6 +55,7 @@ ensembles.
    reference/femic_lidar
    reference/femic_lidar_fixture
    reference/femic_hydrology
+   reference/hydrology_contract_index
    reference/tree_inventory
    reference/stem_models
    reference/tree_simulation
