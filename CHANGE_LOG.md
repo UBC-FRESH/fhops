@@ -4433,3 +4433,13 @@ PY
   Verification: `pytest -q tests/tree` (63 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-28: Added optional DEM and single-corridor road routing to
+  `fhops tree system`. `--dem`, `--road`, `--terrain-step`,
+  `--max-skidder-grade`, and `--terrain-speed-factor` adjust skidder travel
+  from sampled grades, refuse steep routes, and write terrain provenance into
+  the event/summary output. Rasterio/Shapely are lazy optional imports; this is
+  not a full road-network solver or a calibrated terrain model.
+  Verification: `pytest -q tests/tree` (65 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.
