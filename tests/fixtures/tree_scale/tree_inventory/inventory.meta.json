@@ -1,0 +1,26 @@
+{
+  "block_ids": [
+    "B01"
+  ],
+  "caveats": [
+    "Synthetic contract fixture; not a real tree inventory or tree map."
+  ],
+  "crs": "EPSG:3005",
+  "generated_utc": "2026-10-27T00:00:00+00:00",
+  "inventory_id": "tree-scale-fixture-B01",
+  "inventory_sha256": "55d0c44a1a01b6da24cd998e2f053f01b57ba10c0de506735ff74634a0df339e",
+  "method": "Deterministic synthetic point list; not an ITD/ITC run.",
+  "producer": "FHOPS synthetic fixture",
+  "review_status": "reviewed",
+  "reviewed_by": "fixture-reviewer",
+  "schema_version": "fhops.tree.inventory.v1",
+  "source_id": "synthetic-tree-fixture",
+  "tree_count": 12,
+  "units": {
+    "crown_radius": "m",
+    "dbh": "cm",
+    "elevation": "m",
+    "height": "m",
+    "x_y": "m"
+  }
+}

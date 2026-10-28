@@ -1,0 +1,363 @@
+"""Tree-inventory CLI commands for tree-scale FHOPS workflows."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import typer
+
+from fhops.spatial_machine import (
+    DEFAULT_MAX_SLOPE_PERCENT,
+    DEFAULT_REACH_RADIUS_M,
+    DEFAULT_TRAVEL_SPEED_M_PER_S,
+    Obstacle,
+    SpatialMachineError,
+    simulate_block,
+    write_spatial_simulation,
+)
+from fhops.stem import (
+    DEFAULT_FORM_FACTOR,
+    DEFAULT_LOG_LENGTH_M,
+    DEFAULT_SAWLOG_MIN_DBH_CM,
+    DEFAULT_STUMP_HEIGHT_M,
+    ReferenceStemModel,
+    StemModelError,
+    build_stem_inventory,
+    write_stem_inventory,
+)
+from fhops.tree_inventory import validate_tree_inventory
+from fhops.tree_mapping import (
+    DEFAULT_RECONCILIATION_TOLERANCE,
+    TreeInventoryMappingError,
+    TreeInventoryRegistrationError,
+    map_tree_inventory,
+    register_tree_inventory,
+    write_tree_mapping,
+)
+from fhops.tree_replay import (
+    DEFAULT_REPLAY_TOLERANCE,
+    TreeReplayError,
+    replay_tree_schedule,
+    write_tree_replay,
+)
+from fhops.tree_scene import (
+    DEFAULT_LOD_THRESHOLD,
+    DEFAULT_MAX_LOG_NODES,
+    TreeSceneError,
+    write_tree_scene,
+)
+
+tree_app = typer.Typer(add_completion=False, no_args_is_help=True)
+inventory_app = typer.Typer(add_completion=False, no_args_is_help=True)
+tree_app.add_typer(
+    inventory_app,
+    name="inventory",
+    help="Validate individual-tree inventories for tree-scale simulation.",
+)
+
+
+@inventory_app.command("validate")
+def tree_inventory_validate(
+    inventory: Path = typer.Argument(..., help="Tree inventory CSV."),
+    metadata: Path | None = typer.Option(None, "--metadata", help="Tree inventory metadata JSON."),
+    block: list[str] | None = typer.Option(
+        None, "--block", help="Known block id. Repeat for multiple blocks."
+    ),
+) -> None:
+    """Validate a tree inventory without modifying it."""
+    report = validate_tree_inventory(
+        inventory,
+        metadata_path=metadata,
+        block_ids=set(block) if block else None,
+    )
+    typer.echo(json.dumps(report.to_dict(), indent=2))
+    if not report.is_valid:
+        raise typer.Exit(1)
+
+
+@tree_app.command("register")
+def tree_register(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML."),
+    inventory: Path = typer.Argument(..., help="Tree inventory CSV."),
+    metadata: Path | None = typer.Option(None, "--metadata", help="Tree inventory metadata JSON."),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the pin without writing the scenario."
+    ),
+) -> None:
+    """Validate and pin a tree inventory in a scenario."""
+    try:
+        result = register_tree_inventory(
+            scenario,
+            inventory,
+            metadata_path=metadata,
+            dry_run=dry_run,
+        )
+    except TreeInventoryRegistrationError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(json.dumps(result.to_dict(), indent=2))
+
+
+@tree_app.command("map")
+def tree_map(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Mapping output directory. Print only when omitted."
+    ),
+    tolerance: float = typer.Option(
+        DEFAULT_RECONCILIATION_TOLERANCE,
+        "--tolerance",
+        help="Relative tolerance for stem-density and volume reconciliation.",
+    ),
+    strict: bool = typer.Option(
+        False, "--strict", help="Refuse when any block reconciliation warns."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the map without writing outputs."
+    ),
+) -> None:
+    """Map a pinned tree inventory to blocks and reconcile block evidence."""
+    try:
+        mapping = map_tree_inventory(
+            scenario,
+            tolerance=tolerance,
+            require_reconciled=strict,
+        )
+        paths = None if dry_run or out is None else write_tree_mapping(mapping, out)
+    except TreeInventoryMappingError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = mapping.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
+
+
+@tree_app.command("stems")
+def tree_stems(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Stem output directory. Print only when omitted."
+    ),
+    tolerance: float = typer.Option(
+        DEFAULT_RECONCILIATION_TOLERANCE,
+        "--tolerance",
+        help="Relative tolerance for merchantable-volume reconciliation.",
+    ),
+    strict: bool = typer.Option(
+        False, "--strict", help="Refuse when a block volume reconciliation warns."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the manifest without writing outputs."
+    ),
+    form_factor: float = typer.Option(
+        DEFAULT_FORM_FACTOR, "--form-factor", help="Reference model form factor."
+    ),
+    log_length: float = typer.Option(
+        DEFAULT_LOG_LENGTH_M, "--log-length", help="Target log length in metres."
+    ),
+    stump_height: float = typer.Option(
+        DEFAULT_STUMP_HEIGHT_M, "--stump-height", help="Stump height in metres."
+    ),
+    sawlog_min_dbh: float = typer.Option(
+        DEFAULT_SAWLOG_MIN_DBH_CM,
+        "--sawlog-min-dbh",
+        help="Minimum DBH in centimetres for the sawlog product class.",
+    ),
+) -> None:
+    """Derive stem volumes and bucked logs for a pinned tree inventory."""
+    try:
+        model = ReferenceStemModel(
+            form_factor=form_factor,
+            log_length_m=log_length,
+            stump_height_m=stump_height,
+            sawlog_min_dbh_cm=sawlog_min_dbh,
+        )
+        result = build_stem_inventory(
+            scenario,
+            model=model,
+            tolerance=tolerance,
+            require_reconciled=strict,
+        )
+        paths = None if dry_run or out is None else write_stem_inventory(result, out)
+    except StemModelError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
+
+
+@tree_app.command("simulate")
+def tree_simulate(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    block: str = typer.Option(..., "--block", help="Block id to simulate."),
+    machine: str = typer.Option(..., "--machine", help="Scenario machine id."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Simulation output directory. Print only when omitted."
+    ),
+    start_x: float | None = typer.Option(None, "--start-x", help="Machine start easting (m)."),
+    start_y: float | None = typer.Option(None, "--start-y", help="Machine start northing (m)."),
+    start_z: float | None = typer.Option(None, "--start-z", help="Machine start elevation (m)."),
+    reach_radius: float = typer.Option(
+        DEFAULT_REACH_RADIUS_M, "--reach-radius", help="Processing reach in metres."
+    ),
+    travel_speed: float = typer.Option(
+        DEFAULT_TRAVEL_SPEED_M_PER_S,
+        "--travel-speed",
+        help="Travel speed in metres per second.",
+    ),
+    max_slope: float = typer.Option(
+        DEFAULT_MAX_SLOPE_PERCENT,
+        "--max-slope",
+        help="Maximum absolute terrain slope percent.",
+    ),
+    obstacle: list[str] | None = typer.Option(
+        None,
+        "--obstacle",
+        help="Circular obstacle as x,y,radius_m. Repeat for multiple obstacles.",
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the simulation without writing outputs."
+    ),
+) -> None:
+    """Simulate one machine processing trees in one block."""
+    try:
+        obstacles = tuple(_parse_obstacle(value) for value in (obstacle or []))
+        result = simulate_block(
+            scenario,
+            block_id=block,
+            machine_id=machine,
+            start_x_m=start_x,
+            start_y_m=start_y,
+            start_z_m=start_z,
+            reach_radius_m=reach_radius,
+            travel_speed_m_per_s=travel_speed,
+            max_slope_percent=max_slope,
+            obstacles=obstacles,
+        )
+        paths = None if dry_run or out is None else write_spatial_simulation(result, out)
+    except (SpatialMachineError, ValueError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
+
+
+def _parse_obstacle(value: str) -> Obstacle:
+    parts = [part.strip() for part in value.split(",")]
+    if len(parts) != 3:
+        raise ValueError(f"Obstacle {value!r} must be x,y,radius_m.")
+    try:
+        x, y, radius = (float(part) for part in parts)
+    except ValueError as exc:
+        raise ValueError(f"Obstacle {value!r} must contain three numbers.") from exc
+    if radius <= 0:
+        raise ValueError("Obstacle radius must be positive.")
+    return Obstacle(x_m=x, y_m=y, radius_m=radius)
+
+
+@tree_app.command("replay")
+def tree_replay(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    assignments: Path = typer.Argument(..., help="Assignments CSV."),
+    out: Path | None = typer.Option(
+        None, "--out", help="Replay output directory. Print only when omitted."
+    ),
+    tolerance: float = typer.Option(
+        DEFAULT_REPLAY_TOLERANCE,
+        "--tolerance",
+        help="Relative tolerance for scheduled-versus-simulated volume.",
+    ),
+    obstacle: list[str] | None = typer.Option(
+        None,
+        "--obstacle",
+        help="Circular obstacle as x,y,radius_m. Repeat for multiple obstacles.",
+    ),
+    strict: bool = typer.Option(
+        False, "--strict", help="Refuse when any replay discrepancy is recorded."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Validate and print the replay without writing outputs."
+    ),
+) -> None:
+    """Replay an existing assignments schedule at tree scale."""
+    try:
+        obstacles = tuple(_parse_obstacle(value) for value in (obstacle or []))
+        result = replay_tree_schedule(
+            scenario,
+            assignments,
+            tolerance=tolerance,
+            obstacles=obstacles,
+            require_complete=strict,
+        )
+        paths = None if dry_run or out is None else write_tree_replay(result, out)
+    except (TreeReplayError, ValueError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))
+
+
+@tree_app.command("scene")
+def tree_scene(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    assignments: Path = typer.Argument(..., help="Assignments CSV."),
+    out: Path = typer.Option(..., "--out", help="Scene output directory."),
+    lod_threshold: int = typer.Option(
+        DEFAULT_LOD_THRESHOLD,
+        "--lod-threshold",
+        help="Use simple tree geometry above this tree count.",
+    ),
+    max_log_nodes: int = typer.Option(
+        DEFAULT_MAX_LOG_NODES,
+        "--max-log-nodes",
+        help="Maximum individual log nodes.",
+    ),
+    obstacle: list[str] | None = typer.Option(
+        None,
+        "--obstacle",
+        help="Circular obstacle as x,y,radius_m. Repeat for multiple obstacles.",
+    ),
+    strict: bool = typer.Option(
+        False, "--strict", help="Refuse when the replay has any discrepancy."
+    ),
+) -> None:
+    """Export a deterministic glTF/GLB tree scene."""
+    try:
+        obstacles = tuple(_parse_obstacle(value) for value in (obstacle or []))
+        result = write_tree_scene(
+            scenario,
+            assignments,
+            out,
+            lod_threshold=lod_threshold,
+            max_log_nodes=max_log_nodes,
+            obstacles=obstacles,
+            require_complete=strict,
+        )
+    except (TreeSceneError, ValueError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(
+        json.dumps(
+            {
+                "scene_id": result.scene_id,
+                "gltf": str(result.gltf_path),
+                "glb": str(result.glb_path),
+                "manifest": str(result.manifest_path),
+                "camera_path": str(result.camera_path),
+                "viewer": str(result.viewer_path),
+                "tree_count": result.tree_count,
+                "processed_count": result.processed_count,
+                "log_count": result.log_count,
+                "lod": result.lod,
+            },
+            indent=2,
+        )
+    )

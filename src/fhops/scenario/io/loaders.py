@@ -30,6 +30,7 @@ from fhops.scenario.contract.models import (
     ScheduleLock,
     ShiftCalendarEntry,
 )
+from fhops.scenario.contract.tree import TreeInventoryRef
 from fhops.scenario.io.mobilisation import populate_mobilisation_distances
 from fhops.scheduling.mobilisation import MobilisationConfig
 from fhops.scheduling.timeline.models import TimelineConfig
@@ -341,6 +342,10 @@ def load_scenario(yaml_path: str | Path) -> Scenario:
     if "hydrology_products" in meta:
         extras["hydrology_products"] = TypeAdapter(list[HydrologyBundleRef]).validate_python(
             meta["hydrology_products"]
+        )
+    if "tree_inventory" in meta:
+        extras["tree_inventory"] = TypeAdapter(TreeInventoryRef).validate_python(
+            meta["tree_inventory"]
         )
 
     if meta.get("initial_state") is not None:

@@ -16,6 +16,7 @@ ensembles.
 
    overview
    howto/quickstart
+   howto/tree_scale
    howto/data_contract
    howto/benchmarks
    howto/heuristic_presets
@@ -55,6 +56,11 @@ ensembles.
    reference/femic_lidar_fixture
    reference/femic_hydrology
    reference/hydrology_contract_index
+   reference/tree_inventory
+   reference/stem_models
+   reference/tree_simulation
+   reference/tree_replay
+   reference/tree_scene
 
 .. toctree::
    :maxdepth: 1

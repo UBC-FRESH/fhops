@@ -21,6 +21,7 @@ from .models import (
     ScheduleLock,
     validate_initial_state,
 )
+from .tree import TreeInventoryRef
 
 __all__ = [
     "Day",
@@ -38,6 +39,7 @@ __all__ = [
     "LidarProductPin",
     "LidarProductRef",
     "LidarSupport",
+    "TreeInventoryRef",
     "HydrologyArtifactPin",
     "HydrologyBundleRef",
     "HydrologyReadinessStatus",
