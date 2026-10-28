@@ -101,6 +101,47 @@ def test_ground_system_calibrated_and_reference_rates(tmp_path: Path) -> None:
     assert calibrated.makespan_s != reference.makespan_s
 
 
+def test_ground_system_shift_windows_delay_work(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        shift_days=2,
+        shifts_per_day=1,
+        hours_per_shift=0.25,
+        shift_start_hour=0.0,
+    )
+    assert len(result.shift_windows) == 2
+    assert result.makespan_s >= 0.25 * 3600.0
+    assert result.rate_provenance["schedule"]["shift_days"] == 2
+
+
+def test_ground_system_trucking_and_landing_inventory(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        truck_capacity_m3=1.0,
+        truck_cycle_time_s=60.0,
+        truck_count=1,
+        truck_load_time_s=30.0,
+        landing_capacity_m3=2.0,
+    )
+    assert result.truck_summary is not None
+    assert result.truck_summary["dispatched_loads"] > 0
+    assert result.truck_events
+    assert result.landing_inventory_max_m3 > 0
+    assert any("Landing inventory peaked" in warning for warning in result.warnings)
+
+
 def test_ground_system_writes_outputs(tmp_path: Path) -> None:
     scenario = _system_scenario(tmp_path)
     result = simulate_ground_system(

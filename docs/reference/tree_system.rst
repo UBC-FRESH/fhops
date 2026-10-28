@@ -71,6 +71,23 @@ is a single-corridor access model, not a road-network solver. DEM and road
 coordinates must use the same CRS as the inventory. Install the optional
 dependencies with ``pip install "fhops[lidar]"``.
 
+Shift and trucking controls:
+
+.. code-block:: bash
+
+   fhops tree system scenario.yaml      --block B01 --feller H1 --skidder H2 --loader H3      --shift-days 7 --shifts-per-day 2 --hours-per-shift 10      --truck-capacity 30 --truck-cycle 3600 --truck-count 3      --truck-load-time 300 --landing-capacity 120
+
+``--shift-days`` enables discrete operating windows. Tasks that do not fit in
+the remaining window are delayed to the next window; a task is not split across
+a shift boundary, and the run fails if no window can hold it. When
+``--shift-days`` is omitted, time is continuous.
+
+``--truck-capacity`` enables a downstream log-truck tracker. Loader output adds
+to landing inventory; full trucks are dispatched when volume is available.
+Truck events and landing inventory are written to the JSON and summary. Landing
+overflow is reported as a warning and does **not** block the loader in this
+reference model.
+
 Outputs
 -------
 
@@ -80,7 +97,7 @@ Outputs
   machine types, landing, and duration; suitable for an external viewer.
 - ``tree_processing.csv`` — one row per processed tree.
 - ``system_summary.json`` — tree count, processed volume, makespan, machine
-  utilisation, warnings, and caveats.
+  utilisation, shift/truck summaries, warnings, and caveats.
 
 Determinism and invariants
 --------------------------
@@ -99,7 +116,9 @@ Limits
 - Flat terrain; no DEM, road routing, or landing geometry search.
 - Skidder and loader cycle times are configurable defaults, not calibrated
   regressions.
-- No shift/day calendar, breakdowns, trucking, or multi-block routing.
+- Shift windows are fixed and tasks are not split across them.
+- Trucking is a downstream inventory tracker; it does not block the loader.
+- No breakdowns or multi-block routing.
 - Tree inventories must be reviewed separately; this module does not validate
   stem-model calibration.
 - The JSON timeline is data only; FHOPS does not ship a renderer.
