@@ -442,7 +442,7 @@ This is a tree-scale execution layer; the block/day MILP remains the planning
 authority. FHOPS does not implement LiDAR segmentation.
 
 Authoritative note: `notes/tree_scale_simulation_plan.md`.
-Closeout: `notes/reports/p17-closeout.md` (to be written).
+Closeout: `notes/reports/p17-closeout.md`.
 
 - [x] P17.1 Define tree inventory contract and synthetic fixture (#248)
   - [x] Record the tree-level data-source audit
@@ -468,10 +468,10 @@ Closeout: `notes/reports/p17-closeout.md` (to be written).
   - [x] Export deterministic glTF/GLB terrain, trees, paths, and logs
   - [x] Add LOD, viewer/import docs, and a camera path
   - [x] Add scene tests
-- [ ] P17.7 Validate, document, and close out P17 (#254)
-  - [ ] Add the end-to-end synthetic fixture and fail-closed matrix
-  - [ ] Run the quality suite and docs build
-  - [ ] Write the closeout report and queue the phase PR
+- [x] P17.7 Validate, document, and close out P17 (#254)
+  - [x] Add the end-to-end synthetic fixture and fail-closed matrix
+  - [x] Run the quality suite and docs build
+  - [x] Write the closeout report and queue the phase PR
 
 Acceptance:
 

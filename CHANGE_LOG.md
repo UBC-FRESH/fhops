@@ -4297,3 +4297,8 @@ PY
   plane, LOD, a camera path, a Three.js viewer, a scene manifest, `fhops tree
   scene`, tests, and reference docs. The output is a portable scene, not a
   renderer or surveyed tree map; no video is encoded.
+
+- 2026-10-28: P17.7 (#254, parent #247) added the complete synthetic
+  tree-scale fixture and end-to-end CLI test, the fail-closed matrix, a bounded
+  600-tree performance smoke, the workflow how-to, CLI/reference updates, and
+  `notes/reports/p17-closeout.md`. The final phase PR awaits maintainer approval.

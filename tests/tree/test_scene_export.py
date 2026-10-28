@@ -45,6 +45,7 @@ def test_scene_exports_gltf_glb_and_manifest(tmp_path: Path) -> None:
     assert gltf["buffers"][0]["uri"].startswith("data:application/octet-stream;base64,")
     tree_nodes = [node for node in gltf["nodes"] if node["name"].startswith("tree:")]
     assert len(tree_nodes) == 12
+    assert tree_nodes[0]["scale"][1] > 1.0
     assert any(node["name"] == "machine_path" for node in gltf["nodes"])
 
     glb = result.glb_path.read_bytes()

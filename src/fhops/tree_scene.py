@@ -166,11 +166,16 @@ def write_tree_scene(
     min_z = min((tree.elevation_m or 0.0) for tree in stems.trees) if stems.trees else 0.0
     for tree in stems.trees:
         z = tree.elevation_m if tree.elevation_m is not None else min_z
+        crown_scale = (
+            tree.crown_radius_m / 0.5
+            if tree.crown_radius_m is not None and tree.crown_radius_m > 0
+            else max(1.0, tree.dbh_cm / 8.0)
+        )
         builder.add_node(
             f"tree:{tree.tree_id}",
             mesh=tree_meshes[tree.species_code],
             translation=(tree.x_m, z, tree.y_m),
-            scale=(tree.dbh_cm / 40.0, tree.height_m / 25.0, tree.dbh_cm / 40.0),
+            scale=(crown_scale, tree.height_m, crown_scale),
             extras={
                 "tree_id": tree.tree_id,
                 "block_id": tree.block_id,
@@ -286,17 +291,24 @@ class _GltfBuilder:
         self.materials: list[dict[str, Any]] = []
         self.nodes: list[dict[str, Any]] = []
 
-    def add_material(self, name: str, color: tuple[float, float, float, float]) -> int:
-        self.materials.append(
-            {
-                "name": name,
-                "pbrMetallicRoughness": {
-                    "baseColorFactor": list(color),
-                    "metallicFactor": 0.0,
-                    "roughnessFactor": 0.9,
-                },
-            }
-        )
+    def add_material(
+        self,
+        name: str,
+        color: tuple[float, float, float, float],
+        *,
+        double_sided: bool = False,
+    ) -> int:
+        material: dict[str, Any] = {
+            "name": name,
+            "pbrMetallicRoughness": {
+                "baseColorFactor": list(color),
+                "metallicFactor": 0.0,
+                "roughnessFactor": 0.9,
+            },
+        }
+        if double_sided:
+            material["doubleSided"] = True
+        self.materials.append(material)
         return len(self.materials) - 1
 
     def add_geometry(self, positions: list[float], indices: list[int]) -> tuple[int, int]:
@@ -437,9 +449,9 @@ def _ground_mesh(builder: _GltfBuilder, xmin: float, xmax: float, ymin: float, y
         0.0,
         ymax,
     ]
-    indices = [0, 1, 2, 0, 2, 3]
+    indices = [0, 2, 1, 0, 3, 2]
     pos_accessor, idx_accessor = builder.add_geometry(positions, indices)
-    material = builder.add_material("ground", (0.42, 0.40, 0.32, 1.0))
+    material = builder.add_material("ground", (0.34, 0.39, 0.26, 1.0), double_sided=True)
     return builder.add_mesh(
         "ground",
         [
@@ -488,7 +500,7 @@ def _add_logs(
         logs = logs[:max_log_nodes]
     positions, indices = _box_geometry()
     pos_accessor, idx_accessor = builder.add_geometry(positions, indices)
-    material = builder.add_material("logs", (0.55, 0.30, 0.10, 1.0))
+    material = builder.add_material("logs", (0.55, 0.30, 0.10, 1.0), double_sided=True)
     mesh = builder.add_mesh(
         "logs",
         [
