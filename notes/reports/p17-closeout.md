@@ -6,8 +6,8 @@ Parent issue: #247
 
 Phase branch: `feature/p17-tree-scale`
 
-Status: P17.1-P17.6 are merged into the phase branch. This closeout adds P17.7.
-The final phase PR to `main` is the remaining maintainer-approval gate.
+Status: P17.1-P17.7 are merged into the phase branch. The final phase PR to
+`main` is the remaining maintainer-approval gate.
 
 ## Scope delivered
 
@@ -40,9 +40,10 @@ replacement and does not claim that tree-scale replay is statistically superior.
 | P17.4 one-machine simulation | #251 | `a0d9b9a4` |
 | P17.5 schedule replay | #252 | `7774f627` |
 | P17.6 scene export | #253 | `9c4f0d92` |
+| P17.7 validation/closeout | #254 | `d294cef0` |
 
-P17.6 was merged through PR #271; the other child PR links are in the issue
-history. P17.7 (#254) is the closeout change set that adds this report.
+P17.6 was merged through PR #271 and P17.7 through PR #273; the other child PR
+links are in the issue history.
 
 ## End-to-end fixture
 
