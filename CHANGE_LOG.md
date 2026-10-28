@@ -4455,3 +4455,13 @@ PY
   Verification: `pytest -q tests/tree` (67 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-28: Added an optional roadside processor stage and truck markers to
+  the ground-system demo. `fhops tree system --processor` now inserts a
+  TN-103-based processor between skidder and loader; processor events and
+  utilisation are included in the output. The live demo now shows H1 (feller),
+  H2/H3 (skidders), H5 (processor), H4 (loader), and three trucks on the
+  terrain. Tests cover processor ordering and the existing shift/truck paths.
+  Verification: `pytest -q tests/tree` (68 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

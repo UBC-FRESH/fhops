@@ -9,7 +9,8 @@ for one block:
 2. processed trees are grouped into bunches;
 3. skidders are greedily dispatched to the earliest available bunch and return
    to the landing;
-4. one loader processes loads in arrival order.
+4. an optional roadside processor handles skidder loads before the loader;
+5. one loader processes loads in arrival order.
 
 The first implementation uses flat terrain, one landing, configurable default
 cycle times, and no shift calendar or trucking. It is not field-calibrated and

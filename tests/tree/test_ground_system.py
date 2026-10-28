@@ -26,9 +26,10 @@ def _system_scenario(tmp_path: Path) -> Path:
         handle.write("H2,CH2,24.0,950.0,grapple_skidder\n")
         handle.write("H3,CH3,24.0,950.0,grapple_skidder\n")
         handle.write("H4,CH4,24.0,950.0,loader\n")
+        handle.write("H5,CH5,24.0,950.0,roadside_processor\n")
     calendar = root / "scenario" / "data" / "calendar.csv"
     with calendar.open("a", encoding="utf-8") as handle:
-        for machine in ("H2", "H3", "H4"):
+        for machine in ("H2", "H3", "H4", "H5"):
             for day in range(1, 8):
                 handle.write(f"{machine},{day},1\n")
     register_tree_inventory(
@@ -99,6 +100,29 @@ def test_ground_system_calibrated_and_reference_rates(tmp_path: Path) -> None:
     assert reference.rate_provenance["model"].startswith("reference")
     assert calibrated.system_id != reference.system_id
     assert calibrated.makespan_s != reference.makespan_s
+
+
+def test_ground_system_processor_stage(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        processor_machine_id="H5",
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+    )
+    assert result.processor_machine_id == "H5"
+    assert "H5" in result.machine_summaries
+    processor_events = [event for event in result.events if event.machine == "H5"]
+    loader_events = [event for event in result.events if event.machine == "H4"]
+    assert processor_events
+    assert loader_events
+    assert min(event.start_s for event in loader_events) >= min(
+        event.end_s for event in processor_events
+    )
+    assert result.rate_provenance["processor"]["model"].startswith("TN-103")
 
 
 def test_ground_system_shift_windows_delay_work(tmp_path: Path) -> None:
