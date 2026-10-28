@@ -285,6 +285,141 @@ fixtures are not real watershed, road, culvert, or gauge records.
 Later Phase 15 tasks add scenario registration, an explicit crosswalk,
 schedule-bound road/culvert exposure, and one-schedule screening.
 
+Operational Hazard Windows
+--------------------------
+
+Phase 16 adds a separate operational hazard contract. It is not a FEMIC
+response bundle and does not run a hydrology model.
+
+.. code-block:: json
+
+   {
+     "schema_version": "fhops.hydrology.hazard.v1",
+     "hazard_id": "hazard-2026-001",
+     "generated_utc": "2026-10-27T00:00:00+00:00",
+     "source_id": "reviewed-operational-forecast",
+     "review_status": "reviewed",
+     "reviewer_id": "reviewer-id",
+     "windows": [
+       {
+         "watershed_id": "watershed-1",
+         "start_day": 1,
+         "end_day": 2,
+         "severity": "watch",
+         "return_period_years": 2.0,
+         "source_id": "reviewed-operational-forecast",
+         "notes": "Watch window."
+       },
+       {
+         "watershed_id": "watershed-1",
+         "start_day": 3,
+         "end_day": 4,
+         "severity": "warning",
+         "return_period_years": 10.0,
+         "source_id": "reviewed-operational-forecast",
+         "notes": "Warning window."
+       },
+       {
+         "watershed_id": "watershed-1",
+         "start_day": 5,
+         "end_day": 5,
+         "severity": "closure",
+         "return_period_years": 50.0,
+         "source_id": "reviewed-operational-forecast",
+         "notes": "Closure window."
+       }
+     ],
+     "caveats": ["Operational screening only."]
+   }
+
+Severity ranks are ``closure`` > ``warning`` > ``watch``. A lookup returns the
+highest severity covering a watershed/day, or nothing outside the declared
+windows. Overlapping windows of the same severity are rejected; overlapping
+windows of different severity are allowed with a warning that the highest
+severity applies.
+
+Validate the table with:
+
+.. code-block:: bash
+
+   fhops scenario hydrology hazard validate hazard.json
+
+The command emits JSON and exits non-zero on an invalid table. FHOPS does not
+derive hazard windows from weather or hydrology at runtime.
+
+Road and Culvert Assets
+-----------------------
+
+Phase 16 asset evidence is explicit; FHOPS does not infer assets from geometry.
+
+.. code-block:: json
+
+   {
+     "schema_version": "fhops.hydrology.assets.v1",
+     "inventory_id": "assets-2026-001",
+     "generated_utc": "2026-10-27T00:00:00+00:00",
+     "source_id": "reviewed-road-culvert-inventory",
+     "review_status": "reviewed",
+     "reviewer_id": "reviewer-id",
+     "assets": [
+       {
+         "asset_id": "R1",
+         "asset_type": "road",
+         "watershed_id": "watershed-1",
+         "road_job_id": "R1",
+         "vulnerability_class": "high",
+         "notes": "Road asset."
+       },
+       {
+         "asset_id": "C1",
+         "asset_type": "culvert",
+         "watershed_id": "watershed-1",
+         "road_job_id": null,
+         "vulnerability_class": "moderate",
+         "notes": "Culvert asset."
+       }
+     ],
+     "caveats": ["Operational screening only."]
+   }
+
+Road assets require a scenario ``road_job_id``; culverts do not. Every asset
+watershed must appear in the hydrology mapping. Validate and map with:
+
+.. code-block:: bash
+
+   fhops scenario hydrology assets validate assets.json
+   fhops scenario hydrology assets validate assets.json \
+     --scenario scenarios/example/scenario.yaml \
+     --mapping build/hydrology_mapping
+
+The command reports asset count, mapped road jobs, watersheds, warnings, and
+caveats. No asset is converted into a damage curve or a flood-risk finding.
+
+Operational Constraint Check
+----------------------------
+
+Check one assignments schedule against fixed hazard windows:
+
+.. code-block:: bash
+
+   fhops scenario hydrology constraint-check scenarios/example/scenario.yaml \
+     build/hydrology_mapping \
+     assignments.csv \
+     hazard.json \
+     --assets assets.json \
+     --out build/hydrology_constraint_check
+
+The check maps each scheduled block to a FEMIC watershed, looks up watch/
+warning/closure severity for the day, and emits one event per activity. Assets in
+the same watershed are attached as context. Closure activity fails by default;
+`--no-fail-on-closure` reports it without failing. Warning activity is
+informational unless `--fail-on-warning` is set.
+
+Outputs are `hydrology_constraint_events.csv` and
+`hydrology_constraint_check.json`. Missing block mapping, hazard evidence, or
+asset mapping refuses. This is an operational exposure check against a fixed
+hazard, not a watershed flood model.
+
 End-to-End Path
 ---------------
 
@@ -301,3 +436,28 @@ The P15.6 integration test runs the complete synthetic path through the CLI:
 The test also covers a tampered bundle, a schedule-hash mismatch, and the
 reviewed-policy failures. It is synthetic and makes no real watershed or
 regulatory claim.
+
+Solver Boundary
+---------------
+
+FHOPS solvers do not consume hazard windows. The supported enforcement point is
+``fhops scenario hydrology constraint-check``, which fails closure activity and
+reports warning/watch exposure. A solver-side closure constraint is deferred
+until a single shared block/day availability hook is honoured by the MILP,
+heuristics, playback, and rolling-horizon paths.
+
+Operational End-to-End Path
+---------------------------
+
+The P16 integration test runs the operational path through the CLI:
+
+.. code-block:: bash
+
+   fhops scenario hydrology hazard validate HAZARD
+   fhops scenario hydrology assets validate ASSETS --scenario SCENARIO --mapping MAPPING
+   fhops scenario hydrology constraint-check SCENARIO MAPPING ASSIGNMENTS HAZARD \
+     --assets ASSETS --out CHECK
+
+It covers watch/warning/closure reporting, default closure failure, an explicit
+no-fail policy, a tampered hazard, and an unknown road asset. It is synthetic
+and makes no watershed or regulatory claim.

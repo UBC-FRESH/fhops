@@ -431,6 +431,49 @@ Acceptance:
 
 Closeout: `notes/reports/p15-closeout.md`; final PR #232 merged as `3b404414`.
 
+## Phase 16 — Flood-aware operational constraints — complete
+
+Parent issue: #235. Branch: `feature/phase16-flood-operational-constraints`.
+
+Goal: manage operational flood exposure against a fixed external hazard, not
+optimize watershed flood response. FHOPS checks and constrains schedule activity
+inside watch, warning, and closure windows by watershed and explicit assets.
+
+Authoritative note: `notes/phase16_flood_operational_constraints.md`.
+Closeout: pull request #255 squash-merged as `b850275d`; the phase report is
+`notes/reports/p16-closeout.md`.
+
+- [x] P16.1 Define and implement the operational hazard-window contract (#236)
+  - [x] Validate schema, watershed ids, review metadata, day ranges, and overlaps
+  - [x] Add severity lookup and validation report
+  - [x] Add `fhops scenario hydrology hazard validate`, tests, and docs
+- [x] P16.2 Load road/culvert asset evidence (#237)
+  - [x] Define explicit asset ids, types, watersheds, and review metadata
+  - [x] Reject unknown/duplicate assets without geometry inference
+  - [x] Add tests and docs
+- [x] P16.3 Check a schedule for hazard-window violations (#238)
+  - [x] Map block activity to watersheds through the P15 crosswalk
+  - [x] Emit watch/warning/closure events and closure violations
+  - [x] Add the constraint-check CLI, CSV/JSON output, tests, and docs
+- [x] P16.4 Integrate fixed hazard constraints where supported (#239)
+  - [x] Audit solver decision variables for block/day/shift constraints
+  - [x] Keep enforcement at the one-schedule check layer
+  - [x] Record the missing shared solver hook and road-work timing limitation
+- [x] P16.5 Prove, document, and close out P16 (#240)
+  - [x] Add the synthetic/public fixture and fail-closed matrix
+  - [x] Update docs, roadmap, note, and changelog
+  - [x] Write the closeout report and queue the phase PR
+
+Acceptance:
+
+- Hazard windows and assets validate explicit ids and review metadata.
+- A schedule reports watch, warning, and closure events.
+- Closure activity fails by default; warning failure is an explicit policy.
+- Missing evidence refuses.
+- Solver integration, if present, is fixed-scenario only.
+- No real watershed, flood map, or regulatory result is claimed.
+- FHOPS quality suite and docs build are green.
+
 ## Phase 17 — Tree-scale inventory and spatial harvesting simulation — active
 
 Parent issue: #247. Branch: `feature/p17-tree-scale`.
