@@ -46,6 +46,7 @@ from fhops.cli.reporting import report_app
 from fhops.cli.scenario import scenario_app
 from fhops.cli.synthetic import synth_app
 from fhops.cli.telemetry import telemetry_app
+from fhops.cli.tree import tree_app
 from fhops.cli.watch_dashboard import LiveWatch
 from fhops.cli.web import web_app
 from fhops.evaluation import (
@@ -100,6 +101,7 @@ app.add_typer(telemetry_app, name="telemetry")
 app.add_typer(dataset_app, name="dataset")
 app.add_typer(plan_app, name="plan")
 app.add_typer(scenario_app, name="scenario")
+app.add_typer(tree_app, name="tree")
 app.add_typer(report_app, name="report")
 app.add_typer(web_app, name="web")
 console = Console()

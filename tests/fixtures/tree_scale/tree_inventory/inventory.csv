@@ -1,0 +1,13 @@
+tree_id,block_id,x_m,y_m,elevation_m,species_code,dbh_cm,height_m,crown_radius_m,status,confidence,source_id,source_tile_id,merchantable_height_m,defect,grade_hint
+ST001,B01,881712.000,627512.000,412.000,Fd,28.0,22.0,2.4,live,0.94,synthetic-tree-fixture,T01,,,
+ST002,B01,881728.000,627518.000,412.400,Fd,42.0,28.0,3.1,live,0.91,synthetic-tree-fixture,T01,,,
+ST003,B01,881744.000,627507.000,413.100,Cw,36.0,25.0,2.8,live,0.88,synthetic-tree-fixture,T01,,,
+ST004,B01,881761.000,627521.000,413.800,Hw,24.0,19.0,2.1,live,0.83,synthetic-tree-fixture,T01,,,
+ST005,B01,881779.000,627514.000,414.200,Fd,55.0,32.0,3.8,live,0.96,synthetic-tree-fixture,T01,,,
+ST006,B01,881718.000,627536.000,412.700,Cw,31.0,23.0,2.5,live,0.90,synthetic-tree-fixture,T02,,,
+ST007,B01,881735.000,627545.000,413.000,Fd,48.0,30.0,3.4,live,0.93,synthetic-tree-fixture,T02,,,
+ST008,B01,881752.000,627538.000,413.500,Hw,22.0,18.0,1.9,live,0.79,synthetic-tree-fixture,T02,,,
+ST009,B01,881768.000,627551.000,414.000,Fd,62.0,34.0,4.1,live,0.95,synthetic-tree-fixture,T02,,,
+ST010,B01,881724.000,627571.000,413.200,Cw,39.0,27.0,3.0,live,0.87,synthetic-tree-fixture,T03,,,
+ST011,B01,881746.000,627580.000,413.700,Hw,26.0,20.0,2.2,live,0.81,synthetic-tree-fixture,T03,,,
+ST012,B01,881784.000,627566.000,414.400,Fd,45.0,29.0,3.3,live,0.92,synthetic-tree-fixture,T03,,,

@@ -4297,6 +4297,59 @@ PY
   versus Sockeye, `tiny7` omission, and cuOpt-as-seed-source deviations. No
   production backend, manuscript change, or release was added.
 
+- 2026-10-27: Planned P17 (tree-scale inventory and spatial harvesting
+  simulation) in `notes/tree_scale_simulation_plan.md`, added the P17 roadmap
+  section and issue tree (#247 and #248-#254), and created the
+  `feature/p17-tree-scale` phase branch. P17 consumes a producer-neutral tree
+  inventory; it does not implement LiDAR segmentation. No implementation or
+  real-data claim is included yet.
+
+- 2026-10-27: P17.1 (#248, parent #247) added the
+  `fhops.tree.inventory.v1` tree-inventory contract, CSV/metadata loader and
+  validator, `fhops tree inventory validate`, a deterministic synthetic
+  one-block fixture, tests, and reference docs. The source audit found no
+  individual-tree product in the current FHOPS/FEMIC bundle data; the fixture is
+  explicitly synthetic and no tree map or operational claim is made. No
+  segmentation, stem model, machine simulation, or 3D export was added.
+
+- 2026-10-27: P17.2 (#249, parent #247) added the optional
+  `tree_inventory` scenario pin, inventory/metadata checksum and review
+  validation, `fhops tree register`, `fhops tree map`, block tree summaries,
+  density and gross-volume-proxy reconciliation, CSV/JSON mapping manifests,
+  tests, and reference docs. The proxy is explicitly not merchantable volume;
+  no stem model, machine simulation, or 3D export was added.
+
+- 2026-10-27: P17.3 (#250, parent #247) added the pluggable `StemModel`
+  protocol and `ReferenceStemModel` form-factor volume/bucking scaffold,
+  `fhops tree stems`, per-tree logs, block stem summaries, merchantable-volume
+  reconciliation, CSV/JSON outputs, tests, and reference docs. The model and
+  products are explicitly non-operational; no machine simulation or 3D export
+  was added.
+
+- 2026-10-27: P17.4 (#251, parent #247) added the deterministic single-machine
+  tree simulator, `fhops tree simulate`, reach/terrain/obstacle refusals,
+  per-tree processing events, ADV6N10-based processing time, block volume
+  reconciliation, event/manifest outputs, tests, and reference docs. The
+  simulator is one machine on one block and is not coupled to the operational
+  schedule or a 3D scene.
+
+- 2026-10-27: P17.5 (#252, parent #247) added `fhops tree replay`,
+  deterministic schedule-coupled tree consumption, scheduled-versus-simulated
+  volume checks, block leftover reporting, unknown/unsupported/discrepancy
+  handling, flat event and block outputs, replay JSON, tests, and reference
+  docs. The replay does not rewrite the schedule or model cross-block travel.
+
+- 2026-10-27: P17.6 (#253, parent #247) added deterministic glTF/GLB tree
+  scene export, procedural species meshes, tree/machine/log nodes, a flat ground
+  plane, LOD, a camera path, a Three.js viewer, a scene manifest, `fhops tree
+  scene`, tests, and reference docs. The output is a portable scene, not a
+  renderer or surveyed tree map; no video is encoded.
+
+- 2026-10-28: P17.7 (#254, parent #247) added the complete synthetic
+  tree-scale fixture and end-to-end CLI test, the fail-closed matrix, a bounded
+  600-tree performance smoke, the workflow how-to, CLI/reference updates, and
+  `notes/reports/p17-closeout.md`. The final phase PR awaits maintainer approval.
+
 - 2026-10-27: P16.5 merged `origin/main` after the cuOpt MIP memo, resolved the
   changelog conflict, and reran the full test, docs, and pre-commit gates. No
   behavior or result changed.
