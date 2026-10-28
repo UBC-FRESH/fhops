@@ -23,6 +23,6 @@ Next steps after review:
 
 - replace default skidder/loader times with calibrated regressions;
 - add full road-network and landing-search routing (optional DEM/single-corridor access is now present);
-- add shift/day state and breakdowns;
+- add loader-blocking truck dispatch and breakdowns (shift windows and downstream truck tracking are now present);
 - decide whether to ship the external Three.js viewer as an example or keep it
   outside core.

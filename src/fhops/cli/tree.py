@@ -409,6 +409,29 @@ def tree_system(
     terrain_speed_factor: float = typer.Option(
         0.02, "--terrain-speed-factor", help="Speed loss per percent of mean route grade."
     ),
+    shift_days: int | None = typer.Option(
+        None, "--shift-days", help="Operating days. Omit for continuous time."
+    ),
+    shifts_per_day: int = typer.Option(1, "--shifts-per-day", help="Shifts per operating day."),
+    hours_per_shift: float = typer.Option(
+        10.0, "--hours-per-shift", help="Productive hours per shift."
+    ),
+    shift_start_hour: float = typer.Option(
+        0.0, "--shift-start-hour", help="First shift start hour."
+    ),
+    truck_capacity: float | None = typer.Option(
+        None, "--truck-capacity", help="Truck payload capacity (m3). Omit to disable trucking."
+    ),
+    truck_cycle: float = typer.Option(
+        3600.0, "--truck-cycle", help="Truck round trip excluding load (s)."
+    ),
+    truck_count: int = typer.Option(1, "--truck-count", help="Number of trucks."),
+    truck_load_time: float = typer.Option(
+        300.0, "--truck-load-time", help="Truck loading time (s)."
+    ),
+    landing_capacity: float | None = typer.Option(
+        None, "--landing-capacity", help="Landing inventory capacity (m3)."
+    ),
     feller_reach: float = typer.Option(
         DEFAULT_FELLER_REACH_M, "--feller-reach", help="Feller-buncher reach in metres."
     ),
@@ -487,6 +510,15 @@ def tree_system(
             terrain_sample_step_m=terrain_step,
             max_skidder_grade_percent=max_skidder_grade,
             terrain_speed_factor=terrain_speed_factor,
+            shift_days=shift_days,
+            shifts_per_day=shifts_per_day,
+            hours_per_shift=hours_per_shift,
+            shift_start_hour=shift_start_hour,
+            truck_capacity_m3=truck_capacity,
+            truck_cycle_time_s=truck_cycle,
+            truck_count=truck_count,
+            truck_load_time_s=truck_load_time,
+            landing_capacity_m3=landing_capacity,
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
             skidder_specs=skidder_specs,

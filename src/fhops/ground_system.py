@@ -122,6 +122,80 @@ class MachineSpec:
             raise GroundSystemError("capacity_m3 must be positive.")
 
 
+@dataclass(frozen=True)
+class ShiftPattern:
+    """Daily operating-window pattern for system machines.
+
+    Parameters
+    ----------
+    days:
+        Number of operating days.
+    shifts_per_day:
+        Number of shifts per day.
+    hours_per_shift:
+        Productive hours in each shift.
+    start_hour:
+        Clock hour at which the first shift starts.
+
+    Notes
+    -----
+    Tasks are not split across shift boundaries in this reference model. A task
+    that does not fit in the remaining window is delayed to the next window.
+    """
+
+    days: int
+    shifts_per_day: int = 1
+    hours_per_shift: float = 10.0
+    start_hour: float = 0.0
+
+    def __post_init__(self) -> None:
+        if self.days < 1:
+            raise GroundSystemError("ShiftPattern.days must be >= 1.")
+        if self.shifts_per_day < 1:
+            raise GroundSystemError("ShiftPattern.shifts_per_day must be >= 1.")
+        if not math.isfinite(self.hours_per_shift) or self.hours_per_shift <= 0:
+            raise GroundSystemError("ShiftPattern.hours_per_shift must be positive.")
+        if not math.isfinite(self.start_hour) or not 0 <= self.start_hour < 24:
+            raise GroundSystemError("ShiftPattern.start_hour must be in [0, 24).")
+        if self.start_hour + self.shifts_per_day * self.hours_per_shift > 24 + 1e-9:
+            raise GroundSystemError("Shift windows cannot exceed a 24-hour day.")
+
+    def windows(self) -> tuple[tuple[float, float], ...]:
+        """Return absolute working windows in seconds from the simulation start."""
+        windows: list[tuple[float, float]] = []
+        for day in range(self.days):
+            day_start = day * 86400.0
+            for shift in range(self.shifts_per_day):
+                start = day_start + (self.start_hour + shift * self.hours_per_shift) * 3600.0
+                end = start + self.hours_per_shift * 3600.0
+                windows.append((start, end))
+        return tuple(windows)
+
+
+@dataclass(frozen=True)
+class TruckSpec:
+    """Fixed-size log-truck fleet for landing inventory tracking.
+
+    This is a downstream tracker, not a full dispatch/truck-routing model.
+    """
+
+    capacity_m3: float
+    cycle_time_s: float
+    count: int = 1
+    load_time_s: float = 300.0
+
+    def __post_init__(self) -> None:
+        for field, value in (
+            ("capacity_m3", self.capacity_m3),
+            ("cycle_time_s", self.cycle_time_s),
+            ("load_time_s", self.load_time_s),
+        ):
+            if not math.isfinite(value) or value <= 0:
+                raise GroundSystemError(f"TruckSpec.{field} must be positive and finite.")
+        if self.count < 1:
+            raise GroundSystemError("TruckSpec.count must be >= 1.")
+
+
 def default_skidder_spec(machine_id: str) -> MachineSpec:
     """Return the default grapple-skidder specification for ``machine_id``."""
     return MachineSpec(machine_id=machine_id, machine_type="grapple_skidder")
@@ -240,6 +314,11 @@ class GroundSystemResult:
     bunch_volume_m3: float
     rate_model: str
     rate_provenance: dict[str, object]
+    shift_windows: tuple[tuple[float, float], ...]
+    truck_events: tuple[GroundSystemEvent, ...]
+    truck_summary: dict[str, float | int] | None
+    landing_inventory_final_m3: float
+    landing_inventory_max_m3: float
     trees: tuple[GroundSystemTree, ...]
     events: tuple[GroundSystemEvent, ...]
     machine_summaries: dict[str, dict[str, float | int]]
@@ -265,6 +344,11 @@ class GroundSystemResult:
             "bunch_volume_m3": self.bunch_volume_m3,
             "rate_model": self.rate_model,
             "rate_provenance": self.rate_provenance,
+            "shift_windows": [list(window) for window in self.shift_windows],
+            "truck_events": [event.to_dict() for event in self.truck_events],
+            "truck_summary": self.truck_summary,
+            "landing_inventory_final_m3": self.landing_inventory_final_m3,
+            "landing_inventory_max_m3": self.landing_inventory_max_m3,
             "tree_count": self.tree_count,
             "processed_volume_m3": self.processed_volume_m3,
             "unreachable_count": self.unreachable_count,
@@ -312,6 +396,15 @@ def simulate_ground_system(
     terrain_sample_step_m: float = 10.0,
     max_skidder_grade_percent: float = 35.0,
     terrain_speed_factor: float = 0.02,
+    shift_days: int | None = None,
+    shifts_per_day: int = 1,
+    hours_per_shift: float = 10.0,
+    shift_start_hour: float = 0.0,
+    truck_capacity_m3: float | None = None,
+    truck_cycle_time_s: float = 3600.0,
+    truck_count: int = 1,
+    truck_load_time_s: float = 300.0,
+    landing_capacity_m3: float | None = None,
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     skidder_specs: Mapping[str, MachineSpec] | None = None,
@@ -360,6 +453,26 @@ def simulate_ground_system(
         Maximum allowed absolute route grade.
     terrain_speed_factor:
         Fractional speed loss per percent of mean absolute grade.
+    shift_days:
+        Optional number of operating days. When omitted, the model runs
+        continuously.
+    shifts_per_day:
+        Shifts per operating day.
+    hours_per_shift:
+        Productive hours per shift.
+    shift_start_hour:
+        Clock hour when the first shift starts.
+    truck_capacity_m3:
+        Optional truck payload capacity. When omitted, trucking is not tracked.
+    truck_cycle_time_s:
+        Truck round-trip time excluding loading, seconds.
+    truck_count:
+        Number of trucks in the fleet.
+    truck_load_time_s:
+        Fixed truck loading time, seconds.
+    landing_capacity_m3:
+        Optional landing inventory capacity. Overflow is reported as a warning
+        and does not block the loader in this reference model.
     feller_reach_radius_m:
         Feller-buncher reach in metres.
     feller_travel_speed_m_per_s:
@@ -493,13 +606,62 @@ def simulate_ground_system(
     except TerrainError as exc:
         raise GroundSystemError(str(exc)) from exc
     rate_provenance["terrain"] = router.provenance()
+    calendar: _ShiftCalendar | None = None
+    shift_windows: tuple[tuple[float, float], ...] = ()
+    if shift_days is not None:
+        pattern = ShiftPattern(
+            days=shift_days,
+            shifts_per_day=shifts_per_day,
+            hours_per_shift=hours_per_shift,
+            start_hour=shift_start_hour,
+        )
+        calendar = _ShiftCalendar(pattern)
+        shift_windows = pattern.windows()
+    truck_spec: TruckSpec | None = None
+    if truck_capacity_m3 is not None:
+        truck_spec = TruckSpec(
+            capacity_m3=truck_capacity_m3,
+            cycle_time_s=truck_cycle_time_s,
+            count=truck_count,
+            load_time_s=truck_load_time_s,
+        )
+        if landing_capacity_m3 is None:
+            landing_capacity_m3 = truck_spec.capacity_m3 * max(1, truck_spec.count) * 2.0
+    if landing_capacity_m3 is not None and (
+        not math.isfinite(landing_capacity_m3) or landing_capacity_m3 <= 0
+    ):
+        raise GroundSystemError("landing_capacity_m3 must be positive and finite.")
+    rate_provenance["schedule"] = {
+        "shift_days": shift_days,
+        "shifts_per_day": shifts_per_day if shift_days is not None else None,
+        "hours_per_shift": hours_per_shift if shift_days is not None else None,
+        "shift_start_hour": shift_start_hour if shift_days is not None else None,
+    }
+    if truck_spec is not None:
+        rate_provenance["trucking"] = {
+            "capacity_m3": truck_spec.capacity_m3,
+            "cycle_time_s": truck_spec.cycle_time_s,
+            "count": truck_spec.count,
+            "load_time_s": truck_spec.load_time_s,
+            "landing_capacity_m3": landing_capacity_m3,
+        }
     events: list[GroundSystemEvent] = []
     trees: list[GroundSystemTree] = []
     previous_x = fb_sim.start_x_m
     previous_y = fb_sim.start_y_m
+    fb_cursor = 0.0
     for event in processed_events:
-        travel_start = event.start_s
-        travel_end = event.start_s + event.move_time_s
+        if calendar is None:
+            travel_start = event.start_s
+            travel_end = travel_start + event.move_time_s
+            process_start = travel_end
+            process_end = event.end_s
+        else:
+            if event.move_time_s > 0:
+                travel_start, travel_end = calendar.schedule(fb_cursor, event.move_time_s)
+            else:
+                travel_start = travel_end = fb_cursor
+            process_start, process_end = calendar.schedule(travel_end, event.processing_time_s)
         if event.move_time_s > 0:
             events.append(
                 GroundSystemEvent(
@@ -518,8 +680,8 @@ def simulate_ground_system(
             GroundSystemEvent(
                 machine=feller_machine_id,
                 type="process",
-                start_s=travel_end,
-                end_s=event.end_s,
+                start_s=process_start,
+                end_s=process_end,
                 x0=event.machine_x_m,
                 y0=event.machine_y_m,
                 x1=event.machine_x_m,
@@ -531,6 +693,7 @@ def simulate_ground_system(
             )
         )
         previous_x, previous_y = event.machine_x_m, event.machine_y_m
+        fb_cursor = process_end
         trees.append(
             GroundSystemTree(
                 tree_id=event.tree_id,
@@ -539,7 +702,7 @@ def simulate_ground_system(
                 dbh_cm=trees_by_id[event.tree_id].dbh_cm,
                 merchantable_volume_m3=event.merchantable_volume_m3,
                 log_count=event.log_count,
-                processed_s=event.end_s,
+                processed_s=process_end,
             )
         )
     max_bunch_volume_m3 = min(spec.capacity_m3 for spec in skidder_specs.values())
@@ -560,22 +723,43 @@ def simulate_ground_system(
             rate_model=rate_model,
             speed_profile=speed_profile,
             router=router,
+            calendar=calendar,
         )
     except TerrainError as exc:
         router.close()
         raise GroundSystemError(str(exc)) from exc
-    loader_total = _simulate_loader(
-        events,
-        loads,
-        loader,
-        landing_x,
-        landing_y,
-        rate_model=rate_model,
-        seconds_per_m3=loader_seconds_per_m3,
-    )
-    fb_total = fb_sim.total_time_s
+    try:
+        loader_total, load_finishes = _simulate_loader(
+            events,
+            loads,
+            loader,
+            landing_x,
+            landing_y,
+            rate_model=rate_model,
+            seconds_per_m3=loader_seconds_per_m3,
+            calendar=calendar,
+        )
+    except TerrainError as exc:
+        router.close()
+        raise GroundSystemError(str(exc)) from exc
+    truck_events: list[GroundSystemEvent] = []
+    truck_summary: dict[str, float | int] | None = None
+    landing_final = 0.0
+    landing_max = 0.0
+    truck_warnings: list[str] = []
+    if truck_spec is not None:
+        truck_events, truck_summary, landing_final, landing_max, truck_warnings = _simulate_trucks(
+            loads,
+            load_finishes,
+            truck_spec,
+            landing_x,
+            landing_y,
+            landing_capacity_m3=landing_capacity_m3,
+        )
+    fb_total = fb_cursor if calendar is not None else fb_sim.total_time_s
     skidder_total = max((load.ready_s for load in loads), default=0.0)
-    makespan = max(fb_total, skidder_total, loader_total)
+    truck_total = max((event.end_s for event in truck_events), default=0.0)
+    makespan = max(fb_total, skidder_total, loader_total, truck_total)
     summaries: dict[str, dict[str, float | int]] = {}
     for machine in (feller_machine_id, *skidders, loader_machine_id):
         machine_events = [event for event in events if event.machine == machine]
@@ -608,6 +792,7 @@ def simulate_ground_system(
             f"{fb_sim.unreachable_count} tree(s) were unreachable by the feller-buncher."
         )
     warnings.extend(fb_sim.warnings)
+    warnings.extend(truck_warnings)
     router.close()
     return GroundSystemResult(
         system_id=system_id,
@@ -622,6 +807,11 @@ def simulate_ground_system(
         bunch_volume_m3=bunch_volume_m3,
         rate_model=rate_model,
         rate_provenance=rate_provenance,
+        shift_windows=shift_windows,
+        truck_events=tuple(truck_events),
+        truck_summary=truck_summary,
+        landing_inventory_final_m3=landing_final,
+        landing_inventory_max_m3=landing_max,
         trees=tuple(trees),
         events=tuple(events),
         machine_summaries=summaries,
@@ -635,6 +825,8 @@ def simulate_ground_system(
             "Feller-buncher processing uses the existing reference spatial/ADV6N10 model.",
             "Skidder and loader cycle times are configurable defaults; queue dispatch is greedy and deterministic.",
             "DEM/road routing is optional; the model uses a direct line or a single connected road corridor and does not solve a full road network.",
+            "Shift windows delay tasks that do not fit; tasks are not split across shifts.",
+            "Trucking is a downstream landing-inventory tracker; landing overflow is warned, not blocked.",
             "Tree lists must be reviewed separately; this module does not validate stem-model calibration.",
         ),
     )
@@ -660,6 +852,32 @@ class _Load:
     logs: int
     ready_s: float
     tree_ids: tuple[str, ...]
+
+
+class _ShiftCalendar:
+    def __init__(self, pattern: ShiftPattern) -> None:
+        self.windows = pattern.windows()
+
+    def schedule(self, start_s: float, duration_s: float) -> tuple[float, float]:
+        if duration_s <= 0:
+            return start_s, start_s
+        for window_start, window_end in self.windows:
+            candidate = max(start_s, window_start)
+            if candidate + duration_s <= window_end + 1e-9:
+                return candidate, candidate + duration_s
+        raise GroundSystemError(
+            f"Task of {duration_s / 3600.0:.2f} h does not fit in the remaining operating windows."
+        )
+
+
+def _schedule_task(
+    calendar: _ShiftCalendar | None,
+    start_s: float,
+    duration_s: float,
+) -> tuple[float, float]:
+    if calendar is None:
+        return start_s, start_s + duration_s
+    return calendar.schedule(start_s, duration_s)
 
 
 def _build_bunches(
@@ -717,6 +935,7 @@ def _simulate_skidders(
     rate_model: str,
     speed_profile: SkidderSpeedProfile | None,
     router: TerrainRouter,
+    calendar: _ShiftCalendar | None,
 ) -> list[_Load]:
     loads: list[_Load] = []
     available = {machine: 0.0 for machine in skidder_ids}
@@ -756,7 +975,7 @@ def _simulate_skidders(
             loaded_time = distance / (spec.loaded_speed_mps * route.speed_factor)
             load_time = spec.load_fixed_s + spec.load_per_log_s * bunch.logs
             unload_time = spec.unload_fixed_s + spec.unload_per_log_s * bunch.logs
-        empty_end = empty_start + empty_time
+        empty_start, empty_end = _schedule_task(calendar, empty_start, empty_time)
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -773,7 +992,7 @@ def _simulate_skidders(
             )
         )
         load_start = max(empty_end, bunch.ready_s)
-        load_end = load_start + load_time
+        load_start, load_end = _schedule_task(calendar, load_start, load_time)
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -790,7 +1009,7 @@ def _simulate_skidders(
                 status="loading",
             )
         )
-        loaded_end = load_end + loaded_time
+        loaded_end = _schedule_task(calendar, load_end, loaded_time)[1]
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -808,7 +1027,7 @@ def _simulate_skidders(
                 max_grade_percent=route.max_grade_percent,
             )
         )
-        unload_end = loaded_end + unload_time
+        unload_end = _schedule_task(calendar, loaded_end, unload_time)[1]
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -848,8 +1067,10 @@ def _simulate_loader(
     *,
     rate_model: str,
     seconds_per_m3: float | None,
-) -> float:
+    calendar: _ShiftCalendar | None,
+) -> tuple[float, dict[str, float]]:
     available = 0.0
+    finishes: dict[str, float] = {}
     for load in sorted(loads, key=lambda item: (item.ready_s, item.load_id)):
         start = max(available, load.ready_s)
         if rate_model == "calibrated":
@@ -858,7 +1079,7 @@ def _simulate_loader(
             process_time = seconds_per_m3 * load.volume_m3
         else:
             process_time = spec.process_fixed_s + spec.process_per_log_s * load.logs
-        end = start + process_time
+        start, end = _schedule_task(calendar, start, process_time)
         events.append(
             GroundSystemEvent(
                 machine=spec.machine_id,
@@ -876,7 +1097,84 @@ def _simulate_loader(
             )
         )
         available = end
-    return available
+        finishes[load.load_id] = end
+    return available, finishes
+
+
+def _simulate_trucks(
+    loads: list[_Load],
+    load_finishes: dict[str, float],
+    spec: TruckSpec,
+    landing_x: float,
+    landing_y: float,
+    *,
+    landing_capacity_m3: float | None,
+) -> tuple[list[GroundSystemEvent], dict[str, float | int], float, float, list[str]]:
+    events: list[GroundSystemEvent] = []
+    available = [0.0] * spec.count
+    inventory = 0.0
+    max_inventory = 0.0
+    dispatched = 0
+    dispatched_volume = 0.0
+    warnings: list[str] = []
+    for load in sorted(loads, key=lambda item: load_finishes.get(item.load_id, float("inf"))):
+        finish = load_finishes[load.load_id]
+        inventory += load.volume_m3
+        max_inventory = max(max_inventory, inventory)
+        while inventory >= spec.capacity_m3 - 1e-9:
+            truck_index = min(range(spec.count), key=lambda index: available[index])
+            start = max(available[truck_index], finish)
+            load_end = start + spec.load_time_s
+            truck_id = f"T-{truck_index + 1:02d}"
+            events.append(
+                GroundSystemEvent(
+                    machine=truck_id,
+                    type="truck_load",
+                    start_s=start,
+                    end_s=load_end,
+                    x0=landing_x,
+                    y0=landing_y,
+                    x1=landing_x,
+                    y1=landing_y,
+                    volume_m3=spec.capacity_m3,
+                    status="loading",
+                )
+            )
+            depart_end = load_end
+            return_end = depart_end + spec.cycle_time_s
+            events.append(
+                GroundSystemEvent(
+                    machine=truck_id,
+                    type="truck_return",
+                    start_s=depart_end,
+                    end_s=return_end,
+                    x0=landing_x,
+                    y0=landing_y,
+                    x1=landing_x,
+                    y1=landing_y,
+                    volume_m3=spec.capacity_m3,
+                    status="returning",
+                )
+            )
+            available[truck_index] = return_end
+            inventory -= spec.capacity_m3
+            dispatched += 1
+            dispatched_volume += spec.capacity_m3
+    if landing_capacity_m3 is not None and max_inventory > landing_capacity_m3 + 1e-9:
+        warnings.append(
+            f"Landing inventory peaked at {max_inventory:.2f} m3, above capacity "
+            f"{landing_capacity_m3:.2f} m3."
+        )
+    summary: dict[str, float | int] = {
+        "truck_count": spec.count,
+        "truck_capacity_m3": spec.capacity_m3,
+        "dispatched_loads": dispatched,
+        "dispatched_volume_m3": round(dispatched_volume, 3),
+        "landing_inventory_final_m3": round(inventory, 3),
+        "landing_inventory_max_m3": round(max_inventory, 3),
+        "landing_capacity_m3": landing_capacity_m3 or 0.0,
+    }
+    return events, summary, inventory, max_inventory, warnings
 
 
 def write_ground_system(result: GroundSystemResult, out_dir: Path) -> dict[str, Path]:
@@ -976,6 +1274,10 @@ def write_ground_system(result: GroundSystemResult, out_dir: Path) -> dict[str, 
                 "processed_volume_m3": result.processed_volume_m3,
                 "unreachable_count": result.unreachable_count,
                 "makespan_s": result.makespan_s,
+                "shift_windows": [list(window) for window in result.shift_windows],
+                "truck_summary": result.truck_summary,
+                "landing_inventory_final_m3": result.landing_inventory_final_m3,
+                "landing_inventory_max_m3": result.landing_inventory_max_m3,
                 "rate_model": result.rate_model,
                 "rate_provenance": result.rate_provenance,
                 "machine_summaries": result.machine_summaries,

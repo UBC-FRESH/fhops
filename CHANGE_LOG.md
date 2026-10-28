@@ -4443,3 +4443,15 @@ PY
   Verification: `pytest -q tests/tree` (65 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-28: Added shift-window scheduling and downstream truck/landing
+  inventory tracking to `fhops tree system`. `--shift-days`,
+  `--shifts-per-day`, `--hours-per-shift`, and `--shift-start-hour` pause tasks
+  outside operating windows; `--truck-capacity`, `--truck-cycle`,
+  `--truck-count`, `--truck-load-time`, and `--landing-capacity` produce truck
+  events and landing-inventory summaries. Shift tasks are not split across
+  windows; landing overflow warns rather than blocks the loader. Tests and
+  reference docs cover both modes.
+  Verification: `pytest -q tests/tree` (67 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.
