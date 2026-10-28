@@ -20,7 +20,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 
-from fhops.productivity.processor_loader import estimate_loader_productivity_barko450
+from fhops.productivity.processor_loader import (
+    estimate_loader_productivity_barko450,
+    estimate_processor_productivity_tn103,
+)
 from fhops.productivity.skidder_ft import (
     Han2018SkidderMethod,
     SkidderSpeedProfile,
@@ -196,6 +199,41 @@ class TruckSpec:
             raise GroundSystemError("TruckSpec.count must be >= 1.")
 
 
+@dataclass(frozen=True)
+class ProcessorSpec:
+    """Cycle-time parameters for a roadside processor.
+
+    Parameters
+    ----------
+    machine_id:
+        Scenario machine identifier.
+    seconds_per_m3:
+        Productive seconds per cubic metre.
+    fixed_s:
+        Fixed per-load setup time in seconds.
+    """
+
+    machine_id: str
+    seconds_per_m3: float = 3600.0 / 35.0
+    fixed_s: float = 60.0
+
+    def __post_init__(self) -> None:
+        if not math.isfinite(self.seconds_per_m3) or self.seconds_per_m3 <= 0:
+            raise GroundSystemError("ProcessorSpec.seconds_per_m3 must be positive and finite.")
+        if not math.isfinite(self.fixed_s) or self.fixed_s < 0:
+            raise GroundSystemError("ProcessorSpec.fixed_s must be finite and non-negative.")
+
+
+def default_processor_spec(machine_id: str) -> ProcessorSpec:
+    """Return a TN-103 feller-bunched processor specification."""
+    result = estimate_processor_productivity_tn103(scenario="area_a_feller_bunched")
+    if result.productivity_m3_per_smh is None or result.productivity_m3_per_smh <= 0:
+        raise GroundSystemError("TN-103 processor productivity is unavailable.")
+    return ProcessorSpec(
+        machine_id=machine_id, seconds_per_m3=3600.0 / result.productivity_m3_per_smh
+    )
+
+
 def default_skidder_spec(machine_id: str) -> MachineSpec:
     """Return the default grapple-skidder specification for ``machine_id``."""
     return MachineSpec(machine_id=machine_id, machine_type="grapple_skidder")
@@ -315,6 +353,7 @@ class GroundSystemResult:
     rate_model: str
     rate_provenance: dict[str, object]
     shift_windows: tuple[tuple[float, float], ...]
+    processor_machine_id: str | None
     truck_events: tuple[GroundSystemEvent, ...]
     truck_summary: dict[str, float | int] | None
     landing_inventory_final_m3: float
@@ -345,6 +384,7 @@ class GroundSystemResult:
             "rate_model": self.rate_model,
             "rate_provenance": self.rate_provenance,
             "shift_windows": [list(window) for window in self.shift_windows],
+            "processor_machine_id": self.processor_machine_id,
             "truck_events": [event.to_dict() for event in self.truck_events],
             "truck_summary": self.truck_summary,
             "landing_inventory_final_m3": self.landing_inventory_final_m3,
@@ -372,6 +412,11 @@ class GroundSystemResult:
             "machines": {
                 **{self.feller_machine_id: {"type": "feller_buncher"}},
                 **{machine: {"type": "grapple_skidder"} for machine in self.skidder_machine_ids},
+                **(
+                    {self.processor_machine_id: {"type": "roadside_processor"}}
+                    if self.processor_machine_id
+                    else {}
+                ),
                 self.loader_machine_id: {"type": "loader"},
             },
             "warnings": list(self.warnings),
@@ -386,6 +431,7 @@ def simulate_ground_system(
     feller_machine_id: str,
     skidder_machine_ids: Sequence[str],
     loader_machine_id: str,
+    processor_machine_id: str | None = None,
     stem_inventory: StemInventory | None = None,
     landing_x_m: float | None = None,
     landing_y_m: float | None = None,
@@ -409,6 +455,7 @@ def simulate_ground_system(
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     skidder_specs: Mapping[str, MachineSpec] | None = None,
     loader_spec: MachineSpec | None = None,
+    processor_spec: ProcessorSpec | None = None,
     start_x_m: float | None = None,
     start_y_m: float | None = None,
     generated_utc: str | None = None,
@@ -432,6 +479,9 @@ def simulate_ground_system(
         One or more scenario machine IDs for grapple skidders.
     loader_machine_id:
         Scenario machine ID for the loader.
+    processor_machine_id:
+        Optional scenario roadside-processor machine ID between skidder and
+        loader. When omitted, loads pass directly to the loader.
     stem_inventory:
         Optional precomputed stem inventory.
     landing_x_m, landing_y_m:
@@ -481,6 +531,8 @@ def simulate_ground_system(
         Optional per-skidder cycle-time overrides.
     loader_spec:
         Optional loader cycle-time override.
+    processor_spec:
+        Optional processor cycle-time override.
     start_x_m, start_y_m:
         Feller-buncher start position.
     generated_utc:
@@ -516,6 +568,8 @@ def simulate_ground_system(
         raise GroundSystemError(str(exc)) from exc
     machines = {machine.id: machine for machine in scenario.machines}
     requested = (feller_machine_id, *skidders, loader_machine_id)
+    if processor_machine_id is not None:
+        requested = (*requested, processor_machine_id)
     missing = [machine for machine in requested if machine not in machines]
     if missing:
         raise GroundSystemError("Unknown scenario machine(s): " + ", ".join(missing))
@@ -533,6 +587,16 @@ def simulate_ground_system(
         raise GroundSystemError(
             f"Loader {loader_machine_id!r} has role {machines[loader_machine_id].role!r}, expected loader."
         )
+    processor: ProcessorSpec | None = None
+    if processor_machine_id is not None:
+        if machines[processor_machine_id].role not in {"roadside_processor", "processor"}:
+            raise GroundSystemError(
+                f"Processor {processor_machine_id!r} has role "
+                f"{machines[processor_machine_id].role!r}, expected roadside_processor/processor."
+            )
+        processor = processor_spec or default_processor_spec(processor_machine_id)
+        if processor.machine_id != processor_machine_id:
+            raise GroundSystemError("Processor spec ID does not match processor_machine_id.")
     stems = stem_inventory
     if stems is None:
         try:
@@ -645,6 +709,15 @@ def simulate_ground_system(
             "load_time_s": truck_spec.load_time_s,
             "landing_capacity_m3": landing_capacity_m3,
         }
+    if processor is not None:
+        result = estimate_processor_productivity_tn103(scenario="area_a_feller_bunched")
+        rate_provenance["processor"] = {
+            "machine_id": processor_machine_id,
+            "model": "TN-103 feller-bunched processor",
+            "productivity_m3_per_smh": result.productivity_m3_per_smh,
+            "seconds_per_m3": processor.seconds_per_m3,
+            "fixed_s": processor.fixed_s,
+        }
     events: list[GroundSystemEvent] = []
     trees: list[GroundSystemTree] = []
     previous_x = fb_sim.start_x_m
@@ -728,6 +801,21 @@ def simulate_ground_system(
     except TerrainError as exc:
         router.close()
         raise GroundSystemError(str(exc)) from exc
+    if processor is not None:
+        try:
+            processor_total, loads = _simulate_processor(
+                events,
+                loads,
+                processor,
+                landing_x,
+                landing_y,
+                calendar=calendar,
+            )
+        except TerrainError as exc:
+            router.close()
+            raise GroundSystemError(str(exc)) from exc
+    else:
+        processor_total = 0.0
     try:
         loader_total, load_finishes = _simulate_loader(
             events,
@@ -759,9 +847,12 @@ def simulate_ground_system(
     fb_total = fb_cursor if calendar is not None else fb_sim.total_time_s
     skidder_total = max((load.ready_s for load in loads), default=0.0)
     truck_total = max((event.end_s for event in truck_events), default=0.0)
-    makespan = max(fb_total, skidder_total, loader_total, truck_total)
+    makespan = max(fb_total, skidder_total, processor_total, loader_total, truck_total)
     summaries: dict[str, dict[str, float | int]] = {}
-    for machine in (feller_machine_id, *skidders, loader_machine_id):
+    machine_ids = (feller_machine_id, *skidders, loader_machine_id)
+    if processor_machine_id is not None:
+        machine_ids = (*machine_ids, processor_machine_id)
+    for machine in machine_ids:
         machine_events = [event for event in events if event.machine == machine]
         busy = sum(event.end_s - event.start_s for event in machine_events)
         summaries[machine] = {
@@ -774,8 +865,11 @@ def simulate_ground_system(
         "feller": feller_machine_id,
         "skidders": skidders,
         "loader": loader_machine_id,
+        "processor": processor_machine_id,
         "bunch_volume_m3": bunch_volume_m3,
         "rate_model": rate_model,
+        "shift_days": shift_days,
+        "truck_capacity_m3": truck_capacity_m3,
         "events": [event.to_dict() for event in events],
     }
     system_id = (
@@ -808,6 +902,7 @@ def simulate_ground_system(
         rate_model=rate_model,
         rate_provenance=rate_provenance,
         shift_windows=shift_windows,
+        processor_machine_id=processor_machine_id,
         truck_events=tuple(truck_events),
         truck_summary=truck_summary,
         landing_inventory_final_m3=landing_final,
@@ -823,7 +918,7 @@ def simulate_ground_system(
         caveats=(
             "Reference multi-machine event model, not a field-calibrated system simulation.",
             "Feller-buncher processing uses the existing reference spatial/ADV6N10 model.",
-            "Skidder and loader cycle times are configurable defaults; queue dispatch is greedy and deterministic.",
+            "Skidder, processor, and loader cycle times are configurable defaults; queue dispatch is greedy and deterministic.",
             "DEM/road routing is optional; the model uses a direct line or a single connected road corridor and does not solve a full road network.",
             "Shift windows delay tasks that do not fit; tasks are not split across shifts.",
             "Trucking is a downstream landing-inventory tracker; landing overflow is warned, not blocked.",
@@ -1056,6 +1151,52 @@ def _simulate_skidders(
             )
         )
     return loads
+
+
+def _simulate_processor(
+    events: list[GroundSystemEvent],
+    loads: list[_Load],
+    spec: ProcessorSpec,
+    landing_x: float,
+    landing_y: float,
+    *,
+    calendar: _ShiftCalendar | None,
+) -> tuple[float, list[_Load]]:
+    available = 0.0
+    processed: list[_Load] = []
+    for load in sorted(loads, key=lambda item: (item.ready_s, item.load_id)):
+        start = max(available, load.ready_s)
+        duration = spec.fixed_s + spec.seconds_per_m3 * load.volume_m3
+        start, end = _schedule_task(calendar, start, duration)
+        events.append(
+            GroundSystemEvent(
+                machine=spec.machine_id,
+                type="process",
+                start_s=start,
+                end_s=end,
+                x0=landing_x,
+                y0=landing_y,
+                x1=landing_x,
+                y1=landing_y,
+                volume_m3=load.volume_m3,
+                logs=load.logs,
+                tree_ids=load.tree_ids,
+                status="processing",
+            )
+        )
+        processed.append(
+            _Load(
+                load_id=load.load_id,
+                bunch_id=load.bunch_id,
+                skidder_id=load.skidder_id,
+                volume_m3=load.volume_m3,
+                logs=load.logs,
+                ready_s=end,
+                tree_ids=load.tree_ids,
+            )
+        )
+        available = end
+    return available, processed
 
 
 def _simulate_loader(

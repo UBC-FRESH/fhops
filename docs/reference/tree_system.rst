@@ -17,6 +17,7 @@ Command
      --feller H1 \
      --skidder H2 \
      --skidder H3 \
+     --processor H5 \
      --loader H4 \
      --out build/system
 
@@ -24,13 +25,17 @@ The scenario must contain the named machines with compatible roles:
 
 - feller: ``feller_buncher``, ``harvester``, or ``hand_faller``;
 - skidder: ``grapple_skidder`` or ``skidder``;
+- processor: ``roadside_processor`` or ``processor``;
 - loader: ``loader``.
 
 The feller-buncher is processed with
 :func:`fhops.spatial_machine.simulate_block`; its processed-tree events are
 grouped into bunches of approximately ``--bunch-volume`` cubic metres. Skidders
 are dispatched greedily to the earliest available bunch and always return to
-the landing. The loader processes skidder loads in arrival order.
+the landing. If ``--processor`` is supplied, the roadside processor processes
+each skidder load at the landing before it reaches the loader. The loader
+processes processor output in arrival order. Without ``--processor``, loads go
+directly to the loader.
 
 Cycle-time controls are exposed on the CLI:
 
@@ -91,13 +96,14 @@ reference model.
 Outputs
 -------
 
-- ``system_events.csv`` — machine timeline with travel, load, unload, and
-  processing segments.
+- ``system_events.csv`` — machine timeline with travel, load, unload, processor,
+  and loader segments.
 - ``system_events.json`` — the same event stream plus tree processing records,
-  machine types, landing, and duration; suitable for an external viewer.
+  truck events, machine types, landing, shift windows, and duration; suitable
+  for an external viewer.
 - ``tree_processing.csv`` — one row per processed tree.
 - ``system_summary.json`` — tree count, processed volume, makespan, machine
-  utilisation, shift/truck summaries, warnings, and caveats.
+  utilisation, shift/truck summaries, landing inventory, warnings, and caveats.
 
 Determinism and invariants
 --------------------------
@@ -112,8 +118,9 @@ overloading the machine.
 Limits
 ------
 
-- One block, one landing, one feller-buncher, one loader.
-- Flat terrain; no DEM, road routing, or landing geometry search.
+- One block, one landing, one feller-buncher, one optional processor, one loader.
+- DEM and single-corridor road routing are optional; they are not a full road
+  network or landing-search model.
 - Skidder and loader cycle times are configurable defaults, not calibrated
   regressions.
 - Shift windows are fixed and tasks are not split across them.
