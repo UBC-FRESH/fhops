@@ -88,6 +88,13 @@ schema mentions in the contract index, external FEMIC/WS4 GitHub references, and
 the generated FHOPS quickstart path. It runs in CI after the Sphinx build. The
 WS4 CLI path remains manually verified because FHOPS CI does not install WS4.
 
+## P18.5 closeout decision
+
+The phase is queued for approval with `notes/reports/p18-closeout.md`. The
+quickstart and contract index are current for the committed synthetic fixtures,
+and the docs checker runs in CI. No real watershed result or solver-side
+hydrology is claimed.
+
 ## Tasks
 
 - P18.1: documentation and reproducibility audit.

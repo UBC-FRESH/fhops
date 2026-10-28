@@ -4342,3 +4342,9 @@ PY
   links, and the generated FHOPS quickstart path. It fails on a broken link,
   stale schema mention, or quickstart row-count mismatch. The WS4 CLI path stays
   manually verified because FHOPS CI does not install WS4. Added checker tests.
+
+- 2026-10-28: P18.5 (#265, parent #260) added the documentation phase closeout.
+  The report records the audit, quickstart, contract index, executable docs
+  checks, manual WS4 verification, CI evidence, and remaining data/review
+  blockers. Phase 18 is `pr-open`; the final phase PR is queued for maintainer
+  approval. No new hydrology capability or real watershed result was added.

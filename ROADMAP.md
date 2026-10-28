@@ -474,7 +474,7 @@ Acceptance:
 - No real watershed, flood map, or regulatory result is claimed.
 - FHOPS quality suite and docs build are green.
 
-## Phase 18 — Hydrology documentation and reproducibility — active
+## Phase 18 — Hydrology documentation and reproducibility — pr-open
 
 Parent issue: #260. Branch: `feature/phase18-hydrology-docs`.
 
@@ -483,6 +483,7 @@ This is documentation and reproducibility work, not a new hydrology capability.
 P17 is the active tree-scale phase, so this phase uses P18.
 
 Authoritative note: `notes/phase18_hydrology_docs_reproducibility.md`.
+Closeout report: `notes/reports/p18-closeout.md`.
 
 - [x] P18.1 Audit hydrology documentation and reproducibility gaps (#261)
   - [x] Inventory FEMIC, WS4, and FHOPS hydrology docs
@@ -498,9 +499,9 @@ Authoritative note: `notes/phase18_hydrology_docs_reproducibility.md`.
 - [x] P18.4 Add executable hydrology docs checks (#264)
   - [x] Check links and runnable snippets
   - [x] Run the synthetic quickstart in CI
-- [ ] P18.5 Close out the documentation phase (#265)
-  - [ ] Verify docs and gates
-  - [ ] Record synthetic/real-data limits and close out
+- [x] P18.5 Close out the documentation phase (#265)
+  - [x] Verify docs and gates
+  - [x] Record synthetic/real-data limits and close out
 
 Acceptance:
 
