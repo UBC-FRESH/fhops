@@ -1,0 +1,83 @@
+Ground-Based System Simulation
+==============================
+
+``fhops.ground_system`` layers a deterministic grapple-skidder and loader queue
+on top of the existing single-machine tree simulation. It is a reference
+execution model for one block, one feller-buncher, one or more skidders, and one
+loader. It does not replace the block/day MILP or claim field-calibrated system
+productivity.
+
+Command
+-------
+
+.. code-block:: bash
+
+   fhops tree system scenario.yaml \
+     --block B01 \
+     --feller H1 \
+     --skidder H2 \
+     --skidder H3 \
+     --loader H4 \
+     --out build/system
+
+The scenario must contain the named machines with compatible roles:
+
+- feller: ``feller_buncher``, ``harvester``, or ``hand_faller``;
+- skidder: ``grapple_skidder`` or ``skidder``;
+- loader: ``loader``.
+
+The feller-buncher is processed with
+:func:`fhops.spatial_machine.simulate_block`; its processed-tree events are
+grouped into bunches of approximately ``--bunch-volume`` cubic metres. Skidders
+are dispatched greedily to the earliest available bunch and always return to
+the landing. The loader processes skidder loads in arrival order.
+
+Cycle-time controls are exposed on the CLI:
+
+- ``--feller-reach`` and ``--feller-speed``;
+- ``--skidder-capacity``, ``--skidder-empty-speed``,
+  ``--skidder-loaded-speed``, ``--skidder-load-fixed``,
+  ``--skidder-load-per-log``, ``--skidder-unload-fixed``, and
+  ``--skidder-unload-per-log``;
+- ``--loader-process-fixed`` and ``--loader-process-per-log``.
+
+The defaults are reference values, not calibrated regressions. The default
+skidder capacity is 40 m³ so tree-length loads from the mature demo are not
+silently refused; set it to the actual machine payload for operational work.
+
+``--landing-x`` and ``--landing-y`` set the landing in the scenario CRS. When
+omitted, the mean tree position is used. The default is a flat, single-landing
+model.
+
+Outputs
+-------
+
+- ``system_events.csv`` — machine timeline with travel, load, unload, and
+  processing segments.
+- ``system_events.json`` — the same event stream plus tree processing records,
+  machine types, landing, and duration; suitable for an external viewer.
+- ``tree_processing.csv`` — one row per processed tree.
+- ``system_summary.json`` — tree count, processed volume, makespan, machine
+  utilisation, warnings, and caveats.
+
+Determinism and invariants
+--------------------------
+
+Given the same scenario, inventory, machine parameters, and bunch volume, the
+system ID and event timeline are deterministic. The model records each
+processed tree once, uses only the feller-buncher's processed events, and
+reports unreachable trees separately. Skidder capacity is checked against each
+bunch; a load larger than capacity raises an error rather than silently
+overloading the machine.
+
+Limits
+------
+
+- One block, one landing, one feller-buncher, one loader.
+- Flat terrain; no DEM, road routing, or landing geometry search.
+- Skidder and loader cycle times are configurable defaults, not calibrated
+  regressions.
+- No shift/day calendar, breakdowns, trucking, or multi-block routing.
+- Tree inventories must be reviewed separately; this module does not validate
+  stem-model calibration.
+- The JSON timeline is data only; FHOPS does not ship a renderer.

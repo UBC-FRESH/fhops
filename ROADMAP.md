@@ -569,6 +569,7 @@ Acceptance:
 - No new hydrology capability or real watershed result is claimed.
 
 ## Backlog & Ideas
+- [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Calibrated rates, DEM/road/landing routing, shift state, breakdowns, and trucking remain follow-ups.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
 - [x] Scenario authoring UI and schema validators for web clients (P12.6, #183).

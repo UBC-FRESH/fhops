@@ -4402,6 +4402,20 @@ PY
   blockers. Phase 18 is `pr-open`; the final phase PR is queued for maintainer
   approval. No new hydrology capability or real watershed result was added.
 
+- 2026-10-28: Added the multi-machine ground-based system prototype:
+  `fhops.ground_system`, `fhops tree system`, deterministic feller-buncher →
+  skidder → loader event streams, capacity checks, configurable feller/skidder/
+  loader rates, CSV/JSON outputs, tests, and reference docs. The model uses the
+  existing single-machine feller simulation plus configurable default
+  skidder/loader cycle times; it is one block, one landing, flat terrain, and
+  not field-calibrated. No operational claim or real-inventory validation is
+  included.
+  Verification for the ground-system prototype: `pytest -q tests/tree`
+  (62 passed), `ruff format --check src tests`, `ruff check src tests`,
+  `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`. The module/CLI are merged through
+  PR #278.
+
 - 2026-10-28: P18 close-out: pull request #276 squash-merged as `919a4fe0`;
   parent #260 and tasks #261/#262/#263/#264/#265 closed; Phase 18 set to
   complete. The audit, quickstart, contract index, executable docs checks, and
