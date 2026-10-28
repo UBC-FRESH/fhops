@@ -56,8 +56,20 @@ tree-length loads from the mature demo are not silently refused; set it to the
 actual machine payload for operational work.
 
 ``--landing-x`` and ``--landing-y`` set the landing in the scenario CRS. When
-omitted, the mean tree position is used. The default is a flat, single-landing
-model.
+omitted, the mean tree position is used.
+
+Optional terrain routing:
+
+.. code-block:: bash
+
+   fhops tree system scenario.yaml      --block B01 --feller H1 --skidder H2 --loader H3      --dem dem.tif --road road.geojson      --max-skidder-grade 30 --terrain-step 10
+
+``--dem`` samples elevation along each skidder route and refuses routes above
+``--max-skidder-grade``. ``--road`` reads a GeoJSON LineString/MultiLineString
+and follows one connected road corridor between the landing and the bunch. This
+is a single-corridor access model, not a road-network solver. DEM and road
+coordinates must use the same CRS as the inventory. Install the optional
+dependencies with ``pip install "fhops[lidar]"``.
 
 Outputs
 -------

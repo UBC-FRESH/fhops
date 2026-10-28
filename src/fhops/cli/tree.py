@@ -394,6 +394,21 @@ def tree_system(
     ),
     landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
     landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
+    dem: Path | None = typer.Option(
+        None, "--dem", help="Optional GeoTIFF DEM in the scenario CRS."
+    ),
+    road: Path | None = typer.Option(
+        None, "--road", help="Optional GeoJSON line for a single connected road corridor."
+    ),
+    terrain_step: float = typer.Option(
+        10.0, "--terrain-step", help="DEM sampling interval along a route (m)."
+    ),
+    max_skidder_grade: float = typer.Option(
+        35.0, "--max-skidder-grade", help="Maximum allowed skidder route grade (%)."
+    ),
+    terrain_speed_factor: float = typer.Option(
+        0.02, "--terrain-speed-factor", help="Speed loss per percent of mean route grade."
+    ),
     feller_reach: float = typer.Option(
         DEFAULT_FELLER_REACH_M, "--feller-reach", help="Feller-buncher reach in metres."
     ),
@@ -467,6 +482,11 @@ def tree_system(
             landing_y_m=landing_y,
             bunch_volume_m3=bunch_volume,
             rate_model=rate_model,  # type: ignore[arg-type]
+            dem_path=dem,
+            road_path=road,
+            terrain_sample_step_m=terrain_step,
+            max_skidder_grade_percent=max_skidder_grade,
+            terrain_speed_factor=terrain_speed_factor,
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
             skidder_specs=skidder_specs,

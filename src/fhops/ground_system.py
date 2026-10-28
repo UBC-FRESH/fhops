@@ -30,6 +30,7 @@ from fhops.productivity.skidder_ft import (
 from fhops.scenario.io import load_scenario
 from fhops.spatial_machine import SpatialMachineError, simulate_block
 from fhops.stem import StemInventory, build_stem_inventory
+from fhops.terrain import TerrainError, TerrainRouter
 
 GROUND_SYSTEM_SCHEMA = "fhops.tree.ground_system.v1"
 DEFAULT_BUNCH_VOLUME_M3 = 8.0
@@ -160,6 +161,8 @@ class GroundSystemEvent:
     logs: int = 0
     tree_ids: tuple[str, ...] = ()
     status: str = ""
+    distance_m: float = 0.0
+    max_grade_percent: float = 0.0
 
     def to_dict(self) -> dict[str, object]:
         """Return the event as a JSON-serializable mapping."""
@@ -176,6 +179,8 @@ class GroundSystemEvent:
             "logs": self.logs,
             "tree_ids": list(self.tree_ids),
             "status": self.status,
+            "distance_m": self.distance_m,
+            "max_grade_percent": self.max_grade_percent,
         }
 
 
@@ -302,6 +307,11 @@ def simulate_ground_system(
     landing_y_m: float | None = None,
     bunch_volume_m3: float = DEFAULT_BUNCH_VOLUME_M3,
     rate_model: Literal["calibrated", "reference"] = DEFAULT_RATE_MODEL,
+    dem_path: str | Path | None = None,
+    road_path: str | Path | None = None,
+    terrain_sample_step_m: float = 10.0,
+    max_skidder_grade_percent: float = 35.0,
+    terrain_speed_factor: float = 0.02,
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     skidder_specs: Mapping[str, MachineSpec] | None = None,
@@ -339,6 +349,17 @@ def simulate_ground_system(
         ``calibrated`` uses the Han et al. (2018) grapple-skidder regression
         and the Barko 450 ground-skid loader result. ``reference`` uses the
         fixed cycle-time defaults in ``MachineSpec``.
+    dem_path:
+        Optional GeoTIFF DEM in the same CRS as the tree coordinates.
+    road_path:
+        Optional GeoJSON line in the same CRS. The route follows one connected
+        road corridor between landing and bunch, then goes off-road.
+    terrain_sample_step_m:
+        DEM sampling interval along a route.
+    max_skidder_grade_percent:
+        Maximum allowed absolute route grade.
+    terrain_speed_factor:
+        Fractional speed loss per percent of mean absolute grade.
     feller_reach_radius_m:
         Feller-buncher reach in metres.
     feller_travel_speed_m_per_s:
@@ -461,6 +482,17 @@ def simulate_ground_system(
         }
     else:
         rate_provenance = {"model": "reference fixed MachineSpec cycle times"}
+    try:
+        router = TerrainRouter(
+            dem_path=dem_path,
+            road_path=road_path,
+            sample_step_m=terrain_sample_step_m,
+            max_grade_percent=max_skidder_grade_percent,
+            grade_speed_factor=terrain_speed_factor,
+        )
+    except TerrainError as exc:
+        raise GroundSystemError(str(exc)) from exc
+    rate_provenance["terrain"] = router.provenance()
     events: list[GroundSystemEvent] = []
     trees: list[GroundSystemTree] = []
     previous_x = fb_sim.start_x_m
@@ -517,16 +549,21 @@ def simulate_ground_system(
             f"({max_bunch_volume_m3:.2f} m3)."
         )
     bunches = _build_bunches(trees, bunch_volume_m3, max_bunch_volume_m3)
-    loads = _simulate_skidders(
-        events,
-        bunches,
-        skidders,
-        skidder_specs,
-        landing_x,
-        landing_y,
-        rate_model=rate_model,
-        speed_profile=speed_profile,
-    )
+    try:
+        loads = _simulate_skidders(
+            events,
+            bunches,
+            skidders,
+            skidder_specs,
+            landing_x,
+            landing_y,
+            rate_model=rate_model,
+            speed_profile=speed_profile,
+            router=router,
+        )
+    except TerrainError as exc:
+        router.close()
+        raise GroundSystemError(str(exc)) from exc
     loader_total = _simulate_loader(
         events,
         loads,
@@ -571,6 +608,7 @@ def simulate_ground_system(
             f"{fb_sim.unreachable_count} tree(s) were unreachable by the feller-buncher."
         )
     warnings.extend(fb_sim.warnings)
+    router.close()
     return GroundSystemResult(
         system_id=system_id,
         generated_utc=timestamp,
@@ -596,7 +634,7 @@ def simulate_ground_system(
             "Reference multi-machine event model, not a field-calibrated system simulation.",
             "Feller-buncher processing uses the existing reference spatial/ADV6N10 model.",
             "Skidder and loader cycle times are configurable defaults; queue dispatch is greedy and deterministic.",
-            "Flat terrain and a single landing are assumed; road and DEM routing are not modelled.",
+            "DEM/road routing is optional; the model uses a direct line or a single connected road corridor and does not solve a full road network.",
             "Tree lists must be reviewed separately; this module does not validate stem-model calibration.",
         ),
     )
@@ -678,6 +716,7 @@ def _simulate_skidders(
     *,
     rate_model: str,
     speed_profile: SkidderSpeedProfile | None,
+    router: TerrainRouter,
 ) -> list[_Load]:
     loads: list[_Load] = []
     available = {machine: 0.0 for machine in skidder_ids}
@@ -691,15 +730,16 @@ def _simulate_skidders(
             )
         start = available[machine]
         bx, by = bunch.x, bunch.y
-        distance = math.hypot(bx - landing_x, by - landing_y)
+        route = router.route((landing_x, landing_y), (bx, by))
+        distance = route.distance_m
         empty_start = start
         if rate_model == "calibrated":
             if speed_profile is None:
                 raise GroundSystemError("Calibrated rate model requires a skidder speed profile.")
             empty_speed = speed_profile.empty_speed_kmh * (1000.0 / 3600.0)
             loaded_speed = speed_profile.loaded_speed_kmh * (1000.0 / 3600.0)
-            empty_time = distance / empty_speed
-            loaded_time = distance / loaded_speed
+            empty_time = distance / (empty_speed * route.speed_factor)
+            loaded_time = distance / (loaded_speed * route.speed_factor)
             cycle = estimate_grapple_skidder_productivity_han2018(
                 method=Han2018SkidderMethod.WHOLE_TREE,
                 pieces_per_cycle=float(len(bunch.tree_ids)),
@@ -712,8 +752,8 @@ def _simulate_skidders(
             load_time = residual * 0.5
             unload_time = residual * 0.5
         else:
-            empty_time = distance / spec.empty_speed_mps
-            loaded_time = distance / spec.loaded_speed_mps
+            empty_time = distance / (spec.empty_speed_mps * route.speed_factor)
+            loaded_time = distance / (spec.loaded_speed_mps * route.speed_factor)
             load_time = spec.load_fixed_s + spec.load_per_log_s * bunch.logs
             unload_time = spec.unload_fixed_s + spec.unload_per_log_s * bunch.logs
         empty_end = empty_start + empty_time
@@ -728,6 +768,8 @@ def _simulate_skidders(
                 x1=bx,
                 y1=by,
                 status="empty",
+                distance_m=route.distance_m,
+                max_grade_percent=route.max_grade_percent,
             )
         )
         load_start = max(empty_end, bunch.ready_s)
@@ -762,6 +804,8 @@ def _simulate_skidders(
                 volume_m3=bunch.volume_m3,
                 logs=bunch.logs,
                 status="loaded",
+                distance_m=route.distance_m,
+                max_grade_percent=route.max_grade_percent,
             )
         )
         unload_end = loaded_end + unload_time
@@ -887,6 +931,8 @@ def write_ground_system(result: GroundSystemResult, out_dir: Path) -> dict[str, 
                     event.logs,
                     ";".join(event.tree_ids),
                     event.status,
+                    event.distance_m,
+                    event.max_grade_percent,
                 )
             )
     trees_csv = output / "tree_processing.csv"
