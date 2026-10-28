@@ -41,9 +41,19 @@ Cycle-time controls are exposed on the CLI:
   ``--skidder-unload-per-log``;
 - ``--loader-process-fixed`` and ``--loader-process-per-log``.
 
-The defaults are reference values, not calibrated regressions. The default
-skidder capacity is 40 m³ so tree-length loads from the mature demo are not
-silently refused; set it to the actual machine payload for operational work.
+The default ``--rate-model calibrated`` uses:
+
+- the Han et al. (2018) whole-tree grapple-skidder regression with the GNSS
+  cable-skidder speed profile (SK) used as a travel override;
+- the Barko 450 TN-46 ground-skid loader result. The loader's recorded
+  ``avg_volume_per_shift_m3`` is converted to seconds per cubic metre with an
+  assumed 8-hour shift.
+
+``--rate-model reference`` uses the fixed ``MachineSpec`` cycle times instead.
+The calibrated rates are provenance-bearing reference values, not universal or
+field-validated machine rates. The default skidder capacity is 40 m³ so
+tree-length loads from the mature demo are not silently refused; set it to the
+actual machine payload for operational work.
 
 ``--landing-x`` and ``--landing-y`` set the landing in the scenario CRS. When
 omitted, the mean tree position is used. The default is a flat, single-landing
