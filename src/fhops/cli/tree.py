@@ -7,6 +7,16 @@ from pathlib import Path
 
 import typer
 
+from fhops.ground_system import (
+    DEFAULT_BUNCH_VOLUME_M3,
+    DEFAULT_FELLER_REACH_M,
+    DEFAULT_FELLER_TRAVEL_SPEED_MPS,
+    DEFAULT_SKIDDER_CAPACITY_M3,
+    GroundSystemError,
+    MachineSpec,
+    simulate_ground_system,
+    write_ground_system,
+)
 from fhops.spatial_machine import (
     DEFAULT_MAX_SLOPE_PERCENT,
     DEFAULT_REACH_RADIUS_M,
@@ -361,3 +371,105 @@ def tree_scene(
             indent=2,
         )
     )
+
+
+@tree_app.command("system")
+def tree_system(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
+    block: str = typer.Option(..., "--block", help="Block id to simulate."),
+    feller: str = typer.Option(..., "--feller", help="Feller-buncher machine id."),
+    skidder: list[str] = typer.Option(..., "--skidder", help="Grapple-skidder machine id. Repeat."),
+    loader: str = typer.Option(..., "--loader", help="Loader machine id."),
+    out: Path | None = typer.Option(
+        None, "--out", help="System output directory. Print only when omitted."
+    ),
+    bunch_volume: float = typer.Option(
+        DEFAULT_BUNCH_VOLUME_M3, "--bunch-volume", help="Target bunch volume in cubic metres."
+    ),
+    landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
+    landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
+    feller_reach: float = typer.Option(
+        DEFAULT_FELLER_REACH_M, "--feller-reach", help="Feller-buncher reach in metres."
+    ),
+    feller_speed: float = typer.Option(
+        DEFAULT_FELLER_TRAVEL_SPEED_MPS,
+        "--feller-speed",
+        help="Feller-buncher travel speed in metres per second.",
+    ),
+    skidder_capacity: float = typer.Option(
+        DEFAULT_SKIDDER_CAPACITY_M3,
+        "--skidder-capacity",
+        help="Skidder payload capacity in cubic metres.",
+    ),
+    skidder_empty_speed: float = typer.Option(
+        1.4, "--skidder-empty-speed", help="Skidder empty travel speed (m/s)."
+    ),
+    skidder_loaded_speed: float = typer.Option(
+        1.1, "--skidder-loaded-speed", help="Skidder loaded travel speed (m/s)."
+    ),
+    skidder_load_fixed: float = typer.Option(
+        45.0, "--skidder-load-fixed", help="Fixed skidder loading time (s)."
+    ),
+    skidder_load_per_log: float = typer.Option(
+        5.0, "--skidder-load-per-log", help="Skidder loading time per log (s)."
+    ),
+    skidder_unload_fixed: float = typer.Option(
+        45.0, "--skidder-unload-fixed", help="Fixed skidder unloading time (s)."
+    ),
+    skidder_unload_per_log: float = typer.Option(
+        3.0, "--skidder-unload-per-log", help="Skidder unloading time per log (s)."
+    ),
+    loader_process_fixed: float = typer.Option(
+        45.0, "--loader-process-fixed", help="Fixed loader processing time (s)."
+    ),
+    loader_process_per_log: float = typer.Option(
+        4.0, "--loader-process-per-log", help="Loader processing time per log (s)."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Print the system result without writing outputs."
+    ),
+) -> None:
+    """Simulate a feller-buncher/skidder/loader system on one block."""
+    try:
+        skidder_specs = {
+            machine: MachineSpec(
+                machine_id=machine,
+                machine_type="grapple_skidder",
+                capacity_m3=skidder_capacity,
+                empty_speed_mps=skidder_empty_speed,
+                loaded_speed_mps=skidder_loaded_speed,
+                load_fixed_s=skidder_load_fixed,
+                load_per_log_s=skidder_load_per_log,
+                unload_fixed_s=skidder_unload_fixed,
+                unload_per_log_s=skidder_unload_per_log,
+            )
+            for machine in skidder
+        }
+        loader_spec = MachineSpec(
+            machine_id=loader,
+            machine_type="loader",
+            process_fixed_s=loader_process_fixed,
+            process_per_log_s=loader_process_per_log,
+        )
+        result = simulate_ground_system(
+            scenario,
+            block_id=block,
+            feller_machine_id=feller,
+            skidder_machine_ids=tuple(skidder),
+            loader_machine_id=loader,
+            landing_x_m=landing_x,
+            landing_y_m=landing_y,
+            bunch_volume_m3=bunch_volume,
+            feller_reach_radius_m=feller_reach,
+            feller_travel_speed_m_per_s=feller_speed,
+            skidder_specs=skidder_specs,
+            loader_spec=loader_spec,
+        )
+        paths = None if dry_run or out is None else write_ground_system(result, out)
+    except (GroundSystemError, ValueError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    payload = result.to_dict()
+    if paths is not None:
+        payload["paths"] = {key: str(value) for key, value in paths.items()}
+    typer.echo(json.dumps(payload, indent=2))

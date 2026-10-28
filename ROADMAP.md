@@ -568,6 +568,7 @@ Acceptance:
 - No new hydrology capability or real watershed result is claimed.
 
 ## Backlog & Ideas
+- [ ] Productize the ground-based multi-machine tree-scale simulation: prototype `fhops tree system` on `feature/tree-ground-system`; needs review, calibrated rates, DEM/road/landing routing, and an issue tree before merge.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
 - [x] Scenario authoring UI and schema validators for web clients (P12.6, #183).
