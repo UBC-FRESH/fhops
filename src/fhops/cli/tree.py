@@ -11,6 +11,7 @@ from fhops.ground_system import (
     DEFAULT_BUNCH_VOLUME_M3,
     DEFAULT_FELLER_REACH_M,
     DEFAULT_FELLER_TRAVEL_SPEED_MPS,
+    DEFAULT_RATE_MODEL,
     DEFAULT_SKIDDER_CAPACITY_M3,
     GroundSystemError,
     MachineSpec,
@@ -386,6 +387,11 @@ def tree_system(
     bunch_volume: float = typer.Option(
         DEFAULT_BUNCH_VOLUME_M3, "--bunch-volume", help="Target bunch volume in cubic metres."
     ),
+    rate_model: str = typer.Option(
+        DEFAULT_RATE_MODEL,
+        "--rate-model",
+        help="calibrated (Han/Barko) or reference (fixed MachineSpec cycle times).",
+    ),
     landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
     landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
     feller_reach: float = typer.Option(
@@ -460,6 +466,7 @@ def tree_system(
             landing_x_m=landing_x,
             landing_y_m=landing_y,
             bunch_volume_m3=bunch_volume,
+            rate_model=rate_model,  # type: ignore[arg-type]
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
             skidder_specs=skidder_specs,

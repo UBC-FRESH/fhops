@@ -4422,3 +4422,14 @@ PY
   manual WS4 verification are recorded in `notes/reports/p18-closeout.md`. No
   new hydrology capability, real watershed result, flood map, or regulatory
   claim was added.
+
+- 2026-10-28: Calibrated the ground-based system rates. `fhops tree system`
+  now defaults to `--rate-model calibrated`, using the Han et al. (2018)
+  whole-tree grapple-skidder regression and the Barko 450 TN-46 ground-skid
+  loader result; `--rate-model reference` retains the fixed `MachineSpec`
+  cycle times. Provenance is written to the JSON/summary outputs, and the CLI
+  docs/tests cover both modes. The calibrated loader conversion assumes an
+  8-hour shift; this remains a reference model, not a field-calibrated claim.
+  Verification: `pytest -q tests/tree` (63 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

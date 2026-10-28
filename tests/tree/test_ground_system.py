@@ -72,6 +72,35 @@ def test_ground_system_is_deterministic_and_conserves_trees(tmp_path: Path) -> N
     assert any(event.machine == "H4" and event.type == "process" for event in first.events)
 
 
+def test_ground_system_calibrated_and_reference_rates(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    calibrated = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        rate_model="calibrated",
+    )
+    reference = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        rate_model="reference",
+    )
+    assert calibrated.rate_model == "calibrated"
+    assert calibrated.rate_provenance["skidder"]["model"].startswith("Han et al.")
+    assert calibrated.rate_provenance["loader"]["model"].startswith("Barko 450")
+    assert reference.rate_model == "reference"
+    assert reference.rate_provenance["model"].startswith("reference")
+    assert calibrated.system_id != reference.system_id
+    assert calibrated.makespan_s != reference.makespan_s
+
+
 def test_ground_system_writes_outputs(tmp_path: Path) -> None:
     scenario = _system_scenario(tmp_path)
     result = simulate_ground_system(
@@ -89,6 +118,8 @@ def test_ground_system_writes_outputs(tmp_path: Path) -> None:
     payload = json.loads(paths["events_json"].read_text(encoding="utf-8"))
     assert payload["schema_version"] == "fhops.tree.ground_system.v1"
     assert payload["duration_s"] == result.makespan_s
+    assert payload["rate_model"] == result.rate_model
+    assert "rate_provenance" in payload
     assert payload["timeline"]
     assert payload["machines"]["H4"]["type"] == "loader"
     assert len(payload["trees"]) == 12

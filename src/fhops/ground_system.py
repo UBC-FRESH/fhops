@@ -18,7 +18,15 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Literal
 
+from fhops.productivity.processor_loader import estimate_loader_productivity_barko450
+from fhops.productivity.skidder_ft import (
+    Han2018SkidderMethod,
+    SkidderSpeedProfile,
+    estimate_grapple_skidder_productivity_han2018,
+    get_skidder_speed_profile,
+)
 from fhops.scenario.io import load_scenario
 from fhops.spatial_machine import SpatialMachineError, simulate_block
 from fhops.stem import StemInventory, build_stem_inventory
@@ -28,11 +36,14 @@ DEFAULT_BUNCH_VOLUME_M3 = 8.0
 DEFAULT_FELLER_REACH_M = 12.0
 DEFAULT_FELLER_TRAVEL_SPEED_MPS = 0.8
 DEFAULT_SKIDDER_CAPACITY_M3 = 40.0
+DEFAULT_RATE_MODEL: Literal["calibrated", "reference"] = "calibrated"
+RATE_MODELS = {"calibrated", "reference"}
 
 __all__ = [
     "DEFAULT_BUNCH_VOLUME_M3",
     "DEFAULT_FELLER_REACH_M",
     "DEFAULT_FELLER_TRAVEL_SPEED_MPS",
+    "DEFAULT_RATE_MODEL",
     "DEFAULT_SKIDDER_CAPACITY_M3",
     "GroundSystemError",
     "GroundSystemEvent",
@@ -222,6 +233,8 @@ class GroundSystemResult:
     landing_x_m: float
     landing_y_m: float
     bunch_volume_m3: float
+    rate_model: str
+    rate_provenance: dict[str, object]
     trees: tuple[GroundSystemTree, ...]
     events: tuple[GroundSystemEvent, ...]
     machine_summaries: dict[str, dict[str, float | int]]
@@ -245,6 +258,8 @@ class GroundSystemResult:
             "loader_machine_id": self.loader_machine_id,
             "landing": {"x": self.landing_x_m, "y": self.landing_y_m},
             "bunch_volume_m3": self.bunch_volume_m3,
+            "rate_model": self.rate_model,
+            "rate_provenance": self.rate_provenance,
             "tree_count": self.tree_count,
             "processed_volume_m3": self.processed_volume_m3,
             "unreachable_count": self.unreachable_count,
@@ -286,6 +301,7 @@ def simulate_ground_system(
     landing_x_m: float | None = None,
     landing_y_m: float | None = None,
     bunch_volume_m3: float = DEFAULT_BUNCH_VOLUME_M3,
+    rate_model: Literal["calibrated", "reference"] = DEFAULT_RATE_MODEL,
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     skidder_specs: Mapping[str, MachineSpec] | None = None,
@@ -319,6 +335,10 @@ def simulate_ground_system(
         Landing position. Defaults to the mean tree position.
     bunch_volume_m3:
         Target bunch volume in cubic metres.
+    rate_model:
+        ``calibrated`` uses the Han et al. (2018) grapple-skidder regression
+        and the Barko 450 ground-skid loader result. ``reference`` uses the
+        fixed cycle-time defaults in ``MachineSpec``.
     feller_reach_radius_m:
         Feller-buncher reach in metres.
     feller_travel_speed_m_per_s:
@@ -349,6 +369,8 @@ def simulate_ground_system(
         raise GroundSystemError("Skidder machine IDs must be unique.")
     if not math.isfinite(bunch_volume_m3) or bunch_volume_m3 <= 0:
         raise GroundSystemError("bunch_volume_m3 must be positive and finite.")
+    if rate_model not in RATE_MODELS:
+        raise GroundSystemError(f"rate_model must be one of {sorted(RATE_MODELS)}.")
     if feller_machine_id in skidders or loader_machine_id in skidders:
         raise GroundSystemError("Feller and loader machines must not also be skidders.")
     if feller_machine_id == loader_machine_id:
@@ -417,6 +439,28 @@ def simulate_ground_system(
     loader = loader_spec or default_loader_spec(loader_machine_id)
     if loader.machine_id != loader_machine_id:
         raise GroundSystemError("Loader spec ID does not match loader_machine_id.")
+    speed_profile: SkidderSpeedProfile | None = None
+    loader_seconds_per_m3: float | None = None
+    rate_provenance: dict[str, object]
+    if rate_model == "calibrated":
+        speed_profile = get_skidder_speed_profile("SK")
+        loader_result = estimate_loader_productivity_barko450(scenario="ground_skid_block")
+        loader_seconds_per_m3 = 8.0 * 3600.0 / loader_result.avg_volume_per_shift_m3
+        rate_provenance = {
+            "skidder": {
+                "model": "Han et al. (2018) whole-tree grapple-skidder regression",
+                "speed_profile": speed_profile.key,
+                "speed_profile_description": speed_profile.description,
+            },
+            "loader": {
+                "model": "Barko 450 TN-46 ground-skid loader",
+                "avg_volume_per_shift_m3": loader_result.avg_volume_per_shift_m3,
+                "assumed_shift_hours": 8.0,
+                "seconds_per_m3": loader_seconds_per_m3,
+            },
+        }
+    else:
+        rate_provenance = {"model": "reference fixed MachineSpec cycle times"}
     events: list[GroundSystemEvent] = []
     trees: list[GroundSystemTree] = []
     previous_x = fb_sim.start_x_m
@@ -473,8 +517,25 @@ def simulate_ground_system(
             f"({max_bunch_volume_m3:.2f} m3)."
         )
     bunches = _build_bunches(trees, bunch_volume_m3, max_bunch_volume_m3)
-    loads = _simulate_skidders(events, bunches, skidders, skidder_specs, landing_x, landing_y)
-    loader_total = _simulate_loader(events, loads, loader, landing_x, landing_y)
+    loads = _simulate_skidders(
+        events,
+        bunches,
+        skidders,
+        skidder_specs,
+        landing_x,
+        landing_y,
+        rate_model=rate_model,
+        speed_profile=speed_profile,
+    )
+    loader_total = _simulate_loader(
+        events,
+        loads,
+        loader,
+        landing_x,
+        landing_y,
+        rate_model=rate_model,
+        seconds_per_m3=loader_seconds_per_m3,
+    )
     fb_total = fb_sim.total_time_s
     skidder_total = max((load.ready_s for load in loads), default=0.0)
     makespan = max(fb_total, skidder_total, loader_total)
@@ -493,6 +554,7 @@ def simulate_ground_system(
         "skidders": skidders,
         "loader": loader_machine_id,
         "bunch_volume_m3": bunch_volume_m3,
+        "rate_model": rate_model,
         "events": [event.to_dict() for event in events],
     }
     system_id = (
@@ -520,6 +582,8 @@ def simulate_ground_system(
         landing_x_m=landing_x,
         landing_y_m=landing_y,
         bunch_volume_m3=bunch_volume_m3,
+        rate_model=rate_model,
+        rate_provenance=rate_provenance,
         trees=tuple(trees),
         events=tuple(events),
         machine_summaries=summaries,
@@ -611,6 +675,9 @@ def _simulate_skidders(
     specs: Mapping[str, MachineSpec],
     landing_x: float,
     landing_y: float,
+    *,
+    rate_model: str,
+    speed_profile: SkidderSpeedProfile | None,
 ) -> list[_Load]:
     loads: list[_Load] = []
     available = {machine: 0.0 for machine in skidder_ids}
@@ -626,7 +693,30 @@ def _simulate_skidders(
         bx, by = bunch.x, bunch.y
         distance = math.hypot(bx - landing_x, by - landing_y)
         empty_start = start
-        empty_end = empty_start + distance / spec.empty_speed_mps
+        if rate_model == "calibrated":
+            if speed_profile is None:
+                raise GroundSystemError("Calibrated rate model requires a skidder speed profile.")
+            empty_speed = speed_profile.empty_speed_kmh * (1000.0 / 3600.0)
+            loaded_speed = speed_profile.loaded_speed_kmh * (1000.0 / 3600.0)
+            empty_time = distance / empty_speed
+            loaded_time = distance / loaded_speed
+            cycle = estimate_grapple_skidder_productivity_han2018(
+                method=Han2018SkidderMethod.WHOLE_TREE,
+                pieces_per_cycle=float(len(bunch.tree_ids)),
+                piece_volume_m3=bunch.volume_m3 / max(1, len(bunch.tree_ids)),
+                empty_distance_m=distance,
+                loaded_distance_m=distance,
+                speed_profile=speed_profile,
+            ).cycle_time_seconds
+            residual = max(1.0, cycle - empty_time - loaded_time)
+            load_time = residual * 0.5
+            unload_time = residual * 0.5
+        else:
+            empty_time = distance / spec.empty_speed_mps
+            loaded_time = distance / spec.loaded_speed_mps
+            load_time = spec.load_fixed_s + spec.load_per_log_s * bunch.logs
+            unload_time = spec.unload_fixed_s + spec.unload_per_log_s * bunch.logs
+        empty_end = empty_start + empty_time
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -641,7 +731,7 @@ def _simulate_skidders(
             )
         )
         load_start = max(empty_end, bunch.ready_s)
-        load_end = load_start + spec.load_fixed_s + spec.load_per_log_s * bunch.logs
+        load_end = load_start + load_time
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -658,7 +748,7 @@ def _simulate_skidders(
                 status="loading",
             )
         )
-        loaded_end = load_end + distance / spec.loaded_speed_mps
+        loaded_end = load_end + loaded_time
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -674,7 +764,7 @@ def _simulate_skidders(
                 status="loaded",
             )
         )
-        unload_end = loaded_end + spec.unload_fixed_s + spec.unload_per_log_s * bunch.logs
+        unload_end = loaded_end + unload_time
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -711,11 +801,20 @@ def _simulate_loader(
     spec: MachineSpec,
     landing_x: float,
     landing_y: float,
+    *,
+    rate_model: str,
+    seconds_per_m3: float | None,
 ) -> float:
     available = 0.0
     for load in sorted(loads, key=lambda item: (item.ready_s, item.load_id)):
         start = max(available, load.ready_s)
-        end = start + spec.process_fixed_s + spec.process_per_log_s * load.logs
+        if rate_model == "calibrated":
+            if seconds_per_m3 is None:
+                raise GroundSystemError("Calibrated rate model requires loader seconds per m3.")
+            process_time = seconds_per_m3 * load.volume_m3
+        else:
+            process_time = spec.process_fixed_s + spec.process_per_log_s * load.logs
+        end = start + process_time
         events.append(
             GroundSystemEvent(
                 machine=spec.machine_id,
@@ -831,6 +930,8 @@ def write_ground_system(result: GroundSystemResult, out_dir: Path) -> dict[str, 
                 "processed_volume_m3": result.processed_volume_m3,
                 "unreachable_count": result.unreachable_count,
                 "makespan_s": result.makespan_s,
+                "rate_model": result.rate_model,
+                "rate_provenance": result.rate_provenance,
                 "machine_summaries": result.machine_summaries,
                 "warnings": list(result.warnings),
                 "caveats": list(result.caveats),
