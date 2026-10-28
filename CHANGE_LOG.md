@@ -4348,3 +4348,10 @@ PY
   checks, manual WS4 verification, CI evidence, and remaining data/review
   blockers. Phase 18 is `pr-open`; the final phase PR is queued for maintainer
   approval. No new hydrology capability or real watershed result was added.
+
+- 2026-10-28: P18 close-out: pull request #276 squash-merged as `919a4fe0`;
+  parent #260 and tasks #261/#262/#263/#264/#265 closed; Phase 18 set to
+  complete. The audit, quickstart, contract index, executable docs checks, and
+  manual WS4 verification are recorded in `notes/reports/p18-closeout.md`. No
+  new hydrology capability, real watershed result, flood map, or regulatory
+  claim was added.
