@@ -4415,3 +4415,10 @@ PY
   `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`. The new module/CLI are on a
   feature branch and are not merged.
+
+- 2026-10-28: P18 close-out: pull request #276 squash-merged as `919a4fe0`;
+  parent #260 and tasks #261/#262/#263/#264/#265 closed; Phase 18 set to
+  complete. The audit, quickstart, contract index, executable docs checks, and
+  manual WS4 verification are recorded in `notes/reports/p18-closeout.md`. No
+  new hydrology capability, real watershed result, flood map, or regulatory
+  claim was added.

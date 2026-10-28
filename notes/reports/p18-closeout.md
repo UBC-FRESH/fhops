@@ -3,9 +3,9 @@
 Phase: P18 Hydrology documentation and reproducibility
 Parent issue: #260
 Pull request: #276, `feature/phase18-hydrology-docs` into `main`
-Evidence head: `fa83574d` (P18.4)
+Evidence head: `fa83574d` (P18.4); merge commit `919a4fe0`
 Date: 2026-10-28
-Status: queued for approval. Not merged.
+Status: merged on 2026-10-28 as `919a4fe0`.
 
 ## Recommendation
 
@@ -80,7 +80,7 @@ The P18.2 WS4 path was additionally run manually in the workspace:
 
 | Run ID | Head commit | Conclusion | Notes |
 | --- | --- | --- | --- |
-| pending | report commit | not yet run | CI runs on #276 after the report update. |
+| 40608993898 | `3a86392c` | success | All CI jobs passed, including the hydrology docs check. |
 
 ## 5. Deviations
 
