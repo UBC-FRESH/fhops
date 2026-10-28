@@ -530,7 +530,7 @@ Acceptance:
 > Phase 16 is a separately owned flood-aware operational phase and is not part
 > of this branch. P17 does not modify its issue tree or scope.
 
-## Phase 18 — Hydrology documentation and reproducibility — pr-open
+## Phase 18 — Hydrology documentation and reproducibility — complete
 
 Parent issue: #260. Branch: `feature/phase18-hydrology-docs`.
 
@@ -539,7 +539,8 @@ This is documentation and reproducibility work, not a new hydrology capability.
 P17 is the active tree-scale phase, so this phase uses P18.
 
 Authoritative note: `notes/phase18_hydrology_docs_reproducibility.md`.
-Closeout report: `notes/reports/p18-closeout.md`.
+Closeout: pull request #276 squash-merged as `919a4fe0`; the phase report is
+`notes/reports/p18-closeout.md`.
 
 - [x] P18.1 Audit hydrology documentation and reproducibility gaps (#261)
   - [x] Inventory FEMIC, WS4, and FHOPS hydrology docs
