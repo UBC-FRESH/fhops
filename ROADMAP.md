@@ -569,7 +569,7 @@ Acceptance:
 - No new hydrology capability or real watershed result is claimed.
 
 ## Backlog & Ideas
-- [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, breakdowns, loader-blocking truck dispatch, and calibrated processor selection remain follow-ups; the 2026-10-29 sensitivity check found the processor rate dominates the demo.
+- [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, breakdowns, loader-blocking truck dispatch, and calibrated processor selection remain follow-ups; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [ ] Integration with Nemora sampling outputs for downstream operations analytics.
 - [x] Scenario authoring UI and schema validators for web clients (P12.6, #183).

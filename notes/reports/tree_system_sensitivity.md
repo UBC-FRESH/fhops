@@ -131,3 +131,10 @@ The truck fleet is not the bottleneck under the current downstream tracker.
 4. Rerun this grid after calibration.
 
 No operational or regulatory claim is made from these synthetic runs.
+
+## Multiple-processor follow-up
+
+The sensitivity grid above used one processor. Multiple processors are now supported
+(`--processor` repeatable). The research-forest demo uses P1/P2, which reduces the
+makespans to **65.5 h** (Gavin) and **111.3 h** (Malcolm Knapp). The 70 m³/SMH
+surrogate row above should no longer be used to represent two processors.
