@@ -4474,3 +4474,13 @@ PY
   first-order. Results are synthetic reference-model checks, not field
   validation. No production code changed.
   Verification: `sphinx-build -b html docs _build/html -W` and pre-commit.
+
+- 2026-10-29: Added multiple roadside processors to `fhops tree system`.
+  `--processor` is now repeatable; loads are dispatched greedily to the
+  earliest available processor before the loader. Single-processor callers
+  remain compatible. Processor specs and provenance are recorded per machine.
+  The research-forest demo now runs P1/P2. Tests cover two processors and
+  ordering.
+  Verification: `pytest -q tests/tree` (68 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

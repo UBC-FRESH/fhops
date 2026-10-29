@@ -9,7 +9,7 @@ for one block:
 2. processed trees are grouped into bunches;
 3. skidders are greedily dispatched to the earliest available bunch and return
    to the landing;
-4. an optional roadside processor handles skidder loads before the loader;
+4. one or more optional roadside processors handle skidder loads before the loader;
 5. one loader processes loads in arrival order.
 
 The first implementation uses flat terrain, one landing, configurable default

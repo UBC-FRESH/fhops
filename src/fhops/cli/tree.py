@@ -380,8 +380,8 @@ def tree_system(
     block: str = typer.Option(..., "--block", help="Block id to simulate."),
     feller: str = typer.Option(..., "--feller", help="Feller-buncher machine id."),
     skidder: list[str] = typer.Option(..., "--skidder", help="Grapple-skidder machine id. Repeat."),
-    processor: str | None = typer.Option(
-        None, "--processor", help="Optional roadside processor machine id."
+    processor: list[str] | None = typer.Option(
+        None, "--processor", help="Optional roadside processor machine id. Repeat for multiple."
     ),
     loader: str = typer.Option(..., "--loader", help="Loader machine id."),
     out: Path | None = typer.Option(
@@ -503,7 +503,7 @@ def tree_system(
             block_id=block,
             feller_machine_id=feller,
             skidder_machine_ids=tuple(skidder),
-            processor_machine_id=processor,
+            processor_machine_ids=tuple(processor or ()),
             loader_machine_id=loader,
             landing_x_m=landing_x,
             landing_y_m=landing_y,

@@ -27,9 +27,10 @@ def _system_scenario(tmp_path: Path) -> Path:
         handle.write("H3,CH3,24.0,950.0,grapple_skidder\n")
         handle.write("H4,CH4,24.0,950.0,loader\n")
         handle.write("H5,CH5,24.0,950.0,roadside_processor\n")
+        handle.write("H6,CH6,24.0,950.0,roadside_processor\n")
     calendar = root / "scenario" / "data" / "calendar.csv"
     with calendar.open("a", encoding="utf-8") as handle:
-        for machine in ("H2", "H3", "H4", "H5"):
+        for machine in ("H2", "H3", "H4", "H5", "H6"):
             for day in range(1, 8):
                 handle.write(f"{machine},{day},1\n")
     register_tree_inventory(
@@ -109,13 +110,14 @@ def test_ground_system_processor_stage(tmp_path: Path) -> None:
         block_id="B01",
         feller_machine_id="H1",
         skidder_machine_ids=("H2", "H3"),
-        processor_machine_id="H5",
+        processor_machine_ids=("H5", "H6"),
         loader_machine_id="H4",
         bunch_volume_m3=1.0,
     )
     assert result.processor_machine_id == "H5"
     assert "H5" in result.machine_summaries
-    processor_events = [event for event in result.events if event.machine == "H5"]
+    assert "H6" in result.machine_summaries
+    processor_events = [event for event in result.events if event.machine in {"H5", "H6"}]
     loader_events = [event for event in result.events if event.machine == "H4"]
     assert processor_events
     assert loader_events

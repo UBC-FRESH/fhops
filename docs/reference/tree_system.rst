@@ -18,6 +18,7 @@ Command
      --skidder H2 \
      --skidder H3 \
      --processor H5 \
+     --processor H6 \
      --loader H4 \
      --out build/system
 
@@ -25,7 +26,8 @@ The scenario must contain the named machines with compatible roles:
 
 - feller: ``feller_buncher``, ``harvester``, or ``hand_faller``;
 - skidder: ``grapple_skidder`` or ``skidder``;
-- processor: ``roadside_processor`` or ``processor``;
+- processor: ``roadside_processor`` or ``processor``; repeat
+  ``--processor`` to simulate a parallel processing deck;
 - loader: ``loader``.
 
 The feller-buncher is processed with
