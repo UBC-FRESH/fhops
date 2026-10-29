@@ -89,11 +89,11 @@ the remaining window are delayed to the next window; a task is not split across
 a shift boundary, and the run fails if no window can hold it. When
 ``--shift-days`` is omitted, time is continuous.
 
-``--truck-capacity`` enables a downstream log-truck tracker. Loader output adds
-to landing inventory; full trucks are dispatched when volume is available.
-Truck events and landing inventory are written to the JSON and summary. Landing
-overflow is reported as a warning and does **not** block the loader in this
-reference model.
+``--truck-capacity`` enables a log-truck fleet and landing inventory. Loader
+output adds to landing inventory; trucks are dispatched when a payload is
+available. If landing inventory would exceed ``--landing-capacity``, the loader
+waits for a truck. Partial truck loads are allowed to make space. Truck events
+and landing inventory are written to the JSON and summary.
 
 Outputs
 -------
@@ -126,7 +126,8 @@ Limits
 - Skidder and loader cycle times are configurable defaults, not calibrated
   regressions.
 - Shift windows are fixed and tasks are not split across them.
-- Trucking is a downstream inventory tracker; it does not block the loader.
+- Trucking blocks the loader on landing capacity, but truck arrivals are
+  deterministic; there is no truck routing, scale, or dispatch policy.
 - No breakdowns or multi-block routing.
 - Tree inventories must be reviewed separately; this module does not validate
   stem-model calibration.

@@ -55,19 +55,19 @@
     "fb_h": 48.224,
     "loader_h": 74.097,
     "truck_loads": 203,
-    "landing_max_m3": 60.958,
+    "landing_max_m3": 67.773,
     "landing_final_m3": 4.503,
     "warnings": ""
   },
   {
     "variant": "trucks_1",
     "status": "ok",
-    "makespan_h": 227.623,
+    "makespan_h": 253.203,
     "processor_h": 182.462,
     "fb_h": 48.224,
     "loader_h": 74.097,
     "truck_loads": 203,
-    "landing_max_m3": 60.958,
+    "landing_max_m3": 119.989,
     "landing_final_m3": 4.503,
     "warnings": ""
   },
@@ -223,14 +223,14 @@
   {
     "variant": "landing_60",
     "status": "ok",
-    "makespan_h": 225.853,
+    "makespan_h": 225.661,
     "processor_h": 182.462,
     "fb_h": 48.224,
     "loader_h": 74.097,
     "truck_loads": 203,
-    "landing_max_m3": 60.958,
-    "landing_final_m3": 4.503,
-    "warnings": "Landing inventory peaked at 60.96 m3, above capacity 60.00 m3."
+    "landing_max_m3": 57.71,
+    "landing_final_m3": 12.307,
+    "warnings": ""
   },
   {
     "variant": "landing_120",

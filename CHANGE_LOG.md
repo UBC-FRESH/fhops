@@ -4484,3 +4484,12 @@ PY
   Verification: `pytest -q tests/tree` (68 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Made trucking block loader progress when landing inventory would
+  exceed capacity. Trucks now dispatch from the landing queue, partial loads
+  are allowed to make space, and `truck_summary` records queue/inventory
+  behavior. This changes the one-truck sensitivity result (151.8 h / 253.2 h
+  versus 132.1 h / 225.9 h with two or more trucks).
+  Verification: `pytest -q tests/tree` (68 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

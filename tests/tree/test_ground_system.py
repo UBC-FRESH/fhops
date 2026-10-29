@@ -159,13 +159,13 @@ def test_ground_system_trucking_and_landing_inventory(tmp_path: Path) -> None:
         truck_cycle_time_s=60.0,
         truck_count=1,
         truck_load_time_s=30.0,
-        landing_capacity_m3=2.0,
+        landing_capacity_m3=5.0,
     )
     assert result.truck_summary is not None
     assert result.truck_summary["dispatched_loads"] > 0
     assert result.truck_events
-    assert result.landing_inventory_max_m3 > 0
-    assert any("Landing inventory peaked" in warning for warning in result.warnings)
+    assert 0 < result.landing_inventory_max_m3 <= 5.0
+    assert not any("Landing inventory peaked" in warning for warning in result.warnings)
 
 
 def test_ground_system_writes_outputs(tmp_path: Path) -> None:

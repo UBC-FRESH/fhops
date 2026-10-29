@@ -62,12 +62,12 @@
   {
     "variant": "trucks_1",
     "status": "ok",
-    "makespan_h": 134.255,
+    "makespan_h": 151.759,
     "processor_h": 109.476,
     "fb_h": 51.839,
     "loader_h": 43.954,
     "truck_loads": 120,
-    "landing_max_m3": 58.6,
+    "landing_max_m3": 119.991,
     "landing_final_m3": 15.253,
     "warnings": ""
   },
