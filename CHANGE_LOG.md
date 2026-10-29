@@ -1,3 +1,13 @@
+# 2026-10-29 — FHOPS 1.2.0 release
+
+- Bumped the package version to `1.2.0` and added `docs/releases/v1.2.0.md`.
+- Includes the tree-scale inventory/execution layer, deterministic scene export,
+  the ground-system simulation, the committed tree-system example, and the
+  merged hydrology/docs work on `main`.
+- Updated README install pins and import-version test.
+- Verification: 76 tree tests, full CI, Hatch/Twine artifact checks, and a clean
+  wheel smoke install.
+
 # 2026-10-27 — FHOPS 1.1.0 release
 
 - Bumped the package version to `1.1.0` and documented the stable release in
