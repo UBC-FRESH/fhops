@@ -74,13 +74,14 @@ two-processor queue. Multiple processors are not yet modelled.
 | 4 | 132.1 h | 225.9 h |
 | 6 | 132.1 h | 225.9 h |
 
-Trucking is currently a **downstream tracker**; it does not block the loader.
-Adding trucks therefore has almost no effect. One truck adds about 2 h; two or
-more are sufficient for the baseline.
+Trucking now blocks the loader when landing inventory would exceed capacity.
+One truck is insufficient: makespan rises to **151.8 h / 253.2 h** and landing
+inventory peaks at about 120 m³. Two or more trucks return to the baseline
+**132.1 h / 225.9 h** with 58.6 m³ / 61.0 m³ peak inventory.
 
-Landing peak inventory is 58.6 m³ (Gavin) and 61.0 m³ (Malcolm Knapp). A 60 m³
-landing triggers a warning on Malcolm Knapp; 120 m³ is clean. Truck capacity and
-cycle time also have negligible effect while the loader remains unblocked.
+Landing capacity 60 m³ is feasible but tighter: 58.6 m³ peak on Gavin and
+57.7 m³ on Malcolm Knapp. Truck capacity and cycle time remain second-order at
+the current landing capacity.
 
 ## Shift windows
 
@@ -112,20 +113,20 @@ The truck fleet is not the bottleneck under the current downstream tracker.
 
 1. **Processor rate dominates the result.** The demo is not a machine-system
    validation until the processor regime is chosen and cited.
-2. **Trucking is not actually constrained.** Because the loader never blocks on
-   landing inventory, truck-count sensitivity is nearly flat.
+2. **Trucking is now constrained.** One truck is a bottleneck; two or more
+   trucks remove the landing constraint under the baseline landing capacity.
 3. **Shift structure matters more than truck count.** A 2 × 12 h pattern cuts
    makespan substantially; 1 × 8 h is infeasible for Malcolm Knapp.
 4. **One processor is a strong assumption.** Two processors are not modelled;
    the 70 m³/SMH row is only a surrogate.
-5. **Landing capacity 120 m³ is adequate for this baseline; 60 m³ is marginal**
-   for Malcolm Knapp.
+5. **Landing capacity 120 m³ is adequate; 60 m³ is feasible but tight** for
+   Malcolm Knapp.
 
 ## Recommended next steps
 
 1. Replace the TN-103 placeholder with a justified processor regime for each
    research forest, or model multiple processors explicitly.
-2. Add loader-blocking truck dispatch and a real landing queue before using
+2. Add a realistic truck arrival/dispatch policy and truck routing before using
    truck-count results operationally.
 3. Allow tasks to split across shifts, then add breakdowns and delays.
 4. Rerun this grid after calibration.
