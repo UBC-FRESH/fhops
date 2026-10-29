@@ -91,3 +91,36 @@ def test_ground_system_refuses_steep_route(tmp_path: Path) -> None:
             road_path=road,
             max_skidder_grade_percent=5.0,
         )
+
+
+def test_terrain_router_uses_connected_road_network(tmp_path: Path) -> None:
+    pytest.importorskip("shapely")
+    network = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {"type": "LineString", "coordinates": [[0, 0], [10, 0]]},
+            },
+            {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {"type": "LineString", "coordinates": [[10, 0], [20, 10]]},
+            },
+            {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {"type": "LineString", "coordinates": [[10, 0], [20, -10]]},
+            },
+        ],
+    }
+    path = tmp_path / "network.geojson"
+    path.write_text(json.dumps(network), encoding="utf-8")
+    from fhops.terrain import TerrainRouter
+
+    router = TerrainRouter(road_path=path)
+    profile = router.route((0.0, 0.0), (20.0, 10.0))
+    assert router.provenance()["road_model"] == "road network"
+    assert profile.distance_m > 20.0
+    router.close()

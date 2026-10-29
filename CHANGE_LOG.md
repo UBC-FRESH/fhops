@@ -4546,3 +4546,12 @@ PY
   Verification: `pytest -q tests/tree` (74 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Added connected road-network routing to `fhops.terrain`. A
+  MultiLineString road input now builds a small graph and uses shortest-path
+  routing between the landing and bunch; single LineStrings retain projected
+  corridor routing. DEM/grade handling is unchanged. Tests cover a Y-shaped
+  network. This is not a full forest-road scale/landing-search model.
+  Verification: `pytest -q tests/tree` (75 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

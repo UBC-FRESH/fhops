@@ -1,13 +1,14 @@
 """Optional DEM and road routing for tree-scale system simulations.
 
-This module is deliberately small: it samples an optional DEM along a route and
-can route through a single connected road corridor. It is not a full forest-road
-network solver. Rasterio and Shapely are imported lazily so the core tree
+This module samples an optional DEM and routes through either a single connected
+road corridor or a small connected road network. It is not a full forest-road
+network/scale solver. Rasterio and Shapely are imported lazily so the core tree
 simulation does not require the optional geo/lidar dependencies.
 """
 
 from __future__ import annotations
 
+import heapq
 import json
 import math
 from dataclasses import dataclass
@@ -116,10 +117,12 @@ class TerrainRouter:
 
     def route(self, start: tuple[float, float], end: tuple[float, float]) -> RouteProfile:
         """Return the terrain profile for a start/end pair."""
-        points = [start]
-        if self._road is not None:
-            points.extend(self._road_points(start, end))
-        points.append(end)
+        if isinstance(self._road, _RoadNetwork):
+            points = self._road.path(start, end)
+        elif self._road is not None:
+            points = [start, *self._road_points(start, end), end]
+        else:
+            points = [start, end]
         points = _deduplicate(points)
         points = _densify(points, self.sample_step_m)
         elevations = [self._elevation(x, y) for x, y in points]
@@ -168,9 +171,9 @@ class TerrainRouter:
             "sample_step_m": self.sample_step_m,
             "max_grade_percent": self.max_grade_percent,
             "grade_speed_factor": self.grade_speed_factor,
-            "road_model": "single connected road corridor"
-            if self._road is not None
-            else "direct line",
+            "road_model": "road network"
+            if isinstance(self._road, _RoadNetwork)
+            else ("single connected road corridor" if self._road is not None else "direct line"),
         }
 
     def close(self) -> None:
@@ -193,7 +196,7 @@ class TerrainRouter:
     def _load_road(self, path: Path) -> Any:
         try:
             from shapely.geometry import shape
-            from shapely.ops import linemerge, unary_union
+            from shapely.ops import unary_union
         except ImportError as exc:  # pragma: no cover - optional dependency
             raise TerrainError("Road routing requires the shapely optional dependency.") from exc
         try:
@@ -216,16 +219,16 @@ class TerrainRouter:
         if not geometries:
             raise TerrainError("Road GeoJSON contains no LineString geometry.")
         merged = unary_union(geometries)
+        if merged.geom_type == "LineString":
+            return merged
         if merged.geom_type == "MultiLineString":
-            merged = linemerge(merged)
-        if merged.geom_type not in {"LineString", "MultiLineString"}:
-            raise TerrainError("Road geometry must be a connected LineString.")
-        return merged
+            return _RoadNetwork(merged)
+        raise TerrainError("Road geometry must be a LineString or MultiLineString.")
 
     def _road_points(
         self, start: tuple[float, float], end: tuple[float, float]
     ) -> list[tuple[float, float]]:
-        from shapely.geometry import Point
+        from shapely.geometry import LineString, Point
         from shapely.ops import nearest_points, substring
 
         road = self._road
@@ -233,9 +236,8 @@ class TerrainRouter:
             return []
         start_point = nearest_points(road, Point(start))[0]
         end_point = nearest_points(road, Point(end))[0]
-        if road.geom_type == "MultiLineString":
-            # A disconnected corridor cannot be traversed as one route.
-            raise TerrainError("Road GeoJSON must be a single connected corridor.")
+        if not isinstance(road, LineString):
+            raise TerrainError("Projected road routing requires a LineString.")
         start_s = road.project(start_point)
         end_s = road.project(end_point)
         low, high = sorted((start_s, end_s))
@@ -244,6 +246,79 @@ class TerrainRouter:
         if start_s > end_s:
             coords.reverse()
         return [(float(x), float(y)) for x, y in coords]
+
+
+class _RoadNetwork:
+    """Small undirected graph over a connected Shapely line network."""
+
+    def __init__(self, geometry: Any) -> None:
+        self._coords: dict[int, tuple[float, float]] = {}
+        self._adjacency: dict[int, list[tuple[int, float]]] = {}
+        parts = list(geometry.geoms) if geometry.geom_type == "MultiLineString" else [geometry]
+        node_ids: dict[tuple[float, float], int] = {}
+
+        def node_id(point: tuple[float, float]) -> int:
+            key = (round(point[0], 6), round(point[1], 6))
+            existing = node_ids.get(key)
+            if existing is not None:
+                return existing
+            identifier = len(self._coords)
+            node_ids[key] = identifier
+            self._coords[identifier] = (float(point[0]), float(point[1]))
+            self._adjacency[identifier] = []
+            return identifier
+
+        for part in parts:
+            if part.geom_type != "LineString":
+                continue
+            coords = [(float(x), float(y)) for x, y in part.coords]
+            for a, b in zip(coords[:-1], coords[1:], strict=True):
+                ia, ib = node_id(a), node_id(b)
+                length = math.hypot(b[0] - a[0], b[1] - a[1])
+                if length <= 0:
+                    continue
+                self._adjacency[ia].append((ib, length))
+                self._adjacency[ib].append((ia, length))
+        if not self._coords:
+            raise TerrainError("Road network contains no usable line segments.")
+
+    def nearest_node(self, point: tuple[float, float]) -> int:
+        return min(
+            self._coords,
+            key=lambda identifier: math.hypot(
+                self._coords[identifier][0] - point[0],
+                self._coords[identifier][1] - point[1],
+            ),
+        )
+
+    def path(
+        self, start: tuple[float, float], end: tuple[float, float]
+    ) -> list[tuple[float, float]]:
+        start_node = self.nearest_node(start)
+        end_node = self.nearest_node(end)
+        distances = {start_node: 0.0}
+        previous: dict[int, int] = {}
+        heap: list[tuple[float, int]] = [(0.0, start_node)]
+        while heap:
+            distance, node = heapq.heappop(heap)
+            if distance != distances.get(node):
+                continue
+            if node == end_node:
+                break
+            for neighbor, edge_length in self._adjacency[node]:
+                candidate = distance + edge_length
+                if candidate < distances.get(neighbor, float("inf")):
+                    distances[neighbor] = candidate
+                    previous[neighbor] = node
+                    heapq.heappush(heap, (candidate, neighbor))
+        if end_node not in distances:
+            raise TerrainError("No connected road path between landing and target.")
+        nodes = [end_node]
+        while nodes[-1] != start_node:
+            nodes.append(previous[nodes[-1]])
+        nodes.reverse()
+        route = [start] + [self._coords[node] for node in nodes] + [end]
+        return _deduplicate(route)
 
 
 def _deduplicate(points: list[tuple[float, float]]) -> list[tuple[float, float]]:
