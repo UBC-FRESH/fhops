@@ -274,6 +274,35 @@ def test_ground_system_truck_shift_and_arrival_stagger(tmp_path: Path) -> None:
         assert any(start <= event.start_s <= end for start, end in result.shift_windows)
 
 
+def test_ground_system_truck_route_and_mill_queue(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        shift_days=2,
+        shifts_per_day=1,
+        hours_per_shift=0.5,
+        truck_capacity_m3=1.0,
+        truck_cycle_time_s=60.0,
+        truck_count=2,
+        truck_load_time_s=30.0,
+        truck_route_distance_m=1000.0,
+        truck_speed_mps=10.0,
+        mill_service_s=120.0,
+        mill_bays=1,
+        landing_capacity_m3=5.0,
+    )
+    assert result.truck_summary is not None
+    assert result.truck_summary["one_way_distance_m"] == 1000.0
+    assert result.truck_summary["mill_bays"] == 1
+    assert result.truck_summary["mill_wait_s"] >= 0
+    assert result.truck_events
+
+
 def test_ground_system_writes_outputs(tmp_path: Path) -> None:
     scenario = _system_scenario(tmp_path)
     result = simulate_ground_system(

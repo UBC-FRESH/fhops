@@ -4529,3 +4529,12 @@ PY
   Verification: `pytest -q tests/tree` (72 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Added truck route distance and mill service queues. `--truck-route-distance`,
+  `--truck-speed`, `--mill-service`, and `--mill-bays` derive the round-trip
+  cycle from a constant-speed route and queue trucks through mill service bays;
+  mill wait time is reported. Tests cover route-derived cycles and mill queue
+  fields. This is not a road-network or adaptive dispatch model.
+  Verification: `pytest -q tests/tree` (73 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.
