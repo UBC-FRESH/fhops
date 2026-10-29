@@ -469,6 +469,9 @@ def tree_system(
     truck_load_time: float = typer.Option(
         300.0, "--truck-load-time", help="Truck loading time (s)."
     ),
+    truck_arrival_interval: float = typer.Option(
+        0.0, "--truck-arrival-interval", help="Initial truck arrival stagger (s)."
+    ),
     landing_capacity: float | None = typer.Option(
         None, "--landing-capacity", help="Landing inventory capacity (m3)."
     ),
@@ -570,6 +573,7 @@ def tree_system(
             truck_cycle_time_s=truck_cycle,
             truck_count=truck_count,
             truck_load_time_s=truck_load_time,
+            truck_arrival_interval_s=truck_arrival_interval,
             landing_capacity_m3=landing_capacity,
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,

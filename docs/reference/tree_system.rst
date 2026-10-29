@@ -113,8 +113,10 @@ reference reliability model, not a spare-parts or maintenance-policy model.
 ``--truck-capacity`` enables a log-truck fleet and landing inventory. Loader
 output adds to landing inventory; trucks are dispatched when a payload is
 available. If landing inventory would exceed ``--landing-capacity``, the loader
-waits for a truck. Partial truck loads are allowed to make space. Truck events
-and landing inventory are written to the JSON and summary.
+waits for a truck. Partial truck loads are allowed to make space. Truck loading
+respects the active shift window; ``--truck-arrival-interval`` staggers initial
+truck availability. Truck events and landing inventory are written to the JSON
+and summary.
 
 Outputs
 -------
@@ -148,8 +150,9 @@ Limits
 - Skidder and loader cycle times are configurable defaults, not calibrated
   regressions.
 - Shift windows are fixed and tasks are not split across them.
-- Trucking blocks the loader on landing capacity, but truck arrivals are
-  deterministic; there is no truck routing, scale, or dispatch policy.
+- Trucking blocks the loader on landing capacity; arrivals are deterministic and
+  staggered by a fixed interval. There is no truck routing, scale, or adaptive
+  dispatch policy.
 - Downtime windows are absolute and user-supplied; stochastic breakdowns are
   seeded and serialized through one repair crew.
 - No spare-parts, maintenance-policy, or multi-block routing model.
