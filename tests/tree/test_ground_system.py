@@ -230,6 +230,33 @@ def test_ground_system_stochastic_breakdowns(tmp_path: Path) -> None:
     assert result.rate_provenance["schedule"]["breakdowns"]["seed"] == 7
 
 
+def test_ground_system_truck_shift_and_arrival_stagger(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        shift_days=2,
+        shifts_per_day=1,
+        hours_per_shift=0.5,
+        truck_capacity_m3=1.0,
+        truck_cycle_time_s=60.0,
+        truck_count=2,
+        truck_load_time_s=30.0,
+        truck_arrival_interval_s=600.0,
+        landing_capacity_m3=5.0,
+    )
+    assert result.truck_summary is not None
+    assert result.truck_summary["arrival_interval_s"] == 600.0
+    truck_loads = [event for event in result.truck_events if event.type == "truck_load"]
+    assert truck_loads
+    for event in truck_loads:
+        assert any(start <= event.start_s <= end for start, end in result.shift_windows)
+
+
 def test_ground_system_writes_outputs(tmp_path: Path) -> None:
     scenario = _system_scenario(tmp_path)
     result = simulate_ground_system(

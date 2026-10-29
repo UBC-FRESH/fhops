@@ -4512,3 +4512,12 @@ PY
   Verification: `pytest -q tests/tree` (70 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Made truck loading shift-aware and added a staggered initial
+  arrival interval. `--truck-arrival-interval` delays initial truck
+  availability, and truck loading now obeys the active shift calendar. The
+  truck summary records the interval. Tests cover shift-contained truck loads
+  and staggered arrivals.
+  Verification: `pytest -q tests/tree` (71 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

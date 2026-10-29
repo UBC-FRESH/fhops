@@ -254,15 +254,18 @@ class BreakdownConfig:
 
 @dataclass(frozen=True)
 class TruckSpec:
-    """Fixed-size log-truck fleet for landing inventory tracking.
+    """Fixed-size log-truck fleet for landing dispatch.
 
-    This is a downstream tracker, not a full dispatch/truck-routing model.
+    The fleet is deterministic: trucks become available every
+    ``arrival_interval_s`` and after each round trip. Loading is scheduled
+    inside the shift calendar when one is active.
     """
 
     capacity_m3: float
     cycle_time_s: float
     count: int = 1
     load_time_s: float = 300.0
+    arrival_interval_s: float = 0.0
 
     def __post_init__(self) -> None:
         for field, value in (
@@ -272,6 +275,8 @@ class TruckSpec:
         ):
             if not math.isfinite(value) or value <= 0:
                 raise GroundSystemError(f"TruckSpec.{field} must be positive and finite.")
+        if not math.isfinite(self.arrival_interval_s) or self.arrival_interval_s < 0:
+            raise GroundSystemError("TruckSpec.arrival_interval_s must be finite and non-negative.")
         if self.count < 1:
             raise GroundSystemError("TruckSpec.count must be >= 1.")
 
@@ -543,6 +548,7 @@ def simulate_ground_system(
     truck_cycle_time_s: float = 3600.0,
     truck_count: int = 1,
     truck_load_time_s: float = 300.0,
+    truck_arrival_interval_s: float = 0.0,
     landing_capacity_m3: float | None = None,
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
@@ -623,6 +629,8 @@ def simulate_ground_system(
         Number of trucks in the fleet.
     truck_load_time_s:
         Fixed truck loading time, seconds.
+    truck_arrival_interval_s:
+        Staggered initial truck arrival interval, seconds.
     landing_capacity_m3:
         Optional landing inventory capacity. Overflow is reported as a warning
         and does not block the loader in this reference model.
@@ -822,6 +830,7 @@ def simulate_ground_system(
             cycle_time_s=truck_cycle_time_s,
             count=truck_count,
             load_time_s=truck_load_time_s,
+            arrival_interval_s=truck_arrival_interval_s,
         )
         if landing_capacity_m3 is None:
             landing_capacity_m3 = truck_spec.capacity_m3 * max(1, truck_spec.count) * 2.0
@@ -851,6 +860,7 @@ def simulate_ground_system(
             "cycle_time_s": truck_spec.cycle_time_s,
             "count": truck_spec.count,
             "load_time_s": truck_spec.load_time_s,
+            "arrival_interval_s": truck_spec.arrival_interval_s,
             "landing_capacity_m3": landing_capacity_m3,
         }
     if processor_models:
@@ -1477,7 +1487,11 @@ def _simulate_loader(
     available = 0.0
     finishes: dict[str, float] = {}
     truck_events: list[GroundSystemEvent] = []
-    truck_available = [0.0] * (truck_spec.count if truck_spec else 0)
+    truck_available = (
+        [index * truck_spec.arrival_interval_s for index in range(truck_spec.count)]
+        if truck_spec
+        else []
+    )
     inventory = 0.0
     max_inventory = 0.0
     dispatched = 0
@@ -1491,9 +1505,9 @@ def _simulate_loader(
         truck_index = min(range(truck_spec.count), key=lambda index: truck_available[index])
         start = max(start_s, truck_available[truck_index])
         load_volume = min(truck_spec.capacity_m3, inventory)
-        load_end = start + truck_spec.load_time_s
-        return_end = load_end + truck_spec.cycle_time_s
         truck_id = f"T-{truck_index + 1:02d}"
+        start, load_end = _schedule_task(calendar, start, truck_spec.load_time_s, truck_id)
+        return_end = load_end + truck_spec.cycle_time_s
         truck_events.append(
             GroundSystemEvent(
                 machine=truck_id,
@@ -1545,8 +1559,8 @@ def _simulate_loader(
                     )
                 truck_index = min(range(truck_spec.count), key=lambda index: truck_available[index])
                 wait_until = max(start, truck_available[truck_index])
-                start = wait_until
-                dispatch_truck(start)
+                truck_start, _ = dispatch_truck(wait_until)
+                start = max(start, truck_start)
         start, end = _schedule_task(calendar, start, process_time)
         events.append(
             GroundSystemEvent(
@@ -1585,6 +1599,7 @@ def _simulate_loader(
     summary: dict[str, float | int] = {
         "truck_count": truck_spec.count,
         "truck_capacity_m3": truck_spec.capacity_m3,
+        "arrival_interval_s": truck_spec.arrival_interval_s,
         "dispatched_loads": dispatched,
         "dispatched_volume_m3": round(dispatched_volume, 3),
         "landing_inventory_final_m3": round(inventory, 3),
