@@ -951,7 +951,7 @@ def simulate_ground_system(
         }
     if processor_models:
         rate_provenance["processor"] = {
-            "model": processor_model or "tn103_area_a",
+            "model": processor_model or ("custom_specs" if processor_specs else "tn103_area_a"),
             "model_description": "TN-103 feller-bunched processor"
             if processor_model in {None, "tn103_area_a", "tn103_combined"}
             else (

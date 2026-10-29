@@ -1,6 +1,6 @@
 # Ground-based system simulation notes
 
-Status: merged to `main` via PR #278. The CLI exposes feller/skidder/loader rate controls, processor model selection, shifts, trucks, terrain, and deterministic/stochastic downtime.
+Status: merged to `main` via PR #278. The CLI exposes feller/skidder/loader rate controls, processor model/spec selection, shifts, trucks, terrain, and deterministic/stochastic downtime.
 
 The module `fhops.ground_system` adds a deterministic multi-machine event layer
 for one block:
