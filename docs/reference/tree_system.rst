@@ -89,6 +89,16 @@ the remaining window are delayed to the next window; a task is not split across
 a shift boundary, and the run fails if no window can hold it. When
 ``--shift-days`` is omitted, time is continuous.
 
+Machine downtime can be added inside the shift calendar:
+
+.. code-block:: bash
+
+   fhops tree system scenario.yaml      --block B01 --feller H1 --skidder H2 --processor H5 --loader H4      --shift-days 12 --shifts-per-day 2 --hours-per-shift 10      --downtime H2:24:2:breakdown --downtime H4:48:1:maintenance
+
+``MACHINE:START_HOURS:DURATION_HOURS[:REASON]`` times are absolute from the
+simulation start. A task that overlaps a machine downtime window waits until the
+window ends. Downtime requires ``--shift-days``.
+
 ``--truck-capacity`` enables a log-truck fleet and landing inventory. Loader
 output adds to landing inventory; trucks are dispatched when a payload is
 available. If landing inventory would exceed ``--landing-capacity``, the loader
@@ -105,7 +115,8 @@ Outputs
   for an external viewer.
 - ``tree_processing.csv`` — one row per processed tree.
 - ``system_summary.json`` — tree count, processed volume, makespan, machine
-  utilisation, shift/truck summaries, landing inventory, warnings, and caveats.
+  utilisation, shift/downtime/truck summaries, landing inventory, warnings, and
+  caveats.
 
 Determinism and invariants
 --------------------------
@@ -128,7 +139,9 @@ Limits
 - Shift windows are fixed and tasks are not split across them.
 - Trucking blocks the loader on landing capacity, but truck arrivals are
   deterministic; there is no truck routing, scale, or dispatch policy.
-- No breakdowns or multi-block routing.
+- Downtime windows are absolute and user-supplied; they are not a stochastic
+  breakdown model.
+- No multi-block routing.
 - Tree inventories must be reviewed separately; this module does not validate
   stem-model calibration.
 - The JSON timeline is data only; FHOPS does not ship a renderer.

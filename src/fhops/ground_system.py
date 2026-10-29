@@ -53,6 +53,7 @@ __all__ = [
     "GroundSystemEvent",
     "GroundSystemResult",
     "GroundSystemTree",
+    "DowntimeWindow",
     "MachineSpec",
     "default_loader_spec",
     "default_skidder_spec",
@@ -173,6 +174,41 @@ class ShiftPattern:
                 end = start + self.hours_per_shift * 3600.0
                 windows.append((start, end))
         return tuple(windows)
+
+
+@dataclass(frozen=True)
+class DowntimeWindow:
+    """Absolute machine downtime window.
+
+    Parameters
+    ----------
+    machine_id:
+        Machine affected by the downtime.
+    start_s:
+        Start time in seconds from simulation start.
+    duration_s:
+        Downtime duration in seconds.
+    reason:
+        Short reason label.
+    """
+
+    machine_id: str
+    start_s: float
+    duration_s: float
+    reason: str = "downtime"
+
+    def __post_init__(self) -> None:
+        if not math.isfinite(self.start_s) or self.start_s < 0:
+            raise GroundSystemError("DowntimeWindow.start_s must be finite and non-negative.")
+        if not math.isfinite(self.duration_s) or self.duration_s <= 0:
+            raise GroundSystemError("DowntimeWindow.duration_s must be positive and finite.")
+        if not self.machine_id:
+            raise GroundSystemError("DowntimeWindow.machine_id must be non-empty.")
+
+    @property
+    def end_s(self) -> float:
+        """Return the absolute end time."""
+        return self.start_s + self.duration_s
 
 
 @dataclass(frozen=True)
@@ -353,6 +389,7 @@ class GroundSystemResult:
     rate_model: str
     rate_provenance: dict[str, object]
     shift_windows: tuple[tuple[float, float], ...]
+    downtime_windows: tuple[DowntimeWindow, ...]
     processor_machine_id: str | None
     processor_machine_ids: tuple[str, ...]
     truck_events: tuple[GroundSystemEvent, ...]
@@ -385,6 +422,15 @@ class GroundSystemResult:
             "rate_model": self.rate_model,
             "rate_provenance": self.rate_provenance,
             "shift_windows": [list(window) for window in self.shift_windows],
+            "downtime_windows": [
+                {
+                    "machine_id": window.machine_id,
+                    "start_s": window.start_s,
+                    "duration_s": window.duration_s,
+                    "reason": window.reason,
+                }
+                for window in self.downtime_windows
+            ],
             "processor_machine_id": self.processor_machine_id,
             "processor_machine_ids": list(self.processor_machine_ids),
             "truck_events": [event.to_dict() for event in self.truck_events],
@@ -448,6 +494,7 @@ def simulate_ground_system(
     shifts_per_day: int = 1,
     hours_per_shift: float = 10.0,
     shift_start_hour: float = 0.0,
+    downtime: Sequence[DowntimeWindow] = (),
     truck_capacity_m3: float | None = None,
     truck_cycle_time_s: float = 3600.0,
     truck_count: int = 1,
@@ -519,6 +566,8 @@ def simulate_ground_system(
         Productive hours per shift.
     shift_start_hour:
         Clock hour when the first shift starts.
+    downtime:
+        Absolute machine downtime windows. Requires ``shift_days``.
     truck_capacity_m3:
         Optional truck payload capacity. When omitted, trucking is not tracked.
     truck_cycle_time_s:
@@ -696,6 +745,9 @@ def simulate_ground_system(
     rate_provenance["terrain"] = router.provenance()
     calendar: _ShiftCalendar | None = None
     shift_windows: tuple[tuple[float, float], ...] = ()
+    downtime_windows = tuple(downtime)
+    if downtime_windows and shift_days is None:
+        raise GroundSystemError("downtime requires shift_days.")
     if shift_days is not None:
         pattern = ShiftPattern(
             days=shift_days,
@@ -703,7 +755,7 @@ def simulate_ground_system(
             hours_per_shift=hours_per_shift,
             start_hour=shift_start_hour,
         )
-        calendar = _ShiftCalendar(pattern)
+        calendar = _ShiftCalendar(pattern, downtime_windows)
         shift_windows = pattern.windows()
     truck_spec: TruckSpec | None = None
     if truck_capacity_m3 is not None:
@@ -724,6 +776,15 @@ def simulate_ground_system(
         "shifts_per_day": shifts_per_day if shift_days is not None else None,
         "hours_per_shift": hours_per_shift if shift_days is not None else None,
         "shift_start_hour": shift_start_hour if shift_days is not None else None,
+        "downtime": [
+            {
+                "machine_id": window.machine_id,
+                "start_s": window.start_s,
+                "duration_s": window.duration_s,
+                "reason": window.reason,
+            }
+            for window in downtime_windows
+        ],
     }
     if truck_spec is not None:
         rate_provenance["trucking"] = {
@@ -759,10 +820,14 @@ def simulate_ground_system(
             process_end = event.end_s
         else:
             if event.move_time_s > 0:
-                travel_start, travel_end = calendar.schedule(fb_cursor, event.move_time_s)
+                travel_start, travel_end = calendar.schedule(
+                    fb_cursor, event.move_time_s, feller_machine_id
+                )
             else:
                 travel_start = travel_end = fb_cursor
-            process_start, process_end = calendar.schedule(travel_end, event.processing_time_s)
+            process_start, process_end = calendar.schedule(
+                travel_end, event.processing_time_s, feller_machine_id
+            )
         if event.move_time_s > 0:
             events.append(
                 GroundSystemEvent(
@@ -925,6 +990,7 @@ def simulate_ground_system(
         rate_model=rate_model,
         rate_provenance=rate_provenance,
         shift_windows=shift_windows,
+        downtime_windows=downtime_windows,
         processor_machine_id=processors[0] if processors else None,
         processor_machine_ids=processors,
         truck_events=tuple(truck_events),
@@ -974,14 +1040,36 @@ class _Load:
 
 
 class _ShiftCalendar:
-    def __init__(self, pattern: ShiftPattern) -> None:
+    def __init__(
+        self,
+        pattern: ShiftPattern,
+        downtime: Sequence[DowntimeWindow] = (),
+    ) -> None:
         self.windows = pattern.windows()
+        self.downtime: dict[str, list[DowntimeWindow]] = {}
+        for window in downtime:
+            self.downtime.setdefault(window.machine_id, []).append(window)
 
-    def schedule(self, start_s: float, duration_s: float) -> tuple[float, float]:
+    def schedule(
+        self,
+        start_s: float,
+        duration_s: float,
+        machine_id: str | None = None,
+    ) -> tuple[float, float]:
         if duration_s <= 0:
             return start_s, start_s
+        blocks = self.downtime.get(machine_id or "", [])
         for window_start, window_end in self.windows:
             candidate = max(start_s, window_start)
+            while True:
+                overlapping = [
+                    block
+                    for block in blocks
+                    if candidate < block.end_s and candidate + duration_s > block.start_s
+                ]
+                if not overlapping:
+                    break
+                candidate = max(block.end_s for block in overlapping)
             if candidate + duration_s <= window_end + 1e-9:
                 return candidate, candidate + duration_s
         raise GroundSystemError(
@@ -993,10 +1081,11 @@ def _schedule_task(
     calendar: _ShiftCalendar | None,
     start_s: float,
     duration_s: float,
+    machine_id: str | None = None,
 ) -> tuple[float, float]:
     if calendar is None:
         return start_s, start_s + duration_s
-    return calendar.schedule(start_s, duration_s)
+    return calendar.schedule(start_s, duration_s, machine_id)
 
 
 def _build_bunches(
@@ -1094,7 +1183,7 @@ def _simulate_skidders(
             loaded_time = distance / (spec.loaded_speed_mps * route.speed_factor)
             load_time = spec.load_fixed_s + spec.load_per_log_s * bunch.logs
             unload_time = spec.unload_fixed_s + spec.unload_per_log_s * bunch.logs
-        empty_start, empty_end = _schedule_task(calendar, empty_start, empty_time)
+        empty_start, empty_end = _schedule_task(calendar, empty_start, empty_time, machine)
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -1111,7 +1200,7 @@ def _simulate_skidders(
             )
         )
         load_start = max(empty_end, bunch.ready_s)
-        load_start, load_end = _schedule_task(calendar, load_start, load_time)
+        load_start, load_end = _schedule_task(calendar, load_start, load_time, machine)
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -1128,7 +1217,7 @@ def _simulate_skidders(
                 status="loading",
             )
         )
-        loaded_end = _schedule_task(calendar, load_end, loaded_time)[1]
+        loaded_end = _schedule_task(calendar, load_end, loaded_time, machine)[1]
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -1146,7 +1235,7 @@ def _simulate_skidders(
                 max_grade_percent=route.max_grade_percent,
             )
         )
-        unload_end = _schedule_task(calendar, loaded_end, unload_time)[1]
+        unload_end = _schedule_task(calendar, loaded_end, unload_time, machine)[1]
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -1194,7 +1283,7 @@ def _simulate_processor(
         spec = specs[machine]
         start = max(available[machine], load.ready_s)
         duration = spec.fixed_s + spec.seconds_per_m3 * load.volume_m3
-        start, end = _schedule_task(calendar, start, duration)
+        start, end = _schedule_task(calendar, start, duration, spec.machine_id)
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -1471,6 +1560,15 @@ def write_ground_system(result: GroundSystemResult, out_dir: Path) -> dict[str, 
                 "unreachable_count": result.unreachable_count,
                 "makespan_s": result.makespan_s,
                 "shift_windows": [list(window) for window in result.shift_windows],
+                "downtime_windows": [
+                    {
+                        "machine_id": window.machine_id,
+                        "start_s": window.start_s,
+                        "duration_s": window.duration_s,
+                        "reason": window.reason,
+                    }
+                    for window in result.downtime_windows
+                ],
                 "truck_summary": result.truck_summary,
                 "landing_inventory_final_m3": result.landing_inventory_final_m3,
                 "landing_inventory_max_m3": result.landing_inventory_max_m3,
