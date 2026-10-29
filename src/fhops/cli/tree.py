@@ -405,6 +405,14 @@ def tree_system(
     processor: list[str] | None = typer.Option(
         None, "--processor", help="Optional roadside processor machine id. Repeat for multiple."
     ),
+    processor_model: str | None = typer.Option(
+        None,
+        "--processor-model",
+        help="tn103_area_a, tn103_combined, adv5n6_cold, or custom.",
+    ),
+    processor_rate: float | None = typer.Option(
+        None, "--processor-rate", help="Custom processor productivity (m3/SMH)."
+    ),
     loader: str = typer.Option(..., "--loader", help="Loader machine id."),
     out: Path | None = typer.Option(
         None, "--out", help="System output directory. Print only when omitted."
@@ -544,6 +552,8 @@ def tree_system(
             feller_machine_id=feller,
             skidder_machine_ids=tuple(skidder),
             processor_machine_ids=tuple(processor or ()),
+            processor_model=processor_model,
+            processor_rate_m3_per_smh=processor_rate,
             loader_machine_id=loader,
             landing_x_m=landing_x,
             landing_y_m=landing_y,

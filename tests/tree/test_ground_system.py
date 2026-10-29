@@ -130,7 +130,7 @@ def test_ground_system_processor_stage(tmp_path: Path) -> None:
     assert min(event.start_s for event in loader_events) >= min(
         event.end_s for event in processor_events
     )
-    assert result.rate_provenance["processor"]["model"].startswith("TN-103")
+    assert result.rate_provenance["processor"]["model"] == "tn103_area_a"
 
 
 def test_ground_system_shift_windows_delay_work(tmp_path: Path) -> None:
@@ -202,6 +202,23 @@ def test_ground_system_downtime_window(tmp_path: Path) -> None:
     assert delayed.downtime_windows
     assert delayed.makespan_s >= baseline.makespan_s
     assert delayed.rate_provenance["schedule"]["downtime"][0]["machine_id"] == "H2"
+
+
+def test_ground_system_processor_model_selection(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        processor_machine_ids=("H5", "H6"),
+        processor_model="custom",
+        processor_rate_m3_per_smh=100.0,
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+    )
+    assert result.rate_provenance["processor"]["model"] == "custom"
+    assert result.rate_provenance["processor"]["machines"]["H5"]["productivity_m3_per_smh"] == 100.0
 
 
 def test_ground_system_stochastic_breakdowns(tmp_path: Path) -> None:

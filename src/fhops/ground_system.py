@@ -24,6 +24,7 @@ import numpy as np
 
 from fhops.productivity.processor_loader import (
     estimate_loader_productivity_barko450,
+    estimate_processor_productivity_adv5n6,
     estimate_processor_productivity_tn103,
 )
 from fhops.productivity.skidder_ft import (
@@ -57,6 +58,9 @@ __all__ = [
     "GroundSystemTree",
     "BreakdownConfig",
     "DowntimeWindow",
+    "PROCESSOR_MODELS",
+    "ProcessorModel",
+    "processor_spec_from_model",
     "generate_breakdown_windows",
     "MachineSpec",
     "default_loader_spec",
@@ -306,14 +310,43 @@ class ProcessorSpec:
             raise GroundSystemError("ProcessorSpec.fixed_s must be finite and non-negative.")
 
 
+ProcessorModel = Literal["tn103_area_a", "tn103_combined", "adv5n6_cold", "custom"]
+PROCESSOR_MODELS = {"tn103_area_a", "tn103_combined", "adv5n6_cold", "custom"}
+
+
+def processor_spec_from_model(
+    machine_id: str,
+    model: ProcessorModel,
+    *,
+    custom_rate_m3_per_smh: float | None = None,
+) -> ProcessorSpec:
+    """Return a processor specification for a named reference model."""
+    rate: float | None
+    if model == "custom":
+        if custom_rate_m3_per_smh is None or custom_rate_m3_per_smh <= 0:
+            raise GroundSystemError("custom processor model requires a positive rate.")
+        rate = custom_rate_m3_per_smh
+    elif model == "tn103_area_a":
+        tn_result = estimate_processor_productivity_tn103(scenario="area_a_feller_bunched")
+        rate = tn_result.productivity_m3_per_smh
+    elif model == "tn103_combined":
+        tn_combined = estimate_processor_productivity_tn103(scenario="combined_observed")
+        rate = tn_combined.productivity_m3_per_smh
+    elif model == "adv5n6_cold":
+        adv_result = estimate_processor_productivity_adv5n6(
+            stem_source="loader_forwarded", processing_mode="cold"
+        )
+        rate = adv_result.productivity_m3_per_smh
+    else:
+        raise GroundSystemError(f"Unknown processor model {model!r}.")
+    if rate is None or not math.isfinite(rate) or rate <= 0:
+        raise GroundSystemError(f"Processor model {model!r} has no usable productivity rate.")
+    return ProcessorSpec(machine_id=machine_id, seconds_per_m3=3600.0 / rate)
+
+
 def default_processor_spec(machine_id: str) -> ProcessorSpec:
     """Return a TN-103 feller-bunched processor specification."""
-    result = estimate_processor_productivity_tn103(scenario="area_a_feller_bunched")
-    if result.productivity_m3_per_smh is None or result.productivity_m3_per_smh <= 0:
-        raise GroundSystemError("TN-103 processor productivity is unavailable.")
-    return ProcessorSpec(
-        machine_id=machine_id, seconds_per_m3=3600.0 / result.productivity_m3_per_smh
-    )
+    return processor_spec_from_model(machine_id, "tn103_area_a")
 
 
 def default_skidder_spec(machine_id: str) -> MachineSpec:
@@ -556,6 +589,8 @@ def simulate_ground_system(
     loader_spec: MachineSpec | None = None,
     processor_spec: ProcessorSpec | None = None,
     processor_specs: Mapping[str, ProcessorSpec] | None = None,
+    processor_model: str | None = None,
+    processor_rate_m3_per_smh: float | None = None,
     start_x_m: float | None = None,
     start_y_m: float | None = None,
     generated_utc: str | None = None,
@@ -646,6 +681,11 @@ def simulate_ground_system(
         Optional processor cycle-time override for a single processor.
     processor_specs:
         Optional per-processor cycle-time overrides.
+    processor_model:
+        Optional named processor model: ``tn103_area_a``, ``tn103_combined``,
+        ``adv5n6_cold``, or ``custom``.
+    processor_rate_m3_per_smh:
+        Custom productive rate when ``processor_model="custom"``.
     start_x_m, start_y_m:
         Feller-buncher start position.
     generated_utc:
@@ -708,6 +748,10 @@ def simulate_ground_system(
         raise GroundSystemError(
             f"Loader {loader_machine_id!r} has role {machines[loader_machine_id].role!r}, expected loader."
         )
+    if processor_model is not None and processor_model not in PROCESSOR_MODELS:
+        raise GroundSystemError(f"processor_model must be one of {sorted(PROCESSOR_MODELS)}.")
+    if processor_model is not None and (processor_specs or processor_spec):
+        raise GroundSystemError("Pass processor_model or explicit processor specs, not both.")
     processor_specs = dict(processor_specs or {})
     processor_models: dict[str, ProcessorSpec] = {}
     for machine in processors:
@@ -716,7 +760,16 @@ def simulate_ground_system(
                 f"Processor {machine!r} has role {machines[machine].role!r}, "
                 "expected roadside_processor/processor."
             )
-        processor_models[machine] = processor_specs.get(machine) or default_processor_spec(machine)
+        if processor_model is not None:
+            processor_models[machine] = processor_spec_from_model(
+                machine,
+                processor_model,  # type: ignore[arg-type]
+                custom_rate_m3_per_smh=processor_rate_m3_per_smh,
+            )
+        else:
+            processor_models[machine] = processor_specs.get(machine) or default_processor_spec(
+                machine
+            )
         if processor_models[machine].machine_id != machine:
             raise GroundSystemError(f"Processor spec ID does not match {machine!r}.")
     if processor_spec is not None:
@@ -864,13 +917,19 @@ def simulate_ground_system(
             "landing_capacity_m3": landing_capacity_m3,
         }
     if processor_models:
-        result = estimate_processor_productivity_tn103(scenario="area_a_feller_bunched")
         rate_provenance["processor"] = {
-            "model": "TN-103 feller-bunched processor",
-            "productivity_m3_per_smh": result.productivity_m3_per_smh,
+            "model": processor_model or "tn103_area_a",
+            "model_description": "TN-103 feller-bunched processor"
+            if processor_model in {None, "tn103_area_a", "tn103_combined"}
+            else (
+                "ADV5N6 cold loader-forwarded processor"
+                if processor_model == "adv5n6_cold"
+                else "custom processor rate"
+            ),
             "machines": {
                 machine: {
                     "seconds_per_m3": spec.seconds_per_m3,
+                    "productivity_m3_per_smh": 3600.0 / spec.seconds_per_m3,
                     "fixed_s": spec.fixed_s,
                 }
                 for machine, spec in processor_models.items()
