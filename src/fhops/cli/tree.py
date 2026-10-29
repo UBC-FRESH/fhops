@@ -17,6 +17,7 @@ from fhops.ground_system import (
     DowntimeWindow,
     GroundSystemError,
     MachineSpec,
+    ProcessorSpec,
     simulate_ground_system,
     write_ground_system,
 )
@@ -261,6 +262,22 @@ def tree_simulate(
     typer.echo(json.dumps(payload, indent=2))
 
 
+def _load_processor_specs(path: Path) -> dict[str, ProcessorSpec]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Processor specs JSON must be an object mapping machine ids.")
+    specs: dict[str, ProcessorSpec] = {}
+    for machine, values in payload.items():
+        if not isinstance(values, dict):
+            raise ValueError(f"Processor spec for {machine!r} must be an object.")
+        specs[str(machine)] = ProcessorSpec(
+            machine_id=str(machine),
+            seconds_per_m3=float(values.get("seconds_per_m3", 3600.0 / 35.0)),
+            fixed_s=float(values.get("fixed_s", 60.0)),
+        )
+    return specs
+
+
 def _parse_downtime(value: str) -> DowntimeWindow:
     parts = [part.strip() for part in value.split(":")]
     if len(parts) not in {3, 4}:
@@ -413,6 +430,11 @@ def tree_system(
     processor_rate: float | None = typer.Option(
         None, "--processor-rate", help="Custom processor productivity (m3/SMH)."
     ),
+    processor_specs: Path | None = typer.Option(
+        None,
+        "--processor-specs",
+        help='JSON mapping machine id to {"seconds_per_m3": ..., "fixed_s": ...}.',
+    ),
     loader: str = typer.Option(..., "--loader", help="Loader machine id."),
     out: Path | None = typer.Option(
         None, "--out", help="System output directory. Print only when omitted."
@@ -560,6 +582,9 @@ def tree_system(
             processor_machine_ids=tuple(processor or ()),
             processor_model=processor_model,
             processor_rate_m3_per_smh=processor_rate,
+            processor_specs=(
+                _load_processor_specs(processor_specs) if processor_specs is not None else None
+            ),
             loader_machine_id=loader,
             landing_x_m=landing_x,
             landing_y_m=landing_y,

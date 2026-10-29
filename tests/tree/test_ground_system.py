@@ -303,6 +303,53 @@ def test_ground_system_truck_route_and_mill_queue(tmp_path: Path) -> None:
     assert result.truck_events
 
 
+def test_ground_system_processor_specs_cli(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    specs = tmp_path / "processor_specs.json"
+    specs.write_text(
+        json.dumps(
+            {
+                "H5": {"seconds_per_m3": 72.0, "fixed_s": 30.0},
+                "H6": {"seconds_per_m3": 36.0, "fixed_s": 30.0},
+            }
+        ),
+        encoding="utf-8",
+    )
+    out = tmp_path / "specs-system"
+    result = runner.invoke(
+        app,
+        [
+            "tree",
+            "system",
+            str(scenario),
+            "--block",
+            "B01",
+            "--feller",
+            "H1",
+            "--skidder",
+            "H2",
+            "--processor",
+            "H5",
+            "--processor",
+            "H6",
+            "--processor-specs",
+            str(specs),
+            "--loader",
+            "H4",
+            "--bunch-volume",
+            "1.0",
+            "--out",
+            str(out),
+        ],
+        prog_name="fhops",
+    )
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    processor = payload["rate_provenance"]["processor"]
+    assert processor["model"] == "custom_specs"
+    assert processor["machines"]["H5"]["productivity_m3_per_smh"] == 50.0
+
+
 def test_ground_system_writes_outputs(tmp_path: Path) -> None:
     scenario = _system_scenario(tmp_path)
     result = simulate_ground_system(

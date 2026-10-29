@@ -56,6 +56,22 @@ Processor selection can be explicit:
 - ``--processor-model custom --processor-rate <m3/SMH>``
 
 The selected model and per-machine productivity are written to provenance.
+For stand-specific calibration, pass a JSON processor-spec file:
+
+.. code-block:: json
+
+   {
+     "H5": {"seconds_per_m3": 72.0, "fixed_s": 30.0},
+     "H6": {"seconds_per_m3": 36.0, "fixed_s": 30.0}
+   }
+
+.. code-block:: bash
+
+   fhops tree system scenario.yaml --processor H5 --processor H6 \
+     --processor-specs processor_specs.json ...
+
+`seconds_per_m3` is productive time per cubic metre; `fixed_s` is the fixed
+per-load setup. Explicit specs are recorded as `custom_specs`.
 
 The default ``--rate-model calibrated`` uses:
 

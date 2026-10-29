@@ -4538,3 +4538,11 @@ PY
   Verification: `pytest -q tests/tree` (73 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Added per-machine processor spec files via `--processor-specs`.
+  Each machine can supply `seconds_per_m3` and `fixed_s`, enabling stand-specific
+  processor calibration without changing code. CLI tests cover two processors
+  with different rates and custom provenance.
+  Verification: `pytest -q tests/tree` (74 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.
