@@ -270,17 +270,29 @@ class TruckSpec:
     count: int = 1
     load_time_s: float = 300.0
     arrival_interval_s: float = 0.0
+    one_way_distance_m: float | None = None
+    speed_mps: float = 12.0
+    mill_service_s: float = 600.0
+    mill_bays: int = 1
 
     def __post_init__(self) -> None:
         for field, value in (
             ("capacity_m3", self.capacity_m3),
             ("cycle_time_s", self.cycle_time_s),
             ("load_time_s", self.load_time_s),
+            ("speed_mps", self.speed_mps),
+            ("mill_service_s", self.mill_service_s),
         ):
             if not math.isfinite(value) or value <= 0:
                 raise GroundSystemError(f"TruckSpec.{field} must be positive and finite.")
         if not math.isfinite(self.arrival_interval_s) or self.arrival_interval_s < 0:
             raise GroundSystemError("TruckSpec.arrival_interval_s must be finite and non-negative.")
+        if self.one_way_distance_m is not None and (
+            not math.isfinite(self.one_way_distance_m) or self.one_way_distance_m <= 0
+        ):
+            raise GroundSystemError("TruckSpec.one_way_distance_m must be positive and finite.")
+        if self.mill_bays < 1:
+            raise GroundSystemError("TruckSpec.mill_bays must be >= 1.")
         if self.count < 1:
             raise GroundSystemError("TruckSpec.count must be >= 1.")
 
@@ -582,6 +594,10 @@ def simulate_ground_system(
     truck_count: int = 1,
     truck_load_time_s: float = 300.0,
     truck_arrival_interval_s: float = 0.0,
+    truck_route_distance_m: float | None = None,
+    truck_speed_mps: float = 12.0,
+    mill_service_s: float = 600.0,
+    mill_bays: int = 1,
     landing_capacity_m3: float | None = None,
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
@@ -666,6 +682,15 @@ def simulate_ground_system(
         Fixed truck loading time, seconds.
     truck_arrival_interval_s:
         Staggered initial truck arrival interval, seconds.
+    truck_route_distance_m:
+        Optional one-way landing-to-mill distance in metres. When supplied,
+        truck cycle time is derived from distance/speed plus mill service.
+    truck_speed_mps:
+        Truck travel speed for route-derived cycles.
+    mill_service_s:
+        Mill service time per truck.
+    mill_bays:
+        Number of parallel mill service bays.
     landing_capacity_m3:
         Optional landing inventory capacity. Overflow is reported as a warning
         and does not block the loader in this reference model.
@@ -884,6 +909,10 @@ def simulate_ground_system(
             count=truck_count,
             load_time_s=truck_load_time_s,
             arrival_interval_s=truck_arrival_interval_s,
+            one_way_distance_m=truck_route_distance_m,
+            speed_mps=truck_speed_mps,
+            mill_service_s=mill_service_s,
+            mill_bays=mill_bays,
         )
         if landing_capacity_m3 is None:
             landing_capacity_m3 = truck_spec.capacity_m3 * max(1, truck_spec.count) * 2.0
@@ -914,6 +943,10 @@ def simulate_ground_system(
             "count": truck_spec.count,
             "load_time_s": truck_spec.load_time_s,
             "arrival_interval_s": truck_spec.arrival_interval_s,
+            "one_way_distance_m": truck_spec.one_way_distance_m or 0.0,
+            "speed_mps": truck_spec.speed_mps,
+            "mill_service_s": truck_spec.mill_service_s,
+            "mill_bays": truck_spec.mill_bays,
             "landing_capacity_m3": landing_capacity_m3,
         }
     if processor_models:
@@ -1551,6 +1584,8 @@ def _simulate_loader(
         if truck_spec
         else []
     )
+    mill_available = [0.0] * (truck_spec.mill_bays if truck_spec else 0)
+    mill_wait_s = 0.0
     inventory = 0.0
     max_inventory = 0.0
     dispatched = 0
@@ -1566,7 +1601,18 @@ def _simulate_loader(
         load_volume = min(truck_spec.capacity_m3, inventory)
         truck_id = f"T-{truck_index + 1:02d}"
         start, load_end = _schedule_task(calendar, start, truck_spec.load_time_s, truck_id)
-        return_end = load_end + truck_spec.cycle_time_s
+        if truck_spec.one_way_distance_m is not None:
+            nonlocal mill_wait_s
+            travel_s = truck_spec.one_way_distance_m / truck_spec.speed_mps
+            arrival = load_end + travel_s
+            bay = min(range(truck_spec.mill_bays), key=lambda index: mill_available[index])
+            service_start = max(arrival, mill_available[bay])
+            mill_wait_s += service_start - arrival
+            service_end = service_start + truck_spec.mill_service_s
+            mill_available[bay] = service_end
+            return_end = service_end + travel_s
+        else:
+            return_end = load_end + truck_spec.cycle_time_s
         truck_events.append(
             GroundSystemEvent(
                 machine=truck_id,
@@ -1659,6 +1705,11 @@ def _simulate_loader(
         "truck_count": truck_spec.count,
         "truck_capacity_m3": truck_spec.capacity_m3,
         "arrival_interval_s": truck_spec.arrival_interval_s,
+        "one_way_distance_m": truck_spec.one_way_distance_m or 0.0,
+        "speed_mps": truck_spec.speed_mps,
+        "mill_service_s": truck_spec.mill_service_s,
+        "mill_bays": truck_spec.mill_bays,
+        "mill_wait_s": round(mill_wait_s, 3),
         "dispatched_loads": dispatched,
         "dispatched_volume_m3": round(dispatched_volume, 3),
         "landing_inventory_final_m3": round(inventory, 3),

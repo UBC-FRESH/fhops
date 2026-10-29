@@ -124,8 +124,10 @@ output adds to landing inventory; trucks are dispatched when a payload is
 available. If landing inventory would exceed ``--landing-capacity``, the loader
 waits for a truck. Partial truck loads are allowed to make space. Truck loading
 respects the active shift window; ``--truck-arrival-interval`` staggers initial
-truck availability. Truck events and landing inventory are written to the JSON
-and summary.
+truck availability. If ``--truck-route-distance`` is supplied, the round-trip
+time is derived from one-way distance/speed plus ``--mill-service`` and queued
+through ``--mill-bays`` service bays. Truck events, mill wait time, and landing
+inventory are written to the JSON and summary.
 
 Outputs
 -------
@@ -160,8 +162,8 @@ Limits
   regressions.
 - Shift windows are fixed and tasks are not split across them.
 - Trucking blocks the loader on landing capacity; arrivals are deterministic and
-  staggered by a fixed interval. There is no truck routing, scale, or adaptive
-  dispatch policy.
+  staggered by a fixed interval. Route time is a constant-speed distance model;
+  there is no road network, scale, or adaptive dispatch policy.
 - Processor rates are selected from TN-103/ADV5N6 reference models or a custom
   rate; they are not calibrated to the demo stands.
 - Downtime windows are absolute and user-supplied; stochastic breakdowns are

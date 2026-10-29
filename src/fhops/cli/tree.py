@@ -480,6 +480,12 @@ def tree_system(
     truck_arrival_interval: float = typer.Option(
         0.0, "--truck-arrival-interval", help="Initial truck arrival stagger (s)."
     ),
+    truck_route_distance: float | None = typer.Option(
+        None, "--truck-route-distance", help="One-way landing-to-mill distance (m)."
+    ),
+    truck_speed: float = typer.Option(12.0, "--truck-speed", help="Truck travel speed (m/s)."),
+    mill_service: float = typer.Option(600.0, "--mill-service", help="Mill service time (s)."),
+    mill_bays: int = typer.Option(1, "--mill-bays", help="Parallel mill service bays."),
     landing_capacity: float | None = typer.Option(
         None, "--landing-capacity", help="Landing inventory capacity (m3)."
     ),
@@ -584,6 +590,10 @@ def tree_system(
             truck_count=truck_count,
             truck_load_time_s=truck_load_time,
             truck_arrival_interval_s=truck_arrival_interval,
+            truck_route_distance_m=truck_route_distance,
+            truck_speed_mps=truck_speed,
+            mill_service_s=mill_service,
+            mill_bays=mill_bays,
             landing_capacity_m3=landing_capacity,
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
