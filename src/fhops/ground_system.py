@@ -20,6 +20,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 
+import numpy as np
+
 from fhops.productivity.processor_loader import (
     estimate_loader_productivity_barko450,
     estimate_processor_productivity_tn103,
@@ -53,7 +55,9 @@ __all__ = [
     "GroundSystemEvent",
     "GroundSystemResult",
     "GroundSystemTree",
+    "BreakdownConfig",
     "DowntimeWindow",
+    "generate_breakdown_windows",
     "MachineSpec",
     "default_loader_spec",
     "default_skidder_spec",
@@ -209,6 +213,43 @@ class DowntimeWindow:
     def end_s(self) -> float:
         """Return the absolute end time."""
         return self.start_s + self.duration_s
+
+
+@dataclass(frozen=True)
+class BreakdownConfig:
+    """Seeded stochastic breakdown/repair configuration.
+
+    Failures are generated in operating time, then queued through one repair
+    crew. Repair duration is lognormal with mean ``repair_mean_hours`` and
+    coefficient of variation ``repair_cv``.
+
+    Parameters
+    ----------
+    failure_rate_per_machine_hour:
+        Exponential failure rate per machine operating hour.
+    repair_mean_hours:
+        Mean repair duration in hours.
+    repair_cv:
+        Coefficient of variation for the lognormal repair duration.
+    seed:
+        Deterministic random seed.
+    """
+
+    failure_rate_per_machine_hour: float = 0.02
+    repair_mean_hours: float = 2.0
+    repair_cv: float = 0.5
+    seed: int = 20261029
+
+    def __post_init__(self) -> None:
+        if (
+            not math.isfinite(self.failure_rate_per_machine_hour)
+            or self.failure_rate_per_machine_hour <= 0
+        ):
+            raise GroundSystemError("failure_rate_per_machine_hour must be positive and finite.")
+        if not math.isfinite(self.repair_mean_hours) or self.repair_mean_hours <= 0:
+            raise GroundSystemError("repair_mean_hours must be positive and finite.")
+        if not math.isfinite(self.repair_cv) or self.repair_cv < 0:
+            raise GroundSystemError("repair_cv must be finite and non-negative.")
 
 
 @dataclass(frozen=True)
@@ -390,6 +431,7 @@ class GroundSystemResult:
     rate_provenance: dict[str, object]
     shift_windows: tuple[tuple[float, float], ...]
     downtime_windows: tuple[DowntimeWindow, ...]
+    breakdown_summary: dict[str, float | int] | None
     processor_machine_id: str | None
     processor_machine_ids: tuple[str, ...]
     truck_events: tuple[GroundSystemEvent, ...]
@@ -431,6 +473,7 @@ class GroundSystemResult:
                 }
                 for window in self.downtime_windows
             ],
+            "breakdown_summary": self.breakdown_summary,
             "processor_machine_id": self.processor_machine_id,
             "processor_machine_ids": list(self.processor_machine_ids),
             "truck_events": [event.to_dict() for event in self.truck_events],
@@ -495,6 +538,7 @@ def simulate_ground_system(
     hours_per_shift: float = 10.0,
     shift_start_hour: float = 0.0,
     downtime: Sequence[DowntimeWindow] = (),
+    breakdown_config: BreakdownConfig | None = None,
     truck_capacity_m3: float | None = None,
     truck_cycle_time_s: float = 3600.0,
     truck_count: int = 1,
@@ -568,6 +612,9 @@ def simulate_ground_system(
         Clock hour when the first shift starts.
     downtime:
         Absolute machine downtime windows. Requires ``shift_days``.
+    breakdown_config:
+        Optional seeded stochastic breakdown/repair configuration. Requires
+        ``shift_days``; repairs are serialized through one repair crew.
     truck_capacity_m3:
         Optional truck payload capacity. When omitted, trucking is not tracked.
     truck_cycle_time_s:
@@ -746,8 +793,8 @@ def simulate_ground_system(
     calendar: _ShiftCalendar | None = None
     shift_windows: tuple[tuple[float, float], ...] = ()
     downtime_windows = tuple(downtime)
-    if downtime_windows and shift_days is None:
-        raise GroundSystemError("downtime requires shift_days.")
+    if (downtime_windows or breakdown_config is not None) and shift_days is None:
+        raise GroundSystemError("downtime and breakdown_config require shift_days.")
     if shift_days is not None:
         pattern = ShiftPattern(
             days=shift_days,
@@ -755,8 +802,19 @@ def simulate_ground_system(
             hours_per_shift=hours_per_shift,
             start_hour=shift_start_hour,
         )
-        calendar = _ShiftCalendar(pattern, downtime_windows)
         shift_windows = pattern.windows()
+        breakdown_summary: dict[str, float | int] | None = None
+        if breakdown_config is not None:
+            machine_ids = (feller_machine_id, *skidders, loader_machine_id, *processors)
+            generated, breakdown_summary = generate_breakdown_windows(
+                machine_ids,
+                shift_windows,
+                breakdown_config,
+            )
+            downtime_windows = (*downtime_windows, *generated)
+        calendar = _ShiftCalendar(pattern, downtime_windows)
+    else:
+        breakdown_summary = None
     truck_spec: TruckSpec | None = None
     if truck_capacity_m3 is not None:
         truck_spec = TruckSpec(
@@ -785,6 +843,7 @@ def simulate_ground_system(
             }
             for window in downtime_windows
         ],
+        "breakdowns": breakdown_summary,
     }
     if truck_spec is not None:
         rate_provenance["trucking"] = {
@@ -991,6 +1050,7 @@ def simulate_ground_system(
         rate_provenance=rate_provenance,
         shift_windows=shift_windows,
         downtime_windows=downtime_windows,
+        breakdown_summary=breakdown_summary,
         processor_machine_id=processors[0] if processors else None,
         processor_machine_ids=processors,
         truck_events=tuple(truck_events),
@@ -1037,6 +1097,84 @@ class _Load:
     logs: int
     ready_s: float
     tree_ids: tuple[str, ...]
+
+
+def generate_breakdown_windows(
+    machine_ids: Sequence[str],
+    shift_windows: Sequence[tuple[float, float]],
+    config: BreakdownConfig,
+) -> tuple[tuple[DowntimeWindow, ...], dict[str, float | int]]:
+    """Generate seeded breakdown windows and route repairs through one crew."""
+    if not shift_windows:
+        raise GroundSystemError("Breakdown generation requires shift windows.")
+    segments: list[tuple[float, float, float, float]] = []
+    active_cursor = 0.0
+    for window_start, window_end in shift_windows:
+        duration = window_end - window_start
+        if duration <= 0:
+            continue
+        segments.append((active_cursor, active_cursor + duration, window_start, window_end))
+        active_cursor += duration
+    total_active_seconds = active_cursor
+    if total_active_seconds <= 0:
+        raise GroundSystemError("Breakdown generation requires positive shift windows.")
+
+    def active_to_wall(active_seconds: float) -> float:
+        for active_start, active_end, wall_start, _wall_end in segments:
+            if active_seconds <= active_end + 1e-9:
+                return wall_start + (active_seconds - active_start)
+        return segments[-1][3]
+
+    rng = np.random.default_rng(config.seed)
+    failures: list[tuple[float, str, float]] = []
+    sigma = math.sqrt(math.log1p(config.repair_cv**2)) if config.repair_cv > 0 else 0.0
+    for machine in machine_ids:
+        active = 0.0
+        while True:
+            active += float(rng.exponential(1.0 / config.failure_rate_per_machine_hour)) * 3600.0
+            if active > total_active_seconds:
+                break
+            failure_time = active_to_wall(active)
+            repair_hours = float(
+                rng.lognormal(
+                    mean=math.log(config.repair_mean_hours) - 0.5 * sigma**2,
+                    sigma=sigma,
+                )
+            )
+            failures.append((failure_time, machine, repair_hours))
+    failures.sort(key=lambda item: (item[0], item[1]))
+    crew_available = 0.0
+    last_end: dict[str, float] = {}
+    windows: list[DowntimeWindow] = []
+    crew_wait = 0.0
+    for failure_time, machine, repair_hours in failures:
+        if failure_time < last_end.get(machine, 0.0):
+            continue
+        repair_start = max(failure_time, crew_available)
+        repair_end = repair_start + repair_hours * 3600.0
+        if repair_end <= failure_time:
+            continue
+        crew_wait += repair_start - failure_time
+        windows.append(
+            DowntimeWindow(
+                machine_id=machine,
+                start_s=failure_time,
+                duration_s=repair_end - failure_time,
+                reason="breakdown",
+            )
+        )
+        crew_available = repair_end
+        last_end[machine] = repair_end
+    summary: dict[str, float | int] = {
+        "seed": config.seed,
+        "failure_count": len(windows),
+        "repair_hours": round(sum(item.duration_s for item in windows) / 3600.0, 3),
+        "crew_wait_hours": round(crew_wait / 3600.0, 3),
+        "failure_rate_per_machine_hour": config.failure_rate_per_machine_hour,
+        "repair_mean_hours": config.repair_mean_hours,
+        "repair_cv": config.repair_cv,
+    }
+    return tuple(windows), summary
 
 
 class _ShiftCalendar:
@@ -1569,6 +1707,7 @@ def write_ground_system(result: GroundSystemResult, out_dir: Path) -> dict[str, 
                     }
                     for window in result.downtime_windows
                 ],
+                "breakdown_summary": result.breakdown_summary,
                 "truck_summary": result.truck_summary,
                 "landing_inventory_final_m3": result.landing_inventory_final_m3,
                 "landing_inventory_max_m3": result.landing_inventory_max_m3,

@@ -11,6 +11,7 @@ from typer.testing import CliRunner
 
 from fhops.cli.main import app
 from fhops.ground_system import (
+    BreakdownConfig,
     DowntimeWindow,
     GroundSystemError,
     simulate_ground_system,
@@ -201,6 +202,32 @@ def test_ground_system_downtime_window(tmp_path: Path) -> None:
     assert delayed.downtime_windows
     assert delayed.makespan_s >= baseline.makespan_s
     assert delayed.rate_provenance["schedule"]["downtime"][0]["machine_id"] == "H2"
+
+
+def test_ground_system_stochastic_breakdowns(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        shift_days=4,
+        shifts_per_day=1,
+        hours_per_shift=0.5,
+        breakdown_config=BreakdownConfig(
+            failure_rate_per_machine_hour=1.0,
+            repair_mean_hours=0.1,
+            repair_cv=0.2,
+            seed=7,
+        ),
+    )
+    assert result.breakdown_summary is not None
+    assert result.breakdown_summary["failure_count"] > 0
+    assert result.downtime_windows
+    assert all(window.reason == "breakdown" for window in result.downtime_windows)
+    assert result.rate_provenance["schedule"]["breakdowns"]["seed"] == 7
 
 
 def test_ground_system_writes_outputs(tmp_path: Path) -> None:
