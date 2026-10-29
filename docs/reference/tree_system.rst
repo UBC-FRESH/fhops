@@ -99,6 +99,17 @@ Machine downtime can be added inside the shift calendar:
 simulation start. A task that overlaps a machine downtime window waits until the
 window ends. Downtime requires ``--shift-days``.
 
+A seeded stochastic breakdown model can generate downtime windows instead:
+
+.. code-block:: bash
+
+   fhops tree system scenario.yaml      --block B01 --feller H1 --skidder H2 --processor H5 --loader H4      --shift-days 12 --shifts-per-day 2 --hours-per-shift 10      --failure-rate 0.02 --repair-hours 2 --repair-cv 0.5      --breakdown-seed 20261029
+
+Failures are exponential in machine operating hours; repair durations are
+lognormal. Repairs are serialized through one repair crew. The seed and
+failure/repair summary are written to the event/summary provenance. This is a
+reference reliability model, not a spare-parts or maintenance-policy model.
+
 ``--truck-capacity`` enables a log-truck fleet and landing inventory. Loader
 output adds to landing inventory; trucks are dispatched when a payload is
 available. If landing inventory would exceed ``--landing-capacity``, the loader
@@ -139,9 +150,9 @@ Limits
 - Shift windows are fixed and tasks are not split across them.
 - Trucking blocks the loader on landing capacity, but truck arrivals are
   deterministic; there is no truck routing, scale, or dispatch policy.
-- Downtime windows are absolute and user-supplied; they are not a stochastic
-  breakdown model.
-- No multi-block routing.
+- Downtime windows are absolute and user-supplied; stochastic breakdowns are
+  seeded and serialized through one repair crew.
+- No spare-parts, maintenance-policy, or multi-block routing model.
 - Tree inventories must be reviewed separately; this module does not validate
   stem-model calibration.
 - The JSON timeline is data only; FHOPS does not ship a renderer.

@@ -4502,3 +4502,13 @@ PY
   Verification: `pytest -q tests/tree` (69 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Added a seeded stochastic breakdown/repair model to
+  `fhops tree system`. `--failure-rate`, `--repair-hours`, `--repair-cv`, and
+  `--breakdown-seed` generate exponential failures and lognormal repairs routed
+  through one repair crew; downtime windows feed the same scheduling layer as
+  deterministic delays. Tests cover failure generation and provenance. This is
+  a reference reliability model, not a spare-parts or maintenance-policy model.
+  Verification: `pytest -q tests/tree` (70 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

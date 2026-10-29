@@ -13,6 +13,7 @@ from fhops.ground_system import (
     DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     DEFAULT_RATE_MODEL,
     DEFAULT_SKIDDER_CAPACITY_M3,
+    BreakdownConfig,
     DowntimeWindow,
     GroundSystemError,
     MachineSpec,
@@ -448,6 +449,16 @@ def tree_system(
         "--downtime",
         help="Machine downtime as MACHINE:START_HOURS:DURATION_HOURS[:REASON]. Repeat.",
     ),
+    failure_rate: float | None = typer.Option(
+        None, "--failure-rate", help="Stochastic failures per machine operating hour."
+    ),
+    repair_hours: float = typer.Option(
+        2.0, "--repair-hours", help="Mean repair duration for stochastic breakdowns."
+    ),
+    repair_cv: float = typer.Option(
+        0.5, "--repair-cv", help="Coefficient of variation for repair duration."
+    ),
+    breakdown_seed: int = typer.Option(20261029, "--breakdown-seed", help="Breakdown RNG seed."),
     truck_capacity: float | None = typer.Option(
         None, "--truck-capacity", help="Truck payload capacity (m3). Omit to disable trucking."
     ),
@@ -545,6 +556,16 @@ def tree_system(
             hours_per_shift=hours_per_shift,
             shift_start_hour=shift_start_hour,
             downtime=tuple(_parse_downtime(value) for value in (downtime or [])),
+            breakdown_config=(
+                BreakdownConfig(
+                    failure_rate_per_machine_hour=failure_rate,
+                    repair_mean_hours=repair_hours,
+                    repair_cv=repair_cv,
+                    seed=breakdown_seed,
+                )
+                if failure_rate is not None
+                else None
+            ),
             truck_capacity_m3=truck_capacity,
             truck_cycle_time_s=truck_cycle,
             truck_count=truck_count,
