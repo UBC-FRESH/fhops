@@ -4521,3 +4521,11 @@ PY
   Verification: `pytest -q tests/tree` (71 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Added explicit processor model selection to `fhops tree system`.
+  `--processor-model tn103_area_a|tn103_combined|adv5n6_cold|custom` and
+  `--processor-rate` set the processor productivity; per-machine rates and
+  provenance are written to the summary. Tests cover custom-rate selection.
+  Verification: `pytest -q tests/tree` (72 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

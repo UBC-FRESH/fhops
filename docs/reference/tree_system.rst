@@ -48,6 +48,15 @@ Cycle-time controls are exposed on the CLI:
   ``--skidder-unload-per-log``;
 - ``--loader-process-fixed`` and ``--loader-process-per-log``.
 
+Processor selection can be explicit:
+
+- ``--processor-model tn103_area_a`` (default, 35.0 m³/SMH)
+- ``--processor-model tn103_combined`` (20.4 m³/SMH)
+- ``--processor-model adv5n6_cold`` (49.0 m³/SMH)
+- ``--processor-model custom --processor-rate <m3/SMH>``
+
+The selected model and per-machine productivity are written to provenance.
+
 The default ``--rate-model calibrated`` uses:
 
 - the Han et al. (2018) whole-tree grapple-skidder regression with the GNSS
@@ -153,6 +162,8 @@ Limits
 - Trucking blocks the loader on landing capacity; arrivals are deterministic and
   staggered by a fixed interval. There is no truck routing, scale, or adaptive
   dispatch policy.
+- Processor rates are selected from TN-103/ADV5N6 reference models or a custom
+  rate; they are not calibrated to the demo stands.
 - Downtime windows are absolute and user-supplied; stochastic breakdowns are
   seeded and serialized through one repair crew.
 - No spare-parts, maintenance-policy, or multi-block routing model.
