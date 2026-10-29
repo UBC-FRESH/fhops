@@ -13,6 +13,7 @@ from fhops.ground_system import (
     DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     DEFAULT_RATE_MODEL,
     DEFAULT_SKIDDER_CAPACITY_M3,
+    DowntimeWindow,
     GroundSystemError,
     MachineSpec,
     simulate_ground_system,
@@ -259,6 +260,26 @@ def tree_simulate(
     typer.echo(json.dumps(payload, indent=2))
 
 
+def _parse_downtime(value: str) -> DowntimeWindow:
+    parts = [part.strip() for part in value.split(":")]
+    if len(parts) not in {3, 4}:
+        raise ValueError(f"Downtime {value!r} must be MACHINE:START_HOURS:DURATION_HOURS[:REASON].")
+    machine = parts[0]
+    try:
+        start_hours = float(parts[1])
+        duration_hours = float(parts[2])
+    except ValueError as exc:
+        raise ValueError(f"Downtime {value!r} must contain numeric hours.") from exc
+    if start_hours < 0 or duration_hours <= 0:
+        raise ValueError("Downtime start must be >= 0 and duration must be > 0.")
+    return DowntimeWindow(
+        machine_id=machine,
+        start_s=start_hours * 3600.0,
+        duration_s=duration_hours * 3600.0,
+        reason=parts[3] if len(parts) == 4 and parts[3] else "downtime",
+    )
+
+
 def _parse_obstacle(value: str) -> Obstacle:
     parts = [part.strip() for part in value.split(",")]
     if len(parts) != 3:
@@ -422,6 +443,11 @@ def tree_system(
     shift_start_hour: float = typer.Option(
         0.0, "--shift-start-hour", help="First shift start hour."
     ),
+    downtime: list[str] | None = typer.Option(
+        None,
+        "--downtime",
+        help="Machine downtime as MACHINE:START_HOURS:DURATION_HOURS[:REASON]. Repeat.",
+    ),
     truck_capacity: float | None = typer.Option(
         None, "--truck-capacity", help="Truck payload capacity (m3). Omit to disable trucking."
     ),
@@ -518,6 +544,7 @@ def tree_system(
             shifts_per_day=shifts_per_day,
             hours_per_shift=hours_per_shift,
             shift_start_hour=shift_start_hour,
+            downtime=tuple(_parse_downtime(value) for value in (downtime or [])),
             truck_capacity_m3=truck_capacity,
             truck_cycle_time_s=truck_cycle,
             truck_count=truck_count,

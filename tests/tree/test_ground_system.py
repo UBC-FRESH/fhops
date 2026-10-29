@@ -10,7 +10,12 @@ from pathlib import Path
 from typer.testing import CliRunner
 
 from fhops.cli.main import app
-from fhops.ground_system import GroundSystemError, simulate_ground_system, write_ground_system
+from fhops.ground_system import (
+    DowntimeWindow,
+    GroundSystemError,
+    simulate_ground_system,
+    write_ground_system,
+)
 from fhops.tree_mapping import register_tree_inventory
 
 runner = CliRunner()
@@ -166,6 +171,36 @@ def test_ground_system_trucking_and_landing_inventory(tmp_path: Path) -> None:
     assert result.truck_events
     assert 0 < result.landing_inventory_max_m3 <= 5.0
     assert not any("Landing inventory peaked" in warning for warning in result.warnings)
+
+
+def test_ground_system_downtime_window(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    baseline = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        shift_days=2,
+        shifts_per_day=1,
+        hours_per_shift=0.25,
+    )
+    delayed = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        shift_days=2,
+        shifts_per_day=1,
+        hours_per_shift=0.25,
+        downtime=(DowntimeWindow("H2", start_s=0.0, duration_s=600.0, reason="test delay"),),
+    )
+    assert delayed.downtime_windows
+    assert delayed.makespan_s >= baseline.makespan_s
+    assert delayed.rate_provenance["schedule"]["downtime"][0]["machine_id"] == "H2"
 
 
 def test_ground_system_writes_outputs(tmp_path: Path) -> None:

@@ -4493,3 +4493,12 @@ PY
   Verification: `pytest -q tests/tree` (68 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Added absolute machine downtime windows to `fhops tree system`.
+  `--downtime MACHINE:START_HOURS:DURATION_HOURS[:REASON]` is repeatable and
+  requires shift scheduling. Tasks skip blocked windows; downtime provenance is
+  written to the JSON/summary. Tests cover a skidder delay. This is a
+  deterministic user-specified delay, not a stochastic breakdown model.
+  Verification: `pytest -q tests/tree` (69 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

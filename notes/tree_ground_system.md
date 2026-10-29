@@ -10,7 +10,8 @@ for one block:
 3. skidders are greedily dispatched to the earliest available bunch and return
    to the landing;
 4. one or more optional roadside processors handle skidder loads before the loader;
-5. one loader processes loads in arrival order.
+5. one loader processes loads in arrival order;
+6. optional absolute machine downtime windows can delay tasks.
 
 The first implementation uses flat terrain, one landing, configurable default
 cycle times, and no shift calendar or trucking. It is not field-calibrated and
