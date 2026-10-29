@@ -97,11 +97,11 @@ Optional terrain routing:
    fhops tree system scenario.yaml      --block B01 --feller H1 --skidder H2 --loader H3      --dem dem.tif --road road.geojson      --max-skidder-grade 30 --terrain-step 10
 
 ``--dem`` samples elevation along each skidder route and refuses routes above
-``--max-skidder-grade``. ``--road`` reads a GeoJSON LineString/MultiLineString
-and follows one connected road corridor between the landing and the bunch. This
-is a single-corridor access model, not a road-network solver. DEM and road
-coordinates must use the same CRS as the inventory. Install the optional
-dependencies with ``pip install "fhops[lidar]"``.
+``--max-skidder-grade``. ``--road`` reads GeoJSON LineStrings; a single line uses
+projected corridor routing, while a MultiLineString is treated as a connected
+road network and routed with a shortest path. DEM and road coordinates must use
+the same CRS as the inventory. Install the optional dependencies with
+``pip install "fhops[lidar]"``.
 
 Shift and trucking controls:
 
@@ -172,8 +172,9 @@ Limits
 ------
 
 - One block, one landing, one feller-buncher, one optional processor, one loader.
-- DEM and single-corridor road routing are optional; they are not a full road
-  network or landing-search model.
+- DEM and road routing are optional; single corridors use projection, while
+  MultiLineStrings use a small connected-network shortest path. This is not a
+  full forest-road scale/landing-search model.
 - Skidder and loader cycle times are configurable defaults, not calibrated
   regressions.
 - Shift windows are fixed and tasks are not split across them.
