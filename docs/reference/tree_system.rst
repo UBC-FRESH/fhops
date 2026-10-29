@@ -189,3 +189,10 @@ Limits
 - Tree inventories must be reviewed separately; this module does not validate
   stem-model calibration.
 - The JSON timeline is data only; FHOPS does not ship a renderer.
+
+Committed example
+-----------------
+
+``examples/tree_system/`` is a compact synthetic end-to-end example with 12
+trees, one block, one feller-buncher, two skidders, one processor, one loader,
+one truck, and a prebuilt glTF/viewer artifact.

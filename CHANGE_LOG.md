@@ -4555,3 +4555,11 @@ PY
   Verification: `pytest -q tests/tree` (75 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Added the committed `examples/tree_system/` package: a 12-tree
+  synthetic scenario, registered inventory, system event stream, glTF/GLB scene,
+  viewer, and README, plus an end-to-end CLI smoke test. The example is
+  deliberately small and synthetic, not a real tree map or operational plan.
+  Verification: `pytest -q tests/tree` (76 passed), `ruff format --check src
+  tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
+  `sphinx-build -b html docs _build/html -W`.

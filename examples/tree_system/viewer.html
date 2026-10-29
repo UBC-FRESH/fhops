@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FHOPS ground-based system playback</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #101416; color: #e8eef2; font: 13px/1.35 system-ui, sans-serif; }
+    canvas { display: block; }
+    #hud { position: fixed; left: 18px; top: 18px; width: min(470px, calc(100vw - 36px)); background: #101416e8; border: 1px solid #3b4a4f; border-radius: 10px; padding: 12px 14px; }
+    #hud h1 { margin: 0 0 4px; font-size: 15px; }
+    #hud .muted { color: #98a9b1; }
+    #status { margin: 8px 0 6px; font-size: 14px; }
+    #bar { height: 6px; background: #263237; border-radius: 4px; overflow: hidden; }
+    #bar > div { height: 100%; width: 0%; background: #f08a24; }
+    #machines { display: flex; gap: 10px; margin-top: 9px; flex-wrap: wrap; }
+    .machine { border: 1px solid #3b4a4f; border-radius: 7px; padding: 5px 7px; min-width: 118px; }
+    .machine b { display: block; font-size: 12px; }
+    .machine span { color: #b7c6cc; font-size: 11px; }
+    #controls { position: fixed; left: 18px; bottom: 16px; background: #101416e8; border: 1px solid #3b4a4f; border-radius: 10px; padding: 9px 12px; display: flex; gap: 10px; align-items: center; }
+    button { background: #263237; color: #e8eef2; border: 1px solid #52656b; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+    input[type=range] { accent-color: #f08a24; width: 150px; }
+    #legend { position: fixed; right: 18px; bottom: 16px; color: #b7c6cc; text-align: right; }
+    .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: -1px; margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    <h1>Ground-based system · mature stand</h1>
+    <div class="muted" id="subtitle">feller-buncher → grapple skidder → loader</div>
+    <div class="muted" id="systeminfo"></div>
+    <div id="status">loading…</div>
+    <div id="bar"><div></div></div>
+    <div id="machines"></div>
+  </div>
+  <div id="controls">
+    <button id="play">pause</button>
+    <button id="reset">reset</button>
+    <input id="speed" type="range" min="0.25" max="4" step="0.25" value="1">
+    <span id="speedlabel">1× (90 s)</span>
+  </div>
+  <div id="legend">
+    <span class="swatch" style="background:#f08a24"></span>Feller
+    <span class="swatch" style="background:#2e86de"></span>Skidder
+    <span class="swatch" style="background:#f1c40f"></span>Processor
+    <span class="swatch" style="background:#27ae60"></span>Loader
+    <span class="swatch" style="background:#d6b45a"></span>Truck
+  </div>
+  <script type="importmap">
+    {"imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }}
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const renderer = new THREE.WebGLRenderer({antialias: true, preserveDrawingBuffer: true});
+    renderer.setSize(innerWidth, innerHeight); renderer.setPixelRatio(1);
+    document.body.appendChild(renderer.domElement);
+    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x101416);
+    const camera = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.1, 5000);
+    const speciesPalette = {FD:0x3f7d3f, PL:0x4f8f4a, SW:0x2e6b3a, AT:0x6c9f4a, EP:0x7aa85a, BL:0x2c5c3a, CW:0x2f6f4f, HW:0x3f8f5a, DR:0x4d7d3a, MB:0x5a8f4a, AC:0x6a9f4a, W:0x6f8f5a, DM:0x55884a, HM:0x55884a, VB:0x55884a, MV:0x55884a, BA:0x55884a, TW:0x55884a, PW:0x55884a};
+    const controls = new OrbitControls(camera, renderer.domElement);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x25302d, 1.6));
+    const sun = new THREE.DirectionalLight(0xfff2d8, 2.5); sun.position.set(50, 100, 40); scene.add(sun);
+
+    const statusEl = document.getElementById('status');
+    const barEl = document.querySelector('#bar > div');
+    const machinesEl = document.getElementById('machines');
+    const speedEl = document.getElementById('speed');
+    const speedLabel = document.getElementById('speedlabel');
+    let payload = null;
+    let treeNodes = new Map();
+    let machines = {};
+    let currentTime = 0;
+    let playing = true;
+    let speed = 1;
+    let last = performance.now();
+    let duration = 1;
+    let timelineByMachine = {};
+    let processedTimes = [];
+    let cumulativeVolume = [];
+    let cards = {};
+    let terrainData = null;
+    let baseElevation = 0;
+    const machineColors = {
+      feller_buncher: 0xf08a24,
+      grapple_skidder: [0x2e86de, 0x5dade2, 0x85c1e9],
+      roadside_processor: 0xf1c40f,
+      loader: 0x27ae60,
+    };
+    const skidderColors = machineColors.grapple_skidder;
+    const machineOffsets = {'H4': [12, 0], 'H5': [-12, 0], 'H6': [0, 12]};
+    let trucks = {};
+    let truckEvents = {};
+
+    function fmtTime(t) {
+      const s = Math.max(0, Math.floor(t));
+      return `${String(Math.floor(s / 3600)).padStart(2,'0')}:${String(Math.floor((s % 3600) / 60)).padStart(2,'0')}`;
+    }
+    function fmtM3(v) { return `${v.toFixed(0)} m³`; }
+
+    function sampleHeight(x, y) {
+      if (!terrainData) return baseElevation;
+      const {xmin, xmax, ymin, ymax, nx, ny, heights} = terrainData;
+      const fx = Math.max(0, Math.min(nx - 1, (x - xmin) / (xmax - xmin) * (nx - 1)));
+      const fy = Math.max(0, Math.min(ny - 1, (y - ymin) / (ymax - ymin) * (ny - 1)));
+      const ix = Math.min(nx - 2, Math.floor(fx));
+      const iy = Math.min(ny - 2, Math.floor(fy));
+      const dx = fx - ix;
+      const dy = fy - iy;
+      const h00 = heights[iy][ix];
+      const h10 = heights[iy][ix + 1];
+      const h01 = heights[iy + 1][ix];
+      const h11 = heights[iy + 1][ix + 1];
+      return (h00 * (1 - dx) + h10 * dx) * (1 - dy) + (h01 * (1 - dx) + h11 * dx) * dy;
+    }
+
+    function buildTerrain(data) {
+      terrainData = data;
+      const {xmin, xmax, ymin, ymax, nx, ny, heights} = data;
+      const positions = [];
+      const indices = [];
+      for (let j = 0; j < ny; j++) {
+        for (let i = 0; i < nx; i++) {
+          const x = xmin + (xmax - xmin) * i / (nx - 1);
+          const z = ymin + (ymax - ymin) * j / (ny - 1);
+          positions.push(x, heights[j][i], z);
+        }
+      }
+      for (let j = 0; j < ny - 1; j++) {
+        for (let i = 0; i < nx - 1; i++) {
+          const a = j * nx + i;
+          const b = a + 1;
+          const c = a + nx;
+          const d = c + 1;
+          indices.push(a, c, b, b, c, d);
+        }
+      }
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+      const mesh = new THREE.Mesh(
+        geometry,
+        new THREE.MeshStandardMaterial({color: 0x6f7f4d, roughness: 0.95, metalness: 0.0, side: THREE.DoubleSide})
+      );
+      mesh.name = 'dem_terrain';
+      scene.add(mesh);
+    }
+
+    function applyTreeHeights() {
+      for (const node of treeNodes.values()) {
+        node.position.y = sampleHeight(node.position.x, node.position.z);
+      }
+    }
+
+    function segmentAt(machine, t) {
+      const segments = timelineByMachine[machine] || [];
+      if (!segments.length) return null;
+      if (t <= segments[0].start_s) return {segment: segments[0], f: 0};
+      for (let i = 0; i < segments.length; i++) {
+        const s = segments[i];
+        if (t <= s.end_s) {
+          const span = Math.max(0.001, s.end_s - s.start_s);
+          return {segment: s, f: Math.max(0, Math.min(1, (t - s.start_s) / span))};
+        }
+      }
+      return {segment: segments[segments.length - 1], f: 1};
+    }
+
+    function updateMachines(t) {
+      for (const [id, group] of Object.entries(machines)) {
+        const state = segmentAt(id, t);
+        if (!state) continue;
+        const s = state.segment;
+        let x = s.x0 + (s.x1 - s.x0) * state.f;
+        let y = s.y0 + (s.y1 - s.y0) * state.f;
+        const offset = machineOffsets[id] || [0, 0];
+        x += offset[0]; y += offset[1];
+        group.position.set(x, sampleHeight(x, y) + 2.8, y);
+        const active = t >= s.start_s && t <= s.end_s;
+        const card = cards[id];
+        if (card) {
+          const status = active ? s.type.replaceAll('_', ' ') : 'idle';
+          card.querySelector('span').textContent = `${status} · ${id}`;
+        }
+      }
+    }
+
+    function updateTrees(t) {
+      let lo = 0, hi = processedTimes.length;
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (processedTimes[mid] <= t) lo = mid + 1; else hi = mid;
+      }
+      const processed = lo;
+      for (const [id, node] of treeNodes) {
+        node.visible = (node.userData.processed_s ?? Infinity) > t;
+      }
+      const vol = processed ? cumulativeVolume[processed - 1] : 0;
+      barEl.style.width = `${Math.min(100, 100 * t / duration)}%`;
+      statusEl.textContent = `T+${fmtTime(t)} · ${processed.toLocaleString()} / ${processedTimes.length.toLocaleString()} trees · ${fmtM3(vol)}`;
+    }
+
+    function updateTrucks(t) {
+      for (const [id, group] of Object.entries(trucks)) {
+        const events = truckEvents[id] || [];
+        const active = events.find(event => t >= event.start_s && t <= event.end_s);
+        const state = active ? active.type.replaceAll('_', ' ') : 'parked';
+        group.userData.status = state;
+      }
+    }
+
+    function setTime(t) {
+      currentTime = Math.max(0, Math.min(duration, t));
+      updateMachines(currentTime);
+      updateTrucks(currentTime);
+      updateTrees(currentTime);
+    }
+
+    function animate(now) {
+      requestAnimationFrame(animate);
+      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      if (playing && payload) {
+        currentTime += dt * speed * duration / 90;
+        if (currentTime > duration) currentTime = 0;
+        setTime(currentTime);
+      }
+      controls.update(); renderer.render(scene, camera);
+    }
+
+    window.__pause = () => { playing = false; document.getElementById('play').textContent = 'play'; };
+    window.__play = () => { playing = true; last = performance.now(); document.getElementById('play').textContent = 'pause'; };
+    window.__setTime = (t) => { setTime(t); renderer.render(scene, camera); };
+    window.__ready = false;
+
+
+    function makeMachine(id, color, label) {
+      const group = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.BoxGeometry(4.2, 3.0, 5.4), new THREE.MeshStandardMaterial({color, roughness: 0.6, metalness: 0.1}));
+      body.position.y = 1.5; group.add(body);
+      const cab = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.8, 2.0), new THREE.MeshStandardMaterial({color: 0xe8eef2, roughness: 0.4}));
+      cab.position.set(0, 3.1, -0.8); group.add(cab);
+      const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 64;
+      const ctx = canvas.getContext('2d'); ctx.fillStyle = '#101416cc'; ctx.fillRect(0,0,256,64);
+      ctx.fillStyle = '#e8eef2'; ctx.font = 'bold 30px system-ui'; ctx.fillText(label, 8, 42);
+      const tex = new THREE.CanvasTexture(canvas);
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex, depthTest: false}));
+      sprite.position.set(0, 7.0, 0); sprite.scale.set(10, 2.5, 1); group.add(sprite);
+      const beaconMat = new THREE.MeshBasicMaterial({color});
+      const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 18, 6), beaconMat);
+      beam.position.y = 14; group.add(beam);
+      const beacon = new THREE.Mesh(new THREE.SphereGeometry(1.2, 14, 10), beaconMat);
+      beacon.position.y = 23; group.add(beacon);
+      group.scale.setScalar(1.15);
+      group.userData.id = id;
+      scene.add(group); machines[id] = group;
+      const card = document.createElement('div'); card.className = 'machine';
+      card.innerHTML = `<b>${label}</b><span>idle · ${id}</span>`;
+      machinesEl.appendChild(card); cards[id] = card;
+    }
+
+    function makeTruck(id, index, landing) {
+      const group = new THREE.Group();
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(3.2, 2.2, 6.0),
+        new THREE.MeshStandardMaterial({color: 0xd6b45a, roughness: 0.7})
+      );
+      body.position.y = 1.7; group.add(body);
+      const cab = new THREE.Mesh(
+        new THREE.BoxGeometry(2.1, 2.0, 2.0),
+        new THREE.MeshStandardMaterial({color: 0xe8eef2, roughness: 0.5})
+      );
+      cab.position.set(0, 3.2, -2.4); group.add(cab);
+      const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 64;
+      const ctx = canvas.getContext('2d'); ctx.fillStyle = '#101416cc'; ctx.fillRect(0,0,256,64);
+      ctx.fillStyle = '#e8eef2'; ctx.font = 'bold 28px system-ui'; ctx.fillText(id, 8, 42);
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(canvas), depthTest: false}));
+      sprite.position.set(0, 7, 0); sprite.scale.set(8, 2, 1); group.add(sprite);
+      const x = landing.x + (index - 1) * 20;
+      const y = landing.y - 28;
+      group.scale.setScalar(1.8);
+      group.position.set(x, sampleHeight(x, y) + 1.7, y);
+      scene.add(group); trucks[id] = group;
+    }
+
+    new GLTFLoader().load('scene.gltf', (gltf) => {
+      scene.add(gltf.scene);
+      const removeObjects = [];
+      gltf.scene.traverse((object) => {
+        if (object.name === 'machine_path' || object.name.startsWith('log') || object.name === 'ground') {
+          removeObjects.push(object);
+        }
+        if (object.isMesh && object.material && object.material.name && object.material.name.startsWith('crown:')) {
+          const code = object.material.name.slice(6);
+          if (speciesPalette[code] !== undefined) object.material.color.setHex(speciesPalette[code]);
+        }
+        if (object.userData && object.userData.tree_id) {
+          treeNodes.set(object.userData.tree_id, object);
+        }
+      });
+      removeObjects.forEach((object) => object.parent?.remove(object));
+      if (treeNodes.size) {
+        baseElevation = Math.min(...[...treeNodes.values()].map((node) => node.position.y));
+      }
+      Promise.all([
+        fetch('terrain.json').then(r => r.ok ? r.json() : null),
+        fetch('system_events.json').then(r => r.json()),
+      ]).then(([terrain, data]) => {
+        if (terrain) {
+          buildTerrain(terrain);
+          applyTreeHeights();
+        }
+        payload = data; duration = data.duration_s || 1;
+        let skidderIndex = 0;
+        const typeCounts = {feller_buncher: 0, grapple_skidder: 0, roadside_processor: 0, loader: 0};
+        const prefixes = {feller_buncher: 'FB', grapple_skidder: 'GS', roadside_processor: 'P', loader: 'L'};
+        for (const [id, spec] of Object.entries(data.machines || {})) {
+          const type = spec.type;
+          const color = type === 'grapple_skidder'
+            ? skidderColors[skidderIndex++ % skidderColors.length]
+            : (machineColors[type] ?? 0xd9d9d9);
+          typeCounts[type] = (typeCounts[type] || 0) + 1;
+          const label = `${prefixes[type] || type}${typeCounts[type]}`;
+          makeMachine(id, color, label);
+        }
+        const truckCount = data.truck_summary?.truck_count || 0;
+        for (let i = 1; i <= truckCount; i++) makeTruck(`T${i}`, i, data.landing);
+        for (const event of data.truck_events || []) {
+          (truckEvents[event.machine] ||= []).push(event);
+        }
+        for (const list of Object.values(truckEvents)) list.sort((a, b) => a.start_s - b.start_s);
+        const schedule = data.rate_provenance?.schedule;
+        const trucking = data.rate_provenance?.trucking;
+        document.getElementById('subtitle').textContent =
+          `feller-buncher → grapple skidder → processor → loader · ${data.rate_model || 'reference'} · DEM + road`;
+        const landingMax = data.truck_summary?.landing_inventory_max_m3;
+        document.getElementById('systeminfo').textContent =
+          schedule?.shift_days
+            ? `${schedule.shift_days} days × ${schedule.shifts_per_day} shifts × ${schedule.hours_per_shift} h` +
+              (trucking ? ` · ${trucking.count} trucks × ${trucking.capacity_m3} m³` : '') +
+              (landingMax !== undefined ? ` · landing peak ${landingMax} m³` : '')
+            : 'continuous time';
+        timelineByMachine = {};
+        for (const item of data.timeline) (timelineByMachine[item.machine] ||= []).push(item);
+        for (const list of Object.values(timelineByMachine)) list.sort((a,b) => a.start_s - b.start_s);
+        treeNodes.forEach((node, id) => {
+          const rec = data.trees.find(t => t.tree_id === id);
+          if (rec) node.userData.processed_s = rec.processed_s;
+        });
+        processedTimes = data.trees.map(t => t.processed_s).sort((a,b) => a-b);
+        cumulativeVolume = [];
+        let sum = 0;
+        const sorted = [...data.trees].sort((a,b) => a.processed_s - b.processed_s);
+        for (const t of sorted) { sum += t.volume_m3; cumulativeVolume.push(sum); }
+        const landingHeight = sampleHeight(data.landing.x, data.landing.y);
+        const ring = new THREE.Mesh(new THREE.RingGeometry(5.5, 7.0, 40), new THREE.MeshBasicMaterial({color: 0x27ae60, side: THREE.DoubleSide, transparent: true, opacity: 0.8}));
+        ring.rotation.x = -Math.PI / 2; ring.position.set(data.landing.x, landingHeight + 0.3, data.landing.y); scene.add(ring);
+        fetch('road.geojson').then(r => r.ok ? r.json() : null).then((road) => {
+          if (road && road.features && road.features.length) {
+            const coords = road.features[0].geometry.coordinates;
+            const points = coords.map(([x, y]) => new THREE.Vector3(x, sampleHeight(x, y) + 0.8, y));
+            const line = new THREE.Line(
+              new THREE.BufferGeometry().setFromPoints(points),
+              new THREE.LineBasicMaterial({color: 0xd9c27a})
+            );
+            scene.add(line);
+          }
+        }).catch(() => {});
+        setTime(0);
+        const box = new THREE.Box3().setFromObject(scene);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3()).length() || 50;
+        controls.target.copy(center);
+        camera.position.copy(center).add(new THREE.Vector3(size * 0.42, size * 0.24, size * 0.42));
+        controls.update();
+        window.__ready = true;
+      });
+    });
+
+    document.getElementById('play').onclick = () => playing ? window.__pause() : window.__play();
+    document.getElementById('reset').onclick = () => { setTime(0); };
+    speedEl.oninput = () => { speed = Number(speedEl.value); speedLabel.textContent = `${speed}×`; };
+    addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
