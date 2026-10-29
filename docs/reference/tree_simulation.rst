@@ -16,9 +16,11 @@ The simulator:
 
 - starts at an explicit ``(x, y, z)`` point, or at the first tree when no start
   is supplied;
-- processes the nearest feasible tree within ``reach_radius_m``;
+- orders trees by an explicit harvest pattern: ``nearest``, ``strip``, or
+  ``tsp``; ``auto`` uses ``strip`` for a feller-buncher and ``nearest`` for
+  other machine roles;
 - when no tree is in reach, moves to an approach point within reach of the
-  nearest feasible tree;
+  selected tree;
 - rejects a tree when a circular obstacle contains it or when the absolute
   terrain slope between the current position and the tree exceeds
   ``max_slope_percent``;
@@ -28,6 +30,27 @@ The simulator:
 
 The default values are reach ``10 m``, travel speed ``0.5 m/s``, and maximum
 slope ``35%``. They are reference parameters, not field-calibrated settings.
+
+Harvest patterns
+----------------
+
+``pattern=auto`` is the default.  A scenario machine whose role is
+``feller_buncher`` uses ``strip``; every other role uses ``nearest``.
+
+- ``nearest`` processes the nearest feasible tree, then the next nearest, which
+  is deterministic but can jump around a block.
+- ``strip`` divides the tree cloud into contiguous rows, works rows in a
+  serpentine order, and evaluates candidate strip widths and both axes against
+  the full travel path.  It selects the shortest of those systematic orders.
+  It is a planning heuristic, not a validated felling pattern.
+- ``tsp`` builds a nearest-neighbour tour from the start point and applies a
+  bounded deterministic 2-opt improvement.  It is available for comparison and
+  small inventories; large inventories skip the 2-opt refinement.
+
+All patterns process every feasible tree and record obstacles/slope refusals.
+Processing time is unchanged; the pattern changes only tree order and travel.
+The simulation does not claim that a strip order is always shorter than a
+nearest-tree order on a small fixture.
 
 A start point can represent a landing. Automatic landing-geometry lookup is not
 part of P17.4; pass the landing coordinates explicitly when that matters.
@@ -43,6 +66,7 @@ CLI
      --start-x 881700 --start-y 627500 --start-z 412 \
      --reach-radius 10 \
      --max-slope 35 \
+     --pattern strip \
      --out build/tree_machine
 
 Optional circular obstacles use ``--obstacle x,y,radius_m`` and may be repeated.
@@ -64,6 +88,8 @@ Limits
 - Obstacles are circular exclusions supplied explicitly; FHOPS does not infer
   them from geometry or point clouds.
 - Travel is constant speed, not a machine dynamics model.
+- Tree order is a heuristic, not a field-validated felling pattern or a global
+  route optimization.
 - Processing time uses an existing harvester regression and the reference stem
   model; it is not a field-validated productivity claim.
 - No 3D scene or video is produced in this task.

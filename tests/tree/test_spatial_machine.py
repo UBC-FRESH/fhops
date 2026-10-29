@@ -186,3 +186,40 @@ def test_cli_obstacle_parsing_and_errors(tmp_path: Path) -> None:
     )
     assert result.exit_code == 1
     assert "Obstacle" in result.output
+
+def test_feller_buncher_defaults_to_strip_pattern(tmp_path: Path) -> None:
+    scenario = _reconciled_scenario(tmp_path)
+    result = simulate_block(
+        scenario,
+        block_id="B01",
+        machine_id="H1",
+        start_x_m=881700.0,
+        start_y_m=627500.0,
+    )
+    assert result.pattern == "strip"
+    assert result.processed_count == 12
+    assert result.unreachable_count == 0
+
+
+def test_explicit_patterns_are_deterministic(tmp_path: Path) -> None:
+    scenario = _reconciled_scenario(tmp_path)
+    kwargs = {
+        "block_id": "B01",
+        "machine_id": "H1",
+        "start_x_m": 881700.0,
+        "start_y_m": 627500.0,
+        "generated_utc": "2026-10-29T00:00:00+00:00",
+    }
+    nearest = simulate_block(scenario, pattern="nearest", **kwargs)
+    tsp = simulate_block(scenario, pattern="tsp", **kwargs)
+    assert nearest.pattern == "nearest"
+    assert tsp.pattern == "tsp"
+    assert nearest.processed_count == tsp.processed_count == 12
+    assert nearest.to_dict() == simulate_block(scenario, pattern="nearest", **kwargs).to_dict()
+    assert tsp.to_dict() == simulate_block(scenario, pattern="tsp", **kwargs).to_dict()
+
+
+def test_invalid_pattern_refuses(tmp_path: Path) -> None:
+    scenario = _reconciled_scenario(tmp_path)
+    with pytest.raises(SpatialMachineError, match="Unknown pattern"):
+        simulate_block(scenario, block_id="B01", machine_id="H1", pattern="roomba")

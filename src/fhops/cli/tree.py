@@ -214,6 +214,11 @@ def tree_simulate(
         "--max-slope",
         help="Maximum absolute terrain slope percent.",
     ),
+    pattern: str | None = typer.Option(
+        None,
+        "--pattern",
+        help="Tree order: auto, nearest, strip, or tsp. Auto uses strip for a feller-buncher.",
+    ),
     obstacle: list[str] | None = typer.Option(
         None,
         "--obstacle",
@@ -236,6 +241,7 @@ def tree_simulate(
             reach_radius_m=reach_radius,
             travel_speed_m_per_s=travel_speed,
             max_slope_percent=max_slope,
+            pattern=pattern,
             obstacles=obstacles,
         )
         paths = None if dry_run or out is None else write_spatial_simulation(result, out)

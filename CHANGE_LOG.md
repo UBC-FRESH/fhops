@@ -1,3 +1,20 @@
+# 2026-10-29 — Tree-scale harvest patterns for the feller-buncher
+
+- Added explicit `pattern=auto|nearest|strip|tsp` to `fhops tree simulate` and
+  `simulate_block`.
+- `auto` uses serpentine strips for a `feller_buncher` and nearest-tree order
+  for other machine roles.  `strip` evaluates candidate widths/axes by the full
+  travel path; `tsp` uses nearest neighbour plus bounded 2-opt.
+- The simulation manifest now records the selected pattern.  Processing time,
+  reach, terrain, obstacle, and volume-reconciliation behaviour is unchanged.
+- Added tests for the default buncher pattern, explicit patterns, determinism,
+  and invalid-pattern refusal.
+- The pattern is a planning heuristic, not a field-validated felling plan or a
+  global route optimizer.
+
+Verification:
+- `pytest -q tests/tree` -> 58 passed.
+
 # 2026-10-27 — FHOPS 1.1.0 release
 
 - Bumped the package version to `1.1.0` and documented the stable release in

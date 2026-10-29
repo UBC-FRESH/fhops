@@ -196,12 +196,16 @@ statistical defensibility.
 
 ## P17.4 single-machine decision
 
-The simulator is one machine on one block, with a deterministic nearest-feasible
-tree policy. Reach and terrain are explicit parameters. The machine starts at an
-explicit point or the first tree; automatic landing geometry is deferred. Trees
-inside optional circular obstacles or above the slope limit are recorded as
-unreachable. Processing time uses the ADV6N10 harvester regression and the
-reference stem model; travel uses a constant speed.
+The simulator is one machine on one block.  Tree order is explicit:
+``nearest`` (the original greedy policy), ``strip`` (serpentine rows, choosing
+candidate widths and axes by full travel path), or ``tsp`` (nearest neighbour
+with bounded 2-opt).  ``auto`` uses ``strip`` for a feller-buncher and
+``nearest`` for other machine roles.  Reach and terrain are explicit parameters.
+The machine starts at an explicit point or the first tree; automatic landing
+geometry is deferred. Trees inside optional circular obstacles or above the
+slope limit are recorded as unreachable. Processing time uses the ADV6N10
+harvester regression and the reference stem model; travel uses a constant
+speed.
 
 `fhops tree simulate` writes per-tree events and a manifest. The simulator does
 not alter the inventory, stem results, or scenario. It is a reference execution

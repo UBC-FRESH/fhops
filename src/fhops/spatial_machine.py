@@ -184,6 +184,8 @@ class SpatialSimulation:
         Travel speed.
     max_slope_percent : float
         Terrain slope limit.
+    pattern : str
+        Tree-order policy: ``nearest``, ``strip``, or ``tsp``.
     events : tuple[SpatialEvent, ...]
         Visit and unreachable events.
     processed_count : int
@@ -225,6 +227,7 @@ class SpatialSimulation:
     reach_radius_m: float
     travel_speed_m_per_s: float
     max_slope_percent: float
+    pattern: str
     events: tuple[SpatialEvent, ...]
     processed_count: int
     unreachable_count: int
@@ -253,6 +256,7 @@ class SpatialSimulation:
             "reach_radius_m": self.reach_radius_m,
             "travel_speed_m_per_s": self.travel_speed_m_per_s,
             "max_slope_percent": self.max_slope_percent,
+            "pattern": self.pattern,
             "processed_count": self.processed_count,
             "unreachable_count": self.unreachable_count,
             "total_distance_m": self.total_distance_m,
@@ -283,6 +287,7 @@ def simulate_block(
     reach_radius_m: float = DEFAULT_REACH_RADIUS_M,
     travel_speed_m_per_s: float = DEFAULT_TRAVEL_SPEED_M_PER_S,
     max_slope_percent: float = DEFAULT_MAX_SLOPE_PERCENT,
+    pattern: str | None = None,
     max_total_time_s: float | None = None,
     target_merchantable_volume_m3: float | None = None,
     obstacles: tuple[Obstacle, ...] = (),
@@ -316,6 +321,10 @@ def simulate_block(
         Travel speed.
     max_slope_percent : float, optional
         Maximum absolute terrain slope.
+    pattern : str or None, optional
+        Tree-order policy. ``None``/``auto`` uses ``strip`` for a
+        feller-buncher and ``nearest`` for other machine roles. Explicit values
+        are ``nearest``, ``strip``, and ``tsp``.
     max_total_time_s : float | None, optional
         Stop after this elapsed time unless no tree has been processed yet.
     target_merchantable_volume_m3 : float | None, optional
@@ -361,6 +370,17 @@ def simulate_block(
         raise SpatialMachineError(f"Unknown block {block_id!r}.")
     if machine_id not in set(scenario.machine_ids()):
         raise SpatialMachineError(f"Unknown machine {machine_id!r}.")
+    machine = next(item for item in scenario.machines if item.id == machine_id)
+    requested_pattern = (pattern or "auto").lower()
+    if requested_pattern == "auto":
+        requested_pattern = (
+            "strip" if str(getattr(machine, "role", "")).lower() == "feller_buncher" else "nearest"
+        )
+    if requested_pattern not in {"nearest", "strip", "tsp"}:
+        raise SpatialMachineError(
+            f"Unknown pattern {pattern!r}; expected auto, nearest, strip, or tsp."
+        )
+    pattern = requested_pattern
     block = next(item for item in scenario.blocks if item.id == block_id)
     trees = [tree for tree in stems.trees if tree.block_id == block_id]
     if tree_ids is not None:
@@ -381,6 +401,7 @@ def simulate_block(
         reach_radius_m=reach_radius_m,
         travel_speed_m_per_s=travel_speed_m_per_s,
         max_slope_percent=max_slope_percent,
+        pattern=pattern,
         max_total_time_s=max_total_time_s,
         target_merchantable_volume_m3=target_merchantable_volume_m3,
         obstacles=obstacles,
@@ -408,6 +429,7 @@ def simulate_block(
         "machine_id": machine_id,
         "start": [sx, sy, sz],
         "reach_radius_m": reach_radius_m,
+        "pattern": pattern,
         "events": [event.to_dict() for event in events],
     }
     simulation_id = (
@@ -428,6 +450,7 @@ def simulate_block(
         reach_radius_m=reach_radius_m,
         travel_speed_m_per_s=travel_speed_m_per_s,
         max_slope_percent=max_slope_percent,
+        pattern=pattern,
         events=tuple(events),
         processed_count=len(processed),
         unreachable_count=len(unreachable),
@@ -443,6 +466,7 @@ def simulate_block(
         warnings=tuple(warnings),
         caveats=(
             "Reference single-machine simulation, not a field-calibrated routing or physics model.",
+            "Tree order is a planning heuristic (nearest, strip, or tsp), not a field-validated felling pattern.",
             "Processing time uses the ADV6N10 harvester regression; travel is a constant-speed approximation.",
             *stems.caveats,
         ),
@@ -506,16 +530,65 @@ def _simulate_events(
     reach_radius_m: float,
     travel_speed_m_per_s: float,
     max_slope_percent: float,
+    pattern: str,
     max_total_time_s: float | None,
     target_merchantable_volume_m3: float | None,
     obstacles: tuple[Obstacle, ...],
 ) -> list[SpatialEvent]:
     remaining = {tree.tree_id: tree for tree in trees}
+    ordered = (
+        None
+        if pattern == "nearest"
+        else _ordered_trees(trees, start=start, pattern=pattern, reach_radius_m=reach_radius_m)
+    )
     current_x, current_y, current_z = start
     elapsed = 0.0
     events: list[SpatialEvent] = []
     processed_volume = 0.0
     sequence = 1
+
+    def feasible(tree: StemResult) -> tuple[bool, str | None]:
+        x = tree.x_m
+        y = tree.y_m
+        if any(obstacle.contains(x, y) for obstacle in obstacles):
+            return False, "tree lies inside an obstacle"
+        terrain_z = tree.elevation_m if tree.elevation_m is not None else current_z
+        horizontal = math.hypot(x - current_x, y - current_y)
+        slope = abs(terrain_z - current_z) / horizontal * 100.0 if horizontal > 0 else 0.0
+        if slope > max_slope_percent:
+            return False, f"terrain slope {slope:.2f}% exceeds the limit"
+        return True, None
+
+    def distance(tree: StemResult) -> float:
+        return math.hypot(tree.x_m - current_x, tree.y_m - current_y)
+
+    def record_unreachable(tree: StemResult, reason: str | None) -> None:
+        nonlocal sequence
+        events.append(
+            SpatialEvent(
+                sequence=sequence,
+                tree_id=tree.tree_id,
+                block_id=tree.block_id,
+                status="unreachable",
+                reason=reason or "no feasible approach found",
+                x_m=tree.x_m,
+                y_m=tree.y_m,
+                machine_x_m=current_x,
+                machine_y_m=current_y,
+                distance_m=0.0,
+                slope_percent=0.0,
+                move_time_s=0.0,
+                processing_time_s=0.0,
+                start_s=elapsed,
+                end_s=elapsed,
+                cumulative_s=elapsed,
+                merchantable_volume_m3=0.0,
+                log_count=0,
+            )
+        )
+        sequence += 1
+        remaining.pop(tree.tree_id, None)
+
     while remaining:
         if max_total_time_s is not None and events and elapsed >= max_total_time_s:
             break
@@ -525,62 +598,45 @@ def _simulate_events(
         ):
             break
 
-        def feasible(tree: StemResult) -> tuple[bool, str | None]:
-            x = tree.x_m
-            y = tree.y_m
-            if any(obstacle.contains(x, y) for obstacle in obstacles):
-                return False, "tree lies inside an obstacle"
-            terrain_z = tree.elevation_m if tree.elevation_m is not None else current_z
-            horizontal = math.hypot(x - current_x, y - current_y)
-            slope = abs(terrain_z - current_z) / horizontal * 100.0 if horizontal > 0 else 0.0
-            if slope > max_slope_percent:
-                return False, f"terrain slope {slope:.2f}% exceeds the limit"
-            return True, None
-
-        def distance(tree: StemResult) -> float:
-            return math.hypot(tree.x_m - current_x, tree.y_m - current_y)
-
-        within = [tree for tree in remaining.values() if distance(tree) <= reach_radius_m]
         target: StemResult | None = None
-        for tree in sorted(within, key=lambda item: (distance(item), item.tree_id)):
-            ok, _reason = feasible(tree)
-            if ok:
-                target = tree
+        if ordered is not None:
+            # Process the planned order.  A blocked tree is removed and the
+            # planner continues with the next tree in that pattern, rather than
+            # falling back to the nearest-neighbour policy.
+            for candidate in ordered:
+                if candidate.tree_id not in remaining:
+                    continue
+                ok, reason = feasible(candidate)
+                if not ok:
+                    record_unreachable(candidate, reason)
+                    break
+                target = candidate
                 break
-        if target is None:
-            for tree in sorted(remaining.values(), key=lambda item: (distance(item), item.tree_id)):
+            if target is None:
+                if not remaining:
+                    break
+                continue
+        else:
+            within = [tree for tree in remaining.values() if distance(tree) <= reach_radius_m]
+            for tree in sorted(within, key=lambda item: (distance(item), item.tree_id)):
                 ok, _reason = feasible(tree)
                 if ok:
                     target = tree
                     break
-        if target is None:
-            for tree in sorted(remaining.values(), key=lambda item: (distance(item), item.tree_id)):
-                _ok, reason = feasible(tree)
-                events.append(
-                    SpatialEvent(
-                        sequence=sequence,
-                        tree_id=tree.tree_id,
-                        block_id=tree.block_id,
-                        status="unreachable",
-                        reason=reason or "no feasible approach found",
-                        x_m=tree.x_m,
-                        y_m=tree.y_m,
-                        machine_x_m=current_x,
-                        machine_y_m=current_y,
-                        distance_m=0.0,
-                        slope_percent=0.0,
-                        move_time_s=0.0,
-                        processing_time_s=0.0,
-                        start_s=elapsed,
-                        end_s=elapsed,
-                        cumulative_s=elapsed,
-                        merchantable_volume_m3=0.0,
-                        log_count=0,
-                    )
-                )
-                sequence += 1
-                remaining.pop(tree.tree_id)
-            break
+            if target is None:
+                for tree in sorted(remaining.values(), key=lambda item: (distance(item), item.tree_id)):
+                    ok, _reason = feasible(tree)
+                    if ok:
+                        target = tree
+                        break
+            if target is None:
+                for tree in sorted(remaining.values(), key=lambda item: (distance(item), item.tree_id)):
+                    _ok, reason = feasible(tree)
+                    record_unreachable(tree, reason)
+                    if not remaining:
+                        break
+                break
+
         target_distance = distance(target)
         approach_x = current_x
         approach_y = current_y
@@ -624,6 +680,148 @@ def _simulate_events(
         remaining.pop(target.tree_id)
         sequence += 1
     return events
+
+
+def _ordered_trees(
+    trees: list[StemResult],
+    *,
+    start: tuple[float, float, float],
+    pattern: str,
+    reach_radius_m: float,
+) -> list[StemResult]:
+    """Return a deterministic spatial order for strip or TSP harvesting."""
+    if len(trees) <= 1:
+        return list(trees)
+    if pattern == "strip":
+        return _strip_order(trees, start=start, strip_width_m=max(2.0 * reach_radius_m, 10.0))
+    return _tsp_order(trees, start=start)
+
+
+def _strip_order(
+    trees: list[StemResult],
+    *,
+    start: tuple[float, float, float],
+    strip_width_m: float,
+) -> list[StemResult]:
+    """Serpentine rows, choosing the best candidate strip width and axis.
+
+    A feller-buncher does not zig-zag between nearest trees across the whole
+    block.  It works contiguous strips.  The candidate widths are evaluated
+    against the full travel path from the start point, so the selected order is
+    no worse than the ungreedy strip alternatives for the supplied trees.
+    """
+    widths = sorted(
+        {
+            max(5.0, min(strip_width_m, 40.0)),
+            10.0,
+            20.0,
+            30.0,
+            40.0,
+        }
+    )
+    best_order: list[StemResult] | None = None
+    best_distance = float("inf")
+    for use_x_strips in (True, False):
+        for width in widths:
+            order = _strip_order_for_width(
+                trees,
+                start=start,
+                strip_width_m=width,
+                use_x_strips=use_x_strips,
+            )
+            distance = _tour_distance(order, start=start)
+            if distance + 1e-9 < best_distance:
+                best_distance = distance
+                best_order = order
+    return best_order or list(trees)
+
+
+def _strip_order_for_width(
+    trees: list[StemResult],
+    *,
+    start: tuple[float, float, float],
+    strip_width_m: float,
+    use_x_strips: bool,
+) -> list[StemResult]:
+    min_x = min(tree.x_m for tree in trees)
+    max_x = max(tree.x_m for tree in trees)
+    min_y = min(tree.y_m for tree in trees)
+    max_y = max(tree.y_m for tree in trees)
+    groups: dict[int, list[StemResult]] = {}
+    for tree in trees:
+        if use_x_strips:
+            index = int(math.floor((tree.x_m - min_x) / strip_width_m))
+        else:
+            index = int(math.floor((tree.y_m - min_y) / strip_width_m))
+        groups.setdefault(index, []).append(tree)
+    indices = sorted(groups)
+    start_axis = start[0] if use_x_strips else start[1]
+    pivot = (min_x + max_x) / 2.0 if use_x_strips else (min_y + max_y) / 2.0
+    if start_axis > pivot:
+        indices.reverse()
+    ordered: list[StemResult] = []
+    for position, index in enumerate(indices):
+        group = sorted(
+            groups[index],
+            key=(lambda tree: (tree.y_m, tree.x_m)) if use_x_strips else (lambda tree: (tree.x_m, tree.y_m)),
+        )
+        if position % 2 == 1:
+            group.reverse()
+        ordered.extend(group)
+    return ordered
+
+
+def _tour_distance(trees: list[StemResult], *, start: tuple[float, float, float]) -> float:
+    current_x, current_y = start[0], start[1]
+    distance = 0.0
+    for tree in trees:
+        distance += math.hypot(tree.x_m - current_x, tree.y_m - current_y)
+        current_x, current_y = tree.x_m, tree.y_m
+    return distance
+
+
+def _tsp_order(trees: list[StemResult], *, start: tuple[float, float, float]) -> list[StemResult]:
+    """Nearest-neighbour tour followed by deterministic 2-opt improvement."""
+    remaining = list(trees)
+    order: list[StemResult] = []
+    current = (start[0], start[1])
+    while remaining:
+        nearest = min(
+            remaining,
+            key=lambda tree: (math.hypot(tree.x_m - current[0], tree.y_m - current[1]), tree.tree_id),
+        )
+        order.append(nearest)
+        remaining.remove(nearest)
+        current = (nearest.x_m, nearest.y_m)
+
+    # A bounded 2-opt keeps this deterministic and practical for the tree-scale
+    # fixtures and moderate inventories.  Large inventories use the nearest
+    # neighbour order without the quadratic refinement.
+    if len(order) > 1000:
+        return order
+
+    def leg(a: StemResult | None, b: StemResult) -> float:
+        ax, ay = (start[0], start[1]) if a is None else (a.x_m, a.y_m)
+        return math.hypot(b.x_m - ax, b.y_m - ay)
+
+    improved = True
+    passes = 0
+    while improved and passes < 8:
+        improved = False
+        passes += 1
+        for i in range(len(order) - 1):
+            for j in range(i + 1, len(order)):
+                prev = order[i - 1] if i > 0 else None
+                before = leg(prev, order[i]) + (
+                    leg(order[j], order[j + 1]) if j + 1 < len(order) else 0.0
+                )
+                after = leg(prev, order[j]) + (
+                    leg(order[i], order[j + 1]) if j + 1 < len(order) else 0.0
+                )
+                if after + 1e-9 < before:
+                    order[i : j + 1] = reversed(order[i : j + 1])
+                    improved = True
+    return order
 
 
 def _processing_time(tree: StemResult) -> float:
