@@ -237,7 +237,7 @@
     window.__play = () => { playing = true; last = performance.now(); document.getElementById('play').textContent = 'pause'; };
     window.__setTime = (t) => { setTime(t); renderer.render(scene, camera); };
     window.__ready = false;
-    
+
 
     function makeMachine(id, color, label) {
       const group = new THREE.Group();
