@@ -27,3 +27,10 @@ Next steps after review:
 - add loader-blocking truck dispatch and breakdowns (shift windows and downstream truck tracking are now present);
 - decide whether to ship the external Three.js viewer as an example or keep it
   outside core.
+
+## Sensitivity check
+
+`notes/reports/tree_system_sensitivity.md` records the 2026-10-29 bounded grid.
+The processor rate dominates the demo makespan; truck count has little effect
+because trucking is still a downstream tracker. Shift length is first-order.
+The demo data remain synthetic scratch inputs.

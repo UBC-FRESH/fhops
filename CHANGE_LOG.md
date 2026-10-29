@@ -4465,3 +4465,12 @@ PY
   Verification: `pytest -q tests/tree` (68 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-29: Added a bounded sensitivity check for the ground-system demo:
+  `scripts/tree_system_sensitivity.py` and
+  `notes/reports/tree_system_sensitivity.md`. The processor rate dominates
+  (132/226 h at 35 m³/SMH; 93/157 h at 50; 68/114 h at 70), truck count is
+  nearly flat while trucking remains a downstream tracker, and shift length is
+  first-order. Results are synthetic reference-model checks, not field
+  validation. No production code changed.
+  Verification: `sphinx-build -b html docs _build/html -W` and pre-commit.
