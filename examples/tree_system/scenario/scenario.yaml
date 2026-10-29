@@ -1,0 +1,28 @@
+name: FHOPS Tree-Scale Synthetic Fixture
+num_days: 7
+start_date: '2026-01-01'
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+  harvest_systems: data/harvest_systems.yaml
+
+tree_inventory:
+  inventory_id: tree-scale-fixture-B01
+  inventory_sha256: 55d0c44a1a01b6da24cd998e2f053f01b57ba10c0de506735ff74634a0df339e
+  metadata_sha256: d0c36dc487533f6269e39e05d52a32750d81937c00ae9a808772f7df220fdaa6
+  inventory_path: ../tree_inventory/inventory.csv
+  metadata_path: ../tree_inventory/inventory.meta.json
+  crs: EPSG:3005
+  review_status: reviewed
+  reviewed_by: fixture-reviewer
+  source_id: synthetic-tree-fixture
+  producer: FHOPS synthetic fixture
+  method: Deterministic synthetic point list; not an ITD/ITC run.
+  tree_count: 12
+  block_ids:
+  - B01
+  caveats:
+  - Synthetic contract fixture; not a real tree inventory or tree map.

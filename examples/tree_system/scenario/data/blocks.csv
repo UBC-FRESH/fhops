@@ -1,0 +1,2 @@
+id,landing_id,harvest_system_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,stem_density_per_ha,ground_slope_percent
+B01,L1,ground_fb_skid,19.260087,1,7,1.605007,19.260087,12.0,5.0

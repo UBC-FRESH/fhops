@@ -1,0 +1,130 @@
+{
+  "block_id": "B01",
+  "breakdown_summary": null,
+  "caveats": [
+    "Reference multi-machine event model, not a field-calibrated system simulation.",
+    "Feller-buncher processing uses the existing reference spatial/ADV6N10 model.",
+    "Skidder, processor, and loader cycle times are configurable defaults; queue dispatch is greedy and deterministic.",
+    "DEM/road routing is optional; the model uses a direct line or a single connected road corridor and does not solve a full road network.",
+    "Shift windows delay tasks that do not fit; tasks are not split across shifts.",
+    "Trucking blocks the loader when landing inventory would exceed capacity; partial truck loads are allowed to make space.",
+    "Tree lists must be reviewed separately; this module does not validate stem-model calibration."
+  ],
+  "downtime_windows": [],
+  "landing_inventory_final_m3": 4.260087468537424,
+  "landing_inventory_max_m3": 14.260087468537424,
+  "machine_summaries": {
+    "H1": {
+      "busy_s": 890.7182001062379,
+      "events": 23,
+      "utilisation": 0.06388722031686744
+    },
+    "H2": {
+      "busy_s": 114.053618568689,
+      "events": 4,
+      "utilisation": 0.008180554362271606
+    },
+    "H3": {
+      "busy_s": 103.62575786720296,
+      "events": 4,
+      "utilisation": 0.007432610698394543
+    },
+    "H4": {
+      "busy_s": 842.9947098691152,
+      "events": 2,
+      "utilisation": 0.06046422847196602
+    },
+    "H5": {
+      "busy_s": 2101.0375681924206,
+      "events": 2,
+      "utilisation": 0.15069799853322266
+    }
+  },
+  "makespan_s": 13942.040296767636,
+  "processed_volume_m3": 19.260087468537424,
+  "rate_model": "calibrated",
+  "rate_provenance": {
+    "loader": {
+      "assumed_shift_hours": 8.0,
+      "avg_volume_per_shift_m3": 658.0,
+      "model": "Barko 450 TN-46 ground-skid loader",
+      "seconds_per_m3": 43.76899696048632
+    },
+    "processor": {
+      "machines": {
+        "H5": {
+          "fixed_s": 60.0,
+          "productivity_m3_per_smh": 35.0,
+          "seconds_per_m3": 102.85714285714286
+        }
+      },
+      "model": "tn103_area_a",
+      "model_description": "TN-103 feller-bunched processor"
+    },
+    "schedule": {
+      "breakdowns": null,
+      "downtime": [],
+      "hours_per_shift": 8.0,
+      "shift_days": 2,
+      "shift_start_hour": 0.0,
+      "shifts_per_day": 1
+    },
+    "skidder": {
+      "model": "Han et al. (2018) whole-tree grapple-skidder regression",
+      "speed_profile": "SK",
+      "speed_profile_description": "GNSS cable skidder median speeds (Zurita & Borz 2025)"
+    },
+    "terrain": {
+      "dem_crs": null,
+      "dem_path": null,
+      "grade_speed_factor": 0.02,
+      "max_grade_percent": 35.0,
+      "road_model": "direct line",
+      "road_path": null,
+      "sample_step_m": 10.0
+    },
+    "trucking": {
+      "arrival_interval_s": 0.0,
+      "capacity_m3": 5.0,
+      "count": 1,
+      "cycle_time_s": 3600.0,
+      "landing_capacity_m3": 15.0,
+      "load_time_s": 300.0,
+      "mill_bays": 1,
+      "mill_service_s": 600.0,
+      "one_way_distance_m": 0.0,
+      "speed_mps": 12.0
+    }
+  },
+  "schema_version": "fhops.tree.ground_system.v1",
+  "shift_windows": [
+    [
+      0.0,
+      28800.0
+    ],
+    [
+      86400.0,
+      115200.0
+    ]
+  ],
+  "system_id": "fhops-tree-system-aba9bf2585077f09",
+  "tree_count": 12,
+  "truck_summary": {
+    "arrival_interval_s": 0.0,
+    "dispatched_loads": 3,
+    "dispatched_volume_m3": 15.0,
+    "landing_capacity_m3": 15.0,
+    "landing_inventory_final_m3": 4.26,
+    "landing_inventory_max_m3": 14.26,
+    "mill_bays": 1,
+    "mill_service_s": 600.0,
+    "mill_wait_s": 0.0,
+    "one_way_distance_m": 0.0,
+    "speed_mps": 12.0,
+    "truck_capacity_m3": 5.0,
+    "truck_count": 1,
+    "truck_total_s": 13942.04
+  },
+  "unreachable_count": 0,
+  "warnings": []
+}
