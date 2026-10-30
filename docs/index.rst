@@ -17,6 +17,7 @@ ensembles.
    overview
    howto/quickstart
    howto/tree_scale
+   howto/nemora_handoff
    howto/data_contract
    howto/benchmarks
    howto/heuristic_presets

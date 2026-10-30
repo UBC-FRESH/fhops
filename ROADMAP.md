@@ -568,6 +568,28 @@ Acceptance:
 - Docs checks pass in CI.
 - No new hydrology capability or real watershed result is claimed.
 
+## Phase 19 — Nemora tree-inventory handoff
+
+Parent issue: #300. Branch: `feature/phase19-nemora-handoff`. Status: pr-open. Plan:
+`notes/phase19_nemora_handoff.md`.
+
+Goal: prove that a Nemora-generated `fhops.tree.inventory.v1` fixture is
+consumable by the released FHOPS tree-scale workflow without making Nemora a
+runtime dependency.
+
+- [x] P19.1 Generate and commit a Nemora tree-inventory fixture (#301)
+  - [x] Generated a 40-tree deterministic synthetic table.
+  - [x] Exported CSV/metadata with Nemora 0.1.0a1.
+  - [x] FHOPS validates 40 trees/1 block/4 species; provenance recorded.
+- [x] P19.2 Add the handoff scenario, docs, and end-to-end test (#302)
+  - [x] Added B01/L1 scenario with a verified pin.
+  - [x] Ran 40-tree system: 21.512 m³, 0 unreachable, no warnings.
+  - [x] Added end-to-end test; no Nemora import.
+- [x] P19.3 Close out and decide the release path (#303)
+  - [x] Ran gates; two pre-existing HiGHS tests fail locally and are reported.
+  - [x] Wrote `notes/reports/p19-closeout.md`.
+  - [x] No 1.2.1 now; ship with next scheduled release.
+
 ## Backlog & Ideas
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.

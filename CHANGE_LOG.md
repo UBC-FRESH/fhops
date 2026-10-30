@@ -4573,3 +4573,25 @@ PY
   Verification: `pytest -q tests/tree` (76 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-30: Activated P19 (parent #300) to prove the Nemora-generated
+  `fhops.tree.inventory.v1` handoff. Started P19.1 (#301), which will commit a
+  compact synthetic fixture exported by Nemora 0.1.0a1.
+  Verification: pending implementation.
+
+- 2026-10-30: P19.1 (#301) added a 40-tree synthetic
+  `fhops.tree.inventory.v1` fixture exported by Nemora 0.1.0a1 under
+  `examples/nemora_handoff/tree_inventory/`. FHOPS validates it with block
+  `B01` (40 trees, 1 block, 4 species). Provenance records the Nemora version,
+  seed, synthetic input, and checksum; Nemora remains a producer-only artifact.
+
+- 2026-10-30: P19.2 (#302) added the Nemora handoff scenario, how-to page, and
+  end-to-end test. The 40-tree fixture runs through `fhops tree system`
+  (21.512 m³, 0 unreachable, no warnings) without importing Nemora.
+  Verification: target test and docs build pending full gate run.
+
+- 2026-10-30: P19.3 (#303) completed the Nemora handoff phase. No 1.2.1 release
+  now; the fixture/example/docs/test can ship with the next scheduled release.
+  Verification: `pytest -q tests/tree`, targeted handoff test, Ruff, mypy,
+  pre-commit, and docs pass; full `pytest -q` has two pre-existing HiGHS
+  option-error failures in the local environment, reported separately.
