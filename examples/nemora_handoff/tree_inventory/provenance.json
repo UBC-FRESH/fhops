@@ -1,0 +1,19 @@
+{
+  "block_id": "B01",
+  "caveats": [
+    "Not a real tree map.",
+    "No operational or regulatory claim."
+  ],
+  "export_function": "nemora.export.export_fhops_tree_inventory",
+  "input_generation": "Deterministic synthetic DBH/height/species list; no field data.",
+  "nemora_version": "0.1.0a1",
+  "origin_m": [
+    0.0,
+    0.0
+  ],
+  "producer": "Nemora",
+  "seed": 20261030,
+  "size_m": 100.0,
+  "source_id": "nemora-synthetic-phase19",
+  "tree_count": 40
+}

@@ -577,10 +577,10 @@ Goal: prove that a Nemora-generated `fhops.tree.inventory.v1` fixture is
 consumable by the released FHOPS tree-scale workflow without making Nemora a
 runtime dependency.
 
-- [ ] P19.1 Generate and commit a Nemora tree-inventory fixture (#301)
-  - [ ] Generate a compact deterministic synthetic tree table.
-  - [ ] Export CSV/metadata with Nemora 0.1.0a1.
-  - [ ] Validate with FHOPS and record provenance.
+- [x] P19.1 Generate and commit a Nemora tree-inventory fixture (#301)
+  - [x] Generated a 40-tree deterministic synthetic table.
+  - [x] Exported CSV/metadata with Nemora 0.1.0a1.
+  - [x] FHOPS validates 40 trees/1 block/4 species; provenance recorded.
 - [ ] P19.2 Add the handoff scenario, docs, and end-to-end test (#302)
   - [ ] Add a one-block scenario with a verified inventory pin.
   - [ ] Run `fhops tree system` on the fixture.

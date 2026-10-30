@@ -4578,3 +4578,9 @@ PY
   `fhops.tree.inventory.v1` handoff. Started P19.1 (#301), which will commit a
   compact synthetic fixture exported by Nemora 0.1.0a1.
   Verification: pending implementation.
+
+- 2026-10-30: P19.1 (#301) added a 40-tree synthetic
+  `fhops.tree.inventory.v1` fixture exported by Nemora 0.1.0a1 under
+  `examples/nemora_handoff/tree_inventory/`. FHOPS validates it with block
+  `B01` (40 trees, 1 block, 4 species). Provenance records the Nemora version,
+  seed, synthetic input, and checksum; Nemora remains a producer-only artifact.
