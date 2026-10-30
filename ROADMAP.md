@@ -570,7 +570,7 @@ Acceptance:
 
 ## Phase 19 — Nemora tree-inventory handoff
 
-Parent issue: #300. Branch: `feature/phase19-nemora-handoff`. Plan:
+Parent issue: #300. Branch: `feature/phase19-nemora-handoff`. Status: pr-open. Plan:
 `notes/phase19_nemora_handoff.md`.
 
 Goal: prove that a Nemora-generated `fhops.tree.inventory.v1` fixture is
