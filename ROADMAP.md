@@ -581,10 +581,10 @@ runtime dependency.
   - [x] Generated a 40-tree deterministic synthetic table.
   - [x] Exported CSV/metadata with Nemora 0.1.0a1.
   - [x] FHOPS validates 40 trees/1 block/4 species; provenance recorded.
-- [ ] P19.2 Add the handoff scenario, docs, and end-to-end test (#302)
-  - [ ] Add a one-block scenario with a verified inventory pin.
-  - [ ] Run `fhops tree system` on the fixture.
-  - [ ] Add an end-to-end test that does not require Nemora.
+- [x] P19.2 Add the handoff scenario, docs, and end-to-end test (#302)
+  - [x] Added B01/L1 scenario with a verified pin.
+  - [x] Ran 40-tree system: 21.512 m³, 0 unreachable, no warnings.
+  - [x] Added end-to-end test; no Nemora import.
 - [ ] P19.3 Close out and decide the release path (#303)
   - [ ] Run the full gate set.
   - [ ] Write the close-out report.

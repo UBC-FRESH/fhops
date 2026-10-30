@@ -4584,3 +4584,8 @@ PY
   `examples/nemora_handoff/tree_inventory/`. FHOPS validates it with block
   `B01` (40 trees, 1 block, 4 species). Provenance records the Nemora version,
   seed, synthetic input, and checksum; Nemora remains a producer-only artifact.
+
+- 2026-10-30: P19.2 (#302) added the Nemora handoff scenario, how-to page, and
+  end-to-end test. The 40-tree fixture runs through `fhops tree system`
+  (21.512 m³, 0 unreachable, no warnings) without importing Nemora.
+  Verification: target test and docs build pending full gate run.
