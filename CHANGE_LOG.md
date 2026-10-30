@@ -4573,3 +4573,8 @@ PY
   Verification: `pytest -q tests/tree` (76 passed), `ruff format --check src
   tests`, `ruff check src tests`, `mypy src`, `pre-commit run --all-files`, and
   `sphinx-build -b html docs _build/html -W`.
+
+- 2026-10-30: Activated P19 (parent #300) to prove the Nemora-generated
+  `fhops.tree.inventory.v1` handoff. Started P19.1 (#301), which will commit a
+  compact synthetic fixture exported by Nemora 0.1.0a1.
+  Verification: pending implementation.
