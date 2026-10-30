@@ -585,10 +585,10 @@ runtime dependency.
   - [x] Added B01/L1 scenario with a verified pin.
   - [x] Ran 40-tree system: 21.512 m³, 0 unreachable, no warnings.
   - [x] Added end-to-end test; no Nemora import.
-- [ ] P19.3 Close out and decide the release path (#303)
-  - [ ] Run the full gate set.
-  - [ ] Write the close-out report.
-  - [ ] Decide whether a 1.2.1 release is warranted.
+- [x] P19.3 Close out and decide the release path (#303)
+  - [x] Ran gates; two pre-existing HiGHS tests fail locally and are reported.
+  - [x] Wrote `notes/reports/p19-closeout.md`.
+  - [x] No 1.2.1 now; ship with next scheduled release.
 
 ## Backlog & Ideas
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
