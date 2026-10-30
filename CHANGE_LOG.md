@@ -4595,3 +4595,7 @@ PY
   Verification: `pytest -q tests/tree`, targeted handoff test, Ruff, mypy,
   pre-commit, and docs pass; full `pytest -q` has two pre-existing HiGHS
   option-error failures in the local environment, reported separately.
+
+- 2026-10-30: P19 (#300) squash-merged as `43a7862d`; tree matched the
+  approved head `fc4d23b0`. The Nemora handoff fixture/scenario/docs/test are on
+  `main`. No 1.2.1 release or publication was made.
