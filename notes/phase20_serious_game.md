@@ -223,6 +223,11 @@ combination is evaluated, the tree inventory and event calendar are pinned, and
 the precompute is complete. Best-known or sampled bounds must not be labelled
 optimal.
 
+The first KC precompute is complete: 20 combinations (5 care levels × 2
+skidder counts × 2 log lengths), best net profit `$75,705.63`, worst
+`$21,969.10`. The best combination is moderate care (`0.50`), one skidder, and
+`6.1 m` logs. Artifact: `examples/game/precomputed/kc_57254551.json`.
+
 The old fleet-opportunity formula is retained: extra marginal multipliers
 `1×`, `2×`, `8×`, with a `4×` spot surcharge on the last slot. It is now one
 component of net profit, not the whole objective.
@@ -296,9 +301,11 @@ Planned assets and code:
 - `scripts/generate_game_inventory.py` — deterministic Nemora/PSP producer.
 - `examples/game/levels/<level>/prices.yaml` — product/grade prices and level
   cost deck.
+- `examples/game/levels/<level>/level.yaml` — finite control grid.
+- `examples/game/precomputed/<level>.json` — complete stand precompute.
 - `src/fhops/game/levels.py`, `inventory.py`, `bucking.py`,
   `careful_logging.py`, `value.py`, `operation.py`, `scoring.py`,
-  `precompute.py`, `state.py`.
+  `stand_precompute.py`, `state.py`.
 - `src/fhops/web/game.py` and `src/fhops/web/static/game.*`.
 - `tests/game/`, `tests/web/test_game_api.py`.
 - `docs/howto/serious_game.rst`.

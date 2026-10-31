@@ -1,0 +1,19 @@
+schema_version: fhops.game.level.v1
+level_id: kc_57254551
+order: 3
+name: Knife Creek selection cut
+scenario: scenario.yaml
+prices: prices.yaml
+stem_form_factor: 0.192014
+machine_ids:
+  feller: H1
+  skidders: [H2, H3]
+  processors: [H5]
+  loader: H4
+care_levels: [0.0, 0.25, 0.5, 0.75, 1.0]
+skidder_counts: [1, 2]
+bucking:
+  log_length_m: [4.9, 6.1]
+  sawlog_min_dbh_cm: [20.0]
+landing_options:
+  main: 0.0

@@ -4654,3 +4654,9 @@ PY
   profit for all care settings; the current optimum is light care (~$67.6k),
   with maximum care at ~$22.0k, confirming that more care is not monotonically
   better. Added price/log-value tests.
+
+- 2026-10-31: P20 KC precompute and scoring state: added finite stand-level
+  precompute, 0–100 score normalization, and local one-play/order tournament
+  state. The KC grid (5 care levels × 2 skidder counts × 2 log lengths) is
+  complete: 20 combinations, best $75,705.63, worst $21,969.10; best choice is
+  moderate care, one skidder, 6.1 m logs.

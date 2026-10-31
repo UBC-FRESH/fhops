@@ -612,10 +612,13 @@ loader replaces it.
     - [x] Knife Creek harvested/residual inventories generated and validated.
   - [ ] Define landing/road-extension assets, product prices, and bucking policy.
     - [x] Selection-cut careful-logging trade-off with decreasing damage benefits.
-  - [ ] Exhaustive stand-scale precompute and best/worst net-profit bounds.
+  - [x] KC stand-scale precompute: 20 combinations, best $75,705.63,
+    worst $21,969.10.
+  - [ ] Complete the remaining stand levels and full tournament precompute.
 - [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#313)
-  - [ ] Variant scenarios, scoring, and hidden events.
-  - [ ] One-play/order enforcement and persistence.
+  - [x] Net-profit evaluator, price deck, and 0–100 normalization.
+  - [x] One-play/order enforcement and local tournament persistence.
+  - [ ] Wire the evaluator into the API/web run path.
 - [ ] P20.3 Add the game API and web workspace (#314)
   - [ ] Lobby, level map, controls, live run, score, leaderboard.
 - [ ] P20.4 Prove fairness, document the tournament, and close out (#315)
