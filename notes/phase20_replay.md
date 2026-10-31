@@ -13,9 +13,9 @@ For each replay capture:
 - scene metadata: level, choices, contractor, duration, tree count.
 
 Optimal captures are generated offline and committed under
-`examples/game/replays/<level>/optimal/`. MKRF is pre-saved in the first
-implementation; Gavin and KC currently generate their optimal capture JIT on
-first replay request. Use `scripts/generate_game_replay.py` to pre-save them.
+`examples/game/replays/<level>/optimal/`. MKRF, Gavin, and KC optimal captures are pre-saved. Player captures are generated
+JIT and cached, with per-directory locks and duration consistency checks so a
+scene, event timeline, and metadata file cannot be mixed across runs.
 
 Player captures are generated after a completed attempt under
 `build/game_replays/<level>/<choice-hash>/` and served only to that session/team.

@@ -151,6 +151,8 @@ class GameService:
                 self.sessions[session.session_id] = session
         self.replay_tokens: dict[str, Path] = {}
         self.replay_jobs: dict[str, dict[str, Any]] = {}
+        self.replay_locks: dict[Path, threading.Lock] = {}
+        self.replay_locks_guard = threading.Lock()
         self.llm_fn = llm_fn
         self.chat_fn = chat_fn
         self.explanation_cache = explanation_cache
@@ -494,14 +496,16 @@ class GameService:
         }
         replay_root = entry.level_path.parents[2] / "replays" / entry.level_id
         optimal_dir = replay_root / "optimal"
-        if not (optimal_dir / "replay.json").is_file():
-            generate_replay(entry.level_path, optimal_choices, optimal_dir)
+        with self._replay_lock(optimal_dir):
+            if not self._replay_consistent(optimal_dir):
+                generate_replay(entry.level_path, optimal_choices, optimal_dir)
         key = hashlib.sha256(
             json.dumps(player_choices, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()[:16]
         player_dir = Path.cwd() / "build" / "game_replays" / entry.level_id / key
-        if not (player_dir / "replay.json").is_file():
-            generate_replay(entry.level_path, player_choices, player_dir)
+        with self._replay_lock(player_dir):
+            if not self._replay_consistent(player_dir):
+                generate_replay(entry.level_path, player_choices, player_dir)
         optimal_token = secrets.token_urlsafe(16)
         player_token = secrets.token_urlsafe(16)
         self.replay_tokens[optimal_token] = optimal_dir
@@ -517,6 +521,26 @@ class GameService:
             "optimal_choices": optimal_choices,
             "player_choices": player_choices,
         }
+
+    def _replay_lock(self, directory: Path) -> threading.Lock:
+        with self.replay_locks_guard:
+            return self.replay_locks.setdefault(directory.resolve(), threading.Lock())
+
+    @staticmethod
+    def _replay_consistent(directory: Path) -> bool:
+        try:
+            meta = json.loads((directory / "replay.json").read_text(encoding="utf-8"))
+            events = json.loads((directory / "system_events.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return False
+        if not (directory / "scene.gltf").is_file() or not (directory / "viewer.html").is_file():
+            return False
+        return math.isclose(
+            float(meta.get("duration_s", -1.0)),
+            float(events.get("duration_s", -2.0)),
+            rel_tol=1e-6,
+            abs_tol=0.01,
+        )
 
     def replay_asset(self, token: str, filename: str) -> Path:
         """Resolve a token-scoped replay asset file."""

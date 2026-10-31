@@ -4781,3 +4781,8 @@ PY
 - 2026-10-31: P20 game UX: completed teams now get an explicit "all levels
   complete" message instead of a silently disabled submit button; added a New
   session action for starting a fresh run.
+
+- 2026-10-31: P20 replay integrity: added per-asset generation locks and
+  metadata/timeline duration consistency checks, preventing concurrent jobs from
+  mixing optimal scene/events. Pre-saved the corrected Gavin and KC optimal
+  replay assets.
