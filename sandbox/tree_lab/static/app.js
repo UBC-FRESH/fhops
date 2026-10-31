@@ -1,4 +1,4 @@
-import { createViewer } from './viewer.js';
+import { createViewer } from './viewer.js?v=20261031-camera2';
 
 const state = {
   cases: [],
