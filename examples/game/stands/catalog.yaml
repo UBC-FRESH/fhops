@@ -64,6 +64,7 @@ stands:
   silviculture: selection_cut
   base_harvester_productivity_multiplier: 0.8
   careful_logging_profile: default_selection_cut_v1
+  price_deck: examples/game/levels/kc_57254551/prices.yaml
   careful_logging_public:
     care_premium_per_m3_range: [0.0, 14.0]
     productivity_multiplier_range: [0.72, 1.0]

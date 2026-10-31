@@ -4647,3 +4647,10 @@ PY
   multiplier. A calibrated KC run (`form_factor=0.192014`, productivity `0.80`)
   processed 3,162 m³ with no volume warning in 45 s. Added a spatial-machine
   regression test for the processing multiplier.
+
+- 2026-10-31: P20 KC net-profit evaluator: added product/price decks, log
+  classification, machine-hours costing, care premium, residual-asset damage,
+  mobilisation/road costs, and net profit. Calibrated KC returns positive net
+  profit for all care settings; the current optimum is light care (~$67.6k),
+  with maximum care at ~$22.0k, confirming that more care is not monotonically
+  better. Added price/log-value tests.

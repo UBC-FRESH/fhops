@@ -150,7 +150,9 @@ The exact mapping is server-side and is used in precompute. The briefing shows
 only plausible ranges: care premium `0–14 $/m³`, productivity multiplier
 `0.72–1.0`, and residual damage `4–20%`. Players can reason about the trade-off
 but cannot calculate the exact optimum from the UI. The default curve has an
-interior optimum, so “maximum care” is not automatically best.
+interior optimum, so “maximum care” is not automatically best. On the current
+calibrated KC economics the optimum is light care; the exact optimum is
+recomputed per level and revealed only in the debrief.
 
 Residual trees are a separate pinned inventory. They are not processed by the
 tree system. Their asset value loss is charged as:
@@ -292,9 +294,11 @@ Planned assets and code:
 - `examples/game/stands/<level>/landings.geojson` — landing candidates and
   trunk-road extensions.
 - `scripts/generate_game_inventory.py` — deterministic Nemora/PSP producer.
-- `examples/game/stands/<level>/prices.yaml` — product/grade prices.
+- `examples/game/levels/<level>/prices.yaml` — product/grade prices and level
+  cost deck.
 - `src/fhops/game/levels.py`, `inventory.py`, `bucking.py`,
-  `careful_logging.py`, `scoring.py`, `precompute.py`, `state.py`.
+  `careful_logging.py`, `value.py`, `operation.py`, `scoring.py`,
+  `precompute.py`, `state.py`.
 - `src/fhops/web/game.py` and `src/fhops/web/static/game.*`.
 - `tests/game/`, `tests/web/test_game_api.py`.
 - `docs/howto/serious_game.rst`.
