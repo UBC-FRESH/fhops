@@ -7,6 +7,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+from .explain_cache import ExplanationCache, explanation_key
+
 __all__ = [
     "DebriefFacts",
     "build_debrief_facts",
@@ -197,3 +199,21 @@ def explain_debrief(
         }
     except Exception:
         return fallback
+
+
+def explain_debrief_cached(
+    facts: DebriefFacts,
+    *,
+    cache: ExplanationCache | None = None,
+    llm_fn: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Explain a debrief with stable level+choice caching."""
+    if cache is not None:
+        key = explanation_key(facts.level_id, facts.player_choices)
+        cached = cache.get(key)
+        if cached is not None:
+            return cached
+    payload = explain_debrief(facts, llm_fn=llm_fn)
+    if cache is not None:
+        cache.put(explanation_key(facts.level_id, facts.player_choices), payload)
+    return payload

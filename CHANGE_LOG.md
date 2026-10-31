@@ -4686,3 +4686,8 @@ PY
   template explanations, an optional LLM validation hook, API route, and a
   Show debrief button. Leakage tests confirm the debrief is unavailable before
   an attempt.
+
+- 2026-10-31: P20 debrief LLM path: wired the optional agent to
+  `opencode-go/deepseek-v4.1-flash`, added strict JSON prompt/response parsing,
+  and cached explanation payloads by level + choice hash. The deterministic
+  template remains the default when the agent is disabled.

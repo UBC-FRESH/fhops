@@ -177,3 +177,38 @@ def test_debrief_only_after_attempt(tmp_path: Path) -> None:
     payload = after.json()
     assert payload["optimal_choices"]["care_level"] == 0.5
     assert payload["explanation"]["source"] == "deterministic_template"
+
+
+def test_game_debrief_uses_configured_agent_model_hook(tmp_path: Path) -> None:
+    script = tmp_path / "fake_game_agent.py"
+    script.write_text(
+        "import json\nprint(json.dumps({'why_optimal': 'agent explanation', 'parameter_costs': {}}))\n",
+        encoding="utf-8",
+    )
+    app = create_app(
+        ServiceConfig(
+            roots=[tmp_path],
+            workspace=Path.cwd(),
+            game_level=LEVEL,
+            game_precompute=PRECOMPUTE,
+            allow_agent=True,
+            agent_command=(__import__("sys").executable, str(script)),
+        )
+    )
+    client = TestClient(app)
+    client.post("/api/game/sessions", json={"session_id": "agent"})
+    client.post("/api/game/sessions/agent/teams", json={"team_code": "T1"})
+    client.post(
+        "/api/game/sessions/agent/teams/T1/submit",
+        json={
+            "care_level": 0.0,
+            "skidder_count": 1,
+            "log_length_m": 4.9,
+            "sawlog_min_dbh_cm": 20.0,
+            "road_extension_m": 0.0,
+        },
+    )
+    debrief = client.get("/api/game/sessions/agent/teams/T1/debrief/kc_57254551")
+    assert debrief.status_code == 200
+    assert debrief.json()["explanation"]["source"] == "llm"
+    assert debrief.json()["explanation"]["why_optimal"] == "agent explanation"

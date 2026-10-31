@@ -21,6 +21,12 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 import fhops
+from fhops.game.explain_cache import ExplanationCache
+from fhops.game.llm import (
+    DEEPSEEK_GAME_MODEL,
+    build_debrief_prompt,
+    parse_debrief_response,
+)
 from fhops.web.agent import AgentError, AgentRequest, run_agent
 from fhops.web.discovery import RunRecord, discover_runs
 from fhops.web.editing import (
@@ -98,6 +104,10 @@ class ServiceConfig:
         Optional complete stand precompute artifact.
     game_levels / game_precomputes:
         Optional ordered list of stand levels and matching precomputes.
+    game_agent_model:
+        Model used for optional post-level LLM explanations.
+    game_explanation_cache:
+        Optional JSON cache for level+choice explanations.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -121,6 +131,8 @@ class ServiceConfig:
     game_precompute: Path | None = None
     game_levels: list[Path] = field(default_factory=list)
     game_precomputes: list[Path] = field(default_factory=list)
+    game_agent_model: str = DEEPSEEK_GAME_MODEL
+    game_explanation_cache: Path | None = None
 
 
 class ObjectiveUpdate(BaseModel):
@@ -203,7 +215,30 @@ def create_app(config: ServiceConfig) -> FastAPI:
     if config.game_level is not None and config.game_precompute is not None:
         game_specs.append((config.game_level, config.game_precompute))
     if game_specs:
-        game_service = GameService(levels=game_specs)
+        game_llm = None
+        if config.allow_agent:
+
+            def game_llm(facts: dict[str, Any]) -> dict[str, Any]:
+                response = run_agent(
+                    AgentRequest(
+                        message=build_debrief_prompt(facts),
+                        model=config.game_agent_model,
+                    ),
+                    workspace=config.workspace,
+                    command=config.agent_command,
+                    timeout=config.agent_timeout,
+                )
+                return parse_debrief_response(str(response["response"]))
+
+        game_service = GameService(
+            levels=game_specs,
+            llm_fn=game_llm,
+            explanation_cache=(
+                ExplanationCache(config.game_explanation_cache)
+                if config.game_explanation_cache is not None
+                else None
+            ),
+        )
         app.include_router(create_game_router(game_service))
 
     def _scenario_target(scenario_id: str) -> tuple[Path, str | None, RunRecord]:

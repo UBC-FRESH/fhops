@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import math
 import secrets
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -13,7 +14,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from fhops.game.careful_logging import DEFAULT_CAREFUL_LOGGING_CURVE
-from fhops.game.debrief import build_debrief_facts, explain_debrief
+from fhops.game.debrief import build_debrief_facts, explain_debrief_cached
+from fhops.game.explain_cache import ExplanationCache
 from fhops.game.stand_precompute import (
     GameStandPrecomputeError,
     check_stand_precompute,
@@ -75,6 +77,8 @@ class GameService:
         level_path: Path | None = None,
         precompute_path: Path | None = None,
         levels: list[tuple[Path, Path]] | None = None,
+        llm_fn: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
+        explanation_cache: ExplanationCache | None = None,
     ) -> None:
         specs = list(levels or [])
         if level_path is not None or precompute_path is not None:
@@ -119,6 +123,8 @@ class GameService:
             )
         ).hexdigest()
         self.sessions: dict[str, TournamentSession] = {}
+        self.llm_fn = llm_fn
+        self.explanation_cache = explanation_cache
 
     @property
     def level_id(self) -> str:
@@ -238,7 +244,11 @@ class GameService:
         )
         return {
             **facts.to_dict(),
-            "explanation": explain_debrief(facts),
+            "explanation": explain_debrief_cached(
+                facts,
+                cache=self.explanation_cache,
+                llm_fn=self.llm_fn,
+            ),
         }
 
     def submit(
