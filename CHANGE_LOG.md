@@ -4675,3 +4675,8 @@ PY
   precomputes. MKRF uses FAIB CWHdm/Fraser PSP; Gavin uses ICHmk3/Williams Lake
   PSP at age-137 BLOCK_ID 1032. Also extended the local game service/API to all
   three ordered levels and added a level selector to the Game page.
+
+- 2026-10-31: P20 Gavin economic calibration: the synthetic Gavin deck now
+  straddles break-even (best $2,456.78, worst -$5,711.50) instead of being
+  uniformly negative or uniformly profitable. Poorer log-length choices lose
+  money while the best plan remains profitable.

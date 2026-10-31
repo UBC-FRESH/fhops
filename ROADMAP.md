@@ -615,7 +615,8 @@ loader replaces it.
   - [x] KC stand-scale precompute: 20 combinations, best $75,705.63,
     worst $21,969.10.
   - [x] MKRF/Gavin PSP inventories and four-combination precomputes.
-  - [ ] Rebalance the synthetic Gavin price deck and add any remaining levels.
+  - [x] Rebalance the synthetic Gavin deck to straddle break-even.
+  - [ ] Add any remaining levels.
 - [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#313)
   - [x] Net-profit evaluator, price deck, and 0–100 normalization.
   - [x] One-play/order enforcement and local tournament persistence.

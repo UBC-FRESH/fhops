@@ -1,7 +1,8 @@
 schema_version: fhops.game.prices.v1
 currency: CAD
-note: Synthetic serious-game price deck; not a market forecast or mill offer.
-mobilisation_cost: 25000.0
+note: Synthetic serious-game price deck; Gavin is calibrated so the worst/best range
+  straddles break-even.
+mobilisation_cost: 10000.0
 road_extension_cost_per_m: 120.0
 residual_asset_per_m3: 70.0
 products:
