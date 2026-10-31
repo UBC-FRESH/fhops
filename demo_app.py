@@ -96,6 +96,18 @@ async def public_demo_limits(request: Request, call_next: Any) -> Any:
     return response
 
 
+@app.middleware("http")
+async def no_store_public_demo(request: Request, call_next: Any) -> Any:
+    """Never let browsers cache the demo shell or its modules."""
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith(("/game", "/sandbox", "/static")):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
+
 def _landing(_request: Request) -> FileResponse:
     return FileResponse(LANDING, headers={"Cache-Control": "no-store"})
 
