@@ -1,0 +1,25 @@
+{
+  "schema_version": "fhops.tree.inventory.v1",
+  "inventory_id": "mkrf-k80-cable-cut-list",
+  "generated_utc": "2026-10-30T23:50:30+00:00",
+  "source_id": "derived-mkrf-k80-cable",
+  "producer": "FHOPS Tree Lab harvest prescription",
+  "method": "Derived cut list from a stand and a declared harvest prescription.",
+  "crs": "EPSG:3005",
+  "units": {
+    "x_y": "m",
+    "elevation": "m",
+    "dbh": "cm",
+    "height": "m",
+    "crown_radius": "m"
+  },
+  "review_status": "not_reviewed",
+  "block_ids": [
+    "MKRF_K80_666"
+  ],
+  "tree_count": 900,
+  "inventory_sha256": "377365596b2f82d13e95345e86cfbc2134c18736b2062090e3bfe4e65589c7c1",
+  "caveats": [
+    "Derived cut list; not a surveyed stand or tree map."
+  ]
+}

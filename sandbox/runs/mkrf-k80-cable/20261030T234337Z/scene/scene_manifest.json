@@ -1,0 +1,44 @@
+{
+  "assignments_path": "/home/gep/projects/fhops-tree-lab/sandbox/runs/mkrf-k80-cable/20261030T234337Z/inputs/assignments.csv",
+  "bounds": {
+    "x": [
+      1251122.34,
+      1251453.25
+    ],
+    "y": [
+      487560.9,
+      488337.15
+    ],
+    "z": [
+      87.02,
+      552.76
+    ]
+  },
+  "caveats": [
+    "Procedural tree geometry only; not a surveyed tree map or machine CAD.",
+    "Ground is a flat plane at the lowest tree elevation; it is not a terrain model.",
+    "Rendering video is external to FHOPS.",
+    "Reference form-factor model only; not an operational taper or merchantability model.",
+    "Log products and grades are simple placeholders for the simulation path.",
+    "Derived cut list; not a surveyed stand or tree map."
+  ],
+  "files": {
+    "camera_path": "camera_path.json",
+    "glb": "scene.glb",
+    "gltf": "scene.gltf",
+    "viewer": "viewer.html"
+  },
+  "generated_utc": "2026-10-30T23:43:40.416047+00:00",
+  "lod": "detailed",
+  "lod_threshold": 5000,
+  "log_count": 500,
+  "machine_path_points": 349,
+  "processed_count": 349,
+  "replay_id": "fhops-tree-replay-b6d9e9cd1dc1552f",
+  "scenario_path": "/home/gep/projects/fhops-tree-lab/sandbox/runs/mkrf-k80-cable/20261030T234337Z/inputs/scenario/scenario.yaml",
+  "scene_id": "fhops-tree-scene-1bd16abc0825e77a",
+  "schedule_sha256": "472d883387ecf44df028a03ee37fc1578e5510cdbe3924f6f650fa793f5882b7",
+  "schema_version": "fhops.tree.scene.v1",
+  "stem_id": "fhops-stems-37c3d9a8de3d8dc6",
+  "tree_count": 900
+}

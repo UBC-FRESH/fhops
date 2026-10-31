@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FHOPS tree scene</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #101416; }
+    canvas { display: block; }
+    #note { position: fixed; left: 12px; bottom: 12px; color: #d8e0e6;
+            font: 12px/1.4 system-ui, sans-serif; background: #101416cc; padding: 8px 10px; }
+  </style>
+</head>
+<body>
+  <div id="note">FHOPS tree scene · drag to orbit · wheel to zoom</div>
+  <script type="importmap">
+    {"imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }}
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    const renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(devicePixelRatio);
+    document.body.appendChild(renderer.domElement);
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x101416);
+    const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 5000);
+    camera.position.set(0, 40, 80);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x25302d, 1.1));
+    const sun = new THREE.DirectionalLight(0xfff2d8, 2.0);
+    sun.position.set(50, 100, 40);
+    scene.add(sun);
+    new GLTFLoader().load('scene.gltf', (gltf) => {
+      scene.add(gltf.scene);
+      const box = new THREE.Box3().setFromObject(gltf.scene);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3()).length() || 50;
+      controls.target.copy(center);
+      camera.position.copy(center).add(new THREE.Vector3(size * 0.7, size * 0.45, size * 0.7));
+      controls.update();
+    });
+    addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+    (function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); })();
+  </script>
+</body>
+</html>

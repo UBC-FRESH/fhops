@@ -1,0 +1,31 @@
+{
+  "cases": [
+    {
+      "case_id": "afrf-gavin",
+      "run_id": "demo",
+      "status": "completed",
+      "trees": 900,
+      "volume_m3": 1355.983,
+      "makespan_h": 50.99,
+      "events": 2602
+    },
+    {
+      "case_id": "afrf-partial-30",
+      "run_id": "demo",
+      "status": "completed",
+      "trees": 272,
+      "volume_m3": 407.012,
+      "makespan_h": 13.33,
+      "events": 804
+    },
+    {
+      "case_id": "mkrf",
+      "run_id": "demo",
+      "status": "completed",
+      "trees": 800,
+      "volume_m3": 2556.577,
+      "makespan_h": 91.65,
+      "events": 2785
+    }
+  ]
+}

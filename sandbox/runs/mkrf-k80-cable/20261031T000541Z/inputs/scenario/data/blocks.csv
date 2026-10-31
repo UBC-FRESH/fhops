@@ -1,0 +1,2 @@
+id,landing_id,harvest_system_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,stem_density_per_ha,ground_slope_percent
+MKRF_K80_666,K80_L1,cable_standing_tr125,2759.075015,1,10,3.065639,354.040756,115.486777,60.0

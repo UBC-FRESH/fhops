@@ -1,0 +1,2 @@
+id,landing_id,harvest_system_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,stem_density_per_ha,ground_slope_percent
+AFRF_GAVIN_485,L1,ground_fb_skid,407.011673,1,7,1.496366,58.901834,39.363242,9.0

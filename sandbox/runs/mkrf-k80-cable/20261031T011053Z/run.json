@@ -1,0 +1,128 @@
+{
+  "schema_version": "fhops.tree_lab.run.v1",
+  "run_id": "20261031T011053Z",
+  "case_id": "mkrf-k80-cable",
+  "case_label": "MKRF K80 / Raven Creek \u2014 steep cable-yarder concept (FEMIC stand 666)",
+  "status": "completed",
+  "started_utc": "2026-10-31T01:10:53.510157+00:00",
+  "finished_utc": "2026-10-31T01:10:55.857328+00:00",
+  "fhops_version": "1.2.0",
+  "fhops_commit": "02ee6e21b3470f79498e893443f980314aadce4c",
+  "commands": [
+    {
+      "command": [
+        "sandbox.tree_lab.cable",
+        "mkrf-k80-cable"
+      ],
+      "returncode": 0,
+      "duration_s": 0.093,
+      "timed_out": false,
+      "stdout_tail": [
+        "cable concept: 900 trees, 2759.1 m3"
+      ],
+      "stderr_tail": []
+    },
+    {
+      "command": [
+        "/home/gep/projects/fhops/.venv/bin/python",
+        "-m",
+        "fhops.cli.main",
+        "tree",
+        "scene",
+        "/home/gep/projects/fhops-tree-lab/sandbox/runs/mkrf-k80-cable/20261031T011053Z/inputs/scenario/scenario.yaml",
+        "/home/gep/projects/fhops-tree-lab/sandbox/runs/mkrf-k80-cable/20261031T011053Z/inputs/assignments.csv",
+        "--out",
+        "/home/gep/projects/fhops-tree-lab/sandbox/runs/mkrf-k80-cable/20261031T011053Z/scene",
+        "--max-log-nodes",
+        "500"
+      ],
+      "returncode": 0,
+      "duration_s": 2.015,
+      "timed_out": false,
+      "stdout_tail": [
+        "  \"tree_count\": 900,",
+        "  \"processed_count\": 349,",
+        "  \"log_count\": 500,",
+        "  \"lod\": \"detailed\"",
+        "}"
+      ],
+      "stderr_tail": []
+    }
+  ],
+  "pin": {
+    "pinned": true,
+    "inventory_id": "mkrf-k80-cable-synthetic",
+    "changed": false
+  },
+  "harvest": {
+    "prescription": {
+      "type": "clear_cut",
+      "marking_rule": "all",
+      "target_basal_area_fraction": 1.0
+    },
+    "derived": {
+      "scenario": "/home/gep/projects/fhops-tree-lab/sandbox/runs/mkrf-k80-cable/20261031T011053Z/inputs/scenario/scenario.yaml",
+      "assignments": "/home/gep/projects/fhops-tree-lab/sandbox/runs/mkrf-k80-cable/20261031T011053Z/inputs/assignments.csv",
+      "cut_list": "/home/gep/projects/fhops-tree-lab/sandbox/runs/mkrf-k80-cable/20261031T011053Z/inputs/tree_inventory/cut_list.csv",
+      "cut_count": 900,
+      "residual_count": 0,
+      "cut_volume_m3": 2759.075015,
+      "stand_volume_m3": 2759.075015,
+      "cut_basal_area_m2": 162.124934,
+      "stand_basal_area_m2": 162.124934,
+      "removed_basal_area_fraction": 1.0
+    }
+  },
+  "inputs": {
+    "scenario": "d97859529f7fd060a11f1698dcb27517e9d6d2417667997274bb459de0fc6872",
+    "inventory": "377365596b2f82d13e95345e86cfbc2134c18736b2062090e3bfe4e65589c7c1",
+    "metadata": "ebeb68fabddeb6ff06876b5063772dacfa50bc9f329bd5026aca4e919de77a22",
+    "assignments": "472d883387ecf44df028a03ee37fc1578e5510cdbe3924f6f650fa793f5882b7"
+  },
+  "artifacts": {
+    "events_json": "system/system_events.json",
+    "summary_json": "system/system_summary.json",
+    "events_csv": "system/system_events.csv",
+    "tree_processing_csv": "system/tree_processing.csv",
+    "scene_gltf": "scene/scene.gltf",
+    "scene_glb": "scene/scene.glb",
+    "scene_manifest": "scene/scene_manifest.json"
+  },
+  "kpis": {
+    "tree_count": 900,
+    "processed_volume_m3": 2759.075015,
+    "makespan_s": 572341.382,
+    "landing_inventory_max_m3": 0.0,
+    "landing_inventory_final_m3": 0.0,
+    "unreachable_count": 0,
+    "machine_summaries": {
+      "H1": {
+        "busy_s": 54324.682,
+        "events": 900,
+        "utilisation": 0.094917
+      },
+      "Y1": {
+        "busy_s": 572031.991,
+        "events": 326,
+        "utilisation": 0.999459
+      },
+      "L1": {
+        "busy_s": 29340.0,
+        "events": 326,
+        "utilisation": 0.051263
+      }
+    },
+    "truck_summary": null
+  },
+  "warnings": [
+    "Cable yarder is a sandbox reference model, not a calibrated engineering design.",
+    "The 60% slope is a scenario assumption, not a DEM-derived measurement."
+  ],
+  "caveats": [
+    "Synthetic tree list; actual FEMIC forest-cover footprint.",
+    "Reference cable layout and cycle model; not an operational plan.",
+    "No operational, financial, or regulatory claim is made."
+  ],
+  "event_count": 1552,
+  "duration_s": 2.108
+}

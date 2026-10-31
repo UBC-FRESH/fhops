@@ -1,0 +1,35 @@
+name: AFRF Gavin Lake — 30% BA proportional (partial cut)
+num_days: 7
+start_date: '2026-01-01'
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+  harvest_systems: data/harvest_systems.yaml
+
+geo:
+  crs: EPSG:3005
+  notes: Synthetic footprint rectangle of the published block area; not a surveyed polygon.
+
+tree_inventory:
+  inventory_id: afrf-gavin-synthetic
+  inventory_sha256: aac603e092faf5099eda4c6ec665d96a1ca1338400694ec78a2d661e6e77285b
+  metadata_sha256: cf2854a7e606898a93481e8c017c43af601fdc52c69b49a7b46b79afaabad30a
+  inventory_path: ../tree_inventory/tree_inventory.csv
+  metadata_path: ../tree_inventory/tree_inventory.meta.json
+  crs: EPSG:3005
+  review_status: not_reviewed
+  source_id: synthetic-afrf-gavin
+  producer: FHOPS Tree Lab synthetic generator
+  method: Plot-conditioned deterministic synthetic point list; not an ITD/ITC segmentation
+    product.
+  tree_count: 900
+  block_ids:
+  - AFRF_GAVIN_485
+  caveats:
+  - Synthetic tree list; not a surveyed stand, tree map, or ITD/ITC product.
+  - Block footprint is a placeholder rectangle of the published area, not the surveyed
+    polygon.
+  - 'Merchantable volume computed with the FHOPS reference stem model: 1355.983 m3.'

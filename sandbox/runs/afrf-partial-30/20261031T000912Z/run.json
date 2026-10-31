@@ -1,0 +1,197 @@
+{
+  "schema_version": "fhops.tree_lab.run.v1",
+  "run_id": "20261031T000912Z",
+  "case_id": "afrf-partial-30",
+  "case_label": "AFRF Gavin Lake \u2014 30% BA proportional (partial cut)",
+  "status": "completed",
+  "started_utc": "2026-10-31T00:09:12.093669+00:00",
+  "finished_utc": "2026-10-31T00:09:16.780620+00:00",
+  "fhops_version": "1.2.0",
+  "fhops_commit": "02ee6e21b3470f79498e893443f980314aadce4c",
+  "commands": [
+    {
+      "command": [
+        "/home/gep/projects/fhops/.venv/bin/python",
+        "-m",
+        "fhops.cli.main",
+        "tree",
+        "system",
+        "/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/inputs/scenario/scenario.yaml",
+        "--block",
+        "AFRF_GAVIN_485",
+        "--feller",
+        "H1",
+        "--skidder",
+        "H2",
+        "--skidder",
+        "H3",
+        "--processor",
+        "H5",
+        "--loader",
+        "H4",
+        "--bunch-volume",
+        "8.0",
+        "--rate-model",
+        "calibrated",
+        "--shift-days",
+        "5",
+        "--shifts-per-day",
+        "2",
+        "--hours-per-shift",
+        "10",
+        "--truck-capacity",
+        "30.0",
+        "--truck-count",
+        "2",
+        "--truck-cycle",
+        "3600.0",
+        "--landing-capacity",
+        "120.0",
+        "--skidder-capacity",
+        "40.0",
+        "--out",
+        "/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/system"
+      ],
+      "returncode": 0,
+      "duration_s": 2.243,
+      "timed_out": false,
+      "stdout_tail": [
+        "    \"events_json\": \"/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/system/system_events.json\",",
+        "    \"trees_csv\": \"/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/system/tree_processing.csv\",",
+        "    \"manifest\": \"/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/system/system_summary.json\"",
+        "  }",
+        "}"
+      ],
+      "stderr_tail": []
+    },
+    {
+      "command": [
+        "/home/gep/projects/fhops/.venv/bin/python",
+        "-m",
+        "fhops.cli.main",
+        "tree",
+        "scene",
+        "/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/inputs/scenario/scenario.yaml",
+        "/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/inputs/assignments.csv",
+        "--out",
+        "/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/scene",
+        "--max-log-nodes",
+        "500"
+      ],
+      "returncode": 0,
+      "duration_s": 2.154,
+      "timed_out": false,
+      "stdout_tail": [
+        "  \"tree_count\": 272,",
+        "  \"processed_count\": 272,",
+        "  \"log_count\": 500,",
+        "  \"lod\": \"detailed\"",
+        "}"
+      ],
+      "stderr_tail": []
+    }
+  ],
+  "pin": {
+    "pinned": true,
+    "inventory_id": "afrf-gavin-synthetic",
+    "changed": false
+  },
+  "harvest": {
+    "prescription": {
+      "type": "partial",
+      "marking_rule": "proportional",
+      "target_basal_area_fraction": 0.3,
+      "seed": 20261030
+    },
+    "derived": {
+      "scenario": "/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/inputs/scenario/scenario.yaml",
+      "assignments": "/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/inputs/assignments.csv",
+      "cut_list": "/home/gep/projects/fhops-tree-lab/sandbox/runs/afrf-partial-30/20261031T000912Z/inputs/tree_inventory/cut_list.csv",
+      "cut_count": 272,
+      "residual_count": 628,
+      "cut_volume_m3": 407.011673,
+      "stand_volume_m3": 1355.9835,
+      "cut_basal_area_m2": 29.96862,
+      "stand_basal_area_m2": 99.531517,
+      "removed_basal_area_fraction": 0.301097
+    }
+  },
+  "inputs": {
+    "scenario": "70a217117e4a4c41bd9e19651f0c8b336861c328adca433b881c56f8c71dd6d0",
+    "inventory": "aac603e092faf5099eda4c6ec665d96a1ca1338400694ec78a2d661e6e77285b",
+    "metadata": "cf2854a7e606898a93481e8c017c43af601fdc52c69b49a7b46b79afaabad30a",
+    "assignments": "2fb23146442c4b7abce8c7c0a7104a31eaa898c78c4f6b31048b2b8fb8a0db0c"
+  },
+  "artifacts": {
+    "events_json": "system/system_events.json",
+    "summary_json": "system/system_summary.json",
+    "events_csv": "system/system_events.csv",
+    "tree_processing_csv": "system/tree_processing.csv",
+    "scene_gltf": "scene/scene.gltf",
+    "scene_glb": "scene/scene.glb",
+    "scene_manifest": "scene/scene_manifest.json"
+  },
+  "kpis": {
+    "tree_count": 272,
+    "processed_volume_m3": 407.0116726054027,
+    "makespan_s": 48005.44915894446,
+    "landing_inventory_max_m3": 39.317282975238186,
+    "landing_inventory_final_m3": 17.011672605402676,
+    "unreachable_count": 0,
+    "machine_summaries": {
+      "H1": {
+        "busy_s": 17801.732525309904,
+        "events": 540,
+        "utilisation": 0.37082732975519
+      },
+      "H2": {
+        "busy_s": 4357.754478725496,
+        "events": 88,
+        "utilisation": 0.09077624634439133
+      },
+      "H3": {
+        "busy_s": 4659.436216798568,
+        "events": 88,
+        "utilisation": 0.09706056913187769
+      },
+      "H4": {
+        "busy_s": 17814.492661148306,
+        "events": 44,
+        "utilisation": 0.3710931357430926
+      },
+      "H5": {
+        "busy_s": 44504.05775369858,
+        "events": 44,
+        "utilisation": 0.9270626258770565
+      }
+    },
+    "truck_summary": {
+      "arrival_interval_s": 0.0,
+      "dispatched_loads": 13,
+      "dispatched_volume_m3": 390.0,
+      "landing_capacity_m3": 120.0,
+      "landing_inventory_final_m3": 17.012,
+      "landing_inventory_max_m3": 39.317,
+      "mill_bays": 1,
+      "mill_service_s": 600.0,
+      "mill_wait_s": 0.0,
+      "one_way_distance_m": 0.0,
+      "speed_mps": 12.0,
+      "truck_capacity_m3": 30.0,
+      "truck_count": 2,
+      "truck_total_s": 48005.449
+    }
+  },
+  "warnings": [],
+  "caveats": [
+    "Reference multi-machine event model, not a field-calibrated system simulation.",
+    "Feller-buncher processing uses the existing reference spatial/ADV6N10 model.",
+    "Skidder, processor, and loader cycle times are configurable defaults; queue dispatch is greedy and deterministic.",
+    "DEM/road routing is optional; the model uses a direct line or a single connected road corridor and does not solve a full road network.",
+    "Shift windows delay tasks that do not fit; tasks are not split across shifts.",
+    "Trucking blocks the loader when landing inventory would exceed capacity; partial truck loads are allowed to make space.",
+    "Tree lists must be reviewed separately; this module does not validate stem-model calibration."
+  ],
+  "event_count": 804,
+  "duration_s": 4.397
+}

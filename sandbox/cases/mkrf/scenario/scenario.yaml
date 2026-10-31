@@ -1,0 +1,35 @@
+name: MKRF Malcolm Knapp — synthetic tree list
+num_days: 7
+start_date: '2026-01-01'
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+  harvest_systems: data/harvest_systems.yaml
+
+geo:
+  crs: EPSG:3005
+  notes: Synthetic footprint rectangle of the published block area; not a surveyed polygon.
+
+tree_inventory:
+  inventory_id: mkrf-synthetic
+  inventory_sha256: 7db844e3f3036282e6d64d7221527c0555e2b60dd1a1ab1a7de83b42d7c69ba3
+  metadata_sha256: a59670cf68ce58363a5d15d70c77171eea5ea4911de503722afa18d32182bd55
+  inventory_path: ../tree_inventory/tree_inventory.csv
+  metadata_path: ../tree_inventory/tree_inventory.meta.json
+  crs: EPSG:3005
+  review_status: not_reviewed
+  source_id: synthetic-mkrf
+  producer: FHOPS Tree Lab synthetic generator
+  method: Plot-conditioned deterministic synthetic point list; not an ITD/ITC segmentation
+    product.
+  tree_count: 800
+  block_ids:
+  - MKRF_MATURE_868
+  caveats:
+  - Synthetic tree list; not a surveyed stand, tree map, or ITD/ITC product.
+  - Block footprint is a placeholder rectangle of the published area, not the surveyed
+    polygon.
+  - 'Merchantable volume computed with the FHOPS reference stem model: 2556.577 m3.'

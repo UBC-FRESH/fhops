@@ -1,0 +1,25 @@
+{
+  "schema_version": "fhops.tree.inventory.v1",
+  "inventory_id": "mkrf-cut-list",
+  "generated_utc": "2026-10-31T00:07:51+00:00",
+  "source_id": "derived-mkrf",
+  "producer": "FHOPS Tree Lab harvest prescription",
+  "method": "Derived cut list from a stand and a declared harvest prescription.",
+  "crs": "EPSG:3005",
+  "units": {
+    "x_y": "m",
+    "elevation": "m",
+    "dbh": "cm",
+    "height": "m",
+    "crown_radius": "m"
+  },
+  "review_status": "not_reviewed",
+  "block_ids": [
+    "MKRF_MATURE_868"
+  ],
+  "tree_count": 800,
+  "inventory_sha256": "7db844e3f3036282e6d64d7221527c0555e2b60dd1a1ab1a7de83b42d7c69ba3",
+  "caveats": [
+    "Derived cut list; not a surveyed stand or tree map."
+  ]
+}

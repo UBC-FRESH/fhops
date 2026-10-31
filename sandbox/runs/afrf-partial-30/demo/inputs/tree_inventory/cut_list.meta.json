@@ -1,0 +1,25 @@
+{
+  "schema_version": "fhops.tree.inventory.v1",
+  "inventory_id": "afrf-partial-30-cut-list",
+  "generated_utc": "2026-10-30T22:50:20+00:00",
+  "source_id": "derived-afrf-partial-30",
+  "producer": "FHOPS Tree Lab harvest prescription",
+  "method": "Derived cut list from a stand and a declared harvest prescription.",
+  "crs": "EPSG:3005",
+  "units": {
+    "x_y": "m",
+    "elevation": "m",
+    "dbh": "cm",
+    "height": "m",
+    "crown_radius": "m"
+  },
+  "review_status": "not_reviewed",
+  "block_ids": [
+    "AFRF_GAVIN_485"
+  ],
+  "tree_count": 272,
+  "inventory_sha256": "2df7ed5d5437a62c7264691360b04fba9824438a90144feebd98a4ea407f2e24",
+  "caveats": [
+    "Derived cut list; not a surveyed stand or tree map."
+  ]
+}

@@ -1,0 +1,24 @@
+cable_standing_tr125:
+  system_id: cable_standing_tr125
+  loader_batch_volume_m3: 1.8
+  role_counts:
+    hand_faller: 1
+    skyline_yarder: 1
+    roadside_processor: 1
+    loader: 1
+  jobs:
+  - name: felling
+    machine_role: hand_faller
+    prerequisites: []
+  - name: primary_transport
+    machine_role: skyline_yarder
+    prerequisites:
+    - felling
+  - name: processing
+    machine_role: roadside_processor
+    prerequisites:
+    - primary_transport
+  - name: loading
+    machine_role: loader
+    prerequisites:
+    - processing

@@ -1,0 +1,27 @@
+name: MKRF K80 / Raven Creek — steep cable-yarder concept (FEMIC stand 666) (derived cut list)
+num_days: 10
+start_date: 2026-01-01
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+  harvest_systems: data/harvest_systems.yaml
+
+tree_inventory:
+  inventory_id: mkrf-k80-cable-cut-list
+  inventory_sha256: 377365596b2f82d13e95345e86cfbc2134c18736b2062090e3bfe4e65589c7c1
+  metadata_sha256: 0583763b2b1f276d9845f9f0648d08b710c40871cd0293ef21696b4e0f361fdd
+  inventory_path: ../tree_inventory/cut_list.csv
+  metadata_path: ../tree_inventory/cut_list.meta.json
+  crs: EPSG:3005
+  review_status: not_reviewed
+  source_id: derived-mkrf-k80-cable
+  producer: FHOPS Tree Lab harvest prescription
+  method: Derived cut list from a stand and a declared harvest prescription.
+  tree_count: 900
+  block_ids:
+  - MKRF_K80_666
+  caveats:
+  - Derived cut list; not a surveyed stand or tree map.

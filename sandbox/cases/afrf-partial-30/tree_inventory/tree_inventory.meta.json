@@ -1,0 +1,27 @@
+{
+  "schema_version": "fhops.tree.inventory.v1",
+  "inventory_id": "afrf-gavin-synthetic",
+  "generated_utc": "2026-10-30T20:36:47+00:00",
+  "source_id": "synthetic-afrf-gavin",
+  "producer": "FHOPS Tree Lab synthetic generator",
+  "method": "Plot-conditioned deterministic synthetic point list; not an ITD/ITC segmentation product.",
+  "crs": "EPSG:3005",
+  "units": {
+    "x_y": "m",
+    "elevation": "m",
+    "dbh": "cm",
+    "height": "m",
+    "crown_radius": "m"
+  },
+  "review_status": "not_reviewed",
+  "block_ids": [
+    "AFRF_GAVIN_485"
+  ],
+  "tree_count": 900,
+  "inventory_sha256": "aac603e092faf5099eda4c6ec665d96a1ca1338400694ec78a2d661e6e77285b",
+  "caveats": [
+    "Synthetic tree list; not a surveyed stand, tree map, or ITD/ITC product.",
+    "Block footprint is a placeholder rectangle of the published area, not the surveyed polygon.",
+    "Merchantable volume computed with the FHOPS reference stem model: 1355.983 m3."
+  ]
+}

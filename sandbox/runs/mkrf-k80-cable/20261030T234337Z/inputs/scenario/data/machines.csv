@@ -1,0 +1,5 @@
+id,crew,daily_hours,operating_cost,role
+H1,CF,24.0,900.0,hand_faller
+Y1,CY,24.0,2200.0,skyline_yarder
+P1,CP,24.0,1100.0,roadside_processor
+L1,CL,24.0,900.0,loader
