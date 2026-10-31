@@ -105,6 +105,10 @@ async def no_store_public_demo(request: Request, call_next: Any) -> Any:
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
+        # Clear old module caches when a document is opened, so a stale
+        # viewer.js cannot survive a normal reload or hard refresh.
+        if path in ("/", "/demo", "/game", "/sandbox", "/sandbox/"):
+            response.headers["Clear-Site-Data"] = '"cache"'
     return response
 
 
