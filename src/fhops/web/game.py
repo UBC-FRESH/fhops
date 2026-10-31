@@ -535,6 +535,10 @@ class GameService:
             return False
         if not (directory / "scene.gltf").is_file() or not (directory / "viewer.html").is_file():
             return False
+        if meta.get("path_mode") != "swath":
+            return False
+        if meta.get("generator_version") != "fhops.game.replay.swath.v1":
+            return False
         return math.isclose(
             float(meta.get("duration_s", -1.0)),
             float(events.get("duration_s", -2.0)),

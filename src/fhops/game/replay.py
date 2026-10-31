@@ -92,6 +92,8 @@ def generate_replay(
         shutil.copyfile(viewer_source, target / "viewer.html")
     payload = {
         "schema_version": "fhops.game.replay.v1",
+        "path_mode": "swath",
+        "generator_version": "fhops.game.replay.swath.v1",
         "level_id": level["level_id"],
         "choices": choices,
         "duration_s": result.makespan_s,

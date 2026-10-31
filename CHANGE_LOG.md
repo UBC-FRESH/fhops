@@ -4791,3 +4791,7 @@ PY
   enabled it for game operations/replays. Generic tree-system simulations keep
   nearest-neighbor behavior unless explicitly requested. Game precomputes and
   optimal replays are being regenerated with the swath path.
+
+- 2026-10-31: P20 replay cache invalidation: replay assets are now versioned by
+  `path_mode=swath`; the game rejects old nearest-neighbor player caches even if
+  their duration metadata matches.
