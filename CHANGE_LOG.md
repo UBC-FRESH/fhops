@@ -4691,3 +4691,7 @@ PY
   `opencode-go/deepseek-v4.1-flash`, added strict JSON prompt/response parsing,
   and cached explanation payloads by level + choice hash. The deterministic
   template remains the default when the agent is disabled.
+
+- 2026-10-31: P20 game lobby: added session/team progress and a leaderboard
+  panel to `/game`, with refresh after join and submission, plus an API
+  leaderboard regression test.

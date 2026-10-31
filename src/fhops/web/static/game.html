@@ -34,6 +34,14 @@
     <p class="muted">One selection-cut stand. Careful logging trades slower harvester work and an operator premium against residual-stem damage.</p>
   </section>
   <section>
+    <h2>Session</h2>
+    <div id="session-summary" class="muted">Create or join a session to see team progress and the leaderboard.</div>
+    <table id="leaderboard" style="width:100%; margin-top:12px; border-collapse:collapse; display:none">
+      <thead><tr><th style="text-align:left">Team</th><th style="text-align:right">Score</th><th style="text-align:right">Levels</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+  <section>
     <h2>Plan and score</h2>
     <label for="level">Level</label><select id="level"></select>
     <div class="row">
@@ -96,15 +104,23 @@ $('join').onclick = async () => {
   try {
     const session = $('session').value.trim(), team = $('team').value.trim();
     let response = await fetch('/api/game/sessions', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ session_id: session }) });
-    if (response.status === 400) response = await fetch('/api/game/sessions', { method: 'POST' });
-    if (!response.ok) throw new Error(await response.text());
-    const created = await response.json();
-    const sid = created.session_id;
+    let sid = session;
+    if (response.ok) {
+      sid = (await response.json()).session_id;
+    } else if (response.status !== 400) {
+      throw new Error(await response.text());
+    }
     $('session').value = sid;
     response = await fetch(`/api/game/sessions/${encodeURIComponent(sid)}/teams`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ team_code: team }) });
     if (!response.ok && response.status !== 400) throw new Error(await response.text());
     state.armed = true;
     $('submit').disabled = false;
+    const teamState = await fetch(`/api/game/sessions/${encodeURIComponent(sid)}/teams/${encodeURIComponent(team)}`);
+    if (teamState.ok) {
+      const statePayload = await teamState.json();
+      $('session-summary').textContent = `Session ${sid} · team ${team} · next level: ${statePayload.current_level || 'complete'}`;
+    }
+    await refreshLeaderboard(sid);
     show({ joined: { session_id: sid, team_code: team }, current_level: state.level.level_id });
   } catch (error) { show(String(error)); }
 };
@@ -122,9 +138,20 @@ $('submit').onclick = async () => {
     $('score').textContent = Number(payload.score).toFixed(1);
     $('submit').disabled = true;
     $('debrief').disabled = false;
+    await refreshLeaderboard(session);
     show({ score: payload.score, net_profit: payload.attempt.net_profit, result: payload.result });
   } catch (error) { show(String(error)); }
 };
+
+async function refreshLeaderboard(sessionId) {
+  if (!sessionId) return;
+  const response = await fetch(`/api/game/sessions/${encodeURIComponent(sessionId)}/leaderboard`);
+  if (!response.ok) return;
+  const rows = await response.json();
+  const table = $('leaderboard');
+  table.style.display = rows.length ? 'table' : 'none';
+  table.querySelector('tbody').innerHTML = rows.map((row) => `<tr><td>${row.team_code}</td><td style="text-align:right">${Number(row.total_score).toFixed(1)}</td><td style="text-align:right">${row.completed_levels}</td></tr>`).join('');
+}
 
 async function selectLevel(levelId) {
   state.level = state.levels.find((level) => level.level_id === levelId);

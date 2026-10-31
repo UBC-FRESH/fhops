@@ -212,3 +212,13 @@ def test_game_debrief_uses_configured_agent_model_hook(tmp_path: Path) -> None:
     assert debrief.status_code == 200
     assert debrief.json()["explanation"]["source"] == "llm"
     assert debrief.json()["explanation"]["why_optimal"] == "agent explanation"
+
+
+def test_leaderboard_endpoint(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+    client.post("/api/game/sessions", json={"session_id": "demo"})
+    client.post("/api/game/sessions/demo/teams", json={"team_code": "T1"})
+    leaderboard = client.get("/api/game/sessions/demo/leaderboard")
+    assert leaderboard.status_code == 200
+    assert leaderboard.json()[0]["team_code"] == "T1"
+    assert leaderboard.json()[0]["completed_levels"] == 0

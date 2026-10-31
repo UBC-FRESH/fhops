@@ -299,9 +299,10 @@ The local FastAPI service now exposes:
 - `GET /api/game/sessions/{id}/leaderboard`.
 
 The routes are enabled only when `game_level` and `game_precompute` are both
-configured on `ServiceConfig`. A first `/game` shell renders the whole-stand
-SVG boundary, joins a local session/team, exposes the finite controls, submits
-one attempt, and displays the score and selected-run components.
+configured on `ServiceConfig`. The `/game` shell renders the whole-stand SVG boundary, joins a local
+session/team, exposes finite controls, submits one attempt, displays the score
+and selected-run components, refreshes the session leaderboard, and exposes the
+post-attempt debrief.
 
 ## UI
 
