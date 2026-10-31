@@ -4777,3 +4777,7 @@ PY
   whole trees, not bucked log count/length; reference skidder time is per tree;
   processor/loader handling remains log-count-sensitive. Regenerated all level
   precomputes and rebalanced Gavin to straddle break-even again.
+
+- 2026-10-31: P20 game UX: completed teams now get an explicit "all levels
+  complete" message instead of a silently disabled submit button; added a New
+  session action for starting a fresh run.

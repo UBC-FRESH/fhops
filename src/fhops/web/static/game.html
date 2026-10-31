@@ -97,6 +97,7 @@
       <div><label for="team">Team code</label><input id="team" value="TEAM-A" /></div>
     </div>
     <button id="join">Create session and join</button>
+    <button id="new-session" type="button">New session</button>
     <div class="row">
       <div><label for="care">Careful logging</label><select id="care"></select></div>
       <div><label for="skidders">Skidders</label><select id="skidders"></select></div>
@@ -235,9 +236,9 @@ $('join').onclick = async () => {
     if (!response.ok && response.status !== 400) throw new Error(await response.text());
     state.armed = true;
     $('submit').disabled = false;
-    await refreshCompletion(sid, team);
-    await refreshLeaderboard(sid);
     setStatus(`Joined session ${sid} as ${team}.`);
+    await refreshLeaderboard(sid);
+    await refreshCompletion(sid, team);
   } catch (error) { setStatus(String(error)); }
 };
 
@@ -287,6 +288,7 @@ async function refreshCompletion(sessionId, teamCode) {
   $('submit').disabled = complete || !state.armed;
   if ((payload.attempts || []).length > 0) $('replay').disabled = false;
   if (complete) {
+    setStatus('This team has completed all levels. Enter a new team code or click New session to start a fresh run.');
     $('final-title').textContent = `Final debrief — ${scoreText(payload.total_score)} points`;
     $('final-note').textContent = state.level.chat_enabled
       ? 'All levels complete. Ask the optional DeepSeek debrief coach about the tournament.'
@@ -362,6 +364,19 @@ async function selectLevel(levelId) {
   await drawBoundary();
   setStatus(`Level: ${state.level.name} · ${state.level.area_ha?.toFixed(2) || '?'} ha · ${state.level.difficulty || ''}`);
 }
+
+$('new-session').onclick = async () => {
+  try {
+    const response = await fetch(api('/game/sessions'), { method: 'POST' });
+    const payload = await readJson(response);
+    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    $('session').value = payload.session_id;
+    $('team').value = 'TEAM-' + payload.session_id.slice(-4).toUpperCase();
+    state.armed = false;
+    $('submit').disabled = true;
+    setStatus(`New session ${payload.session_id} created. Join it with a team code.`);
+  } catch (error) { setStatus(String(error)); }
+};
 
 $('level').onchange = () => selectLevel($('level').value).catch((error) => setStatus(String(error)));
 $('chat-send').onclick = async () => {
