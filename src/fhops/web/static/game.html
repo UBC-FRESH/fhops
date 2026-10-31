@@ -108,6 +108,7 @@
     </div>
     <button id="submit" disabled>Submit one attempt</button>
     <button id="debrief" disabled>Show debrief</button>
+    <button id="replay" disabled>Open 3D replay</button>
     <div id="score">—</div>
     <div id="result-panel">
       <div class="result-title"><strong id="result-score">—</strong><span id="result-level" class="muted"></span></div>
@@ -126,7 +127,8 @@
 </main>
 <script>
 const state = { level: null, levels: [], armed: false, lastCompletedLevel: null };
-const API = window.location.pathname.replace(/\/game\/?$/, '') + '/api';
+const PAGE_BASE = window.location.pathname.replace(/\/game\/?$/, '');
+const API = PAGE_BASE + '/api';
 const api = (path) => `${API}${path}`;
 const $ = (id) => document.getElementById(id);
 const setStatus = (value) => { $('status').textContent = String(value); };
@@ -255,6 +257,7 @@ $('submit').onclick = async () => {
     $('score').textContent = Number(payload.score).toFixed(1);
     $('submit').disabled = true;
     $('debrief').disabled = false;
+    $('replay').disabled = false;
     await refreshLeaderboard(session);
     await refreshCompletion(session, team);
     $('submit').disabled = state.teamState?.current_level === null;
@@ -278,6 +281,7 @@ async function refreshCompletion(sessionId, teamCode) {
   }
   $('final-panel').style.display = complete ? 'block' : 'none';
   $('submit').disabled = complete || !state.armed;
+  if ((payload.attempts || []).length > 0) $('replay').disabled = false;
   if (complete) {
     $('final-title').textContent = `Final debrief — ${scoreText(payload.total_score)} points`;
     $('final-note').textContent = state.level.chat_enabled
@@ -400,6 +404,25 @@ $('buy-hints').onclick = async () => {
     output.innerHTML = `<strong>Consultant tips</strong><ul>${payload.tips.map((tip) => `<li>${tip}</li>`).join('')}</ul><div>Consultant fees: <strong>${money(payload.total_consultant_fees)}</strong></div>`;
     setStatus('Consultant tips purchased. Fees will be debited from your level result.');
   } catch (error) { setStatus(String(error)); }
+};
+
+$('replay').onclick = async () => {
+  try {
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const levelId = state.lastCompletedLevel || state.teamState?.attempts?.at(-1)?.level_id || state.level.level_id;
+    setStatus('Generating optimal and player replays…');
+    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/replay/${encodeURIComponent(levelId)}`));
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    const query = new URLSearchParams({
+      left: payload.optimal_url,
+      right: payload.player_url,
+      leftDuration: String(payload.optimal_duration_s),
+      rightDuration: String(payload.player_duration_s),
+    });
+    window.open(`${PAGE_BASE}/game/replay?${query.toString()}`, '_blank', 'noopener');
+    setStatus('3D replay opened in a new tab.');
+  } catch (error) { setStatus(`Replay unavailable: ${String(error)}`); }
 };
 
 $('debrief').onclick = async () => {

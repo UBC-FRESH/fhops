@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FHOPS dual 3D replay</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #101416; color: #e8eef2; font: 13px/1.3 system-ui, sans-serif; }
+    #bar { height: 54px; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: #172024; border-bottom: 1px solid #34444a; }
+    #bar strong { font-size: 14px; }
+    #bar button { background: #263237; color: #e8eef2; border: 1px solid #52656b; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+    #bar input[type=range] { flex: 1; accent-color: #f08a24; }
+    #bar span { color: #9eb0b7; min-width: 100px; text-align: right; font-variant-numeric: tabular-nums; }
+    #panes { display: grid; grid-template-columns: 1fr 1fr; height: calc(100% - 55px); gap: 2px; background: #34444a; }
+    .pane { position: relative; background: #101416; min-width: 0; }
+    .label { position: absolute; left: 12px; top: 12px; z-index: 2; background: #101416d9; border: 1px solid #52656b; border-radius: 7px; padding: 6px 9px; font-weight: 600; }
+    iframe { width: 100%; height: 100%; border: 0; }
+    @media (max-width: 900px) { #panes { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="bar">
+    <strong>FHOPS dual replay</strong>
+    <button id="play">Play</button>
+    <button id="reset">Reset</button>
+    <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" />
+    <span id="clock">0:00 / 0:00</span>
+  </div>
+  <div id="panes">
+    <div class="pane"><div class="label">Optimal plan</div><iframe id="left"></iframe></div>
+    <div class="pane"><div class="label">Your plan</div><iframe id="right"></iframe></div>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const left = document.getElementById('left'), right = document.getElementById('right');
+    const prefix = location.pathname.replace(/\/game\/replay\/?$/, '');
+    const assetUrl = (value) => value && value.startsWith('/api/') ? prefix + value : value;
+    left.src = assetUrl(params.get('left')); right.src = assetUrl(params.get('right'));
+    const leftDuration = Number(params.get('leftDuration') || 1);
+    const rightDuration = Number(params.get('rightDuration') || 1);
+    const duration = Math.max(leftDuration, rightDuration, 1);
+    const scrub = document.getElementById('scrub'), clock = document.getElementById('clock');
+    let playing = false, current = 0, last = performance.now();
+    scrub.max = String(duration);
+    const fmt = (v) => `${Math.floor(v / 60)}:${String(Math.floor(v % 60)).padStart(2, '0')}`;
+    function apply() {
+      for (const frame of [left, right]) {
+        const win = frame.contentWindow;
+        if (win && win.__setTime) { win.__pause?.(); win.__setTime(current); }
+      }
+      scrub.value = String(current); clock.textContent = `${fmt(current)} / ${fmt(duration)}`;
+    }
+    function loop(now) {
+      requestAnimationFrame(loop);
+      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      if (playing) { current += dt; if (current > duration) current = duration; apply(); }
+    }
+    document.getElementById('play').onclick = () => { playing = !playing; document.getElementById('play').textContent = playing ? 'Pause' : 'Play'; last = performance.now(); };
+    document.getElementById('reset').onclick = () => { playing = false; document.getElementById('play').textContent = 'Play'; current = 0; apply(); };
+    scrub.oninput = () => { current = Number(scrub.value); apply(); };
+    left.addEventListener('load', () => { setTimeout(apply, 500); });
+    right.addEventListener('load', () => { setTimeout(apply, 500); });
+    apply(); requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

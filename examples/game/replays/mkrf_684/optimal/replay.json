@@ -1,0 +1,17 @@
+{
+  "schema_version": "fhops.game.replay.v1",
+  "level_id": "mkrf_684",
+  "choices": {
+    "care_level": 0.0,
+    "log_length_m": 6.1,
+    "road_extension_m": 0.0,
+    "sawlog_min_dbh_cm": 20.0,
+    "skidder_count": 1
+  },
+  "duration_s": 538444.2153769835,
+  "tree_count": 4798,
+  "processed_volume_m3": 4116.596666581882,
+  "scene": "scene.gltf",
+  "events": "system_events.json",
+  "viewer": "viewer.html"
+}

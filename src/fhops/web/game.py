@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import math
 import secrets
 from collections.abc import Callable
@@ -16,6 +17,7 @@ from pydantic import BaseModel, Field
 from fhops.game.careful_logging import DEFAULT_CAREFUL_LOGGING_CURVE
 from fhops.game.debrief import build_debrief_facts, explain_debrief_cached
 from fhops.game.explain_cache import ExplanationCache
+from fhops.game.replay import generate_replay
 from fhops.game.stand_precompute import (
     GameStandPrecomputeError,
     check_stand_precompute,
@@ -137,6 +139,7 @@ class GameService:
             )
         ).hexdigest()
         self.sessions: dict[str, TournamentSession] = {}
+        self.replay_tokens: dict[str, Path] = {}
         self.llm_fn = llm_fn
         self.chat_fn = chat_fn
         self.explanation_cache = explanation_cache
@@ -402,6 +405,73 @@ class GameService:
             "total_consultant_fees": self._consultant_fees(entry, combined),
         }
 
+    def replay(self, session_id: str, team_code: str, level_id: str) -> dict[str, Any]:
+        """Generate/cache optimal and player replays for a completed attempt."""
+        session = self.session(session_id)
+        team = session.team(team_code)
+        attempt = next((item for item in team.attempts if item.level_id == level_id), None)
+        if attempt is None:
+            raise GameStateError(f"Level {level_id!r} has not been completed by this team.")
+        entry = self._entry(level_id)
+        optimal_choices = {
+            key: entry.precompute["bounds"]["best_choices"][key]
+            for key in (
+                "care_level",
+                "skidder_count",
+                "log_length_m",
+                "sawlog_min_dbh_cm",
+                "road_extension_m",
+            )
+        }
+        player_choices = {
+            key: attempt.choices[key]
+            for key in (
+                "care_level",
+                "skidder_count",
+                "log_length_m",
+                "sawlog_min_dbh_cm",
+                "road_extension_m",
+            )
+        }
+        replay_root = entry.level_path.parents[2] / "replays" / entry.level_id
+        optimal_dir = replay_root / "optimal"
+        if not (optimal_dir / "replay.json").is_file():
+            generate_replay(entry.level_path, optimal_choices, optimal_dir)
+        key = hashlib.sha256(
+            json.dumps(player_choices, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()[:16]
+        player_dir = Path.cwd() / "build" / "game_replays" / entry.level_id / key
+        if not (player_dir / "replay.json").is_file():
+            generate_replay(entry.level_path, player_choices, player_dir)
+        optimal_token = secrets.token_urlsafe(16)
+        player_token = secrets.token_urlsafe(16)
+        self.replay_tokens[optimal_token] = optimal_dir
+        self.replay_tokens[player_token] = player_dir
+        optimal_meta = json.loads((optimal_dir / "replay.json").read_text(encoding="utf-8"))
+        player_meta = json.loads((player_dir / "replay.json").read_text(encoding="utf-8"))
+        return {
+            "level_id": entry.level_id,
+            "optimal_url": f"/api/game/replay-assets/{optimal_token}/viewer.html",
+            "player_url": f"/api/game/replay-assets/{player_token}/viewer.html",
+            "optimal_duration_s": optimal_meta["duration_s"],
+            "player_duration_s": player_meta["duration_s"],
+            "optimal_choices": optimal_choices,
+            "player_choices": player_choices,
+        }
+
+    def replay_asset(self, token: str, filename: str) -> Path:
+        """Resolve a token-scoped replay asset file."""
+        try:
+            root = self.replay_tokens[token]
+        except KeyError as exc:
+            raise KeyError("Unknown replay token.") from exc
+        if Path(filename).name != filename:
+            raise ValueError("Invalid replay asset name.")
+        path = (root / filename).resolve()
+        if not path.is_relative_to(root.resolve()) or not path.is_file():
+            raise FileNotFoundError(filename)
+        return path
+
     def _entry(self, level_id: str) -> _StandEntry:
         try:
             return self.entries[level_id]
@@ -538,6 +608,26 @@ def create_game_router(service: GameService) -> APIRouter:
         except KeyError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         except GameStateError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @router.get("/sessions/{session_id}/teams/{team_code}/replay/{level_id}")
+    def replay(session_id: str, team_code: str, level_id: str) -> dict[str, Any]:
+        try:
+            return service.replay(session_id, team_code, level_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except (GameStateError, ValueError, FileNotFoundError, RuntimeError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @router.get("/replay-assets/{token}/{filename}")
+    def replay_asset(token: str, filename: str):
+        from fastapi.responses import FileResponse
+
+        try:
+            return FileResponse(service.replay_asset(token, filename))
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except (ValueError, FileNotFoundError) as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
     @router.get("/sessions/{session_id}/teams/{team_code}/debrief/{level_id}")

@@ -4755,3 +4755,8 @@ PY
   from the agent prompt, capped user questions, and bounded the synthesized
   prompt below the 4,000-character AgentRequest limit. Long final-chat questions
   now work without validation errors.
+
+- 2026-10-31: P20 first dual 3D replay: added replay asset generation, token-
+  scoped asset serving, a synchronized two-pane replay page, and a post-level
+  replay button. MKRF optimal assets are pre-saved; player replays are generated
+  JIT and cached by choice hash.

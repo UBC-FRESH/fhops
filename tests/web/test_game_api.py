@@ -112,7 +112,7 @@ def test_game_shell_and_boundary(tmp_path: Path) -> None:
     assert shell.status_code == 200
     assert "FHOPS Serious Game" in shell.text
     assert "level-map" in shell.text
-    assert "const API = window.location.pathname" in shell.text
+    assert "const PAGE_BASE = window.location.pathname" in shell.text
     assert 'id="sawlog"' in shell.text
     assert 'id="landing"' in shell.text
     assert shell.headers.get("cache-control") == "no-store"

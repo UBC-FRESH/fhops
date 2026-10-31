@@ -848,6 +848,13 @@ def create_app(config: ServiceConfig) -> FastAPI:
     if _STATIC_DIR.exists():
         app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
 
+    @app.get("/game/replay")
+    def replay_page() -> FileResponse:
+        path = _STATIC_DIR / "replay.html"
+        if not path.exists():
+            raise HTTPException(status_code=500, detail="Replay shell is missing")
+        return FileResponse(path, headers={"Cache-Control": "no-store"})
+
     @app.get("/game")
     def game_page() -> FileResponse:
         path = _STATIC_DIR / "game.html"
