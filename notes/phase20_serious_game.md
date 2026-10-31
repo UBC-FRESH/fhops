@@ -271,6 +271,21 @@ the attempt completes.
   submission.
 - State is local-only and persisted server-side. No public authentication claim.
 
+## API status
+
+The local FastAPI service now exposes:
+
+- `GET /api/game/levels` — public level metadata, controls, care ranges, prices,
+  and score bounds; no optimal choice.
+- `POST /api/game/sessions` — create a local session.
+- `POST /api/game/sessions/{id}/teams` — register a team.
+- `GET /api/game/sessions/{id}/teams/{team}` — current level and attempts.
+- `POST /api/game/sessions/{id}/teams/{team}/submit` — exact precomputed scoring.
+- `GET /api/game/sessions/{id}/leaderboard`.
+
+The routes are enabled only when `game_level` and `game_precompute` are both
+configured on `ServiceConfig`.
+
 ## UI
 
 A new **Game** workspace:

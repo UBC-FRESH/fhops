@@ -4660,3 +4660,8 @@ PY
   state. The KC grid (5 care levels × 2 skidder counts × 2 log lengths) is
   complete: 20 combinations, best $75,705.63, worst $21,969.10; best choice is
   moderate care, one skidder, 6.1 m logs.
+
+- 2026-10-31: P20 local game API: added public level metadata, session and team
+  creation, ordered one-play submission against the complete KC precompute,
+  team state, leaderboard, and pre-run leakage checks. Game routes are opt-in via
+  `ServiceConfig.game_level` plus `game_precompute`.

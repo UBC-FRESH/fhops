@@ -2,6 +2,8 @@ schema_version: fhops.game.level.v1
 level_id: kc_57254551
 order: 3
 name: Knife Creek selection cut
+area_ha: 35.952623
+difficulty: advanced
 scenario: scenario.yaml
 prices: prices.yaml
 stem_form_factor: 0.192014

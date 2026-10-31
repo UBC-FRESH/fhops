@@ -125,6 +125,10 @@ class TournamentSession:
         self.teams[normalized] = team
         return team
 
+    def team(self, team_code: str) -> TeamState:
+        """Return a registered team or raise a state error."""
+        return self._team(team_code)
+
     def current_level(self, team_code: str) -> str | None:
         """Return the next required level for a team."""
         team = self._team(team_code)

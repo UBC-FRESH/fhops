@@ -31,6 +31,7 @@ from fhops.web.editing import (
     update_locks,
     update_objective,
 )
+from fhops.web.game import GameService, create_game_router
 from fhops.web.lidarview import lidar_payload
 from fhops.web.lidarworkflow import (
     LidarBundleRequest,
@@ -91,6 +92,10 @@ class ServiceConfig:
         Allowlisted roots containing FEMIC LiDAR bundle directories.
     lidar_timeout:
         Timeout for LiDAR mapping subprocesses.
+    game_level:
+        Optional stand-level game manifest. Must be paired with ``game_precompute``.
+    game_precompute:
+        Optional complete stand precompute artifact.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -110,6 +115,8 @@ class ServiceConfig:
     agent_timeout: float = 120.0
     lidar_bundles: list[Path] = field(default_factory=list)
     lidar_timeout: float = 300.0
+    game_level: Path | None = None
+    game_precompute: Path | None = None
 
 
 class ObjectiveUpdate(BaseModel):
@@ -184,6 +191,14 @@ def create_app(config: ServiceConfig) -> FastAPI:
             run_manager.shutdown()
 
     app = FastAPI(title=config.title, version=fhops.__version__, lifespan=lifespan)
+    if (config.game_level is None) != (config.game_precompute is None):
+        raise ValueError("game_level and game_precompute must be configured together.")
+    if config.game_level is not None and config.game_precompute is not None:
+        game_service = GameService(
+            level_path=config.game_level,
+            precompute_path=config.game_precompute,
+        )
+        app.include_router(create_game_router(game_service))
 
     def _scenario_target(scenario_id: str) -> tuple[Path, str | None, RunRecord]:
         record = _find_run(roots, scenario_id)

@@ -618,7 +618,9 @@ loader replaces it.
 - [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#313)
   - [x] Net-profit evaluator, price deck, and 0–100 normalization.
   - [x] One-play/order enforcement and local tournament persistence.
-  - [ ] Wire the evaluator into the API/web run path.
+  - [x] Local game API: public level, session/team, ordered submission,
+    leaderboard.
+  - [ ] Add the Game workspace UI and level-map viewport.
 - [ ] P20.3 Add the game API and web workspace (#314)
   - [ ] Lobby, level map, controls, live run, score, leaderboard.
 - [ ] P20.4 Prove fairness, document the tournament, and close out (#315)
