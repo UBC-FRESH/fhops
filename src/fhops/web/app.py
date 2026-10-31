@@ -109,6 +109,8 @@ class ServiceConfig:
         Model used for optional post-level LLM explanations.
     game_explanation_cache:
         Optional JSON cache for level+choice explanations.
+    game_session_store:
+        Optional JSON file used to persist tournament sessions across restarts.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -134,6 +136,7 @@ class ServiceConfig:
     game_precomputes: list[Path] = field(default_factory=list)
     game_agent_model: str = DEEPSEEK_GAME_MODEL
     game_explanation_cache: Path | None = None
+    game_session_store: Path | None = None
 
 
 class ObjectiveUpdate(BaseModel):
@@ -251,6 +254,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
                 if config.game_explanation_cache is not None
                 else None
             ),
+            session_store=config.game_session_store,
         )
         app.include_router(create_game_router(game_service))
 

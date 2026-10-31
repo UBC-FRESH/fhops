@@ -337,3 +337,35 @@ def test_consultant_fees_can_drive_negative_score(tmp_path: Path) -> None:
     )
     assert submitted.status_code == 200, submitted.text
     assert submitted.json()["score"] < 0.0
+
+
+def test_sessions_persist_across_service_restarts(tmp_path: Path) -> None:
+    store = tmp_path / "sessions.json"
+    config = ServiceConfig(
+        roots=[tmp_path],
+        workspace=Path.cwd(),
+        game_level=LEVEL,
+        game_precompute=PRECOMPUTE,
+        game_session_store=store,
+    )
+    first = TestClient(create_app(config))
+    first.post("/api/game/sessions", json={"session_id": "persisted"})
+    first.post("/api/game/sessions/persisted/teams", json={"team_code": "T1"})
+    first.post(
+        "/api/game/sessions/persisted/teams/T1/submit",
+        json={
+            "contractor_id": "northpoint",
+            "care_level": 0.5,
+            "skidder_count": 1,
+            "log_length_m": 6.1,
+            "sawlog_min_dbh_cm": 20.0,
+            "road_extension_m": 0.0,
+        },
+    )
+    assert store.is_file()
+
+    second = TestClient(create_app(config))
+    state = second.get("/api/game/sessions/persisted/teams/T1")
+    assert state.status_code == 200
+    assert len(state.json()["attempts"]) == 1
+    assert state.json()["current_level"] is None

@@ -435,7 +435,10 @@ $('debrief').onclick = async () => {
     if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
     renderDebrief(payload);
     setStatus('Debrief loaded for the completed level.');
-  } catch (error) { setStatus(String(error)); }
+  } catch (error) {
+    const text = String(error);
+    setStatus(text.includes('Unknown session') ? 'Session expired. Click Create session and join again.' : text);
+  }
 };
 
 loadLevel().catch((error) => setStatus(String(error)));

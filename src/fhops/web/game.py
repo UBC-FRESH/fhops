@@ -95,6 +95,7 @@ class GameService:
         llm_fn: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
         chat_fn: Callable[[dict[str, Any], str], str] | None = None,
         explanation_cache: ExplanationCache | None = None,
+        session_store: Path | None = None,
     ) -> None:
         specs = list(levels or [])
         if level_path is not None or precompute_path is not None:
@@ -139,6 +140,14 @@ class GameService:
             )
         ).hexdigest()
         self.sessions: dict[str, TournamentSession] = {}
+        self.session_store = session_store.expanduser().resolve() if session_store else None
+        if self.session_store is not None and self.session_store.is_file():
+            stored = json.loads(self.session_store.read_text(encoding="utf-8"))
+            if stored.get("schema_version") != "fhops.game.sessions.v1":
+                raise ValueError("Unsupported game session store schema.")
+            for item in stored.get("sessions", []):
+                session = TournamentSession.from_dict(item)
+                self.sessions[session.session_id] = session
         self.replay_tokens: dict[str, Path] = {}
         self.llm_fn = llm_fn
         self.chat_fn = chat_fn
@@ -160,6 +169,7 @@ class GameService:
             self.ruleset_hash,
         )
         self.sessions[session_id] = session
+        self._persist_sessions()
         return session.to_dict()
 
     def session(self, session_id: str) -> TournamentSession:
@@ -173,6 +183,7 @@ class GameService:
         """Register one team in a session."""
         session = self.session(session_id)
         team = session.register_team(team_code)
+        self._persist_sessions()
         return team.to_dict()
 
     def boundary(self, level_id: str) -> dict[str, Any]:
@@ -361,6 +372,7 @@ class GameService:
             net_profit=net_profit,
             score=score,
         )
+        self._persist_sessions()
         result_payload = dict(base_result)
         result_payload["net_profit"] = net_profit
         result_payload["contractor_adjustment"] = contractor_adjustment
@@ -395,6 +407,7 @@ class GameService:
         if unknown:
             raise ValueError("Unknown consultant(s): " + ", ".join(unknown))
         team.consultants[current] = combined
+        self._persist_sessions()
         tips = []
         for consultant_id in selected:
             tips.extend(self._tip_text(entry, by_id[consultant_id]))
@@ -404,6 +417,18 @@ class GameService:
             "tips": tips,
             "total_consultant_fees": self._consultant_fees(entry, combined),
         }
+
+    def _persist_sessions(self) -> None:
+        if self.session_store is None:
+            return
+        self.session_store.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "schema_version": "fhops.game.sessions.v1",
+            "sessions": [session.to_dict() for session in self.sessions.values()],
+        }
+        self.session_store.write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
 
     def replay(self, session_id: str, team_code: str, level_id: str) -> dict[str, Any]:
         """Generate/cache optimal and player replays for a completed attempt."""

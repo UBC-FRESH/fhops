@@ -90,6 +90,11 @@ def web(
         "--game-explanation-cache",
         help="JSON cache for game explanations.",
     ),
+    game_session_store: Path | None = typer.Option(
+        Path("build/game_sessions.json"),
+        "--game-session-store",
+        help="JSON file for persistent tournament sessions.",
+    ),
 ) -> None:
     """Start the web service when no subcommand is given."""
     if ctx.invoked_subcommand is not None:
@@ -119,6 +124,7 @@ def web(
         game_precomputes=game_precompute or [],
         game_agent_model=game_agent_model,
         game_explanation_cache=game_explanation_cache,
+        game_session_store=game_session_store,
     )
     try:
         run_server(config)

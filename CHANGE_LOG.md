@@ -4760,3 +4760,7 @@ PY
   scoped asset serving, a synchronized two-pane replay page, and a post-level
   replay button. MKRF optimal assets are pre-saved; player replays are generated
   JIT and cached by choice hash.
+
+- 2026-10-31: P20 session persistence: tournament sessions now persist to a JSON
+  store and reload on service restart, fixing "Unknown session" after restarts.
+  The UI also shows a clear expired-session prompt when an old session is gone.
