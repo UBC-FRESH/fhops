@@ -1,140 +1,219 @@
-# Phase 20 plan: web serious game
+# Phase 20 plan: stand-scale web serious game
 
-Parent issue: #306
+Parent issue: #311
 Branch: `feature/phase20-serious-game`
-Status: planned
+Status: revised 2026-10-31 — old shift-scenario levels retired
+
+## Revision
+
+The first P20 draft used the synthetic `tiny7`, `small21`, `med42`, and
+`large84` shift scenarios. That was the wrong abstraction for the game. Those
+levels are multi-block scheduling exercises with no stand geometry, no tree
+list, no log recovery, and no net profit.
+
+The game is now organised around **one real VRI-derived stand per level**:
+
+- the stand boundary is the map/viewport;
+- a deterministic tree list is generated inside that boundary;
+- the player controls the block-level machine plan, landing choice, and bucking
+  policy;
+- the score is dominated by **net operations profit**, not just delivered
+  volume.
+
+The existing exact-precompute pipeline and old tiny7 artifact are retained only
+for regression/reference until the stand-scale loader replaces them. They are
+not the game's active levels.
 
 ## Goal
 
 Turn the operational web UI into a deterministic, instructor-run serious game.
-Each level maps to an existing shift-level scenario. Teams choose bounded fleet
-and scheduling posture controls, launch one SA run, and receive a 0–100 score
-against a fully precomputed level parameter space.
+Each level is one real stand polygon from MKRF, AFRF Gavin Lake, or AFRF Knife
+Creek. Teams choose a bounded machine/arrival/landing/bucking plan, run one
+deterministic operation, and receive a 0–100 score based on normalized net
+profit.
 
-## Levels
+## Selected stands
 
-| Level | Scenario | Horizon | Blocks | Base machines | Fleet palette bounds |
-| --- | --- | ---: | ---: | ---: | --- |
-| 1 | `tiny7` | 7 d | 2 | 9 | feller 1–2, skidder 1–3, processor 0–2, loader 1–2 |
-| 2 | `small21` | 21 d | 6 | 9 | feller 1–2, skidder 1–4, processor 0–2, loader 1–2 |
-| 3 | `med42` | 42 d | 12 | 9 | feller 1–3, skidder 1–6, processor 0–3, loader 1–3 |
-| 4 | `large84` | 84 d | 48 | 18 | feller 1–4, skidder 1–8, processor 0–4, loader 1–4 |
+Stand selection is committed in `examples/game/stands/catalog.yaml` with the
+exact polygons as EPSG:3005 GeoJSON.
 
-Only machine types already present in the scenario palette are available. Added
-machines copy the base role, rates, and costs; they do not invent a new machine
-model.
+| Level | Stand | Area | BEC / stand | System | Main difficulty |
+| --- | --- | ---: | --- | --- | --- |
+| 1 `mkrf_684` | MKRF RES_KEY 684 | 6.86 ha | CWHdm, HW/FDC, 104 y | tree-length: feller + skidder + loader | starter: small layout, no processor |
+| 2 `gavin_3` | Gavin Lake BLOCK_ID 3 | 13.94 ha | ICHmk3, 207 y | cut-to-length: feller + skidder + processor + loader | intermediate: value recovery and processing balance |
+| 3 `kc_57254551` | Knife Creek VRI polygon 57254551 | 35.95 ha | IDFdk3, FDI, 140 y, 479 stems/ha, 146.6 m³/ha | cut-to-length, two skidders | advanced: larger layout, landing choice, trunk-road extension |
 
-## Team controls
+### Provenance
 
-1. **Fleet counts** for each palette role.
-2. **Arrival posture**:
-   - `hot`: all machines available on day 1.
-   - `staged`: a second wave arrives on day 3.
-   - `phased`: role waves on days 1, 3, and 5.
-3. **Harvest pattern**:
-   - `parallel`: all blocks open from day 1.
-   - `sequential`: block release staggered across the first quarter of the horizon.
-   - `finish-first`: early blocks get tighter release windows to encourage completion.
-4. **Launch** one SA run. Breakdowns are deterministic and hidden; they are not
-   a player control.
+- MKRF: `models/mkrf_patchworks_model/spatial/fragments.shp`, a VRI-derived
+  MKRF patchworks layer; selected by `RES_KEY`.
+- Gavin Lake: `data/legacy_gavinlake/spatial/fragments.shp`, a VRI-derived
+  cutblock layer; selected by `BLOCK_ID`.
+- Knife Creek: `data/inventory/vri_2025_kc.gpkg`, VRI 2025 R1; selected by
+  `POLYGON_ID`.
 
-The controls constrain the scenario. The SA still chooses the actual
-machine/block/day/shift assignments.
+Only Knife Creek is backed by a raw VRI polygon in the local FEMIC instance.
+MKRF and Gavin Lake are backed by VRI-derived stand layers with VRI/BEC and age
+attributes. If a raw-VRI-only rule is required, those two boundaries must be
+replaced with public VRI polygons before the levels are enabled.
+
+### Optional boss level
+
+A later fourth level can use Knife Creek `POLYGON_ID 34685844` (57.05 ha,
+IDFdk3, 734 stems/ha, 204 m³/ha) with three landing options. It is not part of
+the MVP because the larger tree list and road extensions increase simulation
+cost.
+
+## One block, whole-operation viewport
+
+Every level has exactly one harvest block. This keeps the web map simple: the
+viewport can frame the whole operation, including the block boundary, tree
+list, landing candidates, and any trunk-road extension.
+
+Large blocks may have **multiple mutually exclusive landing options**:
+
+- `main` uses existing access and has no road-extension cost;
+- `north` / `south` (or similar) require a short deterministic trunk-road
+  extension, charged as length × unit cost plus mobilisation;
+- the chosen landing is part of the player's plan and is revealed with the
+  optimal plan after completion.
+
+For MVP, one landing is active in a run. If simultaneous landings are added
+later, the visual stand is partitioned into simulation sub-blocks but remains
+one level and one map extent.
+
+Landing coordinates, trunk-road alignment, and extension lengths must be
+surveyed from the stand boundary/road layer or DEM. They are not invented in
+the scoring code.
+
+## Deterministic synthetic tree maps
+
+Tree lists are generated offline with Nemora from PSP distributions, pinned,
+and checked into the level assets:
+
+1. Select PSP plots matching the stand BEC, leading species, and age/site
+   stratum.
+2. Fit species composition and DBH/height distributions; retain the fit
+   metadata and sample sizes.
+3. Generate a deterministic tree list with the level seed and place trees
+   inside the exact stand polygon.
+4. Calibrate to VRI stems/ha and volume/ha where those attributes exist.
+5. Export a `fhops.tree.inventory.v1` table plus metadata and checksums.
+
+Knife Creek has local PSP assets (`data/psp/`). MKRF CWHdm and Gavin Lake
+ICHmk3 currently need BEC-matched PSP inputs; those levels must stay disabled
+until the fit source and sample counts are recorded. Do not substitute VRI
+polygon attributes for a tree list and call it PSP-derived.
+
+The tree list is fixed for all teams. The player does not control the hidden
+tree map, breakdown timings, or PSP sampling.
+
+## Machine plan controls
+
+1. **Fleet counts** within the level palette. Extra slots have increasing fixed
+   opportunity costs, including the expensive spot/rental slot.
+2. **Arrival posture**: hot, staged, or phased.
+3. **Shift plan**: operating days/shifts and shift length within the level's
+   allowed windows.
+4. **Landing option**: main or a trunk-road-extension option.
+5. **Bucking policy** (below).
+
+The machine plan is evaluated by the tree-scale system. The old multi-block SA
+assignment is not the game's primary scheduling engine; one block does not give
+SA a meaningful block-selection problem. A fixed-fleet schedule solver may still
+be used internally where it improves the operations plan, but the scored output
+is the deterministic tree-system/net-profit result.
+
+## Bucking policy and log value
+
+The player parameterizes a bucking policy, for example:
+
+- target log length (finite choices such as 4.9, 5.2, 6.1 m);
+- stump height;
+- minimum sawlog DBH;
+- top diameter / grade split;
+- whether to prioritize grade recovery or volume recovery.
+
+The policy changes which logs are produced from each stem and therefore
+recovery by product/grade. FHOPS currently has a simple `sawlog`/`pulp` stem
+model with placeholder products; P20 must add a level-owned product price
+schedule and a game bucking-policy adapter. The adapter must be deterministic
+and report volumes by product/grade, not just total merchantable volume.
+
+Revenue:
+
+```text
+gross_log_value = sum(product_volume_m3 * product_price_per_m3)
+```
+
+## Net-profit scoring
+
+Ops cost includes scheduled machine hours, mobilisation, landing/road
+extension, trucking if enabled, and the fixed fleet opportunity cost.
+
+```text
+net_profit = gross_log_value
+           - machine_operating_cost
+           - mobilisation_cost
+           - road_extension_cost
+           - landing_cost
+           - trucking_cost
+           - fleet_opportunity_cost
+```
+
+The level fixes objective weights and product prices. The game precomputes every
+feasible finite control combination with the deterministic evaluator and
+records best/worst net profit:
+
+```text
+score = 100 * (net_profit - worst_level) / (best_level - worst_level)
+```
+
+Scores are clamped to 0–100. The score is only enabled when every feasible
+combination is evaluated, the tree inventory and event calendar are pinned, and
+the precompute is complete. Best-known or sampled bounds must not be labelled
+optimal.
+
+The old fleet-opportunity formula is retained: extra marginal multipliers
+`1×`, `2×`, `8×`, with a `4×` spot surcharge on the last slot. It is now one
+component of net profit, not the whole objective.
 
 ## Deterministic events
 
-Each level has a fixed seeded event schedule represented as unavailable machine
-day/shift slots. Every team sees the same hidden schedule. The event list is
-server-side only; it is revealed in the post-level debrief, not before or during
-the run.
-
-## Fleet opportunity cost
-
-Idle time is not enough to price extra machines: a machine can fill a slot that
-would otherwise be idle and improve the schedule while still being unavailable
-elsewhere. Each level therefore defines an explicit fleet opportunity cost,
-separate from mobilisation, transitions, and landing penalties.
-
-For role `r`, let `owned_r` be the free/base fleet included in the level and
-`n_r` the team's chosen count. The extra count is
-`k_r = max(0, n_r - owned_r)`. The penalty is fixed per level and independent of
-how many shifts the machine works:
-
-```text
-fleet_penalty = sum_r sum_{j=1..k_r} unit_cost_r * marginal_multiplier[j]
-              + spot_surcharge_r  if k_r reaches the level's last/spot slot
-```
-
-Defaults for review:
-
-- marginal multipliers for extra slots: `1.0`, `2.0`, `8.0`;
-- the last available extra slot receives an additive spot surcharge
-  (default `4.0 * unit_cost_r`, added to its `8.0 * unit_cost_r` marginal cost:
-  `12.0 * unit_cost_r` for that slot), representing contractor spot rental;
-- `unit_cost_r` is fixed per role and level in the level manifest;
-- extra slots beyond the base fleet have no free idle credit;
-- `fleet_penalty` is subtracted from the FHOPS objective only for game scoring
-  and precompute. The MIP schedule itself is still solved with the normal FHOPS
-  objective; because the penalty is schedule-independent, the optimal schedule
-  for a fixed fleet does not change.
-
-The level briefing shows the fleet-cost schedule but not the hidden breakdown
-events. The debit is reported separately from production/mobilisation so teams
-can see why buying the last machine was expensive.
-
-## Scoring
-
-- Each level fixes `ObjectiveWeights`; game runs cannot edit them.
-- Precompute builds every feasible control combination and solves it with the
-  operational MIP to optimality.
-- `worst_level` is the minimum optimal objective over the feasible combinations;
-  `best_level` is the maximum.
-- The team's run is re-evaluated under the fixed weights, then the level's
-  schedule-independent fleet debit is subtracted:
-
-```text
-adjusted_objective = fhops_objective - fleet_penalty
-score = 100 * (adjusted_objective - worst_level) / (best_level - worst_level)
-```
-
-- Scores are clamped to 0–100. The raw objective and component breakdown remain
-  internal; the UI shows the normalized score and a component summary.
-- A level is game-enabled only when precompute is complete for its full finite
-  menu.
+Breakdowns, weather/terrain downtime, and other hidden events are fixed per
+level and seed. They are stored server-side and replayed identically for every
+team. They are never sent to the client before the attempt is complete.
 
 ## End-of-level learning debrief
 
-After a level is completed, the game reveals:
+After completion, reveal:
 
-- the optimal fleet counts, arrival posture, and harvest pattern;
-- the player's choices and the 0–100 score;
-- the objective component deltas (production, mobilisation, transitions,
-  landing surplus, fleet opportunity cost);
-- the cost of each wrong parameter value the player selected.
+- the optimal machine plan, landing choice, and bucking policy;
+- the player's plan and score;
+- gross log value, product/grade recovery, machine hours, mobilisation, road
+  extension, fleet opportunity cost, and net profit;
+- the cost of each wrong parameter value, computed by replacing one parameter
+  with the optimal value while holding the rest fixed.
 
-The explanation layer is fact-grounded, not free-form:
+The explanation layer remains fact-grounded:
 
-1. Build a structured `ExplanationFacts` payload from the precomputed grid:
-   optimal values, player values, full-choice objective delta, and
-   single-parameter counterfactual deltas (replace one wrong value with the
-   optimal value, holding the rest fixed).
-2. Generate the optimal-choice "why" and per-parameter "cost" explanations with
-   the optional LLM agent using a strict JSON schema.
-3. Validate every numeric claim against `ExplanationFacts`; reject or fall back
-   to deterministic templates on mismatch.
-4. Cache explanations by level + choice hash so every team receives the same
-   explanation and no API is needed mid-tournament.
+1. Build a structured `ExplanationFacts` payload from the precomputed grid.
+2. Generate the “why optimal” and per-parameter cost text with the optional LLM
+   under a strict JSON schema.
+3. Validate every numeric claim against `ExplanationFacts`; fall back to
+   deterministic templates on mismatch.
+4. Cache by level + choice hash so every team sees the same explanation.
 
-The client receives the optimal controls only after the attempt is complete.
-Before completion, neither the optimal values nor hidden breakdown timings are
-exposed.
+Optimal controls, optimal bucking policy, and hidden events are withheld until
+the attempt completes.
 
 ## Tournament state
 
 - `TournamentSession`: instructor-created ID, level order, ruleset hash.
 - `TeamSession`: opaque team code, ordered attempts, scores, total.
-- `LevelAttempt`: choices, variant hash, run ID, raw/normalized score, status.
-- One attempt per level. The server rejects replay, skip-ahead, or cross-level
+- `LevelAttempt`: controls, inventory hash, event hash, run ID, net profit,
+  normalized score, status.
+- One attempt per level; server rejects replay, skip-ahead, and cross-level
   submission.
 - State is local-only and persisted server-side. No public authentication claim.
 
@@ -144,61 +223,59 @@ A new **Game** workspace:
 
 - lobby/team code entry;
 - ordered level map with locked/completed states;
-- level briefing and control palette;
-- launch and live run progress;
-- score card and leaderboard;
-- post-level debrief with deterministic events and component summary.
+- level briefing, whole-stand viewport, tree/landing context;
+- fleet/arrival/shift/landing/bucking controls;
+- launch and run progress;
+- score card, leaderboard, and post-level debrief.
 
-## Precompute and artifacts
+## Artifacts
 
-Planned artifacts:
+Committed stand assets:
 
-- `examples/game/levels/*.yaml` — level manifests.
-- `game_levels/<level>/precomputed.json` — menu hash, best/worst, completeness.
-- `scripts/precompute_game_levels.py` — offline exact MIP sweep.
-- `src/fhops/game/levels.py`, `variants.py`, `scoring.py`, `state.py`.
+- `examples/game/stands/catalog.yaml` — selected stands and provenance.
+- `examples/game/stands/*.geojson` — exact EPSG:3005 stand boundaries.
+
+Planned assets and code:
+
+- `examples/game/levels/<level>.yaml` — level manifests.
+- `examples/game/stands/<level>/trees.csv` and metadata — Nemora inventories.
+- `examples/game/stands/<level>/landings.geojson` — landing candidates and
+  trunk-road extensions.
+- `examples/game/stands/<level>/prices.yaml` — product/grade prices.
+- `src/fhops/game/levels.py`, `inventory.py`, `bucking.py`, `scoring.py`,
+  `precompute.py`, `state.py`.
 - `src/fhops/web/game.py` and `src/fhops/web/static/game.*`.
 - `tests/game/`, `tests/web/test_game_api.py`.
 - `docs/howto/serious_game.rst`.
 
 ## Acceptance
 
-- Four levels are defined from existing scenarios.
-- Every scored level has a complete exact precompute.
-- Same choices produce identical variants, breakdowns, seeds, and scores.
-- One-play/order rules are server-enforced and immutable.
-- Optimal schedules and hidden events never reach the client.
-- Score normalization is reproducible and clamped.
-- Tests/docs pass; no operational claim.
+- Three MVP levels use the committed MKRF, Gavin Lake, and Knife Creek stand
+  polygons; one block per level.
+- Each level has a pinned Nemora/PSP tree inventory and provenance; levels
+  without a valid PSP fit stay disabled.
+- Players can parameterize fleet, arrival, shift, landing, and bucking policy.
+- The score is normalized net profit with both log-value recovery and operating
+  costs visible.
+- Every feasible finite combination is precomputed; incomplete levels fail
+  closed.
+- Same choices produce identical trees, events, machine runs, and scores.
+- One-play/order rules are server-enforced.
+- Optimal plans and hidden events never reach the client before completion.
+- Tests/docs pass; no operational or harvest-planning claim.
 
 ## Risks
 
-- Exact precompute can be expensive for Large84. Levels that cannot be fully
-  precomputed are not game-enabled.
+- CWHdm/ICHmk3 PSP coverage is not yet local; the two smaller levels may need
+  public PSP inputs or a BEC-matched regional fit.
+- FHOPS tree system is ground-based and currently supports one feller/loader
+  with multiple skidders/processors; the game must not imply cable or full
+  multi-feller support.
+- FHOPS stem products are placeholders; bucking/value code must be added and
+  validated.
+- Landing candidates and trunk-road lengths need a real road/DEM survey.
+- Exhaustive tree-system precompute can still be expensive for the 36 ha level;
+  cache bucking value by stand/policy and fail closed on incomplete grids.
 - The web service has no authentication; tournaments are local/instructor-run.
-- A team's SA run is not guaranteed to find the MIP optimum, so 100 is a ceiling.
-- The game measures scheduling decisions, not real-world productivity.
-
-## Exactness status
-
-Tiny7 is currently the only game-enabled level. Its full 216-variant menu was
-solved to optimality: adjusted best `4406.153`, worst `4366.909`.
-
-Small21 is **not game-enabled**: its base-menu variant
-(`feller=2, skidder=1, processor=3, loader=3`, hot/parallel) did not reach an
-optimal MIP status within 300 seconds. The precompute fails closed and does not
-emit bounds for Small21. Medium42 and Large84 have not been attempted because
-they are at least as hard.
-
-Options before enabling more levels:
-
-1. run longer exact MIP solves offline with Gurobi or a larger time budget;
-2. reduce the menu or use smaller scenario variants that prove exact;
-3. accept best-known SA bounds (not allowed under the current exact-score
-   requirement).
-
-The game must not label best-known bounds as optimal.
-
-## Activation gate
-
-This phase is planned, not active. Activating it requires maintainer approval.
+- The game measures simulated operational decisions, not real-world
+  productivity or profitability.

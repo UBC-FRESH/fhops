@@ -1,0 +1,74 @@
+schema_version: fhops.game.stands.v1
+status: stand selection complete; PSP/Nemora inventory generation pending
+stands:
+- level_id: mkrf_684
+  order: 1
+  name: MKRF Cedar Flat
+  forest: Malcolm Knapp Research Forest
+  boundary: mkrf_684.geojson
+  source: RES_KEY 684; VRI-derived MKRF patchworks fragment
+  area_ha: 6.863879
+  bec: CWHdm
+  leading_species:
+  - hw
+  - fdc
+  age_years: 104
+  harvest_system: tree_length
+  difficulty: starter
+  landing_options:
+  - id: main
+    road_extension_m: 0
+    road_extension_status: existing access
+  psp_fit:
+    status: pending
+    bec_target: CWHdm
+    source: BEC-matched PSP; not yet local
+- level_id: gavin_3
+  order: 2
+  name: Gavin Lake Block 3
+  forest: Alex Fraser Research Forest, Gavin Lake
+  boundary: gavin_3.geojson
+  source: BLOCK_ID 3; VRI-derived Gavin Lake cutblock
+  area_ha: 13.944055
+  bec: ICHmk3
+  leading_species: null
+  age_years: 207
+  harvest_system: cut_to_length
+  difficulty: intermediate
+  landing_options:
+  - id: main
+    road_extension_m: 0
+    road_extension_status: existing access
+  psp_fit:
+    status: pending
+    bec_target: ICHmk3
+    source: BEC-matched PSP; not yet local
+- level_id: kc_57254551
+  order: 3
+  name: Knife Creek Polygon 57254551
+  forest: Alex Fraser Research Forest, Knife Creek
+  boundary: kc_57254551.geojson
+  source: POLYGON_ID 57254551; VRI 2025 R1
+  area_ha: 35.952623
+  bec: IDFdk3
+  leading_species:
+  - fdi
+  age_years: 140
+  stems_per_ha: 479
+  volume_m3_per_ha: 146.585
+  harvest_system: cut_to_length_two_skidders
+  difficulty: advanced
+  landing_options:
+  - id: main
+    road_extension_m: 0
+    road_extension_status: existing access
+  - id: north
+    road_extension_m: null
+    road_extension_status: survey required
+  - id: south
+    road_extension_m: null
+    road_extension_status: survey required
+  psp_fit:
+    status: available
+    bec_target: IDFdk3
+    source: femic-afrf-knifecreek-instance/data/psp

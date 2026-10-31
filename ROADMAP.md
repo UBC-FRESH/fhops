@@ -596,14 +596,21 @@ Parent issue: #311. Branch: `feature/phase20-serious-game`. Status: active.
 Plan: `notes/phase20_serious_game.md`.
 
 Goal: turn the operational web UI into a deterministic instructor-run serious
-game. Levels map to Tiny7, Small21, Medium42, and Large84; teams choose bounded
-fleet/arrival/harvest controls, launch one SA run, and receive 0–100 scores
-against an exact precomputed parameter space.
+game. Each level is one real VRI-derived stand from MKRF, AFRF Gavin Lake, or
+AFRF Knife Creek. Teams choose a bounded machine/arrival/landing/bucking plan
+and receive a 0–100 score based on normalized net operations profit, including
+log-value recovery and operating costs.
 
-- [ ] P20.1 Define levels, control contract, and exact precompute pipeline (#312)
-  - [x] Level manifests and machine palettes.
-  - [x] Deterministic breakdown schedules.
-  - [ ] Exact MIP precompute and best/worst bounds.
+The former Tiny7/Small21/Medium42/Large84 shift-scenario levels are retired
+from P20. Their boundary/precompute code remains only while the stand-scale
+loader replaces it.
+
+- [ ] P20.1 Define stand levels, inventory/control contract, and precompute (#312)
+  - [x] Selected one MKRF, one Gavin Lake, and one Knife Creek stand boundary.
+  - [x] Committed EPSG:3005 GeoJSON boundaries and provenance catalog.
+  - [ ] Generate pinned Nemora/PSP tree inventories; resolve CWHdm/ICHmk3 PSP.
+  - [ ] Define landing/road-extension assets, product prices, and bucking policy.
+  - [ ] Exhaustive stand-scale precompute and best/worst net-profit bounds.
 - [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#313)
   - [ ] Variant scenarios, scoring, and hidden events.
   - [ ] One-play/order enforcement and persistence.

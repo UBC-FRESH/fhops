@@ -4623,3 +4623,12 @@ PY
   4406.153/worst 4366.909). Small21 failed closed: a base-menu variant did not
   prove optimal within 300 s. Medium42/Large84 are not attempted yet. No game
   level is enabled beyond Tiny7.
+
+- 2026-10-31: P20 revised from synthetic multi-block shift scenarios to
+  stand-scale levels. Selected MKRF `RES_KEY 684` (6.86 ha, CWHdm), Gavin Lake
+  `BLOCK_ID 3` (13.94 ha, ICHmk3), and Knife Creek VRI `POLYGON_ID 57254551`
+  (35.95 ha, IDFdk3), with EPSG:3005 GeoJSON boundaries and provenance. The
+  revised design uses one block per level, Nemora/PSP tree lists, playable
+  bucking policies, and net-profit scoring. Old tiny7/small21 game levels are
+  retired; no new level is game-enabled until inventories and precompute are
+  complete.
