@@ -72,6 +72,7 @@ export function createViewer(container, { onTime } = {}) {
   let terrain = null;
   let loaded = false;
   let userInteracted = false;
+  let blockOutline = null;
 
   controls.addEventListener('start', () => { userInteracted = true; });
 
@@ -101,6 +102,7 @@ export function createViewer(container, { onTime } = {}) {
     processedTimes = [];
     cumulativeVolume = [];
     terrain = null;
+    blockOutline = null;
     payload = null;
   }
 
@@ -379,6 +381,7 @@ export function createViewer(container, { onTime } = {}) {
     payload = events;
     duration = events.duration_s || 1;
     terrain = events.terrain || null;
+    blockOutline = Array.isArray(events.block_outline) ? events.block_outline : null;
 
     return new Promise((resolve, reject) => {
       new GLTFLoader().load(sceneUrl, (gltf) => {
@@ -467,64 +470,72 @@ export function createViewer(container, { onTime } = {}) {
   }
 
   function fitCamera() {
-    // Frame the whole ground plan, not the tallest machine beacon. Use the
-    // stand/tree bounding box for plan dimensions, put the target at the
-    // ground-plan centroid, and fit both the vertical and horizontal FOV.
-    // The fixed 50° elevation / 35° azimuth gives a predictable bird's-eye
-    // oblique view for every case.
-    const box = new THREE.Box3().setFromObject(scene);
-    if (box.isEmpty()) return;
-    const center = box.getCenter(new THREE.Vector3());
-    const size = box.getSize(new THREE.Vector3());
-    const radius = Math.max(10, 0.5 * Math.hypot(size.x, size.z));
-    const target = new THREE.Vector3(
-      center.x,
-      terrainHeight(center.x, center.z),
-      center.z,
-    );
-    const elevation = THREE.MathUtils.degToRad(50);
-    const azimuth = THREE.MathUtils.degToRad(35);
+    // Frame the block footprint, not the full scene box (which includes
+    // machine beacons and tall tree crowns). The orbit target is the
+    // area-weighted block centroid at ground level.
+    const outline = (blockOutline || []).filter((point) => Array.isArray(point) && point.length >= 2);
+    let points = outline.map(([x, y]) => [Number(x), Number(y)]).filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y));
+    if (!points.length) {
+      points = [...treeNodes.values()].map((node) => [node.position.x, node.position.z]);
+    }
+    if (!points.length) {
+      const fallback = new THREE.Box3().setFromObject(scene);
+      if (fallback.isEmpty()) return;
+      const center = fallback.getCenter(new THREE.Vector3());
+      points = [[center.x, center.z]];
+    }
+    let cx;
+    let cy;
+    if (outline.length >= 3) {
+      let twiceArea = 0;
+      let sx = 0;
+      let sy = 0;
+      for (let i = 0; i < outline.length; i++) {
+        const [x1, y1] = outline[i];
+        const [x2, y2] = outline[(i + 1) % outline.length];
+        const cross = Number(x1) * Number(y2) - Number(x2) * Number(y1);
+        twiceArea += cross;
+        sx += (Number(x1) + Number(x2)) * cross;
+        sy += (Number(y1) + Number(y2)) * cross;
+      }
+      if (Math.abs(twiceArea) > 1e-9) {
+        cx = sx / (3 * twiceArea);
+        cy = sy / (3 * twiceArea);
+      }
+    }
+    if (!Number.isFinite(cx) || !Number.isFinite(cy)) {
+      const xs = points.map(([x]) => x);
+      const ys = points.map(([, y]) => y);
+      cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+      cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+    }
+    const groundY = terrainHeight(cx, cy);
+    let radius = 0;
+    for (const [x, y] of points) {
+      radius = Math.max(radius, Math.hypot(x - cx, y - cy));
+    }
+    radius = Math.max(radius, 10) * 1.18;
+    const sceneBox = new THREE.Box3().setFromObject(scene);
+    const maxHeight = Math.max(20, Number.isFinite(sceneBox.max.y) ? sceneBox.max.y - groundY : 40);
+    const target = new THREE.Vector3(cx, groundY, cy);
     const vFov = THREE.MathUtils.degToRad(camera.fov);
     const hFov = 2 * Math.atan(Math.tan(vFov / 2) * Math.max(0.1, camera.aspect));
     const fitFov = Math.min(vFov, hFov);
-    const heightFit = (Math.max(1, size.y) / 2) / Math.tan(vFov / 2);
-    let distance = Math.max(
+    const distance = Math.max(
       radius / Math.sin(fitFov / 2),
-      heightFit,
-    ) * 1.35;
-
-    const place = () => {
-      const horizontal = distance * Math.cos(elevation);
-      camera.position.set(
-        target.x + horizontal * Math.sin(azimuth),
-        target.y + distance * Math.sin(elevation),
-        target.z + horizontal * Math.cos(azimuth),
-      );
-      camera.lookAt(target);
-      camera.updateMatrixWorld();
-      camera.updateProjectionMatrix();
-    };
-    place();
-
-    // Account for the tallest trees and the cable spar without letting a
-    // single beacon dominate the fit. Iterate on the actual projected corners.
-    const corners = [];
-    for (const x of [box.min.x, box.max.x]) {
-      for (const y of [box.min.y, box.max.y]) {
-        for (const z of [box.min.z, box.max.z]) corners.push(new THREE.Vector3(x, y, z));
-      }
-    }
-    for (let pass = 0; pass < 3; pass++) {
-      let extent = 0;
-      for (const corner of corners) {
-        const ndc = corner.clone().project(camera);
-        extent = Math.max(extent, Math.abs(ndc.x), Math.abs(ndc.y));
-      }
-      if (!Number.isFinite(extent) || extent <= 0) break;
-      distance = Math.min(radius * 12, Math.max(radius * 0.5, distance * (extent / 0.82)));
-      place();
-    }
-
+      maxHeight / (2 * Math.tan(vFov / 2)),
+    ) * 1.15;
+    const elevation = THREE.MathUtils.degToRad(50);
+    const azimuth = THREE.MathUtils.degToRad(35);
+    const horizontal = distance * Math.cos(elevation);
+    camera.position.set(
+      target.x + horizontal * Math.sin(azimuth),
+      target.y + distance * Math.sin(elevation),
+      target.z + horizontal * Math.cos(azimuth),
+    );
+    camera.lookAt(target);
+    camera.updateMatrixWorld();
+    camera.updateProjectionMatrix();
     controls.target.copy(target);
     controls.minDistance = distance * 0.15;
     controls.maxDistance = distance * 4.0;
@@ -535,6 +546,12 @@ export function createViewer(container, { onTime } = {}) {
     camera.updateProjectionMatrix();
     controls.update();
     userInteracted = false;
+    window.__fhopsViewerDebug = {
+      target: [target.x, target.y, target.z],
+      blockCentroid: [cx, groundY, cy],
+      radius,
+      distance,
+    };
   }
 
   function animate(now) {
