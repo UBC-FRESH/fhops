@@ -154,7 +154,12 @@ function renderDebrief(payload) {
   $('debrief-why').textContent = payload.explanation.why_optimal;
   const optimal = payload.optimal_choices;
   $('debrief-optimal').innerHTML = `<div class="metric-row"><span>Optimal choices</span><strong>care ${optimal.care_level}, ${optimal.skidder_count} skidder(s), ${optimal.log_length_m} m logs, sawlog min ${optimal.sawlog_min_dbh_cm} cm, road extension ${optimal.road_extension_m} m</strong></div>`;
-  $('debrief-costs').innerHTML = (payload.parameter_deltas || []).map((item) => `<div class="metric-row"><span>${parameterLabel(item.parameter)}: ${item.player_value} → ${item.optimal_value}</span><strong>${money(item.cost_of_wrong)} cost</strong></div>`).join('');
+  const gap = payload.optimal_net_profit - payload.player_net_profit;
+  const largest = Math.max(0, ...(payload.parameter_deltas || []).map((item) => item.cost_of_wrong));
+  const interaction = gap > 0 && largest <= 0
+    ? '<div class="metric-row"><span>Gap explanation</span><strong>interaction between choices</strong></div>'
+    : '';
+  $('debrief-costs').innerHTML = `<div class="metric-row"><span>Gap to optimal</span><strong>${money(gap)}</strong></div>` + interaction + (payload.parameter_deltas || []).map((item) => `<div class="metric-row"><span>${parameterLabel(item.parameter)}: ${item.player_value} → ${item.optimal_value}</span><strong>${money(item.cost_of_wrong)} one-at-a-time</strong></div>`).join('');
 }
 
 function polygonRings(payload) {

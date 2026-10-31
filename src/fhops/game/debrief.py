@@ -147,20 +147,28 @@ def build_debrief_facts(
 
 def render_template_debrief(facts: DebriefFacts) -> dict[str, Any]:
     """Return a deterministic explanation with no LLM dependency."""
+    gap = facts.optimal_net_profit - facts.player_net_profit
     if facts.parameter_deltas:
         largest = facts.parameter_deltas[0]
-        cost_text = (
-            f"The largest miss was {PARAMETER_LABELS[largest['parameter']]} "
-            f"({largest['player_value']} instead of {largest['optimal_value']}), "
-            f"which cost ${largest['cost_of_wrong']:,.0f} in net profit."
-        )
+        if largest["cost_of_wrong"] <= 0 and gap > 0:
+            cost_text = (
+                "No single parameter change closes the gap; the loss comes from the "
+                "interaction between the choices."
+            )
+        else:
+            cost_text = (
+                f"The largest single-parameter miss was "
+                f"{PARAMETER_LABELS[largest['parameter']]} "
+                f"({largest['player_value']} instead of {largest['optimal_value']}), "
+                f"which cost ${largest['cost_of_wrong']:,.0f} in net profit."
+            )
     else:
         cost_text = "Your plan matched the best finite control combination."
     score_text = f"{facts.score:.0f}" if facts.score.is_integer() else f"{facts.score:.1f}"
     why = (
         f"The best plan earned ${facts.optimal_net_profit:,.0f} net profit; "
         f"your plan earned ${facts.player_net_profit:,.0f} and scored "
-        f"{score_text}/100. {cost_text}"
+        f"{score_text}/100. The gap to optimal is ${gap:,.0f}. {cost_text}"
     )
     return {
         "why_optimal": why,
@@ -208,11 +216,11 @@ def explain_debrief(
             )
         ):
             return fallback
-        if re.search(r"\d+\.\d{3,}", why):
+        if re.search(r"\d", why):
             return fallback
         if not isinstance(costs, dict):
             return fallback
-        if any(re.search(r"\d+\.\d{3,}", str(value)) for value in costs.values()):
+        if any(re.search(r"\d", str(value)) for value in costs.values()):
             return fallback
         # Numeric claims in the template are generated only from facts; reject
         # extra numeric-looking keys rather than trusting free-form prose.

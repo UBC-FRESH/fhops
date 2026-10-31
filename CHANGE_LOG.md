@@ -4739,3 +4739,8 @@ PY
   processor for delimbing/bucking/top removal; updated machine/calendar/
   harvest-system assets and regenerated the MKRF precompute (best $259,929.60,
   worst $252,265.64).
+
+- 2026-10-31: P20 debrief consistency: the UI now shows the total gap to
+  optimal and labels one-at-a-time parameter effects separately; when no single
+  change explains the gap, it reports an interaction. LLM prose is qualitative
+  only—any numeric claim is rejected and falls back to deterministic facts.

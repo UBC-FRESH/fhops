@@ -91,3 +91,25 @@ def test_prompt_facts_are_rounded_to_presentation_precision() -> None:
     assert "21969.10009106162" not in prompt
     assert "75706" in prompt
     assert "21969" in prompt
+
+
+def test_dollar_claim_from_llm_is_rejected() -> None:
+    payload = load_stand_precompute(PRECOMPUTE)
+    choices = {
+        "care_level": 0.25,
+        "skidder_count": 1,
+        "log_length_m": 6.1,
+        "sawlog_min_dbh_cm": 20.0,
+        "road_extension_m": 0.0,
+    }
+    facts = build_debrief_facts(payload, player_choices=choices, score=96.0)
+    from fhops.game.debrief import explain_debrief
+
+    result = explain_debrief(
+        facts,
+        llm_fn=lambda _: {
+            "why_optimal": "The largest miss cost $0 in net profit.",
+            "parameter_costs": {},
+        },
+    )
+    assert result["source"] == "deterministic_template"

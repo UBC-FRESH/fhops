@@ -58,9 +58,10 @@ def build_debrief_prompt(facts: dict[str, Any]) -> str:
         "You are the FHOPS serious-game debrief coach. Explain the result using "
         "ONLY the facts in the JSON below. Write for a student: never mention JSON "
         "field names, snake_case names, raw floats, or implementation details. "
-        "Round currency to whole dollars and percentages to one decimal place. "
-        "Do not add new numeric claims, do not change the optimal choice, and do "
-        "not give operational advice beyond the supplied facts. Return ONLY one "
+        "Do not include any digits, dollar amounts, percentages, or parameter "
+        "values; numeric details are shown separately by the UI. Do not add new "
+        "numeric claims, do not change the optimal choice, and do not give "
+        "operational advice beyond the supplied facts. Return ONLY one "
         "JSON object with exactly these keys:\n"
         '{"why_optimal": "concise explanation", "parameter_costs": {"parameter": "explanation"}}\n'
         "Facts:\n"
