@@ -285,18 +285,19 @@ export function createViewer(container, { onTime } = {}) {
     return { unprocessed: Math.max(0, unprocessed), processed: Math.max(0, processed) };
   }
 
-  function makeTextSprite(initial, scale = 1) {
+  function makeTextSprite(initial, height = 2.5) {
     const canvas = document.createElement('canvas');
     canvas.width = 512; canvas.height = 96;
     const ctx = canvas.getContext('2d');
     const texture = new THREE.CanvasTexture(canvas);
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, depthTest: false }));
-    sprite.scale.set(34 * scale, 6.4 * scale, 1);
+    // Match the machine-label height and preserve the canvas aspect ratio.
+    sprite.scale.set(height * (512 / 96), height, 1);
     const setText = (text) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#101416dd'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#e8eef2'; ctx.font = 'bold 32px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText(text, canvas.width / 2, 58);
+      ctx.fillStyle = '#e8eef2'; ctx.font = 'bold 38px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(text, canvas.width / 2, 60);
       texture.needsUpdate = true;
     };
     setText(initial);
@@ -322,9 +323,9 @@ export function createViewer(container, { onTime } = {}) {
         logs.push(log);
       }
     }
-    const text = makeTextSprite(`${label} · 0 m³`, 1.2);
-    text.sprite.position.set(0, 10.2, 0);
-    group.add(text.sprite);
+    const text = makeTextSprite(`${label} · 0 m³`, 2.5);
+    text.sprite.position.set(0, 12, 0);
+    scene.add(text.sprite);
     group.position.set(landing.x + dx, sampleHeight(landing.x + dx, landing.y + dy), landing.y + dy);
     group.userData = { logs, label: text, name: label, lastVolume: -1 };
     scene.add(group);
@@ -343,9 +344,10 @@ export function createViewer(container, { onTime } = {}) {
       });
       const scaleY = 0.35 + ratio * 0.65;
       group.scale.set(1, scaleY, 1);
-      group.userData.label.sprite.position.y = 10.2 / scaleY;
-      const labelScale = Math.min(2.2, Math.max(0.8, camera.position.distanceTo(group.position) / 600));
-      group.userData.label.sprite.scale.set(40.8 * labelScale / scaleY, 7.68 * labelScale / scaleY, 1);
+      // The label lives in world space, not inside the scaled deck group, so
+      // its text aspect ratio and font size never change with deck volume.
+      group.userData.label.sprite.visible = group.visible;
+      group.userData.label.sprite.position.set(group.position.x, group.position.y + 12, group.position.z);
       const rounded = volume < 10 ? volume.toFixed(1) : volume.toFixed(0);
       if (rounded !== group.userData.lastVolume) {
         group.userData.lastVolume = rounded;
@@ -790,7 +792,7 @@ export function createViewer(container, { onTime } = {}) {
             );
             shed.position.set(millX, sampleHeight(millX, millY) + 4, millY);
             scene.add(shed);
-            const millLabel = makeTextSprite('mill', 0.9);
+            const millLabel = makeTextSprite('mill', 2.5);
             millLabel.sprite.position.set(millX, sampleHeight(millX, millY) + 12, millY);
             scene.add(millLabel.sprite);
             const road = new THREE.Line(
