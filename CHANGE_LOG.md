@@ -4599,3 +4599,9 @@ PY
 - 2026-10-30: P19 (#300) squash-merged as `43a7862d`; tree matched the
   approved head `fc4d23b0`. The Nemora handoff fixture/scenario/docs/test are on
   `main`. No 1.2.1 release or publication was made.
+
+- 2026-10-31: Planned P20 (#306) as a deterministic instructor-run web serious
+  game. Levels map to Tiny7, Small21, Medium42, and Large84; controls cover
+  fleet counts, arrival posture, harvest pattern, and hidden deterministic
+  breakdowns. Scoring will use fixed objective weights and exact MIP precompute
+  bounds. This phase is planned only; no implementation has started.

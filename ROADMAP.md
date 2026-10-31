@@ -590,10 +590,33 @@ runtime dependency.
   - [x] Wrote `notes/reports/p19-closeout.md`.
   - [x] No 1.2.1 now; ship with next scheduled release.
 
+## Phase 20 — Web serious game
+
+Parent issue: #306. Branch: `feature/phase20-serious-game`. Status: planned.
+Plan: `notes/phase20_serious_game.md`.
+
+Goal: turn the operational web UI into a deterministic instructor-run serious
+game. Levels map to Tiny7, Small21, Medium42, and Large84; teams choose bounded
+fleet/arrival/harvest controls, launch one SA run, and receive 0–100 scores
+against an exact precomputed parameter space.
+
+- [ ] P20.1 Define levels, control contract, and exact precompute pipeline (#307)
+  - [ ] Level manifests and machine palettes.
+  - [ ] Deterministic breakdown schedules.
+  - [ ] Exact MIP precompute and best/worst bounds.
+- [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#308)
+  - [ ] Variant scenarios, scoring, and hidden events.
+  - [ ] One-play/order enforcement and persistence.
+- [ ] P20.3 Add the game API and web workspace (#309)
+  - [ ] Lobby, level map, controls, live run, score, leaderboard.
+- [ ] P20.4 Prove fairness, document the tournament, and close out (#310)
+  - [ ] Deterministic/fairness/leakage tests.
+  - [ ] Instructor/student docs and close-out report.
+
 ## Backlog & Ideas
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
-- [ ] Integration with Nemora sampling outputs for downstream operations analytics.
+- [x] Integration with Nemora sampling outputs for downstream operations analytics (P19 tree-inventory handoff).
 - [x] Scenario authoring UI and schema validators for web clients (P12.6, #183).
 - [ ] Cloud execution harness for large-scale heuristics.
 - [ ] DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
