@@ -473,10 +473,13 @@ export function createViewer(container, { onTime } = {}) {
         // On-map speed: 10 km/h; the 20 km mill leg is represented by the
         // off-map gap in the truck-return interval.
         const mapTravel = Math.min(returnDuration * 0.45, Math.max(1, pathLength / (10 * 1000 / 3600)));
+        // 20 km to the mill, 50 km/h average over the 40 km return trip = 48 min.
+        const millTrip = Math.min(returnDuration, 2880);
+        const arrival = previous.loadEnd + millTrip;
         const outboundEnd = previous.loadEnd + mapTravel;
-        const inboundStart = previous.returnEnd - mapTravel;
+        const inboundStart = arrival - mapTravel;
         if (t <= outboundEnd) {
-          const point = pathPoint(path, (t - previous.loadEnd) / Math.max(1, mapped));
+          const point = pathPoint(path, (t - previous.loadEnd) / Math.max(1, mapTravel));
           x = point.x; y = point.y; heading = point.heading;
           status = 'loaded outbound';
           group.userData.cargo.visible = true;
@@ -484,11 +487,15 @@ export function createViewer(container, { onTime } = {}) {
           visible = false;
           status = 'off map';
           group.userData.cargo.visible = false;
-        } else {
-          const point = pathPoint(path, 1 - (t - inboundStart) / Math.max(1, mapped));
+        } else if (t <= arrival) {
+          const point = pathPoint(path, 1 - (t - inboundStart) / Math.max(1, mapTravel));
           x = point.x; y = point.y; heading = point.heading;
           status = 'returning empty';
           group.userData.cargo.visible = false;
+        } else {
+          status = 'waiting';
+          group.userData.cargo.visible = false;
+          if ((group.userData.queueIndex || 0) > 2) visible = false;
         }
       } else {
         group.userData.cargo.visible = false;
