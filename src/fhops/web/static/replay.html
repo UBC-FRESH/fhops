@@ -10,6 +10,7 @@
     #bar strong { font-size: 14px; }
     #bar button { background: #263237; color: #e8eef2; border: 1px solid #52656b; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
     #bar input[type=range] { flex: 1; accent-color: #f08a24; }
+    #bar select { background: #263237; color: #e8eef2; border: 1px solid #52656b; border-radius: 6px; padding: 6px; }
     #bar span { color: #9eb0b7; min-width: 100px; text-align: right; font-variant-numeric: tabular-nums; }
     #panes { display: grid; grid-template-columns: 1fr 1fr; height: calc(100% - 55px); gap: 2px; background: #34444a; }
     .pane { position: relative; background: #101416; min-width: 0; }
@@ -24,6 +25,14 @@
     <button id="play">Play</button>
     <button id="reset">Reset</button>
     <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" />
+    <select id="speed" title="Playback speed; 1× plays the full timeline in 90 seconds">
+      <option value="0.25">0.25×</option>
+      <option value="0.5">0.5×</option>
+      <option value="1" selected>1× (90 s)</option>
+      <option value="2">2×</option>
+      <option value="4">4×</option>
+      <option value="8">8×</option>
+    </select>
     <span id="clock">0:00 / 0:00</span>
   </div>
   <div id="panes">
@@ -40,7 +49,8 @@
     const rightDuration = Number(params.get('rightDuration') || 1);
     const duration = Math.max(leftDuration, rightDuration, 1);
     const scrub = document.getElementById('scrub'), clock = document.getElementById('clock');
-    let playing = false, current = 0, last = performance.now();
+    const speedEl = document.getElementById('speed');
+    let playing = false, current = 0, last = performance.now(), speed = 1;
     scrub.max = String(duration);
     const fmt = (v) => `${Math.floor(v / 60)}:${String(Math.floor(v % 60)).padStart(2, '0')}`;
     function apply() {
@@ -53,11 +63,17 @@
     function loop(now) {
       requestAnimationFrame(loop);
       const dt = Math.min(0.1, (now - last) / 1000); last = now;
-      if (playing) { current += dt; if (current > duration) current = duration; apply(); }
+      if (playing) {
+        // Full timeline at 1× = 90 real seconds, matching the single viewer.
+        current += dt * speed * duration / 90;
+        if (current > duration) { current = duration; playing = false; document.getElementById('play').textContent = 'Play'; }
+        apply();
+      }
     }
     document.getElementById('play').onclick = () => { playing = !playing; document.getElementById('play').textContent = playing ? 'Pause' : 'Play'; last = performance.now(); };
     document.getElementById('reset').onclick = () => { playing = false; document.getElementById('play').textContent = 'Play'; current = 0; apply(); };
     scrub.oninput = () => { current = Number(scrub.value); apply(); };
+    speedEl.onchange = () => { speed = Number(speedEl.value); };
     left.addEventListener('load', () => { setTimeout(apply, 500); });
     right.addEventListener('load', () => { setTimeout(apply, 500); });
     apply(); requestAnimationFrame(loop);
