@@ -592,8 +592,7 @@ runtime dependency.
 
 ## Phase 20 — Web serious game
 
-Parent issue: #311. Branch: `feature/phase20-serious-game`. Status: complete
-(PR queued for review). Plan: `notes/phase20_serious_game.md`. Closeout:
+Parent issue: #311. Branch: `feature/phase20-serious-game`. Status: complete (PR #317). Plan: `notes/phase20_serious_game.md`. Closeout:
 `notes/reports/p20-closeout.md`.
 
 Goal: turn the operational web UI into a deterministic instructor-run serious

@@ -4716,3 +4716,5 @@ PY
 - 2026-10-31: P20 closeout: implementation complete; all three levels, game API,
   UI, session rules, leaderboard, debrief, optional DeepSeek chat, fairness
   tests, instructor docs, and CLI launch flags are in place. Phase PR queued.
+
+- 2026-10-31: P20 phase PR opened as #317.

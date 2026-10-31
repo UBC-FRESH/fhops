@@ -1,6 +1,6 @@
 # P20 serious game — closeout
 
-Status: implementation complete; phase PR queued for review.
+Status: implementation complete; PR #317 queued for review.
 
 ## Delivered
 
