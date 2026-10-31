@@ -1,0 +1,38 @@
+name: "FHOPS Serious Game \u2014 Gavin Lake Block 1032"
+num_days: 30
+start_date: '2026-01-01'
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: prod_rates.csv
+  harvest_systems: harvest_systems.yaml
+geo:
+  block_geojson: blocks.geojson
+  landing_geojson: landings.geojson
+  crs: EPSG:3005
+  notes: Gavin Lake Block 1032; synthetic FAIB-PSP tree inventory.
+tree_inventory:
+  inventory_id: gavin_1032-faib-psp-v1
+  inventory_sha256: c5c6fd80a926d4ab4c7aaf643fe5b4672e70a0def21dde89bb8172665ff6c1d5
+  metadata_sha256: 69c594a4d9c1d5bdc37e0d69119d185eb69011b64051816d9430e013029ac9d2
+  inventory_path: ../../stands/gavin_1032/trees.csv
+  metadata_path: ../../stands/gavin_1032/inventory.meta.json
+  crs: EPSG:3005
+  review_status: not_reviewed
+  reviewed_by: null
+  source_id: faib-psp-ichmk
+  producer: Nemora
+  method: Weibull DBH fit to FAIB PSP live trees; species composition and height allometry
+    from the same BEC/TSA/age window; deterministic placement inside the VRI polygon.
+  tree_count: 18595
+  block_ids:
+  - B01
+  caveats:
+  - Synthetic tree map; not a surveyed stand or operational inventory.
+  - DBH distribution is fitted to regional PSP live trees in the stated BEC/TSA/age
+    window.
+  - Species composition and height allometry are regional PSP summaries, not measured
+    stand values.
+  - Tree placement is deterministic Poisson, not a mapped stem map.

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import math
 import secrets
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -45,35 +46,92 @@ class GameChoicesPayload(BaseModel):
     road_extension_m: float = 0.0
 
 
-class GameService:
-    """Load a configured stand level and keep local tournament state."""
+@dataclass(frozen=True, slots=True)
+class _StandEntry:
+    """Loaded stand level and its complete precompute."""
 
-    def __init__(self, *, level_path: Path, precompute_path: Path) -> None:
-        self.level_path = level_path.expanduser().resolve()
-        self.precompute_path = precompute_path.expanduser().resolve()
-        self.level = _load_level(self.level_path)
-        self.precompute = load_stand_precompute(self.precompute_path)
-        try:
-            check_stand_precompute(self.level_path, self.precompute)
-        except GameStandPrecomputeError as exc:
-            raise ValueError(str(exc)) from exc
-        self.price = PriceSchedule.from_path(
-            (self.level_path.parent / self.level["prices"]).resolve()
-        )
-        self.level_id = str(self.level["level_id"])
-        self.ruleset_hash = hashlib.sha256(
+    level_path: Path
+    precompute_path: Path
+    level: dict[str, Any]
+    precompute: dict[str, Any]
+    price: PriceSchedule
+    level_id: str
+    order: int
+
+    @property
+    def ruleset_hash(self) -> str:
+        return hashlib.sha256(
             self.level_path.read_bytes() + self.precompute_path.read_bytes()
+        ).hexdigest()
+
+
+class GameService:
+    """Load configured stand levels and keep local tournament state."""
+
+    def __init__(
+        self,
+        *,
+        level_path: Path | None = None,
+        precompute_path: Path | None = None,
+        levels: list[tuple[Path, Path]] | None = None,
+    ) -> None:
+        specs = list(levels or [])
+        if level_path is not None or precompute_path is not None:
+            if level_path is None or precompute_path is None:
+                raise ValueError("game_level and game_precompute must be configured together.")
+            specs.append((level_path, precompute_path))
+        if not specs:
+            raise ValueError("At least one stand level is required.")
+        entries: dict[str, _StandEntry] = {}
+        for spec_level, spec_precompute in specs:
+            level_path_resolved = spec_level.expanduser().resolve()
+            precompute_path_resolved = spec_precompute.expanduser().resolve()
+            level = _load_level(level_path_resolved)
+            precompute = load_stand_precompute(precompute_path_resolved)
+            try:
+                check_stand_precompute(level_path_resolved, precompute)
+            except GameStandPrecomputeError as exc:
+                raise ValueError(str(exc)) from exc
+            level_id = str(level["level_id"])
+            if level_id in entries:
+                raise ValueError(f"Duplicate game level {level_id!r}.")
+            entries[level_id] = _StandEntry(
+                level_path=level_path_resolved,
+                precompute_path=precompute_path_resolved,
+                level=level,
+                precompute=precompute,
+                price=PriceSchedule.from_path(
+                    (level_path_resolved.parent / level["prices"]).resolve()
+                ),
+                level_id=level_id,
+                order=int(level.get("order", 0)),
+            )
+        self.entries = entries
+        self.level_order = tuple(
+            entry.level_id for entry in sorted(entries.values(), key=lambda item: item.order)
+        )
+        self.ruleset_hash = hashlib.sha256(
+            b"".join(
+                entries[level_id].level_path.read_bytes()
+                + entries[level_id].precompute_path.read_bytes()
+                for level_id in self.level_order
+            )
         ).hexdigest()
         self.sessions: dict[str, TournamentSession] = {}
 
+    @property
+    def level_id(self) -> str:
+        """Return the first level id for single-level compatibility."""
+        return self.level_order[0]
+
     def create_session(self, session_id: str | None = None) -> dict[str, Any]:
-        """Create an empty local tournament session."""
+        """Create an empty local tournament session in level order."""
         session_id = session_id or f"game-{secrets.token_hex(4)}"
         if session_id in self.sessions:
             raise ValueError(f"Session {session_id!r} already exists.")
         session = TournamentSession.create(
             session_id,
-            (self.level_id,),
+            self.level_order,
             self.ruleset_hash,
         )
         self.sessions[session_id] = session
@@ -92,36 +150,46 @@ class GameService:
         team = session.register_team(team_code)
         return team.to_dict()
 
-    def boundary(self) -> dict[str, Any]:
-        """Return the stand boundary for the whole-operation viewport."""
+    def boundary(self, level_id: str) -> dict[str, Any]:
+        """Return a stand boundary for the whole-operation viewport."""
         import json
 
-        path = (self.level_path.parent / self.level["boundary"]).resolve()
+        entry = self._entry(level_id)
+        path = (entry.level_path.parent / entry.level["boundary"]).resolve()
         return json.loads(path.read_text(encoding="utf-8"))
 
-    def public_level(self) -> dict[str, Any]:
+    def public_levels(self) -> list[dict[str, Any]]:
+        """Return all public level metadata in order."""
+        return [self.public_level(level_id) for level_id in self.level_order]
+
+    def public_level(self, level_id: str | None = None) -> dict[str, Any]:
         """Return pre-run level metadata without the optimal choice."""
-        bounds = self.precompute["bounds"]
-        bucking = self.level.get("bucking", {})
+        entry = self._entry(level_id or self.level_id)
+        bounds = entry.precompute["bounds"]
+        bucking = entry.level.get("bucking", {})
         return {
-            "level_id": self.level_id,
-            "name": self.level["name"],
-            "order": self.level.get("order", 0),
-            "area_ha": self.level.get("area_ha"),
-            "difficulty": self.level.get("difficulty"),
+            "level_id": entry.level_id,
+            "name": entry.level["name"],
+            "order": entry.order,
+            "area_ha": entry.level.get("area_ha"),
+            "difficulty": entry.level.get("difficulty"),
             "controls": {
-                "care_levels": self.level["care_levels"],
-                "skidder_counts": self.level["skidder_counts"],
+                "care_levels": entry.level["care_levels"],
+                "skidder_counts": entry.level["skidder_counts"],
                 "log_length_m": bucking.get("log_length_m", []),
                 "sawlog_min_dbh_cm": bucking.get("sawlog_min_dbh_cm", []),
-                "landing_options": self.level.get("landing_options", {}),
+                "landing_options": entry.level.get("landing_options", {}),
             },
-            "careful_logging": DEFAULT_CAREFUL_LOGGING_CURVE.public_summary(),
+            "careful_logging": (
+                DEFAULT_CAREFUL_LOGGING_CURVE.public_summary()
+                if entry.level.get("selection_cut", True)
+                else None
+            ),
             "prices": {
-                "currency": self.price.currency,
-                "products": dict(self.price.products),
-                "mobilisation_cost": self.price.mobilisation_cost,
-                "road_extension_cost_per_m": self.price.road_extension_cost_per_m,
+                "currency": entry.price.currency,
+                "products": dict(entry.price.products),
+                "mobilisation_cost": entry.price.mobilisation_cost,
+                "road_extension_cost_per_m": entry.price.road_extension_cost_per_m,
             },
             "score_bounds": {
                 "best_net_profit": bounds["best_net_profit"],
@@ -156,10 +224,11 @@ class GameService:
     ) -> dict[str, Any]:
         """Score a precomputed choice and record the attempt."""
         session = self.session(session_id)
-        variant = self._find_variant(choices)
+        entry = self._entry(level_id)
+        variant = self._find_variant(entry, choices)
         attempt = session.submit(
             team_code=team_code,
-            level_id=level_id,
+            level_id=entry.level_id,
             choices=choices.model_dump(),
             net_profit=float(variant["net_profit"]),
             score=float(variant["score"]),
@@ -170,8 +239,15 @@ class GameService:
             "result": variant["result"],
         }
 
-    def _find_variant(self, choices: GameChoicesPayload) -> dict[str, Any]:
-        for record in self.precompute["variants"]:
+    def _entry(self, level_id: str) -> _StandEntry:
+        try:
+            return self.entries[level_id]
+        except KeyError as exc:
+            raise KeyError(f"Unknown level_id={level_id}") from exc
+
+    @staticmethod
+    def _find_variant(entry: _StandEntry, choices: GameChoicesPayload) -> dict[str, Any]:
+        for record in entry.precompute["variants"]:
             if (
                 math.isclose(float(record["care_level"]), choices.care_level, abs_tol=1e-9)
                 and int(record["skidder_count"]) == choices.skidder_count
@@ -206,14 +282,14 @@ def create_game_router(service: GameService) -> APIRouter:
 
     @router.get("/levels")
     def levels() -> list[dict[str, Any]]:
-        return [service.public_level()]
+        return service.public_levels()
 
     @router.get("/levels/{level_id}/boundary")
     def boundary(level_id: str) -> dict[str, Any]:
-        if level_id != service.level_id:
-            raise HTTPException(status_code=404, detail=f"Unknown level_id={level_id}")
         try:
-            return service.boundary()
+            return service.boundary(level_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
         except (OSError, ValueError) as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 

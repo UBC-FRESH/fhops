@@ -4670,3 +4670,8 @@ PY
   SVG viewport, session/team join, finite care/skidder/log controls, one-attempt
   submission, score display, and a boundary API. The shell uses the exact
   precomputed KC scoring path and never receives the optimal choice.
+
+- 2026-10-31: P20 added MKRF and Gavin Lake PSP-based stand inventories and
+  precomputes. MKRF uses FAIB CWHdm/Fraser PSP; Gavin uses ICHmk3/Williams Lake
+  PSP at age-137 BLOCK_ID 1032. Also extended the local game service/API to all
+  three ordered levels and added a level selector to the Game page.

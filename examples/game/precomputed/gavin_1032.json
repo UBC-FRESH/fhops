@@ -1,0 +1,185 @@
+{
+  "bounds": {
+    "best_choices": {
+      "care_level": 0.0,
+      "log_length_m": 6.1,
+      "road_extension_m": 0.0,
+      "sawlog_min_dbh_cm": 20.0,
+      "skidder_count": 1
+    },
+    "best_net_profit": -14297.224065273447,
+    "worst_net_profit": -22571.442020036222
+  },
+  "completeness": {
+    "combination_count": 4,
+    "complete": true
+  },
+  "level_id": "gavin_1032",
+  "level_manifest": "/home/gep/projects/fhops-p12/examples/game/levels/gavin_1032/level.yaml",
+  "level_order": 2,
+  "schema_version": "fhops.game.stand_precompute.v1",
+  "variants": [
+    {
+      "care_level": 0.0,
+      "log_length_m": 4.9,
+      "net_profit": -22571.442020036222,
+      "result": {
+        "care_level": 0.0,
+        "care_premium": 0.0,
+        "feller_productivity_multiplier": 1.0,
+        "gross_log_value": 114025.15963464053,
+        "machine_cost": 111596.60165467675,
+        "machine_hours": {
+          "H1": 94.38005233004374,
+          "H2": 29.2990786658799,
+          "H4": 17.71598162045899,
+          "H5": 44.59922347474528
+        },
+        "makespan_s": 398970.8754559325,
+        "mobilisation_cost": 25000.0,
+        "net_profit": -22571.442020036222,
+        "processed_volume_m3": 1457.1394882827524,
+        "product_value": {
+          "pulp": 32335.051388606083,
+          "sawlog_butt": 27411.40209576016,
+          "sawlog_upper": 54278.70615027429
+        },
+        "product_volume_m3": {
+          "pulp": 718.5566975245862,
+          "sawlog_butt": 195.7957292554291,
+          "sawlog_upper": 542.7870615027401
+        },
+        "residual_asset_value": 0.0,
+        "residual_damage_loss": 0.0,
+        "road_extension_cost": 0.0,
+        "warnings": []
+      },
+      "road_extension_m": 0.0,
+      "sawlog_min_dbh_cm": 20.0,
+      "score": 0.0,
+      "skidder_count": 1
+    },
+    {
+      "care_level": 0.0,
+      "log_length_m": 6.1,
+      "net_profit": -14297.224065273447,
+      "result": {
+        "care_level": 0.0,
+        "care_premium": 0.0,
+        "feller_productivity_multiplier": 1.0,
+        "gross_log_value": 115943.1586151019,
+        "machine_cost": 105240.38268037535,
+        "machine_hours": {
+          "H1": 87.82519760011138,
+          "H2": 25.260235105309953,
+          "H4": 17.71598162045901,
+          "H5": 44.599223474745244
+        },
+        "makespan_s": 375307.949254294,
+        "mobilisation_cost": 25000.0,
+        "net_profit": -14297.224065273447,
+        "processed_volume_m3": 1457.1394882827524,
+        "product_value": {
+          "pulp": 32335.05138860644,
+          "sawlog_butt": 34124.398527374855,
+          "sawlog_upper": 49483.7086991206
+        },
+        "product_volume_m3": {
+          "pulp": 718.5566975245766,
+          "sawlog_butt": 243.74570376696335,
+          "sawlog_upper": 494.8370869912063
+        },
+        "residual_asset_value": 0.0,
+        "residual_damage_loss": 0.0,
+        "road_extension_cost": 0.0,
+        "warnings": []
+      },
+      "road_extension_m": 0.0,
+      "sawlog_min_dbh_cm": 20.0,
+      "score": 100.0,
+      "skidder_count": 1
+    },
+    {
+      "care_level": 0.0,
+      "log_length_m": 4.9,
+      "net_profit": -22571.442020036207,
+      "result": {
+        "care_level": 0.0,
+        "care_premium": 0.0,
+        "feller_productivity_multiplier": 1.0,
+        "gross_log_value": 114025.15963464053,
+        "machine_cost": 111596.60165467674,
+        "machine_hours": {
+          "H1": 94.38005233004374,
+          "H2": 16.746281961562406,
+          "H3": 12.552796704317483,
+          "H4": 17.71598162045899,
+          "H5": 44.59922347474528
+        },
+        "makespan_s": 398970.8754559325,
+        "mobilisation_cost": 25000.0,
+        "net_profit": -22571.442020036207,
+        "processed_volume_m3": 1457.1394882827524,
+        "product_value": {
+          "pulp": 32335.051388606083,
+          "sawlog_butt": 27411.40209576016,
+          "sawlog_upper": 54278.70615027429
+        },
+        "product_volume_m3": {
+          "pulp": 718.5566975245862,
+          "sawlog_butt": 195.7957292554291,
+          "sawlog_upper": 542.7870615027401
+        },
+        "residual_asset_value": 0.0,
+        "residual_damage_loss": 0.0,
+        "road_extension_cost": 0.0,
+        "warnings": []
+      },
+      "road_extension_m": 0.0,
+      "sawlog_min_dbh_cm": 20.0,
+      "score": 1.7587058146069904e-13,
+      "skidder_count": 2
+    },
+    {
+      "care_level": 0.0,
+      "log_length_m": 6.1,
+      "net_profit": -14297.224065273462,
+      "result": {
+        "care_level": 0.0,
+        "care_premium": 0.0,
+        "feller_productivity_multiplier": 1.0,
+        "gross_log_value": 115943.1586151019,
+        "machine_cost": 105240.38268037536,
+        "machine_hours": {
+          "H1": 87.82519760011138,
+          "H2": 12.707438400992444,
+          "H3": 12.552796704317522,
+          "H4": 17.71598162045901,
+          "H5": 44.599223474745244
+        },
+        "makespan_s": 375307.949254294,
+        "mobilisation_cost": 25000.0,
+        "net_profit": -14297.224065273462,
+        "processed_volume_m3": 1457.1394882827524,
+        "product_value": {
+          "pulp": 32335.05138860644,
+          "sawlog_butt": 34124.398527374855,
+          "sawlog_upper": 49483.7086991206
+        },
+        "product_volume_m3": {
+          "pulp": 718.5566975245766,
+          "sawlog_butt": 243.74570376696335,
+          "sawlog_upper": 494.8370869912063
+        },
+        "residual_asset_value": 0.0,
+        "residual_damage_loss": 0.0,
+        "road_extension_cost": 0.0,
+        "warnings": []
+      },
+      "road_extension_m": 0.0,
+      "sawlog_min_dbh_cm": 20.0,
+      "score": 99.99999999999982,
+      "skidder_count": 2
+    }
+  ]
+}

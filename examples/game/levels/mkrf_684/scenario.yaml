@@ -1,0 +1,38 @@
+name: "FHOPS Serious Game \u2014 MKRF Cedar Flat"
+num_days: 30
+start_date: '2026-01-01'
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: prod_rates.csv
+  harvest_systems: harvest_systems.yaml
+geo:
+  block_geojson: blocks.geojson
+  landing_geojson: landings.geojson
+  crs: EPSG:3005
+  notes: MKRF Cedar Flat; synthetic FAIB-PSP tree inventory.
+tree_inventory:
+  inventory_id: mkrf_684-faib-psp-v1
+  inventory_sha256: 3ce8e7a832324e1771bafa36c9b4d60789aa6c3e6e152e24f12adf1ad55e5dfe
+  metadata_sha256: 1d696ef03e1d461512cd927b5a9e11f24f5b19ebae23e5cbe1440414bd7bba67
+  inventory_path: ../../stands/mkrf_684/trees.csv
+  metadata_path: ../../stands/mkrf_684/inventory.meta.json
+  crs: EPSG:3005
+  review_status: not_reviewed
+  reviewed_by: null
+  source_id: faib-psp-cwhdm
+  producer: Nemora
+  method: Weibull DBH fit to FAIB PSP live trees; species composition and height allometry
+    from the same BEC/TSA/age window; deterministic placement inside the VRI polygon.
+  tree_count: 4798
+  block_ids:
+  - B01
+  caveats:
+  - Synthetic tree map; not a surveyed stand or operational inventory.
+  - DBH distribution is fitted to regional PSP live trees in the stated BEC/TSA/age
+    window.
+  - Species composition and height allometry are regional PSP summaries, not measured
+    stand values.
+  - Tree placement is deterministic Poisson, not a mapped stem map.

@@ -40,7 +40,7 @@ exact polygons as EPSG:3005 GeoJSON.
 | Level | Stand | Area | BEC / stand | System | Main difficulty |
 | --- | --- | ---: | --- | --- | --- |
 | 1 `mkrf_684` | MKRF RES_KEY 684 | 6.86 ha | CWHdm, HW/FDC, 104 y | tree-length: feller + skidder + loader | starter: small layout, no processor |
-| 2 `gavin_3` | Gavin Lake BLOCK_ID 3 | 13.94 ha | ICHmk3, 207 y | cut-to-length: feller + skidder + processor + loader | intermediate: value recovery and processing balance |
+| 2 `gavin_1032` | Gavin Lake BLOCK_ID 1032 | 10.00 ha | ICHmk3, 137 y | cut-to-length: feller + skidder + processor + loader | intermediate: value recovery and processing balance |
 | 3 `kc_57254551` | Knife Creek VRI polygon 57254551 | 35.95 ha | IDFdk3, FDI, 140 y, 479 stems/ha, 146.6 m³/ha | selection cut, cut-to-length, two skidders | advanced: careful-logging trade-off, landing choice, trunk-road extension |
 
 ### Provenance
@@ -48,7 +48,8 @@ exact polygons as EPSG:3005 GeoJSON.
 - MKRF: `models/mkrf_patchworks_model/spatial/fragments.shp`, a VRI-derived
   MKRF patchworks layer; selected by `RES_KEY`.
 - Gavin Lake: `data/legacy_gavinlake/spatial/fragments.shp`, a VRI-derived
-  cutblock layer; selected by `BLOCK_ID`.
+  cutblock layer; selected by `BLOCK_ID` 1032 (age 137, matching the available
+  ICHmk3 PSP window).
 - Knife Creek: `data/inventory/vri_2025_kc.gpkg`, VRI 2025 R1; selected by
   `POLYGON_ID`.
 
@@ -223,10 +224,16 @@ combination is evaluated, the tree inventory and event calendar are pinned, and
 the precompute is complete. Best-known or sampled bounds must not be labelled
 optimal.
 
-The first KC precompute is complete: 20 combinations (5 care levels × 2
-skidder counts × 2 log lengths), best net profit `$75,705.63`, worst
-`$21,969.10`. The best combination is moderate care (`0.50`), one skidder, and
-`6.1 m` logs. Artifact: `examples/game/precomputed/kc_57254551.json`.
+KC precompute is complete: 20 combinations (5 care levels × 2 skidder counts ×
+2 log lengths), best net profit `$75,705.63`, worst `$21,969.10`. The best
+combination is moderate care (`0.50`), one skidder, and `6.1 m` logs.
+Artifact: `examples/game/precomputed/kc_57254551.json`.
+
+MKRF and Gavin are clearcut/tree-length or cut-to-length levels with care
+fixed at standard. Each has four combinations (2 skidder counts × 2 log
+lengths). MKRF precompute: best `$334,549.83`, worst `$326,885.86`. Gavin
+precompute: best `-$14,297.22`, worst `-$22,571.44` (the synthetic price deck
+currently runs negative at this small, dense stand).
 
 The old fleet-opportunity formula is retained: extra marginal multipliers
 `1×`, `2×`, `8×`, with a `4×` spot surcharge on the last slot. It is now one
@@ -320,6 +327,7 @@ Planned assets and code:
   cost deck.
 - `examples/game/levels/<level>/level.yaml` — finite control grid.
 - `examples/game/precomputed/<level>.json` — complete stand precompute.
+- `scripts/generate_faib_inventory.py` — FAIB PSP inventory producer.
 - `src/fhops/game/levels.py`, `inventory.py`, `bucking.py`,
   `careful_logging.py`, `value.py`, `operation.py`, `scoring.py`,
   `stand_precompute.py`, `state.py`.

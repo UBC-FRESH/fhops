@@ -35,6 +35,7 @@
   </section>
   <section>
     <h2>Plan and score</h2>
+    <label for="level">Level</label><select id="level"></select>
     <div class="row">
       <div><label for="session">Session</label><input id="session" value="demo" /></div>
       <div><label for="team">Team code</label><input id="team" value="TEAM-A" /></div>
@@ -51,7 +52,7 @@
   </section>
 </main>
 <script>
-const state = { level: null, armed: false };
+const state = { level: null, levels: [], armed: false };
 const $ = (id) => document.getElementById(id);
 const show = (value) => { $('status').textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2); };
 
@@ -85,12 +86,9 @@ async function drawBoundary() {
 async function loadLevel() {
   const response = await fetch('/api/game/levels');
   if (!response.ok) throw new Error(await response.text());
-  state.level = (await response.json())[0];
-  $('care').innerHTML = state.level.controls.care_levels.map((v) => `<option value="${v}">${v}</option>`).join('');
-  $('skidders').innerHTML = state.level.controls.skidder_counts.map((v) => `<option value="${v}">${v}</option>`).join('');
-  $('logs').innerHTML = state.level.controls.log_length_m.map((v) => `<option value="${v}">${v} m</option>`).join('');
-  await drawBoundary();
-  show({ level: state.level.name, status: state.level.status, scoring: state.level.score_bounds });
+  state.levels = await response.json();
+  $('level').innerHTML = state.levels.map((l) => `<option value="${l.level_id}">${l.name}</option>`).join('');
+  await selectLevel(state.levels[0].level_id);
 }
 
 $('join').onclick = async () => {
@@ -114,7 +112,7 @@ $('submit').onclick = async () => {
   try {
     if (!state.armed) throw new Error('Join a session first.');
     const session = $('session').value.trim(), team = $('team').value.trim();
-    const response = await fetch(`/api/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit`, {
+    const response = await fetch(`/api/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit?level_id=${encodeURIComponent(state.level.level_id)}`, {
       method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ care_level: Number($('care').value), skidder_count: Number($('skidders').value), log_length_m: Number($('logs').value), sawlog_min_dbh_cm: 20.0, road_extension_m: 0.0 })
     });
@@ -126,6 +124,16 @@ $('submit').onclick = async () => {
   } catch (error) { show(String(error)); }
 };
 
+async function selectLevel(levelId) {
+  state.level = state.levels.find((level) => level.level_id === levelId);
+  $('care').innerHTML = state.level.controls.care_levels.map((v) => `<option value="${v}">${v}</option>`).join('');
+  $('skidders').innerHTML = state.level.controls.skidder_counts.map((v) => `<option value="${v}">${v}</option>`).join('');
+  $('logs').innerHTML = state.level.controls.log_length_m.map((v) => `<option value="${v}">${v} m</option>`).join('');
+  await drawBoundary();
+  show({ level: state.level.name, status: state.level.status, scoring: state.level.score_bounds });
+}
+
+$('level').onchange = () => selectLevel($('level').value).catch((error) => show(String(error)));
 loadLevel().catch((error) => show(String(error)));
 </script>
 </body>

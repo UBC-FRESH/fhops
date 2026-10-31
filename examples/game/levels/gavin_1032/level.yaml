@@ -1,0 +1,32 @@
+schema_version: fhops.game.level.v1
+level_id: gavin_1032
+order: 2
+name: Gavin Lake Block 1032
+area_ha: 9.997778533518572
+difficulty: intermediate
+boundary: ../../stands/gavin_1032.geojson
+scenario: scenario.yaml
+prices: prices.yaml
+stem_form_factor: 0.45
+selection_cut: false
+machine_ids:
+  feller: H1
+  skidders:
+  - H2
+  - H3
+  processors:
+  - H5
+  loader: H4
+care_levels:
+- 0.0
+skidder_counts:
+- 1
+- 2
+bucking:
+  log_length_m:
+  - 4.9
+  - 6.1
+  sawlog_min_dbh_cm:
+  - 20.0
+landing_options:
+  main: 0.0

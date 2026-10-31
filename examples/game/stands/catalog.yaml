@@ -20,19 +20,19 @@ stands:
     road_extension_m: 0
     road_extension_status: existing access
   psp_fit:
-    status: pending
+    status: available
     bec_target: CWHdm
-    source: BEC-matched PSP; not yet local
-- level_id: gavin_3
+    source: FAIB PSP CWHdm, Fraser TSA, age 80-125
+- level_id: gavin_1032
   order: 2
-  name: Gavin Lake Block 3
+  name: Gavin Lake Block 1032
   forest: Alex Fraser Research Forest, Gavin Lake
-  boundary: gavin_3.geojson
-  source: BLOCK_ID 3; VRI-derived Gavin Lake cutblock
-  area_ha: 13.944055
+  boundary: gavin_1032.geojson
+  source: BLOCK_ID 1032; VRI-derived Gavin Lake cutblock
+  area_ha: 9.997779
   bec: ICHmk3
   leading_species: null
-  age_years: 207
+  age_years: 137
   harvest_system: cut_to_length
   difficulty: intermediate
   landing_options:
@@ -40,9 +40,9 @@ stands:
     road_extension_m: 0
     road_extension_status: existing access
   psp_fit:
-    status: pending
+    status: available
     bec_target: ICHmk3
-    source: BEC-matched PSP; not yet local
+    source: FAIB PSP ICHmk3, Williams Lake TSA, age 90-150
 - level_id: kc_57254551
   order: 3
   name: Knife Creek Polygon 57254551

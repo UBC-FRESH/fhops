@@ -113,3 +113,42 @@ def test_game_shell_and_boundary(tmp_path: Path) -> None:
     assert boundary.status_code == 200
     assert boundary.json()["type"] == "FeatureCollection"
     assert "best_choices" not in boundary.text
+
+
+def test_multi_level_order_and_selector_payload(tmp_path: Path) -> None:
+    app = create_app(
+        ServiceConfig(
+            roots=[tmp_path],
+            workspace=Path.cwd(),
+            game_levels=[
+                Path("examples/game/levels/mkrf_684/level.yaml").resolve(),
+                Path("examples/game/levels/gavin_1032/level.yaml").resolve(),
+                LEVEL,
+            ],
+            game_precomputes=[
+                Path("examples/game/precomputed/mkrf_684.json").resolve(),
+                Path("examples/game/precomputed/gavin_1032.json").resolve(),
+                PRECOMPUTE,
+            ],
+        )
+    )
+    client = TestClient(app)
+    levels = client.get("/api/game/levels").json()
+    assert [item["level_id"] for item in levels] == ["mkrf_684", "gavin_1032", "kc_57254551"]
+
+    client.post("/api/game/sessions", json={"session_id": "multi"})
+    client.post("/api/game/sessions/multi/teams", json={"team_code": "T1"})
+    state = client.get("/api/game/sessions/multi/teams/T1").json()
+    assert state["current_level"] == "mkrf_684"
+
+    skipped = client.post(
+        "/api/game/sessions/multi/teams/T1/submit?level_id=kc_57254551",
+        json={
+            "care_level": 0.0,
+            "skidder_count": 1,
+            "log_length_m": 6.1,
+            "sawlog_min_dbh_cm": 20.0,
+            "road_extension_m": 0.0,
+        },
+    )
+    assert skipped.status_code == 400

@@ -11,7 +11,7 @@ from typing import Any
 
 import yaml
 
-from .operation import evaluate_kc_selection_cut
+from .operation import evaluate_kc_selection_cut, evaluate_stand
 from .scoring import ScoreBounds, normalize_score
 
 __all__ = [
@@ -108,22 +108,48 @@ def precompute_stand_level(
     for choices in enumerate_stand_choices(level):
         if choices.skidder_count > len(skidders):
             raise GameStandPrecomputeError("skidder_count exceeds available machines.")
-        result = evaluate_fn(
-            scenario,
-            price_path=prices,
-            care_level=choices.care_level,
-            form_factor=float(level["stem_form_factor"]),
-            log_length_m=choices.log_length_m,
-            sawlog_min_dbh_cm=choices.sawlog_min_dbh_cm,
-            road_extension_m=choices.road_extension_m,
-            machine_ids={
-                "feller": machine_ids["feller"],
-                "skidders": skidders[: choices.skidder_count],
-                "processors": tuple(machine_ids.get("processors", [])),
-                "loader": machine_ids["loader"],
-            },
-        )
-        result_payload = result.to_dict() if hasattr(result, "to_dict") else dict(result)
+        machine_selection = {
+            "feller": machine_ids["feller"],
+            "skidders": skidders[: choices.skidder_count],
+            "processors": tuple(machine_ids.get("processors", [])),
+            "loader": machine_ids["loader"],
+        }
+        if evaluate_fn is evaluate_kc_selection_cut:
+            if level.get("selection_cut", True):
+                result = evaluate_kc_selection_cut(
+                    scenario,
+                    price_path=prices,
+                    care_level=choices.care_level,
+                    form_factor=float(level["stem_form_factor"]),
+                    log_length_m=choices.log_length_m,
+                    sawlog_min_dbh_cm=choices.sawlog_min_dbh_cm,
+                    road_extension_m=choices.road_extension_m,
+                    machine_ids=machine_selection,
+                )
+            else:
+                result = evaluate_stand(
+                    scenario,
+                    price_path=prices,
+                    care_level=0.0,
+                    selection_cut=False,
+                    form_factor=float(level["stem_form_factor"]),
+                    log_length_m=choices.log_length_m,
+                    sawlog_min_dbh_cm=choices.sawlog_min_dbh_cm,
+                    road_extension_m=choices.road_extension_m,
+                    machine_ids=machine_selection,
+                )
+        else:
+            result = evaluate_fn(
+                scenario,
+                price_path=prices,
+                care_level=choices.care_level,
+                form_factor=float(level["stem_form_factor"]),
+                log_length_m=choices.log_length_m,
+                sawlog_min_dbh_cm=choices.sawlog_min_dbh_cm,
+                road_extension_m=choices.road_extension_m,
+                machine_ids=machine_selection,
+            )
+        result_payload = result if isinstance(result, dict) else result.to_dict()
         record = {
             **choices.to_dict(),
             "net_profit": float(result_payload["net_profit"]),
@@ -139,7 +165,10 @@ def precompute_stand_level(
         worst_net_profit=float(worst["net_profit"]),
     )
     for record in records:
-        record["score"] = normalize_score(float(record["net_profit"]), bounds)
+        net_profit = record.get("net_profit")
+        if not isinstance(net_profit, (int, float)):
+            raise GameStandPrecomputeError("Variant result has no numeric net_profit.")
+        record["score"] = normalize_score(float(net_profit), bounds)
     return {
         "schema_version": SCHEMA_VERSION,
         "level_id": level["level_id"],

@@ -96,6 +96,8 @@ class ServiceConfig:
         Optional stand-level game manifest. Must be paired with ``game_precompute``.
     game_precompute:
         Optional complete stand precompute artifact.
+    game_levels / game_precomputes:
+        Optional ordered list of stand levels and matching precomputes.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -117,6 +119,8 @@ class ServiceConfig:
     lidar_timeout: float = 300.0
     game_level: Path | None = None
     game_precompute: Path | None = None
+    game_levels: list[Path] = field(default_factory=list)
+    game_precomputes: list[Path] = field(default_factory=list)
 
 
 class ObjectiveUpdate(BaseModel):
@@ -191,13 +195,15 @@ def create_app(config: ServiceConfig) -> FastAPI:
             run_manager.shutdown()
 
     app = FastAPI(title=config.title, version=fhops.__version__, lifespan=lifespan)
+    if len(config.game_levels) != len(config.game_precomputes):
+        raise ValueError("game_levels and game_precomputes must have the same length.")
     if (config.game_level is None) != (config.game_precompute is None):
         raise ValueError("game_level and game_precompute must be configured together.")
+    game_specs = list(zip(config.game_levels, config.game_precomputes, strict=True))
     if config.game_level is not None and config.game_precompute is not None:
-        game_service = GameService(
-            level_path=config.game_level,
-            precompute_path=config.game_precompute,
-        )
+        game_specs.append((config.game_level, config.game_precompute))
+    if game_specs:
+        game_service = GameService(levels=game_specs)
         app.include_router(create_game_router(game_service))
 
     def _scenario_target(scenario_id: str) -> tuple[Path, str | None, RunRecord]:

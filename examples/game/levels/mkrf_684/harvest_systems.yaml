@@ -1,0 +1,21 @@
+tree_length_ground:
+  system_id: tree_length_ground
+  loader_batch_volume_m3: 30.0
+  role_headstart_shifts:
+    roadside_processor: 0.0
+    loader: 0.0
+  role_counts:
+    feller_buncher: 1
+    grapple_skidder: 2
+    roadside_processor: 0
+    loader: 1
+  jobs:
+  - name: felling
+    machine_role: feller_buncher
+    prerequisites: []
+  - name: primary_transport
+    machine_role: grapple_skidder
+    prerequisites: [felling]
+  - name: loading
+    machine_role: loader
+    prerequisites: [primary_transport]

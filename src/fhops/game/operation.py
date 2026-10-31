@@ -107,12 +107,13 @@ def _residual_trees(
     return [model.evaluate(row) for row in inventory.rows]
 
 
-def evaluate_kc_selection_cut(
+def evaluate_stand(
     scenario_path: str | Path,
     *,
     price_path: str | Path,
-    care_level: float,
-    form_factor: float = 0.192014,
+    care_level: float = 0.0,
+    selection_cut: bool = False,
+    form_factor: float = 0.45,
     log_length_m: float = 4.9,
     stump_height_m: float = 0.3,
     sawlog_min_dbh_cm: float = 20.0,
@@ -122,7 +123,7 @@ def evaluate_kc_selection_cut(
     machine_ids: dict[str, Any] | None = None,
     care_curve: CarefulLoggingCurve = DEFAULT_CAREFUL_LOGGING_CURVE,
 ) -> OperationResult:
-    """Evaluate one KC selection-cut operation and return net profit."""
+    """Evaluate one stand-scale operation and return net profit."""
     if form_factor <= 0 or log_length_m <= 0 or stump_height_m <= 0:
         raise ValueError("Stem and bucking parameters must be positive.")
     scenario_file = Path(scenario_path).expanduser().resolve()
@@ -135,14 +136,23 @@ def evaluate_kc_selection_cut(
         sawlog_min_dbh_cm=sawlog_min_dbh_cm,
     )
     stems: StemInventory = build_stem_inventory(scenario_file, model=model)
-    residual = _residual_trees(scenario_file, scenario, model)
+    residual = _residual_trees(scenario_file, scenario, model) if selection_cut else []
     residual_asset = price.residual_asset_value(
         sum(tree.merchantable_volume_m3 for tree in residual)
     )
-    care = care_curve.get(care_level)
-    feller_productivity = (
-        care_curve.base_selection_cut_productivity_multiplier * care.care_productivity_multiplier
-    )
+    if selection_cut:
+        care = care_curve.get(care_level)
+        feller_productivity = (
+            care_curve.base_selection_cut_productivity_multiplier
+            * care.care_productivity_multiplier
+        )
+        care_premium_per_m3 = care.care_premium_per_m3
+        residual_damage_fraction = care.residual_damage_fraction
+    else:
+        care = None
+        feller_productivity = 1.0
+        care_premium_per_m3 = 0.0
+        residual_damage_fraction = 0.0
     ids = machine_ids or _default_machine_ids(scenario)
     result = simulate_ground_system(
         scenario_file,
@@ -168,8 +178,8 @@ def evaluate_kc_selection_cut(
     machine_cost = sum(
         hours * machine_costs.get(machine_id, 0.0) for machine_id, hours in machine_hours.items()
     )
-    care_premium = result.processed_volume_m3 * care.care_premium_per_m3
-    residual_damage_loss = residual_asset * care.residual_damage_fraction
+    care_premium = result.processed_volume_m3 * care_premium_per_m3
+    residual_damage_loss = residual_asset * residual_damage_fraction
     road_extension_cost = price.road_extension_cost(road_extension_m)
     net_profit = (
         float(value["gross_log_value"])
@@ -180,7 +190,7 @@ def evaluate_kc_selection_cut(
         - road_extension_cost
     )
     return OperationResult(
-        care_level=care.level,
+        care_level=0.0 if care is None else care.level,
         processed_volume_m3=result.processed_volume_m3,
         gross_log_value=float(value["gross_log_value"]),
         machine_cost=machine_cost,
@@ -196,4 +206,37 @@ def evaluate_kc_selection_cut(
         makespan_s=result.makespan_s,
         feller_productivity_multiplier=feller_productivity,
         warnings=tuple(result.warnings),
+    )
+
+
+def evaluate_kc_selection_cut(
+    scenario_path: str | Path,
+    *,
+    price_path: str | Path,
+    care_level: float,
+    form_factor: float = 0.192014,
+    log_length_m: float = 4.9,
+    stump_height_m: float = 0.3,
+    sawlog_min_dbh_cm: float = 20.0,
+    road_extension_m: float = 0.0,
+    shift_days: int = 30,
+    hours_per_shift: float = 20.0,
+    machine_ids: dict[str, Any] | None = None,
+    care_curve: CarefulLoggingCurve = DEFAULT_CAREFUL_LOGGING_CURVE,
+) -> OperationResult:
+    """Evaluate the KC selection-cut level."""
+    return evaluate_stand(
+        scenario_path,
+        price_path=price_path,
+        care_level=care_level,
+        selection_cut=True,
+        form_factor=form_factor,
+        log_length_m=log_length_m,
+        stump_height_m=stump_height_m,
+        sawlog_min_dbh_cm=sawlog_min_dbh_cm,
+        road_extension_m=road_extension_m,
+        shift_days=shift_days,
+        hours_per_shift=hours_per_shift,
+        machine_ids=machine_ids,
+        care_curve=care_curve,
     )
