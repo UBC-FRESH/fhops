@@ -13,6 +13,7 @@
   <div style="background:#7a4b00;color:#fff;padding:7px 14px;font:600 12px/1.4 system-ui;text-align:center">Public experimental demo · no login · agent enabled</div>
   <header>
     <div class="brand">FHOPS Tree Lab <small>local sandbox · demonstration only</small></div>
+    <button id="up-level" class="btn ghost" title="Back to case list" hidden>↑ Cases</button>
     <nav id="nav">
       <button data-view="cases" class="active">Cases</button>
       <button data-view="run">Run</button>
@@ -62,6 +63,7 @@
         <div id="timeline-strip"></div>
         <div id="scene-controls">
           <button class="btn" id="scene-play">pause</button>
+          <button class="btn ghost" id="scene-back">← cases</button>
           <button class="btn ghost" id="scene-reset">reset</button>
           <button class="btn ghost" id="scene-fit">fit view</button>
           <input id="scene-scrub" type="range" min="0" max="1000" value="0">
@@ -119,6 +121,6 @@
     </section>
   </main>
 
-  <script type="module" src="./static/app.20261031g.js"></script>
+  <script type="module" src="./static/app.20261031h.js"></script>
 </body>
 </html>

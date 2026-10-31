@@ -62,6 +62,8 @@ function setView(name) {
   document.querySelectorAll('.view').forEach((section) => {
     section.classList.toggle('active', section.id === `view-${name}`);
   });
+  const upLevel = document.getElementById('up-level');
+  if (upLevel) upLevel.hidden = name === 'cases';
   if (name === 'scene') viewer.resize();
 }
 
@@ -614,6 +616,8 @@ $('#scene-play').addEventListener('click', () => {
   const playing = viewer.toggle();
   $('#scene-play').textContent = playing ? 'pause' : 'play';
 });
+$('#scene-back').addEventListener('click', () => setView('cases'));
+document.getElementById('up-level')?.addEventListener('click', () => setView('cases'));
 $('#scene-reset').addEventListener('click', () => { viewer.reset(); updateSceneHud(0); });
 $('#scene-fit').addEventListener('click', () => viewer.fit());
 $('#scene-scrub').addEventListener('input', (event) => {

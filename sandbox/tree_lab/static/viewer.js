@@ -781,8 +781,32 @@ export function createViewer(container, { onTime } = {}) {
 
         deckCurves = buildDeckCurves(events);
         if (events.landing) {
-          decks.unprocessed = makeDeck(events.landing, -34, 70, 0x7d5a36, 'unprocessed deck');
-          decks.processed = makeDeck(events.landing, 34, 70, 0xc9a36a, 'processed log deck');
+          decks.unprocessed = makeDeck(events.landing, -52, 62, 0x7d5a36, 'unprocessed deck');
+          decks.processed = makeDeck(events.landing, 28, 62, 0xc9a36a, 'processed log deck');
+          const hasProcessor = Object.values(events.machines || {}).some((machine) =>
+            ['roadside_processor', 'processor'].includes(machine.type));
+          if (hasProcessor) {
+            const flowStart = new THREE.Vector3(
+              events.landing.x - 52,
+              sampleHeight(events.landing.x - 52, events.landing.y + 62) + 2.5,
+              events.landing.y + 62,
+            );
+            const flowEnd = new THREE.Vector3(
+              events.landing.x + 28,
+              sampleHeight(events.landing.x + 28, events.landing.y + 62) + 2.5,
+              events.landing.y + 62,
+            );
+            const flow = new THREE.ArrowHelper(
+              flowEnd.clone().sub(flowStart).normalize(),
+              flowStart,
+              flowStart.distanceTo(flowEnd),
+              0xf1c40f,
+              12,
+              7,
+            );
+            flow.name = 'landing_flow';
+            scene.add(flow);
+          }
           if (truckIds.length) {
             const millX = events.landing.x + 120;
             const millY = events.landing.y + 140;
