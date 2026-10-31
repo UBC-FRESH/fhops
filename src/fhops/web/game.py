@@ -92,6 +92,13 @@ class GameService:
         team = session.register_team(team_code)
         return team.to_dict()
 
+    def boundary(self) -> dict[str, Any]:
+        """Return the stand boundary for the whole-operation viewport."""
+        import json
+
+        path = (self.level_path.parent / self.level["boundary"]).resolve()
+        return json.loads(path.read_text(encoding="utf-8"))
+
     def public_level(self) -> dict[str, Any]:
         """Return pre-run level metadata without the optimal choice."""
         bounds = self.precompute["bounds"]
@@ -201,10 +208,19 @@ def create_game_router(service: GameService) -> APIRouter:
     def levels() -> list[dict[str, Any]]:
         return [service.public_level()]
 
-    @router.post("/sessions")
-    def create_session(request: GameSessionCreate) -> dict[str, Any]:
+    @router.get("/levels/{level_id}/boundary")
+    def boundary(level_id: str) -> dict[str, Any]:
+        if level_id != service.level_id:
+            raise HTTPException(status_code=404, detail=f"Unknown level_id={level_id}")
         try:
-            return service.create_session(request.session_id)
+            return service.boundary()
+        except (OSError, ValueError) as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @router.post("/sessions")
+    def create_session(request: GameSessionCreate | None = None) -> dict[str, Any]:
+        try:
+            return service.create_session(request.session_id if request else None)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 

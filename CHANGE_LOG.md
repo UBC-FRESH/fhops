@@ -4665,3 +4665,8 @@ PY
   creation, ordered one-play submission against the complete KC precompute,
   team state, leaderboard, and pre-run leakage checks. Game routes are opt-in via
   `ServiceConfig.game_level` plus `game_precompute`.
+
+- 2026-10-31: P20 first Game workspace: added `/game` shell with a whole-stand
+  SVG viewport, session/team join, finite care/skidder/log controls, one-attempt
+  submission, score display, and a boundary API. The shell uses the exact
+  precomputed KC scoring path and never receives the optimal choice.

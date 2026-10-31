@@ -622,7 +622,9 @@ loader replaces it.
     leaderboard.
   - [ ] Add the Game workspace UI and level-map viewport.
 - [ ] P20.3 Add the game API and web workspace (#314)
-  - [ ] Lobby, level map, controls, live run, score, leaderboard.
+  - [x] Local API: level metadata, session/team, ordered submission, leaderboard.
+  - [x] First `/game` shell: whole-stand SVG, controls, score, team join.
+  - [ ] Full lobby/level-map/leaderboard UI and live progress.
 - [ ] P20.4 Prove fairness, document the tournament, and close out (#315)
   - [ ] Deterministic/fairness/leakage tests.
   - [ ] Instructor/student docs and close-out report.

@@ -101,3 +101,15 @@ def test_invalid_choice_fails_closed(tmp_path: Path) -> None:
     )
     assert response.status_code == 400
     assert "precomputed control grid" in response.json()["detail"]
+
+
+def test_game_shell_and_boundary(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+
+    shell = client.get("/game")
+    assert shell.status_code == 200
+    assert "FHOPS Serious Game" in shell.text
+    boundary = client.get("/api/game/levels/kc_57254551/boundary")
+    assert boundary.status_code == 200
+    assert boundary.json()["type"] == "FeatureCollection"
+    assert "best_choices" not in boundary.text

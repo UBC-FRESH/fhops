@@ -794,6 +794,13 @@ def create_app(config: ServiceConfig) -> FastAPI:
     if _STATIC_DIR.exists():
         app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
 
+    @app.get("/game")
+    def game_page() -> FileResponse:
+        path = _STATIC_DIR / "game.html"
+        if not path.exists():
+            raise HTTPException(status_code=500, detail="Game shell is missing")
+        return FileResponse(path)
+
     @app.get("/")
     def index() -> FileResponse:
         index_path = _STATIC_DIR / "index.html"

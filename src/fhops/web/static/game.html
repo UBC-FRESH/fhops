@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FHOPS Serious Game</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; }
+    body { margin: 0; background: #eef2ef; color: #17201b; }
+    header { padding: 18px 24px; background: #173d2a; color: white; }
+    header h1 { margin: 0; font-size: 1.25rem; }
+    main { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: 18px; padding: 18px; }
+    section { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 1px 4px #0002; }
+    h2 { margin-top: 0; font-size: 1rem; }
+    #map { width: 100%; min-height: 420px; background: #dce8df; border-radius: 8px; }
+    #map svg { width: 100%; height: 420px; }
+    label { display: block; margin: 10px 0 4px; font-size: .85rem; color: #36453b; }
+    input, select, button { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #9aaba0; border-radius: 6px; background: white; }
+    button { margin-top: 10px; background: #1f6b43; color: white; border: 0; cursor: pointer; }
+    button:disabled { background: #8da89a; cursor: not-allowed; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .muted { color: #5e6e64; font-size: .85rem; }
+    #status { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: .85rem; margin-top: 12px; }
+    #score { font-size: 2.4rem; font-weight: 700; margin: 8px 0; }
+    @media (max-width: 850px) { main { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<header><h1>FHOPS Serious Game — Knife Creek</h1></header>
+<main>
+  <section>
+    <h2>Whole-operation viewport</h2>
+    <div id="map" aria-label="Stand boundary"></div>
+    <p class="muted">One selection-cut stand. Careful logging trades slower harvester work and an operator premium against residual-stem damage.</p>
+  </section>
+  <section>
+    <h2>Plan and score</h2>
+    <div class="row">
+      <div><label for="session">Session</label><input id="session" value="demo" /></div>
+      <div><label for="team">Team code</label><input id="team" value="TEAM-A" /></div>
+    </div>
+    <button id="join">Create session and join</button>
+    <div class="row">
+      <div><label for="care">Careful logging</label><select id="care"></select></div>
+      <div><label for="skidders">Skidders</label><select id="skidders"></select></div>
+    </div>
+    <label for="logs">Target log length</label><select id="logs"></select>
+    <button id="submit" disabled>Submit one attempt</button>
+    <div id="score">—</div>
+    <div id="status">Join a session to begin.</div>
+  </section>
+</main>
+<script>
+const state = { level: null, armed: false };
+const $ = (id) => document.getElementById(id);
+const show = (value) => { $('status').textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2); };
+
+function polygonRings(payload) {
+  const rings = [];
+  for (const feature of payload.features || []) {
+    const g = feature.geometry;
+    if (!g) continue;
+    if (g.type === 'Polygon') rings.push(g.coordinates[0]);
+    if (g.type === 'MultiPolygon') for (const poly of g.coordinates) rings.push(poly[0]);
+  }
+  return rings;
+}
+
+async function drawBoundary() {
+  const response = await fetch(`/api/game/levels/${state.level.level_id}/boundary`);
+  if (!response.ok) throw new Error(await response.text());
+  const rings = polygonRings(await response.json());
+  const points = rings.flat();
+  const xs = points.map((p) => p[0]), ys = points.map((p) => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const pad = 20, w = 640, h = 420;
+  const scale = Math.min((w - 2 * pad) / (maxX - minX || 1), (h - 2 * pad) / (maxY - minY || 1));
+  const ox = pad + (w - 2 * pad - (maxX - minX) * scale) / 2;
+  const oy = pad + (h - 2 * pad - (maxY - minY) * scale) / 2;
+  const project = ([x, y]) => [ox + (x - minX) * scale, h - (oy + (y - minY) * scale)];
+  const paths = rings.map((ring) => 'M' + ring.map(project).map((p) => p.map((n) => n.toFixed(1)).join(',')).join('L') + 'Z').join(' ');
+  $('map').innerHTML = `<svg viewBox="0 0 ${w} ${h}" role="img"><path d="${paths}" fill="#5f9b72" fill-rule="evenodd" stroke="#173d2a" stroke-width="2"/></svg>`;
+}
+
+async function loadLevel() {
+  const response = await fetch('/api/game/levels');
+  if (!response.ok) throw new Error(await response.text());
+  state.level = (await response.json())[0];
+  $('care').innerHTML = state.level.controls.care_levels.map((v) => `<option value="${v}">${v}</option>`).join('');
+  $('skidders').innerHTML = state.level.controls.skidder_counts.map((v) => `<option value="${v}">${v}</option>`).join('');
+  $('logs').innerHTML = state.level.controls.log_length_m.map((v) => `<option value="${v}">${v} m</option>`).join('');
+  await drawBoundary();
+  show({ level: state.level.name, status: state.level.status, scoring: state.level.score_bounds });
+}
+
+$('join').onclick = async () => {
+  try {
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    let response = await fetch('/api/game/sessions', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ session_id: session }) });
+    if (response.status === 400) response = await fetch('/api/game/sessions', { method: 'POST' });
+    if (!response.ok) throw new Error(await response.text());
+    const created = await response.json();
+    const sid = created.session_id;
+    $('session').value = sid;
+    response = await fetch(`/api/game/sessions/${encodeURIComponent(sid)}/teams`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ team_code: team }) });
+    if (!response.ok && response.status !== 400) throw new Error(await response.text());
+    state.armed = true;
+    $('submit').disabled = false;
+    show({ joined: { session_id: sid, team_code: team }, current_level: state.level.level_id });
+  } catch (error) { show(String(error)); }
+};
+
+$('submit').onclick = async () => {
+  try {
+    if (!state.armed) throw new Error('Join a session first.');
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const response = await fetch(`/api/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ care_level: Number($('care').value), skidder_count: Number($('skidders').value), log_length_m: Number($('logs').value), sawlog_min_dbh_cm: 20.0, road_extension_m: 0.0 })
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    $('score').textContent = Number(payload.score).toFixed(1);
+    $('submit').disabled = true;
+    show({ score: payload.score, net_profit: payload.attempt.net_profit, result: payload.result });
+  } catch (error) { show(String(error)); }
+};
+
+loadLevel().catch((error) => show(String(error)));
+</script>
+</body>
+</html>
