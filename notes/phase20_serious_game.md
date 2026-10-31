@@ -179,6 +179,26 @@ Planned artifacts:
 - A team's SA run is not guaranteed to find the MIP optimum, so 100 is a ceiling.
 - The game measures scheduling decisions, not real-world productivity.
 
+## Exactness status
+
+Tiny7 is currently the only game-enabled level. Its full 216-variant menu was
+solved to optimality: adjusted best `4406.153`, worst `4366.909`.
+
+Small21 is **not game-enabled**: its base-menu variant
+(`feller=2, skidder=1, processor=3, loader=3`, hot/parallel) did not reach an
+optimal MIP status within 300 seconds. The precompute fails closed and does not
+emit bounds for Small21. Medium42 and Large84 have not been attempted because
+they are at least as hard.
+
+Options before enabling more levels:
+
+1. run longer exact MIP solves offline with Gurobi or a larger time budget;
+2. reduce the menu or use smaller scenario variants that prove exact;
+3. accept best-known SA bounds (not allowed under the current exact-score
+   requirement).
+
+The game must not label best-known bounds as optimal.
+
 ## Activation gate
 
 This phase is planned, not active. Activating it requires maintainer approval.

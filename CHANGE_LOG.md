@@ -4617,3 +4617,9 @@ PY
   deterministic breakdown events, and the `fhops.game` variant builder. Exact
   MIP precompute and the learning debrief remain pending. Fleet opportunity
   costs use increasing marginal multipliers plus a spot-slot surcharge.
+
+- 2026-10-31: P20.1 added the exact precompute pipeline and Tiny7's complete
+  216-variant cache (`examples/game/precomputed/tiny7.json`, adjusted best
+  4406.153/worst 4366.909). Small21 failed closed: a base-menu variant did not
+  prove optimal within 300 s. Medium42/Large84 are not attempted yet. No game
+  level is enabled beyond Tiny7.

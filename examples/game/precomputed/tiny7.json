@@ -1,0 +1,3985 @@
+{
+  "bounds": {
+    "best_adjusted_objective": 4406.152752,
+    "best_choices": {
+      "arrival_profile": "hot",
+      "fleet_counts": {
+        "feller_buncher": 2,
+        "grapple_skidder": 2,
+        "loader": 3,
+        "processor": 3
+      },
+      "harvest_pattern": "sequential"
+    },
+    "worst_adjusted_objective": 4366.908752
+  },
+  "completeness": {
+    "complete": true,
+    "feasible_count": 216,
+    "infeasible_count": 0,
+    "variant_count": 216
+  },
+  "infeasible": [],
+  "level_id": "tiny7",
+  "level_order": 1,
+  "menu": {
+    "arrival_profiles": [
+      "hot",
+      "staged",
+      "phased"
+    ],
+    "fleet": [
+      {
+        "marginal_multipliers": [
+          1.0,
+          2.0,
+          8.0
+        ],
+        "maximum": 3,
+        "owned": 2,
+        "role": "feller_buncher",
+        "spot_surcharge": 4.0,
+        "unit_cost": 4.0
+      },
+      {
+        "marginal_multipliers": [
+          1.0,
+          2.0,
+          8.0
+        ],
+        "maximum": 3,
+        "owned": 1,
+        "role": "grapple_skidder",
+        "spot_surcharge": 4.0,
+        "unit_cost": 4.0
+      },
+      {
+        "marginal_multipliers": [
+          1.0,
+          2.0,
+          8.0
+        ],
+        "maximum": 4,
+        "owned": 3,
+        "role": "processor",
+        "spot_surcharge": 4.0,
+        "unit_cost": 3.0
+      },
+      {
+        "marginal_multipliers": [
+          1.0,
+          2.0,
+          8.0
+        ],
+        "maximum": 4,
+        "owned": 3,
+        "role": "loader",
+        "spot_surcharge": 4.0,
+        "unit_cost": 3.0
+      }
+    ],
+    "harvest_patterns": [
+      "parallel",
+      "sequential",
+      "finish_first"
+    ]
+  },
+  "objective_weights": {
+    "landing_surplus": 0.05,
+    "mobilisation": 0.2,
+    "production": 1.0,
+    "transitions": 0.1
+  },
+  "scenario": "/home/gep/projects/fhops-p12/examples/tiny7/scenario.yaml",
+  "schema_version": "fhops.game.precompute.v1",
+  "variants": [
+    {
+      "adjusted_objective": 4392.6067520000015,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 0.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100800016,
+      "raw_objective": 4392.6067520000015,
+      "variant_sha256": "b2b303c5740755a538d0b3629541eef28aadd79a067303139a83f5a911aabcf9"
+    },
+    {
+      "adjusted_objective": 4381.858752000003,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 0.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4381.858752000003,
+      "variant_sha256": "f4a918306363725c26f4375d16928a8ac7524df1cc2ea69756c974b2ef2cc064"
+    },
+    {
+      "adjusted_objective": 4381.858752000003,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 0.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4381.858752000003,
+      "variant_sha256": "f4a918306363725c26f4375d16928a8ac7524df1cc2ea69756c974b2ef2cc064"
+    },
+    {
+      "adjusted_objective": 4392.6067520000015,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 0.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100800016,
+      "raw_objective": 4392.6067520000015,
+      "variant_sha256": "b2b303c5740755a538d0b3629541eef28aadd79a067303139a83f5a911aabcf9"
+    },
+    {
+      "adjusted_objective": 4381.858752000003,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 0.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4381.858752000003,
+      "variant_sha256": "f4a918306363725c26f4375d16928a8ac7524df1cc2ea69756c974b2ef2cc064"
+    },
+    {
+      "adjusted_objective": 4381.858752000003,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 0.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4381.858752000003,
+      "variant_sha256": "f4a918306363725c26f4375d16928a8ac7524df1cc2ea69756c974b2ef2cc064"
+    },
+    {
+      "adjusted_objective": 4392.606751999993,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 0.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999953,
+      "raw_objective": 4392.606751999993,
+      "variant_sha256": "07ed7d79abf48cccda56a81525bc5f981e7ed9ce1755e0ce9aef36c0c4e4cfc9"
+    },
+    {
+      "adjusted_objective": 4381.908752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 0.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000022,
+      "raw_objective": 4381.908752000001,
+      "variant_sha256": "b15a1ae591802b56bf6cb9c2a7c50d55138492385880d333f02421b2109cb30b"
+    },
+    {
+      "adjusted_objective": 4381.908752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 0.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000022,
+      "raw_objective": 4381.908752000001,
+      "variant_sha256": "b15a1ae591802b56bf6cb9c2a7c50d55138492385880d333f02421b2109cb30b"
+    },
+    {
+      "adjusted_objective": 4385.606752000001,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4392.606752000001,
+      "variant_sha256": "a7cf6e8f7fac7519b7aca295638f697cf3250289195a1afa388636410c7edf13"
+    },
+    {
+      "adjusted_objective": 4374.908752000011,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4381.908752000011,
+      "variant_sha256": "df1a537dd8629a6b6cd2f4c7d13408c05f59add4e353d2462d95d8d4e32eca15"
+    },
+    {
+      "adjusted_objective": 4374.908752000011,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4381.908752000011,
+      "variant_sha256": "df1a537dd8629a6b6cd2f4c7d13408c05f59add4e353d2462d95d8d4e32eca15"
+    },
+    {
+      "adjusted_objective": 4385.506752000018,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000153,
+      "raw_objective": 4392.506752000018,
+      "variant_sha256": "61d18d10ec7011f8f836663b51fc35c5c4713fc1a2d23efeba3b7ebf9d674bb3"
+    },
+    {
+      "adjusted_objective": 4374.808752000001,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100798912,
+      "raw_objective": 4381.808752000001,
+      "variant_sha256": "8fdd21bfb92e32e059c1798094d8b98aaafc1aa8fb4ba71be783a694eff4c536"
+    },
+    {
+      "adjusted_objective": 4374.808752000001,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100798912,
+      "raw_objective": 4381.808752000001,
+      "variant_sha256": "8fdd21bfb92e32e059c1798094d8b98aaafc1aa8fb4ba71be783a694eff4c536"
+    },
+    {
+      "adjusted_objective": 4385.606752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4392.606752000001,
+      "variant_sha256": "f4748118a7d3f5e0e13889d0bd3179861fea96ea35d7bcb8c36da29be4c56bd1"
+    },
+    {
+      "adjusted_objective": 4374.908752000072,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799281,
+      "raw_objective": 4381.908752000072,
+      "variant_sha256": "8c251394a9a48fae8b4b199a5e91f0a7f6c93fa71385d86e38dd6c44d311fda6"
+    },
+    {
+      "adjusted_objective": 4374.908752000072,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799281,
+      "raw_objective": 4381.908752000072,
+      "variant_sha256": "8c251394a9a48fae8b4b199a5e91f0a7f6c93fa71385d86e38dd6c44d311fda6"
+    },
+    {
+      "adjusted_objective": 4396.254751999999,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4403.254751999999,
+      "variant_sha256": "e0ad30a9853dbd6fe9a69cd55c430ecef7032220772e2bd6bc36d43b42b8462b"
+    },
+    {
+      "adjusted_objective": 4396.254752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.254752,
+      "variant_sha256": "551bd20a1aff3ff4eedc915ca6d6b5a96e1231d3200207a2e00926dd1ff7f43f"
+    },
+    {
+      "adjusted_objective": 4396.254752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.254752,
+      "variant_sha256": "551bd20a1aff3ff4eedc915ca6d6b5a96e1231d3200207a2e00926dd1ff7f43f"
+    },
+    {
+      "adjusted_objective": 4396.354752000001,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4403.354752000001,
+      "variant_sha256": "f3fde2b168b87f514e903565a98e91cbd48bd58456b4b68930cc963b043802f5"
+    },
+    {
+      "adjusted_objective": 4396.254752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.254752,
+      "variant_sha256": "27277b0052edbeea8e37a5ad1b1ef9cb7c15e26f87dbba494ee75b73eed6916c"
+    },
+    {
+      "adjusted_objective": 4396.254752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.254752,
+      "variant_sha256": "27277b0052edbeea8e37a5ad1b1ef9cb7c15e26f87dbba494ee75b73eed6916c"
+    },
+    {
+      "adjusted_objective": 4396.254752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.254752,
+      "variant_sha256": "2a8ea6303e92a6a060705344959b3eddfdd5f72fd8401f13907195b0536f881c"
+    },
+    {
+      "adjusted_objective": 4396.254752000018,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4403.254752000018,
+      "variant_sha256": "3d7c2978fec57cd9cf7d444c320882deda3941ed76de3f4097f2e09293982223"
+    },
+    {
+      "adjusted_objective": 4396.254752000018,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 7.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4403.254752000018,
+      "variant_sha256": "3d7c2978fec57cd9cf7d444c320882deda3941ed76de3f4097f2e09293982223"
+    },
+    {
+      "adjusted_objective": 4389.354752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 14.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.354752,
+      "variant_sha256": "b13b60d924edd15c252680bd81a6eccf95834608dc501bca0a6319fc3204e23a"
+    },
+    {
+      "adjusted_objective": 4389.304752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 14.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "a923a8527e88f1758fcbba7c8e826df90ace1e3f7816a1776aec14946f1a35f9"
+    },
+    {
+      "adjusted_objective": 4389.304752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 14.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "a923a8527e88f1758fcbba7c8e826df90ace1e3f7816a1776aec14946f1a35f9"
+    },
+    {
+      "adjusted_objective": 4389.354752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 14.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.354752,
+      "variant_sha256": "3a4f01d3f1d74053942ef9b307d1293e4deea5d35a16a3b0c1439c8113346b4e"
+    },
+    {
+      "adjusted_objective": 4389.254752000001,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 14.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.254752000001,
+      "variant_sha256": "c97cf777324c3541e1791c9220087525af4b9203ea26f8d8cae29693eb642761"
+    },
+    {
+      "adjusted_objective": 4389.254752000001,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 14.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.254752000001,
+      "variant_sha256": "c97cf777324c3541e1791c9220087525af4b9203ea26f8d8cae29693eb642761"
+    },
+    {
+      "adjusted_objective": 4389.204752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 14.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.204752000001,
+      "variant_sha256": "2946d1e18166e7017a3e5f2385b9def4d347e78966c505512d48d86ea74bd2e6"
+    },
+    {
+      "adjusted_objective": 4389.304752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 14.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "fbf33c8964b70916c55e8bcd45ff0526a4c2dad67b8aed82fd21dee799375b2b"
+    },
+    {
+      "adjusted_objective": 4389.304752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 14.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "fbf33c8964b70916c55e8bcd45ff0526a4c2dad67b8aed82fd21dee799375b2b"
+    },
+    {
+      "adjusted_objective": 4406.0527520000005,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.0527520000005,
+      "variant_sha256": "7de7cc83805aa7373ae0e67edcf387e02a04140f61d92dee8de29f93ff9e0a0c"
+    },
+    {
+      "adjusted_objective": 4406.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "a338068404d7d744c97c3d2b2edad99dd5ac0612e1b158e0536a26fabcc8083a"
+    },
+    {
+      "adjusted_objective": 4406.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "a338068404d7d744c97c3d2b2edad99dd5ac0612e1b158e0536a26fabcc8083a"
+    },
+    {
+      "adjusted_objective": 4405.902752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4413.902752,
+      "variant_sha256": "3653ce8a5141dcd68b21541493c8870276ae07d00fb2e108b475646efc1b7672"
+    },
+    {
+      "adjusted_objective": 4406.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "f1faac8797b0d4de75bbe2b857df37fa8d1345fc47a98cbc336b645712db531b"
+    },
+    {
+      "adjusted_objective": 4406.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "f1faac8797b0d4de75bbe2b857df37fa8d1345fc47a98cbc336b645712db531b"
+    },
+    {
+      "adjusted_objective": 4395.304752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000008,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "310549cdad069d8d72d0a9c7783f990610b38673bf66c5354d75b6adce935a56"
+    },
+    {
+      "adjusted_objective": 4395.354752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.354752,
+      "variant_sha256": "c08b2e143e07367d09868e87fb85415114d6db6e952092bdd1c55761cb3ff2ec"
+    },
+    {
+      "adjusted_objective": 4395.354752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.354752,
+      "variant_sha256": "c08b2e143e07367d09868e87fb85415114d6db6e952092bdd1c55761cb3ff2ec"
+    },
+    {
+      "adjusted_objective": 4399.252752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000008,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "8e705a11ade37b8c61c984ff58758967bba0e3494f748c1462bb528f6f410e53"
+    },
+    {
+      "adjusted_objective": 4399.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000062,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "3bbdda05c5ba500c4f48525228ba5bb31887b55c33f6c9d12f65c0ed13a9a207"
+    },
+    {
+      "adjusted_objective": 4399.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000062,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "3bbdda05c5ba500c4f48525228ba5bb31887b55c33f6c9d12f65c0ed13a9a207"
+    },
+    {
+      "adjusted_objective": 4399.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "87b3f5d5f50d13687c4cfe823030d2fa9bd6aedd887c910f060d483726bb7f6f"
+    },
+    {
+      "adjusted_objective": 4399.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000095,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "cd36f9d710cbcd37c1737c9aaa38cc44da830f1e1570d06170c4fbf9a86ceeaa"
+    },
+    {
+      "adjusted_objective": 4399.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000095,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "cd36f9d710cbcd37c1737c9aaa38cc44da830f1e1570d06170c4fbf9a86ceeaa"
+    },
+    {
+      "adjusted_objective": 4388.454752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.454752000001,
+      "variant_sha256": "b33cc859a58c6df289ff20aa16c1576f0f0a30efb9ce1150d535ec7992e8efb9"
+    },
+    {
+      "adjusted_objective": 4388.404752000004,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007995642,
+      "raw_objective": 4403.404752000004,
+      "variant_sha256": "37a8d4f78c531f7682eef407272f8595de262177b5d44e685308e758b87f3c46"
+    },
+    {
+      "adjusted_objective": 4388.404752000004,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007995642,
+      "raw_objective": 4403.404752000004,
+      "variant_sha256": "37a8d4f78c531f7682eef407272f8595de262177b5d44e685308e758b87f3c46"
+    },
+    {
+      "adjusted_objective": 4399.2527519999985,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.2527519999985,
+      "variant_sha256": "6fc029caebdb0a92291e33814499cd848025c753071f6e8a71931b852dd8904e"
+    },
+    {
+      "adjusted_objective": 4398.902752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4413.902752,
+      "variant_sha256": "c944d538c73adf42bd5de879447ea7a61534c2a2e9d314e148dda26393a20c9c"
+    },
+    {
+      "adjusted_objective": 4398.902752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4413.902752,
+      "variant_sha256": "c944d538c73adf42bd5de879447ea7a61534c2a2e9d314e148dda26393a20c9c"
+    },
+    {
+      "adjusted_objective": 4399.202752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.202752,
+      "variant_sha256": "43b0022308a1af895e4e861168c4fd4c35854f5670b1daecb44b73ca30a62e25"
+    },
+    {
+      "adjusted_objective": 4399.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "55858ca03e735a355c22a5de4bf32744ec09afbf93bbf2aa4a5882746658d5ae"
+    },
+    {
+      "adjusted_objective": 4399.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "55858ca03e735a355c22a5de4bf32744ec09afbf93bbf2aa4a5882746658d5ae"
+    },
+    {
+      "adjusted_objective": 4399.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100800005,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "d8eb9979e7852573612c2f73f2f233c82ce6df5b18d8fabbcd0bc487028bf2a1"
+    },
+    {
+      "adjusted_objective": 4398.8027520000005,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4413.8027520000005,
+      "variant_sha256": "c4bcd4c25baa1ff5cf57d4cdcc8660196b23ca26b09afab9c757bb5533607388"
+    },
+    {
+      "adjusted_objective": 4398.8027520000005,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4413.8027520000005,
+      "variant_sha256": "c4bcd4c25baa1ff5cf57d4cdcc8660196b23ca26b09afab9c757bb5533607388"
+    },
+    {
+      "adjusted_objective": 4392.252752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "41a43520f7d471b827c81b033902505dbeb17ce0ce32794344dd540146d31c88"
+    },
+    {
+      "adjusted_objective": 4392.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "b6b43491211f326628b3c38d55d11ea7a426b2330f878085f7756916859d6f62"
+    },
+    {
+      "adjusted_objective": 4392.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "b6b43491211f326628b3c38d55d11ea7a426b2330f878085f7756916859d6f62"
+    },
+    {
+      "adjusted_objective": 4392.202752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.202752,
+      "variant_sha256": "8b81d2eee0a84868515edac0348d0dce38a5f7f4fdb3c69586a3b4c563985708"
+    },
+    {
+      "adjusted_objective": 4392.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "0d54d2fd30c4b8be9e305689e37bb92e5864fd11685a50dfbcdda2bf7d33bbee"
+    },
+    {
+      "adjusted_objective": 4392.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "0d54d2fd30c4b8be9e305689e37bb92e5864fd11685a50dfbcdda2bf7d33bbee"
+    },
+    {
+      "adjusted_objective": 4392.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "5b2e83bf9fb560995b7780d5ac0d060f78ff9bbc062d9de955b82a904266de27"
+    },
+    {
+      "adjusted_objective": 4392.002752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.002752,
+      "variant_sha256": "4b873558d2a80086e4f5f4a648cc1721a44f8a601a4c89f5bb603af43dc18dcf"
+    },
+    {
+      "adjusted_objective": 4392.002752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.002752,
+      "variant_sha256": "4b873558d2a80086e4f5f4a648cc1721a44f8a601a4c89f5bb603af43dc18dcf"
+    },
+    {
+      "adjusted_objective": 4398.102752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "b939c1e65d417dc874be88d29e220ba797ad625ce1dfea0a5836983afb0da96d"
+    },
+    {
+      "adjusted_objective": 4398.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999975,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "49130606a5c21e3375be720dc0aa6e98c660de5deb34c42e45621be72703c3bd"
+    },
+    {
+      "adjusted_objective": 4398.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999975,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "49130606a5c21e3375be720dc0aa6e98c660de5deb34c42e45621be72703c3bd"
+    },
+    {
+      "adjusted_objective": 4398.202752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.202752,
+      "variant_sha256": "8050d9188954175f15314f8cb6831c562bab2f5bc63147554e97bc1159eb2b5e"
+    },
+    {
+      "adjusted_objective": 4398.152752000001,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000037,
+      "raw_objective": 4414.152752000001,
+      "variant_sha256": "990b42d3c9050076d0a5b8df63ab89a88592e1143f099e8f016ac0dabbfa8758"
+    },
+    {
+      "adjusted_objective": 4398.152752000001,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000037,
+      "raw_objective": 4414.152752000001,
+      "variant_sha256": "990b42d3c9050076d0a5b8df63ab89a88592e1143f099e8f016ac0dabbfa8758"
+    },
+    {
+      "adjusted_objective": 4387.354752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.354752000001,
+      "variant_sha256": "8f3a0e29de9e346ffff326ad8e8a3d230009e41993b8189910e7065746737297"
+    },
+    {
+      "adjusted_objective": 4387.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "92f474453ae6dfa6db132a073dcaca32e6582319daaee5818b2d0dfe9589b61d"
+    },
+    {
+      "adjusted_objective": 4387.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "92f474453ae6dfa6db132a073dcaca32e6582319daaee5818b2d0dfe9589b61d"
+    },
+    {
+      "adjusted_objective": 4391.252752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "0c2571e3ff936f05e7ced91e1e24c93644eacf2cb41cd19a5e33a90445a9d37c"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "4dd461b58ab61d10c62bd0f72890376c78c9c239858a12cc2d57331797b8b1ab"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "4dd461b58ab61d10c62bd0f72890376c78c9c239858a12cc2d57331797b8b1ab"
+    },
+    {
+      "adjusted_objective": 4391.202752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.202752,
+      "variant_sha256": "7bfb8c420e3e9782ddc073621e3555929b217a53865c4193138a88fa334b7655"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999826,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "200bdb2e080541151c4e4f006962f8479da46dd96ec4a97ff45b756ef6183ce0"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999826,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "200bdb2e080541151c4e4f006962f8479da46dd96ec4a97ff45b756ef6183ce0"
+    },
+    {
+      "adjusted_objective": 4380.454752000096,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999495,
+      "raw_objective": 4403.454752000096,
+      "variant_sha256": "88cf680bbcd4694c9235d30671950595e35b48fdf3687aa6455cd0bacba32c26"
+    },
+    {
+      "adjusted_objective": 4380.404752000003,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007996923,
+      "raw_objective": 4403.404752000003,
+      "variant_sha256": "29684c4cf4144e2f8917a4810b0a6efab41f7ef37fc95b02932ab439d35a3739"
+    },
+    {
+      "adjusted_objective": 4380.404752000003,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007996923,
+      "raw_objective": 4403.404752000003,
+      "variant_sha256": "29684c4cf4144e2f8917a4810b0a6efab41f7ef37fc95b02932ab439d35a3739"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "e2cef5efdc48aa75ed59099dafb3a09afc58a38d20bf058c282c9fd4340aa29e"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "61dc0627b2d48b3fbb8a5658b089d7b5a9fc7d95cdcefd0714610b47cf437def"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "61dc0627b2d48b3fbb8a5658b089d7b5a9fc7d95cdcefd0714610b47cf437def"
+    },
+    {
+      "adjusted_objective": 4391.102752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100800001,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "784e845052d3bf2182652a7996d1888bfe0c29251fab7bd3432acae5368bab49"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799993,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "1c7c4a5cc6584eea07f778460dcb7071df2ca7a75117f155494ceeaf455b1668"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799993,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "1c7c4a5cc6584eea07f778460dcb7071df2ca7a75117f155494ceeaf455b1668"
+    },
+    {
+      "adjusted_objective": 4390.8027520000005,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4413.8027520000005,
+      "variant_sha256": "a7d4f80a02200a69347be7eefaa9f854a6fe2e614fc8eb277bced010c8feb520"
+    },
+    {
+      "adjusted_objective": 4391.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000423,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "3a19f65f1788189569d549f2d84d2e72b98e3ccd81938c7af58e69f8eaa57e90"
+    },
+    {
+      "adjusted_objective": 4391.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000423,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "3a19f65f1788189569d549f2d84d2e72b98e3ccd81938c7af58e69f8eaa57e90"
+    },
+    {
+      "adjusted_objective": 4384.252752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "0a9068e4ec13d0d524ce4744d8586337a2015aeb2b456e9ddacb7c78948efe0c"
+    },
+    {
+      "adjusted_objective": 4384.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "90bc0a7ff3144255440c7cd5f92d214161470852594c4d58e05a0fb15661b92c"
+    },
+    {
+      "adjusted_objective": 4384.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "90bc0a7ff3144255440c7cd5f92d214161470852594c4d58e05a0fb15661b92c"
+    },
+    {
+      "adjusted_objective": 4384.102752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "4950d12fb6e6e14a8b1154af9ca718b29e9082b731b098fb6b1f7324bd7e6bc5"
+    },
+    {
+      "adjusted_objective": 4384.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "bc2aac45289e3d47274552cb9f2f276005de3c6961dbd93535dd073f34238da0"
+    },
+    {
+      "adjusted_objective": 4384.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "bc2aac45289e3d47274552cb9f2f276005de3c6961dbd93535dd073f34238da0"
+    },
+    {
+      "adjusted_objective": 4384.152752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000055,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "810c0a038633a5da53c7e2f870cf2f705127f4bd5d6b1a781d9e6322978c2b22"
+    },
+    {
+      "adjusted_objective": 4384.052752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.052752000001,
+      "variant_sha256": "b0710b791072642487f76cf7c9455be834d6a4f4b8719bb98bddf0f9779b2c7b"
+    },
+    {
+      "adjusted_objective": 4384.052752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 2,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.052752000001,
+      "variant_sha256": "b0710b791072642487f76cf7c9455be834d6a4f4b8719bb98bddf0f9779b2c7b"
+    },
+    {
+      "adjusted_objective": 4384.656752000003,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000008,
+      "raw_objective": 4392.656752000003,
+      "variant_sha256": "663670c6b8db53ef424acfa5fcf6b7f820dee5629545db0d7eec8820c71aafc9"
+    },
+    {
+      "adjusted_objective": 4384.606752000001,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999928,
+      "raw_objective": 4392.606752000001,
+      "variant_sha256": "a2727f878566bcffed5e422de7bef35bfc5ee9d1f8052c89a04903d76192a2f9"
+    },
+    {
+      "adjusted_objective": 4384.606752000001,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999928,
+      "raw_objective": 4392.606752000001,
+      "variant_sha256": "a2727f878566bcffed5e422de7bef35bfc5ee9d1f8052c89a04903d76192a2f9"
+    },
+    {
+      "adjusted_objective": 4384.606752000001,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4392.606752000001,
+      "variant_sha256": "f0c46de48c175222fce3aa07fe96d2e785d61f0c23e141f6859d6bd756f88b18"
+    },
+    {
+      "adjusted_objective": 4373.908752000003,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999968,
+      "raw_objective": 4381.908752000003,
+      "variant_sha256": "8055b63c9a88aeb0d3ce594ca65d1f0d549835c001df7bfd2722a0328630ec40"
+    },
+    {
+      "adjusted_objective": 4373.908752000003,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999968,
+      "raw_objective": 4381.908752000003,
+      "variant_sha256": "8055b63c9a88aeb0d3ce594ca65d1f0d549835c001df7bfd2722a0328630ec40"
+    },
+    {
+      "adjusted_objective": 4384.606752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4392.606752000001,
+      "variant_sha256": "91791d6a2b41b69ce1cdc1f44b94655a52b193942c680f8e944c199b32373d52"
+    },
+    {
+      "adjusted_objective": 4373.908752000027,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000117,
+      "raw_objective": 4381.908752000027,
+      "variant_sha256": "66c1c1a725d209cdc51680b0376dfbd5ad27a156e4937b6621fc4326ad0b7d5b"
+    },
+    {
+      "adjusted_objective": 4373.908752000027,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 8.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000117,
+      "raw_objective": 4381.908752000027,
+      "variant_sha256": "66c1c1a725d209cdc51680b0376dfbd5ad27a156e4937b6621fc4326ad0b7d5b"
+    },
+    {
+      "adjusted_objective": 4377.706752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4392.706752,
+      "variant_sha256": "b34d8ac797b24b9cb346593f675bf66d953ae5cd62a0dedbd8df101b961921f3"
+    },
+    {
+      "adjusted_objective": 4377.656752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000015,
+      "raw_objective": 4392.656752,
+      "variant_sha256": "66d090f3c4d1e78a95127eae07621f90c570f73dd4924b65820589703b4196b6"
+    },
+    {
+      "adjusted_objective": 4377.656752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000015,
+      "raw_objective": 4392.656752,
+      "variant_sha256": "66d090f3c4d1e78a95127eae07621f90c570f73dd4924b65820589703b4196b6"
+    },
+    {
+      "adjusted_objective": 4377.606752000009,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000048,
+      "raw_objective": 4392.606752000009,
+      "variant_sha256": "2bd8c48f9f9eac31b7cd8bed683386f64382b14daecc250dccc179457a811376"
+    },
+    {
+      "adjusted_objective": 4366.908752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799991,
+      "raw_objective": 4381.908752,
+      "variant_sha256": "09d0679b148fba1d7480362f4829c85bbf0fa7e1f0110da2d0090a00b7877e12"
+    },
+    {
+      "adjusted_objective": 4366.908752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799991,
+      "raw_objective": 4381.908752,
+      "variant_sha256": "09d0679b148fba1d7480362f4829c85bbf0fa7e1f0110da2d0090a00b7877e12"
+    },
+    {
+      "adjusted_objective": 4377.506752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008003187,
+      "raw_objective": 4392.506752,
+      "variant_sha256": "98a91ae27584ab8d707f314be0ba51842d7274b5a86a47888f4b73d4040d8543"
+    },
+    {
+      "adjusted_objective": 4366.908752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000586,
+      "raw_objective": 4381.908752000001,
+      "variant_sha256": "213dd0d2f2cc203a3fc84b07a2121ab4b855fbd9d82ff195bbb79b66e34d4881"
+    },
+    {
+      "adjusted_objective": 4366.908752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000586,
+      "raw_objective": 4381.908752000001,
+      "variant_sha256": "213dd0d2f2cc203a3fc84b07a2121ab4b855fbd9d82ff195bbb79b66e34d4881"
+    },
+    {
+      "adjusted_objective": 4388.204752000001,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.204752000001,
+      "variant_sha256": "995302672ebc771e6356a613747de94f1d76738c0b1e1a8d58128fd8f9c8b790"
+    },
+    {
+      "adjusted_objective": 4388.254752000001,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.254752000001,
+      "variant_sha256": "66c9e5b2f613d0d6b5d482323786e9a8674070e2be03be7a605d5eaa12f8e84d"
+    },
+    {
+      "adjusted_objective": 4388.254752000001,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.254752000001,
+      "variant_sha256": "66c9e5b2f613d0d6b5d482323786e9a8674070e2be03be7a605d5eaa12f8e84d"
+    },
+    {
+      "adjusted_objective": 4388.354752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.354752,
+      "variant_sha256": "7f6328a7bff7ea0cbe3afb92d2773b784e534608136c378d34e6cf01f2bbefa6"
+    },
+    {
+      "adjusted_objective": 4388.254752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.254752,
+      "variant_sha256": "23600e0a83124bb8c428235298666dc9b924687b4fd9f0e22545cef400e2a050"
+    },
+    {
+      "adjusted_objective": 4388.254752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.254752,
+      "variant_sha256": "23600e0a83124bb8c428235298666dc9b924687b4fd9f0e22545cef400e2a050"
+    },
+    {
+      "adjusted_objective": 4388.154752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4403.154752,
+      "variant_sha256": "4f08e859f7d4c1767bffcaff586f2689d64262e776c5646a797587e72bf71e03"
+    },
+    {
+      "adjusted_objective": 4388.254752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.254752,
+      "variant_sha256": "e8ca93fd13e53427eb2f177225def7a5ab9ca82d1ec628a57aaa28174cb524a9"
+    },
+    {
+      "adjusted_objective": 4388.254752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 15.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.254752,
+      "variant_sha256": "e8ca93fd13e53427eb2f177225def7a5ab9ca82d1ec628a57aaa28174cb524a9"
+    },
+    {
+      "adjusted_objective": 4381.354752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.354752,
+      "variant_sha256": "839b17e11755c8edf749482bd307a876d40223a9591399be9ac23a2436739fdf"
+    },
+    {
+      "adjusted_objective": 4381.304752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "08795b4b8b4ec7209cfe69002be1b6efa2095bff4d6a3d89dc9b7f87f960a4e8"
+    },
+    {
+      "adjusted_objective": 4381.304752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "08795b4b8b4ec7209cfe69002be1b6efa2095bff4d6a3d89dc9b7f87f960a4e8"
+    },
+    {
+      "adjusted_objective": 4381.154752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.154752,
+      "variant_sha256": "c3edb8429044450de4be7d71c04f418b658f048bbdbb3fd5689c86e1e9348caf"
+    },
+    {
+      "adjusted_objective": 4381.304752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999964,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "16151c2809fcbf789f753186e4b818b0e579899e992932ae0d4afbd2a7efc05e"
+    },
+    {
+      "adjusted_objective": 4381.304752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999964,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "16151c2809fcbf789f753186e4b818b0e579899e992932ae0d4afbd2a7efc05e"
+    },
+    {
+      "adjusted_objective": 4381.354752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.354752,
+      "variant_sha256": "29d8a8d1765930b7d744cc6060ee97dd414a4b40cd3bc47468895b51735d5e7c"
+    },
+    {
+      "adjusted_objective": 4381.304752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "7f7df3fd636bdfd29f6b26e5e4ec979a8974435b2c6dcb3a14aef0704385d714"
+    },
+    {
+      "adjusted_objective": 4381.304752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 1,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 22.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "7f7df3fd636bdfd29f6b26e5e4ec979a8974435b2c6dcb3a14aef0704385d714"
+    },
+    {
+      "adjusted_objective": 4398.252752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "079cb1dc3ba42b676834f1c36c8c46b4154467b2141578737519490927e8e799"
+    },
+    {
+      "adjusted_objective": 4398.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "8468a7a5aff347ddb58714649e8785f8b9edf4f6a13b614cbb665d9de65bcd3c"
+    },
+    {
+      "adjusted_objective": 4398.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "8468a7a5aff347ddb58714649e8785f8b9edf4f6a13b614cbb665d9de65bcd3c"
+    },
+    {
+      "adjusted_objective": 4398.0527520000005,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.0527520000005,
+      "variant_sha256": "39c16aff6c184a736ecba1b24388996b0fcc7b4428591b974b3ebe0712bbff8c"
+    },
+    {
+      "adjusted_objective": 4398.152752000003,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4414.152752000003,
+      "variant_sha256": "f5a433b9ee5b68efc45bf1180c50f59a1b85e38b8549286754cf64cadfd6b91b"
+    },
+    {
+      "adjusted_objective": 4398.152752000003,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4414.152752000003,
+      "variant_sha256": "f5a433b9ee5b68efc45bf1180c50f59a1b85e38b8549286754cf64cadfd6b91b"
+    },
+    {
+      "adjusted_objective": 4387.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "42080e4089b21392264e93328a5556fbca1f849ddb7a060380a6a0b80b31df65"
+    },
+    {
+      "adjusted_objective": 4387.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "876620bf9b1fae1fec6bb8c81c62624cae6f4d40121e219126165bd40b42e884"
+    },
+    {
+      "adjusted_objective": 4387.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 16.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "876620bf9b1fae1fec6bb8c81c62624cae6f4d40121e219126165bd40b42e884"
+    },
+    {
+      "adjusted_objective": 4391.0527520000005,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999717,
+      "raw_objective": 4414.0527520000005,
+      "variant_sha256": "4727dc07c09955c620b534c58aa11750e0620c2dbb6b9d3e14126d51d7438d3b"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "e6004c47733536f182c8087af2ee6a876cd20112fd5f13d11035769a8778fd63"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "e6004c47733536f182c8087af2ee6a876cd20112fd5f13d11035769a8778fd63"
+    },
+    {
+      "adjusted_objective": 4391.20275199998,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799991,
+      "raw_objective": 4414.20275199998,
+      "variant_sha256": "c64dec0733e5f45c1d54f0588c3ebb1953363dd8ff411ead9df9695df3ed4538"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "80ebad02086de91af73918da147c054a95571526af3312662d3e64d0acaec0cc"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "80ebad02086de91af73918da147c054a95571526af3312662d3e64d0acaec0cc"
+    },
+    {
+      "adjusted_objective": 4380.304752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4403.304752,
+      "variant_sha256": "886d37ef987f5fe0a24e2eedc298ac34924df4ca7e77a3e192099b13fb9a345f"
+    },
+    {
+      "adjusted_objective": 4380.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799998,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "4f9867d2488d7e638c12d37ccbca7d3f714a90aa3c22382da4bba890f48557f6"
+    },
+    {
+      "adjusted_objective": 4380.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799998,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "4f9867d2488d7e638c12d37ccbca7d3f714a90aa3c22382da4bba890f48557f6"
+    },
+    {
+      "adjusted_objective": 4391.252751999999,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.252751999999,
+      "variant_sha256": "d9277b689815b43e21e0f3403945148ff63dcee6d807bc7cb63bdc5182b34d4f"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "741eacdc2ef6ba4e84a7153d141462edf83910a791f6552de9ea4194c1007abd"
+    },
+    {
+      "adjusted_objective": 4391.152752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "741eacdc2ef6ba4e84a7153d141462edf83910a791f6552de9ea4194c1007abd"
+    },
+    {
+      "adjusted_objective": 4390.902752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4413.902752,
+      "variant_sha256": "84710b70f4ec66c62f356e059c9a94a9c4d0b6dfd985dbb126e0cc98613ec1fc"
+    },
+    {
+      "adjusted_objective": 4391.102752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "a82b37e58ef10c5908032b5e79d8c0e6dfe9e6ff084737be769453916dfc4e93"
+    },
+    {
+      "adjusted_objective": 4391.102752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "a82b37e58ef10c5908032b5e79d8c0e6dfe9e6ff084737be769453916dfc4e93"
+    },
+    {
+      "adjusted_objective": 4390.952752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4413.952752,
+      "variant_sha256": "f73395ac71f2f236a19407122827fe1cf8545d23f7c099e8e0c40b8df363be28"
+    },
+    {
+      "adjusted_objective": 4390.952752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799994,
+      "raw_objective": 4413.952752,
+      "variant_sha256": "debe0386449c30d5116de0fc58c8b63ecba912dbeeecb6ec105ccc76301f1c1e"
+    },
+    {
+      "adjusted_objective": 4390.952752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 23.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100799994,
+      "raw_objective": 4413.952752,
+      "variant_sha256": "debe0386449c30d5116de0fc58c8b63ecba912dbeeecb6ec105ccc76301f1c1e"
+    },
+    {
+      "adjusted_objective": 4384.252752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007986813,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "4cca0c280d76bb8cccf9d0a3761097712efa8189ed9a7bfa06f77824b1943394"
+    },
+    {
+      "adjusted_objective": 4384.102752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "96efe7e907fb346c94b0ced27ef14f17349987a68fabc2a98c266d5ab5b3a5aa"
+    },
+    {
+      "adjusted_objective": 4384.102752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "96efe7e907fb346c94b0ced27ef14f17349987a68fabc2a98c266d5ab5b3a5aa"
+    },
+    {
+      "adjusted_objective": 4384.252752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "0b30771721c85d7afa5e57b95a9a7c1dea7110fdf0292b6653226c8c85e5a71d"
+    },
+    {
+      "adjusted_objective": 4384.0527520000005,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.0527520000005,
+      "variant_sha256": "b13d9d4c7c61fa15bbdf58d3139f2336f6ff4b27fc0e67204b142878822f1523"
+    },
+    {
+      "adjusted_objective": 4384.0527520000005,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.0527520000005,
+      "variant_sha256": "b13d9d4c7c61fa15bbdf58d3139f2336f6ff4b27fc0e67204b142878822f1523"
+    },
+    {
+      "adjusted_objective": 4384.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999724,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "65b6fd1d1c8491b4a8189d111bb796ef1a421f6296d35ce3ee6cb1479483f565"
+    },
+    {
+      "adjusted_objective": 4383.952752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100800008,
+      "raw_objective": 4413.952752,
+      "variant_sha256": "c6dfc5019eaa80935b84b9c3d4153e16e77e66a2c35c5271204dafdd0a67052b"
+    },
+    {
+      "adjusted_objective": 4383.952752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 2,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 30.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100800008,
+      "raw_objective": 4413.952752,
+      "variant_sha256": "c6dfc5019eaa80935b84b9c3d4153e16e77e66a2c35c5271204dafdd0a67052b"
+    },
+    {
+      "adjusted_objective": 4390.252752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 24.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999895,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "994d24560b67c082582a20d318654f689c1ede809cde292f0bc75459ac51deb3"
+    },
+    {
+      "adjusted_objective": 4390.202752000003,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 24.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.202752000003,
+      "variant_sha256": "b678b906c88d496e638fa96e3e0fbc79cc1a16629db6570715b1e5bc4f414158"
+    },
+    {
+      "adjusted_objective": 4390.202752000003,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 24.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.202752000003,
+      "variant_sha256": "b678b906c88d496e638fa96e3e0fbc79cc1a16629db6570715b1e5bc4f414158"
+    },
+    {
+      "adjusted_objective": 4390.252752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 24.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "12d126470cc6bdd4d097f7c4617f429441d2a2b79aa4ebfaaa2d3f0943a6ba51"
+    },
+    {
+      "adjusted_objective": 4390.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 24.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "ab63dd03cde196caf769bd31094a8456c1abb6e9b070aeaf0cb3b5e2705389c0"
+    },
+    {
+      "adjusted_objective": 4390.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 24.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "ab63dd03cde196caf769bd31094a8456c1abb6e9b070aeaf0cb3b5e2705389c0"
+    },
+    {
+      "adjusted_objective": 4379.4547520053175,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 24.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811003582778,
+      "raw_objective": 4403.4547520053175,
+      "variant_sha256": "c5df930766fab97c4040b1b9502818588aeba9bbbce96d17773b98c4d3989957"
+    },
+    {
+      "adjusted_objective": 4379.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 24.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "5b89586dbea9c37caf74bfa5b41ae00a19ec7d4fc0b2992965bab1bd64553983"
+    },
+    {
+      "adjusted_objective": 4379.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 24.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "5b89586dbea9c37caf74bfa5b41ae00a19ec7d4fc0b2992965bab1bd64553983"
+    },
+    {
+      "adjusted_objective": 4383.202752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.202752,
+      "variant_sha256": "caa9a2c71cf371e04990f588f3dcb98e4dee7283851c51276d87b3aed3bb1eb2"
+    },
+    {
+      "adjusted_objective": 4383.002752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.002752,
+      "variant_sha256": "b35f12610f8c57f07f1b78447725cdbe0ca625f1d72cdf64e2599c7719821096"
+    },
+    {
+      "adjusted_objective": 4383.002752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.002752,
+      "variant_sha256": "b35f12610f8c57f07f1b78447725cdbe0ca625f1d72cdf64e2599c7719821096"
+    },
+    {
+      "adjusted_objective": 4383.0527520000005,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999993,
+      "raw_objective": 4414.0527520000005,
+      "variant_sha256": "aed3f009ccd8f52a161192206bd5d20f9b2ecef30dc60f5df462f9d5190bc9cd"
+    },
+    {
+      "adjusted_objective": 4383.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "7f9ce97829f14699ef61d2b058685e4c419b414503df3b7d294d83e9bec29869"
+    },
+    {
+      "adjusted_objective": 4383.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "7f9ce97829f14699ef61d2b058685e4c419b414503df3b7d294d83e9bec29869"
+    },
+    {
+      "adjusted_objective": 4372.454752000001,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.81100800003,
+      "raw_objective": 4403.454752000001,
+      "variant_sha256": "e0154f9c12f3994a55b0807b77bf465eee332a04834576029ca7f18d5ec56265"
+    },
+    {
+      "adjusted_objective": 4372.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000197,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "f764a89720cf76dc60a5c5715431ac527878bc1c12733d53c69e77d84cd6f403"
+    },
+    {
+      "adjusted_objective": 4372.404752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 3
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000197,
+      "raw_objective": 4403.404752,
+      "variant_sha256": "f764a89720cf76dc60a5c5715431ac527878bc1c12733d53c69e77d84cd6f403"
+    },
+    {
+      "adjusted_objective": 4383.202752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000008,
+      "raw_objective": 4414.202752,
+      "variant_sha256": "827d08cf8db8b6b8617a12e61df0aef7c545879bdacff8d37905b753b4af9fd7"
+    },
+    {
+      "adjusted_objective": 4383.202752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.202752,
+      "variant_sha256": "4d79b6aa49e3a8a55622d9848448e6c0613e34118d42e22db05e9dffa5ea38f4"
+    },
+    {
+      "adjusted_objective": 4383.202752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.202752,
+      "variant_sha256": "4d79b6aa49e3a8a55622d9848448e6c0613e34118d42e22db05e9dffa5ea38f4"
+    },
+    {
+      "adjusted_objective": 4383.0527520000005,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008000004,
+      "raw_objective": 4414.0527520000005,
+      "variant_sha256": "b3f45aaacfd30ecbd472e4118c0807d00e41e562fddd7d24b2c6cffb7ccbe073"
+    },
+    {
+      "adjusted_objective": 4383.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "ab0c633f8881a83ae655d7997d46e92499554ea1b97b28ed70df5988f9d9d88e"
+    },
+    {
+      "adjusted_objective": 4383.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "ab0c633f8881a83ae655d7997d46e92499554ea1b97b28ed70df5988f9d9d88e"
+    },
+    {
+      "adjusted_objective": 4383.002752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.002752,
+      "variant_sha256": "a1211dbc446369110a580cc4ffd90aed3f3f02fccd60ea3bd69cd3d7b9195a1a"
+    },
+    {
+      "adjusted_objective": 4383.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "8f08bbda20f146d44a616a4415f9376cc5cb9b84476af434e5dbe97579ed10f9"
+    },
+    {
+      "adjusted_objective": 4383.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 3,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 31.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "8f08bbda20f146d44a616a4415f9376cc5cb9b84476af434e5dbe97579ed10f9"
+    },
+    {
+      "adjusted_objective": 4376.252752,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 38.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "c963c8930eb25576e2e0f519d173812f7683732909e27eeb941fff0538de2c52"
+    },
+    {
+      "adjusted_objective": 4376.102752000001,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 38.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.102752000001,
+      "variant_sha256": "a8dae0ef91bc017629fc2a3525cb37c16c0712b967bc2a6565c4ff1c0022cd6e"
+    },
+    {
+      "adjusted_objective": 4376.102752000001,
+      "choices": {
+        "arrival_profile": "hot",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 38.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.102752000001,
+      "variant_sha256": "a8dae0ef91bc017629fc2a3525cb37c16c0712b967bc2a6565c4ff1c0022cd6e"
+    },
+    {
+      "adjusted_objective": 4376.252752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 38.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.252752,
+      "variant_sha256": "88441344a2f9d47f7698296f7134f54869d127f5dee9244b27fca913168ae50a"
+    },
+    {
+      "adjusted_objective": 4376.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 38.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "815aae6bbb7a88099f8cbc7cbd457d0ec682f1afbea76607b5b682ffb005c359"
+    },
+    {
+      "adjusted_objective": 4376.152752,
+      "choices": {
+        "arrival_profile": "staged",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 38.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.152752,
+      "variant_sha256": "815aae6bbb7a88099f8cbc7cbd457d0ec682f1afbea76607b5b682ffb005c359"
+    },
+    {
+      "adjusted_objective": 4376.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "parallel"
+      },
+      "fleet_penalty": 38.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811007999997,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "6f1a9b9ce43ff3ebb8b908405436e8c535f5ffff2facef30d457ce52ced22113"
+    },
+    {
+      "adjusted_objective": 4376.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "sequential"
+      },
+      "fleet_penalty": 38.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "c53dabb1aae6b04d08939660376d2474fcc3c10fb4e49f72a05d7b39e77f6578"
+    },
+    {
+      "adjusted_objective": 4376.102752,
+      "choices": {
+        "arrival_profile": "phased",
+        "fleet_counts": {
+          "feller_buncher": 3,
+          "grapple_skidder": 3,
+          "loader": 4,
+          "processor": 4
+        },
+        "harvest_pattern": "finish_first"
+      },
+      "fleet_penalty": 38.0,
+      "outcome": "optimal",
+      "production_m3": 17658.811008,
+      "raw_objective": 4414.102752,
+      "variant_sha256": "c53dabb1aae6b04d08939660376d2474fcc3c10fb4e49f72a05d7b39e77f6578"
+    }
+  ]
+}
