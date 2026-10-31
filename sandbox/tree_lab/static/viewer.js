@@ -132,6 +132,11 @@ export function createViewer(container, { onTime } = {}) {
   let cumulativeVolume = [];
   let truckEvents = {};
   let trucks = {};
+  let deckCurves = null;
+  let decks = {};
+  let cableSpec = null;
+  let cableYarderId = null;
+  let carriage = null;
   let loadedRunKey = null;
   let baseElevation = 0;
   let residualGroup = null;
@@ -163,6 +168,11 @@ export function createViewer(container, { onTime } = {}) {
     cards = new Map();
     trucks = {};
     truckEvents = {};
+    deckCurves = null;
+    decks = {};
+    cableSpec = null;
+    cableYarderId = null;
+    carriage = null;
     residualGroup = null;
     timelineByMachine = {};
     processedTimes = [];
@@ -232,18 +242,181 @@ export function createViewer(container, { onTime } = {}) {
     }
   }
 
+  function buildDeckCurves(events) {
+    const machineType = (id) => events.machines?.[id]?.type || '';
+    const hasProcessor = Object.values(events.machines || {}).some((machine) =>
+      ['roadside_processor', 'processor'].includes(machine.type));
+    const changes = [];
+    const add = (t, key, delta) => {
+      const value = Number(delta);
+      if (Number.isFinite(t) && Number.isFinite(value) && Math.abs(value) > 1e-9) changes.push({ t, key, delta: value });
+    };
+    for (const event of events.timeline || []) {
+      const type = machineType(event.machine);
+      const volume = Math.abs(Number(event.volume_m3) || 0);
+      if (['grapple_skidder', 'skidder', 'forwarder'].includes(type) && event.type === 'unload') {
+        add(event.end_s, 'unprocessed', volume);
+      } else if (type === 'cable_yarder' && event.type === 'yard') {
+        add(event.start_s, 'unprocessed', volume);
+      } else if (['roadside_processor', 'processor'].includes(type) && event.type === 'process') {
+        add(event.start_s, 'unprocessed', -volume);
+        add(event.end_s, 'processed', volume);
+      } else if (type === 'loader' && event.type === 'load' && !hasProcessor) {
+        add(event.start_s, 'unprocessed', -volume);
+      }
+    }
+    for (const event of events.truck_events || []) {
+      if (event.type === 'truck_load' && hasProcessor) {
+        add(event.start_s, 'processed', -Math.abs(Number(event.volume_m3) || 0));
+      }
+    }
+    changes.sort((a, b) => a.t - b.t);
+    return { changes };
+  }
+
+  function deckVolumesAt(t) {
+    let unprocessed = 0;
+    let processed = 0;
+    for (const change of deckCurves?.changes || []) {
+      if (change.t > t) break;
+      if (change.key === 'unprocessed') unprocessed += change.delta;
+      else processed += change.delta;
+    }
+    return { unprocessed: Math.max(0, unprocessed), processed: Math.max(0, processed) };
+  }
+
+  function makeTextSprite(initial, scale = 1) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512; canvas.height = 96;
+    const ctx = canvas.getContext('2d');
+    const texture = new THREE.CanvasTexture(canvas);
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, depthTest: false }));
+    sprite.scale.set(34 * scale, 6.4 * scale, 1);
+    const setText = (text) => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#101416dd'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#e8eef2'; ctx.font = 'bold 32px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(text, canvas.width / 2, 58);
+      texture.needsUpdate = true;
+    };
+    setText(initial);
+    return { sprite, setText };
+  }
+
+  function makeDeck(landing, dx, dy, color, label) {
+    const group = new THREE.Group();
+    const pad = new THREE.Mesh(
+      new THREE.CylinderGeometry(14, 14, 0.45, 20),
+      new THREE.MeshStandardMaterial({ color: 0x51452c, roughness: 1 }),
+    );
+    pad.position.y = 0.2;
+    group.add(pad);
+    const logs = [];
+    const material = new THREE.MeshStandardMaterial({ color, roughness: 0.9 });
+    for (let row = 0; row < 3; row += 1) {
+      for (let index = 0; index < 8; index += 1) {
+        const log = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 8.4, 7), material);
+        log.rotation.z = Math.PI / 2;
+        log.position.set((index - 3.5) * 1.35, 1.05 + row * 1.15, (row - 1) * 2.4);
+        group.add(log);
+        logs.push(log);
+      }
+    }
+    const text = makeTextSprite(`${label} · 0 m³`, 1.2);
+    text.sprite.position.set(0, 10.2, 0);
+    group.add(text.sprite);
+    group.position.set(landing.x + dx, sampleHeight(landing.x + dx, landing.y + dy), landing.y + dy);
+    group.userData = { logs, label: text, name: label, lastVolume: -1 };
+    scene.add(group);
+    return group;
+  }
+
+  function updateDecks(t) {
+    if (!deckCurves) return;
+    const volumes = deckVolumesAt(t);
+    for (const [key, group] of Object.entries(decks)) {
+      const volume = key === 'unprocessed' ? volumes.unprocessed : volumes.processed;
+      const ratio = Math.min(1, volume / 40);
+      group.visible = volume > 0.1;
+      group.userData.logs.forEach((log, index) => {
+        log.visible = index < Math.max(1, Math.ceil(ratio * group.userData.logs.length));
+      });
+      const scaleY = 0.35 + ratio * 0.65;
+      group.scale.set(1, scaleY, 1);
+      group.userData.label.sprite.position.y = 10.2 / scaleY;
+      group.userData.label.sprite.scale.set(40.8 / scaleY, 7.68 / scaleY, 1);
+      const rounded = volume < 10 ? volume.toFixed(1) : volume.toFixed(0);
+      if (rounded !== group.userData.lastVolume) {
+        group.userData.lastVolume = rounded;
+        group.userData.label.setText(`${group.userData.name} · ${rounded} m³`);
+      }
+    }
+  }
+
   function updateTrucks(t) {
     for (const [id, group] of Object.entries(trucks)) {
       const events = truckEvents[id] || [];
       const active = events.find((event) => t >= event.start_s && t <= event.end_s);
-      group.userData.status = active ? active.type.replaceAll('_', ' ') : 'parked';
+      const home = group.userData.home;
+      const mill = group.userData.mill;
+      let x = home[0];
+      let y = home[1];
+      let status = 'waiting';
+      let heading = 0;
+      if (active?.type === 'truck_load') {
+        status = 'loading';
+        group.userData.cargo.visible = true;
+      } else if (active?.type === 'truck_return') {
+        const span = Math.max(1, active.end_s - active.start_s);
+        const f = Math.max(0, Math.min(1, (t - active.start_s) / span));
+        let u;
+        if (f < 0.15) u = 0;
+        else if (f < 0.65) u = (f - 0.15) / 0.5;
+        else if (f < 0.85) u = 1;
+        else u = (1 - f) / 0.15;
+        x = home[0] + (mill[0] - home[0]) * u;
+        y = home[1] + (mill[1] - home[1]) * u;
+        heading = Math.atan2(mill[1] - home[1], mill[0] - home[0]);
+        status = f >= 0.85 ? 'returning' : (f >= 0.65 ? 'at mill' : 'driving out');
+        group.userData.cargo.visible = true;
+      } else {
+        group.userData.cargo.visible = false;
+      }
+      group.position.set(x, sampleHeight(x, y) + 1.8, y);
+      group.rotation.y = heading;
+      group.userData.status = status;
     }
+  }
+
+  function updateCarriage(t) {
+    if (!carriage || !cableSpec) return;
+    const yarderId = cableYarderId;
+    const state = yarderId ? segmentAt(yarderId, t) : null;
+    if (!state || state.segment.type !== 'yard') {
+      carriage.visible = false;
+      return;
+    }
+    const f = state.f;
+    let u;
+    if (f < 0.45) u = f / 0.45;
+    else if (f < 0.55) u = 1;
+    else u = Math.max(0, (1 - f) / 0.45);
+    const yarder = cableSpec.yarder;
+    const spar = cableSpec.spar;
+    const x = yarder.x + (spar.x - yarder.x) * u;
+    const y = yarder.y + (spar.y - yarder.y) * u;
+    const lineY = cableSpec.yarderY + (cableSpec.sparY - cableSpec.yarderY) * u;
+    carriage.visible = true;
+    carriage.position.set(x, lineY - 2.4, y);
+    carriage.userData.loaded.visible = u > 0.12 && u < 0.96;
   }
 
   function setTime(t) {
     currentTime = Math.max(0, Math.min(duration, t));
     updateMachines(currentTime);
     updateTrucks(currentTime);
+    updateDecks(currentTime);
+    updateCarriage(currentTime);
     updateTrees(currentTime);
     if (onTime) onTime(currentTime);
   }
@@ -297,6 +470,18 @@ export function createViewer(container, { onTime } = {}) {
     );
     cab.position.set(0, 3.2, -2.4);
     group.add(cab);
+    const cargo = new THREE.Group();
+    const cargoMat = new THREE.MeshStandardMaterial({ color: 0x7d5a36, roughness: 0.95 });
+    for (let row = 0; row < 2; row += 1) {
+      for (let logIndex = 0; logIndex < 3; logIndex += 1) {
+        const log = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 4.8, 7), cargoMat);
+        log.rotation.z = Math.PI / 2;
+        log.position.set((logIndex - 1) * 0.85, 2.9 + row * 0.75, -0.4);
+        cargo.add(log);
+      }
+    }
+    cargo.visible = false;
+    group.add(cargo);
     const canvas = document.createElement('canvas');
     canvas.width = 256; canvas.height = 64;
     const ctx = canvas.getContext('2d');
@@ -305,10 +490,11 @@ export function createViewer(container, { onTime } = {}) {
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
     sprite.position.set(0, 7, 0); sprite.scale.set(8, 2, 1);
     group.add(sprite);
-    const x = landing.x + (index - 1) * 22;
-    const y = landing.y - 30;
+    const home = [landing.x + (index - 1) * 13, landing.y - 28];
+    const mill = [landing.x + 120, landing.y + 140];
     group.scale.setScalar(1.7);
-    group.position.set(x, sampleHeight(x, y) + 1.7, y);
+    group.userData = { home, mill, cargo, status: 'waiting', id };
+    group.position.set(home[0], sampleHeight(home[0], home[1]) + 1.8, home[1]);
     scene.add(group);
     trucks[id] = group;
   }
@@ -415,6 +601,39 @@ export function createViewer(container, { onTime } = {}) {
     crown.position.set(Number(spar.x), sparBase + sparHeight + 4.0, Number(spar.y));
     crown.name = 'cable_spar_crown';
     scene.add(crown);
+
+    cableSpec = {
+      yarder: { x: Number(yarder.x), y: Number(yarder.y) },
+      spar: { x: Number(spar.x), y: Number(spar.y) },
+      yarderY,
+      sparY,
+    };
+    cableYarderId = Object.keys(machines).find((id) => id.startsWith('Y')) || null;
+    const carriageGroup = new THREE.Group();
+    const carriageBody = new THREE.Mesh(
+      new THREE.BoxGeometry(2.4, 1.5, 2.0),
+      new THREE.MeshStandardMaterial({ color: 0xffcc33, roughness: 0.35, metalness: 0.25 }),
+    );
+    carriageGroup.add(carriageBody);
+    const hanger = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.08, 2.4, 5),
+      new THREE.MeshStandardMaterial({ color: 0x8899a0, roughness: 0.5 }),
+    );
+    hanger.position.y = 1.7;
+    carriageGroup.add(hanger);
+    const loaded = new THREE.Group();
+    const logMat = new THREE.MeshStandardMaterial({ color: 0x7d5a36, roughness: 0.95 });
+    for (let index = 0; index < 3; index += 1) {
+      const log = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 3.8, 6), logMat);
+      log.rotation.z = Math.PI / 2;
+      log.position.set(0, -1.1, (index - 1) * 0.55);
+      loaded.add(log);
+    }
+    carriageGroup.add(loaded);
+    carriageGroup.userData.loaded = loaded;
+    carriageGroup.visible = false;
+    carriage = carriageGroup;
+    scene.add(carriageGroup);
   }
 
   function addBlockOutline(outline) {
@@ -488,12 +707,48 @@ export function createViewer(container, { onTime } = {}) {
           if (slot) cards.set(id, slot);
         }
 
-        const truckCount = events.truck_summary?.truck_count || 0;
-        for (let index = 1; index <= truckCount; index++) makeTruck(`T${index}`, index, events.landing);
+        // Cable runs do not have a trucking model. Use the loader cycles to
+        // give the cable case the same visible landing → mill → landing truck
+        // loop without changing the simulation output.
+        if (!(events.truck_events || []).length) {
+          const loaderId = Object.entries(events.machines || {})
+            .find(([, machine]) => machine.type === 'loader')?.[0];
+          const loaderLoads = (events.timeline || [])
+            .filter((event) => event.machine === loaderId && event.type === 'load')
+            .sort((a, b) => a.start_s - b.start_s);
+          if (loaderLoads.length) {
+            let available = 0;
+            const visualTruckEvents = [];
+            for (const load of loaderLoads) {
+              const start = Math.max(load.start_s, available);
+              const end = Math.max(load.end_s, start + Math.max(1, load.end_s - load.start_s));
+              visualTruckEvents.push({
+                machine: 'T-01', type: 'truck_load', start_s: start, end_s: end,
+                x0: events.landing.x, y0: events.landing.y, x1: events.landing.x, y1: events.landing.y,
+                volume_m3: Number(load.volume_m3) || 0,
+              });
+              const returnEnd = end + 3600;
+              visualTruckEvents.push({
+                machine: 'T-01', type: 'truck_return', start_s: end, end_s: returnEnd,
+                x0: events.landing.x, y0: events.landing.y, x1: events.landing.x, y1: events.landing.y,
+                volume_m3: Number(load.volume_m3) || 0,
+              });
+              available = returnEnd;
+            }
+            events.truck_events = visualTruckEvents;
+            events.truck_summary = { truck_count: 1 };
+          }
+        }
         for (const event of events.truck_events || []) {
           (truckEvents[event.machine] ||= []).push(event);
         }
         for (const list of Object.values(truckEvents)) list.sort((a, b) => a.start_s - b.start_s);
+        const truckIds = Object.keys(truckEvents).sort();
+        if (!truckIds.length) {
+          const truckCount = Number(events.truck_summary?.truck_count) || 0;
+          for (let index = 1; index <= truckCount; index += 1) truckIds.push(`T-${String(index).padStart(2, '0')}`);
+        }
+        truckIds.forEach((id, index) => makeTruck(id, index + 1, events.landing));
 
         timelineByMachine = {};
         for (const item of events.timeline || []) (timelineByMachine[item.machine] ||= []).push(item);
@@ -519,6 +774,34 @@ export function createViewer(container, { onTime } = {}) {
           ring.rotation.x = -Math.PI / 2;
           ring.position.set(events.landing.x, sampleHeight(events.landing.x, events.landing.y) + 0.4, events.landing.y);
           scene.add(ring);
+        }
+
+        deckCurves = buildDeckCurves(events);
+        if (events.landing) {
+          decks.unprocessed = makeDeck(events.landing, -34, 70, 0x7d5a36, 'unprocessed deck');
+          decks.processed = makeDeck(events.landing, 34, 70, 0xc9a36a, 'processed log deck');
+          if (truckIds.length) {
+            const millX = events.landing.x + 120;
+            const millY = events.landing.y + 140;
+            const shed = new THREE.Mesh(
+              new THREE.BoxGeometry(18, 8, 14),
+              new THREE.MeshStandardMaterial({ color: 0x59656a, roughness: 0.85 }),
+            );
+            shed.position.set(millX, sampleHeight(millX, millY) + 4, millY);
+            scene.add(shed);
+            const millLabel = makeTextSprite('mill', 0.9);
+            millLabel.sprite.position.set(millX, sampleHeight(millX, millY) + 12, millY);
+            scene.add(millLabel.sprite);
+            const road = new THREE.Line(
+              new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(events.landing.x, sampleHeight(events.landing.x, events.landing.y) + 0.5, events.landing.y),
+                new THREE.Vector3(millX, sampleHeight(millX, millY) + 0.5, millY),
+              ]),
+              new THREE.LineBasicMaterial({ color: 0x9a8b5a, transparent: true, opacity: 0.55 }),
+            );
+            road.name = 'mill_road';
+            scene.add(road);
+          }
         }
 
         addCable(events.cable);
@@ -641,6 +924,8 @@ export function createViewer(container, { onTime } = {}) {
     load,
     resize,
     fit: fitCamera,
+    deckVolumes: () => (deckCurves ? deckVolumesAt(currentTime) : { unprocessed: 0, processed: 0 }),
+    truckStatuses: () => Object.entries(trucks).map(([id, group]) => `${id} ${group.userData.status || 'waiting'}`),
     machineStates,
     seek: (t) => setTime(t),
     reset: () => setTime(0),

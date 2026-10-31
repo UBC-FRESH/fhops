@@ -417,6 +417,12 @@ function updateSceneHud(t) {
   $('#scene-bar').firstElementChild.style.width = `${progress}%`;
   $('#scene-scrub').value = Math.round(progress * 10);
   for (const playhead of state.timelinePlayheads || []) playhead.style.left = `${progress}%`;
+  const deck = viewer.deckVolumes?.();
+  const deckNode = document.getElementById('scene-decks');
+  if (deckNode && deck) {
+    const trucks = viewer.truckStatuses?.() || [];
+    deckNode.textContent = `Decks · unprocessed ${fmtM3(deck.unprocessed)} · processed ${fmtM3(deck.processed)}${trucks.length ? ` · trucks ${trucks.join(' · ')}` : ''}`;
+  }
   const active = viewer.machineStates();
   for (const [id, status] of Object.entries(active)) {
     const node = document.getElementById(`mcard-${id}`);

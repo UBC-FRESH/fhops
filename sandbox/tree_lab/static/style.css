@@ -128,6 +128,7 @@ pre { background: #0b0f11; border: 1px solid var(--line); border-radius: 8px; pa
 }
 #scene-hud h1 { font-size: 14px; margin: 0 0 2px; }
 #scene-hud .muted { color: var(--muted); font-size: 11px; }
+#scene-decks { margin: 4px 0 7px; color: #d9b98c; font-size: 11px; letter-spacing: 0.1px; }
 #scene-status { margin: 8px 0 6px; font-size: 13px; }
 #scene-bar { height: 5px; background: #263237; border-radius: 4px; overflow: hidden; }
 #scene-bar > div { height: 100%; width: 0%; background: var(--accent); }
