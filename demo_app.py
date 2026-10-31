@@ -52,7 +52,7 @@ tree_lab_app = create_tree_lab_app(
         root_path="",
     )
 )
-app.mount("/sandbox-v20261031h", tree_lab_app)
+app.mount("/sandbox-v20261031i", tree_lab_app)
 app.mount("/sandbox", tree_lab_app)
 
 # Simple app-level public-demo guardrails. Nginx should still enforce its own
@@ -108,7 +108,7 @@ async def no_store_public_demo(request: Request, call_next: Any) -> Any:
         response.headers["Expires"] = "0"
         # Clear old module caches when a document is opened, so a stale
         # viewer.js cannot survive a normal reload or hard refresh.
-        if path in ("/", "/demo", "/game", "/sandbox", "/sandbox/", "/sandbox-v20261031h", "/sandbox-v20261031h/", "/sandbox-v20261031c", "/sandbox-v20261031c/", "/sandbox-v20261031d", "/sandbox-v20261031d/", "/sandbox-v20261031e", "/sandbox-v20261031e/", "/sandbox-v20261031f", "/sandbox-v20261031f/", "/sandbox-v20261031g", "/sandbox-v20261031g/"):
+        if path in ("/", "/demo", "/game", "/sandbox", "/sandbox/", "/sandbox-v20261031i", "/sandbox-v20261031i/", "/sandbox-v20261031c", "/sandbox-v20261031c/", "/sandbox-v20261031d", "/sandbox-v20261031d/", "/sandbox-v20261031e", "/sandbox-v20261031e/", "/sandbox-v20261031f", "/sandbox-v20261031f/", "/sandbox-v20261031g", "/sandbox-v20261031g/", "/sandbox-v20261031h", "/sandbox-v20261031h/"):
             response.headers["Clear-Site-Data"] = '"cache"'
     return response
 
@@ -118,7 +118,7 @@ def _landing(_request: Request) -> FileResponse:
 
 
 async def _sandbox_redirect(_request: Request) -> RedirectResponse:
-    return RedirectResponse("/sandbox-v20261031h/", status_code=302)
+    return RedirectResponse("/sandbox-v20261031i/", status_code=302)
 
 
 app.router.routes.insert(0, Route("/sandbox", _sandbox_redirect, methods=["GET"]))
@@ -133,5 +133,7 @@ app.router.routes.insert(0, Route("/sandbox-v20261031f", _sandbox_redirect, meth
 app.router.routes.insert(0, Route("/sandbox-v20261031f/", _sandbox_redirect, methods=["GET"]))
 app.router.routes.insert(0, Route("/sandbox-v20261031g", _sandbox_redirect, methods=["GET"]))
 app.router.routes.insert(0, Route("/sandbox-v20261031g/", _sandbox_redirect, methods=["GET"]))
+app.router.routes.insert(0, Route("/sandbox-v20261031h", _sandbox_redirect, methods=["GET"]))
+app.router.routes.insert(0, Route("/sandbox-v20261031h/", _sandbox_redirect, methods=["GET"]))
 app.router.routes.insert(0, Route("/", _landing, methods=["GET"]))
 app.router.routes.insert(0, Route("/demo", _landing, methods=["GET"]))

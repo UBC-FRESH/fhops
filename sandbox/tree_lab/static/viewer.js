@@ -34,6 +34,32 @@ const ROLE_LABELS = {
 const MACHINE_OFFSETS = { H4: [12, 0], H5: [-12, 0], H6: [0, 12] };
 const SWATH_BAND_HEIGHT_M = 24;
 
+function treeBounds(events) {
+  const trees = events.trees || [];
+  if (!trees.length) return null;
+  const xs = trees.map((tree) => Number(tree.x)).filter(Number.isFinite);
+  const ys = trees.map((tree) => Number(tree.y)).filter(Number.isFinite);
+  if (!xs.length || !ys.length) return null;
+  return { minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys) };
+}
+
+function normalizeLanding(events) {
+  const bounds = treeBounds(events);
+  const old = events.landing;
+  if (!bounds || !old) return;
+  const inside = Number(old.x) > bounds.minX && Number(old.x) < bounds.maxX
+    && Number(old.y) > bounds.minY && Number(old.y) < bounds.maxY;
+  if (!inside) return;
+  const next = { x: bounds.maxX - 45, y: bounds.minY - 28 };
+  const near = (x, y) => Math.abs(Number(x) - Number(old.x)) < 1.5
+    && Math.abs(Number(y) - Number(old.y)) < 1.5;
+  for (const event of [...(events.timeline || []), ...(events.truck_events || [])]) {
+    if (near(event.x0, event.y0)) { event.x0 = next.x; event.y0 = next.y; }
+    if (near(event.x1, event.y1)) { event.x1 = next.x; event.y1 = next.y; }
+  }
+  events.landing = next;
+}
+
 function swathOrder(trees) {
   const valid = trees.filter((tree) => Number.isFinite(Number(tree.x)) && Number.isFinite(Number(tree.y)));
   if (!valid.length) return [];
@@ -137,6 +163,8 @@ export function createViewer(container, { onTime } = {}) {
   let cableSpec = null;
   let cableYarderId = null;
   let carriage = null;
+  let landingPosition = null;
+  let roadEndpoints = null;
   let loadedRunKey = null;
   let baseElevation = 0;
   let residualGroup = null;
@@ -173,6 +201,8 @@ export function createViewer(container, { onTime } = {}) {
     cableSpec = null;
     cableYarderId = null;
     carriage = null;
+    landingPosition = null;
+    roadEndpoints = null;
     residualGroup = null;
     timelineByMachine = {};
     processedTimes = [];
@@ -571,6 +601,54 @@ export function createViewer(container, { onTime } = {}) {
     );
   }
 
+  function addRoad(events) {
+    const bounds = treeBounds(events);
+    const landing = events.landing;
+    if (!bounds || !landing) return;
+    const roadY = Math.min(Number(landing.y), bounds.minY - 12);
+    const left = bounds.minX - 60;
+    const right = bounds.maxX + 60;
+    roadEndpoints = [[left, roadY], [right, roadY]];
+    const roadHeight = (x, y) => sampleHeight(x, y) + 0.9;
+    const halfWidth = 5.5;
+    const positions = [
+      left, roadHeight(left, roadY - halfWidth), roadY - halfWidth,
+      left, roadHeight(left, roadY + halfWidth), roadY + halfWidth,
+      right, roadHeight(right, roadY - halfWidth), roadY - halfWidth,
+      right, roadHeight(right, roadY + halfWidth), roadY + halfWidth,
+    ];
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setIndex([0, 2, 1, 1, 2, 3]);
+    geometry.computeVertexNormals();
+    const road = new THREE.Mesh(
+      geometry,
+      new THREE.MeshStandardMaterial({ color: 0x66685a, roughness: 0.95, side: THREE.DoubleSide }),
+    );
+    road.name = 'block_road';
+    scene.add(road);
+    const spur = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(landing.x, roadHeight(landing.x, roadY), roadY),
+        new THREE.Vector3(landing.x, roadHeight(landing.x, landing.y), landing.y),
+      ]),
+      new THREE.LineBasicMaterial({ color: 0xd8c58a, transparent: true, opacity: 0.9 }),
+    );
+    spur.name = 'landing_spur';
+    scene.add(spur);
+    const pad = new THREE.Mesh(
+      new THREE.CircleGeometry(22, 32),
+      new THREE.MeshStandardMaterial({ color: 0x8b876e, roughness: 0.95, side: THREE.DoubleSide }),
+    );
+    pad.rotation.x = -Math.PI / 2;
+    pad.position.set(Number(landing.x), sampleHeight(Number(landing.x), Number(landing.y)) + 0.5, Number(landing.y));
+    pad.name = 'landing_pad';
+    scene.add(pad);
+    const label = makeTextSprite('landing', 2.5);
+    label.sprite.position.set(Number(landing.x), sampleHeight(Number(landing.x), Number(landing.y)) + 16, Number(landing.y));
+    scene.add(label.sprite);
+  }
+
   function addCable(cable) {
     if (!cable || !cable.yarder || !cable.spar) return;
     const yarder = cable.yarder;
@@ -656,6 +734,7 @@ export function createViewer(container, { onTime } = {}) {
 
   function load(payloadArg) {
     const { sceneUrl, events, residual } = payloadArg;
+    normalizeLanding(events);
     normalizeFellerSwath(events);
     const runKey = `${sceneUrl}`;
     if (loadedRunKey === runKey) {
@@ -666,6 +745,7 @@ export function createViewer(container, { onTime } = {}) {
     }
     loadedRunKey = runKey;
     clearScene();
+    landingPosition = events.landing || null;
     loaded = false;
     payload = events;
     duration = events.duration_s || 1;
@@ -779,6 +859,7 @@ export function createViewer(container, { onTime } = {}) {
           scene.add(ring);
         }
 
+        addRoad(events);
         deckCurves = buildDeckCurves(events);
         if (events.landing) {
           decks.unprocessed = makeDeck(events.landing, -52, 62, 0x7d5a36, 'unprocessed deck');
@@ -855,6 +936,8 @@ export function createViewer(container, { onTime } = {}) {
     if (!points.length) {
       points = [...treeNodes.values()].map((node) => [node.position.x, node.position.z]);
     }
+    if (landingPosition) points.push([Number(landingPosition.x), Number(landingPosition.y)]);
+    if (roadEndpoints) points.push(...roadEndpoints);
     if (!points.length) {
       const fallback = new THREE.Box3().setFromObject(scene);
       if (fallback.isEmpty()) return;
