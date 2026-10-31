@@ -178,6 +178,13 @@ model with placeholder products; P20 must add a level-owned product price
 schedule and a game bucking-policy adapter. The adapter must be deterministic
 and report volumes by product/grade, not just total merchantable volume.
 
+The KC stand uses a calibrated reference stem form factor (`0.192014`) so the
+harvested tree list reconciles to the VRI volume target (3,162 m³). The tree
+system now accepts `--stem-form-factor`, bucking (`--stem-log-length`,
+`--stem-stump-height`, `--stem-sawlog-min-dbh`), and a
+`--feller-productivity-multiplier`; the game engine will pass the selection-cut
+base (`0.80`) times the chosen care multiplier.
+
 Revenue:
 
 ```text

@@ -601,6 +601,7 @@ def simulate_ground_system(
     landing_capacity_m3: float | None = None,
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
+    feller_processing_time_multiplier: float = 1.0,
     skidder_specs: Mapping[str, MachineSpec] | None = None,
     loader_spec: MachineSpec | None = None,
     processor_spec: ProcessorSpec | None = None,
@@ -698,6 +699,9 @@ def simulate_ground_system(
         Feller-buncher reach in metres.
     feller_travel_speed_m_per_s:
         Feller-buncher travel speed.
+    feller_processing_time_multiplier:
+        Multiplier on feller-buncher per-tree processing time. Selection-cut
+        care and other slow-work adjustments use values above one.
     skidder_specs:
         Optional per-skidder cycle-time overrides.
     loader_spec:
@@ -819,6 +823,7 @@ def simulate_ground_system(
             start_y_m=start_y_m,
             reach_radius_m=feller_reach_radius_m,
             travel_speed_m_per_s=feller_travel_speed_m_per_s,
+            processing_time_multiplier=feller_processing_time_multiplier,
         )
     except SpatialMachineError as exc:
         raise GroundSystemError(str(exc)) from exc

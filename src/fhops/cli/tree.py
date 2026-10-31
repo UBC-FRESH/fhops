@@ -519,6 +519,27 @@ def tree_system(
         "--feller-speed",
         help="Feller-buncher travel speed in metres per second.",
     ),
+    feller_productivity_multiplier: float = typer.Option(
+        1.0,
+        "--feller-productivity-multiplier",
+        help="Multiplier on feller processing productivity (<1 slows selection-cut work).",
+    ),
+    stem_form_factor: float | None = typer.Option(
+        None,
+        "--stem-form-factor",
+        help="Optional calibrated reference stem form factor for this run.",
+    ),
+    stem_log_length: float = typer.Option(
+        DEFAULT_LOG_LENGTH_M, "--stem-log-length", help="Target bucked log length (m)."
+    ),
+    stem_stump_height: float = typer.Option(
+        DEFAULT_STUMP_HEIGHT_M, "--stem-stump-height", help="Stump height (m)."
+    ),
+    stem_sawlog_min_dbh: float = typer.Option(
+        DEFAULT_SAWLOG_MIN_DBH_CM,
+        "--stem-sawlog-min-dbh",
+        help="Minimum DBH for sawlog product classification (cm).",
+    ),
     skidder_capacity: float = typer.Option(
         DEFAULT_SKIDDER_CAPACITY_M3,
         "--skidder-capacity",
@@ -574,6 +595,19 @@ def tree_system(
             process_fixed_s=loader_process_fixed,
             process_per_log_s=loader_process_per_log,
         )
+        stem_inventory = None
+        if stem_form_factor is not None:
+            stem_inventory = build_stem_inventory(
+                scenario,
+                model=ReferenceStemModel(
+                    form_factor=stem_form_factor,
+                    log_length_m=stem_log_length,
+                    stump_height_m=stem_stump_height,
+                    sawlog_min_dbh_cm=stem_sawlog_min_dbh,
+                ),
+            )
+        if feller_productivity_multiplier <= 0:
+            raise GroundSystemError("feller-productivity-multiplier must be positive.")
         result = simulate_ground_system(
             scenario,
             block_id=block,
@@ -622,11 +656,13 @@ def tree_system(
             landing_capacity_m3=landing_capacity,
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
+            feller_processing_time_multiplier=1.0 / feller_productivity_multiplier,
+            stem_inventory=stem_inventory,
             skidder_specs=skidder_specs,
             loader_spec=loader_spec,
         )
         paths = None if dry_run or out is None else write_ground_system(result, out)
-    except (GroundSystemError, ValueError) as exc:
+    except (GroundSystemError, StemModelError, ValueError) as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
     payload = result.to_dict()

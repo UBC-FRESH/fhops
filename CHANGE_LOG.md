@@ -4641,3 +4641,9 @@ PY
   premiums, and diminishing residual-damage benefits; the default curve has an
   interior optimum at moderate care. Added scenario, block/landing assets,
   machine/calendar data, and tests.
+
+- 2026-10-31: P20 tree-system integration for KC: added feller processing-time
+  scaling, CLI stem form-factor/bucking options, and a feller-productivity
+  multiplier. A calibrated KC run (`form_factor=0.192014`, productivity `0.80`)
+  processed 3,162 m³ with no volume warning in 45 s. Added a spatial-machine
+  regression test for the processing multiplier.

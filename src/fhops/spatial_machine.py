@@ -283,6 +283,7 @@ def simulate_block(
     reach_radius_m: float = DEFAULT_REACH_RADIUS_M,
     travel_speed_m_per_s: float = DEFAULT_TRAVEL_SPEED_M_PER_S,
     max_slope_percent: float = DEFAULT_MAX_SLOPE_PERCENT,
+    processing_time_multiplier: float = 1.0,
     max_total_time_s: float | None = None,
     target_merchantable_volume_m3: float | None = None,
     obstacles: tuple[Obstacle, ...] = (),
@@ -316,6 +317,10 @@ def simulate_block(
         Travel speed.
     max_slope_percent : float, optional
         Maximum absolute terrain slope.
+    processing_time_multiplier : float, optional
+        Multiplier on each tree processing time. Values above one model slower
+        harvester work (for example selection-cut care); values below one model
+        faster work. Travel time is unaffected.
     max_total_time_s : float | None, optional
         Stop after this elapsed time unless no tree has been processed yet.
     target_merchantable_volume_m3 : float | None, optional
@@ -340,6 +345,7 @@ def simulate_block(
         ("reach_radius_m", reach_radius_m),
         ("travel_speed_m_per_s", travel_speed_m_per_s),
         ("max_slope_percent", max_slope_percent),
+        ("processing_time_multiplier", processing_time_multiplier),
     ):
         if not math.isfinite(value) or value <= 0:
             raise SpatialMachineError(f"{field} must be positive and finite.")
@@ -381,6 +387,7 @@ def simulate_block(
         reach_radius_m=reach_radius_m,
         travel_speed_m_per_s=travel_speed_m_per_s,
         max_slope_percent=max_slope_percent,
+        processing_time_multiplier=processing_time_multiplier,
         max_total_time_s=max_total_time_s,
         target_merchantable_volume_m3=target_merchantable_volume_m3,
         obstacles=obstacles,
@@ -506,6 +513,7 @@ def _simulate_events(
     reach_radius_m: float,
     travel_speed_m_per_s: float,
     max_slope_percent: float,
+    processing_time_multiplier: float,
     max_total_time_s: float | None,
     target_merchantable_volume_m3: float | None,
     obstacles: tuple[Obstacle, ...],
@@ -594,7 +602,7 @@ def _simulate_events(
         horizontal = math.hypot(target.x_m - current_x, target.y_m - current_y)
         slope = abs(terrain_z - current_z) / horizontal * 100.0 if horizontal > 0 else 0.0
         move_time = move_distance / travel_speed_m_per_s
-        processing_time = _processing_time(target)
+        processing_time = _processing_time(target) * processing_time_multiplier
         start_s = elapsed
         elapsed += move_time + processing_time
         events.append(
