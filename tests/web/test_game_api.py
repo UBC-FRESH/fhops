@@ -109,6 +109,7 @@ def test_game_shell_and_boundary(tmp_path: Path) -> None:
     shell = client.get("/game")
     assert shell.status_code == 200
     assert "FHOPS Serious Game" in shell.text
+    assert "level-map" in shell.text
     boundary = client.get("/api/game/levels/kc_57254551/boundary")
     assert boundary.status_code == 200
     assert boundary.json()["type"] == "FeatureCollection"

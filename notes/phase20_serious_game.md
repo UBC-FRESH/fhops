@@ -301,10 +301,11 @@ The local FastAPI service now exposes:
 The routes are enabled when `ServiceConfig` has matching stand levels and
 precomputes. Instructors can pass them from the CLI with repeatable
 `--game-level` / `--game-precompute` flags, plus `--game-agent-model` and
-`--game-explanation-cache`. The `/game` shell renders the whole-stand SVG boundary, joins a local
-session/team, exposes finite controls, submits one attempt, displays the score
-and selected-run components, refreshes the session leaderboard, and exposes the
-post-attempt debrief. When the optional agent is enabled, a final-only chat
+`--game-explanation-cache`. The `/game` shell renders the whole-stand SVG boundary, a level map with
+completed/current/locked states, joins a local session/team, auto-selects the
+next required level, submits one attempt with progress feedback, displays the
+score and selected-run components, refreshes the session leaderboard, and
+exposes the post-attempt debrief. When the optional agent is enabled, a final-only chat
 panel unlocks only after the last level is complete; the API also refuses chat
 before that point.
 

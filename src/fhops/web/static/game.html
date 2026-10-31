@@ -29,6 +29,13 @@
     #chat-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
     #chat-row button { width: auto; margin: 0; }
     #score { font-size: 2.4rem; font-weight: 700; margin: 8px 0; }
+    #level-map { display: grid; gap: 8px; margin: 8px 0 12px; }
+    .level-card { border: 1px solid #c8d5cc; border-radius: 8px; padding: 8px 10px; background: #f7faf8; cursor: pointer; }
+    .level-card.current { border-color: #1f6b43; box-shadow: 0 0 0 2px #1f6b4333; }
+    .level-card.completed { background: #e5f2e9; }
+    .level-card.locked { opacity: .55; cursor: not-allowed; }
+    .level-card strong { display: block; font-size: .92rem; }
+    .level-card span { font-size: .78rem; color: #5e6e64; }
     @media (max-width: 850px) { main { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -59,7 +66,9 @@
   </section>
   <section>
     <h2>Plan and score</h2>
-    <label for="level">Level</label><select id="level"></select>
+    <label>Level map</label>
+    <div id="level-map"></div>
+    <label for="level">Selected level</label><select id="level"></select>
     <div class="row">
       <div><label for="session">Session</label><input id="session" value="demo" /></div>
       <div><label for="team">Team code</label><input id="team" value="TEAM-A" /></div>
@@ -113,6 +122,7 @@ async function loadLevel() {
   if (!response.ok) throw new Error(await response.text());
   state.levels = await response.json();
   $('level').innerHTML = state.levels.map((l) => `<option value="${l.level_id}">${l.name}</option>`).join('');
+  renderLevelMap(null);
   await selectLevel(state.levels[0].level_id);
 }
 
@@ -131,13 +141,8 @@ $('join').onclick = async () => {
     if (!response.ok && response.status !== 400) throw new Error(await response.text());
     state.armed = true;
     $('submit').disabled = false;
-    const teamState = await fetch(`/api/game/sessions/${encodeURIComponent(sid)}/teams/${encodeURIComponent(team)}`);
-    if (teamState.ok) {
-      const statePayload = await teamState.json();
-      $('session-summary').textContent = `Session ${sid} · team ${team} · next level: ${statePayload.current_level || 'complete'}`;
-    }
-    await refreshLeaderboard(sid);
     await refreshCompletion(sid, team);
+    await refreshLeaderboard(sid);
     show({ joined: { session_id: sid, team_code: team }, current_level: state.level.level_id });
   } catch (error) { show(String(error)); }
 };
@@ -145,6 +150,8 @@ $('join').onclick = async () => {
 $('submit').onclick = async () => {
   try {
     if (!state.armed) throw new Error('Join a session first.');
+    $('submit').disabled = true;
+    show('Submitting attempt…');
     const session = $('session').value.trim(), team = $('team').value.trim();
     const response = await fetch(`/api/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit?level_id=${encodeURIComponent(state.level.level_id)}`, {
       method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -157,8 +164,9 @@ $('submit').onclick = async () => {
     $('debrief').disabled = false;
     await refreshLeaderboard(session);
     await refreshCompletion(session, team);
+    $('submit').disabled = false;
     show({ score: payload.score, net_profit: payload.attempt.net_profit, result: payload.result });
-  } catch (error) { show(String(error)); }
+  } catch (error) { $('submit').disabled = false; show(String(error)); }
 };
 
 async function refreshCompletion(sessionId, teamCode) {
@@ -167,7 +175,15 @@ async function refreshCompletion(sessionId, teamCode) {
   if (!response.ok) return;
   const payload = await response.json();
   const complete = payload.current_level === null;
+  state.teamState = payload;
+  $('session-summary').textContent = `Session ${sessionId} · team ${teamCode} · next level: ${payload.current_level || 'complete'}`;
+  renderLevelMap(payload);
+  if (payload.current_level) {
+    $('level').value = payload.current_level;
+    await selectLevel(payload.current_level);
+  }
   $('final-panel').style.display = complete ? 'block' : 'none';
+  $('submit').disabled = complete || !state.armed;
   if (complete) {
     $('final-title').textContent = `Final debrief — ${payload.total_score.toFixed(1)} points`;
     $('final-note').textContent = state.level.chat_enabled
@@ -186,6 +202,23 @@ async function refreshLeaderboard(sessionId) {
   const table = $('leaderboard');
   table.style.display = rows.length ? 'table' : 'none';
   table.querySelector('tbody').innerHTML = rows.map((row) => `<tr><td>${row.team_code}</td><td style="text-align:right">${Number(row.total_score).toFixed(1)}</td><td style="text-align:right">${row.completed_levels}</td></tr>`).join('');
+}
+
+function renderLevelMap(teamState) {
+  const completed = new Set((teamState?.attempts || []).map((attempt) => attempt.level_id));
+  const current = teamState?.current_level || null;
+  $('level-map').innerHTML = state.levels.map((level) => {
+    const status = completed.has(level.level_id) ? 'completed' : (current === level.level_id ? 'current' : (teamState ? 'locked' : 'open'));
+    const label = status === 'completed' ? 'completed' : status === 'current' ? 'next up' : status === 'locked' ? 'locked' : 'available';
+    return `<div class="level-card ${status}" data-level-id="${level.level_id}"><strong>${level.name}</strong><span>${level.area_ha?.toFixed(2) || '?'} ha · ${level.difficulty || ''} · ${label}</span></div>`;
+  }).join('');
+  document.querySelectorAll('.level-card').forEach((card) => {
+    card.onclick = () => {
+      if (card.classList.contains('locked')) return;
+      $('level').value = card.dataset.levelId;
+      selectLevel(card.dataset.levelId).catch((error) => show(String(error)));
+    };
+  });
 }
 
 async function selectLevel(levelId) {

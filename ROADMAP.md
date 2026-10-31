@@ -628,7 +628,8 @@ loader replaces it.
   - [x] First `/game` shell: whole-stand SVG, controls, score, team join.
   - [x] Session progress and leaderboard panel.
   - [x] CLI flags for stand levels, precomputes, agent model, and cache.
-  - [ ] Full lobby/level-map and live progress.
+  - [x] Level map with completed/current/locked states and submit progress.
+  - [ ] Live tree-system progress view.
 - [ ] P20.4 Prove fairness, document the tournament, and close out (#315)
   - [x] Deterministic/fairness/leakage tests.
   - [x] Instructor docs and validation note.

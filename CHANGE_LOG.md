@@ -4708,3 +4708,7 @@ PY
 - 2026-10-31: P20 fairness/docs pass: added deterministic score, leakage,
   cross-team reproducibility, and completion-gating tests; added the serious
   game instructor how-to and P20 validation note.
+
+- 2026-10-31: P20 Game workspace polish: added a level map with
+  completed/current/locked states, auto-selection of the next required level,
+  and submission progress feedback.
