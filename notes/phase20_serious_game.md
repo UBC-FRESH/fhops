@@ -62,14 +62,15 @@ how many shifts the machine works:
 
 ```text
 fleet_penalty = sum_r sum_{j=1..k_r} unit_cost_r * marginal_multiplier[j]
-              + spot_premium_r  if k_r reaches the level's last/spot slot
+              + spot_surcharge_r  if k_r reaches the level's last/spot slot
 ```
 
 Defaults for review:
 
 - marginal multipliers for extra slots: `1.0`, `2.0`, `8.0`;
-- the last available extra slot receives an additional `spot_premium`
-  (default `4.0x` the marginal cost), representing a contractor spot rental;
+- the last available extra slot receives an additive spot surcharge
+  (default `4.0 * unit_cost_r`, added to its `8.0 * unit_cost_r` marginal cost:
+  `12.0 * unit_cost_r` for that slot), representing contractor spot rental;
 - `unit_cost_r` is fixed per role and level in the level manifest;
 - extra slots beyond the base fleet have no free idle credit;
 - `fleet_penalty` is subtracted from the FHOPS objective only for game scoring
