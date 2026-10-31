@@ -38,6 +38,7 @@ ensembles.
    howto/hauling
    howto/hydrology_quickstart
    howto/web
+   howto/serious_game
 
 .. toctree::
    :maxdepth: 2

@@ -4704,3 +4704,7 @@ PY
 - 2026-10-31: P20 instructor launch path: added `fhops web` flags for repeatable
   game levels/precomputes, the DeepSeek V4.1 Flash model, and explanation cache.
   The game no longer requires a hand-written `ServiceConfig`.
+
+- 2026-10-31: P20 fairness/docs pass: added deterministic score, leakage,
+  cross-team reproducibility, and completion-gating tests; added the serious
+  game instructor how-to and P20 validation note.

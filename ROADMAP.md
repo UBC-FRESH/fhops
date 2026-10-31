@@ -630,8 +630,9 @@ loader replaces it.
   - [x] CLI flags for stand levels, precomputes, agent model, and cache.
   - [ ] Full lobby/level-map and live progress.
 - [ ] P20.4 Prove fairness, document the tournament, and close out (#315)
-  - [ ] Deterministic/fairness/leakage tests.
-  - [ ] Instructor/student docs and close-out report.
+  - [x] Deterministic/fairness/leakage tests.
+  - [x] Instructor docs and validation note.
+  - [ ] Full lobby/level-map/live-progress polish and final phase close-out.
 - [ ] P20.5 Add the optimal-parameter learning debrief (#316)
   - [x] Facts and single-parameter counterfactual deltas.
   - [x] Deterministic template fallback with optional LLM hook.
