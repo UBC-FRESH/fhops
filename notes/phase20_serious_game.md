@@ -48,6 +48,39 @@ day/shift slots. Every team sees the same hidden schedule. The event list is
 server-side only; it is revealed in the post-level debrief, not before or during
 the run.
 
+## Fleet opportunity cost
+
+Idle time is not enough to price extra machines: a machine can fill a slot that
+would otherwise be idle and improve the schedule while still being unavailable
+elsewhere. Each level therefore defines an explicit fleet opportunity cost,
+separate from mobilisation, transitions, and landing penalties.
+
+For role `r`, let `owned_r` be the free/base fleet included in the level and
+`n_r` the team's chosen count. The extra count is
+`k_r = max(0, n_r - owned_r)`. The penalty is fixed per level and independent of
+how many shifts the machine works:
+
+```text
+fleet_penalty = sum_r sum_{j=1..k_r} unit_cost_r * marginal_multiplier[j]
+              + spot_premium_r  if k_r reaches the level's last/spot slot
+```
+
+Defaults for review:
+
+- marginal multipliers for extra slots: `1.0`, `2.0`, `8.0`;
+- the last available extra slot receives an additional `spot_premium`
+  (default `4.0x` the marginal cost), representing a contractor spot rental;
+- `unit_cost_r` is fixed per role and level in the level manifest;
+- extra slots beyond the base fleet have no free idle credit;
+- `fleet_penalty` is subtracted from the FHOPS objective only for game scoring
+  and precompute. The MIP schedule itself is still solved with the normal FHOPS
+  objective; because the penalty is schedule-independent, the optimal schedule
+  for a fixed fleet does not change.
+
+The level briefing shows the fleet-cost schedule but not the hidden breakdown
+events. The debit is reported separately from production/mobilisation so teams
+can see why buying the last machine was expensive.
+
 ## Scoring
 
 - Each level fixes `ObjectiveWeights`; game runs cannot edit them.
