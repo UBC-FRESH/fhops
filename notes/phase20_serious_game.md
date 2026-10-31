@@ -247,6 +247,12 @@ team. They are never sent to the client before the attempt is complete.
 
 ## End-of-level learning debrief
 
+The first debrief path is implemented: `/api/game/sessions/{id}/teams/{team}/debrief/{level_id}`
+returns the optimal choices, component deltas, and per-parameter costs only
+after that team has completed the level. The Game page has a **Show debrief**
+button. Explanations currently use validated deterministic templates; the
+optional LLM hook remains available but is not enabled by default.
+
 After completion, reveal:
 
 - the optimal machine plan, landing choice, and bucking policy;

@@ -152,3 +152,28 @@ def test_multi_level_order_and_selector_payload(tmp_path: Path) -> None:
         },
     )
     assert skipped.status_code == 400
+
+
+def test_debrief_only_after_attempt(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+    client.post("/api/game/sessions", json={"session_id": "demo"})
+    client.post("/api/game/sessions/demo/teams", json={"team_code": "T1"})
+    before = client.get("/api/game/sessions/demo/teams/T1/debrief/kc_57254551")
+    assert before.status_code == 400
+
+    submitted = client.post(
+        "/api/game/sessions/demo/teams/T1/submit",
+        json={
+            "care_level": 0.0,
+            "skidder_count": 2,
+            "log_length_m": 4.9,
+            "sawlog_min_dbh_cm": 20.0,
+            "road_extension_m": 0.0,
+        },
+    )
+    assert submitted.status_code == 200
+    after = client.get("/api/game/sessions/demo/teams/T1/debrief/kc_57254551")
+    assert after.status_code == 200
+    payload = after.json()
+    assert payload["optimal_choices"]["care_level"] == 0.5
+    assert payload["explanation"]["source"] == "deterministic_template"

@@ -13,6 +13,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from fhops.game.careful_logging import DEFAULT_CAREFUL_LOGGING_CURVE
+from fhops.game.debrief import build_debrief_facts, explain_debrief
 from fhops.game.stand_precompute import (
     GameStandPrecomputeError,
     check_stand_precompute,
@@ -214,6 +215,32 @@ class GameService:
         """Return the session leaderboard."""
         return self.session(session_id).leaderboard()
 
+    def debrief(
+        self,
+        session_id: str,
+        team_code: str,
+        level_id: str,
+    ) -> dict[str, Any]:
+        """Return a post-attempt debrief, including the optimal choice."""
+        session = self.session(session_id)
+        team = session.team(team_code)
+        attempt = next(
+            (item for item in team.attempts if item.level_id == level_id),
+            None,
+        )
+        if attempt is None:
+            raise ValueError(f"Level {level_id!r} has not been completed by this team.")
+        entry = self._entry(level_id)
+        facts = build_debrief_facts(
+            entry.precompute,
+            player_choices=attempt.choices,
+            score=attempt.score,
+        )
+        return {
+            **facts.to_dict(),
+            "explanation": explain_debrief(facts),
+        }
+
     def submit(
         self,
         session_id: str,
@@ -324,6 +351,15 @@ def create_game_router(service: GameService) -> APIRouter:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         except GameStateError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @router.get("/sessions/{session_id}/teams/{team_code}/debrief/{level_id}")
+    def debrief(session_id: str, team_code: str, level_id: str) -> dict[str, Any]:
+        try:
+            return service.debrief(session_id, team_code, level_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except (GameStateError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/sessions/{session_id}/teams/{team_code}/submit")
     def submit(

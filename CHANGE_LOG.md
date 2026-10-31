@@ -4680,3 +4680,9 @@ PY
   straddles break-even (best $2,456.78, worst -$5,711.50) instead of being
   uniformly negative or uniformly profitable. Poorer log-length choices lose
   money while the best plan remains profitable.
+
+- 2026-10-31: P20 learning debrief: added post-attempt facts, optimal-choice
+  reveal, component deltas, per-parameter counterfactual costs, deterministic
+  template explanations, an optional LLM validation hook, API route, and a
+  Show debrief button. Leakage tests confirm the debrief is unavailable before
+  an attempt.

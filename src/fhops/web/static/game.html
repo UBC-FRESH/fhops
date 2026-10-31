@@ -47,6 +47,7 @@
     </div>
     <label for="logs">Target log length</label><select id="logs"></select>
     <button id="submit" disabled>Submit one attempt</button>
+    <button id="debrief" disabled>Show debrief</button>
     <div id="score">—</div>
     <div id="status">Join a session to begin.</div>
   </section>
@@ -120,6 +121,7 @@ $('submit').onclick = async () => {
     if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
     $('score').textContent = Number(payload.score).toFixed(1);
     $('submit').disabled = true;
+    $('debrief').disabled = false;
     show({ score: payload.score, net_profit: payload.attempt.net_profit, result: payload.result });
   } catch (error) { show(String(error)); }
 };
@@ -134,6 +136,16 @@ async function selectLevel(levelId) {
 }
 
 $('level').onchange = () => selectLevel($('level').value).catch((error) => show(String(error)));
+$('debrief').onclick = async () => {
+  try {
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const response = await fetch(`/api/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/debrief/${encodeURIComponent(state.level.level_id)}`);
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    show({ optimal_choices: payload.optimal_choices, explanation: payload.explanation, parameter_costs: payload.parameter_deltas });
+  } catch (error) { show(String(error)); }
+};
+
 loadLevel().catch((error) => show(String(error)));
 </script>
 </body>
