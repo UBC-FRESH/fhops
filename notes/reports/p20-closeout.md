@@ -1,6 +1,6 @@
-# P20 serious game — validation note
+# P20 serious game — closeout
 
-Status: core game path is implemented and tested; P20.3 polish remains open.
+Status: implementation complete; phase PR queued for review.
 
 ## Delivered
 
@@ -11,14 +11,15 @@ Status: core game path is implemented and tested; P20.3 polish remains open.
   benefits and residual-tree inventory.
 - Finite precomputes for every level:
   - MKRF: 4 combinations, best $334,549.83 / worst $326,885.86.
-  - Gavin: 4 combinations, best $2,456.78 / worst -$5,711.50 (straddles
-    break-even by design).
+  - Gavin: 4 combinations, best $2,456.78 / worst -$5,711.50 (deliberately
+    straddles break-even).
   - Knife Creek: 20 combinations, best $75,705.63 / worst $21,969.10.
 - Local game API, session/team order enforcement, one-play rejection,
   leaderboard, post-level debrief, and final-only optional chat.
 - DeepSeek V4.1 Flash provider hook, strict JSON validation, and level+choice
   explanation cache.
 - CLI launch flags for levels, precomputes, model, and cache.
+- Level map with completed/current/locked states and submission feedback.
 - Instructor how-to: `docs/howto/serious_game.rst`.
 
 ## Validation
@@ -31,13 +32,14 @@ Status: core game path is implemented and tested; P20.3 polish remains open.
   - debrief/chat gating before completion;
   - DeepSeek prompt/response and cache behavior.
 - All three `precompute_stand_level.py --check` runs pass.
+- Pre-commit passes on changed files.
 
-## Limits and open work
+## Limits and follow-ups
 
-- No public authentication; instructor/local deployment only.
+- No public authentication; local/instructor deployment only.
 - MKRF/Gavin boundaries are VRI-derived FEMIC layers, not raw VRI polygons.
 - Gavin PSP support is two plots and its stand is synthetic.
 - Price/cost decks are game assumptions, not market forecasts.
 - FHOPS stem products are placeholders.
-- The Game page has a level selector and leaderboard but not a full lobby/level
-  map or live progress view.
+- A true live tree-system progress view is not implemented because submissions
+  are scored from the precomputed grid; the UI shows submission progress only.

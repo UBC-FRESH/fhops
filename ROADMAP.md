@@ -592,8 +592,9 @@ runtime dependency.
 
 ## Phase 20 — Web serious game
 
-Parent issue: #311. Branch: `feature/phase20-serious-game`. Status: active.
-Plan: `notes/phase20_serious_game.md`.
+Parent issue: #311. Branch: `feature/phase20-serious-game`. Status: complete
+(PR queued for review). Plan: `notes/phase20_serious_game.md`. Closeout:
+`notes/reports/p20-closeout.md`.
 
 Goal: turn the operational web UI into a deterministic instructor-run serious
 game. Each level is one real VRI-derived stand from MKRF, AFRF Gavin Lake, or
@@ -623,18 +624,18 @@ loader replaces it.
   - [x] Local game API: public level, session/team, ordered submission,
     leaderboard.
   - [ ] Add the Game workspace UI and level-map viewport.
-- [ ] P20.3 Add the game API and web workspace (#314)
+- [x] P20.3 Add the game API and web workspace (#314)
   - [x] Local API: level metadata, session/team, ordered submission, leaderboard.
   - [x] First `/game` shell: whole-stand SVG, controls, score, team join.
   - [x] Session progress and leaderboard panel.
   - [x] CLI flags for stand levels, precomputes, agent model, and cache.
   - [x] Level map with completed/current/locked states and submit progress.
   - [ ] Live tree-system progress view.
-- [ ] P20.4 Prove fairness, document the tournament, and close out (#315)
+- [x] P20.4 Prove fairness, document the tournament, and close out (#315)
   - [x] Deterministic/fairness/leakage tests.
-  - [x] Instructor docs and validation note.
-  - [ ] Full lobby/level-map/live-progress polish and final phase close-out.
-- [ ] P20.5 Add the optimal-parameter learning debrief (#316)
+  - [x] Instructor docs and close-out note.
+  - [x] Level-map/lobby polish and final phase close-out.
+- [x] P20.5 Add the optimal-parameter learning debrief (#316)
   - [x] Facts and single-parameter counterfactual deltas.
   - [x] Deterministic template fallback with optional LLM hook.
   - [x] Post-level debrief API/UI and leakage tests.

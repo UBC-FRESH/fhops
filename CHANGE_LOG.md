@@ -4712,3 +4712,7 @@ PY
 - 2026-10-31: P20 Game workspace polish: added a level map with
   completed/current/locked states, auto-selection of the next required level,
   and submission progress feedback.
+
+- 2026-10-31: P20 closeout: implementation complete; all three levels, game API,
+  UI, session rules, leaderboard, debrief, optional DeepSeek chat, fairness
+  tests, instructor docs, and CLI launch flags are in place. Phase PR queued.
