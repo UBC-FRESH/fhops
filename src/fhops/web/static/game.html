@@ -40,12 +40,12 @@
   </style>
 </head>
 <body>
-<header><h1>FHOPS Serious Game — Knife Creek</h1></header>
+<header><h1>FHOPS Serious Game</h1></header>
 <main>
   <section>
     <h2>Whole-operation viewport</h2>
     <div id="map" aria-label="Stand boundary"></div>
-    <p class="muted">One selection-cut stand. Careful logging trades slower harvester work and an operator premium against residual-stem damage.</p>
+    <p class="muted">One stand per level. The viewport, controls, and debrief update as the ordered levels unlock.</p>
   </section>
   <section>
     <h2>Session</h2>
@@ -86,7 +86,9 @@
   </section>
 </main>
 <script>
-const state = { level: null, levels: [], armed: false };
+const state = { level: null, levels: [], armed: false, lastCompletedLevel: null };
+const API = window.location.pathname.replace(/\/game\/?$/, '') + '/api';
+const api = (path) => `${API}${path}`;
 const $ = (id) => document.getElementById(id);
 const show = (value) => { $('status').textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2); };
 
@@ -102,7 +104,7 @@ function polygonRings(payload) {
 }
 
 async function drawBoundary() {
-  const response = await fetch(`/api/game/levels/${state.level.level_id}/boundary`);
+  const response = await fetch(api(`/game/levels/${state.level.level_id}/boundary`));
   if (!response.ok) throw new Error(await response.text());
   const rings = polygonRings(await response.json());
   const points = rings.flat();
@@ -118,7 +120,7 @@ async function drawBoundary() {
 }
 
 async function loadLevel() {
-  const response = await fetch('/api/game/levels');
+  const response = await fetch(api('/game/levels'));
   if (!response.ok) throw new Error(await response.text());
   state.levels = await response.json();
   $('level').innerHTML = state.levels.map((l) => `<option value="${l.level_id}">${l.name}</option>`).join('');
@@ -129,7 +131,7 @@ async function loadLevel() {
 $('join').onclick = async () => {
   try {
     const session = $('session').value.trim(), team = $('team').value.trim();
-    let response = await fetch('/api/game/sessions', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ session_id: session }) });
+    let response = await fetch(api('/game/sessions'), { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ session_id: session }) });
     let sid = session;
     if (response.ok) {
       sid = (await response.json()).session_id;
@@ -137,7 +139,7 @@ $('join').onclick = async () => {
       throw new Error(await response.text());
     }
     $('session').value = sid;
-    response = await fetch(`/api/game/sessions/${encodeURIComponent(sid)}/teams`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ team_code: team }) });
+    response = await fetch(api(`/game/sessions/${encodeURIComponent(sid)}/teams`), { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ team_code: team }) });
     if (!response.ok && response.status !== 400) throw new Error(await response.text());
     state.armed = true;
     $('submit').disabled = false;
@@ -151,9 +153,12 @@ $('submit').onclick = async () => {
   try {
     if (!state.armed) throw new Error('Join a session first.');
     $('submit').disabled = true;
+    $('debrief').disabled = true;
+    $('score').textContent = '—';
+    state.lastCompletedLevel = state.level.level_id;
     show('Submitting attempt…');
     const session = $('session').value.trim(), team = $('team').value.trim();
-    const response = await fetch(`/api/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit?level_id=${encodeURIComponent(state.level.level_id)}`, {
+    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit?level_id=${encodeURIComponent(state.level.level_id)}`), {
       method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ care_level: Number($('care').value), skidder_count: Number($('skidders').value), log_length_m: Number($('logs').value), sawlog_min_dbh_cm: 20.0, road_extension_m: 0.0 })
     });
@@ -164,14 +169,14 @@ $('submit').onclick = async () => {
     $('debrief').disabled = false;
     await refreshLeaderboard(session);
     await refreshCompletion(session, team);
-    $('submit').disabled = false;
+    $('submit').disabled = state.teamState?.current_level === null;
     show({ score: payload.score, net_profit: payload.attempt.net_profit, result: payload.result });
   } catch (error) { $('submit').disabled = false; show(String(error)); }
 };
 
 async function refreshCompletion(sessionId, teamCode) {
   if (!sessionId || !teamCode) return;
-  const response = await fetch(`/api/game/sessions/${encodeURIComponent(sessionId)}/teams/${encodeURIComponent(teamCode)}`);
+  const response = await fetch(api(`/game/sessions/${encodeURIComponent(sessionId)}/teams/${encodeURIComponent(teamCode)}`));
   if (!response.ok) return;
   const payload = await response.json();
   const complete = payload.current_level === null;
@@ -196,7 +201,7 @@ async function refreshCompletion(sessionId, teamCode) {
 
 async function refreshLeaderboard(sessionId) {
   if (!sessionId) return;
-  const response = await fetch(`/api/game/sessions/${encodeURIComponent(sessionId)}/leaderboard`);
+  const response = await fetch(api(`/game/sessions/${encodeURIComponent(sessionId)}/leaderboard`));
   if (!response.ok) return;
   const rows = await response.json();
   const table = $('leaderboard');
@@ -242,7 +247,7 @@ $('chat-send').onclick = async () => {
     userLine.textContent = `You: ${message}`;
     log.appendChild(userLine);
     $('chat-input').value = '';
-    const response = await fetch(`/api/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/chat`, {
+    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/chat`), {
       method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ message })
     });
     const payload = await response.json();
@@ -262,7 +267,8 @@ $('chat-send').onclick = async () => {
 $('debrief').onclick = async () => {
   try {
     const session = $('session').value.trim(), team = $('team').value.trim();
-    const response = await fetch(`/api/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/debrief/${encodeURIComponent(state.level.level_id)}`);
+    const completedLevel = state.lastCompletedLevel || state.level.level_id;
+    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/debrief/${encodeURIComponent(completedLevel)}`));
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
     show({ optimal_choices: payload.optimal_choices, explanation: payload.explanation, parameter_costs: payload.parameter_deltas });

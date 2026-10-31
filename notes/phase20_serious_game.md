@@ -305,7 +305,8 @@ precomputes. Instructors can pass them from the CLI with repeatable
 completed/current/locked states, joins a local session/team, auto-selects the
 next required level, submits one attempt with progress feedback, displays the
 score and selected-run components, refreshes the session leaderboard, and
-exposes the post-attempt debrief. When the optional agent is enabled, a final-only chat
+exposes the post-attempt debrief. API calls are relative to the page's proxy
+prefix so JupyterHub `/proxy/<port>/game` deployments work. When the optional agent is enabled, a final-only chat
 panel unlocks only after the last level is complete; the API also refuses chat
 before that point.
 

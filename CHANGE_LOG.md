@@ -4718,3 +4718,9 @@ PY
   tests, instructor docs, and CLI launch flags are in place. Phase PR queued.
 
 - 2026-10-31: P20 phase PR opened as #317.
+
+- 2026-10-31: P20 UI proxy fix after browser exercise: all game API calls now
+  derive their prefix from the page URL, fixing JupyterHub `/proxy/<port>/game`
+  deployments that previously sent `/api/...` to nginx. Also fixed stale score
+  display during submission and made Show debrief target the level just
+  completed rather than the auto-selected next level.
