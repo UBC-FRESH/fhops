@@ -157,6 +157,7 @@ export function createViewer(container, { onTime } = {}) {
   let processedTimes = [];
   let cumulativeVolume = [];
   let truckEvents = {};
+  let truckSchedules = {};
   let trucks = {};
   let deckCurves = null;
   let decks = {};
@@ -386,37 +387,120 @@ export function createViewer(container, { onTime } = {}) {
     }
   }
 
+  function pathPoint(path, f) {
+    let total = 0;
+    const lengths = [];
+    for (let index = 1; index < path.length; index += 1) {
+      const length = Math.hypot(path[index][0] - path[index - 1][0], path[index][1] - path[index - 1][1]);
+      lengths.push(length);
+      total += length;
+    }
+    let remaining = Math.max(0, Math.min(1, f)) * total;
+    for (let index = 0; index < lengths.length; index += 1) {
+      if (remaining <= lengths[index] || index === lengths.length - 1) {
+        const u = lengths[index] > 0 ? Math.min(1, remaining / lengths[index]) : 0;
+        const a = path[index];
+        const b = path[index + 1];
+        return {
+          x: a[0] + (b[0] - a[0]) * u,
+          y: a[1] + (b[1] - a[1]) * u,
+          heading: Math.atan2(b[1] - a[1], b[0] - a[0]),
+        };
+      }
+      remaining -= lengths[index];
+    }
+    return { x: path[0][0], y: path[0][1], heading: 0 };
+  }
+
+  function buildTruckSchedules(events) {
+    const loads = (events.truck_events || []).filter((event) => event.type === 'truck_load')
+      .sort((a, b) => a.start_s - b.start_s);
+    const returns = (events.truck_events || []).filter((event) => event.type === 'truck_return')
+      .sort((a, b) => a.start_s - b.start_s);
+    const unusedReturns = new Set(returns);
+    const baseIds = [...new Set(loads.map((load) => load.machine))];
+    const fleetSize = Math.max(4, baseIds.length);
+    const ids = Array.from({ length: fleetSize }, (_, index) => `T-${String(index + 1).padStart(2, '0')}`);
+    const available = ids.map(() => -Infinity);
+    const schedules = Object.fromEntries(ids.map((id) => [id, []]));
+    for (const load of loads) {
+      const ret = returns.find((item) => unusedReturns.has(item)
+        && item.machine === load.machine
+        && item.start_s >= load.end_s - 1
+        && item.start_s <= load.end_s + 2);
+      if (ret) unusedReturns.delete(ret);
+      const returnEnd = ret?.end_s ?? (load.end_s + 3600);
+      let slot = available.findIndex((ready) => ready <= load.start_s);
+      if (slot < 0) slot = available.indexOf(Math.min(...available));
+      schedules[ids[slot]].push({
+        loadStart: Number(load.start_s),
+        loadEnd: Number(load.end_s),
+        returnEnd,
+        volume: Number(load.volume_m3) || 0,
+      });
+      available[slot] = returnEnd;
+    }
+    return schedules;
+  }
+
   function updateTrucks(t) {
+    const roadY = roadEndpoints ? Number(roadEndpoints[0][1]) : null;
+    const exitX = roadEndpoints ? Number(roadEndpoints[1][0]) : null;
     for (const [id, group] of Object.entries(trucks)) {
-      const events = truckEvents[id] || [];
-      const active = events.find((event) => t >= event.start_s && t <= event.end_s);
+      const schedule = truckSchedules[id] || [];
+      const previous = schedule.filter((item) => item.loadStart <= t).at(-1);
       const home = group.userData.home;
-      const mill = group.userData.mill;
       let x = home[0];
       let y = home[1];
       let status = 'waiting';
       let heading = 0;
-      if (active?.type === 'truck_load') {
+      let visible = true;
+      if (!previous) {
+        group.userData.cargo.visible = false;
+      } else if (t <= previous.loadEnd) {
         status = 'loading';
         group.userData.cargo.visible = true;
-      } else if (active?.type === 'truck_return') {
-        const span = Math.max(1, active.end_s - active.start_s);
-        const f = Math.max(0, Math.min(1, (t - active.start_s) / span));
-        let u;
-        if (f < 0.15) u = 0;
-        else if (f < 0.65) u = (f - 0.15) / 0.5;
-        else if (f < 0.85) u = 1;
-        else u = (1 - f) / 0.15;
-        x = home[0] + (mill[0] - home[0]) * u;
-        y = home[1] + (mill[1] - home[1]) * u;
-        heading = Math.atan2(mill[1] - home[1], mill[0] - home[0]);
-        status = f >= 0.85 ? 'returning' : (f >= 0.65 ? 'at mill' : 'driving out');
-        group.userData.cargo.visible = true;
+      } else if (t <= previous.returnEnd) {
+        const returnDuration = Math.max(1, previous.returnEnd - previous.loadEnd);
+        const path = [
+          [home[0], home[1]],
+          [home[0], roadY ?? home[1]],
+          [exitX ?? home[0] + 150, roadY ?? home[1]],
+        ];
+        const pathLength = path.slice(1).reduce((sum, point, index) => (
+          sum + Math.hypot(point[0] - path[index][0], point[1] - path[index][1])
+        ), 0);
+        // On-map speed: 10 km/h; the 20 km mill leg is represented by the
+        // off-map gap in the truck-return interval.
+        const mapTravel = Math.min(returnDuration * 0.45, Math.max(1, pathLength / (10 * 1000 / 3600)));
+        const outboundEnd = previous.loadEnd + mapTravel;
+        const inboundStart = previous.returnEnd - mapTravel;
+        if (t <= outboundEnd) {
+          const point = pathPoint(path, (t - previous.loadEnd) / Math.max(1, mapped));
+          x = point.x; y = point.y; heading = point.heading;
+          status = 'loaded outbound';
+          group.userData.cargo.visible = true;
+        } else if (t < inboundStart) {
+          visible = false;
+          status = 'off map';
+          group.userData.cargo.visible = false;
+        } else {
+          const point = pathPoint(path, 1 - (t - inboundStart) / Math.max(1, mapped));
+          x = point.x; y = point.y; heading = point.heading;
+          status = 'returning empty';
+          group.userData.cargo.visible = false;
+        }
       } else {
         group.userData.cargo.visible = false;
+        // Keep only the first two empty trucks visible at the landing; the
+        // rest remain staged until they are assigned a load.
+        if ((group.userData.queueIndex || 0) > 2) visible = false;
       }
-      group.position.set(x, sampleHeight(x, y) + 1.8, y);
-      group.rotation.y = heading;
+      group.visible = visible;
+      if (visible) {
+        group.position.set(x, sampleHeight(x, y) + 1.8, y);
+        group.rotation.y = heading;
+      }
       group.userData.status = status;
     }
   }
@@ -523,10 +607,9 @@ export function createViewer(container, { onTime } = {}) {
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
     sprite.position.set(0, 7, 0); sprite.scale.set(8, 2, 1);
     group.add(sprite);
-    const home = [landing.x + (index - 1) * 13, landing.y - 28];
-    const mill = [landing.x + 120, landing.y + 140];
+    const home = [landing.x + (index - 1) * 8, landing.y];
     group.scale.setScalar(1.7);
-    group.userData = { home, mill, cargo, status: 'waiting', id };
+    group.userData = { home, cargo, status: 'waiting', id, queueIndex: index };
     group.position.set(home[0], sampleHeight(home[0], home[1]) + 1.8, home[1]);
     scene.add(group);
     trucks[id] = group;
@@ -791,7 +874,7 @@ export function createViewer(container, { onTime } = {}) {
         }
 
         // Cable runs do not have a trucking model. Use the loader cycles to
-        // give the cable case the same visible landing → mill → landing truck
+        // give the cable case the same visible landing → road edge → landing truck
         // loop without changing the simulation output.
         if (!(events.truck_events || []).length) {
           const loaderId = Object.entries(events.machines || {})
@@ -825,12 +908,8 @@ export function createViewer(container, { onTime } = {}) {
         for (const event of events.truck_events || []) {
           (truckEvents[event.machine] ||= []).push(event);
         }
-        for (const list of Object.values(truckEvents)) list.sort((a, b) => a.start_s - b.start_s);
-        const truckIds = Object.keys(truckEvents).sort();
-        if (!truckIds.length) {
-          const truckCount = Number(events.truck_summary?.truck_count) || 0;
-          for (let index = 1; index <= truckCount; index += 1) truckIds.push(`T-${String(index).padStart(2, '0')}`);
-        }
+        truckSchedules = buildTruckSchedules(events);
+        const truckIds = Object.keys(truckSchedules).sort();
         truckIds.forEach((id, index) => makeTruck(id, index + 1, events.landing));
 
         timelineByMachine = {};
@@ -848,6 +927,7 @@ export function createViewer(container, { onTime } = {}) {
         for (const tree of sorted) { sum += tree.volume_m3 || 0; cumulativeVolume.push(sum); }
 
         addResidualTrees(residual);
+        addRoad(events);
 
         if (events.landing) {
           const ring = new THREE.Mesh(
@@ -859,7 +939,6 @@ export function createViewer(container, { onTime } = {}) {
           scene.add(ring);
         }
 
-        addRoad(events);
         deckCurves = buildDeckCurves(events);
         if (events.landing) {
           decks.unprocessed = makeDeck(events.landing, -52, 62, 0x7d5a36, 'unprocessed deck');
@@ -887,28 +966,6 @@ export function createViewer(container, { onTime } = {}) {
             );
             flow.name = 'landing_flow';
             scene.add(flow);
-          }
-          if (truckIds.length) {
-            const millX = events.landing.x + 120;
-            const millY = events.landing.y + 140;
-            const shed = new THREE.Mesh(
-              new THREE.BoxGeometry(18, 8, 14),
-              new THREE.MeshStandardMaterial({ color: 0x59656a, roughness: 0.85 }),
-            );
-            shed.position.set(millX, sampleHeight(millX, millY) + 4, millY);
-            scene.add(shed);
-            const millLabel = makeTextSprite('mill', 2.5);
-            millLabel.sprite.position.set(millX, sampleHeight(millX, millY) + 12, millY);
-            scene.add(millLabel.sprite);
-            const road = new THREE.Line(
-              new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(events.landing.x, sampleHeight(events.landing.x, events.landing.y) + 0.5, events.landing.y),
-                new THREE.Vector3(millX, sampleHeight(millX, millY) + 0.5, millY),
-              ]),
-              new THREE.LineBasicMaterial({ color: 0x9a8b5a, transparent: true, opacity: 0.55 }),
-            );
-            road.name = 'mill_road';
-            scene.add(road);
           }
         }
 
