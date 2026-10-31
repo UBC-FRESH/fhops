@@ -637,13 +637,13 @@ def _simulate_events(
 def _processing_time(tree: StemResult) -> float:
     if tree.merchantable_volume_m3 <= 0:
         return 0.0
-    log_count = max(1, len(tree.logs))
-    mean_log_length = sum(log.length_m for log in tree.logs) / log_count
+    # Felling handles the whole tree. Bucking length belongs to the processor,
+    # not to feller-buncher productivity.
     inputs = ADV6N10HarvesterInputs(
         stem_volume_m3=tree.merchantable_volume_m3,
-        products_count=float(log_count),
+        products_count=1.0,
         stems_per_cycle=1.0,
-        mean_log_length_m=max(mean_log_length, 1e-9),
+        mean_log_length_m=max(tree.height_m, 1e-9),
     )
     productivity = estimate_harvester_productivity_adv6n10(inputs)
     return tree.merchantable_volume_m3 / productivity * 3600.0

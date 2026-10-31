@@ -4772,3 +4772,8 @@ PY
 - 2026-10-31: P20 replay robustness: replay generation is now asynchronous with
   job polling, avoiding proxy timeouts and Safari JSON parse errors on slow KC
   assets. The UI also reads non-JSON error bodies safely.
+
+- 2026-10-31: P20 time-model correction: feller-buncher productivity now uses
+  whole trees, not bucked log count/length; reference skidder time is per tree;
+  processor/loader handling remains log-count-sensitive. Regenerated all level
+  precomputes and rebalanced Gavin to straddle break-even again.

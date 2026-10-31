@@ -6,9 +6,9 @@
     "log_length_m": 6.1,
     "road_extension_m": 0.0,
     "sawlog_min_dbh_cm": 20.0,
-    "skidder_count": 1
+    "skidder_count": 2
   },
-  "duration_s": 538444.2153769835,
+  "duration_s": 549547.655010018,
   "tree_count": 4798,
   "processed_volume_m3": 4116.596666581882,
   "scene": "scene.gltf",

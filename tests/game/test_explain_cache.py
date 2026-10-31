@@ -87,10 +87,10 @@ def test_prompt_facts_are_rounded_to_presentation_precision() -> None:
     }
     facts = build_debrief_facts(payload, player_choices=choices, score=0.0)
     prompt = build_debrief_prompt(facts.to_dict())
-    assert "75705.62948483122" not in prompt
-    assert "21969.10009106162" not in prompt
-    assert "75706" in prompt
-    assert "21969" in prompt
+    assert f"{facts.optimal_net_profit:.5f}" not in prompt
+    assert f"{facts.player_net_profit:.5f}" not in prompt
+    assert str(round(facts.optimal_net_profit)) in prompt
+    assert str(round(facts.player_net_profit)) in prompt
 
 
 def test_dollar_claim_from_llm_is_rejected() -> None:

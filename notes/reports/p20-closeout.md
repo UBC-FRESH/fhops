@@ -10,10 +10,10 @@ Status: implementation complete; PR #317 queued for review.
 - Knife Creek selection-cut careful-logging trade-off with diminishing damage
   benefits and residual-tree inventory.
 - Finite precomputes for every level:
-  - MKRF: 4 combinations, best $259,929.60 / worst $252,265.64.
-  - Gavin: 4 combinations, best $2,456.78 / worst -$5,711.50 (deliberately
+  - MKRF: 4 combinations, best $255,090.33 / worst $246,366.12.
+  - Gavin: 4 combinations, best $2,610.45 / worst -$3,530.55 (deliberately
     straddles break-even).
-  - Knife Creek: 20 combinations, best $75,705.63 / worst $21,969.10.
+  - Knife Creek: 20 combinations, best $70,760.60 / worst $20,875.67.
 - Local game API, session/team order enforcement, one-play rejection,
   leaderboard, post-level debrief, and final-only optional chat.
 - DeepSeek V4.1 Flash provider hook, strict JSON validation, and level+choice

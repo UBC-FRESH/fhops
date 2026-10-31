@@ -101,10 +101,10 @@ and checked into the level assets:
 4. Calibrate to VRI stems/ha and volume/ha where those attributes exist.
 5. Export a `fhops.tree.inventory.v1` table plus metadata and checksums.
 
-Knife Creek has local PSP assets (`data/psp/`). MKRF CWHdm and Gavin Lake
-ICHmk3 currently need BEC-matched PSP inputs; those levels must stay disabled
-until the fit source and sample counts are recorded. Do not substitute VRI
-polygon attributes for a tree list and call it PSP-derived.
+Knife Creek has local PSP assets (`data/psp/`). MKRF uses FAIB CWHdm Fraser
+TSA PSP; Gavin uses FAIB ICHmk3 Williams Lake TSA PSP with only two plots.
+Do not substitute VRI polygon attributes for a tree list and call it
+PSP-derived.
 
 The tree list is fixed for all teams. The player does not control the hidden
 tree map, breakdown timings, or PSP sampling.
@@ -248,8 +248,8 @@ Artifact: `examples/game/precomputed/kc_57254551.json`.
 
 MKRF and Gavin are clearcut/tree-length or cut-to-length levels with care
 fixed at standard. Each has four combinations (2 skidder counts × 2 log
-lengths). MKRF precompute: best `$259,929.60`, worst `$252,265.64`. Gavin
-precompute: best `$2,456.78`, worst `-$5,711.50`, deliberately straddling
+lengths). MKRF precompute: best `$255,090.33`, worst `$246,366.12`. Gavin
+precompute: best `$2,610.45`, worst `-$3,530.55`, deliberately straddling
 break-even so the weak choices lose money while the best plan is profitable.
 
 The old fleet-opportunity formula is retained: extra marginal multipliers
