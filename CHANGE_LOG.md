@@ -4599,3 +4599,199 @@ PY
 - 2026-10-30: P19 (#300) squash-merged as `43a7862d`; tree matched the
   approved head `fc4d23b0`. The Nemora handoff fixture/scenario/docs/test are on
   `main`. No 1.2.1 release or publication was made.
+
+- 2026-10-31: Planned P20 (#306) as a deterministic instructor-run web serious
+  game. Levels map to Tiny7, Small21, Medium42, and Large84; controls cover
+  fleet counts, arrival posture, harvest pattern, and hidden deterministic
+  breakdowns. Scoring will use fixed objective weights and exact MIP precompute
+  bounds. This phase is planned only; no implementation has started.
+
+- 2026-10-31: Added P20.5 (#316) to the planned serious game: after completion,
+  reveal optimal parameter values and provide fact-grounded explanations of why
+  they win and what each wrong parameter value cost. LLM output will be
+  schema-constrained, validated against precomputed facts, cached, and backed by
+  deterministic templates.
+
+- 2026-10-31: P20.1 added four level manifests
+  (`examples/game/levels/`), machine palettes, arrival/harvest controls,
+  deterministic breakdown events, and the `fhops.game` variant builder. Exact
+  MIP precompute and the learning debrief remain pending. Fleet opportunity
+  costs use increasing marginal multipliers plus a spot-slot surcharge.
+
+- 2026-10-31: P20.1 added the exact precompute pipeline and Tiny7's complete
+  216-variant cache (`examples/game/precomputed/tiny7.json`, adjusted best
+  4406.153/worst 4366.909). Small21 failed closed: a base-menu variant did not
+  prove optimal within 300 s. Medium42/Large84 are not attempted yet. No game
+  level is enabled beyond Tiny7.
+
+- 2026-10-31: P20 revised from synthetic multi-block shift scenarios to
+  stand-scale levels. Selected MKRF `RES_KEY 684` (6.86 ha, CWHdm), Gavin Lake
+  `BLOCK_ID 3` (13.94 ha, ICHmk3), and Knife Creek VRI `POLYGON_ID 57254551`
+  (35.95 ha, IDFdk3), with EPSG:3005 GeoJSON boundaries and provenance. The
+  revised design uses one block per level, Nemora/PSP tree lists, playable
+  bucking policies, and net-profit scoring. Old tiny7/small21 game levels are
+  retired; no new level is game-enabled until inventories and precompute are
+  complete.
+
+- 2026-10-31: P20 Knife Creek stand-scale assets: generated a deterministic
+  17,221-tree Nemora/PSP stand inside VRI polygon 57254551, split into 10,333
+  harvested and 6,888 residual trees, and validated both FHOPS inventories. The
+  first tree-system smoke run completed in 47 s. Added a selection-cut
+  careful-logging curve with a `0.80` base productivity multiplier, rising care
+  premiums, and diminishing residual-damage benefits; the default curve has an
+  interior optimum at moderate care. Added scenario, block/landing assets,
+  machine/calendar data, and tests.
+
+- 2026-10-31: P20 tree-system integration for KC: added feller processing-time
+  scaling, CLI stem form-factor/bucking options, and a feller-productivity
+  multiplier. A calibrated KC run (`form_factor=0.192014`, productivity `0.80`)
+  processed 3,162 m³ with no volume warning in 45 s. Added a spatial-machine
+  regression test for the processing multiplier.
+
+- 2026-10-31: P20 KC net-profit evaluator: added product/price decks, log
+  classification, machine-hours costing, care premium, residual-asset damage,
+  mobilisation/road costs, and net profit. Calibrated KC returns positive net
+  profit for all care settings; the current optimum is light care (~$67.6k),
+  with maximum care at ~$22.0k, confirming that more care is not monotonically
+  better. Added price/log-value tests.
+
+- 2026-10-31: P20 KC precompute and scoring state: added finite stand-level
+  precompute, 0–100 score normalization, and local one-play/order tournament
+  state. The KC grid (5 care levels × 2 skidder counts × 2 log lengths) is
+  complete: 20 combinations, best $75,705.63, worst $21,969.10; best choice is
+  moderate care, one skidder, 6.1 m logs.
+
+- 2026-10-31: P20 local game API: added public level metadata, session and team
+  creation, ordered one-play submission against the complete KC precompute,
+  team state, leaderboard, and pre-run leakage checks. Game routes are opt-in via
+  `ServiceConfig.game_level` plus `game_precompute`.
+
+- 2026-10-31: P20 first Game workspace: added `/game` shell with a whole-stand
+  SVG viewport, session/team join, finite care/skidder/log controls, one-attempt
+  submission, score display, and a boundary API. The shell uses the exact
+  precomputed KC scoring path and never receives the optimal choice.
+
+- 2026-10-31: P20 added MKRF and Gavin Lake PSP-based stand inventories and
+  precomputes. MKRF uses FAIB CWHdm/Fraser PSP; Gavin uses ICHmk3/Williams Lake
+  PSP at age-137 BLOCK_ID 1032. Also extended the local game service/API to all
+  three ordered levels and added a level selector to the Game page.
+
+- 2026-10-31: P20 Gavin economic calibration: the synthetic Gavin deck now
+  straddles break-even (best $2,456.78, worst -$5,711.50) instead of being
+  uniformly negative or uniformly profitable. Poorer log-length choices lose
+  money while the best plan remains profitable.
+
+- 2026-10-31: P20 learning debrief: added post-attempt facts, optimal-choice
+  reveal, component deltas, per-parameter counterfactual costs, deterministic
+  template explanations, an optional LLM validation hook, API route, and a
+  Show debrief button. Leakage tests confirm the debrief is unavailable before
+  an attempt.
+
+- 2026-10-31: P20 debrief LLM path: wired the optional agent to
+  `opencode-go/deepseek-v4.1-flash`, added strict JSON prompt/response parsing,
+  and cached explanation payloads by level + choice hash. The deterministic
+  template remains the default when the agent is disabled.
+
+- 2026-10-31: P20 game lobby: added session/team progress and a leaderboard
+  panel to `/game`, with refresh after join and submission, plus an API
+  leaderboard regression test.
+
+- 2026-10-31: P20 final-only optional chat: added a completion-gated chat API
+  and final debrief panel. The chat uses the same DeepSeek V4.1 Flash agent hook,
+  receives all tournament debrief facts, and is unavailable before the final
+  level is complete.
+
+- 2026-10-31: P20 instructor launch path: added `fhops web` flags for repeatable
+  game levels/precomputes, the DeepSeek V4.1 Flash model, and explanation cache.
+  The game no longer requires a hand-written `ServiceConfig`.
+
+- 2026-10-31: P20 fairness/docs pass: added deterministic score, leakage,
+  cross-team reproducibility, and completion-gating tests; added the serious
+  game instructor how-to and P20 validation note.
+
+- 2026-10-31: P20 Game workspace polish: added a level map with
+  completed/current/locked states, auto-selection of the next required level,
+  and submission progress feedback.
+
+- 2026-10-31: P20 closeout: implementation complete; all three levels, game API,
+  UI, session rules, leaderboard, debrief, optional DeepSeek chat, fairness
+  tests, instructor docs, and CLI launch flags are in place. Phase PR queued.
+
+- 2026-10-31: P20 phase PR opened as #317.
+
+- 2026-10-31: P20 UI proxy fix after browser exercise: all game API calls now
+  derive their prefix from the page URL, fixing JupyterHub `/proxy/<port>/game`
+  deployments that previously sent `/api/...` to nginx. Also fixed stale score
+  display during submission and made Show debrief target the level just
+  completed rather than the auto-selected next level.
+
+- 2026-10-31: P20 result UI polish: replaced raw JSON dumps with a score card,
+  component breakdown, product recovery labels, and readable debrief panel.
+  Tightened the debrief prompt and fallback validation against snake_case/raw
+  float output, and fixed proxy-relative API calls after live browser testing.
+
+- 2026-10-31: P20 UI briefing/control parity: added block briefing panels and
+  sawlog/landing controls so every finite debrief parameter is visible before
+  submission, added no-store caching to `/game`, and tightened result/debrief
+  formatting to avoid raw JSON and excess precision.
+
+- 2026-10-31: P20 corrected MKRF tree-length system to include a roadside
+  processor for delimbing/bucking/top removal; updated machine/calendar/
+  harvest-system assets and regenerated the MKRF precompute (best $259,929.60,
+  worst $252,265.64).
+
+- 2026-10-31: P20 debrief consistency: the UI now shows the total gap to
+  optimal and labels one-at-a-time parameter effects separately; when no single
+  change explains the gap, it reports an interaction. LLM prose is qualitative
+  only—any numeric claim is rejected and falls back to deterministic facts.
+
+- 2026-10-31: P20 paid-information mechanic: added four contractor quotes with
+  rate/move-in trade-offs and three overlapping consultant tip tiers. Consultant
+  fees are debited immediately, the 0–100 score can go negative when fees exceed
+  the no-tip spread, and the no-tip optimal plan remains the only 100. The UI
+  exposes contractor quotes and tip purchase before submission.
+
+- 2026-10-31: P20 final chat prompt compaction: removed full debrief history
+  from the agent prompt, capped user questions, and bounded the synthesized
+  prompt below the 4,000-character AgentRequest limit. Long final-chat questions
+  now work without validation errors.
+
+- 2026-10-31: P20 first dual 3D replay: added replay asset generation, token-
+  scoped asset serving, a synchronized two-pane replay page, and a post-level
+  replay button. MKRF optimal assets are pre-saved; player replays are generated
+  JIT and cached by choice hash.
+
+- 2026-10-31: P20 session persistence: tournament sessions now persist to a JSON
+  store and reload on service restart, fixing "Unknown session" after restarts.
+  The UI also shows a clear expired-session prompt when an old session is gone.
+
+- 2026-10-31: P20 dual-replay timing: the synchronized wrapper now plays the
+  full simulated timeline in 90 real seconds at 1× (matching the FHOPS viewer),
+  with 0.25×–8× speed controls instead of 1 simulated second per real second.
+
+- 2026-10-31: P20 replay robustness: replay generation is now asynchronous with
+  job polling, avoiding proxy timeouts and Safari JSON parse errors on slow KC
+  assets. The UI also reads non-JSON error bodies safely.
+
+- 2026-10-31: P20 time-model correction: feller-buncher productivity now uses
+  whole trees, not bucked log count/length; reference skidder time is per tree;
+  processor/loader handling remains log-count-sensitive. Regenerated all level
+  precomputes and rebalanced Gavin to straddle break-even again.
+
+- 2026-10-31: P20 game UX: completed teams now get an explicit "all levels
+  complete" message instead of a silently disabled submit button; added a New
+  session action for starting a fresh run.
+
+- 2026-10-31: P20 replay integrity: added per-asset generation locks and
+  metadata/timeline duration consistency checks, preventing concurrent jobs from
+  mixing optimal scene/events. Pre-saved the corrected Gavin and KC optimal
+  replay assets.
+
+- 2026-10-31: P20 harvest pattern: added a boustrophedon feller swath mode and
+  enabled it for game operations/replays. Generic tree-system simulations keep
+  nearest-neighbor behavior unless explicitly requested. Game precomputes and
+  optimal replays are being regenerated with the swath path.
+
+- 2026-10-31: P20 replay cache invalidation: replay assets are now versioned by
+  `path_mode=swath`; the game rejects old nearest-neighbor player caches even if
+  their duration metadata matches.

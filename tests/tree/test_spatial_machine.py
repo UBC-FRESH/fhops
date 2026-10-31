@@ -186,3 +186,49 @@ def test_cli_obstacle_parsing_and_errors(tmp_path: Path) -> None:
     )
     assert result.exit_code == 1
     assert "Obstacle" in result.output
+
+
+def test_processing_time_multiplier_slows_harvester_only(tmp_path: Path) -> None:
+    scenario = _reconciled_scenario(tmp_path)
+    kwargs = {
+        "block_id": "B01",
+        "machine_id": "H1",
+        "start_x_m": 881700.0,
+        "start_y_m": 627500.0,
+        "start_z_m": 412.0,
+        "reach_radius_m": 10.0,
+        "travel_speed_m_per_s": 1.0,
+    }
+    base = simulate_block(scenario, **kwargs)
+    slow = simulate_block(scenario, **kwargs, processing_time_multiplier=2.0)
+
+    assert slow.processing_time_s == pytest.approx(base.processing_time_s * 2.0)
+    assert slow.travel_time_s == pytest.approx(base.travel_time_s)
+    assert slow.total_time_s > base.total_time_s
+
+
+def test_bucking_length_does_not_change_feller_time(tmp_path: Path) -> None:
+    scenario = _reconciled_scenario(tmp_path)
+    short_logs = build_stem_inventory(
+        scenario,
+        model=__import__("fhops.stem", fromlist=["ReferenceStemModel"]).ReferenceStemModel(
+            log_length_m=3.0
+        ),
+    )
+    long_logs = build_stem_inventory(
+        scenario,
+        model=__import__("fhops.stem", fromlist=["ReferenceStemModel"]).ReferenceStemModel(
+            log_length_m=6.0
+        ),
+    )
+    common = {
+        "block_id": "B01",
+        "machine_id": "H1",
+        "start_x_m": 881700.0,
+        "start_y_m": 627500.0,
+        "reach_radius_m": 10.0,
+    }
+    short = simulate_block(scenario, stem_inventory=short_logs, **common)
+    long = simulate_block(scenario, stem_inventory=long_logs, **common)
+
+    assert short.processing_time_s == pytest.approx(long.processing_time_s)

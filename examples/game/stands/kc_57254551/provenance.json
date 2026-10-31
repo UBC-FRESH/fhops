@@ -1,0 +1,35 @@
+{
+  "source_id": "idf-cariboo-psp-weibull-regression",
+  "stand_id": "kc_57254551",
+  "boundary": "examples/game/stands/kc_57254551.geojson",
+  "seed": 57254551,
+  "method": "Weibull DBH distribution regressed from IDF Cariboo PSP QMD/TPA; FD height allometry calibrated to VRI mean height; deterministic Poisson placement inside the VRI polygon.",
+  "target_qmd_cm": 22.53329366957784,
+  "target_tpa": 479,
+  "target_area_ha": 35.95262287865164,
+  "target_mean_height_m": 29.2,
+  "harvest_fraction": 0.6,
+  "residual_fraction": 0.4,
+  "fit": {
+    "pooled_a": 1.020033131597821,
+    "predicted_beta": 12.439653228179997,
+    "qmd_calibration_scale": 0.915788706110598,
+    "realized_qmd_cm": 22.542557047214732,
+    "realized_ba_m2_ha": 687.3146777531566
+  },
+  "qmd_source": "VRI basal area and live stems/HA",
+  "height_source": "VRI projected height and PSP FD allometry",
+  "psp_sources": {
+    "regression": "/srv/shared-data/gep/ws4/tmp/afrf-repos/femic-afrf-knifecreek-instance/data/psp/idf_cariboo_psp_weibull_regression.json",
+    "sample": "/srv/shared-data/gep/ws4/tmp/afrf-repos/femic-afrf-knifecreek-instance/data/psp/idf_cariboo_psp_stemlist_sample.csv"
+  },
+  "caveats": [
+    "Synthetic tree map; not a surveyed stand or operational inventory.",
+    "DBH distribution is a QMD/TPA-conditioned PSP regression, not a growth model.",
+    "Height is an FD allometry calibrated to VRI mean height, not a measured tree height.",
+    "Tree placement is deterministic Poisson, not a mapped stem map.",
+    "Harvest/residual split is a deterministic synthetic selection-cut allocation, not a prescription."
+  ],
+  "residual_inventory_sha256": "2463f87e68a46693582c703e08d9e9eeff109c0dfec1eb1a764277ac77315bd0",
+  "residual_tree_count": 6888
+}

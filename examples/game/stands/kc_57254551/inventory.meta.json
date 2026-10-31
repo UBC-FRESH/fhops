@@ -1,0 +1,30 @@
+{
+  "schema_version": "fhops.tree.inventory.v1",
+  "inventory_id": "kc_57254551-harvest-nemora-psp-v1",
+  "generated_utc": "2026-10-31T00:00:00+00:00",
+  "source_id": "idf-cariboo-psp-weibull-regression",
+  "producer": "Nemora",
+  "method": "Weibull DBH distribution regressed from IDF Cariboo PSP QMD/TPA; FD height allometry calibrated to VRI mean height; deterministic Poisson placement inside the VRI polygon.",
+  "crs": "EPSG:3005",
+  "units": {
+    "x_y": "m",
+    "elevation": "m",
+    "dbh": "cm",
+    "height": "m",
+    "crown_radius": "m"
+  },
+  "review_status": "not_reviewed",
+  "reviewed_by": null,
+  "block_ids": [
+    "KC01"
+  ],
+  "caveats": [
+    "Synthetic tree map; not a surveyed stand or operational inventory.",
+    "DBH distribution is a QMD/TPA-conditioned PSP regression, not a growth model.",
+    "Height is an FD allometry calibrated to VRI mean height, not a measured tree height.",
+    "Tree placement is deterministic Poisson, not a mapped stem map.",
+    "Harvest/residual split is a deterministic synthetic selection-cut allocation, not a prescription."
+  ],
+  "tree_count": 10333,
+  "inventory_sha256": "7719f38e500f6956d5297564e5db4ffe3b2966a70d54bd97796c0076b1428024"
+}

@@ -309,17 +309,22 @@ class ProcessorSpec:
         Productive seconds per cubic metre.
     fixed_s:
         Fixed per-load setup time in seconds.
+    per_log_s:
+        Additional processing time per bucked log, seconds.
     """
 
     machine_id: str
     seconds_per_m3: float = 3600.0 / 35.0
     fixed_s: float = 60.0
+    per_log_s: float = 0.5
 
     def __post_init__(self) -> None:
         if not math.isfinite(self.seconds_per_m3) or self.seconds_per_m3 <= 0:
             raise GroundSystemError("ProcessorSpec.seconds_per_m3 must be positive and finite.")
         if not math.isfinite(self.fixed_s) or self.fixed_s < 0:
             raise GroundSystemError("ProcessorSpec.fixed_s must be finite and non-negative.")
+        if not math.isfinite(self.per_log_s) or self.per_log_s < 0:
+            raise GroundSystemError("ProcessorSpec.per_log_s must be finite and non-negative.")
 
 
 ProcessorModel = Literal["tn103_area_a", "tn103_combined", "adv5n6_cold", "custom"]
@@ -601,6 +606,8 @@ def simulate_ground_system(
     landing_capacity_m3: float | None = None,
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
+    feller_processing_time_multiplier: float = 1.0,
+    path_mode: Literal["nearest", "swath"] = "nearest",
     skidder_specs: Mapping[str, MachineSpec] | None = None,
     loader_spec: MachineSpec | None = None,
     processor_spec: ProcessorSpec | None = None,
@@ -698,6 +705,12 @@ def simulate_ground_system(
         Feller-buncher reach in metres.
     feller_travel_speed_m_per_s:
         Feller-buncher travel speed.
+    feller_processing_time_multiplier:
+        Multiplier on feller-buncher per-tree processing time. Selection-cut
+        care and other slow-work adjustments use values above one.
+    path_mode:
+        ``swath`` uses a boustrophedon feller path; ``nearest`` preserves the
+        original nearest-tree behavior.
     skidder_specs:
         Optional per-skidder cycle-time overrides.
     loader_spec:
@@ -819,6 +832,8 @@ def simulate_ground_system(
             start_y_m=start_y_m,
             reach_radius_m=feller_reach_radius_m,
             travel_speed_m_per_s=feller_travel_speed_m_per_s,
+            processing_time_multiplier=feller_processing_time_multiplier,
+            path_mode=path_mode,
         )
     except SpatialMachineError as exc:
         raise GroundSystemError(str(exc)) from exc
@@ -1421,8 +1436,10 @@ def _simulate_skidders(
         else:
             empty_time = distance / (spec.empty_speed_mps * route.speed_factor)
             loaded_time = distance / (spec.loaded_speed_mps * route.speed_factor)
-            load_time = spec.load_fixed_s + spec.load_per_log_s * bunch.logs
-            unload_time = spec.unload_fixed_s + spec.unload_per_log_s * bunch.logs
+            # Reference skidder time is per whole tree, not per bucked log.
+            pieces = len(bunch.tree_ids)
+            load_time = spec.load_fixed_s + spec.load_per_log_s * pieces
+            unload_time = spec.unload_fixed_s + spec.unload_per_log_s * pieces
         empty_start, empty_end = _schedule_task(calendar, empty_start, empty_time, machine)
         events.append(
             GroundSystemEvent(
@@ -1522,7 +1539,7 @@ def _simulate_processor(
         machine = min(processors, key=lambda item: available[item])
         spec = specs[machine]
         start = max(available[machine], load.ready_s)
-        duration = spec.fixed_s + spec.seconds_per_m3 * load.volume_m3
+        duration = spec.fixed_s + spec.seconds_per_m3 * load.volume_m3 + spec.per_log_s * load.logs
         start, end = _schedule_task(calendar, start, duration, spec.machine_id)
         events.append(
             GroundSystemEvent(
@@ -1653,6 +1670,7 @@ def _simulate_loader(
             if seconds_per_m3 is None:
                 raise GroundSystemError("Calibrated rate model requires loader seconds per m3.")
             process_time = seconds_per_m3 * load.volume_m3
+            process_time += spec.process_per_log_s * load.logs
         else:
             process_time = spec.process_fixed_s + spec.process_per_log_s * load.logs
         if truck_spec is not None and landing_capacity_m3 is not None:

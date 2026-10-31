@@ -1,0 +1,2 @@
+id,landing_id,harvest_system_id,work_required,earliest_start,latest_finish,avg_stem_size_m3,volume_per_ha_m3,stem_density_per_ha,ground_slope_percent
+B01,L1,tree_length_ground,4116.596667,1,30,0.857982,599.747834,699.021629,8.0

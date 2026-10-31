@@ -1,0 +1,47 @@
+{
+  "assignments_path": "/home/gep/projects/fhops-p12/examples/game/replays/mkrf_684/optimal/assignment.csv",
+  "bounds": {
+    "x": [
+      1247808.159635,
+      1248058.94564
+    ],
+    "y": [
+      480736.789056,
+      481136.418957
+    ],
+    "z": [
+      0.0,
+      0.0
+    ]
+  },
+  "caveats": [
+    "Procedural tree geometry only; not a surveyed tree map or machine CAD.",
+    "Ground is a flat plane at the lowest tree elevation; it is not a terrain model.",
+    "Rendering video is external to FHOPS.",
+    "Reference form-factor model only; not an operational taper or merchantability model.",
+    "Log products and grades are simple placeholders for the simulation path.",
+    "Synthetic tree map; not a surveyed stand or operational inventory.",
+    "DBH distribution is fitted to regional PSP live trees in the stated BEC/TSA/age window.",
+    "Species composition and height allometry are regional PSP summaries, not measured stand values.",
+    "Tree placement is deterministic Poisson, not a mapped stem map."
+  ],
+  "files": {
+    "camera_path": "camera_path.json",
+    "glb": "scene.glb",
+    "gltf": "scene.gltf",
+    "viewer": "viewer.html"
+  },
+  "generated_utc": "2026-10-31T00:00:00+00:00",
+  "lod": "detailed",
+  "lod_threshold": 5000,
+  "log_count": 2000,
+  "machine_path_points": 2205,
+  "processed_count": 2205,
+  "replay_id": "fhops-tree-replay-7460ecc56268c914",
+  "scenario_path": "/home/gep/projects/fhops-p12/examples/game/levels/mkrf_684/scenario.yaml",
+  "scene_id": "fhops-tree-scene-6e939838195ac33c",
+  "schedule_sha256": "88e2ba1e1830d7cdf592c3de822af318080efacdd5a9f81ac675538d26f4267c",
+  "schema_version": "fhops.tree.scene.v1",
+  "stem_id": "fhops-stems-339c9c7de3e4b9a6",
+  "tree_count": 4798
+}

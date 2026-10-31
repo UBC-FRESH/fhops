@@ -1,0 +1,50 @@
+{
+  "source_id": "faib-psp-cwhdm",
+  "stand_id": "mkrf_684",
+  "boundary": "examples/game/stands/mkrf_684.geojson",
+  "seed": 684,
+  "method": "Weibull DBH fit to FAIB PSP live trees; species composition and height allometry from the same BEC/TSA/age window; deterministic placement inside the VRI polygon.",
+  "target_area_ha": 6.863879171972996,
+  "target_metrics": {
+    "tph": 699.0796219459933,
+    "qmd_cm": 38.75963147643664,
+    "height_m": 24.3620408558573,
+    "ba_m2_per_ha": 77.25466496923711,
+    "species_ba_share": {
+      "FD": 0.7271875797815519,
+      "CW": 0.1773066676306264,
+      "HW": 0.0804203768401996,
+      "MB": 0.015085375747622
+    },
+    "plot_count": 30,
+    "tree_count": 1963,
+    "age_median": 99.02779358390745
+  },
+  "weibull": {
+    "shape": 1.3369581516538798,
+    "scale_cm": 32.74497815241723,
+    "qmd_scale": 1.006737976089952
+  },
+  "psp_source": "FAIB Ground Plot Compilations, faib_tree_detail.csv + faib_plot_header.csv + faib_header.csv",
+  "psp_window": {
+    "stand_id": "mkrf_684",
+    "stands_dir": "examples/game/stands",
+    "psp_dir": "/tmp/opencode/psp",
+    "bec_zone": "CWH",
+    "bec_subzone": "dm",
+    "bec_variant": "None",
+    "tsa": "Fraser TSA",
+    "age_min": "80.0",
+    "age_max": "125.0",
+    "seed": "684",
+    "out_dir": "None"
+  },
+  "caveats": [
+    "Synthetic tree map; not a surveyed stand or operational inventory.",
+    "DBH distribution is fitted to regional PSP live trees in the stated BEC/TSA/age window.",
+    "Species composition and height allometry are regional PSP summaries, not measured stand values.",
+    "Tree placement is deterministic Poisson, not a mapped stem map."
+  ],
+  "inventory_sha256": "3ce8e7a832324e1771bafa36c9b4d60789aa6c3e6e152e24f12adf1ad55e5dfe",
+  "tree_count": 4798
+}

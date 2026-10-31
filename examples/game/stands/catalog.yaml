@@ -1,0 +1,87 @@
+schema_version: fhops.game.stands.v1
+status: stand selection complete; PSP/Nemora inventory generation pending
+stands:
+- level_id: mkrf_684
+  order: 1
+  name: MKRF Cedar Flat
+  forest: Malcolm Knapp Research Forest
+  boundary: mkrf_684.geojson
+  source: RES_KEY 684; VRI-derived MKRF patchworks fragment
+  area_ha: 6.863879
+  bec: CWHdm
+  leading_species:
+  - hw
+  - fdc
+  age_years: 104
+  harvest_system: tree_length
+  difficulty: starter
+  landing_options:
+  - id: main
+    road_extension_m: 0
+    road_extension_status: existing access
+  psp_fit:
+    status: available
+    bec_target: CWHdm
+    source: FAIB PSP CWHdm, Fraser TSA, age 80-125
+- level_id: gavin_1032
+  order: 2
+  name: Gavin Lake Block 1032
+  forest: Alex Fraser Research Forest, Gavin Lake
+  boundary: gavin_1032.geojson
+  source: BLOCK_ID 1032; VRI-derived Gavin Lake cutblock
+  area_ha: 9.997779
+  bec: ICHmk3
+  leading_species: null
+  age_years: 137
+  harvest_system: cut_to_length
+  difficulty: intermediate
+  landing_options:
+  - id: main
+    road_extension_m: 0
+    road_extension_status: existing access
+  psp_fit:
+    status: available
+    bec_target: ICHmk3
+    source: FAIB PSP ICHmk3, Williams Lake TSA, age 90-150
+- level_id: kc_57254551
+  order: 3
+  name: Knife Creek Polygon 57254551
+  forest: Alex Fraser Research Forest, Knife Creek
+  boundary: kc_57254551.geojson
+  source: POLYGON_ID 57254551; VRI 2025 R1
+  area_ha: 35.952623
+  bec: IDFdk3
+  leading_species:
+  - fdi
+  age_years: 140
+  stems_per_ha: 479
+  basal_area_m2_per_ha: 19.10182
+  volume_m3_per_ha: 146.585
+  height_m: 29.2
+  stem_form_factor: 0.192014
+  harvest_fraction: 0.6
+  harvest_system: selection_cut_two_skidders
+  silviculture: selection_cut
+  base_harvester_productivity_multiplier: 0.8
+  careful_logging_profile: default_selection_cut_v1
+  price_deck: examples/game/levels/kc_57254551/prices.yaml
+  careful_logging_public:
+    care_premium_per_m3_range: [0.0, 14.0]
+    productivity_multiplier_range: [0.72, 1.0]
+    residual_damage_fraction_range: [0.04, 0.2]
+    exact_mapping: server_side_only
+  difficulty: advanced
+  landing_options:
+  - id: main
+    road_extension_m: 0
+    road_extension_status: existing access
+  - id: north
+    road_extension_m: null
+    road_extension_status: survey required
+  - id: south
+    road_extension_m: null
+    road_extension_status: survey required
+  psp_fit:
+    status: available
+    bec_target: IDFdk3
+    source: femic-afrf-knifecreek-instance/data/psp

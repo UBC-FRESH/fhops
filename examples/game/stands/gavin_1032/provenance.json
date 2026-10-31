@@ -1,0 +1,50 @@
+{
+  "source_id": "faib-psp-ichmk",
+  "stand_id": "gavin_1032",
+  "boundary": "examples/game/stands/gavin_1032.geojson",
+  "seed": 1032,
+  "method": "Weibull DBH fit to FAIB PSP live trees; species composition and height allometry from the same BEC/TSA/age window; deterministic placement inside the VRI polygon.",
+  "target_area_ha": 9.997778533518572,
+  "target_metrics": {
+    "tph": 1859.8888668400705,
+    "qmd_cm": 13.175510078609133,
+    "height_m": 8.875217571487775,
+    "ba_m2_per_ha": 25.009334262183387,
+    "species_ba_share": {
+      "BL": 0.5754795331658108,
+      "SW": 0.19616841763190657,
+      "CW": 0.14211749897382875,
+      "FD": 0.08623455022845386
+    },
+    "plot_count": 2,
+    "tree_count": 165,
+    "age_median": 101.408863238746
+  },
+  "weibull": {
+    "shape": 1.5356284983698103,
+    "scale_cm": 12.063443023629308,
+    "qmd_scale": 0.8934796734518519
+  },
+  "psp_source": "FAIB Ground Plot Compilations, faib_tree_detail.csv + faib_plot_header.csv + faib_header.csv",
+  "psp_window": {
+    "stand_id": "gavin_1032",
+    "stands_dir": "examples/game/stands",
+    "psp_dir": "/tmp/opencode/psp",
+    "bec_zone": "ICH",
+    "bec_subzone": "mk",
+    "bec_variant": "3",
+    "tsa": "Williams Lake TSA",
+    "age_min": "90.0",
+    "age_max": "150.0",
+    "seed": "1032",
+    "out_dir": "None"
+  },
+  "caveats": [
+    "Synthetic tree map; not a surveyed stand or operational inventory.",
+    "DBH distribution is fitted to regional PSP live trees in the stated BEC/TSA/age window.",
+    "Species composition and height allometry are regional PSP summaries, not measured stand values.",
+    "Tree placement is deterministic Poisson, not a mapped stem map."
+  ],
+  "inventory_sha256": "c5c6fd80a926d4ab4c7aaf643fe5b4672e70a0def21dde89bb8172665ff6c1d5",
+  "tree_count": 18595
+}

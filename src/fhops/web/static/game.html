@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FHOPS Serious Game</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; }
+    body { margin: 0; background: #eef2ef; color: #17201b; }
+    header { padding: 18px 24px; background: #173d2a; color: white; }
+    header h1 { margin: 0; font-size: 1.25rem; }
+    main { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: 18px; padding: 18px; }
+    section { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 1px 4px #0002; }
+    h2 { margin-top: 0; font-size: 1rem; }
+    #map { width: 100%; min-height: 420px; background: #dce8df; border-radius: 8px; }
+    #map svg { width: 100%; height: 420px; }
+    label { display: block; margin: 10px 0 4px; font-size: .85rem; color: #36453b; }
+    input, select, button { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #9aaba0; border-radius: 6px; background: white; }
+    button { margin-top: 10px; background: #1f6b43; color: white; border: 0; cursor: pointer; }
+    button:disabled { background: #8da89a; cursor: not-allowed; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .muted { color: #5e6e64; font-size: .85rem; }
+    #status { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: .85rem; margin-top: 12px; }
+    #final-panel { grid-column: 1 / -1; display: none; }
+    #chat-log { min-height: 120px; max-height: 260px; overflow-y: auto; border: 1px solid #c8d5cc; border-radius: 8px; padding: 10px; background: #f7faf8; margin: 10px 0; }
+    .chat-message { margin: 6px 0; }
+    .chat-user { color: #173d2a; font-weight: 600; }
+    .chat-agent { color: #34483b; }
+    #chat-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    #chat-row button { width: auto; margin: 0; }
+    #score { font-size: 2.4rem; font-weight: 700; margin: 8px 0; }
+    #result-panel, #debrief-panel { display: none; border-top: 1px solid #d8e2db; margin-top: 14px; padding-top: 12px; }
+    .metric-row { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-bottom: 1px solid #edf2ee; font-size: .9rem; }
+    .metric-row strong { font-variant-numeric: tabular-nums; }
+    .result-title { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+    .result-title strong { font-size: 1.6rem; }
+    #debrief-why { background: #f7faf8; border-left: 3px solid #1f6b43; padding: 8px 10px; margin: 8px 0; }
+    #level-map { display: grid; gap: 8px; margin: 8px 0 12px; }
+    .level-card { border: 1px solid #c8d5cc; border-radius: 8px; padding: 8px 10px; background: #f7faf8; cursor: pointer; }
+    .level-card.current { border-color: #1f6b43; box-shadow: 0 0 0 2px #1f6b4333; }
+    .level-card.completed { background: #e5f2e9; }
+    .level-card.locked { opacity: .55; cursor: not-allowed; }
+    .level-card strong { display: block; font-size: .92rem; }
+    .level-card span { font-size: .78rem; color: #5e6e64; }
+    .briefing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 18px; font-size: .84rem; }
+    .briefing-grid div { padding: 3px 0; border-bottom: 1px solid #edf2ee; }
+    .briefing-grid span { color: #5e6e64; }
+    .briefing-note { margin: 8px 0 0; font-size: .8rem; color: #5e6e64; }
+    #briefing { margin: 8px 0 4px; }
+    #consultants { display: grid; gap: 6px; margin: 6px 0; }
+    .consultant-option { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: .84rem; }
+    .consultant-option label { display: flex; gap: 6px; align-items: center; margin: 0; color: #36453b; }
+    .consultant-option input { width: auto; }
+    #hint-output { font-size: .84rem; color: #36453b; background: #f7faf8; border-left: 3px solid #8b6f2d; padding: 8px 10px; margin: 6px 0; display: none; }
+    #hint-output ul { margin: 4px 0; padding-left: 18px; }
+    @media (max-width: 850px) { main { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<header><h1>FHOPS Serious Game</h1></header>
+<main>
+  <section>
+    <h2>Whole-operation viewport</h2>
+    <div id="map" aria-label="Stand boundary"></div>
+    <p class="muted">One stand per level. The viewport, controls, and debrief update as the ordered levels unlock.</p>
+  </section>
+  <section>
+    <h2>Session</h2>
+    <div id="session-summary" class="muted">Create or join a session to see team progress and the leaderboard.</div>
+    <table id="leaderboard" style="width:100%; margin-top:12px; border-collapse:collapse; display:none">
+      <thead><tr><th style="text-align:left">Team</th><th style="text-align:right">Score</th><th style="text-align:right">Levels</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+  <section id="final-panel">
+    <h2 id="final-title">Final debrief</h2>
+    <p class="muted" id="final-note">All levels complete. Ask the optional debrief coach about the tournament.</p>
+    <div id="chat-log"></div>
+    <div id="chat-row">
+      <input id="chat-input" maxlength="1200" placeholder="Ask about your score, choices, or trade-offs…" />
+      <button id="chat-send">Ask</button>
+    </div>
+  </section>
+  <section>
+    <h2>Plan and score</h2>
+    <div id="briefing"></div>
+    <label>Level map</label>
+    <div id="level-map"></div>
+    <label for="level">Selected level</label><select id="level"></select>
+    <label for="contractor">Contractor</label><select id="contractor"></select>
+    <label>Consultant tips <span class="muted">(optional; fees are debited)</span></label>
+    <div id="consultants"></div>
+    <button id="buy-hints" type="button">Buy selected tips</button>
+    <div id="hint-output"></div>
+    <div class="row">
+      <div><label for="session">Session</label><input id="session" value="demo" /></div>
+      <div><label for="team">Team code</label><input id="team" value="TEAM-A" /></div>
+    </div>
+    <button id="join">Create session and join</button>
+    <button id="new-session" type="button">New session</button>
+    <div class="row">
+      <div><label for="care">Careful logging</label><select id="care"></select></div>
+      <div><label for="skidders">Skidders</label><select id="skidders"></select></div>
+    </div>
+    <label for="logs">Target log length</label><select id="logs"></select>
+    <div class="row">
+      <div><label for="sawlog">Sawlog min DBH</label><select id="sawlog"></select></div>
+      <div><label for="landing">Landing option</label><select id="landing"></select></div>
+    </div>
+    <button id="submit" disabled>Submit one attempt</button>
+    <button id="debrief" disabled>Show debrief</button>
+    <button id="replay" disabled>Open 3D replay</button>
+    <div id="score">—</div>
+    <div id="result-panel">
+      <div class="result-title"><strong id="result-score">—</strong><span id="result-level" class="muted"></span></div>
+      <div class="metric-row"><span>Net profit</span><strong id="result-net">—</strong></div>
+      <div id="result-components"></div>
+      <div id="result-products"></div>
+    </div>
+    <div id="debrief-panel">
+      <h3>Debrief</h3>
+      <div id="debrief-why"></div>
+      <div id="debrief-optimal"></div>
+      <div id="debrief-costs"></div>
+    </div>
+    <div id="status">Join a session to begin.</div>
+  </section>
+</main>
+<script>
+const state = { level: null, levels: [], armed: false, lastCompletedLevel: null };
+const PAGE_BASE = window.location.pathname.replace(/\/game\/?$/, '');
+const API = PAGE_BASE + '/api';
+const api = (path) => `${API}${path}`;
+const $ = (id) => document.getElementById(id);
+const setStatus = (value) => { $('status').textContent = String(value); };
+const money = (value) => Math.abs(Number(value)) < 0.5 ? '$0' : new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(Number(value));
+async function readJson(response) {
+  const text = await response.text();
+  try { return JSON.parse(text); } catch { throw new Error(text || response.statusText); }
+}
+const number = (value) => new Intl.NumberFormat('en-CA', { maximumFractionDigits: 1 }).format(Number(value));
+const scoreText = (value) => Number.isInteger(Number(value)) ? Number(value).toFixed(0) : Number(value).toFixed(1);
+const parameterLabel = (key) => ({
+  care_level: 'careful logging',
+  skidder_count: 'skidder count',
+  log_length_m: 'log length',
+  sawlog_min_dbh_cm: 'sawlog minimum DBH',
+  road_extension_m: 'road extension',
+}[key] || key);
+function renderResult(payload) {
+  const result = payload.result;
+  $('result-panel').style.display = 'block';
+  $('result-score').textContent = `${scoreText(payload.score)} / 100`;
+  $('result-level').textContent = state.levels.find((level) => level.level_id === state.lastCompletedLevel)?.name || '';
+  $('result-net').textContent = money(result.net_profit);
+  const components = [
+    ['Gross log value', result.gross_log_value],
+    ['Machine operating cost', -result.machine_cost],
+    ['Care premium', -result.care_premium],
+    ['Residual damage loss', -result.residual_damage_loss],
+    ['Mobilisation', -result.mobilisation_cost],
+    ['Road extension', -result.road_extension_cost],
+    ['Contractor quote adjustment', result.contractor_adjustment || 0],
+    ['Consultant fees', -(result.consultant_fees || 0)],
+  ];
+  $('result-components').innerHTML = components.map(([label, value]) => `<div class="metric-row"><span>${label}</span><strong>${money(value)}</strong></div>`).join('');
+  const products = Object.entries(result.product_volume_m3 || {});
+  $('result-products').innerHTML = products.length
+    ? `<div class="metric-row"><span>Recovered products</span><strong>${products.map(([key, value]) => `${key.replaceAll('_', ' ')}: ${number(value)} m³`).join(' · ')}</strong></div>`
+    : '';
+}
+function renderDebrief(payload) {
+  $('debrief-panel').style.display = 'block';
+  $('debrief-why').textContent = payload.explanation.why_optimal;
+  const optimal = payload.optimal_choices;
+  $('debrief-optimal').innerHTML = `<div class="metric-row"><span>Optimal choices</span><strong>care ${optimal.care_level}, ${optimal.skidder_count} skidder(s), ${optimal.log_length_m} m logs, sawlog min ${optimal.sawlog_min_dbh_cm} cm, road extension ${optimal.road_extension_m} m</strong></div>`;
+  const gap = payload.optimal_net_profit - payload.player_net_profit;
+  const largest = Math.max(0, ...(payload.parameter_deltas || []).map((item) => item.cost_of_wrong));
+  const interaction = gap > 0 && largest <= 0
+    ? '<div class="metric-row"><span>Gap explanation</span><strong>interaction between choices</strong></div>'
+    : '';
+  const deltas = payload.component_deltas || {};
+  const feeRow = (deltas.consultant_fees || 0) < 0 ? `<div class="metric-row"><span>Consultant fees</span><strong>${money(deltas.consultant_fees)}</strong></div>` : '';
+  const contractorRow = (deltas.contractor_adjustment || 0) !== 0 ? `<div class="metric-row"><span>Contractor quote effect</span><strong>${money(deltas.contractor_adjustment)}</strong></div>` : '';
+  $('debrief-costs').innerHTML = `<div class="metric-row"><span>Gap to optimal</span><strong>${money(gap)}</strong></div>` + feeRow + contractorRow + interaction + (payload.parameter_deltas || []).map((item) => `<div class="metric-row"><span>${parameterLabel(item.parameter)}: ${item.player_value} → ${item.optimal_value}</span><strong>${money(item.cost_of_wrong)} one-at-a-time</strong></div>`).join('');
+}
+
+function polygonRings(payload) {
+  const rings = [];
+  for (const feature of payload.features || []) {
+    const g = feature.geometry;
+    if (!g) continue;
+    if (g.type === 'Polygon') rings.push(g.coordinates[0]);
+    if (g.type === 'MultiPolygon') for (const poly of g.coordinates) rings.push(poly[0]);
+  }
+  return rings;
+}
+
+async function drawBoundary() {
+  const response = await fetch(api(`/game/levels/${state.level.level_id}/boundary`));
+  if (!response.ok) throw new Error(await response.text());
+  const rings = polygonRings(await response.json());
+  const points = rings.flat();
+  const xs = points.map((p) => p[0]), ys = points.map((p) => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const pad = 20, w = 640, h = 420;
+  const scale = Math.min((w - 2 * pad) / (maxX - minX || 1), (h - 2 * pad) / (maxY - minY || 1));
+  const ox = pad + (w - 2 * pad - (maxX - minX) * scale) / 2;
+  const oy = pad + (h - 2 * pad - (maxY - minY) * scale) / 2;
+  const project = ([x, y]) => [ox + (x - minX) * scale, h - (oy + (y - minY) * scale)];
+  const paths = rings.map((ring) => 'M' + ring.map(project).map((p) => p.map((n) => n.toFixed(1)).join(',')).join('L') + 'Z').join(' ');
+  $('map').innerHTML = `<svg viewBox="0 0 ${w} ${h}" role="img"><path d="${paths}" fill="#5f9b72" fill-rule="evenodd" stroke="#173d2a" stroke-width="2"/></svg>`;
+}
+
+async function loadLevel() {
+  const response = await fetch(api('/game/levels'));
+  if (!response.ok) throw new Error(await response.text());
+  state.levels = await response.json();
+  $('level').innerHTML = state.levels.map((l) => `<option value="${l.level_id}">${l.name}</option>`).join('');
+  renderLevelMap(null);
+  await selectLevel(state.levels[0].level_id);
+}
+
+$('join').onclick = async () => {
+  try {
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    let response = await fetch(api('/game/sessions'), { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ session_id: session }) });
+    let sid = session;
+    if (response.ok) {
+      sid = (await response.json()).session_id;
+    } else if (response.status !== 400) {
+      throw new Error(await response.text());
+    }
+    $('session').value = sid;
+    response = await fetch(api(`/game/sessions/${encodeURIComponent(sid)}/teams`), { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ team_code: team }) });
+    if (!response.ok && response.status !== 400) throw new Error(await response.text());
+    state.armed = true;
+    $('submit').disabled = false;
+    setStatus(`Joined session ${sid} as ${team}.`);
+    await refreshLeaderboard(sid);
+    await refreshCompletion(sid, team);
+  } catch (error) { setStatus(String(error)); }
+};
+
+$('submit').onclick = async () => {
+  try {
+    if (!state.armed) throw new Error('Join a session first.');
+    $('submit').disabled = true;
+    $('debrief').disabled = true;
+    $('score').textContent = '—';
+    $('result-panel').style.display = 'none';
+    $('debrief-panel').style.display = 'none';
+    state.lastCompletedLevel = state.level.level_id;
+    setStatus('Submitting attempt…');
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit?level_id=${encodeURIComponent(state.level.level_id)}`), {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ contractor_id: $('contractor').value, care_level: Number($('care').value), skidder_count: Number($('skidders').value), log_length_m: Number($('logs').value), sawlog_min_dbh_cm: Number($('sawlog').value), road_extension_m: Number($('landing').value) })
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    $('score').textContent = Number(payload.score).toFixed(1);
+    $('submit').disabled = true;
+    $('debrief').disabled = false;
+    $('replay').disabled = false;
+    await refreshLeaderboard(session);
+    await refreshCompletion(session, team);
+    $('submit').disabled = state.teamState?.current_level === null;
+    renderResult(payload);
+    setStatus('Level complete. Review the result and debrief.');
+  } catch (error) { $('submit').disabled = false; setStatus(String(error)); }
+};
+
+async function refreshCompletion(sessionId, teamCode) {
+  if (!sessionId || !teamCode) return;
+  const response = await fetch(api(`/game/sessions/${encodeURIComponent(sessionId)}/teams/${encodeURIComponent(teamCode)}`));
+  if (!response.ok) return;
+  const payload = await response.json();
+  const complete = payload.current_level === null;
+  state.teamState = payload;
+  $('session-summary').textContent = `Session ${sessionId} · team ${teamCode} · next level: ${payload.current_level || 'complete'}`;
+  renderLevelMap(payload);
+  if (payload.current_level) {
+    $('level').value = payload.current_level;
+    await selectLevel(payload.current_level);
+  }
+  $('final-panel').style.display = complete ? 'block' : 'none';
+  $('submit').disabled = complete || !state.armed;
+  if ((payload.attempts || []).length > 0) $('replay').disabled = false;
+  if (complete) {
+    setStatus('This team has completed all levels. Enter a new team code or click New session to start a fresh run.');
+    $('final-title').textContent = `Final debrief — ${scoreText(payload.total_score)} points`;
+    $('final-note').textContent = state.level.chat_enabled
+      ? 'All levels complete. Ask the optional DeepSeek debrief coach about the tournament.'
+      : 'All levels complete. The optional chat agent is disabled for this session.';
+    $('chat-input').disabled = !state.level.chat_enabled;
+    $('chat-send').disabled = !state.level.chat_enabled;
+  }
+}
+
+async function refreshLeaderboard(sessionId) {
+  if (!sessionId) return;
+  const response = await fetch(api(`/game/sessions/${encodeURIComponent(sessionId)}/leaderboard`));
+  if (!response.ok) return;
+  const rows = await response.json();
+  const table = $('leaderboard');
+  table.style.display = rows.length ? 'table' : 'none';
+  table.querySelector('tbody').innerHTML = rows.map((row) => `<tr><td>${row.team_code}</td><td style="text-align:right">${Number(row.total_score).toFixed(1)}</td><td style="text-align:right">${row.completed_levels}</td></tr>`).join('');
+}
+
+function renderLevelMap(teamState) {
+  const completed = new Set((teamState?.attempts || []).map((attempt) => attempt.level_id));
+  const current = teamState?.current_level || null;
+  $('level-map').innerHTML = state.levels.map((level) => {
+    const status = completed.has(level.level_id) ? 'completed' : (current === level.level_id ? 'current' : (teamState ? 'locked' : 'open'));
+    const label = status === 'completed' ? 'completed' : status === 'current' ? 'next up' : status === 'locked' ? 'locked' : 'available';
+    return `<div class="level-card ${status}" data-level-id="${level.level_id}"><strong>${level.name}</strong><span>${level.area_ha?.toFixed(2) || '?'} ha · ${level.difficulty || ''} · ${label}</span></div>`;
+  }).join('');
+  document.querySelectorAll('.level-card').forEach((card) => {
+    card.onclick = () => {
+      if (card.classList.contains('locked')) return;
+      $('level').value = card.dataset.levelId;
+      selectLevel(card.dataset.levelId).catch((error) => setStatus(String(error)));
+    };
+  });
+}
+
+function renderBriefing() {
+  const b = state.level.briefing || {};
+  const price = state.level.prices || {};
+  const rows = [
+    ['Forest', b.forest], ['Stand', b.stand], ['Area', b.area_ha ? `${number(b.area_ha)} ha` : null],
+    ['BEC', b.bec], ['Species', b.species], ['Age', b.age_years ? `${b.age_years} years` : null],
+    ['Stems', b.stems_per_ha ? `${number(b.stems_per_ha)} /ha` : null],
+    ['Basal area', b.basal_area_m2_per_ha ? `${number(b.basal_area_m2_per_ha)} m²/ha` : null],
+    ['Volume', b.volume_m3_per_ha ? `${number(b.volume_m3_per_ha)} m³/ha` : null],
+    ['Mean height', b.mean_height_m ? `${number(b.mean_height_m)} m` : null],
+    ['Slope assumption', b.slope_percent != null ? `${number(b.slope_percent)}%` : null],
+    ['Prescription', b.prescription], ['Removal', b.removal_fraction != null ? `${number(b.removal_fraction * 100)}%` : null],
+    ['Residual stems', b.residual_stems_per_ha ? `${number(b.residual_stems_per_ha)} /ha` : null],
+    ['Harvest system', b.harvest_system], ['Landing', b.landing],
+    ['Machine rate', b.machine_operating_cost_per_smh ? `${money(b.machine_operating_cost_per_smh)}/SMH` : null],
+    ['Mobilisation', b.mobilisation_cost != null ? money(b.mobilisation_cost) : null],
+    ['Products', price.products ? Object.entries(price.products).map(([k,v]) => `${k.replaceAll('_',' ')} ${money(v)}/m³`).join(' · ') : null],
+  ].filter(([, value]) => value !== null && value !== undefined && value !== '');
+  const assumptions = (b.planning_assumptions || []).map((item) => `<li>${item}</li>`).join('');
+  const unknowns = (b.unknowns || []).map((item) => `<li>${item}</li>`).join('');
+  $('briefing').innerHTML = `<div class="briefing-grid">${rows.map(([label, value]) => `<div><span>${label}</span><br>${value}</div>`).join('')}</div>` +
+    (assumptions ? `<div class="briefing-note"><strong>Planning assumptions</strong><ul>${assumptions}</ul></div>` : '') +
+    (unknowns ? `<div class="briefing-note"><strong>Unknown until debrief</strong><ul>${unknowns}</ul></div>` : '');
+}
+
+async function selectLevel(levelId) {
+  state.level = state.levels.find((level) => level.level_id === levelId);
+  $('care').innerHTML = state.level.controls.care_levels.map((v) => `<option value="${v}">${v}</option>`).join('');
+  $('skidders').innerHTML = state.level.controls.skidder_counts.map((v) => `<option value="${v}">${v}</option>`).join('');
+  $('logs').innerHTML = state.level.controls.log_length_m.map((v) => `<option value="${v}">${v} m</option>`).join('');
+  $('sawlog').innerHTML = state.level.controls.sawlog_min_dbh_cm.map((v) => `<option value="${v}">${v} cm</option>`).join('');
+  $('landing').innerHTML = Object.entries(state.level.controls.landing_options || {}).map(([key, value]) => `<option value="${value}">${key} (${value} m road)</option>`).join('');
+  $('contractor').innerHTML = (state.level.contractors || []).map((c) => `<option value="${c.id}">${c.name} — rate ×${c.rate_multiplier}, move-in ${money(c.mobilisation_adjustment)}</option>`).join('');
+  $('consultants').innerHTML = (state.level.consultants || []).map((c) => `<div class="consultant-option"><label><input type="checkbox" value="${c.id}"> ${c.name} <span class="muted">(${c.tier})</span></label><strong>${money(c.fee)}</strong></div>`).join('');
+  $('hint-output').style.display = 'none';
+  renderBriefing();
+  await drawBoundary();
+  setStatus(`Level: ${state.level.name} · ${state.level.area_ha?.toFixed(2) || '?'} ha · ${state.level.difficulty || ''}`);
+}
+
+$('new-session').onclick = async () => {
+  try {
+    const response = await fetch(api('/game/sessions'), { method: 'POST' });
+    const payload = await readJson(response);
+    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    $('session').value = payload.session_id;
+    $('team').value = 'TEAM-' + payload.session_id.slice(-4).toUpperCase();
+    state.armed = false;
+    $('submit').disabled = true;
+    setStatus(`New session ${payload.session_id} created. Join it with a team code.`);
+  } catch (error) { setStatus(String(error)); }
+};
+
+$('level').onchange = () => selectLevel($('level').value).catch((error) => setStatus(String(error)));
+$('chat-send').onclick = async () => {
+  try {
+    const message = $('chat-input').value.trim();
+    if (!message) return;
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const log = $('chat-log');
+    const userLine = document.createElement('div');
+    userLine.className = 'chat-message chat-user';
+    userLine.textContent = `You: ${message}`;
+    log.appendChild(userLine);
+    $('chat-input').value = '';
+    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/chat`), {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ message })
+    });
+    const payload = await response.json();
+    const agentLine = document.createElement('div');
+    agentLine.className = 'chat-message chat-agent';
+    agentLine.textContent = response.ok ? `Coach: ${payload.response}` : `Chat unavailable: ${payload.detail}`;
+    log.appendChild(agentLine);
+    log.scrollTop = log.scrollHeight;
+  } catch (error) {
+    const line = document.createElement('div');
+    line.className = 'chat-message chat-agent';
+    line.textContent = `Chat unavailable: ${String(error)}`;
+    $('chat-log').appendChild(line);
+  }
+};
+
+$('buy-hints').onclick = async () => {
+  try {
+    if (!state.armed) throw new Error('Join a session first.');
+    const selected = Array.from(document.querySelectorAll('#consultants input:checked')).map((item) => item.value);
+    if (!selected.length) throw new Error('Select at least one consultant.');
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/consult`), {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ consultant_ids: selected })
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    const output = $('hint-output');
+    output.style.display = 'block';
+    output.innerHTML = `<strong>Consultant tips</strong><ul>${payload.tips.map((tip) => `<li>${tip}</li>`).join('')}</ul><div>Consultant fees: <strong>${money(payload.total_consultant_fees)}</strong></div>`;
+    setStatus('Consultant tips purchased. Fees will be debited from your level result.');
+  } catch (error) { setStatus(String(error)); }
+};
+
+$('replay').onclick = async () => {
+  try {
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const levelId = state.lastCompletedLevel || state.teamState?.attempts?.at(-1)?.level_id || state.level.level_id;
+    setStatus('Starting replay generation…');
+    const start = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/replay/${encodeURIComponent(levelId)}`), { method: 'POST' });
+    const started = await readJson(start);
+    if (!start.ok) throw new Error(started.detail || JSON.stringify(started));
+    const jobId = started.job_id;
+    let payload = null;
+    for (let i = 0; i < 180; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const statusResponse = await fetch(api(`/game/replay-jobs/${encodeURIComponent(jobId)}`));
+      const status = await readJson(statusResponse);
+      if (!statusResponse.ok) throw new Error(status.detail || JSON.stringify(status));
+      if (status.status === 'ready') { payload = status.result; break; }
+      if (status.status === 'failed') throw new Error(status.error || 'Replay generation failed.');
+      setStatus(`Generating replay assets… ${i * 2}s`);
+    }
+    if (!payload) throw new Error('Replay generation is taking too long; try again shortly.');
+    const query = new URLSearchParams({
+      left: payload.optimal_url,
+      right: payload.player_url,
+      leftDuration: String(payload.optimal_duration_s),
+      rightDuration: String(payload.player_duration_s),
+    });
+    window.open(`${PAGE_BASE}/game/replay?${query.toString()}`, '_blank', 'noopener');
+    setStatus('3D replay opened in a new tab.');
+  } catch (error) { setStatus(`Replay unavailable: ${String(error)}`); }
+};
+
+$('debrief').onclick = async () => {
+  try {
+    setStatus('Loading debrief…');
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const completedLevel = state.lastCompletedLevel || state.level.level_id;
+    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/debrief/${encodeURIComponent(completedLevel)}`));
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    renderDebrief(payload);
+    setStatus('Debrief loaded for the completed level.');
+  } catch (error) {
+    const text = String(error);
+    setStatus(text.includes('Unknown session') ? 'Session expired. Click Create session and join again.' : text);
+  }
+};
+
+loadLevel().catch((error) => setStatus(String(error)));
+</script>
+</body>
+</html>

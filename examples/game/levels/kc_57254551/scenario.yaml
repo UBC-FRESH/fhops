@@ -1,0 +1,38 @@
+name: "FHOPS Serious Game \u2014 Knife Creek selection cut"
+num_days: 30
+start_date: '2026-01-01'
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: prod_rates.csv
+  harvest_systems: harvest_systems.yaml
+geo:
+  block_geojson: blocks.geojson
+  landing_geojson: landings.geojson
+  crs: EPSG:3005
+  notes: VRI polygon 57254551; synthetic selection-cut tree inventory.
+tree_inventory:
+  inventory_id: kc_57254551-harvest-nemora-psp-v1
+  inventory_sha256: 7719f38e500f6956d5297564e5db4ffe3b2966a70d54bd97796c0076b1428024
+  metadata_sha256: e54e307983bf2dce0426bbb4213d91734e92a4df278acfc5876b04c77f33a546
+  inventory_path: ../../stands/kc_57254551/trees.csv
+  metadata_path: ../../stands/kc_57254551/inventory.meta.json
+  crs: EPSG:3005
+  review_status: not_reviewed
+  reviewed_by: null
+  source_id: idf-cariboo-psp-weibull-regression
+  producer: Nemora
+  method: Weibull PSP conditional distribution with deterministic placement; synthetic
+    selection-cut split.
+  tree_count: 10333
+  block_ids:
+  - KC01
+  caveats:
+  - Synthetic tree map; not a surveyed stand or operational inventory.
+  - DBH distribution is a QMD/TPA-conditioned PSP regression, not a growth model.
+  - Height is an FD allometry calibrated to VRI mean height, not a measured tree height.
+  - Tree placement is deterministic Poisson, not a mapped stem map.
+  - Harvest/residual split is a deterministic synthetic selection-cut allocation,
+    not a prescription.

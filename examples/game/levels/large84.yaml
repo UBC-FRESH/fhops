@@ -1,0 +1,24 @@
+id: large84
+order: 4
+name: "Large84: Fleet Under Pressure"
+description: "A long horizon with many blocks. Spot capacity is expensive and breakdowns hurt."
+scenario: "../../large84/scenario.yaml"
+arrival_profiles: [hot, staged, phased]
+harvest_patterns: [parallel, sequential, finish_first]
+breakdown_seed: 84107
+breakdowns:
+  - {role: feller_buncher, index: 0, day: 10}
+  - {role: feller_buncher, index: 1, day: 28}
+  - {role: grapple_skidder, index: 0, day: 16}
+  - {role: processor, index: 1, day: 32}
+  - {role: loader, index: 1, day: 45}
+objective_weights:
+  production: 1.0
+  mobilisation: 0.2
+  transitions: 0.1
+  landing_surplus: 0.05
+fleet:
+  - {role: feller_buncher, owned: 4, maximum: 5, unit_cost: 18.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
+  - {role: grapple_skidder, owned: 2, maximum: 4, unit_cost: 18.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
+  - {role: processor, owned: 6, maximum: 7, unit_cost: 14.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
+  - {role: loader, owned: 6, maximum: 7, unit_cost: 14.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}

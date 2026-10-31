@@ -590,10 +590,63 @@ runtime dependency.
   - [x] Wrote `notes/reports/p19-closeout.md`.
   - [x] No 1.2.1 now; ship with next scheduled release.
 
+## Phase 20 — Web serious game
+
+Parent issue: #311. Branch: `feature/phase20-serious-game`. Status: complete (PR #317). Plan: `notes/phase20_serious_game.md`. Closeout:
+`notes/reports/p20-closeout.md`.
+
+Goal: turn the operational web UI into a deterministic instructor-run serious
+game. Each level is one real VRI-derived stand from MKRF, AFRF Gavin Lake, or
+AFRF Knife Creek. Teams choose a bounded machine/arrival/landing/bucking plan
+and receive a 0–100 score based on normalized net operations profit, including
+log-value recovery and operating costs.
+
+The former Tiny7/Small21/Medium42/Large84 shift-scenario levels are retired
+from P20. Their boundary/precompute code remains only while the stand-scale
+loader replaces it.
+
+- [ ] P20.1 Define stand levels, inventory/control contract, and precompute (#312)
+  - [x] Selected one MKRF, one Gavin Lake, and one Knife Creek stand boundary.
+  - [x] Committed EPSG:3005 GeoJSON boundaries and provenance catalog.
+  - [ ] Generate pinned Nemora/PSP tree inventories; resolve CWHdm/ICHmk3 PSP.
+    - [x] Knife Creek harvested/residual inventories generated and validated.
+  - [ ] Define landing/road-extension assets, product prices, and bucking policy.
+    - [x] Selection-cut careful-logging trade-off with decreasing damage benefits.
+  - [x] KC stand-scale precompute: 20 combinations, best $75,705.63,
+    worst $21,969.10.
+  - [x] MKRF/Gavin PSP inventories and four-combination precomputes.
+  - [x] Rebalance the synthetic Gavin deck to straddle break-even.
+  - [ ] Add any remaining levels.
+- [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#313)
+  - [x] Net-profit evaluator, price deck, and 0–100 normalization.
+  - [x] One-play/order enforcement and local tournament persistence.
+  - [x] Local game API: public level, session/team, ordered submission,
+    leaderboard.
+  - [ ] Add the Game workspace UI and level-map viewport.
+- [x] P20.3 Add the game API and web workspace (#314)
+  - [x] Local API: level metadata, session/team, ordered submission, leaderboard.
+  - [x] First `/game` shell: whole-stand SVG, controls, score, team join.
+  - [x] Session progress and leaderboard panel.
+  - [x] CLI flags for stand levels, precomputes, agent model, and cache.
+  - [x] Level map with completed/current/locked states and submit progress.
+  - [ ] Dual 3D replay: pre-saved optimal assets + JIT/cached player replay.
+- [x] P20.4 Prove fairness, document the tournament, and close out (#315)
+  - [x] Deterministic/fairness/leakage tests.
+  - [x] Instructor docs and close-out note.
+  - [x] Level-map/lobby polish and final phase close-out.
+- [x] P20.5 Add the optimal-parameter learning debrief (#316)
+  - [x] Facts and single-parameter counterfactual deltas.
+  - [x] Deterministic template fallback with optional LLM hook.
+  - [x] Post-level debrief API/UI and leakage tests.
+  - [x] Connect the optional DeepSeek V4.1 Flash provider and level+choice cache.
+  - [x] Final-only optional chat panel, gated by full tournament completion.
+  - [x] Four contractor quotes and three overlapping paid consultant tips;
+    fees can drive the score below zero.
+
 ## Backlog & Ideas
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
-- [ ] Integration with Nemora sampling outputs for downstream operations analytics.
+- [x] Integration with Nemora sampling outputs for downstream operations analytics (P19 tree-inventory handoff).
 - [x] Scenario authoring UI and schema validators for web clients (P12.6, #183).
 - [ ] Cloud execution harness for large-scale heuristics.
 - [ ] DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.

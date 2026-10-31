@@ -21,6 +21,13 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 import fhops
+from fhops.game.explain_cache import ExplanationCache
+from fhops.game.llm import (
+    DEEPSEEK_GAME_MODEL,
+    build_debrief_prompt,
+    build_final_chat_prompt,
+    parse_debrief_response,
+)
 from fhops.web.agent import AgentError, AgentRequest, run_agent
 from fhops.web.discovery import RunRecord, discover_runs
 from fhops.web.editing import (
@@ -31,6 +38,7 @@ from fhops.web.editing import (
     update_locks,
     update_objective,
 )
+from fhops.web.game import GameService, create_game_router
 from fhops.web.lidarview import lidar_payload
 from fhops.web.lidarworkflow import (
     LidarBundleRequest,
@@ -91,6 +99,18 @@ class ServiceConfig:
         Allowlisted roots containing FEMIC LiDAR bundle directories.
     lidar_timeout:
         Timeout for LiDAR mapping subprocesses.
+    game_level:
+        Optional stand-level game manifest. Must be paired with ``game_precompute``.
+    game_precompute:
+        Optional complete stand precompute artifact.
+    game_levels / game_precomputes:
+        Optional ordered list of stand levels and matching precomputes.
+    game_agent_model:
+        Model used for optional post-level LLM explanations.
+    game_explanation_cache:
+        Optional JSON cache for level+choice explanations.
+    game_session_store:
+        Optional JSON file used to persist tournament sessions across restarts.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -110,6 +130,13 @@ class ServiceConfig:
     agent_timeout: float = 120.0
     lidar_bundles: list[Path] = field(default_factory=list)
     lidar_timeout: float = 300.0
+    game_level: Path | None = None
+    game_precompute: Path | None = None
+    game_levels: list[Path] = field(default_factory=list)
+    game_precomputes: list[Path] = field(default_factory=list)
+    game_agent_model: str = DEEPSEEK_GAME_MODEL
+    game_explanation_cache: Path | None = None
+    game_session_store: Path | None = None
 
 
 class ObjectiveUpdate(BaseModel):
@@ -184,6 +211,52 @@ def create_app(config: ServiceConfig) -> FastAPI:
             run_manager.shutdown()
 
     app = FastAPI(title=config.title, version=fhops.__version__, lifespan=lifespan)
+    if len(config.game_levels) != len(config.game_precomputes):
+        raise ValueError("game_levels and game_precomputes must have the same length.")
+    if (config.game_level is None) != (config.game_precompute is None):
+        raise ValueError("game_level and game_precompute must be configured together.")
+    game_specs = list(zip(config.game_levels, config.game_precomputes, strict=True))
+    if config.game_level is not None and config.game_precompute is not None:
+        game_specs.append((config.game_level, config.game_precompute))
+    if game_specs:
+        game_llm = None
+        game_chat = None
+        if config.allow_agent:
+
+            def game_llm(facts: dict[str, Any]) -> dict[str, Any]:
+                response = run_agent(
+                    AgentRequest(
+                        message=build_debrief_prompt(facts),
+                        model=config.game_agent_model,
+                    ),
+                    workspace=config.workspace,
+                    command=config.agent_command,
+                    timeout=config.agent_timeout,
+                )
+                return parse_debrief_response(str(response["response"]))
+
+            def game_chat(context: dict[str, Any], message: str) -> str:
+                prompt = build_final_chat_prompt(context, message)
+                response = run_agent(
+                    AgentRequest(message=prompt, model=config.game_agent_model),
+                    workspace=config.workspace,
+                    command=config.agent_command,
+                    timeout=config.agent_timeout,
+                )
+                return str(response["response"])
+
+        game_service = GameService(
+            levels=game_specs,
+            llm_fn=game_llm,
+            chat_fn=game_chat,
+            explanation_cache=(
+                ExplanationCache(config.game_explanation_cache)
+                if config.game_explanation_cache is not None
+                else None
+            ),
+            session_store=config.game_session_store,
+        )
+        app.include_router(create_game_router(game_service))
 
     def _scenario_target(scenario_id: str) -> tuple[Path, str | None, RunRecord]:
         record = _find_run(roots, scenario_id)
@@ -778,6 +851,20 @@ def create_app(config: ServiceConfig) -> FastAPI:
 
     if _STATIC_DIR.exists():
         app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
+
+    @app.get("/game/replay")
+    def replay_page() -> FileResponse:
+        path = _STATIC_DIR / "replay.html"
+        if not path.exists():
+            raise HTTPException(status_code=500, detail="Replay shell is missing")
+        return FileResponse(path, headers={"Cache-Control": "no-store"})
+
+    @app.get("/game")
+    def game_page() -> FileResponse:
+        path = _STATIC_DIR / "game.html"
+        if not path.exists():
+            raise HTTPException(status_code=500, detail="Game shell is missing")
+        return FileResponse(path, headers={"Cache-Control": "no-store"})
 
     @app.get("/")
     def index() -> FileResponse:

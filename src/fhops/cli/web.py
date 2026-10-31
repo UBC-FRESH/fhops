@@ -70,6 +70,31 @@ def web(
         "--lidar-timeout",
         help="LiDAR mapping subprocess timeout in seconds.",
     ),
+    game_level: list[Path] | None = typer.Option(
+        None,
+        "--game-level",
+        help="Stand game level manifest (repeatable, in play order).",
+    ),
+    game_precompute: list[Path] | None = typer.Option(
+        None,
+        "--game-precompute",
+        help="Matching stand precompute artifact (repeatable).",
+    ),
+    game_agent_model: str = typer.Option(
+        "opencode-go/deepseek-v4.1-flash",
+        "--game-agent-model",
+        help="Model for optional game debrief/chat agent.",
+    ),
+    game_explanation_cache: Path | None = typer.Option(
+        None,
+        "--game-explanation-cache",
+        help="JSON cache for game explanations.",
+    ),
+    game_session_store: Path | None = typer.Option(
+        Path("build/game_sessions.json"),
+        "--game-session-store",
+        help="JSON file for persistent tournament sessions.",
+    ),
 ) -> None:
     """Start the web service when no subcommand is given."""
     if ctx.invoked_subcommand is not None:
@@ -95,6 +120,11 @@ def web(
         agent_timeout=agent_timeout,
         lidar_bundles=lidar_bundles or [],
         lidar_timeout=lidar_timeout,
+        game_levels=game_level or [],
+        game_precomputes=game_precompute or [],
+        game_agent_model=game_agent_model,
+        game_explanation_cache=game_explanation_cache,
+        game_session_store=game_session_store,
     )
     try:
         run_server(config)

@@ -1,0 +1,22 @@
+id: small21
+order: 2
+name: "Small21: Build the Flow"
+description: "A six-block level where sequencing and a balanced fleet matter."
+scenario: "../../small21/scenario.yaml"
+arrival_profiles: [hot, staged, phased]
+harvest_patterns: [parallel, sequential, finish_first]
+breakdown_seed: 21107
+breakdowns:
+  - {role: grapple_skidder, index: 0, day: 4}
+  - {role: processor, index: 0, day: 7}
+  - {role: loader, index: 0, day: 11}
+objective_weights:
+  production: 1.0
+  mobilisation: 0.2
+  transitions: 0.1
+  landing_surplus: 0.05
+fleet:
+  - {role: feller_buncher, owned: 2, maximum: 3, unit_cost: 6.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
+  - {role: grapple_skidder, owned: 1, maximum: 4, unit_cost: 6.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
+  - {role: processor, owned: 3, maximum: 4, unit_cost: 5.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
+  - {role: loader, owned: 3, maximum: 4, unit_cost: 5.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
