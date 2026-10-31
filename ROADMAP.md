@@ -600,16 +600,16 @@ game. Levels map to Tiny7, Small21, Medium42, and Large84; teams choose bounded
 fleet/arrival/harvest controls, launch one SA run, and receive 0–100 scores
 against an exact precomputed parameter space.
 
-- [ ] P20.1 Define levels, control contract, and exact precompute pipeline (#307)
-  - [ ] Level manifests and machine palettes.
-  - [ ] Deterministic breakdown schedules.
+- [ ] P20.1 Define levels, control contract, and exact precompute pipeline (#312)
+  - [x] Level manifests and machine palettes.
+  - [x] Deterministic breakdown schedules.
   - [ ] Exact MIP precompute and best/worst bounds.
-- [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#308)
+- [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#313)
   - [ ] Variant scenarios, scoring, and hidden events.
   - [ ] One-play/order enforcement and persistence.
-- [ ] P20.3 Add the game API and web workspace (#309)
+- [ ] P20.3 Add the game API and web workspace (#314)
   - [ ] Lobby, level map, controls, live run, score, leaderboard.
-- [ ] P20.4 Prove fairness, document the tournament, and close out (#310)
+- [ ] P20.4 Prove fairness, document the tournament, and close out (#315)
   - [ ] Deterministic/fairness/leakage tests.
   - [ ] Instructor/student docs and close-out report.
 - [ ] P20.5 Add the optimal-parameter learning debrief (#316)
