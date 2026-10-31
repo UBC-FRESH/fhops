@@ -215,6 +215,7 @@ function machineTimeline(events) {
   for (const machine of machines) {
     const segments = (events.timeline || []).filter((item) => item.machine === machine);
     const track = el('div', { class: 'tl-track' });
+    track.dataset.duration = String(duration);
     for (const segment of segments) {
       const left = (segment.start_s / duration) * 100;
       const width = Math.max(0.15, ((segment.end_s - segment.start_s) / duration) * 100);
@@ -224,6 +225,7 @@ function machineTimeline(events) {
         style: `left:${left}%;width:${width}%;background:${colors[events.machines[machine].type] || '#888'}`,
       }));
     }
+    track.append(el('div', { class: 'tl-playhead' }));
     wrap.append(el('div', { class: 'tl-row' }, el('span', { class: 'id' }, machine), track));
   }
   return wrap;
@@ -378,6 +380,28 @@ function renderMachineCards(events) {
 function renderTimelineStrip(events) {
   const strip = $('#timeline-strip');
   strip.replaceChildren(machineTimeline(events));
+  state.timelinePlayheads = [...strip.querySelectorAll('.tl-playhead')];
+  for (const track of strip.querySelectorAll('.tl-track')) {
+    track.style.cursor = 'ew-resize';
+    track.addEventListener('pointerdown', (event) => {
+      const duration = Number(track.dataset.duration) || state.currentEvents?.duration_s || 1;
+      const rect = track.getBoundingClientRect();
+      const fraction = Math.min(1, Math.max(0, (event.clientX - rect.left) / Math.max(1, rect.width)));
+      viewer.pause();
+      $('#scene-play').textContent = 'play';
+      viewer.seek(fraction * duration);
+      updateSceneHud(fraction * duration);
+      track.setPointerCapture?.(event.pointerId);
+    });
+    track.addEventListener('pointermove', (event) => {
+      if (!event.buttons) return;
+      const duration = Number(track.dataset.duration) || state.currentEvents?.duration_s || 1;
+      const rect = track.getBoundingClientRect();
+      const fraction = Math.min(1, Math.max(0, (event.clientX - rect.left) / Math.max(1, rect.width)));
+      viewer.seek(fraction * duration);
+      updateSceneHud(fraction * duration);
+    });
+  }
 }
 
 function updateSceneHud(t) {
@@ -389,8 +413,10 @@ function updateSceneHud(t) {
     .filter((tree) => (tree.processed_s ?? Infinity) <= t)
     .reduce((sum, tree) => sum + (tree.volume_m3 || 0), 0);
   $('#scene-status').textContent = `T+${fmtClock(t)} · ${processed.toLocaleString()} / ${(events.trees || []).length.toLocaleString()} trees · ${fmtM3(volume)}`;
-  $('#scene-bar').firstElementChild.style.width = `${Math.min(100, (t / duration) * 100)}%`;
-  $('#scene-scrub').value = Math.round((t / duration) * 1000);
+  const progress = Math.min(100, Math.max(0, (t / duration) * 100));
+  $('#scene-bar').firstElementChild.style.width = `${progress}%`;
+  $('#scene-scrub').value = Math.round(progress * 10);
+  for (const playhead of state.timelinePlayheads || []) playhead.style.left = `${progress}%`;
   const active = viewer.machineStates();
   for (const [id, status] of Object.entries(active)) {
     const node = document.getElementById(`mcard-${id}`);

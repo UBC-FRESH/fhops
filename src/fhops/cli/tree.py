@@ -524,6 +524,11 @@ def tree_system(
         "--feller-productivity-multiplier",
         help="Multiplier on feller processing productivity (<1 slows selection-cut work).",
     ),
+    path_mode: str = typer.Option(
+        "nearest",
+        "--path-mode",
+        help="Feller path: nearest (legacy) or swath (contiguous boustrophedon rows).",
+    ),
     stem_form_factor: float | None = typer.Option(
         None,
         "--stem-form-factor",
@@ -657,6 +662,7 @@ def tree_system(
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
             feller_processing_time_multiplier=1.0 / feller_productivity_multiplier,
+            path_mode=path_mode,  # type: ignore[arg-type]
             stem_inventory=stem_inventory,
             skidder_specs=skidder_specs,
             loader_spec=loader_spec,

@@ -162,6 +162,7 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
     for processor in args.get("processors") or []:
         command.extend(["--processor", str(processor)])
     command.extend(["--loader", str(args["loader"])])
+    command.extend(["--path-mode", str(args.get("path_mode", "swath"))])
     option_map = {
         "bunch_volume_m3": "--bunch-volume",
         "rate_model": "--rate-model",

@@ -32,6 +32,72 @@ const ROLE_LABELS = {
   cable_yarder: 'Y',
 };
 const MACHINE_OFFSETS = { H4: [12, 0], H5: [-12, 0], H6: [0, 12] };
+const SWATH_BAND_HEIGHT_M = 24;
+
+function swathOrder(trees) {
+  const valid = trees.filter((tree) => Number.isFinite(Number(tree.x)) && Number.isFinite(Number(tree.y)));
+  if (!valid.length) return [];
+  const minY = Math.min(...valid.map((tree) => Number(tree.y)));
+  const bands = new Map();
+  for (const tree of valid) {
+    const band = Math.floor((Number(tree.y) - minY) / SWATH_BAND_HEIGHT_M);
+    if (!bands.has(band)) bands.set(band, []);
+    bands.get(band).push(tree);
+  }
+  const ordered = [];
+  const bandKeys = [...bands.keys()].sort((a, b) => a - b);
+  bandKeys.forEach((band, index) => {
+    const row = bands.get(band).slice().sort((a, b) => (
+      Number(a.x) - Number(b.x) || Number(a.y) - Number(b.y) || String(a.tree_id).localeCompare(String(b.tree_id))
+    ));
+    if (index % 2) row.reverse();
+    ordered.push(...row);
+  });
+  return ordered;
+}
+
+function normalizeFellerSwath(events) {
+  if (!events || !Array.isArray(events.timeline) || !Array.isArray(events.trees)) return;
+  const feller = events.feller_machine_id || Object.entries(events.machines || {})
+    .find(([, machine]) => ['feller_buncher', 'harvester', 'hand_faller'].includes(machine.type))?.[0];
+  if (!feller) return;
+  const processTypes = new Set(['process', 'fell', 'fall']);
+  const fellerSegments = events.timeline
+    .filter((segment) => segment.machine === feller)
+    .sort((a, b) => a.start_s - b.start_s);
+  const processSegments = fellerSegments.filter((segment) => processTypes.has(segment.type));
+  if (!processSegments.length || processSegments.length !== events.trees.length) return;
+  const ordered = swathOrder(events.trees);
+  if (ordered.length !== processSegments.length) return;
+  for (let index = 0; index < processSegments.length; index += 1) {
+    const segment = processSegments[index];
+    const tree = ordered[index];
+    const x = Number(tree.x);
+    const y = Number(tree.y);
+    segment.tree_ids = [tree.tree_id];
+    segment.x0 = x; segment.x1 = x; segment.y0 = y; segment.y1 = y;
+    if (Number.isFinite(Number(tree.volume_m3))) segment.volume_m3 = Number(tree.volume_m3);
+    if (Number.isFinite(Number(tree.logs))) segment.logs = Number(tree.logs);
+    tree.processed_s = segment.end_s;
+  }
+  let previousPoint = null;
+  const processSet = new Set(processSegments);
+  for (let index = 0; index < fellerSegments.length; index += 1) {
+    const segment = fellerSegments[index];
+    if (processSet.has(segment)) {
+      previousPoint = [Number(segment.x0), Number(segment.y0)];
+      continue;
+    }
+    if (!String(segment.type).startsWith('travel')) continue;
+    const next = fellerSegments.slice(index + 1).find((item) => processSet.has(item));
+    if (previousPoint) {
+      segment.x0 = previousPoint[0]; segment.y0 = previousPoint[1];
+    }
+    if (next) {
+      segment.x1 = Number(next.x0); segment.y1 = Number(next.y0);
+    }
+  }
+}
 
 export function createViewer(container, { onTime } = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
@@ -368,6 +434,7 @@ export function createViewer(container, { onTime } = {}) {
 
   function load(payloadArg) {
     const { sceneUrl, events, residual } = payloadArg;
+    normalizeFellerSwath(events);
     const runKey = `${sceneUrl}`;
     if (loadedRunKey === runKey) {
       payload = events;

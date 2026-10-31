@@ -154,7 +154,8 @@ pre { background: #0b0f11; border: 1px solid var(--line); border-radius: 8px; pa
 #timeline-strip.show { display: block; }
 .tl-row { display: flex; align-items: center; gap: 8px; height: 15px; }
 .tl-row .id { width: 30px; color: var(--muted); font-size: 10px; }
-.tl-track { position: relative; flex: 1; height: 9px; background: #1b2428; border-radius: 3px; overflow: hidden; }
+.tl-track { position: relative; flex: 1; height: 9px; background: #1b2428; border-radius: 3px; overflow: hidden; touch-action: none; }
+.tl-playhead { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--accent); box-shadow: 0 0 0 1px #101416cc; transform: translateX(-1px); pointer-events: none; z-index: 3; }
 .tl-seg { position: absolute; top: 0; bottom: 0; opacity: 0.9; }
 
 .agent-grid { display: grid; grid-template-columns: minmax(360px, 1fr) minmax(360px, 1fr); gap: 16px; }

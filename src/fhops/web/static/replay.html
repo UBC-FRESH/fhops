@@ -21,6 +21,8 @@
     .timeline-track { position: relative; height: 13px; background: #1d292d; border-radius: 3px; overflow: hidden; }
     .timeline-bar { position: absolute; top: 0; height: 100%; min-width: 1px; }
     .timeline-bar:hover { outline: 1px solid #fff; z-index: 2; }
+    .timeline-playhead { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #fff; box-shadow: 0 0 0 1px #101416; transform: translateX(-1px); pointer-events: none; z-index: 3; }
+    .timeline-track { cursor: ew-resize; touch-action: none; }
     .timeline-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; color: #b7c6cc; font-size: .72rem; }
     .timeline-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
     @media (max-width: 900px) { .timeline-columns { grid-template-columns: 1fr; } }
@@ -79,6 +81,11 @@
         if (win && win.__setTime) { win.__pause?.(); win.__setTime(current); }
       }
       scrub.value = String(current); clock.textContent = `${fmt(current)} / ${fmt(duration)}`;
+      document.querySelectorAll('.timeline-track').forEach((track) => {
+        const trackDuration = Number(track.dataset.duration) || duration;
+        const playhead = track.querySelector('.timeline-playhead');
+        if (playhead) playhead.style.left = `${100 * Math.min(trackDuration, current) / trackDuration}%`;
+      });
     }
     function loop(now) {
       requestAnimationFrame(loop);
@@ -127,6 +134,7 @@
         label.textContent = machine;
         const track = document.createElement('div');
         track.className = 'timeline-track';
+        track.dataset.duration = String(duration);
         for (const event of merged) {
           const bar = document.createElement('span');
           bar.className = 'timeline-bar';
@@ -136,6 +144,9 @@
           bar.title = `${machine} · ${event.type} · ${Math.round(event.start_s)}–${Math.round(event.end_s)} s`;
           track.appendChild(bar);
         }
+        const playhead = document.createElement('span');
+        playhead.className = 'timeline-playhead';
+        track.appendChild(playhead);
         row.append(label, track);
         root.appendChild(row);
       }
@@ -152,12 +163,38 @@
         ]);
         renderTimelineSide(document.getElementById('timeline-left'), leftData);
         renderTimelineSide(document.getElementById('timeline-right'), rightData);
+        apply();
       } catch (error) {
         document.getElementById('timeline-left').textContent = `Timeline unavailable: ${String(error)}`;
         document.getElementById('timeline-right').textContent = '';
         timelineLoaded = false;
       }
     }
+    let timelineScrubTrack = null;
+    function seekFromTimeline(event) {
+      const track = event.target.closest?.('.timeline-track');
+      if (!track) return;
+      timelineScrubTrack = track;
+      scrubTimelineTo(event.clientX);
+      playing = false;
+      document.getElementById('play').textContent = 'Play';
+      track.setPointerCapture?.(event.pointerId);
+    }
+    function scrubTimelineTo(clientX) {
+      if (!timelineScrubTrack) return;
+      const trackDuration = Number(timelineScrubTrack.dataset.duration) || duration;
+      const rect = timelineScrubTrack.getBoundingClientRect();
+      const fraction = Math.min(1, Math.max(0, (clientX - rect.left) / Math.max(1, rect.width)));
+      current = fraction * trackDuration;
+      apply();
+    }
+    timelinePanel.addEventListener('pointerdown', seekFromTimeline);
+    timelinePanel.addEventListener('pointermove', (event) => {
+      if (timelineScrubTrack && event.buttons) scrubTimelineTo(event.clientX);
+    });
+    timelinePanel.addEventListener('pointerup', () => { timelineScrubTrack = null; });
+    timelinePanel.addEventListener('pointercancel', () => { timelineScrubTrack = null; });
+
     document.getElementById('timeline-toggle').onclick = async () => {
       const showing = timelinePanel.style.display === 'block';
       timelinePanel.style.display = showing ? 'none' : 'block';
