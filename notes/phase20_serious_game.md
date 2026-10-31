@@ -302,10 +302,11 @@ The routes are enabled when `ServiceConfig` has matching stand levels and
 precomputes. Instructors can pass them from the CLI with repeatable
 `--game-level` / `--game-precompute` flags, plus `--game-agent-model` and
 `--game-explanation-cache`. The `/game` shell renders the whole-stand SVG boundary, a level map with
-completed/current/locked states, joins a local session/team, auto-selects the
-next required level, submits one attempt with progress feedback, displays the
-score and selected-run components, refreshes the session leaderboard, and
-exposes the post-attempt debrief. API calls are relative to the page's proxy
+completed/current/locked states, a block briefing (stand, species, density,
+volume, prescription, terrain/cost assumptions, products, and unknowns), joins
+a local session/team, auto-selects the next required level, submits one attempt
+with progress feedback, displays the score and selected-run components,
+refreshes the session leaderboard, and exposes the post-attempt debrief. API calls are relative to the page's proxy
 prefix so JupyterHub `/proxy/<port>/game` deployments work. When the optional agent is enabled, a final-only chat
 panel unlocks only after the last level is complete; the API also refuses chat
 before that point.

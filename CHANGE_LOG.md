@@ -4729,3 +4729,8 @@ PY
   component breakdown, product recovery labels, and readable debrief panel.
   Tightened the debrief prompt and fallback validation against snake_case/raw
   float output, and fixed proxy-relative API calls after live browser testing.
+
+- 2026-10-31: P20 UI briefing/control parity: added block briefing panels and
+  sawlog/landing controls so every finite debrief parameter is visible before
+  submission, added no-store caching to `/game`, and tightened result/debrief
+  formatting to avoid raw JSON and excess precision.

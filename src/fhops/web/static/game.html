@@ -42,6 +42,11 @@
     .level-card.locked { opacity: .55; cursor: not-allowed; }
     .level-card strong { display: block; font-size: .92rem; }
     .level-card span { font-size: .78rem; color: #5e6e64; }
+    .briefing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 18px; font-size: .84rem; }
+    .briefing-grid div { padding: 3px 0; border-bottom: 1px solid #edf2ee; }
+    .briefing-grid span { color: #5e6e64; }
+    .briefing-note { margin: 8px 0 0; font-size: .8rem; color: #5e6e64; }
+    #briefing { margin: 8px 0 4px; }
     @media (max-width: 850px) { main { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -72,6 +77,7 @@
   </section>
   <section>
     <h2>Plan and score</h2>
+    <div id="briefing"></div>
     <label>Level map</label>
     <div id="level-map"></div>
     <label for="level">Selected level</label><select id="level"></select>
@@ -85,6 +91,10 @@
       <div><label for="skidders">Skidders</label><select id="skidders"></select></div>
     </div>
     <label for="logs">Target log length</label><select id="logs"></select>
+    <div class="row">
+      <div><label for="sawlog">Sawlog min DBH</label><select id="sawlog"></select></div>
+      <div><label for="landing">Landing option</label><select id="landing"></select></div>
+    </div>
     <button id="submit" disabled>Submit one attempt</button>
     <button id="debrief" disabled>Show debrief</button>
     <div id="score">—</div>
@@ -111,10 +121,11 @@ const $ = (id) => document.getElementById(id);
 const setStatus = (value) => { $('status').textContent = String(value); };
 const money = (value) => Math.abs(Number(value)) < 0.5 ? '$0' : new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(Number(value));
 const number = (value) => new Intl.NumberFormat('en-CA', { maximumFractionDigits: 1 }).format(Number(value));
+const scoreText = (value) => Number.isInteger(Number(value)) ? Number(value).toFixed(0) : Number(value).toFixed(1);
 function renderResult(payload) {
   const result = payload.result;
   $('result-panel').style.display = 'block';
-  $('result-score').textContent = `${Number(payload.score).toFixed(1)} / 100`;
+  $('result-score').textContent = `${scoreText(payload.score)} / 100`;
   $('result-level').textContent = state.levels.find((level) => level.level_id === state.lastCompletedLevel)?.name || '';
   $('result-net').textContent = money(result.net_profit);
   const components = [
@@ -209,7 +220,7 @@ $('submit').onclick = async () => {
     const session = $('session').value.trim(), team = $('team').value.trim();
     const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit?level_id=${encodeURIComponent(state.level.level_id)}`), {
       method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ care_level: Number($('care').value), skidder_count: Number($('skidders').value), log_length_m: Number($('logs').value), sawlog_min_dbh_cm: 20.0, road_extension_m: 0.0 })
+      body: JSON.stringify({ care_level: Number($('care').value), skidder_count: Number($('skidders').value), log_length_m: Number($('logs').value), sawlog_min_dbh_cm: Number($('sawlog').value), road_extension_m: Number($('landing').value) })
     });
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
@@ -240,7 +251,7 @@ async function refreshCompletion(sessionId, teamCode) {
   $('final-panel').style.display = complete ? 'block' : 'none';
   $('submit').disabled = complete || !state.armed;
   if (complete) {
-    $('final-title').textContent = `Final debrief — ${payload.total_score.toFixed(1)} points`;
+    $('final-title').textContent = `Final debrief — ${scoreText(payload.total_score)} points`;
     $('final-note').textContent = state.level.chat_enabled
       ? 'All levels complete. Ask the optional DeepSeek debrief coach about the tournament.'
       : 'All levels complete. The optional chat agent is disabled for this session.';
@@ -276,11 +287,39 @@ function renderLevelMap(teamState) {
   });
 }
 
+function renderBriefing() {
+  const b = state.level.briefing || {};
+  const price = state.level.prices || {};
+  const rows = [
+    ['Forest', b.forest], ['Stand', b.stand], ['Area', b.area_ha ? `${number(b.area_ha)} ha` : null],
+    ['BEC', b.bec], ['Species', b.species], ['Age', b.age_years ? `${b.age_years} years` : null],
+    ['Stems', b.stems_per_ha ? `${number(b.stems_per_ha)} /ha` : null],
+    ['Basal area', b.basal_area_m2_per_ha ? `${number(b.basal_area_m2_per_ha)} m²/ha` : null],
+    ['Volume', b.volume_m3_per_ha ? `${number(b.volume_m3_per_ha)} m³/ha` : null],
+    ['Mean height', b.mean_height_m ? `${number(b.mean_height_m)} m` : null],
+    ['Slope assumption', b.slope_percent != null ? `${number(b.slope_percent)}%` : null],
+    ['Prescription', b.prescription], ['Removal', b.removal_fraction != null ? `${number(b.removal_fraction * 100)}%` : null],
+    ['Residual stems', b.residual_stems_per_ha ? `${number(b.residual_stems_per_ha)} /ha` : null],
+    ['Harvest system', b.harvest_system], ['Landing', b.landing],
+    ['Machine rate', b.machine_operating_cost_per_smh ? `${money(b.machine_operating_cost_per_smh)}/SMH` : null],
+    ['Mobilisation', b.mobilisation_cost != null ? money(b.mobilisation_cost) : null],
+    ['Products', price.products ? Object.entries(price.products).map(([k,v]) => `${k.replaceAll('_',' ')} ${money(v)}/m³`).join(' · ') : null],
+  ].filter(([, value]) => value !== null && value !== undefined && value !== '');
+  const assumptions = (b.planning_assumptions || []).map((item) => `<li>${item}</li>`).join('');
+  const unknowns = (b.unknowns || []).map((item) => `<li>${item}</li>`).join('');
+  $('briefing').innerHTML = `<div class="briefing-grid">${rows.map(([label, value]) => `<div><span>${label}</span><br>${value}</div>`).join('')}</div>` +
+    (assumptions ? `<div class="briefing-note"><strong>Planning assumptions</strong><ul>${assumptions}</ul></div>` : '') +
+    (unknowns ? `<div class="briefing-note"><strong>Unknown until debrief</strong><ul>${unknowns}</ul></div>` : '');
+}
+
 async function selectLevel(levelId) {
   state.level = state.levels.find((level) => level.level_id === levelId);
   $('care').innerHTML = state.level.controls.care_levels.map((v) => `<option value="${v}">${v}</option>`).join('');
   $('skidders').innerHTML = state.level.controls.skidder_counts.map((v) => `<option value="${v}">${v}</option>`).join('');
   $('logs').innerHTML = state.level.controls.log_length_m.map((v) => `<option value="${v}">${v} m</option>`).join('');
+  $('sawlog').innerHTML = state.level.controls.sawlog_min_dbh_cm.map((v) => `<option value="${v}">${v} cm</option>`).join('');
+  $('landing').innerHTML = Object.entries(state.level.controls.landing_options || {}).map(([key, value]) => `<option value="${value}">${key} (${value} m road)</option>`).join('');
+  renderBriefing();
   await drawBoundary();
   setStatus(`Level: ${state.level.name} · ${state.level.area_ha?.toFixed(2) || '?'} ha · ${state.level.difficulty || ''}`);
 }

@@ -29,3 +29,29 @@ bucking:
   - 20.0
 landing_options:
   main: 0.0
+briefing:
+  forest: Malcolm Knapp Research Forest
+  stand: RES_KEY 684 (VRI-derived)
+  area_ha: 6.863879
+  bec: CWHdm
+  species: HW / FDC
+  age_years: 104
+  stems_per_ha: 699.1
+  basal_area_m2_per_ha: 77.3
+  volume_m3_per_ha: 599.7
+  mean_height_m: 24.4
+  slope_percent: 8.0
+  prescription: clearcut
+  removal_fraction: 1.0
+  harvest_system: 'tree-length: feller-buncher + grapple skidder + loader'
+  machine_operating_cost_per_smh: 600.0
+  mobilisation_cost: 25000.0
+  landing: main; existing access
+  planning_assumptions:
+  - Slope is a level planning assumption, not a surveyed terrain product.
+  - Product prices are a synthetic game deck, not a mill forecast.
+  - Tree list is synthetic and calibrated to regional PSP distributions.
+  unknowns:
+  - Hidden breakdown timing.
+  - Exact productivity response to care settings.
+  - Actual road/landing construction quantities.

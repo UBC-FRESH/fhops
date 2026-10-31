@@ -235,7 +235,8 @@ def create_app(config: ServiceConfig) -> FastAPI:
                 prompt = (
                     "You are the FHOPS serious-game final debrief coach. Answer the "
                     "team's question using only the supplied tournament facts. Do not "
-                    "reveal any new hidden parameters beyond the debrief facts. Be concise "
+                    "reveal any new hidden parameters beyond the debrief facts. Round currency to "
+                    "whole dollars, volumes to one decimal place, and scores to one decimal. Be concise "
                     "and link advice to net profit, score, and the listed choices.\n"
                     f"Context JSON: {json.dumps(context, sort_keys=True)}\n"
                     f"Team question: {message}"
@@ -859,7 +860,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
         path = _STATIC_DIR / "game.html"
         if not path.exists():
             raise HTTPException(status_code=500, detail="Game shell is missing")
-        return FileResponse(path)
+        return FileResponse(path, headers={"Cache-Control": "no-store"})
 
     @app.get("/")
     def index() -> FileResponse:

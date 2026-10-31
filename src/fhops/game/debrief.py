@@ -144,13 +144,13 @@ def render_template_debrief(facts: DebriefFacts) -> dict[str, Any]:
         cost_text = (
             f"The largest miss was {largest['parameter']} "
             f"({largest['player_value']} instead of {largest['optimal_value']}), "
-            f"which cost ${largest['cost_of_wrong']:,.2f} in net profit."
+            f"which cost ${largest['cost_of_wrong']:,.0f} in net profit."
         )
     else:
         cost_text = "Your plan matched the best finite control combination."
     why = (
-        f"The best plan earned ${facts.optimal_net_profit:,.2f} net profit; "
-        f"your plan earned ${facts.player_net_profit:,.2f} and scored "
+        f"The best plan earned ${facts.optimal_net_profit:,.0f} net profit; "
+        f"your plan earned ${facts.player_net_profit:,.0f} and scored "
         f"{facts.score:.1f}/100. {cost_text}"
     )
     return {
@@ -158,7 +158,7 @@ def render_template_debrief(facts: DebriefFacts) -> dict[str, Any]:
         "parameter_costs": {
             item["parameter"]: (
                 f"Choosing {item['optimal_value']} instead of {item['player_value']} "
-                f"would have changed net profit by ${item['net_profit_delta']:,.2f}."
+                f"would have changed net profit by ${item['net_profit_delta']:,.0f}."
             )
             for item in facts.parameter_deltas
         },

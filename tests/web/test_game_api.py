@@ -36,6 +36,8 @@ def test_public_level_hides_optimal_choice(tmp_path: Path) -> None:
     assert "best_choices" not in payload
     assert "careful_logging" in payload
     assert "care_premium_per_m3_range" in payload["careful_logging"]
+    assert payload["briefing"]["bec"] == "IDFdk3"
+    assert payload["briefing"]["volume_m3_per_ha"] > 0
 
 
 def test_session_team_and_submission(tmp_path: Path) -> None:
@@ -111,6 +113,9 @@ def test_game_shell_and_boundary(tmp_path: Path) -> None:
     assert "FHOPS Serious Game" in shell.text
     assert "level-map" in shell.text
     assert "const API = window.location.pathname" in shell.text
+    assert 'id="sawlog"' in shell.text
+    assert 'id="landing"' in shell.text
+    assert shell.headers.get("cache-control") == "no-store"
     boundary = client.get("/api/game/levels/kc_57254551/boundary")
     assert boundary.status_code == 200
     assert boundary.json()["type"] == "FeatureCollection"
