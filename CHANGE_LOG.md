@@ -4611,3 +4611,9 @@ PY
   they win and what each wrong parameter value cost. LLM output will be
   schema-constrained, validated against precomputed facts, cached, and backed by
   deterministic templates.
+
+- 2026-10-31: P20.1 added four level manifests
+  (`examples/game/levels/`), machine palettes, arrival/harvest controls,
+  deterministic breakdown events, and the `fhops.game` variant builder. Exact
+  MIP precompute and the learning debrief remain pending. Fleet opportunity
+  costs use increasing marginal multipliers plus a spot-slot surcharge.

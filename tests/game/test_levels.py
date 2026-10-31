@@ -25,7 +25,9 @@ def test_fleet_penalty_increases_and_spot_slot_is_expensive() -> None:
     feller = next(option for option in tiny7.fleet if option.role == "feller_buncher")
 
     assert feller.penalty(feller.owned) == 0.0
-    assert feller.penalty(feller.owned + 1) == pytest.approx(feller.unit_cost + feller.spot_surcharge)
+    assert feller.penalty(feller.owned + 1) == pytest.approx(
+        feller.unit_cost + feller.spot_surcharge
+    )
     if feller.owned + 2 <= feller.maximum:
         assert feller.penalty(feller.owned + 2) == pytest.approx(
             feller.unit_cost + 2.0 * feller.unit_cost + feller.spot_surcharge
