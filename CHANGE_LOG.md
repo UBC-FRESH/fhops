@@ -4605,3 +4605,9 @@ PY
   fleet counts, arrival posture, harvest pattern, and hidden deterministic
   breakdowns. Scoring will use fixed objective weights and exact MIP precompute
   bounds. This phase is planned only; no implementation has started.
+
+- 2026-10-31: Added P20.5 (#316) to the planned serious game: after completion,
+  reveal optimal parameter values and provide fact-grounded explanations of why
+  they win and what each wrong parameter value cost. LLM output will be
+  schema-constrained, validated against precomputed facts, cached, and backed by
+  deterministic templates.

@@ -612,6 +612,10 @@ against an exact precomputed parameter space.
 - [ ] P20.4 Prove fairness, document the tournament, and close out (#310)
   - [ ] Deterministic/fairness/leakage tests.
   - [ ] Instructor/student docs and close-out report.
+- [ ] P20.5 Add the optimal-parameter learning debrief (#316)
+  - [ ] Facts and single-parameter counterfactual deltas.
+  - [ ] Optional LLM explanations with fact validation and template fallback.
+  - [ ] Post-level debrief API/UI and leakage tests.
 
 ## Backlog & Ideas
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.

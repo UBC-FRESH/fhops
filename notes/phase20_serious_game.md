@@ -102,6 +102,33 @@ score = 100 * (adjusted_objective - worst_level) / (best_level - worst_level)
 - A level is game-enabled only when precompute is complete for its full finite
   menu.
 
+## End-of-level learning debrief
+
+After a level is completed, the game reveals:
+
+- the optimal fleet counts, arrival posture, and harvest pattern;
+- the player's choices and the 0–100 score;
+- the objective component deltas (production, mobilisation, transitions,
+  landing surplus, fleet opportunity cost);
+- the cost of each wrong parameter value the player selected.
+
+The explanation layer is fact-grounded, not free-form:
+
+1. Build a structured `ExplanationFacts` payload from the precomputed grid:
+   optimal values, player values, full-choice objective delta, and
+   single-parameter counterfactual deltas (replace one wrong value with the
+   optimal value, holding the rest fixed).
+2. Generate the optimal-choice "why" and per-parameter "cost" explanations with
+   the optional LLM agent using a strict JSON schema.
+3. Validate every numeric claim against `ExplanationFacts`; reject or fall back
+   to deterministic templates on mismatch.
+4. Cache explanations by level + choice hash so every team receives the same
+   explanation and no API is needed mid-tournament.
+
+The client receives the optimal controls only after the attempt is complete.
+Before completion, neither the optimal values nor hidden breakdown timings are
+exposed.
+
 ## Tournament state
 
 - `TournamentSession`: instructor-created ID, level order, ruleset hash.
