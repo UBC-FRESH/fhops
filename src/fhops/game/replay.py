@@ -68,6 +68,7 @@ def generate_replay(
         shift_days=30,
         hours_per_shift=20.0,
         feller_processing_time_multiplier=1.0 / productivity,
+        path_mode="swath",
     )
     (target / "system_events.json").write_text(
         json.dumps(result.to_dict(), sort_keys=True) + "\n", encoding="utf-8"

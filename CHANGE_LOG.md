@@ -4786,3 +4786,8 @@ PY
   metadata/timeline duration consistency checks, preventing concurrent jobs from
   mixing optimal scene/events. Pre-saved the corrected Gavin and KC optimal
   replay assets.
+
+- 2026-10-31: P20 harvest pattern: added a boustrophedon feller swath mode and
+  enabled it for game operations/replays. Generic tree-system simulations keep
+  nearest-neighbor behavior unless explicitly requested. Game precomputes and
+  optimal replays are being regenerated with the swath path.

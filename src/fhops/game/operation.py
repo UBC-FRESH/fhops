@@ -165,6 +165,7 @@ def evaluate_stand(
         shift_days=shift_days,
         hours_per_shift=hours_per_shift,
         feller_processing_time_multiplier=1.0 / feller_productivity,
+        path_mode="swath",
     )
     stem_by_id = {tree.tree_id: tree for tree in stems.trees}
     processed_ids = {tree.tree_id for tree in result.trees}

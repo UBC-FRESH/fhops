@@ -119,6 +119,11 @@ tree map, breakdown timings, or PSP sampling.
 4. **Landing option**: main or a trunk-road-extension option.
 5. **Bucking policy** (below).
 
+The game operation uses a boustrophedon feller swath so the 3D replay shows a
+contiguous harvest rather than nearest-neighbor jumping. Processor and loader
+handling still depends on bucked logs; feller and skidder stages operate on
+whole trees.
+
 The machine plan is evaluated by the tree-scale system. The old multi-block SA
 assignment is not the game's primary scheduling engine; one block does not give
 SA a meaningful block-selection problem. A fixed-fleet schedule solver may still

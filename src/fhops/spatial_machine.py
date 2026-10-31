@@ -16,6 +16,7 @@ import math
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Literal
 
 from fhops.productivity.harvester_ctl import (
     ADV6N10HarvesterInputs,
@@ -284,6 +285,8 @@ def simulate_block(
     travel_speed_m_per_s: float = DEFAULT_TRAVEL_SPEED_M_PER_S,
     max_slope_percent: float = DEFAULT_MAX_SLOPE_PERCENT,
     processing_time_multiplier: float = 1.0,
+    path_mode: Literal["nearest", "swath"] = "nearest",
+    swath_band_height_m: float | None = None,
     max_total_time_s: float | None = None,
     target_merchantable_volume_m3: float | None = None,
     obstacles: tuple[Obstacle, ...] = (),
@@ -321,6 +324,12 @@ def simulate_block(
         Multiplier on each tree processing time. Values above one model slower
         harvester work (for example selection-cut care); values below one model
         faster work. Travel time is unaffected.
+    path_mode : {"nearest", "swath"}, optional
+        ``swath`` uses boustrophedon bands for a contiguous harvest pattern;
+        ``nearest`` preserves the original nearest-tree behavior.
+    swath_band_height_m : float | None, optional
+        Height of the boustrophedon harvest bands. Defaults to twice the reach
+        radius when ``path_mode="swath"``.
     max_total_time_s : float | None, optional
         Stop after this elapsed time unless no tree has been processed yet.
     target_merchantable_volume_m3 : float | None, optional
@@ -373,7 +382,21 @@ def simulate_block(
         trees = [tree for tree in trees if tree.tree_id in tree_ids]
     if not trees:
         raise SpatialMachineError(f"Block {block_id!r} has no tree records.")
-    first = trees[0]
+    if path_mode not in {"nearest", "swath"}:
+        raise SpatialMachineError("path_mode must be 'nearest' or 'swath'.")
+    ordered_trees = (
+        _swath_order(
+            trees,
+            band_height_m=(
+                swath_band_height_m
+                if swath_band_height_m is not None
+                else max(2.0 * reach_radius_m, 5.0)
+            ),
+        )
+        if path_mode == "swath"
+        else trees
+    )
+    first = ordered_trees[0]
     sx = first.x_m if start_x_m is None else start_x_m
     sy = first.y_m if start_y_m is None else start_y_m
     sz = first.elevation_m if start_z_m is None else start_z_m
@@ -382,8 +405,9 @@ def simulate_block(
     if not all(math.isfinite(value) for value in (sx, sy, sz)):
         raise SpatialMachineError("Starting position must be finite.")
     events = _simulate_events(
-        trees,
+        ordered_trees,
         start=(sx, sy, sz),
+        path_mode=path_mode,
         reach_radius_m=reach_radius_m,
         travel_speed_m_per_s=travel_speed_m_per_s,
         max_slope_percent=max_slope_percent,
@@ -506,10 +530,33 @@ def write_spatial_simulation(simulation: SpatialSimulation, out_dir: Path) -> di
     return {"events": events_path, "manifest": manifest_path}
 
 
+def _swath_order(
+    trees: list[StemResult],
+    *,
+    band_height_m: float,
+) -> list[StemResult]:
+    """Order trees into alternating rows for a visible, contiguous harvest sweep."""
+    if not trees:
+        return []
+    min_y = min(tree.y_m for tree in trees)
+    rows: dict[int, list[StemResult]] = {}
+    for tree in trees:
+        band = int(math.floor((tree.y_m - min_y) / band_height_m))
+        rows.setdefault(band, []).append(tree)
+    ordered: list[StemResult] = []
+    for index, (_, band_trees) in enumerate(sorted(rows.items())):
+        band_trees.sort(key=lambda tree: (tree.x_m, tree.y_m))
+        if index % 2:
+            band_trees.reverse()
+        ordered.extend(band_trees)
+    return ordered
+
+
 def _simulate_events(
     trees: list[StemResult],
     *,
     start: tuple[float, float, float],
+    path_mode: Literal["nearest", "swath"] = "nearest",
     reach_radius_m: float,
     travel_speed_m_per_s: float,
     max_slope_percent: float,
@@ -548,19 +595,30 @@ def _simulate_events(
         def distance(tree: StemResult) -> float:
             return math.hypot(tree.x_m - current_x, tree.y_m - current_y)
 
-        within = [tree for tree in remaining.values() if distance(tree) <= reach_radius_m]
         target: StemResult | None = None
-        for tree in sorted(within, key=lambda item: (distance(item), item.tree_id)):
-            ok, _reason = feasible(tree)
-            if ok:
-                target = tree
-                break
-        if target is None:
-            for tree in sorted(remaining.values(), key=lambda item: (distance(item), item.tree_id)):
+        if path_mode == "swath":
+            for tree in trees:
+                if tree.tree_id not in remaining:
+                    continue
                 ok, _reason = feasible(tree)
                 if ok:
                     target = tree
                     break
+        else:
+            within = [tree for tree in remaining.values() if distance(tree) <= reach_radius_m]
+            for tree in sorted(within, key=lambda item: (distance(item), item.tree_id)):
+                ok, _reason = feasible(tree)
+                if ok:
+                    target = tree
+                    break
+            if target is None:
+                for tree in sorted(
+                    remaining.values(), key=lambda item: (distance(item), item.tree_id)
+                ):
+                    ok, _reason = feasible(tree)
+                    if ok:
+                        target = tree
+                        break
         if target is None:
             for tree in sorted(remaining.values(), key=lambda item: (distance(item), item.tree_id)):
                 _ok, reason = feasible(tree)
