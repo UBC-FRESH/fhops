@@ -344,7 +344,8 @@ export function createViewer(container, { onTime } = {}) {
       const scaleY = 0.35 + ratio * 0.65;
       group.scale.set(1, scaleY, 1);
       group.userData.label.sprite.position.y = 10.2 / scaleY;
-      group.userData.label.sprite.scale.set(40.8 / scaleY, 7.68 / scaleY, 1);
+      const labelScale = Math.min(2.2, Math.max(0.8, camera.position.distanceTo(group.position) / 600));
+      group.userData.label.sprite.scale.set(40.8 * labelScale / scaleY, 7.68 * labelScale / scaleY, 1);
       const rounded = volume < 10 ? volume.toFixed(1) : volume.toFixed(0);
       if (rounded !== group.userData.lastVolume) {
         group.userData.lastVolume = rounded;
