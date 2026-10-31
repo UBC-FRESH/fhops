@@ -4724,3 +4724,8 @@ PY
   deployments that previously sent `/api/...` to nginx. Also fixed stale score
   display during submission and made Show debrief target the level just
   completed rather than the auto-selected next level.
+
+- 2026-10-31: P20 result UI polish: replaced raw JSON dumps with a score card,
+  component breakdown, product recovery labels, and readable debrief panel.
+  Tightened the debrief prompt and fallback validation against snake_case/raw
+  float output, and fixed proxy-relative API calls after live browser testing.

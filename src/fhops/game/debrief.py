@@ -183,6 +183,10 @@ def explain_debrief(
         costs = candidate.get("parameter_costs")
         if not isinstance(why, str) or not why.strip():
             return fallback
+        if any(
+            token in why for token in ("player_", "optimal_", "net_profit", "parameter_deltas", "{")
+        ):
+            return fallback
         if not isinstance(costs, dict):
             return fallback
         # Numeric claims in the template are generated only from facts; reject

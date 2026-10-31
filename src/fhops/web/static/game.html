@@ -29,6 +29,12 @@
     #chat-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
     #chat-row button { width: auto; margin: 0; }
     #score { font-size: 2.4rem; font-weight: 700; margin: 8px 0; }
+    #result-panel, #debrief-panel { display: none; border-top: 1px solid #d8e2db; margin-top: 14px; padding-top: 12px; }
+    .metric-row { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-bottom: 1px solid #edf2ee; font-size: .9rem; }
+    .metric-row strong { font-variant-numeric: tabular-nums; }
+    .result-title { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+    .result-title strong { font-size: 1.6rem; }
+    #debrief-why { background: #f7faf8; border-left: 3px solid #1f6b43; padding: 8px 10px; margin: 8px 0; }
     #level-map { display: grid; gap: 8px; margin: 8px 0 12px; }
     .level-card { border: 1px solid #c8d5cc; border-radius: 8px; padding: 8px 10px; background: #f7faf8; cursor: pointer; }
     .level-card.current { border-color: #1f6b43; box-shadow: 0 0 0 2px #1f6b4333; }
@@ -82,6 +88,18 @@
     <button id="submit" disabled>Submit one attempt</button>
     <button id="debrief" disabled>Show debrief</button>
     <div id="score">—</div>
+    <div id="result-panel">
+      <div class="result-title"><strong id="result-score">—</strong><span id="result-level" class="muted"></span></div>
+      <div class="metric-row"><span>Net profit</span><strong id="result-net">—</strong></div>
+      <div id="result-components"></div>
+      <div id="result-products"></div>
+    </div>
+    <div id="debrief-panel">
+      <h3>Debrief</h3>
+      <div id="debrief-why"></div>
+      <div id="debrief-optimal"></div>
+      <div id="debrief-costs"></div>
+    </div>
     <div id="status">Join a session to begin.</div>
   </section>
 </main>
@@ -90,7 +108,36 @@ const state = { level: null, levels: [], armed: false, lastCompletedLevel: null 
 const API = window.location.pathname.replace(/\/game\/?$/, '') + '/api';
 const api = (path) => `${API}${path}`;
 const $ = (id) => document.getElementById(id);
-const show = (value) => { $('status').textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2); };
+const setStatus = (value) => { $('status').textContent = String(value); };
+const money = (value) => Math.abs(Number(value)) < 0.5 ? '$0' : new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(Number(value));
+const number = (value) => new Intl.NumberFormat('en-CA', { maximumFractionDigits: 1 }).format(Number(value));
+function renderResult(payload) {
+  const result = payload.result;
+  $('result-panel').style.display = 'block';
+  $('result-score').textContent = `${Number(payload.score).toFixed(1)} / 100`;
+  $('result-level').textContent = state.levels.find((level) => level.level_id === state.lastCompletedLevel)?.name || '';
+  $('result-net').textContent = money(result.net_profit);
+  const components = [
+    ['Gross log value', result.gross_log_value],
+    ['Machine operating cost', -result.machine_cost],
+    ['Care premium', -result.care_premium],
+    ['Residual damage loss', -result.residual_damage_loss],
+    ['Mobilisation', -result.mobilisation_cost],
+    ['Road extension', -result.road_extension_cost],
+  ];
+  $('result-components').innerHTML = components.map(([label, value]) => `<div class="metric-row"><span>${label}</span><strong>${money(value)}</strong></div>`).join('');
+  const products = Object.entries(result.product_volume_m3 || {});
+  $('result-products').innerHTML = products.length
+    ? `<div class="metric-row"><span>Recovered products</span><strong>${products.map(([key, value]) => `${key.replaceAll('_', ' ')}: ${number(value)} m³`).join(' · ')}</strong></div>`
+    : '';
+}
+function renderDebrief(payload) {
+  $('debrief-panel').style.display = 'block';
+  $('debrief-why').textContent = payload.explanation.why_optimal;
+  const optimal = payload.optimal_choices;
+  $('debrief-optimal').innerHTML = `<div class="metric-row"><span>Optimal choices</span><strong>care ${optimal.care_level}, ${optimal.skidder_count} skidder(s), ${optimal.log_length_m} m logs, sawlog min ${optimal.sawlog_min_dbh_cm} cm, road extension ${optimal.road_extension_m} m</strong></div>`;
+  $('debrief-costs').innerHTML = (payload.parameter_deltas || []).map((item) => `<div class="metric-row"><span>${item.parameter}: ${item.player_value} → ${item.optimal_value}</span><strong>${money(item.cost_of_wrong)} cost</strong></div>`).join('');
+}
 
 function polygonRings(payload) {
   const rings = [];
@@ -145,8 +192,8 @@ $('join').onclick = async () => {
     $('submit').disabled = false;
     await refreshCompletion(sid, team);
     await refreshLeaderboard(sid);
-    show({ joined: { session_id: sid, team_code: team }, current_level: state.level.level_id });
-  } catch (error) { show(String(error)); }
+    setStatus(`Joined session ${sid} as ${team}.`);
+  } catch (error) { setStatus(String(error)); }
 };
 
 $('submit').onclick = async () => {
@@ -155,8 +202,10 @@ $('submit').onclick = async () => {
     $('submit').disabled = true;
     $('debrief').disabled = true;
     $('score').textContent = '—';
+    $('result-panel').style.display = 'none';
+    $('debrief-panel').style.display = 'none';
     state.lastCompletedLevel = state.level.level_id;
-    show('Submitting attempt…');
+    setStatus('Submitting attempt…');
     const session = $('session').value.trim(), team = $('team').value.trim();
     const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit?level_id=${encodeURIComponent(state.level.level_id)}`), {
       method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -170,8 +219,9 @@ $('submit').onclick = async () => {
     await refreshLeaderboard(session);
     await refreshCompletion(session, team);
     $('submit').disabled = state.teamState?.current_level === null;
-    show({ score: payload.score, net_profit: payload.attempt.net_profit, result: payload.result });
-  } catch (error) { $('submit').disabled = false; show(String(error)); }
+    renderResult(payload);
+    setStatus('Level complete. Review the result and debrief.');
+  } catch (error) { $('submit').disabled = false; setStatus(String(error)); }
 };
 
 async function refreshCompletion(sessionId, teamCode) {
@@ -221,7 +271,7 @@ function renderLevelMap(teamState) {
     card.onclick = () => {
       if (card.classList.contains('locked')) return;
       $('level').value = card.dataset.levelId;
-      selectLevel(card.dataset.levelId).catch((error) => show(String(error)));
+      selectLevel(card.dataset.levelId).catch((error) => setStatus(String(error)));
     };
   });
 }
@@ -232,10 +282,10 @@ async function selectLevel(levelId) {
   $('skidders').innerHTML = state.level.controls.skidder_counts.map((v) => `<option value="${v}">${v}</option>`).join('');
   $('logs').innerHTML = state.level.controls.log_length_m.map((v) => `<option value="${v}">${v} m</option>`).join('');
   await drawBoundary();
-  show({ level: state.level.name, status: state.level.status, scoring: state.level.score_bounds });
+  setStatus(`Level: ${state.level.name} · ${state.level.area_ha?.toFixed(2) || '?'} ha · ${state.level.difficulty || ''}`);
 }
 
-$('level').onchange = () => selectLevel($('level').value).catch((error) => show(String(error)));
+$('level').onchange = () => selectLevel($('level').value).catch((error) => setStatus(String(error)));
 $('chat-send').onclick = async () => {
   try {
     const message = $('chat-input').value.trim();
@@ -271,11 +321,12 @@ $('debrief').onclick = async () => {
     const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/debrief/${encodeURIComponent(completedLevel)}`));
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
-    show({ optimal_choices: payload.optimal_choices, explanation: payload.explanation, parameter_costs: payload.parameter_deltas });
-  } catch (error) { show(String(error)); }
+    renderDebrief(payload);
+    setStatus('Debrief loaded for the completed level.');
+  } catch (error) { setStatus(String(error)); }
 };
 
-loadLevel().catch((error) => show(String(error)));
+loadLevel().catch((error) => setStatus(String(error)));
 </script>
 </body>
 </html>

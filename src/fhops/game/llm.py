@@ -17,10 +17,13 @@ DEEPSEEK_GAME_MODEL = "opencode-go/deepseek-v4.1-flash"
 def build_debrief_prompt(facts: dict[str, Any]) -> str:
     """Build a strict JSON-only explanation prompt from deterministic facts."""
     return (
-        "You are the FHOPS serious-game debrief agent. Explain the result using "
-        "ONLY the facts in the JSON below. Do not add new numeric claims, do not "
-        "change the optimal choice, and do not give operational advice beyond "
-        "the supplied facts. Return ONLY one JSON object with exactly these keys:\n"
+        "You are the FHOPS serious-game debrief coach. Explain the result using "
+        "ONLY the facts in the JSON below. Write for a student: never mention JSON "
+        "field names, snake_case names, raw floats, or implementation details. "
+        "Round currency to whole dollars and percentages to one decimal place. "
+        "Do not add new numeric claims, do not change the optimal choice, and do "
+        "not give operational advice beyond the supplied facts. Return ONLY one "
+        "JSON object with exactly these keys:\n"
         '{"why_optimal": "concise explanation", "parameter_costs": {"parameter": "explanation"}}\n'
         "Facts:\n" + json.dumps(facts, sort_keys=True, separators=(",", ":"))
     )

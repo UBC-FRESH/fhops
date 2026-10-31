@@ -52,3 +52,25 @@ def test_explanation_cache_hits(tmp_path: Path) -> None:
     assert calls["count"] == 1
     stored = json.loads(cache_path.read_text())
     assert explanation_key("kc_57254551", choices) in stored
+
+
+def test_technical_llm_text_falls_back_to_template() -> None:
+    payload = load_stand_precompute(PRECOMPUTE)
+    choices = {
+        "care_level": 0.0,
+        "skidder_count": 1,
+        "log_length_m": 4.9,
+        "sawlog_min_dbh_cm": 20.0,
+        "road_extension_m": 0.0,
+    }
+    facts = build_debrief_facts(payload, player_choices=choices, score=0.0)
+    from fhops.game.debrief import explain_debrief
+
+    result = explain_debrief(
+        facts,
+        llm_fn=lambda _: {
+            "why_optimal": "player_net_profit was 123.456789",
+            "parameter_costs": {},
+        },
+    )
+    assert result["source"] == "deterministic_template"
