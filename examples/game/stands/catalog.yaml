@@ -55,8 +55,20 @@ stands:
   - fdi
   age_years: 140
   stems_per_ha: 479
+  basal_area_m2_per_ha: 19.10182
   volume_m3_per_ha: 146.585
-  harvest_system: cut_to_length_two_skidders
+  height_m: 29.2
+  stem_form_factor: 0.192014
+  harvest_fraction: 0.6
+  harvest_system: selection_cut_two_skidders
+  silviculture: selection_cut
+  base_harvester_productivity_multiplier: 0.8
+  careful_logging_profile: default_selection_cut_v1
+  careful_logging_public:
+    care_premium_per_m3_range: [0.0, 14.0]
+    productivity_multiplier_range: [0.72, 1.0]
+    residual_damage_fraction_range: [0.04, 0.2]
+    exact_mapping: server_side_only
   difficulty: advanced
   landing_options:
   - id: main

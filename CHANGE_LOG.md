@@ -4632,3 +4632,12 @@ PY
   bucking policies, and net-profit scoring. Old tiny7/small21 game levels are
   retired; no new level is game-enabled until inventories and precompute are
   complete.
+
+- 2026-10-31: P20 Knife Creek stand-scale assets: generated a deterministic
+  17,221-tree Nemora/PSP stand inside VRI polygon 57254551, split into 10,333
+  harvested and 6,888 residual trees, and validated both FHOPS inventories. The
+  first tree-system smoke run completed in 47 s. Added a selection-cut
+  careful-logging curve with a `0.80` base productivity multiplier, rising care
+  premiums, and diminishing residual-damage benefits; the default curve has an
+  interior optimum at moderate care. Added scenario, block/landing assets,
+  machine/calendar data, and tests.

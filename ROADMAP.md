@@ -609,7 +609,9 @@ loader replaces it.
   - [x] Selected one MKRF, one Gavin Lake, and one Knife Creek stand boundary.
   - [x] Committed EPSG:3005 GeoJSON boundaries and provenance catalog.
   - [ ] Generate pinned Nemora/PSP tree inventories; resolve CWHdm/ICHmk3 PSP.
+    - [x] Knife Creek harvested/residual inventories generated and validated.
   - [ ] Define landing/road-extension assets, product prices, and bucking policy.
+    - [x] Selection-cut careful-logging trade-off with decreasing damage benefits.
   - [ ] Exhaustive stand-scale precompute and best/worst net-profit bounds.
 - [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#313)
   - [ ] Variant scenarios, scoring, and hidden events.

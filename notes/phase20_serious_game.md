@@ -41,7 +41,7 @@ exact polygons as EPSG:3005 GeoJSON.
 | --- | --- | ---: | --- | --- | --- |
 | 1 `mkrf_684` | MKRF RES_KEY 684 | 6.86 ha | CWHdm, HW/FDC, 104 y | tree-length: feller + skidder + loader | starter: small layout, no processor |
 | 2 `gavin_3` | Gavin Lake BLOCK_ID 3 | 13.94 ha | ICHmk3, 207 y | cut-to-length: feller + skidder + processor + loader | intermediate: value recovery and processing balance |
-| 3 `kc_57254551` | Knife Creek VRI polygon 57254551 | 35.95 ha | IDFdk3, FDI, 140 y, 479 stems/ha, 146.6 m³/ha | cut-to-length, two skidders | advanced: larger layout, landing choice, trunk-road extension |
+| 3 `kc_57254551` | Knife Creek VRI polygon 57254551 | 35.95 ha | IDFdk3, FDI, 140 y, 479 stems/ha, 146.6 m³/ha | selection cut, cut-to-length, two skidders | advanced: careful-logging trade-off, landing choice, trunk-road extension |
 
 ### Provenance
 
@@ -124,6 +124,44 @@ SA a meaningful block-selection problem. A fixed-fleet schedule solver may still
 be used internally where it improves the operations plan, but the scored output
 is the deterministic tree-system/net-profit result.
 
+## Careful logging and residual damage (Knife Creek)
+
+Knife Creek is a selection cut, not a clearcut. The base harvester productivity
+is reduced by `0.80` relative to a clear-fell rate to account for slower
+movement, selection of retained stems, and damage avoidance.
+
+The player then chooses a careful-logging level. Higher care:
+
+- lowers harvester productivity further;
+- adds a negotiated operator care premium per harvested m³;
+- reduces the fraction of residual trees damaged.
+
+The residual-damage benefit has **decreasing marginal returns**:
+
+| Setting | Care multiplier | Care premium $/m³ | Residual damage |
+| --- | ---: | ---: | ---: |
+| standard | 1.00 | 0.0 | 20% |
+| light care | 0.96 | 2.0 | 13% |
+| moderate care | 0.90 | 3.0 | 8.5% |
+| high care | 0.82 | 7.0 | 5.5% |
+| maximum care | 0.72 | 14.0 | 4.0% |
+
+The exact mapping is server-side and is used in precompute. The briefing shows
+only plausible ranges: care premium `0–14 $/m³`, productivity multiplier
+`0.72–1.0`, and residual damage `4–20%`. Players can reason about the trade-off
+but cannot calculate the exact optimum from the UI. The default curve has an
+interior optimum, so “maximum care” is not automatically best.
+
+Residual trees are a separate pinned inventory. They are not processed by the
+tree system. Their asset value loss is charged as:
+
+```text
+residual_damage_loss = residual_asset_value * residual_damage_fraction
+```
+
+The residual inventory, damage value, and exact care mapping are revealed only
+in the post-level debrief.
+
 ## Bucking policy and log value
 
 The player parameterizes a bucking policy, for example:
@@ -154,6 +192,8 @@ extension, trucking if enabled, and the fixed fleet opportunity cost.
 ```text
 net_profit = gross_log_value
            - machine_operating_cost
+           - careful_logging_premium
+           - residual_damage_loss
            - mobilisation_cost
            - road_extension_cost
            - landing_cost
@@ -238,12 +278,16 @@ Committed stand assets:
 Planned assets and code:
 
 - `examples/game/levels/<level>.yaml` — level manifests.
-- `examples/game/stands/<level>/trees.csv` and metadata — Nemora inventories.
+- `examples/game/stands/<level>/trees.csv` and metadata — harvested Nemora
+  inventories.
+- `examples/game/stands/<level>/residual_trees.csv` — residual stems for damage
+  accounting (Knife Creek).
 - `examples/game/stands/<level>/landings.geojson` — landing candidates and
   trunk-road extensions.
+- `scripts/generate_game_inventory.py` — deterministic Nemora/PSP producer.
 - `examples/game/stands/<level>/prices.yaml` — product/grade prices.
-- `src/fhops/game/levels.py`, `inventory.py`, `bucking.py`, `scoring.py`,
-  `precompute.py`, `state.py`.
+- `src/fhops/game/levels.py`, `inventory.py`, `bucking.py`,
+  `careful_logging.py`, `scoring.py`, `precompute.py`, `state.py`.
 - `src/fhops/web/game.py` and `src/fhops/web/static/game.*`.
 - `tests/game/`, `tests/web/test_game_api.py`.
 - `docs/howto/serious_game.rst`.
@@ -254,9 +298,12 @@ Planned assets and code:
   polygons; one block per level.
 - Each level has a pinned Nemora/PSP tree inventory and provenance; levels
   without a valid PSP fit stay disabled.
-- Players can parameterize fleet, arrival, shift, landing, and bucking policy.
-- The score is normalized net profit with both log-value recovery and operating
-  costs visible.
+- Players can parameterize fleet, arrival, shift, landing, bucking policy, and
+  (on Knife Creek) careful logging.
+- The score is normalized net profit with log-value recovery, operating costs,
+  care premium, and residual damage visible.
+- Careful-logging damage benefits have decreasing marginal returns; maximum
+  care is not automatically optimal.
 - Every feasible finite combination is precomputed; incomplete levels fail
   closed.
 - Same choices produce identical trees, events, machine runs, and scores.
@@ -273,6 +320,8 @@ Planned assets and code:
   multi-feller support.
 - FHOPS stem products are placeholders; bucking/value code must be added and
   validated.
+- Careful-logging curve defaults are a game design, not an empirical
+  productivity/damage model; they need calibration and clear caveats.
 - Landing candidates and trunk-road lengths need a real road/DEM survey.
 - Exhaustive tree-system precompute can still be expensive for the 36 ha level;
   cache bucking value by stand/policy and fail closed on incomplete grids.

@@ -1,0 +1,6 @@
+id,crew,daily_hours,operating_cost,role
+H1,CH1,20.0,950.0,feller_buncher
+H2,CH2,20.0,950.0,grapple_skidder
+H3,CH3,20.0,950.0,grapple_skidder
+H5,CH5,20.0,950.0,roadside_processor
+H4,CH4,20.0,950.0,loader
