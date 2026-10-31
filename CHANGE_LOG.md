@@ -1,3 +1,19 @@
+# 2026-10-31 — Studio retained trees, obstacles, terrain, and runnable replay
+
+- Studio projects now materialize retained trees as simulation obstacles and
+  render retained trees in teal in the 3D replay.
+- Studio terrain heightfields are exported as a GeoTIFF DEM and the edited road
+  is exported as GeoJSON for route/grade checks.
+- Derived inventory tree elevations follow the edited terrain heightfield.
+- Studio replay renders terrain and retained trees and visually routes machine
+  travel around retained obstacles.
+- Added retained/terrain indicators to the replay header and obstacle assertions
+  in Studio tests.
+- Known behavior: extreme terrain edits can correctly reject a run with a
+  maximum-grade error; use a smoother/flatter edit or adjust route settings.
+- Verification: targeted Studio tests, lint/syntax checks, and replay browser
+  smoke test.
+
 # 2026-10-31 — Studio retained trees, obstacles, and terrain replay
 
 - Studio-derived runs now pass retained trees to the feller simulation as

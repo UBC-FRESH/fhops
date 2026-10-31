@@ -669,7 +669,7 @@ eventually terrain/obstacle editing, with a derived scenario run.
   - [x] Studio run endpoint and KPI result panel
   - [x] Studio 3D replay of derived runs
 - [x] P21.4 Retained-tree rendering, obstacles, and visual terrain replay
-- [ ] P21.4a Terrain-aware simulation routing (visual heightfield exists)
+- [x] P21.4a Terrain DEM/road handoff for route and grade checks
 - [ ] P21.5 3D editor integration and replay preview
 - [ ] P21.6 Full operator-policy simulation integration
 - [ ] P21.7 Closeout: tests, docs, gates, and issue-tree closeout

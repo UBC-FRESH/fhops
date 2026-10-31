@@ -43,7 +43,7 @@ rewriting project storage.
 ## Explicit limitations in this slice
 
 - 2D top-down editor, not yet direct 3D manipulation
-- Terrain edits are visual in the 3D replay; the heightfield is not yet used by the core machine-routing simulation
+- Terrain edits generate a DEM and are used for route/grade checks; the feller and skidder route models remain reference approximations and can reject steep terrain
 - Operator policies are stored for every machine, but only the feller policy is
   currently mapped into the simulation runner
 - Retention clumps are tree-level selections; no filled clump polygons yet

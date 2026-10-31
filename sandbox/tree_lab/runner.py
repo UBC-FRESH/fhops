@@ -217,9 +217,13 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         command.extend(["--processor-model", str(args["processor_model"])])
     if args.get("processor_rate"):
         command.extend(["--processor-rate", str(args["processor_rate"])])
-    if args.get("dem"):
+    if case.manifest.get("dem"):
         command.extend(["--dem", str(case.path("dem"))])
-    if args.get("road"):
+    elif args.get("dem"):
+        command.extend(["--dem", str(case.path("dem"))])
+    if case.manifest.get("road"):
+        command.extend(["--road", str(case.path("road"))])
+    elif args.get("road"):
         command.extend(["--road", str(case.path("road"))])
     command.extend(["--out", str(run_dir / "system")])
     return command

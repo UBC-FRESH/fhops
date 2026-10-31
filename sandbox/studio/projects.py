@@ -13,6 +13,7 @@ import math
 import re
 import secrets
 import shutil
+from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -384,7 +385,33 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
     return args
 
 
-def _write_project_inventory(rows: list[Any], directory: Path, case_id: str) -> tuple[Path, Path]:
+def _terrain_elevation(project: dict[str, Any], base: float, x: float, y: float) -> float:
+    terrain = project.get("terrain") or {}
+    heights = terrain.get("heights") or []
+    bounds = terrain.get("bounds")
+    if not heights or not isinstance(bounds, list) or len(bounds) != 4:
+        return base
+    min_x, min_y, max_x, max_y = (float(value) for value in bounds)
+    res = max(2, int(terrain.get("resolution") or 24))
+    fx = max(0.0, min(res - 1, (x - min_x) / max(1e-9, max_x - min_x) * (res - 1)))
+    fy = max(0.0, min(res - 1, (y - min_y) / max(1e-9, max_y - min_y) * (res - 1)))
+    x0, y0 = int(fx), int(fy)
+    x1, y1 = min(res - 1, x0 + 1), min(res - 1, y0 + 1)
+    dx, dy = fx - x0, fy - y0
+    h00 = float(heights[y0 * res + x0] or 0.0)
+    h10 = float(heights[y0 * res + x1] or 0.0)
+    h01 = float(heights[y1 * res + x0] or 0.0)
+    h11 = float(heights[y1 * res + x1] or 0.0)
+    return base + (h00 * (1 - dx) + h10 * dx) * (1 - dy) + (h01 * (1 - dx) + h11 * dx) * dy
+
+
+def _write_project_inventory(
+    rows: list[Any],
+    directory: Path,
+    case_id: str,
+    *,
+    elevation_fn: Callable[[float, float], float] | None = None,
+) -> tuple[Path, Path]:
     directory.mkdir(parents=True, exist_ok=True)
     inventory = directory / "tree_inventory.csv"
     with inventory.open("w", encoding="utf-8", newline="") as handle:
@@ -455,8 +482,21 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     ]
     if not rows:
         raise StudioError("The edited block and retention rules leave no harvestable trees.")
+    terrain = project.get("terrain") or {}
+    heights = terrain.get("heights") or []
+    base_elevation = min(
+        (float(tree.elevation_m) for tree in inventory.rows if tree.elevation_m is not None),
+        default=0.0,
+    )
+    elevation_fn = None
+    if heights:
+        base_elevation = float(terrain.get("base_m", base_elevation))
+
+        def elevation_fn(x: float, y: float) -> float:
+            return _terrain_elevation(project, base_elevation, x, y)
+
     inv_path, meta_path = _write_project_inventory(
-        rows, root / "tree_inventory", str(base_case.case_id)
+        rows, root / "tree_inventory", str(base_case.case_id), elevation_fn=elevation_fn
     )
     manifest = json.loads((base_case.root / "case.json").read_text(encoding="utf-8"))
     manifest["label"] = str(project.get("label") or manifest.get("label"))
@@ -469,6 +509,103 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     }
     manifest["landing"] = project.get("landing")
     manifest["studio_project_id"] = project_id
+    if heights:
+        try:
+            import numpy as np
+            import rasterio
+            from rasterio.transform import from_origin
+
+            bounds = terrain.get("bounds") or []
+            if len(bounds) == 4:
+                min_x, min_y, max_x, max_y = (float(value) for value in bounds)
+                landing = project.get("landing") or {}
+                road_points = (project.get("road") or {}).get("points") or []
+                margin = 60.0
+                dem_min_x = min(
+                    [
+                        min_x,
+                        *[float(point[0]) - margin for point in road_points],
+                        float(landing.get("x", min_x)) - margin,
+                    ]
+                )
+                dem_min_y = min(
+                    [
+                        min_y,
+                        *[float(point[1]) - margin for point in road_points],
+                        float(landing.get("y", min_y)) - margin,
+                    ]
+                )
+                dem_max_x = max(
+                    [
+                        max_x,
+                        *[float(point[0]) + margin for point in road_points],
+                        float(landing.get("x", max_x)) + margin,
+                    ]
+                )
+                dem_max_y = max(
+                    [
+                        max_y,
+                        *[float(point[1]) + margin for point in road_points],
+                        float(landing.get("y", max_y)) + margin,
+                    ]
+                )
+                dem_res = 40
+                cell_x = (dem_max_x - dem_min_x) / dem_res
+                cell_y = (dem_max_y - dem_min_y) / dem_res
+                array = np.empty((dem_res, dem_res), dtype="float32")
+                for row in range(dem_res):
+                    for col in range(dem_res):
+                        x = dem_min_x + (col + 0.5) * cell_x
+                        y = dem_min_y + (row + 0.5) * cell_y
+                        array[row, col] = _terrain_elevation(project, base_elevation, x, y)
+                array = np.flipud(array)
+                dem_path = root / "terrain" / "studio_dem.tif"
+                dem_path.parent.mkdir(parents=True, exist_ok=True)
+                transform = from_origin(dem_min_x, dem_max_y, cell_x, cell_y)
+                with rasterio.open(
+                    dem_path,
+                    "w",
+                    driver="GTiff",
+                    height=dem_res,
+                    width=dem_res,
+                    count=1,
+                    dtype="float32",
+                    crs="EPSG:3005",
+                    transform=transform,
+                ) as dataset:
+                    dataset.write(array, 1)
+                manifest["dem"] = str(dem_path.relative_to(root))
+                manifest.setdefault("terrain", {})["dem"] = manifest["dem"]
+                manifest["terrain"]["studio_base_m"] = base_elevation
+        except Exception:
+            # A visual terrain edit must not prevent a run if rasterio is unavailable.
+            pass
+    road = project.get("road") or {}
+    road_points = road.get("points") or []
+    if len(road_points) >= 2:
+        road_path = root / "approaches" / "studio_road.geojson"
+        road_path.parent.mkdir(parents=True, exist_ok=True)
+        road_path.write_text(
+            json.dumps(
+                {
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "type": "Feature",
+                            "properties": {"source": "studio"},
+                            "geometry": {
+                                "type": "LineString",
+                                "coordinates": [[float(x), float(y)] for x, y in road_points],
+                            },
+                        }
+                    ],
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        manifest["road"] = str(road_path.relative_to(root))
     manifest["obstacles"] = [
         [
             round(tree.x_m, 3),
