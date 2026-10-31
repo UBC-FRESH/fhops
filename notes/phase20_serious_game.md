@@ -253,8 +253,8 @@ Artifact: `examples/game/precomputed/kc_57254551.json`.
 
 MKRF and Gavin are clearcut/tree-length or cut-to-length levels with care
 fixed at standard. Each has four combinations (2 skidder counts × 2 log
-lengths). MKRF precompute: best `$255,090.33`, worst `$246,366.12`. Gavin
-precompute: best `$2,610.45`, worst `-$3,530.55`, deliberately straddling
+lengths). MKRF precompute: best `$257,235.66`, worst `$246,117.58`. Gavin
+precompute: best `$2,302.38`, worst `-$3,838.62`, deliberately straddling
 break-even so the weak choices lose money while the best plan is profitable.
 
 The old fleet-opportunity formula is retained: extra marginal multipliers
