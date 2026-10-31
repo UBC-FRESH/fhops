@@ -79,7 +79,7 @@ export function createViewer(container, { onTime } = {}) {
   function resize() {
     const width = container.clientWidth || window.innerWidth;
     const height = container.clientHeight || window.innerHeight;
-    renderer.setSize(width, height, false);
+    renderer.setSize(width, height, true);
     camera.aspect = width / Math.max(1, height);
     camera.updateProjectionMatrix();
     // The scene view can be created while hidden. Re-fit once the real
