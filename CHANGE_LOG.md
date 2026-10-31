@@ -4734,3 +4734,8 @@ PY
   sawlog/landing controls so every finite debrief parameter is visible before
   submission, added no-store caching to `/game`, and tightened result/debrief
   formatting to avoid raw JSON and excess precision.
+
+- 2026-10-31: P20 corrected MKRF tree-length system to include a roadside
+  processor for delimbing/bucking/top removal; updated machine/calendar/
+  harvest-system assets and regenerated the MKRF precompute (best $259,929.60,
+  worst $252,265.64).

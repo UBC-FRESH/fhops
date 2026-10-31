@@ -10,7 +10,7 @@ Status: implementation complete; PR #317 queued for review.
 - Knife Creek selection-cut careful-logging trade-off with diminishing damage
   benefits and residual-tree inventory.
 - Finite precomputes for every level:
-  - MKRF: 4 combinations, best $334,549.83 / worst $326,885.86.
+  - MKRF: 4 combinations, best $259,929.60 / worst $252,265.64.
   - Gavin: 4 combinations, best $2,456.78 / worst -$5,711.50 (deliberately
     straddles break-even).
   - Knife Creek: 20 combinations, best $75,705.63 / worst $21,969.10.

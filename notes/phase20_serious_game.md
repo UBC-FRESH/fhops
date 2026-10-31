@@ -39,7 +39,7 @@ exact polygons as EPSG:3005 GeoJSON.
 
 | Level | Stand | Area | BEC / stand | System | Main difficulty |
 | --- | --- | ---: | --- | --- | --- |
-| 1 `mkrf_684` | MKRF RES_KEY 684 | 6.86 ha | CWHdm, HW/FDC, 104 y | tree-length: feller + skidder + loader | starter: small layout, no processor |
+| 1 `mkrf_684` | MKRF RES_KEY 684 | 6.86 ha | CWHdm, HW/FDC, 104 y | tree-length: feller + skidder + roadside processor + loader | starter: small layout, processing at landing |
 | 2 `gavin_1032` | Gavin Lake BLOCK_ID 1032 | 10.00 ha | ICHmk3, 137 y | cut-to-length: feller + skidder + processor + loader | intermediate: value recovery and processing balance |
 | 3 `kc_57254551` | Knife Creek VRI polygon 57254551 | 35.95 ha | IDFdk3, FDI, 140 y, 479 stems/ha, 146.6 m³/ha | selection cut, cut-to-length, two skidders | advanced: careful-logging trade-off, landing choice, trunk-road extension |
 
@@ -231,7 +231,7 @@ Artifact: `examples/game/precomputed/kc_57254551.json`.
 
 MKRF and Gavin are clearcut/tree-length or cut-to-length levels with care
 fixed at standard. Each has four combinations (2 skidder counts × 2 log
-lengths). MKRF precompute: best `$334,549.83`, worst `$326,885.86`. Gavin
+lengths). MKRF precompute: best `$259,929.60`, worst `$252,265.64`. Gavin
 precompute: best `$2,456.78`, worst `-$5,711.50`, deliberately straddling
 break-even so the weak choices lose money while the best plan is profitable.
 

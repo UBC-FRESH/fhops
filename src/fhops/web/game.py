@@ -188,6 +188,7 @@ class GameService:
             "order": entry.order,
             "area_ha": entry.level.get("area_ha"),
             "difficulty": entry.level.get("difficulty"),
+            "briefing": entry.level.get("briefing", {}),
             "controls": {
                 "care_levels": entry.level["care_levels"],
                 "skidder_counts": entry.level["skidder_counts"],

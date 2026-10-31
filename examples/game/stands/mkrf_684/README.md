@@ -12,3 +12,5 @@ FAIB-PSP-derived synthetic inventory for MKRF `RES_KEY 684`.
 
 The tree list is deterministic but synthetic; placements are Poisson, not a
 mapped stem map. See `provenance.json` and `inventory.meta.json`.
+
+The MKRF tree-length system includes a roadside processor for delimbing/bucking; it is not a processor-free tree-length operation.

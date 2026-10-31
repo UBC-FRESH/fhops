@@ -122,6 +122,13 @@ const setStatus = (value) => { $('status').textContent = String(value); };
 const money = (value) => Math.abs(Number(value)) < 0.5 ? '$0' : new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(Number(value));
 const number = (value) => new Intl.NumberFormat('en-CA', { maximumFractionDigits: 1 }).format(Number(value));
 const scoreText = (value) => Number.isInteger(Number(value)) ? Number(value).toFixed(0) : Number(value).toFixed(1);
+const parameterLabel = (key) => ({
+  care_level: 'careful logging',
+  skidder_count: 'skidder count',
+  log_length_m: 'log length',
+  sawlog_min_dbh_cm: 'sawlog minimum DBH',
+  road_extension_m: 'road extension',
+}[key] || key);
 function renderResult(payload) {
   const result = payload.result;
   $('result-panel').style.display = 'block';
@@ -147,7 +154,7 @@ function renderDebrief(payload) {
   $('debrief-why').textContent = payload.explanation.why_optimal;
   const optimal = payload.optimal_choices;
   $('debrief-optimal').innerHTML = `<div class="metric-row"><span>Optimal choices</span><strong>care ${optimal.care_level}, ${optimal.skidder_count} skidder(s), ${optimal.log_length_m} m logs, sawlog min ${optimal.sawlog_min_dbh_cm} cm, road extension ${optimal.road_extension_m} m</strong></div>`;
-  $('debrief-costs').innerHTML = (payload.parameter_deltas || []).map((item) => `<div class="metric-row"><span>${item.parameter}: ${item.player_value} → ${item.optimal_value}</span><strong>${money(item.cost_of_wrong)} cost</strong></div>`).join('');
+  $('debrief-costs').innerHTML = (payload.parameter_deltas || []).map((item) => `<div class="metric-row"><span>${parameterLabel(item.parameter)}: ${item.player_value} → ${item.optimal_value}</span><strong>${money(item.cost_of_wrong)} cost</strong></div>`).join('');
 }
 
 function polygonRings(payload) {
@@ -355,6 +362,7 @@ $('chat-send').onclick = async () => {
 
 $('debrief').onclick = async () => {
   try {
+    setStatus('Loading debrief…');
     const session = $('session').value.trim(), team = $('team').value.trim();
     const completedLevel = state.lastCompletedLevel || state.level.level_id;
     const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/debrief/${encodeURIComponent(completedLevel)}`));

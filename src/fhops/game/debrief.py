@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import re
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -16,6 +17,13 @@ __all__ = [
     "explain_debrief",
 ]
 
+PARAMETER_LABELS = {
+    "care_level": "careful logging",
+    "skidder_count": "skidder count",
+    "log_length_m": "log length",
+    "sawlog_min_dbh_cm": "sawlog minimum DBH",
+    "road_extension_m": "road extension",
+}
 PARAMETERS = (
     "care_level",
     "skidder_count",
@@ -142,21 +150,22 @@ def render_template_debrief(facts: DebriefFacts) -> dict[str, Any]:
     if facts.parameter_deltas:
         largest = facts.parameter_deltas[0]
         cost_text = (
-            f"The largest miss was {largest['parameter']} "
+            f"The largest miss was {PARAMETER_LABELS[largest['parameter']]} "
             f"({largest['player_value']} instead of {largest['optimal_value']}), "
             f"which cost ${largest['cost_of_wrong']:,.0f} in net profit."
         )
     else:
         cost_text = "Your plan matched the best finite control combination."
+    score_text = f"{facts.score:.0f}" if facts.score.is_integer() else f"{facts.score:.1f}"
     why = (
         f"The best plan earned ${facts.optimal_net_profit:,.0f} net profit; "
         f"your plan earned ${facts.player_net_profit:,.0f} and scored "
-        f"{facts.score:.1f}/100. {cost_text}"
+        f"{score_text}/100. {cost_text}"
     )
     return {
         "why_optimal": why,
         "parameter_costs": {
-            item["parameter"]: (
+            PARAMETER_LABELS[item["parameter"]]: (
                 f"Choosing {item['optimal_value']} instead of {item['player_value']} "
                 f"would have changed net profit by ${item['net_profit_delta']:,.0f}."
             )
@@ -184,10 +193,26 @@ def explain_debrief(
         if not isinstance(why, str) or not why.strip():
             return fallback
         if any(
-            token in why for token in ("player_", "optimal_", "net_profit", "parameter_deltas", "{")
+            token in why
+            for token in (
+                "player_",
+                "optimal_",
+                "net_profit",
+                "parameter_deltas",
+                "care_level",
+                "skidder_count",
+                "log_length_m",
+                "sawlog_min_dbh_cm",
+                "road_extension_m",
+                "{",
+            )
         ):
             return fallback
+        if re.search(r"\d+\.\d{3,}", why):
+            return fallback
         if not isinstance(costs, dict):
+            return fallback
+        if any(re.search(r"\d+\.\d{3,}", str(value)) for value in costs.values()):
             return fallback
         # Numeric claims in the template are generated only from facts; reject
         # extra numeric-looking keys rather than trusting free-form prose.

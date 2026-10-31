@@ -74,3 +74,20 @@ def test_technical_llm_text_falls_back_to_template() -> None:
         },
     )
     assert result["source"] == "deterministic_template"
+
+
+def test_prompt_facts_are_rounded_to_presentation_precision() -> None:
+    payload = load_stand_precompute(PRECOMPUTE)
+    choices = {
+        "care_level": 1.0,
+        "skidder_count": 1,
+        "log_length_m": 4.9,
+        "sawlog_min_dbh_cm": 20.0,
+        "road_extension_m": 0.0,
+    }
+    facts = build_debrief_facts(payload, player_choices=choices, score=0.0)
+    prompt = build_debrief_prompt(facts.to_dict())
+    assert "75705.62948483122" not in prompt
+    assert "21969.10009106162" not in prompt
+    assert "75706" in prompt
+    assert "21969" in prompt
