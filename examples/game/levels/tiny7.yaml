@@ -1,0 +1,21 @@
+id: tiny7
+order: 1
+name: "Tiny7: First Shift"
+description: "A two-block starter level. Learn the fleet and arrival trade-offs."
+scenario: "../../tiny7/scenario.yaml"
+arrival_profiles: [hot, staged, phased]
+harvest_patterns: [parallel, sequential, finish_first]
+breakdown_seed: 19107
+breakdowns:
+  - {role: grapple_skidder, index: 0, day: 3}
+  - {role: loader, index: 0, day: 5}
+objective_weights:
+  production: 1.0
+  mobilisation: 0.2
+  transitions: 0.1
+  landing_surplus: 0.05
+fleet:
+  - {role: feller_buncher, owned: 2, maximum: 3, unit_cost: 4.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
+  - {role: grapple_skidder, owned: 1, maximum: 3, unit_cost: 4.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
+  - {role: processor, owned: 3, maximum: 4, unit_cost: 3.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
+  - {role: loader, owned: 3, maximum: 4, unit_cost: 3.0, marginal_multipliers: [1.0, 2.0, 8.0], spot_surcharge: 4.0}
