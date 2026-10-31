@@ -222,3 +222,41 @@ def test_leaderboard_endpoint(tmp_path: Path) -> None:
     assert leaderboard.status_code == 200
     assert leaderboard.json()[0]["team_code"] == "T1"
     assert leaderboard.json()[0]["completed_levels"] == 0
+
+
+def test_final_chat_is_gated_until_completion(tmp_path: Path) -> None:
+    script = tmp_path / "fake_chat_agent.py"
+    script.write_text("print('final coach reply')\n", encoding="utf-8")
+    app = create_app(
+        ServiceConfig(
+            roots=[tmp_path],
+            workspace=Path.cwd(),
+            game_level=LEVEL,
+            game_precompute=PRECOMPUTE,
+            allow_agent=True,
+            agent_command=(__import__("sys").executable, str(script)),
+        )
+    )
+    client = TestClient(app)
+    assert client.get("/api/game/levels").json()[0]["chat_enabled"] is True
+    client.post("/api/game/sessions", json={"session_id": "chat"})
+    client.post("/api/game/sessions/chat/teams", json={"team_code": "T1"})
+
+    blocked = client.post(
+        "/api/game/sessions/chat/teams/T1/chat", json={"message": "How did we do?"}
+    )
+    assert blocked.status_code == 400
+
+    client.post(
+        "/api/game/sessions/chat/teams/T1/submit",
+        json={
+            "care_level": 0.5,
+            "skidder_count": 1,
+            "log_length_m": 6.1,
+            "sawlog_min_dbh_cm": 20.0,
+            "road_extension_m": 0.0,
+        },
+    )
+    reply = client.post("/api/game/sessions/chat/teams/T1/chat", json={"message": "How did we do?"})
+    assert reply.status_code == 200, reply.text
+    assert reply.json()["response"] == "final coach reply"

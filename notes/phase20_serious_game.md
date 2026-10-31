@@ -302,7 +302,9 @@ The routes are enabled only when `game_level` and `game_precompute` are both
 configured on `ServiceConfig`. The `/game` shell renders the whole-stand SVG boundary, joins a local
 session/team, exposes finite controls, submits one attempt, displays the score
 and selected-run components, refreshes the session leaderboard, and exposes the
-post-attempt debrief.
+post-attempt debrief. When the optional agent is enabled, a final-only chat
+panel unlocks only after the last level is complete; the API also refuses chat
+before that point.
 
 ## UI
 

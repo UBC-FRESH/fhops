@@ -39,6 +39,12 @@ class TeamCreate(BaseModel):
     team_code: str = Field(min_length=1, max_length=80)
 
 
+class ChatRequest(BaseModel):
+    """Final-debrief chat message."""
+
+    message: str = Field(min_length=1, max_length=4000)
+
+
 class GameChoicesPayload(BaseModel):
     """Finite stand-control choices submitted by a team."""
 
@@ -78,6 +84,7 @@ class GameService:
         precompute_path: Path | None = None,
         levels: list[tuple[Path, Path]] | None = None,
         llm_fn: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
+        chat_fn: Callable[[dict[str, Any], str], str] | None = None,
         explanation_cache: ExplanationCache | None = None,
     ) -> None:
         specs = list(levels or [])
@@ -124,6 +131,7 @@ class GameService:
         ).hexdigest()
         self.sessions: dict[str, TournamentSession] = {}
         self.llm_fn = llm_fn
+        self.chat_fn = chat_fn
         self.explanation_cache = explanation_cache
 
     @property
@@ -202,6 +210,7 @@ class GameService:
                 "best_net_profit": bounds["best_net_profit"],
                 "worst_net_profit": bounds["worst_net_profit"],
             },
+            "chat_enabled": self.chat_fn is not None,
             "status": "ready",
         }
 
@@ -250,6 +259,33 @@ class GameService:
                 llm_fn=self.llm_fn,
             ),
         }
+
+    def chat(self, session_id: str, team_code: str, message: str) -> dict[str, Any]:
+        """Chat about the completed tournament; only after the final level."""
+        session = self.session(session_id)
+        team = session.team(team_code)
+        if session.current_level(team.team_code) is not None:
+            raise GameStateError("Final chat unlocks only after the final level is complete.")
+        if self.chat_fn is None:
+            raise GameStateError("The optional final chat agent is disabled.")
+        if not message.strip():
+            raise ValueError("Chat message must not be blank.")
+        debriefs = []
+        for attempt in team.attempts:
+            entry = self._entry(attempt.level_id)
+            facts = build_debrief_facts(
+                entry.precompute,
+                player_choices=attempt.choices,
+                score=attempt.score,
+            )
+            debriefs.append(facts.to_dict())
+        context = {
+            "team_code": team.team_code,
+            "total_score": team.total_score,
+            "attempts": [attempt.to_dict() for attempt in team.attempts],
+            "debriefs": debriefs,
+        }
+        return {"response": self.chat_fn(context, message), "source": "agent"}
 
     def submit(
         self,
@@ -370,6 +406,17 @@ def create_game_router(service: GameService) -> APIRouter:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         except (GameStateError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @router.post("/sessions/{session_id}/teams/{team_code}/chat")
+    def chat(session_id: str, team_code: str, request: ChatRequest) -> dict[str, Any]:
+        try:
+            return service.chat(session_id, team_code, request.message)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except (GameStateError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except RuntimeError as exc:
+            raise HTTPException(status_code=502, detail=str(exc)) from exc
 
     @router.post("/sessions/{session_id}/teams/{team_code}/submit")
     def submit(

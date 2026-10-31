@@ -21,6 +21,13 @@
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .muted { color: #5e6e64; font-size: .85rem; }
     #status { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: .85rem; margin-top: 12px; }
+    #final-panel { grid-column: 1 / -1; display: none; }
+    #chat-log { min-height: 120px; max-height: 260px; overflow-y: auto; border: 1px solid #c8d5cc; border-radius: 8px; padding: 10px; background: #f7faf8; margin: 10px 0; }
+    .chat-message { margin: 6px 0; }
+    .chat-user { color: #173d2a; font-weight: 600; }
+    .chat-agent { color: #34483b; }
+    #chat-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    #chat-row button { width: auto; margin: 0; }
     #score { font-size: 2.4rem; font-weight: 700; margin: 8px 0; }
     @media (max-width: 850px) { main { grid-template-columns: 1fr; } }
   </style>
@@ -40,6 +47,15 @@
       <thead><tr><th style="text-align:left">Team</th><th style="text-align:right">Score</th><th style="text-align:right">Levels</th></tr></thead>
       <tbody></tbody>
     </table>
+  </section>
+  <section id="final-panel">
+    <h2 id="final-title">Final debrief</h2>
+    <p class="muted" id="final-note">All levels complete. Ask the optional debrief coach about the tournament.</p>
+    <div id="chat-log"></div>
+    <div id="chat-row">
+      <input id="chat-input" placeholder="Ask about your score, choices, or trade-offs…" />
+      <button id="chat-send">Ask</button>
+    </div>
   </section>
   <section>
     <h2>Plan and score</h2>
@@ -121,6 +137,7 @@ $('join').onclick = async () => {
       $('session-summary').textContent = `Session ${sid} · team ${team} · next level: ${statePayload.current_level || 'complete'}`;
     }
     await refreshLeaderboard(sid);
+    await refreshCompletion(sid, team);
     show({ joined: { session_id: sid, team_code: team }, current_level: state.level.level_id });
   } catch (error) { show(String(error)); }
 };
@@ -139,9 +156,27 @@ $('submit').onclick = async () => {
     $('submit').disabled = true;
     $('debrief').disabled = false;
     await refreshLeaderboard(session);
+    await refreshCompletion(session, team);
     show({ score: payload.score, net_profit: payload.attempt.net_profit, result: payload.result });
   } catch (error) { show(String(error)); }
 };
+
+async function refreshCompletion(sessionId, teamCode) {
+  if (!sessionId || !teamCode) return;
+  const response = await fetch(`/api/game/sessions/${encodeURIComponent(sessionId)}/teams/${encodeURIComponent(teamCode)}`);
+  if (!response.ok) return;
+  const payload = await response.json();
+  const complete = payload.current_level === null;
+  $('final-panel').style.display = complete ? 'block' : 'none';
+  if (complete) {
+    $('final-title').textContent = `Final debrief — ${payload.total_score.toFixed(1)} points`;
+    $('final-note').textContent = state.level.chat_enabled
+      ? 'All levels complete. Ask the optional DeepSeek debrief coach about the tournament.'
+      : 'All levels complete. The optional chat agent is disabled for this session.';
+    $('chat-input').disabled = !state.level.chat_enabled;
+    $('chat-send').disabled = !state.level.chat_enabled;
+  }
+}
 
 async function refreshLeaderboard(sessionId) {
   if (!sessionId) return;
@@ -163,6 +198,34 @@ async function selectLevel(levelId) {
 }
 
 $('level').onchange = () => selectLevel($('level').value).catch((error) => show(String(error)));
+$('chat-send').onclick = async () => {
+  try {
+    const message = $('chat-input').value.trim();
+    if (!message) return;
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const log = $('chat-log');
+    const userLine = document.createElement('div');
+    userLine.className = 'chat-message chat-user';
+    userLine.textContent = `You: ${message}`;
+    log.appendChild(userLine);
+    $('chat-input').value = '';
+    const response = await fetch(`/api/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/chat`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ message })
+    });
+    const payload = await response.json();
+    const agentLine = document.createElement('div');
+    agentLine.className = 'chat-message chat-agent';
+    agentLine.textContent = response.ok ? `Coach: ${payload.response}` : `Chat unavailable: ${payload.detail}`;
+    log.appendChild(agentLine);
+    log.scrollTop = log.scrollHeight;
+  } catch (error) {
+    const line = document.createElement('div');
+    line.className = 'chat-message chat-agent';
+    line.textContent = `Chat unavailable: ${String(error)}`;
+    $('chat-log').appendChild(line);
+  }
+};
+
 $('debrief').onclick = async () => {
   try {
     const session = $('session').value.trim(), team = $('team').value.trim();

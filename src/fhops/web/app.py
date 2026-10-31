@@ -216,6 +216,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
         game_specs.append((config.game_level, config.game_precompute))
     if game_specs:
         game_llm = None
+        game_chat = None
         if config.allow_agent:
 
             def game_llm(facts: dict[str, Any]) -> dict[str, Any]:
@@ -230,9 +231,27 @@ def create_app(config: ServiceConfig) -> FastAPI:
                 )
                 return parse_debrief_response(str(response["response"]))
 
+            def game_chat(context: dict[str, Any], message: str) -> str:
+                prompt = (
+                    "You are the FHOPS serious-game final debrief coach. Answer the "
+                    "team's question using only the supplied tournament facts. Do not "
+                    "reveal any new hidden parameters beyond the debrief facts. Be concise "
+                    "and link advice to net profit, score, and the listed choices.\n"
+                    f"Context JSON: {json.dumps(context, sort_keys=True)}\n"
+                    f"Team question: {message}"
+                )
+                response = run_agent(
+                    AgentRequest(message=prompt, model=config.game_agent_model),
+                    workspace=config.workspace,
+                    command=config.agent_command,
+                    timeout=config.agent_timeout,
+                )
+                return str(response["response"])
+
         game_service = GameService(
             levels=game_specs,
             llm_fn=game_llm,
+            chat_fn=game_chat,
             explanation_cache=(
                 ExplanationCache(config.game_explanation_cache)
                 if config.game_explanation_cache is not None

@@ -4695,3 +4695,8 @@ PY
 - 2026-10-31: P20 game lobby: added session/team progress and a leaderboard
   panel to `/game`, with refresh after join and submission, plus an API
   leaderboard regression test.
+
+- 2026-10-31: P20 final-only optional chat: added a completion-gated chat API
+  and final debrief panel. The chat uses the same DeepSeek V4.1 Flash agent hook,
+  receives all tournament debrief facts, and is unavailable before the final
+  level is complete.
