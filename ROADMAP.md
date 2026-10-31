@@ -667,6 +667,7 @@ eventually terrain/obstacle editing, with a derived scenario run.
   - [x] Landing and machine-system overrides
   - [x] Feller operator-policy productivity hook
   - [x] Studio run endpoint and KPI result panel
+  - [x] Studio 3D replay of derived runs
 - [ ] P21.4 Terrain/obstacle simulation hook
 - [ ] P21.5 3D editor integration and replay preview
 - [ ] P21.6 Full operator-policy simulation integration

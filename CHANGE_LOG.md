@@ -1,3 +1,14 @@
+# 2026-10-31 — Phase 21 Studio 3D replay
+
+- Added a `/replay` route to Scenario Studio that opens the generated scene and
+  event stream for a Studio run in the existing Tree Lab 3D viewer.
+- Added run list/events/summary/scene endpoints and a “Open 3D replay” link in
+  the Studio run result panel.
+- The public demo remains unchanged; Studio runs stay under
+  `build/studio_projects/<project>/runs/`.
+- Verification: Playwright load of a generated run at 1440×900; 3D scene,
+  machine cards, timing controls, and no browser errors.
+
 # 2026-10-31 — Phase 21 Scenario Studio first slice (branch phase21-scenario-studio)
 
 - Added a separate `sandbox/studio` FastAPI service and static editor.

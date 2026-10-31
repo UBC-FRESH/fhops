@@ -49,7 +49,7 @@ rewriting project storage.
 - Retention clumps are tree-level selections; no filled clump polygons yet
 - No obstacle or stream tools yet
 - No multi-landing or road-network routing yet
-- No 3D preview of the derived run yet; the run result panel shows KPIs only
+- 3D replay is available for derived runs, but 3D *editing* is still the next slice.
 - No authentication; this is a local development tool
 
 ## Run locally

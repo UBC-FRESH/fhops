@@ -1,0 +1,17 @@
+html, body { margin: 0; height: 100%; background: #0e1214; color: #e6eef2; font: 13px/1.4 system-ui, sans-serif; overflow: hidden; }
+body { display: flex; flex-direction: column; }
+header { display: flex; align-items: center; gap: 14px; padding: 9px 14px; background: #11181b; border-bottom: 1px solid #2b3a40; flex: 0 0 auto; }
+header .back { color: #f08a24; text-decoration: none; }
+header .muted { color: #93a6ae; margin-left: auto; }
+main { position: relative; flex: 1 1 auto; min-height: 0; }
+#scene { position: absolute; inset: 0; }
+#hud { position: absolute; left: 14px; top: 14px; width: min(430px, calc(100vw - 28px)); background: #101416e8; border: 1px solid #2b3a40; border-radius: 10px; padding: 12px 14px; }
+#hud h1 { font-size: 14px; margin: 0 0 3px; }
+#status { color: #b7c6cc; margin: 7px 0; font-size: 12px; }
+#machines { display: flex; gap: 8px; flex-wrap: wrap; }
+.mcard { border: 1px solid #2b3a40; border-radius: 6px; padding: 4px 7px; min-width: 104px; }
+.mcard b { display: block; font-size: 11px; }
+.mcard span { color: #93a6ae; font-size: 10px; }
+#controls { position: absolute; left: 14px; bottom: 14px; right: 14px; background: #101416e8; border: 1px solid #2b3a40; border-radius: 9px; padding: 8px 10px; display: flex; align-items: center; gap: 9px; }
+#controls button, #controls select { background: #263237; color: #e6eef2; border: 1px solid #52656b; border-radius: 5px; padding: 5px 9px; cursor: pointer; }
+#controls input { flex: 1; accent-color: #f08a24; }

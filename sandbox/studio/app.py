@@ -10,6 +10,7 @@ does not alter the public demo. Run it with::
 from __future__ import annotations
 
 import argparse
+import json
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -35,6 +36,7 @@ from sandbox.tree_lab.runner import RunError, run_case
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+TREE_LAB_STATIC = REPO_ROOT / "sandbox" / "tree_lab" / "static"
 
 
 @dataclass(slots=True)
@@ -166,6 +168,56 @@ def create_app(config: StudioConfig) -> FastAPI:
         except (StudioError, CaseError, RunError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    def _run_path(project_id: str, run_id: str) -> Path:
+        if "/" in run_id or ".." in run_id:
+            raise HTTPException(status_code=400, detail="Invalid run id.")
+        path = project_path(config.projects_root, project_id) / "runs" / run_id
+        if not path.is_dir():
+            raise HTTPException(status_code=404, detail="Unknown run.")
+        return path
+
+    @app.get("/api/projects/{project_id}/runs")
+    def runs(project_id: str) -> dict[str, Any]:
+        root = project_path(config.projects_root, project_id) / "runs"
+        items = []
+        if root.is_dir():
+            for path in sorted(root.iterdir(), reverse=True):
+                record = path / "run.json"
+                if record.is_file():
+                    try:
+                        payload = json.loads(record.read_text(encoding="utf-8"))
+                    except (OSError, json.JSONDecodeError):
+                        continue
+                    items.append(payload)
+        return {"runs": items}
+
+    @app.get("/api/projects/{project_id}/runs/{run_id}/events")
+    def run_events(project_id: str, run_id: str) -> FileResponse:
+        path = _run_path(project_id, run_id) / "system" / "system_events.json"
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="Run events not found.")
+        return FileResponse(path, media_type="application/json")
+
+    @app.get("/api/projects/{project_id}/runs/{run_id}/summary")
+    def run_summary(project_id: str, run_id: str) -> FileResponse:
+        path = _run_path(project_id, run_id) / "system" / "system_summary.json"
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="Run summary not found.")
+        return FileResponse(path, media_type="application/json")
+
+    @app.get("/api/projects/{project_id}/runs/{run_id}/scene.gltf")
+    def run_scene(project_id: str, run_id: str) -> FileResponse:
+        path = _run_path(project_id, run_id) / "scene" / "scene.gltf"
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="Run scene not found.")
+        return FileResponse(path, media_type="model/gltf+json")
+
+    @app.get("/replay")
+    def replay() -> FileResponse:
+        return FileResponse(
+            STATIC_DIR / "studio_replay.html", headers={"Cache-Control": "no-store"}
+        )
+
     @app.get("/api/projects/{project_id}/project.json")
     def project_file(project_id: str) -> FileResponse:
         try:
@@ -181,6 +233,7 @@ def create_app(config: StudioConfig) -> FastAPI:
         return FileResponse(STATIC_DIR / "studio.html", headers={"Cache-Control": "no-store"})
 
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+    app.mount("/lab", StaticFiles(directory=TREE_LAB_STATIC), name="tree-lab")
     return app
 
 

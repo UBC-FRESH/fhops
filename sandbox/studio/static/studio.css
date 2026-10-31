@@ -68,3 +68,5 @@ textarea { width: 100%; resize: vertical; }
 #new-form { padding: 4px; }
 #new-form select { width: 100%; }
 .selected { outline: 2px solid var(--accent); }
+#run-result a { color: var(--accent); text-decoration: none; }
+#run-result a:hover { text-decoration: underline; }
