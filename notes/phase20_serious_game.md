@@ -298,8 +298,10 @@ The local FastAPI service now exposes:
 - `POST /api/game/sessions/{id}/teams/{team}/submit` — exact precomputed scoring.
 - `GET /api/game/sessions/{id}/leaderboard`.
 
-The routes are enabled only when `game_level` and `game_precompute` are both
-configured on `ServiceConfig`. The `/game` shell renders the whole-stand SVG boundary, joins a local
+The routes are enabled when `ServiceConfig` has matching stand levels and
+precomputes. Instructors can pass them from the CLI with repeatable
+`--game-level` / `--game-precompute` flags, plus `--game-agent-model` and
+`--game-explanation-cache`. The `/game` shell renders the whole-stand SVG boundary, joins a local
 session/team, exposes finite controls, submits one attempt, displays the score
 and selected-run components, refreshes the session leaderboard, and exposes the
 post-attempt debrief. When the optional agent is enabled, a final-only chat

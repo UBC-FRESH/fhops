@@ -627,6 +627,7 @@ loader replaces it.
   - [x] Local API: level metadata, session/team, ordered submission, leaderboard.
   - [x] First `/game` shell: whole-stand SVG, controls, score, team join.
   - [x] Session progress and leaderboard panel.
+  - [x] CLI flags for stand levels, precomputes, agent model, and cache.
   - [ ] Full lobby/level-map and live progress.
 - [ ] P20.4 Prove fairness, document the tournament, and close out (#315)
   - [ ] Deterministic/fairness/leakage tests.
