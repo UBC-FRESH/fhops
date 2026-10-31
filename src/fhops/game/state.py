@@ -36,8 +36,10 @@ class LevelAttempt:
             raise ValueError("choices must not be empty.")
         if not math.isfinite(self.net_profit):
             raise ValueError("net_profit must be finite.")
-        if not 0.0 <= self.score <= 100.0:
-            raise ValueError("score must be within 0–100.")
+        if not math.isfinite(self.score):
+            raise ValueError("score must be finite.")
+        if self.score > 100.0:
+            raise ValueError("score cannot exceed 100.")
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-serializable attempt."""
@@ -65,6 +67,7 @@ class TeamState:
 
     team_code: str
     attempts: list[LevelAttempt] = field(default_factory=list)
+    consultants: dict[str, list[str]] = field(default_factory=dict)
 
     @property
     def total_score(self) -> float:
@@ -76,6 +79,7 @@ class TeamState:
         return {
             "team_code": self.team_code,
             "attempts": [attempt.to_dict() for attempt in self.attempts],
+            "consultants": {key: list(value) for key, value in self.consultants.items()},
         }
 
     @classmethod
@@ -84,6 +88,10 @@ class TeamState:
         return cls(
             team_code=str(payload["team_code"]),
             attempts=[LevelAttempt.from_dict(item) for item in payload.get("attempts", [])],
+            consultants={
+                str(key): [str(item) for item in value]
+                for key, value in (payload.get("consultants") or {}).items()
+            },
         )
 
 

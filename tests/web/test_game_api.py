@@ -267,3 +267,73 @@ def test_final_chat_is_gated_until_completion(tmp_path: Path) -> None:
     reply = client.post("/api/game/sessions/chat/teams/T1/chat", json={"message": "How did we do?"})
     assert reply.status_code == 200, reply.text
     assert reply.json()["response"] == "final coach reply"
+
+
+def test_contractor_and_consultant_fees_are_applied(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+    client.post("/api/game/sessions", json={"session_id": "fees"})
+    client.post("/api/game/sessions/fees/teams", json={"team_code": "T1"})
+    levels = client.get("/api/game/levels").json()[0]
+    assert len(levels["contractors"]) == 4
+    assert len(levels["consultants"]) == 3
+
+    consulted = client.post(
+        "/api/game/sessions/fees/teams/T1/consult",
+        json={"consultant_ids": ["scout"]},
+    )
+    assert consulted.status_code == 200, consulted.text
+    assert consulted.json()["tips"]
+    assert consulted.json()["total_consultant_fees"] == 1500.0
+
+    submitted = client.post(
+        "/api/game/sessions/fees/teams/T1/submit",
+        json={
+            "contractor_id": "northpoint",
+            "care_level": 0.5,
+            "skidder_count": 1,
+            "log_length_m": 6.1,
+            "sawlog_min_dbh_cm": 20.0,
+            "road_extension_m": 0.0,
+        },
+    )
+    assert submitted.status_code == 200, submitted.text
+    payload = submitted.json()
+    assert payload["consultant_fees"] == 1500.0
+    assert payload["result"]["consultant_fees"] == 1500.0
+    assert payload["attempt"]["choices"]["contractor_id"] == "northpoint"
+    debrief = client.get("/api/game/sessions/fees/teams/T1/debrief/kc_57254551")
+    assert debrief.status_code == 200, debrief.text
+    assert debrief.json()["consultant_fees"] == 1500.0
+    assert debrief.json()["component_deltas"]["consultant_fees"] == -1500.0
+
+
+def test_consultant_fees_can_drive_negative_score(tmp_path: Path) -> None:
+    app = create_app(
+        ServiceConfig(
+            roots=[tmp_path],
+            workspace=Path.cwd(),
+            game_level=Path("examples/game/levels/gavin_1032/level.yaml").resolve(),
+            game_precompute=Path("examples/game/precomputed/gavin_1032.json").resolve(),
+        )
+    )
+    client = TestClient(app)
+    client.post("/api/game/sessions", json={"session_id": "negative"})
+    client.post("/api/game/sessions/negative/teams", json={"team_code": "T1"})
+    consulted = client.post(
+        "/api/game/sessions/negative/teams/T1/consult",
+        json={"consultant_ids": ["scout", "planner", "specialist"]},
+    )
+    assert consulted.status_code == 200, consulted.text
+    submitted = client.post(
+        "/api/game/sessions/negative/teams/T1/submit",
+        json={
+            "contractor_id": "spot",
+            "care_level": 0.0,
+            "skidder_count": 2,
+            "log_length_m": 4.9,
+            "sawlog_min_dbh_cm": 20.0,
+            "road_extension_m": 0.0,
+        },
+    )
+    assert submitted.status_code == 200, submitted.text
+    assert submitted.json()["score"] < 0.0

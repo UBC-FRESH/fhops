@@ -47,6 +47,12 @@
     .briefing-grid span { color: #5e6e64; }
     .briefing-note { margin: 8px 0 0; font-size: .8rem; color: #5e6e64; }
     #briefing { margin: 8px 0 4px; }
+    #consultants { display: grid; gap: 6px; margin: 6px 0; }
+    .consultant-option { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: .84rem; }
+    .consultant-option label { display: flex; gap: 6px; align-items: center; margin: 0; color: #36453b; }
+    .consultant-option input { width: auto; }
+    #hint-output { font-size: .84rem; color: #36453b; background: #f7faf8; border-left: 3px solid #8b6f2d; padding: 8px 10px; margin: 6px 0; display: none; }
+    #hint-output ul { margin: 4px 0; padding-left: 18px; }
     @media (max-width: 850px) { main { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -81,6 +87,11 @@
     <label>Level map</label>
     <div id="level-map"></div>
     <label for="level">Selected level</label><select id="level"></select>
+    <label for="contractor">Contractor</label><select id="contractor"></select>
+    <label>Consultant tips <span class="muted">(optional; fees are debited)</span></label>
+    <div id="consultants"></div>
+    <button id="buy-hints" type="button">Buy selected tips</button>
+    <div id="hint-output"></div>
     <div class="row">
       <div><label for="session">Session</label><input id="session" value="demo" /></div>
       <div><label for="team">Team code</label><input id="team" value="TEAM-A" /></div>
@@ -142,6 +153,8 @@ function renderResult(payload) {
     ['Residual damage loss', -result.residual_damage_loss],
     ['Mobilisation', -result.mobilisation_cost],
     ['Road extension', -result.road_extension_cost],
+    ['Contractor quote adjustment', result.contractor_adjustment || 0],
+    ['Consultant fees', -(result.consultant_fees || 0)],
   ];
   $('result-components').innerHTML = components.map(([label, value]) => `<div class="metric-row"><span>${label}</span><strong>${money(value)}</strong></div>`).join('');
   const products = Object.entries(result.product_volume_m3 || {});
@@ -159,7 +172,10 @@ function renderDebrief(payload) {
   const interaction = gap > 0 && largest <= 0
     ? '<div class="metric-row"><span>Gap explanation</span><strong>interaction between choices</strong></div>'
     : '';
-  $('debrief-costs').innerHTML = `<div class="metric-row"><span>Gap to optimal</span><strong>${money(gap)}</strong></div>` + interaction + (payload.parameter_deltas || []).map((item) => `<div class="metric-row"><span>${parameterLabel(item.parameter)}: ${item.player_value} → ${item.optimal_value}</span><strong>${money(item.cost_of_wrong)} one-at-a-time</strong></div>`).join('');
+  const deltas = payload.component_deltas || {};
+  const feeRow = (deltas.consultant_fees || 0) < 0 ? `<div class="metric-row"><span>Consultant fees</span><strong>${money(deltas.consultant_fees)}</strong></div>` : '';
+  const contractorRow = (deltas.contractor_adjustment || 0) !== 0 ? `<div class="metric-row"><span>Contractor quote effect</span><strong>${money(deltas.contractor_adjustment)}</strong></div>` : '';
+  $('debrief-costs').innerHTML = `<div class="metric-row"><span>Gap to optimal</span><strong>${money(gap)}</strong></div>` + feeRow + contractorRow + interaction + (payload.parameter_deltas || []).map((item) => `<div class="metric-row"><span>${parameterLabel(item.parameter)}: ${item.player_value} → ${item.optimal_value}</span><strong>${money(item.cost_of_wrong)} one-at-a-time</strong></div>`).join('');
 }
 
 function polygonRings(payload) {
@@ -232,7 +248,7 @@ $('submit').onclick = async () => {
     const session = $('session').value.trim(), team = $('team').value.trim();
     const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/submit?level_id=${encodeURIComponent(state.level.level_id)}`), {
       method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ care_level: Number($('care').value), skidder_count: Number($('skidders').value), log_length_m: Number($('logs').value), sawlog_min_dbh_cm: Number($('sawlog').value), road_extension_m: Number($('landing').value) })
+      body: JSON.stringify({ contractor_id: $('contractor').value, care_level: Number($('care').value), skidder_count: Number($('skidders').value), log_length_m: Number($('logs').value), sawlog_min_dbh_cm: Number($('sawlog').value), road_extension_m: Number($('landing').value) })
     });
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
@@ -331,6 +347,9 @@ async function selectLevel(levelId) {
   $('logs').innerHTML = state.level.controls.log_length_m.map((v) => `<option value="${v}">${v} m</option>`).join('');
   $('sawlog').innerHTML = state.level.controls.sawlog_min_dbh_cm.map((v) => `<option value="${v}">${v} cm</option>`).join('');
   $('landing').innerHTML = Object.entries(state.level.controls.landing_options || {}).map(([key, value]) => `<option value="${value}">${key} (${value} m road)</option>`).join('');
+  $('contractor').innerHTML = (state.level.contractors || []).map((c) => `<option value="${c.id}">${c.name} — rate ×${c.rate_multiplier}, move-in ${money(c.mobilisation_adjustment)}</option>`).join('');
+  $('consultants').innerHTML = (state.level.consultants || []).map((c) => `<div class="consultant-option"><label><input type="checkbox" value="${c.id}"> ${c.name} <span class="muted">(${c.tier})</span></label><strong>${money(c.fee)}</strong></div>`).join('');
+  $('hint-output').style.display = 'none';
   renderBriefing();
   await drawBoundary();
   setStatus(`Level: ${state.level.name} · ${state.level.area_ha?.toFixed(2) || '?'} ha · ${state.level.difficulty || ''}`);
@@ -363,6 +382,24 @@ $('chat-send').onclick = async () => {
     line.textContent = `Chat unavailable: ${String(error)}`;
     $('chat-log').appendChild(line);
   }
+};
+
+$('buy-hints').onclick = async () => {
+  try {
+    if (!state.armed) throw new Error('Join a session first.');
+    const selected = Array.from(document.querySelectorAll('#consultants input:checked')).map((item) => item.value);
+    if (!selected.length) throw new Error('Select at least one consultant.');
+    const session = $('session').value.trim(), team = $('team').value.trim();
+    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/consult`), {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ consultant_ids: selected })
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    const output = $('hint-output');
+    output.style.display = 'block';
+    output.innerHTML = `<strong>Consultant tips</strong><ul>${payload.tips.map((tip) => `<li>${tip}</li>`).join('')}</ul><div>Consultant fees: <strong>${money(payload.total_consultant_fees)}</strong></div>`;
+    setStatus('Consultant tips purchased. Fees will be debited from your level result.');
+  } catch (error) { setStatus(String(error)); }
 };
 
 $('debrief').onclick = async () => {

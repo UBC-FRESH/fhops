@@ -61,3 +61,50 @@ briefing:
   - Exact care/productivity/damage curve.
   - North/south road-extension lengths and costs.
   - Actual retention prescription and residual-tree quality.
+contractors:
+- id: northpoint
+  name: Northpoint Contracting
+  rate_multiplier: 0.95
+  mobilisation_adjustment: 6000.0
+  note: Low hourly rate, higher move-in.
+- id: lakeview
+  name: Lakeview Harvesting
+  rate_multiplier: 1.0
+  mobilisation_adjustment: 0.0
+  note: Balanced quote.
+- id: ridge
+  name: Ridge Line Logging
+  rate_multiplier: 1.08
+  mobilisation_adjustment: -4000.0
+  note: Higher rate, lower move-in.
+- id: spot
+  name: Spot Crew Co.
+  rate_multiplier: 1.15
+  mobilisation_adjustment: -8000.0
+  note: Premium availability, highest rate.
+consultants:
+- id: scout
+  name: Operations Scout
+  tier: cheap
+  fee: 1500.0
+  parameters:
+  - skidder_count
+  note: One narrow operational tip.
+- id: planner
+  name: Harvest Planner
+  tier: balanced
+  fee: 5000.0
+  parameters:
+  - care_level
+  - log_length_m
+  note: Two overlapping parameter tips.
+- id: specialist
+  name: Senior Specialist
+  tier: premium
+  fee: 12000.0
+  parameters:
+  - care_level
+  - log_length_m
+  - skidder_count
+  note: Highest precision; heavily overlaps the other consultants.
+max_consultants: 3

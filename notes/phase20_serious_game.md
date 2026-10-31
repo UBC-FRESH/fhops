@@ -194,6 +194,20 @@ Revenue:
 gross_log_value = sum(product_volume_m3 * product_price_per_m3)
 ```
 
+## Contractors, consultants, and paid information
+
+Each level exposes four contractor quotes with different hourly-rate multipliers
+and mobilisation adjustments. The player selects one quote; the score uses the
+adjusted absolute net profit.
+
+Three optional consultants (cheap/balanced/premium) sell deterministic tips.
+Tips overlap in scope; fees are debited immediately when purchased, whether or
+not the tip improves the final choice. Tip value is not counterfactually scored:
+there is no way to know what the team would have chosen without it. Consultant
+fees are simply subtracted from net profit, and the 0–100 score is allowed to go
+negative when fees exceed the level's no-consultant spread. A no-tip optimal
+plan remains the only way to score 100.
+
 ## Net-profit scoring
 
 Ops cost includes scheduled machine hours, mobilisation, landing/road
@@ -216,8 +230,11 @@ feasible finite control combination with the deterministic evaluator and
 records best/worst net profit:
 
 ```text
-score = 100 * (net_profit - worst_level) / (best_level - worst_level)
+score = min(100, 100 * (net_profit - worst_level) / (best_level - worst_level))
 ```
+
+The lower bound is intentionally not clamped: consultant fees can push the
+score below zero. The no-tip optimal plan is the only 100-point plan.
 
 Scores are clamped to 0–100. The score is only enabled when every feasible
 combination is evaluated, the tree inventory and event calendar are pinned, and

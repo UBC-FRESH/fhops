@@ -4744,3 +4744,9 @@ PY
   optimal and labels one-at-a-time parameter effects separately; when no single
   change explains the gap, it reports an interaction. LLM prose is qualitative
   only—any numeric claim is rejected and falls back to deterministic facts.
+
+- 2026-10-31: P20 paid-information mechanic: added four contractor quotes with
+  rate/move-in trade-offs and three overlapping consultant tip tiers. Consultant
+  fees are debited immediately, the 0–100 score can go negative when fees exceed
+  the no-tip spread, and the no-tip optimal plan remains the only 100. The UI
+  exposes contractor quotes and tip purchase before submission.

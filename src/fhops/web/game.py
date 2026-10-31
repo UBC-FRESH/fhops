@@ -6,7 +6,7 @@ import hashlib
 import math
 import secrets
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -45,9 +45,16 @@ class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=4000)
 
 
+class ConsultRequest(BaseModel):
+    """Paid consultant tips requested before submission."""
+
+    consultant_ids: list[str] = Field(default_factory=list, max_length=3)
+
+
 class GameChoicesPayload(BaseModel):
     """Finite stand-control choices submitted by a team."""
 
+    contractor_id: str | None = None
     care_level: float
     skidder_count: int
     log_length_m: float
@@ -180,7 +187,6 @@ class GameService:
     def public_level(self, level_id: str | None = None) -> dict[str, Any]:
         """Return pre-run level metadata without the optimal choice."""
         entry = self._entry(level_id or self.level_id)
-        bounds = entry.precompute["bounds"]
         bucking = entry.level.get("bucking", {})
         return {
             "level_id": entry.level_id,
@@ -189,6 +195,9 @@ class GameService:
             "area_ha": entry.level.get("area_ha"),
             "difficulty": entry.level.get("difficulty"),
             "briefing": entry.level.get("briefing", {}),
+            "contractors": entry.level.get("contractors", []),
+            "consultants": entry.level.get("consultants", []),
+            "max_consultants": entry.level.get("max_consultants", 3),
             "controls": {
                 "care_levels": entry.level["care_levels"],
                 "skidder_counts": entry.level["skidder_counts"],
@@ -207,10 +216,7 @@ class GameService:
                 "mobilisation_cost": entry.price.mobilisation_cost,
                 "road_extension_cost_per_m": entry.price.road_extension_cost_per_m,
             },
-            "score_bounds": {
-                "best_net_profit": bounds["best_net_profit"],
-                "worst_net_profit": bounds["worst_net_profit"],
-            },
+            "score_bounds": self._adjusted_bounds(entry),
             "chat_enabled": self.chat_fn is not None,
             "status": "ready",
         }
@@ -224,6 +230,7 @@ class GameService:
             "team_code": team.team_code,
             "current_level": session.current_level(team.team_code),
             "attempts": [attempt.to_dict() for attempt in team.attempts],
+            "consultants": {key: list(value) for key, value in team.consultants.items()},
             "total_score": team.total_score,
         }
 
@@ -252,8 +259,36 @@ class GameService:
             player_choices=attempt.choices,
             score=attempt.score,
         )
+        contractor = self._contractor(
+            entry,
+            str(attempt.choices.get("contractor_id") or ""),
+        )
+        variant = self._find_variant(
+            entry,
+            GameChoicesPayload(
+                **{
+                    key: attempt.choices[key]
+                    for key in GameChoicesPayload.model_fields
+                    if key in attempt.choices
+                }
+            ),
+        )
+        adjustment = self._contractor_adjustment(contractor, variant["result"])
+        fees = self._consultant_fees(
+            entry, [str(item) for item in attempt.choices.get("consultant_ids", [])]
+        )
+        component_deltas = dict(facts.component_deltas)
+        component_deltas["contractor_adjustment"] = adjustment
+        component_deltas["consultant_fees"] = -fees
+        facts = replace(
+            facts,
+            player_net_profit=attempt.net_profit,
+            component_deltas=component_deltas,
+        )
         return {
             **facts.to_dict(),
+            "contractor": contractor,
+            "consultant_fees": fees,
             "explanation": explain_debrief_cached(
                 facts,
                 cache=self.explanation_cache,
@@ -298,19 +333,73 @@ class GameService:
     ) -> dict[str, Any]:
         """Score a precomputed choice and record the attempt."""
         session = self.session(session_id)
+        team = session.team(team_code)
         entry = self._entry(level_id)
         variant = self._find_variant(entry, choices)
+        contractor = self._contractor(entry, choices.contractor_id)
+        base_result = variant["result"]
+        contractor_adjustment = self._contractor_adjustment(contractor, base_result)
+        consultant_ids = team.consultants.get(level_id, [])
+        consultant_fees = self._consultant_fees(entry, consultant_ids)
+        net_profit = float(variant["net_profit"]) + contractor_adjustment - consultant_fees
+        bounds = self._adjusted_bounds(entry)
+        best = float(bounds["best_net_profit"])
+        worst = float(bounds["worst_net_profit"])
+        span = best - worst
+        score = 100.0 if not span else 100.0 * (net_profit - worst) / span
+        score = min(100.0, score)
+        attempt_choices = choices.model_dump()
+        attempt_choices["contractor_id"] = contractor["id"]
+        attempt_choices["consultant_ids"] = list(consultant_ids)
         attempt = session.submit(
             team_code=team_code,
             level_id=entry.level_id,
-            choices=choices.model_dump(),
-            net_profit=float(variant["net_profit"]),
-            score=float(variant["score"]),
+            choices=attempt_choices,
+            net_profit=net_profit,
+            score=score,
         )
+        result_payload = dict(base_result)
+        result_payload["net_profit"] = net_profit
+        result_payload["contractor_adjustment"] = contractor_adjustment
+        result_payload["consultant_fees"] = consultant_fees
         return {
             "attempt": attempt.to_dict(),
             "score": attempt.score,
-            "result": variant["result"],
+            "contractor": contractor,
+            "consultant_fees": consultant_fees,
+            "result": result_payload,
+        }
+
+    def consult(self, session_id: str, team_code: str, consultant_ids: list[str]) -> dict[str, Any]:
+        """Purchase paid tips for the current level and return their text."""
+        session = self.session(session_id)
+        team = session.team(team_code)
+        current = session.current_level(team.team_code)
+        if current is None:
+            raise GameStateError("All levels are complete; no further tips are available.")
+        entry = self._entry(current)
+        by_id = {str(item["id"]): item for item in entry.level.get("consultants", [])}
+        selected = list(dict.fromkeys(consultant_ids))
+        if not selected:
+            raise ValueError("Select at least one consultant.")
+        if len(selected) > int(entry.level.get("max_consultants", 3)):
+            raise ValueError("Too many consultants selected.")
+        existing = list(team.consultants.get(current, []))
+        combined = list(dict.fromkeys(existing + selected))
+        if len(combined) > int(entry.level.get("max_consultants", 3)):
+            raise ValueError("Too many consultants selected for this level.")
+        unknown = [item for item in combined if item not in by_id]
+        if unknown:
+            raise ValueError("Unknown consultant(s): " + ", ".join(unknown))
+        team.consultants[current] = combined
+        tips = []
+        for consultant_id in selected:
+            tips.extend(self._tip_text(entry, by_id[consultant_id]))
+        return {
+            "level_id": current,
+            "consultant_ids": combined,
+            "tips": tips,
+            "total_consultant_fees": self._consultant_fees(entry, combined),
         }
 
     def _entry(self, level_id: str) -> _StandEntry:
@@ -318,6 +407,58 @@ class GameService:
             return self.entries[level_id]
         except KeyError as exc:
             raise KeyError(f"Unknown level_id={level_id}") from exc
+
+    @staticmethod
+    def _contractor(entry: _StandEntry, contractor_id: str | None) -> dict[str, Any]:
+        contractors = entry.level.get("contractors", [])
+        if not contractors:
+            raise ValueError("Level has no contractor quotes.")
+        target = contractor_id or contractors[0]["id"]
+        for item in contractors:
+            if item["id"] == target:
+                return dict(item)
+        raise ValueError(f"Unknown contractor_id={target!r}")
+
+    @staticmethod
+    def _contractor_adjustment(contractor: dict[str, Any], result: dict[str, Any]) -> float:
+        machine_cost = float(result.get("machine_cost", 0.0))
+        rate_multiplier = float(contractor.get("rate_multiplier", 1.0))
+        mobilisation_adjustment = float(contractor.get("mobilisation_adjustment", 0.0))
+        return -(machine_cost * (rate_multiplier - 1.0)) - mobilisation_adjustment
+
+    @staticmethod
+    def _consultant_fees(entry: _StandEntry, consultant_ids: list[str]) -> float:
+        by_id = {str(item["id"]): item for item in entry.level.get("consultants", [])}
+        return sum(float(by_id[item]["fee"]) for item in consultant_ids if item in by_id)
+
+    @staticmethod
+    def _tip_text(entry: _StandEntry, consultant: dict[str, Any]) -> list[str]:
+        best = entry.precompute["bounds"]["best_choices"]
+        labels = {
+            "care_level": "careful logging",
+            "skidder_count": "skidder count",
+            "log_length_m": "log length",
+            "sawlog_min_dbh_cm": "sawlog minimum DBH",
+            "road_extension_m": "road extension",
+        }
+        return [
+            f"{consultant['name']}: {labels[parameter]} {best[parameter]}"
+            for parameter in consultant.get("parameters", [])
+            if parameter in best
+        ]
+
+    def _adjusted_bounds(self, entry: _StandEntry) -> dict[str, float]:
+        contractors = entry.level.get("contractors", [])
+        nets = []
+        for variant in entry.precompute["variants"]:
+            for contractor in contractors:
+                nets.append(
+                    float(variant["net_profit"])
+                    + self._contractor_adjustment(contractor, variant["result"])
+                )
+        if not nets:
+            return {"best_net_profit": 0.0, "worst_net_profit": 0.0}
+        return {"best_net_profit": max(nets), "worst_net_profit": min(nets)}
 
     @staticmethod
     def _find_variant(entry: _StandEntry, choices: GameChoicesPayload) -> dict[str, Any]:
@@ -418,6 +559,15 @@ def create_game_router(service: GameService) -> APIRouter:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         except RuntimeError as exc:
             raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    @router.post("/sessions/{session_id}/teams/{team_code}/consult")
+    def consult(session_id: str, team_code: str, request: ConsultRequest) -> dict[str, Any]:
+        try:
+            return service.consult(session_id, team_code, request.consultant_ids)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except (GameStateError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/sessions/{session_id}/teams/{team_code}/submit")
     def submit(

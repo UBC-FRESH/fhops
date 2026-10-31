@@ -165,10 +165,14 @@ def render_template_debrief(facts: DebriefFacts) -> dict[str, Any]:
     else:
         cost_text = "Your plan matched the best finite control combination."
     score_text = f"{facts.score:.0f}" if facts.score.is_integer() else f"{facts.score:.1f}"
+    fee_impact = -float(facts.component_deltas.get("consultant_fees", 0.0))
+    fee_text = (
+        f" Consultant fees account for ${fee_impact:,.0f} of that gap." if fee_impact > 0 else ""
+    )
     why = (
         f"The best plan earned ${facts.optimal_net_profit:,.0f} net profit; "
         f"your plan earned ${facts.player_net_profit:,.0f} and scored "
-        f"{score_text}/100. The gap to optimal is ${gap:,.0f}. {cost_text}"
+        f"{score_text}/100. The gap to optimal is ${gap:,.0f}.{fee_text} {cost_text}"
     )
     return {
         "why_optimal": why,
