@@ -34,7 +34,7 @@ from fhops.productivity.skidder_ft import (
     get_skidder_speed_profile,
 )
 from fhops.scenario.io import load_scenario
-from fhops.spatial_machine import SpatialMachineError, simulate_block
+from fhops.spatial_machine import Obstacle, SpatialMachineError, simulate_block
 from fhops.stem import StemInventory, build_stem_inventory
 from fhops.terrain import TerrainError, TerrainRouter
 
@@ -608,6 +608,7 @@ def simulate_ground_system(
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     feller_processing_time_multiplier: float = 1.0,
     path_mode: Literal["nearest", "swath"] = "nearest",
+    obstacles: tuple[Obstacle, ...] = (),
     skidder_specs: Mapping[str, MachineSpec] | None = None,
     loader_spec: MachineSpec | None = None,
     processor_spec: ProcessorSpec | None = None,
@@ -711,6 +712,8 @@ def simulate_ground_system(
     path_mode:
         ``swath`` uses a boustrophedon feller path; ``nearest`` preserves the
         original nearest-tree behavior.
+    obstacles:
+        Circular exclusion zones, such as retained-tree patches.
     skidder_specs:
         Optional per-skidder cycle-time overrides.
     loader_spec:
@@ -834,6 +837,7 @@ def simulate_ground_system(
             travel_speed_m_per_s=feller_travel_speed_m_per_s,
             processing_time_multiplier=feller_processing_time_multiplier,
             path_mode=path_mode,
+            obstacles=obstacles,
         )
     except SpatialMachineError as exc:
         raise GroundSystemError(str(exc)) from exc

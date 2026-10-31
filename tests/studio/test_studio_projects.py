@@ -42,3 +42,4 @@ def test_materialized_case_filters_retention(tmp_path: Path) -> None:
     assert len(inventory.rows) == 898
     assert derived.manifest["landing"]["x"] == saved["landing"]["x"]
     assert derived.manifest["system_args"]["feller"] == "H1"
+    assert len(derived.manifest["obstacles"]) == 2

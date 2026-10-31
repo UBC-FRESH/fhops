@@ -668,7 +668,8 @@ eventually terrain/obstacle editing, with a derived scenario run.
   - [x] Feller operator-policy productivity hook
   - [x] Studio run endpoint and KPI result panel
   - [x] Studio 3D replay of derived runs
-- [ ] P21.4 Terrain/obstacle simulation hook
+- [x] P21.4 Retained-tree rendering, obstacles, and visual terrain replay
+- [ ] P21.4a Terrain-aware simulation routing (visual heightfield exists)
 - [ ] P21.5 3D editor integration and replay preview
 - [ ] P21.6 Full operator-policy simulation integration
 - [ ] P21.7 Closeout: tests, docs, gates, and issue-tree closeout

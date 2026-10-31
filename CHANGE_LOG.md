@@ -1,3 +1,15 @@
+# 2026-10-31 — Studio retained trees, obstacles, and terrain replay
+
+- Studio-derived runs now pass retained trees to the feller simulation as
+  circular obstacles.
+- Studio 3D replay renders retained trees in teal so they no longer disappear;
+  machines visually detour around retained-tree obstacles.
+- Studio 3D replay receives the edited terrain heightfield and applies it to the
+  scene, replacing the flat ground plane.
+- Added retained/terrain badges to the replay header and obstacle assertions to
+  the materialization test.
+- Verification: targeted Studio tests and browser replay load.
+
 # 2026-10-31 — Phase 21 Studio 3D replay
 
 - Added a `/replay` route to Scenario Studio that opens the generated scene and

@@ -173,6 +173,7 @@ export function createViewer(container, { onTime } = {}) {
   let loaded = false;
   let userInteracted = false;
   let blockOutline = null;
+  let retainedObstacles = [];
 
   controls.addEventListener('start', () => { userInteracted = true; });
 
@@ -210,11 +211,29 @@ export function createViewer(container, { onTime } = {}) {
     cumulativeVolume = [];
     terrain = null;
     blockOutline = null;
+    retainedObstacles = [];
     payload = null;
   }
 
   function terrainHeight(x, y) {
     if (!terrain) return baseElevation;
+    if (Array.isArray(terrain.heights) && terrain.heights.length) {
+      const bounds = terrain.bounds;
+      if (Array.isArray(bounds) && bounds.length === 4) {
+        const [minX, minY, maxX, maxY] = bounds.map(Number);
+        const res = Math.max(2, Number(terrain.resolution) || 24);
+        const fx = Math.max(0, Math.min(res - 1, ((Number(x) - minX) / Math.max(1, maxX - minX)) * (res - 1)));
+        const fy = Math.max(0, Math.min(res - 1, ((Number(y) - minY) / Math.max(1, maxY - minY)) * (res - 1)));
+        const x0 = Math.floor(fx), y0 = Math.floor(fy);
+        const x1 = Math.min(res - 1, x0 + 1), y1 = Math.min(res - 1, y0 + 1);
+        const dx = fx - x0, dy = fy - y0;
+        const h00 = Number(terrain.heights[y0 * res + x0]) || 0;
+        const h10 = Number(terrain.heights[y0 * res + x1]) || 0;
+        const h01 = Number(terrain.heights[y1 * res + x0]) || 0;
+        const h11 = Number(terrain.heights[y1 * res + x1]) || 0;
+        return baseElevation + (h00 * (1 - dx) + h10 * dx) * (1 - dy) + (h01 * (1 - dx) + h11 * dx) * dy;
+      }
+    }
     const origin = terrain.origin || [0, 0];
     const uphill = terrain.uphill || [0, -1];
     const slope = Number(terrain.slope_percent || 0) / 100;
@@ -251,13 +270,40 @@ export function createViewer(container, { onTime } = {}) {
     return states;
   }
 
+  function routeAroundObstacles(x0, y0, x1, y1) {
+    let best = null;
+    let bestDistance = Infinity;
+    const dx = x1 - x0;
+    const dy = y1 - y0;
+    const lengthSq = dx * dx + dy * dy || 1;
+    for (const obstacle of retainedObstacles) {
+      const t = Math.max(0, Math.min(1, ((obstacle.x - x0) * dx + (obstacle.y - y0) * dy) / lengthSq));
+      const px = x0 + dx * t;
+      const py = y0 + dy * t;
+      const distance = Math.hypot(obstacle.x - px, obstacle.y - py);
+      if (distance < obstacle.radius + 4 && distance < bestDistance) {
+        best = { obstacle, t, px, py, length: Math.hypot(dx, dy) };
+        bestDistance = distance;
+      }
+    }
+    if (!best || bestDistance > best.obstacle.radius + 4) return [[x0, y0], [x1, y1]];
+    const normalX = -(dy / Math.max(1, best.length));
+    const normalY = dx / Math.max(1, best.length);
+    const side = ((x0 - best.obstacle.x) * normalX + (y0 - best.obstacle.y) * normalY) >= 0 ? 1 : -1;
+    const offset = best.obstacle.radius + 6;
+    const via = [best.obstacle.x + normalX * offset * side, best.obstacle.y + normalY * offset * side];
+    return [[x0, y0], via, [x1, y1]];
+  }
+
   function updateMachines(t) {
     for (const [id, group] of Object.entries(machines)) {
       const state = segmentAt(id, t);
       if (!state) continue;
       const segment = state.segment;
-      let x = segment.x0 + (segment.x1 - segment.x0) * state.f;
-      let y = segment.y0 + (segment.y1 - segment.y0) * state.f;
+      const path = routeAroundObstacles(segment.x0, segment.y0, segment.x1, segment.y1);
+      const point = pathPoint(path, state.f);
+      let x = point.x;
+      let y = point.y;
       const offset = MACHINE_OFFSETS[id] || [0, 0];
       x += offset[0]; y += offset[1];
       group.position.set(x, sampleHeight(x, y) + 2.8, y);
@@ -642,9 +688,14 @@ export function createViewer(container, { onTime } = {}) {
       trunk.scale.set(dbh * 1.2, height * 0.4, dbh * 1.2);
       trunk.position.set(x, base + height * 0.2, y);
       const crown = new THREE.Mesh(crownGeo, crownMat);
-      crown.scale.set(crownRadius, height * 0.65, crownRadius);
-      crown.position.set(x, base + height * 0.55, y);
-      group.add(trunk, crown);
+      crown.scale.set(crownRadius * 1.15, height * 0.7, crownRadius * 1.15);
+      crown.position.set(x, base + height * 0.6, y);
+      const marker = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.9, 1.2, 3.0, 7),
+        new THREE.MeshBasicMaterial({ color: 0x2fbfb0, transparent: true, opacity: 0.9 }),
+      );
+      marker.position.set(x, base + 1.5, y);
+      group.add(trunk, crown, marker);
     }
     residualGroup = group;
     scene.add(group);
@@ -934,6 +985,9 @@ export function createViewer(container, { onTime } = {}) {
         for (const tree of sorted) { sum += tree.volume_m3 || 0; cumulativeVolume.push(sum); }
 
         addResidualTrees(residual);
+        retainedObstacles = (residual?.trees || []).map((tree) => ({
+          x: Number(tree.x), y: Number(tree.y), radius: Math.max(2, (Number(tree.crown_radius_m) || 3) * 0.55),
+        }));
         addRoad(events);
 
         if (events.landing) {

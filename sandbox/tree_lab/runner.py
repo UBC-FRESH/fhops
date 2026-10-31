@@ -184,6 +184,12 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
     if edge is not None:
         command.extend(["--landing-x", f"{edge[0]:.3f}", "--landing-y", f"{edge[1]:.3f}"])
     command.extend(["--path-mode", str(args.get("path_mode", "swath"))])
+    for obstacle in case.manifest.get("obstacles") or []:
+        try:
+            x, y, radius = (float(value) for value in obstacle)
+        except (TypeError, ValueError):
+            continue
+        command.extend(["--obstacle", f"{x:.3f},{y:.3f},{max(0.1, radius):.3f}"])
     option_map = {
         "bunch_volume_m3": "--bunch-volume",
         "rate_model": "--rate-model",

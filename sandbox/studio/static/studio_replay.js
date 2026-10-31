@@ -39,10 +39,36 @@ async function load() {
   download.href = `${API}projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}/events`;
   download.hidden = false;
   document.getElementById("run-label").textContent = `${projectId} · ${runId}`;
-  events = await fetch(`${API}projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}/events`).then((response) => {
-    if (!response.ok) throw new Error(`events ${response.status}`);
-    return response.json();
-  });
+  const [loadedEvents, project, dataset] = await Promise.all([
+    fetch(`${API}projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}/events`).then((response) => {
+      if (!response.ok) throw new Error(`events ${response.status}`);
+      return response.json();
+    }),
+    fetch(`${API}projects/${encodeURIComponent(projectId)}`).then((response) => response.json()),
+    fetch(`${API}projects/${encodeURIComponent(projectId)}/dataset`).then((response) => response.json()),
+  ]);
+  events = loadedEvents;
+  const terrain = project?.terrain;
+  if (terrain && Array.isArray(terrain.heights) && terrain.heights.length) {
+    const polygon = project.block?.polygon || [];
+    const xs = polygon.map((point) => Number(point[0]));
+    const ys = polygon.map((point) => Number(point[1]));
+    events.terrain = {
+      bounds: terrain.bounds || [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)],
+      resolution: terrain.resolution || 24,
+      heights: terrain.heights,
+    };
+  }
+  const retainedTrees = (dataset.trees || []).filter((tree) => tree.retained);
+  document.getElementById("run-label").textContent += ` · ${retainedTrees.length} retained`;
+  if (events.terrain) document.getElementById("run-label").textContent += " · terrain";
+  const residual = {
+    trees: retainedTrees
+      .map((tree) => ({
+        tree_id: tree.tree_id, x: tree.x, y: tree.y, dbh_cm: tree.dbh_cm,
+        height_m: tree.height_m, crown_radius_m: Math.max(1, tree.dbh_cm / 30),
+      })),
+  };
   duration = Math.max(1, Number(events.duration_s) || 1);
   machines.innerHTML = "";
   for (const [id, spec] of Object.entries(events.machines || {})) {
@@ -55,7 +81,7 @@ async function load() {
   await viewer.load({
     sceneUrl: `${API}projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}/scene.gltf`,
     events,
-    residual: null,
+    residual,
   });
   clock.textContent = `${events.block_id || "Edited scenario"} · ${events.tree_count || 0} trees · ${(Number(events.processed_volume_m3) || 0).toFixed(0)} m³`;
   status.textContent = "ready";

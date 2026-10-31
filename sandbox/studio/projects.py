@@ -448,6 +448,11 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
         for tree in inventory.rows
         if tree.tree_id not in retained and _point_in_polygon(tree.x_m, tree.y_m, polygon)
     ]
+    residual_rows = [
+        tree
+        for tree in inventory.rows
+        if tree.tree_id in retained and _point_in_polygon(tree.x_m, tree.y_m, polygon)
+    ]
     if not rows:
         raise StudioError("The edited block and retention rules leave no harvestable trees.")
     inv_path, meta_path = _write_project_inventory(
@@ -464,6 +469,14 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     }
     manifest["landing"] = project.get("landing")
     manifest["studio_project_id"] = project_id
+    manifest["obstacles"] = [
+        [
+            round(tree.x_m, 3),
+            round(tree.y_m, 3),
+            round(max(2.0, (tree.crown_radius_m or 3.0) * 0.55), 3),
+        ]
+        for tree in residual_rows
+    ]
     sync_system_args(project)
     manifest["system_args"] = project["system_args"]
     if isinstance(manifest.get("cable"), dict):
