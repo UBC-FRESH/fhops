@@ -90,3 +90,51 @@ def parse_debrief_response(text: str) -> dict[str, Any]:
     if not isinstance(payload.get("parameter_costs"), dict):
         raise ValueError("Debrief agent response needs parameter_costs.")
     return payload
+
+
+def build_final_chat_prompt(context: dict[str, Any], message: str) -> str:
+    """Build a bounded final-chat prompt from compact tournament facts."""
+    compact_levels = []
+    for item in context.get("debriefs", []):
+        compact_levels.append(
+            {
+                "level_id": item.get("level_id"),
+                "score": item.get("score"),
+                "player_net_profit": item.get("player_net_profit"),
+                "optimal_net_profit": item.get("optimal_net_profit"),
+                "player_choices": item.get("player_choices"),
+                "optimal_choices": item.get("optimal_choices"),
+                "parameter_deltas": item.get("parameter_deltas", []),
+                "consultant_fees": (item.get("component_deltas") or {}).get("consultant_fees", 0.0),
+                "contractor_adjustment": (item.get("component_deltas") or {}).get(
+                    "contractor_adjustment", 0.0
+                ),
+            }
+        )
+    payload = format_facts_for_prompt(
+        {
+            "team_code": context.get("team_code"),
+            "total_score": context.get("total_score"),
+            "levels": compact_levels,
+        }
+    )
+    user_text = message.strip()[:1200]
+    prompt = (
+        "You are the FHOPS serious-game final debrief coach. Answer the team's "
+        "question using only the compact tournament facts below. Do not invent "
+        "numeric claims; numeric facts are shown by the UI. Keep the answer concise "
+        "and discuss the consequences of contractor, consultant, and parameter choices. "
+        "Round any unavoidable numbers to whole dollars, volumes to one decimal, and "
+        "scores to one decimal.\n"
+        f"Facts: {json.dumps(payload, sort_keys=True, separators=(',', ':'))}\n"
+        f"Team question: {user_text}"
+    )
+    if len(prompt) <= 3900:
+        return prompt
+    # Keep the question and a bounded fact prefix rather than overflowing the agent.
+    budget = max(200, 3900 - len(user_text) - 160)
+    return (
+        "You are the FHOPS serious-game final debrief coach. Answer using only these "
+        f"bounded facts: {json.dumps(payload, sort_keys=True)[:budget]} "
+        f"Team question: {user_text}"
+    )

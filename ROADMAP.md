@@ -629,7 +629,7 @@ loader replaces it.
   - [x] Session progress and leaderboard panel.
   - [x] CLI flags for stand levels, precomputes, agent model, and cache.
   - [x] Level map with completed/current/locked states and submit progress.
-  - [ ] Live tree-system progress view.
+  - [ ] Dual 3D replay: pre-saved optimal assets + JIT/cached player replay.
 - [x] P20.4 Prove fairness, document the tournament, and close out (#315)
   - [x] Deterministic/fairness/leakage tests.
   - [x] Instructor docs and close-out note.

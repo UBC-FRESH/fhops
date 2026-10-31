@@ -4750,3 +4750,8 @@ PY
   fees are debited immediately, the 0–100 score can go negative when fees exceed
   the no-tip spread, and the no-tip optimal plan remains the only 100. The UI
   exposes contractor quotes and tip purchase before submission.
+
+- 2026-10-31: P20 final chat prompt compaction: removed full debrief history
+  from the agent prompt, capped user questions, and bounded the synthesized
+  prompt below the 4,000-character AgentRequest limit. Long final-chat questions
+  now work without validation errors.

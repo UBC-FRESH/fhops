@@ -25,6 +25,7 @@ from fhops.game.explain_cache import ExplanationCache
 from fhops.game.llm import (
     DEEPSEEK_GAME_MODEL,
     build_debrief_prompt,
+    build_final_chat_prompt,
     parse_debrief_response,
 )
 from fhops.web.agent import AgentError, AgentRequest, run_agent
@@ -232,15 +233,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
                 return parse_debrief_response(str(response["response"]))
 
             def game_chat(context: dict[str, Any], message: str) -> str:
-                prompt = (
-                    "You are the FHOPS serious-game final debrief coach. Answer the "
-                    "team's question using only the supplied tournament facts. Do not "
-                    "reveal any new hidden parameters beyond the debrief facts. Round currency to "
-                    "whole dollars, volumes to one decimal place, and scores to one decimal. Be concise "
-                    "and link advice to net profit, score, and the listed choices.\n"
-                    f"Context JSON: {json.dumps(context, sort_keys=True)}\n"
-                    f"Team question: {message}"
-                )
+                prompt = build_final_chat_prompt(context, message)
                 response = run_agent(
                     AgentRequest(message=prompt, model=config.game_agent_model),
                     workspace=config.workspace,

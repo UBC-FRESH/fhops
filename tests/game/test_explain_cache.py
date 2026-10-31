@@ -113,3 +113,27 @@ def test_dollar_claim_from_llm_is_rejected() -> None:
         },
     )
     assert result["source"] == "deterministic_template"
+
+
+def test_final_chat_prompt_is_bounded() -> None:
+    from fhops.game.llm import build_final_chat_prompt
+
+    context = {
+        "team_code": "TEAM-A",
+        "total_score": 300.0,
+        "debriefs": [
+            {
+                "level_id": "kc_57254551",
+                "score": 96.0,
+                "player_net_profit": 73577.54,
+                "optimal_net_profit": 75705.63,
+                "player_choices": {"care_level": 0.25, "log_length_m": 6.1},
+                "optimal_choices": {"care_level": 0.5, "log_length_m": 6.1},
+                "parameter_deltas": [{"parameter": "care_level", "cost_of_wrong": 2128.09}],
+                "component_deltas": {"consultant_fees": -1500.0},
+            }
+        ],
+    }
+    prompt = build_final_chat_prompt(context, "x" * 8000)
+    assert len(prompt) <= 4000
+    assert "Team question:" in prompt
