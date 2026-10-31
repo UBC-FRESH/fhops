@@ -643,6 +643,38 @@ loader replaces it.
   - [x] Four contractor quotes and three overlapping paid consultant tips;
     fees can drive the score below zero.
 
+## Phase 21 — Scenario Studio
+
+Parent issue: TBD. Branch: `phase21-scenario-studio`. Status: in progress. Plan:
+`notes/phase21_scenario_studio.md`. Issue tree: `notes/phase21_issue_tree.md`.
+
+Goal: add an interactive authoring layer over immutable Tree Lab cases for
+boundary, landing, road, retention, machine-system, operator-policy, and
+eventually terrain/obstacle editing, with a derived scenario run.
+
+- [x] P21.1 Project schema, storage, API, and editor shell
+  - [x] Separate Studio FastAPI service and static editor
+  - [x] Create/list/load/save/delete/export project endpoints
+  - [x] 2D canvas editor with pan, zoom, fit, undo, and redo
+- [x] P21.2 Boundary, landing, road, retention, and machine editing
+  - [x] Editable block boundary polygon and area/stat recomputation
+  - [x] Road-snapped landing and road polyline editing
+  - [x] Tree-level retention brush and retention target
+  - [x] Machine add/remove and operator policy presets
+  - [x] Visual terrain heightfield brush prototype
+- [x] P21.3 Materialize derived cases and run edited scenarios
+  - [x] Boundary and retention filtering into a disposable case
+  - [x] Landing and machine-system overrides
+  - [x] Feller operator-policy productivity hook
+  - [x] Studio run endpoint and KPI result panel
+- [ ] P21.4 Terrain/obstacle simulation hook
+- [ ] P21.5 3D editor integration and replay preview
+- [ ] P21.6 Full operator-policy simulation integration
+- [ ] P21.7 Closeout: tests, docs, gates, and issue-tree closeout
+
+Known limits: 2D editor only; terrain is visual-only; only the feller policy is
+wired into simulation; no obstacle/stream tools; no 3D preview yet.
+
 ## Backlog & Ideas
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.

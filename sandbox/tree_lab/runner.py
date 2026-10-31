@@ -144,8 +144,11 @@ def _git_commit() -> str | None:
     return completed.stdout.strip() or None
 
 
-def _edge_landing(cut_list: Path) -> tuple[float, float] | None:
-    """Place the landing just south-east of the block edge."""
+def _edge_landing(case: Case, cut_list: Path) -> tuple[float, float] | None:
+    """Return a manifest landing, or place one just south-east of the block edge."""
+    landing = case.manifest.get("landing")
+    if isinstance(landing, dict) and "x" in landing and "y" in landing:
+        return float(landing["x"]), float(landing["y"])
     try:
         with cut_list.open(encoding="utf-8", newline="") as handle:
             rows = list(csv.DictReader(handle))
@@ -177,7 +180,7 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
     for processor in args.get("processors") or []:
         command.extend(["--processor", str(processor)])
     command.extend(["--loader", str(args["loader"])])
-    edge = _edge_landing(run_dir / "inputs" / "tree_inventory" / "cut_list.csv")
+    edge = _edge_landing(case, run_dir / "inputs" / "tree_inventory" / "cut_list.csv")
     if edge is not None:
         command.extend(["--landing-x", f"{edge[0]:.3f}", "--landing-y", f"{edge[1]:.3f}"])
     command.extend(["--path-mode", str(args.get("path_mode", "swath"))])
@@ -194,6 +197,7 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         "skidder_capacity_m3": "--skidder-capacity",
         "feller_reach_m": "--feller-reach",
         "feller_speed_mps": "--feller-speed",
+        "feller_productivity_multiplier": "--feller-productivity-multiplier",
         "max_skidder_grade": "--max-skidder-grade",
     }
     for key, flag in option_map.items():

@@ -1,3 +1,19 @@
+# 2026-10-31 — Phase 21 Scenario Studio first slice (branch phase21-scenario-studio)
+
+- Added a separate `sandbox/studio` FastAPI service and static editor.
+- Added immutable project overlays under `build/studio_projects/` with create,
+  list, load, save, delete, dataset, and JSON export endpoints.
+- Added a 2D plan editor for block boundaries, landings, roads, retention trees,
+  machine systems, operator policies, and a visual terrain brush.
+- Added derived-case materialization that filters boundary/retention, applies
+  landing and machine-system edits, and runs the existing Tree Lab simulation
+  pipeline. Feller operator policy is mapped to a productivity multiplier.
+- Added Studio project/materialization smoke tests and the Phase 21 plan,
+  issue-tree manifest, and roadmap entry.
+- Verification: `PYTHONPATH=src:. /home/gep/projects/fhops/.venv/bin/python -m pytest -q tests/studio/test_studio_projects.py`
+  (2 passed); `node --check sandbox/studio/static/studio.js`; Studio Python
+  compile check. Full repository gates not run for this slice.
+
 # 2026-10-29 — FHOPS 1.2.0 release
 
 - Bumped the package version to `1.2.0` and added `docs/releases/v1.2.0.md`.
