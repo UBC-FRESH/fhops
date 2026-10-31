@@ -88,10 +88,12 @@ can see why buying the last machine was expensive.
   operational MIP to optimality.
 - `worst_level` is the minimum optimal objective over the feasible combinations;
   `best_level` is the maximum.
-- The team's run is re-evaluated under the fixed weights:
+- The team's run is re-evaluated under the fixed weights, then the level's
+  schedule-independent fleet debit is subtracted:
 
 ```text
-score = 100 * (team_objective - worst_level) / (best_level - worst_level)
+adjusted_objective = fhops_objective - fleet_penalty
+score = 100 * (adjusted_objective - worst_level) / (best_level - worst_level)
 ```
 
 - Scores are clamped to 0–100. The raw objective and component breakdown remain
