@@ -16,7 +16,7 @@ cd /home/gep/projects/fhops-public-demo
 ./run_public_demo.sh
 ```
 
-The clone is based on `UBC-FRESH/fhops` `main` at the P20 merge. The demo wrapper adds only the landing page, `/demo` alias, and `/sandbox` static mount. The game agent is disabled for the public demo; game debriefs use deterministic templates.
+The clone is based on `UBC-FRESH/fhops` `main` at the P20 merge. The demo wrapper adds only the landing page, `/demo` alias, and `/sandbox` static mount. The optional agent is enabled for the public demo. App-level rate and body-size limits remain active.
 
 Nginx should reverse-proxy the public root to `http://127.0.0.1:8780`.
 

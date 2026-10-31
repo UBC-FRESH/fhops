@@ -26,7 +26,7 @@ app: FastAPI = create_app(
         host="127.0.0.1",
         port=8780,
         title="FHOPS Public Demo",
-        allow_agent=False,
+        allow_agent=True,
         game_levels=[
             ROOT / "examples/game/levels/mkrf_684/level.yaml",
             ROOT / "examples/game/levels/gavin_1032/level.yaml",
@@ -48,7 +48,7 @@ tree_lab_app = create_tree_lab_app(
         cases_root=ROOT / "sandbox" / "cases",
         runs_root=ROOT / "sandbox" / "runs",
         workspace=ROOT,
-        allow_agent=False,
+        allow_agent=True,
         root_path="",
     )
 )
