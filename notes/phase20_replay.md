@@ -33,6 +33,12 @@ Each pane is the existing FHOPS tree-system viewer with independent orbit/zoom.
 A wrapper synchronizes play/pause, timeline position, and speed. The player can
 scrub and replay as often as desired.
 
+## Job execution
+
+Replay generation is asynchronous. The game starts a replay job, polls its
+state, and opens the dual viewer only when both assets are ready. This avoids
+proxy timeouts during the expensive KC scene/timeline generation.
+
 ## Constraints
 
 - No replay assets before completion.

@@ -133,6 +133,10 @@ const api = (path) => `${API}${path}`;
 const $ = (id) => document.getElementById(id);
 const setStatus = (value) => { $('status').textContent = String(value); };
 const money = (value) => Math.abs(Number(value)) < 0.5 ? '$0' : new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(Number(value));
+async function readJson(response) {
+  const text = await response.text();
+  try { return JSON.parse(text); } catch { throw new Error(text || response.statusText); }
+}
 const number = (value) => new Intl.NumberFormat('en-CA', { maximumFractionDigits: 1 }).format(Number(value));
 const scoreText = (value) => Number.isInteger(Number(value)) ? Number(value).toFixed(0) : Number(value).toFixed(1);
 const parameterLabel = (key) => ({
@@ -410,10 +414,22 @@ $('replay').onclick = async () => {
   try {
     const session = $('session').value.trim(), team = $('team').value.trim();
     const levelId = state.lastCompletedLevel || state.teamState?.attempts?.at(-1)?.level_id || state.level.level_id;
-    setStatus('Generating optimal and player replays…');
-    const response = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/replay/${encodeURIComponent(levelId)}`));
-    const payload = await response.json();
-    if (!response.ok) throw new Error(payload.detail || JSON.stringify(payload));
+    setStatus('Starting replay generation…');
+    const start = await fetch(api(`/game/sessions/${encodeURIComponent(session)}/teams/${encodeURIComponent(team)}/replay/${encodeURIComponent(levelId)}`), { method: 'POST' });
+    const started = await readJson(start);
+    if (!start.ok) throw new Error(started.detail || JSON.stringify(started));
+    const jobId = started.job_id;
+    let payload = null;
+    for (let i = 0; i < 180; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const statusResponse = await fetch(api(`/game/replay-jobs/${encodeURIComponent(jobId)}`));
+      const status = await readJson(statusResponse);
+      if (!statusResponse.ok) throw new Error(status.detail || JSON.stringify(status));
+      if (status.status === 'ready') { payload = status.result; break; }
+      if (status.status === 'failed') throw new Error(status.error || 'Replay generation failed.');
+      setStatus(`Generating replay assets… ${i * 2}s`);
+    }
+    if (!payload) throw new Error('Replay generation is taking too long; try again shortly.');
     const query = new URLSearchParams({
       left: payload.optimal_url,
       right: payload.player_url,

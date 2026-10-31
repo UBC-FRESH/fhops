@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 import secrets
+import threading
 from collections.abc import Callable
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -149,6 +150,7 @@ class GameService:
                 session = TournamentSession.from_dict(item)
                 self.sessions[session.session_id] = session
         self.replay_tokens: dict[str, Path] = {}
+        self.replay_jobs: dict[str, dict[str, Any]] = {}
         self.llm_fn = llm_fn
         self.chat_fn = chat_fn
         self.explanation_cache = explanation_cache
@@ -431,7 +433,39 @@ class GameService:
         )
 
     def replay(self, session_id: str, team_code: str, level_id: str) -> dict[str, Any]:
-        """Generate/cache optimal and player replays for a completed attempt."""
+        """Start asynchronous generation of optimal and player replays."""
+        session = self.session(session_id)
+        team = session.team(team_code)
+        attempt = next((item for item in team.attempts if item.level_id == level_id), None)
+        if attempt is None:
+            raise GameStateError(f"Level {level_id!r} has not been completed by this team.")
+        job_id = secrets.token_urlsafe(16)
+        self.replay_jobs[job_id] = {"status": "running", "level_id": level_id, "error": None}
+        thread = threading.Thread(
+            target=self._run_replay_job,
+            args=(job_id, session_id, team_code, level_id),
+            daemon=True,
+        )
+        thread.start()
+        return {"job_id": job_id, "status": "running"}
+
+    def _run_replay_job(self, job_id: str, session_id: str, team_code: str, level_id: str) -> None:
+        try:
+            payload = self._build_replay_assets(session_id, team_code, level_id)
+            self.replay_jobs[job_id] = {"status": "ready", "result": payload, "error": None}
+        except Exception as exc:  # noqa: BLE001 - background job reports its failure
+            self.replay_jobs[job_id] = {"status": "failed", "error": str(exc)}
+
+    def replay_status(self, job_id: str) -> dict[str, Any]:
+        """Return the status of an asynchronous replay job."""
+        try:
+            return dict(self.replay_jobs[job_id])
+        except KeyError as exc:
+            raise KeyError(f"Unknown replay job {job_id!r}") from exc
+
+    def _build_replay_assets(
+        self, session_id: str, team_code: str, level_id: str
+    ) -> dict[str, Any]:
         session = self.session(session_id)
         team = session.team(team_code)
         attempt = next((item for item in team.attempts if item.level_id == level_id), None)
@@ -635,7 +669,7 @@ def create_game_router(service: GameService) -> APIRouter:
         except GameStateError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
-    @router.get("/sessions/{session_id}/teams/{team_code}/replay/{level_id}")
+    @router.post("/sessions/{session_id}/teams/{team_code}/replay/{level_id}")
     def replay(session_id: str, team_code: str, level_id: str) -> dict[str, Any]:
         try:
             return service.replay(session_id, team_code, level_id)
@@ -643,6 +677,13 @@ def create_game_router(service: GameService) -> APIRouter:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         except (GameStateError, ValueError, FileNotFoundError, RuntimeError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @router.get("/replay-jobs/{job_id}")
+    def replay_status(job_id: str) -> dict[str, Any]:
+        try:
+            return service.replay_status(job_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
 
     @router.get("/replay-assets/{token}/{filename}")
     def replay_asset(token: str, filename: str):

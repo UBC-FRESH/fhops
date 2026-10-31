@@ -4768,3 +4768,7 @@ PY
 - 2026-10-31: P20 dual-replay timing: the synchronized wrapper now plays the
   full simulated timeline in 90 real seconds at 1× (matching the FHOPS viewer),
   with 0.25×–8× speed controls instead of 1 simulated second per real second.
+
+- 2026-10-31: P20 replay robustness: replay generation is now asynchronous with
+  job polling, avoiding proxy timeouts and Safari JSON parse errors on slow KC
+  assets. The UI also reads non-JSON error bodies safely.
