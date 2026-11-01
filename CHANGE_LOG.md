@@ -1,3 +1,15 @@
+# 2026-11-01 — 3D editing and graceful terrain blocking
+
+- Added `/3d` Studio editing page using Three.js: orbit, landing movement,
+  retention toggling, terrain raising/lowering, and boundary vertex dragging.
+- Added a 2D/3D editor link and save flow against the same Studio project record.
+- Changed skidder route failures from whole-run aborts to per-bunch blocked
+  warnings; blocked volume is excluded and reported in the run warnings.
+- Added warning rendering to the Studio run result panel.
+- Updated terrain tests and Studio documentation/roadmap.
+- Verification: `pytest` for terrain + Studio tests, ruff, JS syntax checks,
+  and Playwright 3D editor smoke test.
+
 # 2026-11-01 — Studio terrain visualization demo
 
 - Added height-colored terrain shading and a wireframe overlay to the Studio 3D

@@ -218,6 +218,10 @@ def create_app(config: StudioConfig) -> FastAPI:
             STATIC_DIR / "studio_replay.html", headers={"Cache-Control": "no-store"}
         )
 
+    @app.get("/3d")
+    def edit_3d() -> FileResponse:
+        return FileResponse(STATIC_DIR / "studio_3d.html", headers={"Cache-Control": "no-store"})
+
     @app.get("/api/projects/{project_id}/project.json")
     def project_file(project_id: str) -> FileResponse:
         try:

@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from test_ground_system import _system_scenario
 
-from fhops.ground_system import GroundSystemError, simulate_ground_system
+from fhops.ground_system import simulate_ground_system
 
 
 def _write_dem_and_road(tmp_path: Path) -> tuple[Path, Path]:
@@ -76,21 +76,23 @@ def test_ground_system_dem_and_road_routing(tmp_path: Path) -> None:
     assert any(event.max_grade_percent > 0 for event in travel)
 
 
-def test_ground_system_refuses_steep_route(tmp_path: Path) -> None:
+def test_ground_system_blocks_steep_route(tmp_path: Path) -> None:
+    """Steep bunches are reported as blocked instead of aborting the system."""
     scenario = _system_scenario(tmp_path)
     dem, road = _write_dem_and_road(tmp_path)
-    with pytest.raises(GroundSystemError, match="maximum grade"):
-        simulate_ground_system(
-            scenario,
-            block_id="B01",
-            feller_machine_id="H1",
-            skidder_machine_ids=("H2", "H3"),
-            loader_machine_id="H4",
-            bunch_volume_m3=1.0,
-            dem_path=dem,
-            road_path=road,
-            max_skidder_grade_percent=5.0,
-        )
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        dem_path=dem,
+        road_path=road,
+        max_skidder_grade_percent=5.0,
+    )
+    assert any("blocked" in warning.lower() for warning in result.warnings)
+    assert not [event for event in result.events if event.type == "travel_loaded"]
 
 
 def test_terrain_router_uses_connected_road_network(tmp_path: Path) -> None:

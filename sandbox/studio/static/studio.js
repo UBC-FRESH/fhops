@@ -336,6 +336,8 @@ function renderProjectMeta() {
   }
   const base = state.cases.find((item) => item.case_id === state.project.base_case_id);
   $("#project-meta").innerHTML = `<b>${escapeHtml(state.project.label)}</b><br><span class="muted">${escapeHtml(base?.label || state.project.base_case_id)} · revision ${state.project.revision || 1}${state.dirty ? " · unsaved" : ""}</span>`;
+  const edit3d = $("#edit-3d");
+  if (edit3d) edit3d.href = `3d?project=${encodeURIComponent(state.project.project_id)}`;
 }
 
 function escapeHtml(value) {
@@ -769,7 +771,11 @@ async function runScenario() {
       ["makespan h", kpis.makespan_s ? (Number(kpis.makespan_s) / 3600).toFixed(1) : "—"],
       ["unreachable", kpis.unreachable_count ?? "—"],
     ];
-    $("#run-result").innerHTML = `<b>Run ${escapeHtml(record.run_id)}</b><div class="stat-grid" style="margin-top:7px">${rows.map(([label, value]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("")}</div><p><a class="back" href="replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(record.run_id)}" target="_blank">Open 3D replay →</a></p>`;
+    const warnings = Array.isArray(record.warnings) ? record.warnings : [];
+    const warningHtml = warnings.length
+      ? `<div class="banner warn"><b>Blocked / warnings</b><ul>${warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul></div>`
+      : "";
+    $("#run-result").innerHTML = `<b>Run ${escapeHtml(record.run_id)}</b><div class="stat-grid" style="margin-top:7px">${rows.map(([label, value]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("")}</div>${warningHtml}<p><a class="back" href="replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(record.run_id)}" target="_blank">Open 3D replay →</a></p>`;
     setStatus(`Run complete · ${record.run_id}`);
     renderProjectMeta();
   } catch (error) {

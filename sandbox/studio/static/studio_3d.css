@@ -1,0 +1,28 @@
+html, body { margin: 0; height: 100%; background: #0d1113; color: #e6eef2; font: 13px/1.4 system-ui, sans-serif; overflow: hidden; }
+body { display: flex; flex-direction: column; }
+header { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: #11181b; border-bottom: 1px solid #2b3a40; flex: 0 0 auto; }
+header strong { font-size: 14px; }
+header .back { color: #f08a24; text-decoration: none; }
+header #project-name { color: #b7c6cc; font-size: 12px; }
+header #status { margin-left: auto; font-size: 11px; }
+header button { background: #f08a24; color: #141414; border: 0; border-radius: 5px; padding: 5px 10px; font-weight: 650; cursor: pointer; }
+main { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 170px minmax(0, 1fr) 230px; }
+#scene { grid-column: 2; grid-row: 1; position: relative; min-width: 0; min-height: 0; }
+#scene canvas { display: block; }
+#tools, #stats { background: #151b1e; padding: 10px; overflow: auto; }
+#tools { grid-column: 1; grid-row: 1; }
+#stats { grid-column: 3; grid-row: 1; }
+#tools { border-right: 1px solid #2b3a40; }
+#stats { border-left: 1px solid #2b3a40; }
+h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .7px; color: #93a6ae; margin: 0 0 8px; }
+#tools button, #fit { width: 100%; text-align: left; background: #1b2428; color: #e6eef2; border: 1px solid #2b3a40; border-radius: 5px; padding: 5px 7px; margin: 3px 0; cursor: pointer; }
+#tools button.active { border-color: #f08a24; background: #2b2318; }
+#tools .secondary { margin-top: 12px; }
+#tools label { display: block; color: #93a6ae; font-size: 10px; margin-top: 12px; }
+#tools output { float: right; color: #e6eef2; }
+#tools input[type=range] { width: 100%; accent-color: #f08a24; }
+#tools .check { display: flex; align-items: center; gap: 5px; margin-top: 8px; }
+#tools .check input { accent-color: #f08a24; }
+.hint { color: #93a6ae; font-size: 10px; line-height: 1.4; margin-top: 14px; }
+#scene-stats { font-size: 11px; line-height: 1.7; }
+#scene-stats b { color: #e6eef2; }

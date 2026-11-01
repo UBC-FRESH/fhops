@@ -70,3 +70,7 @@ textarea { width: 100%; resize: vertical; }
 .selected { outline: 2px solid var(--accent); }
 #run-result a { color: var(--accent); text-decoration: none; }
 #run-result a:hover { text-decoration: underline; }
+
+.banner { border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; margin: 8px 0; font-size: 11px; }
+.banner.warn { border-color: #80631b; background: #2a2410; color: #e8d49b; }
+.banner ul { margin: 5px 0 0 16px; padding: 0; }
