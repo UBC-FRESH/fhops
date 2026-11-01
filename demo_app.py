@@ -9,7 +9,6 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
 from starlette.routing import Route
 
 from fhops.web.app import ServiceConfig, create_app
@@ -108,7 +107,27 @@ async def no_store_public_demo(request: Request, call_next: Any) -> Any:
         response.headers["Expires"] = "0"
         # Clear old module caches when a document is opened, so a stale
         # viewer.js cannot survive a normal reload or hard refresh.
-        if path in ("/", "/demo", "/game", "/sandbox", "/sandbox/", "/sandbox-v20261031i", "/sandbox-v20261031i/", "/sandbox-v20261031c", "/sandbox-v20261031c/", "/sandbox-v20261031d", "/sandbox-v20261031d/", "/sandbox-v20261031e", "/sandbox-v20261031e/", "/sandbox-v20261031f", "/sandbox-v20261031f/", "/sandbox-v20261031g", "/sandbox-v20261031g/", "/sandbox-v20261031h", "/sandbox-v20261031h/"):
+        if path in (
+            "/",
+            "/demo",
+            "/game",
+            "/sandbox",
+            "/sandbox/",
+            "/sandbox-v20261031i",
+            "/sandbox-v20261031i/",
+            "/sandbox-v20261031c",
+            "/sandbox-v20261031c/",
+            "/sandbox-v20261031d",
+            "/sandbox-v20261031d/",
+            "/sandbox-v20261031e",
+            "/sandbox-v20261031e/",
+            "/sandbox-v20261031f",
+            "/sandbox-v20261031f/",
+            "/sandbox-v20261031g",
+            "/sandbox-v20261031g/",
+            "/sandbox-v20261031h",
+            "/sandbox-v20261031h/",
+        ):
             response.headers["Clear-Site-Data"] = '"cache"'
     return response
 

@@ -1,3 +1,15 @@
+# 2026-11-01 — P21.4 verification sweep (#322)
+
+- Repository gates: `ruff check .` pass, `ruff format --check .` pass,
+  `mypy src` pass (188 files), `pre-commit run --all-files` pass.
+- Targeted tests: `tests/studio/test_studio_projects.py` and
+  `tests/tree/test_ground_system_terrain.py` pass.
+- Full `pytest` remains blocked by the pre-existing HiGHS `iteration_count`
+  option-error assertion in `tests/model/test_milp_driver_robustness.py`.
+- Sphinx build remains blocked by missing Pandoc (`nbsphinx`), an environment
+  gap rather than a Phase 21 code failure.
+- No phase PR, merge, tag, release, or settings change yet.
+
 # 2026-11-01 — Phase 21 compliance recovery (P21.4, #322)
 
 - Renamed the phase branch to `feature/p21-scenario-studio`.

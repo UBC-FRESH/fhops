@@ -1,9 +1,9 @@
 # Phase 21 compliance audit
 
-Date: 2026-11-01  
-Repository: `/home/gep/projects/fhops-scenario-studio`  
-Phase branch: `feature/p21-scenario-studio`  
-Parent issue: #318  
+Date: 2026-11-01
+Repository: `/home/gep/projects/fhops-scenario-studio`
+Phase branch: `feature/p21-scenario-studio`
+Parent issue: #318
 Child issues: #319–#322
 
 ## Policy references
