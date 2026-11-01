@@ -76,3 +76,8 @@ textarea { width: 100%; resize: vertical; }
 .banner ul { margin: 5px 0 0 16px; padding: 0; }
 
 .tool-options select { width: 100%; box-sizing: border-box; background: #0c1214; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px; margin-bottom: 7px; }
+
+.compare-grid { display: grid; grid-template-columns: 1fr auto; gap: 3px 8px; font-size: 11px; }
+.compare-grid .muted { color: var(--muted); }
+.delta-ok { color: var(--ok); }
+.delta-bad { color: #ff8b80; }

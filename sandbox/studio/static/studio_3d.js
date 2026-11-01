@@ -525,9 +525,9 @@ async function runScenario() {
     link.href = `replay?project=${encodeURIComponent(projectId)}&run=${encodeURIComponent(record.run_id)}`;
     link.hidden = false;
     const warnings = Array.isArray(record.warnings) ? record.warnings : [];
-    $("#run-output").innerHTML = warnings.length
-      ? `<b>Blocked / warnings</b><ul>${warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul>`
-      : "No warnings.";
+    const kpis = record.kpis || {};
+    $("#run-output").innerHTML = `<b>${Number(kpis.processed_volume_m3 || 0).toFixed(0)} m³</b> · ${(Number(kpis.makespan_s || 0) / 3600).toFixed(1)} h · ${Number(kpis.tree_count || 0).toLocaleString()} trees`
+      + (warnings.length ? `<br><b>Blocked / warnings</b><ul>${warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul>` : " · no warnings");
     setStatus(`Run ${record.run_id} complete${warnings.length ? ` · ${warnings.length} warning(s)` : ""}`);
   } catch (error) {
     setStatus(`Run failed: ${error.message}`, true);

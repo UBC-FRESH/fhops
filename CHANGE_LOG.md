@@ -1,3 +1,10 @@
+# 2026-11-01 — Run-to-run comparison
+
+- Added latest-versus-previous run comparison in the Studio plan editor:
+  volume, makespan, tree count, and warning deltas.
+- Added KPI summary to the 3D editor run output alongside blocked warnings.
+- Verification: Playwright plan comparison smoke test; no browser errors.
+
 # 2026-11-01 — Retention presets and operator-policy translation
 
 - Added retention clump type presets: retention clump, riparian buffer, and

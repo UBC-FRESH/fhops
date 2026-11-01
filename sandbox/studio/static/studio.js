@@ -769,13 +769,50 @@ async function duplicateProject() {
   } catch (error) { setStatus(`Duplicate failed: ${error.message}`, true); }
 }
 
+function formatDuration(seconds) {
+  if (seconds == null || !Number.isFinite(Number(seconds))) return "—";
+  return `${(Number(seconds) / 3600).toFixed(1)} h`;
+}
+
+function formatValue(value, digits = 1) {
+  return value == null || !Number.isFinite(Number(value)) ? "—" : Number(value).toFixed(digits);
+}
+
+function renderRunComparison(runs) {
+  const node = $("#run-compare");
+  if (!runs || runs.length < 2) {
+    node.textContent = "Need two runs to compare.";
+    return;
+  }
+  const latest = runs[0];
+  const previous = runs[1];
+  const lk = latest.kpis || {};
+  const pk = previous.kpis || {};
+  const rows = [
+    ["volume m³", Number(pk.processed_volume_m3), Number(lk.processed_volume_m3), "higher"],
+    ["makespan", Number(pk.makespan_s) / 3600, Number(lk.makespan_s) / 3600, "lower"],
+    ["trees", Number(pk.tree_count), Number(lk.tree_count), "higher"],
+    ["warnings", (previous.warnings || []).length, (latest.warnings || []).length, "lower"],
+  ];
+  let html = `<b>${escapeHtml(latest.run_id)}</b> vs ${escapeHtml(previous.run_id)}<div class="compare-grid" style="margin-top:6px">`;
+  for (const [label, before, after, direction] of rows) {
+    if (!Number.isFinite(before) || !Number.isFinite(after)) continue;
+    const delta = after - before;
+    const good = direction === "higher" ? delta >= 0 : delta <= 0;
+    html += `<span>${label}</span><span class="${good ? "delta-ok" : "delta-bad"}">${delta >= 0 ? "+" : ""}${label === "makespan" ? delta.toFixed(1) : delta.toFixed(0)}</span>`;
+  }
+  html += "</div>";
+  node.innerHTML = html;
+}
+
 async function loadRunHistory() {
   if (!state.project) return;
   try {
     const payload = await api(`projects/${encodeURIComponent(state.project.project_id)}/runs`);
     const runs = payload.runs || [];
     const node = $("#run-history");
-    if (!runs.length) { node.textContent = "No runs yet."; return; }
+    if (!runs.length) { node.textContent = "No runs yet."; renderRunComparison([]); return; }
+    renderRunComparison(runs);
     node.innerHTML = "";
     for (const run of runs.slice(0, 8)) {
       const link = document.createElement("a");
