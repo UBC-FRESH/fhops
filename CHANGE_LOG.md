@@ -1,3 +1,10 @@
+# 2026-11-01 — deploy Studio terrain elevation fix
+
+- Synced `sandbox/studio/projects.py` and replay terrain resampling from merged `main` (`70da4cb2`).
+- Derived scene tree elevations now use the edited heightfield; replay terrain includes the landing/road margin.
+- Existing runs retain old elevations; rerun projects to regenerate scenes.
+- No host networking or routing changes.
+
 # 2026-11-01 — deploy replay retention visibility and timeline
 
 - Synced Studio replay assets and Tree Lab viewer from merged `main` (`83606577`).

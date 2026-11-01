@@ -175,6 +175,66 @@ function drawTimeline() {
   timelineCursor.textContent = `T+${fmt(cursor)}`;
 }
 
+function replayTerrain(project) {
+  const terrain = project?.terrain;
+  if (!terrain || !Array.isArray(terrain.heights) || !terrain.heights.length) return null;
+  const polygon = project.block?.polygon || [];
+  const polygonXs = polygon.map((point) => Number(point[0])).filter(Number.isFinite);
+  const polygonYs = polygon.map((point) => Number(point[1])).filter(Number.isFinite);
+  const sourceBounds = Array.isArray(terrain.bounds) && terrain.bounds.length === 4
+    ? terrain.bounds.map(Number)
+    : [
+        Math.min(...polygonXs),
+        Math.min(...polygonYs),
+        Math.max(...polygonXs),
+        Math.max(...polygonYs),
+      ];
+  const [sourceMinX, sourceMinY, sourceMaxX, sourceMaxY] = sourceBounds;
+  const sourceRes = Math.max(2, Number(terrain.resolution) || 24);
+  const sampleSource = (x, y) => {
+    const fx = Math.max(0, Math.min(sourceRes - 1, ((x - sourceMinX) / Math.max(1e-9, sourceMaxX - sourceMinX)) * (sourceRes - 1)));
+    const fy = Math.max(0, Math.min(sourceRes - 1, ((y - sourceMinY) / Math.max(1e-9, sourceMaxY - sourceMinY)) * (sourceRes - 1)));
+    const x0 = Math.floor(fx), y0 = Math.floor(fy);
+    const x1 = Math.min(sourceRes - 1, x0 + 1), y1 = Math.min(sourceRes - 1, y0 + 1);
+    const dx = fx - x0, dy = fy - y0;
+    const h00 = Number(terrain.heights[y0 * sourceRes + x0]) || 0;
+    const h10 = Number(terrain.heights[y0 * sourceRes + x1]) || 0;
+    const h01 = Number(terrain.heights[y1 * sourceRes + x0]) || 0;
+    const h11 = Number(terrain.heights[y1 * sourceRes + x1]) || 0;
+    return (h00 * (1 - dx) + h10 * dx) * (1 - dy) + (h01 * (1 - dx) + h11 * dx) * dy;
+  };
+
+  const xs = [...polygonXs];
+  const ys = [...polygonYs];
+  const landing = project.landing || {};
+  if (Number.isFinite(Number(landing.x))) xs.push(Number(landing.x));
+  if (Number.isFinite(Number(landing.y))) ys.push(Number(landing.y));
+  for (const point of project.road?.points || []) {
+    if (Number.isFinite(Number(point[0]))) xs.push(Number(point[0]));
+    if (Number.isFinite(Number(point[1]))) ys.push(Number(point[1]));
+  }
+  xs.push(sourceMinX, sourceMaxX);
+  ys.push(sourceMinY, sourceMaxY);
+  const margin = 60;
+  const bounds = [
+    Math.min(...xs) - margin,
+    Math.min(...ys) - margin,
+    Math.max(...xs) + margin,
+    Math.max(...ys) + margin,
+  ];
+  const resolution = Math.max(sourceRes, 40);
+  const heights = new Array(resolution * resolution);
+  const [minX, minY, maxX, maxY] = bounds;
+  for (let row = 0; row < resolution; row += 1) {
+    const y = minY + ((row + 0.5) / resolution) * (maxY - minY);
+    for (let col = 0; col < resolution; col += 1) {
+      const x = minX + ((col + 0.5) / resolution) * (maxX - minX);
+      heights[row * resolution + col] = sampleSource(x, y);
+    }
+  }
+  return { bounds, resolution, heights };
+}
+
 async function load() {
   if (!projectId || !runId) throw new Error("Missing project or run id.");
   download.href = `${API}projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}/events`;
@@ -189,17 +249,7 @@ async function load() {
     fetch(`${API}projects/${encodeURIComponent(projectId)}/dataset`).then((response) => response.json()),
   ]);
   events = loadedEvents;
-  const terrain = project?.terrain;
-  if (terrain && Array.isArray(terrain.heights) && terrain.heights.length) {
-    const polygon = project.block?.polygon || [];
-    const xs = polygon.map((point) => Number(point[0]));
-    const ys = polygon.map((point) => Number(point[1]));
-    events.terrain = {
-      bounds: terrain.bounds || [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)],
-      resolution: terrain.resolution || 24,
-      heights: terrain.heights,
-    };
-  }
+  events.terrain = replayTerrain(project);
   const retainedTrees = (dataset.trees || []).filter((tree) => tree.retained);
   document.getElementById("run-label").textContent += ` · ${retainedTrees.length} retained`;
   if (events.terrain) document.getElementById("run-label").textContent += " · terrain";
