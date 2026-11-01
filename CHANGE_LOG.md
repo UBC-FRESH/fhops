@@ -1,3 +1,13 @@
+# 2026-11-01 — Terrain-aware machine playback routing
+
+- Added an A* route cache in the 3D replay viewer for machine travel segments.
+- Skidder/feller movement now follows a route around terrain cells above the
+  machine grade limit and around retained-tree obstacles.
+- Routes are cached per segment; fallback behavior is retained when no feasible
+  path exists.
+- Added a 3D replay smoke test against the terrain demo.
+- Verification: Playwright replay at 1440×900; no browser errors.
+
 # 2026-11-01 — Studio 3D workflow polish
 
 - Added 3D road drawing, Shift-click boundary vertex insertion, Delete removal,
