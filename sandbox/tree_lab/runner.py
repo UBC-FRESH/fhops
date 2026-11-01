@@ -204,6 +204,14 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         "feller_reach_m": "--feller-reach",
         "feller_speed_mps": "--feller-speed",
         "feller_productivity_multiplier": "--feller-productivity-multiplier",
+        "skidder_empty_speed": "--skidder-empty-speed",
+        "skidder_loaded_speed": "--skidder-loaded-speed",
+        "skidder_load_fixed": "--skidder-load-fixed",
+        "skidder_load_per_log": "--skidder-load-per-log",
+        "skidder_unload_fixed": "--skidder-unload-fixed",
+        "skidder_unload_per_log": "--skidder-unload-per-log",
+        "loader_process_fixed": "--loader-process-fixed",
+        "loader_process_per_log": "--loader-process-per-log",
         "max_skidder_grade": "--max-skidder-grade",
     }
     for key, flag in option_map.items():
