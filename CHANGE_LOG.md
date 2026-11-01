@@ -1,3 +1,10 @@
+# 2026-11-01 — P21 clean main integration branch
+
+- Created `feature/p21-demo-integration` from `main` and ported the game, Tree Lab/sandbox, public-demo wrapper, Studio, required core/runtime changes, and tests.
+- This replaces the public-demo-based branch as the mergeable phase branch; the public-demo branch remains deployment history.
+- Verification on the clean branch: `ruff check .`, `ruff format --check .`, `mypy src`, `pre-commit run --all-files`, and targeted Studio/terrain pytest pass. Full pytest and Sphinx remain blocked by the pre-existing HiGHS assertion and missing Pandoc.
+- No merge, tag, or release has been performed.
+
 # 2026-11-01 — P21.4 phase closeout report and public deployment
 
 - Pushed `feature/p21-scenario-studio` to origin.

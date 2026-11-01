@@ -1,7 +1,7 @@
 # Phase 21 — Scenario Studio
 
 Status: in progress
-Branch: `phase21-scenario-studio`
+Branch: `p21-demo-integration`
 Worktree: `/home/gep/projects/fhops-scenario-studio`
 Parent issue: TBD (create from `notes/phase21_issue_tree.md`)
 
