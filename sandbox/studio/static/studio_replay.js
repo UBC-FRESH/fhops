@@ -11,12 +11,32 @@ const play = document.getElementById("play");
 const scrub = document.getElementById("scrub");
 const clock = document.getElementById("title");
 const download = document.getElementById("download");
+const timelinePanel = document.getElementById("timeline-panel");
+const timelineCanvas = document.getElementById("timeline-canvas");
+const timelineToggle = document.getElementById("timeline-toggle");
+const timelineCursor = document.getElementById("timeline-cursor");
 let events = null;
 let duration = 1;
+let currentTime = 0;
+let hoverTime = null;
+let seekingTimeline = false;
+let timelineLanes = [];
+
+const TIMELINE_COLORS = {
+  process: "#f08a24",
+  travel: "#68b6ff",
+  load: "#69d18c",
+  unload: "#69d18c",
+  truck_load: "#d6b45a",
+  truck_return: "#a58b5a",
+  repair: "#ff6b6b",
+  wait: "#52656b",
+};
 
 const viewer = createViewer(scene, {
   onTime: (t) => {
     if (!events) return;
+    currentTime = t;
     const processed = (events.trees || []).filter((tree) => (tree.processed_s ?? Infinity) <= t).length;
     const volume = (events.trees || []).filter((tree) => (tree.processed_s ?? Infinity) <= t).reduce((sum, tree) => sum + (Number(tree.volume_m3) || 0), 0);
     status.textContent = `T+${fmt(t)} · ${processed.toLocaleString()} / ${(events.trees || []).length.toLocaleString()} trees · ${volume.toFixed(0)} m³`;
@@ -26,12 +46,133 @@ const viewer = createViewer(scene, {
       const node = document.querySelector(`[data-machine="${id}"] span`);
       if (node) node.textContent = state;
     }
+    if (!timelinePanel.hidden) drawTimeline();
   },
 });
 
 function fmt(t) {
   const s = Math.max(0, Math.floor(t));
   return `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor((s % 3600) / 60)).padStart(2, "0")}`;
+}
+
+function buildTimeline() {
+  const machineIds = new Set(Object.keys(events?.machines || {}));
+  for (const item of events?.timeline || []) machineIds.add(item.machine);
+  timelineLanes = [...machineIds].sort().map((id) => ({
+    id,
+    type: events?.machines?.[id]?.type || "machine",
+  }));
+  drawTimeline();
+}
+
+function timelineGeometry() {
+  const rect = timelineCanvas.getBoundingClientRect();
+  return {
+    rect,
+    left: 106,
+    right: 12,
+    top: 17,
+    bottom: 20,
+    width: Math.max(1, rect.width),
+    height: Math.max(1, rect.height),
+  };
+}
+
+function timelineTimeAt(clientX) {
+  const { rect, left, right, width } = timelineGeometry();
+  const plotWidth = Math.max(1, width - left - right);
+  const x = Math.max(0, Math.min(plotWidth, clientX - rect.left - left));
+  return (x / plotWidth) * duration;
+}
+
+function seekTimeline(clientX) {
+  viewer.seek(Math.max(0, Math.min(duration, timelineTimeAt(clientX))));
+}
+
+function drawTimeline() {
+  if (!events || timelinePanel.hidden) return;
+  const { rect, left, right, top, bottom, width, height } = timelineGeometry();
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const pixelWidth = Math.max(1, Math.round(width * dpr));
+  const pixelHeight = Math.max(1, Math.round(height * dpr));
+  if (timelineCanvas.width !== pixelWidth || timelineCanvas.height !== pixelHeight) {
+    timelineCanvas.width = pixelWidth;
+    timelineCanvas.height = pixelHeight;
+  }
+  const ctx = timelineCanvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  const plotWidth = Math.max(1, width - left - right);
+  const plotHeight = Math.max(1, height - top - bottom);
+  const laneHeight = Math.max(13, plotHeight / Math.max(1, timelineLanes.length));
+
+  ctx.fillStyle = "#0c1113";
+  ctx.fillRect(left, top, plotWidth, plotHeight);
+  ctx.font = "10px system-ui, sans-serif";
+  ctx.textBaseline = "middle";
+  for (let tick = 0; tick <= 5; tick += 1) {
+    const x = left + (plotWidth * tick) / 5;
+    ctx.strokeStyle = "#263237";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, top);
+    ctx.lineTo(x, top + plotHeight);
+    ctx.stroke();
+    ctx.fillStyle = "#93a6ae";
+    ctx.textAlign = tick === 0 ? "left" : tick === 5 ? "right" : "center";
+    ctx.fillText(fmt((duration * tick) / 5), x, height - 8);
+  }
+
+  timelineLanes.forEach((lane, index) => {
+    const y = top + index * laneHeight;
+    if (index % 2 === 0) {
+      ctx.fillStyle = "#11181b";
+      ctx.fillRect(left, y, plotWidth, laneHeight);
+    }
+    const short = lane.id.length > 15 ? `${lane.id.slice(0, 14)}…` : lane.id;
+    ctx.fillStyle = "#d7e3e7";
+    ctx.textAlign = "right";
+    ctx.fillText(short, left - 7, y + laneHeight / 2);
+    ctx.fillStyle = "#7f9299";
+    ctx.textAlign = "left";
+    ctx.font = "8px system-ui, sans-serif";
+    ctx.fillText(lane.type.replaceAll("_", " "), 4, y + laneHeight / 2);
+    ctx.font = "10px system-ui, sans-serif";
+  });
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(left, top, plotWidth, plotHeight);
+  ctx.clip();
+  for (const item of events.timeline || []) {
+    const index = timelineLanes.findIndex((lane) => lane.id === item.machine);
+    if (index < 0) continue;
+    const y = top + index * laneHeight + 2;
+    const start = Math.max(0, Number(item.start_s) || 0);
+    const end = Math.max(start + 0.001, Number(item.end_s) || start + 0.001);
+    const x0 = left + (start / duration) * plotWidth;
+    const x1 = left + (Math.min(duration, end) / duration) * plotWidth;
+    ctx.fillStyle = TIMELINE_COLORS[item.type] || "#8fa6ae";
+    ctx.fillRect(x0, y, Math.max(1, x1 - x0), Math.max(2, laneHeight - 4));
+  }
+  ctx.restore();
+
+  const cursor = Math.max(0, Math.min(duration, hoverTime ?? currentTime));
+  const cursorX = left + (cursor / duration) * plotWidth;
+  ctx.strokeStyle = "#f08a24";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cursorX, top - 7);
+  ctx.lineTo(cursorX, top + plotHeight + 3);
+  ctx.stroke();
+  ctx.fillStyle = "#f08a24";
+  ctx.beginPath();
+  ctx.moveTo(cursorX - 5, top - 13);
+  ctx.lineTo(cursorX + 5, top - 13);
+  ctx.lineTo(cursorX, top - 5);
+  ctx.closePath();
+  ctx.fill();
+  timelineCursor.textContent = `T+${fmt(cursor)}`;
 }
 
 async function load() {
@@ -71,6 +212,7 @@ async function load() {
       })),
   };
   duration = Math.max(1, Number(events.duration_s) || 1);
+  buildTimeline();
   machines.innerHTML = "";
   for (const [id, spec] of Object.entries(events.machines || {})) {
     const card = document.createElement("div");
@@ -96,5 +238,28 @@ document.getElementById("reset").addEventListener("click", () => viewer.reset())
 document.getElementById("fit").addEventListener("click", () => viewer.fit());
 scrub.addEventListener("input", () => viewer.seek((Number(scrub.value) / 1000) * duration));
 document.getElementById("speed").addEventListener("change", (event) => viewer.setSpeed(Number(event.target.value)));
-window.addEventListener("resize", () => viewer.resize());
+timelineToggle.addEventListener("click", () => {
+  timelinePanel.hidden = !timelinePanel.hidden;
+  timelineToggle.classList.toggle("active", !timelinePanel.hidden);
+  if (!timelinePanel.hidden) drawTimeline();
+});
+timelineCanvas.addEventListener("mousemove", (event) => {
+  hoverTime = timelineTimeAt(event.clientX);
+  if (seekingTimeline) seekTimeline(event.clientX);
+  drawTimeline();
+});
+timelineCanvas.addEventListener("mouseleave", () => {
+  hoverTime = null;
+  drawTimeline();
+});
+timelineCanvas.addEventListener("mousedown", (event) => {
+  seekingTimeline = true;
+  seekTimeline(event.clientX);
+  event.preventDefault();
+});
+window.addEventListener("mouseup", () => { seekingTimeline = false; });
+window.addEventListener("resize", () => {
+  viewer.resize();
+  if (!timelinePanel.hidden) drawTimeline();
+});
 load().catch((error) => { status.textContent = `failed: ${error.message}`; });

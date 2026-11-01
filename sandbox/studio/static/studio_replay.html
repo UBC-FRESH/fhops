@@ -20,11 +20,24 @@
       <h1 id="title">Edited scenario</h1>
       <div id="status">loading scene and events…</div>
       <div id="machines"></div>
+      <div id="replay-legend">
+        <span><i class="swatch retained"></i>retained / riparian tree</span>
+        <span><i class="swatch stream"></i>stream buffer</span>
+      </div>
+    </div>
+    <div id="timeline-panel" hidden>
+      <div id="timeline-head">
+        <strong>Machine timeline</strong>
+        <span id="timeline-cursor">T+00:00</span>
+        <span class="timeline-hint">move the cursor head · click or drag to seek</span>
+      </div>
+      <canvas id="timeline-canvas"></canvas>
     </div>
     <div id="controls">
       <button id="play">pause</button>
       <button id="reset">reset</button>
       <button id="fit">fit view</button>
+      <button id="timeline-toggle">timeline</button>
       <input id="scrub" type="range" min="0" max="1000" value="0" />
       <select id="speed">
         <option value="0.5">0.5×</option>

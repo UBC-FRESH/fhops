@@ -1,3 +1,20 @@
+# 2026-11-01 — 3D replay retention visibility and timeline (#330)
+
+- Made retained and stream-buffer trees readable at normal replay zoom with
+  bright teal crowns, ground rings, beacons, and depth-independent overlay
+  rendering.
+- Added riparian blue clump fills, readable clump labels, and a retained/riparian
+  and stream-buffer legend to the replay HUD.
+- Added a **Timeline** button to the 3D replay controls. The panel shows
+  per-machine lanes and event bars, follows the playback cursor, shows a
+  mouse-positionable cursor head with hover time, and seeks on click/drag.
+- Manual Playwright/Chromium smoke test against the Gavin replay: retained
+  cluster visible, timeline opens, hover cursor reports `T+04:28`, click seeks,
+  and drag seeks to a later event.
+- `node --check` for `studio_replay.js` and `viewer.js`; targeted pytest (24
+  passed); `ruff check`, `ruff format --check`, `mypy src`, and `pre-commit`
+  pass.
+
 # 2026-11-01 — P22 closeout and public deployment
 
 - PR #327 (Phase 22, #324/#325/#326) squash-merged to `main` as
