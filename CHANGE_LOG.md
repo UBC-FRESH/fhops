@@ -1,3 +1,10 @@
+# 2026-11-01 — deploy replay retention visibility and timeline
+
+- Synced Studio replay assets and Tree Lab viewer from merged `main` (`83606577`).
+- Retained and stream-buffer trees are now readable as teal crowns/rings in 3D replay; added clump labels and a retained/stream legend.
+- Added the machine-event Timeline panel with hover cursor and click/drag seeking.
+- No host networking or routing changes.
+
 # 2026-11-01 — deploy P22 processor policies and stream buffers
 
 - Synced `src/fhops/ground_system.py`, `src/fhops/cli/tree.py`, Tree Lab runner/viewer, and Studio 2D/3D assets from merged `main` (`56865cf0`).
