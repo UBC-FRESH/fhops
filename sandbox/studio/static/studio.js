@@ -695,9 +695,11 @@ function onDoubleClick(event) {
   if (state.tool === "clump" && state.project && state.clumpDraft.length >= 3) {
     pushHistory();
     state.project.retention.clumps = state.project.retention.clumps || [];
+    const kind = $("#clump-kind")?.value || "retention";
     state.project.retention.clumps.push({
       id: `clump-${Date.now().toString(36)}`,
-      label: "retention clump",
+      label: kind === "riparian" ? "riparian buffer" : kind === "corridor" ? "no-harvest corridor" : "retention clump",
+      kind,
       polygon: state.clumpDraft.slice(),
     });
     state.clumpDraft = [];

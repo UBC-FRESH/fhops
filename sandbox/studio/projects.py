@@ -494,6 +494,46 @@ def _write_project_inventory(
     return inventory, meta_path
 
 
+def apply_operator_policies(project: dict[str, Any]) -> dict[str, Any]:
+    """Translate machine policy presets into system arguments the CLI can run."""
+    args = sync_system_args(project)
+    machines = project.get("machines") or []
+    policies = project.get("operator_policies") or {}
+    by_role: dict[str, list[str]] = {}
+    for machine in machines:
+        by_role.setdefault(str(machine.get("role", "")), []).append(str(machine.get("id")))
+
+    def preset_for(machine_id: str) -> dict[str, Any]:
+        return POLICY_PRESETS.get(str(policies.get(machine_id, "steady")), POLICY_PRESETS["steady"])
+
+    skidder_ids = [
+        machine_id
+        for role in ("grapple_skidder", "skidder", "forwarder", "cable_yarder", "skyline_yarder")
+        for machine_id in by_role.get(role, [])
+    ]
+    loader_ids = by_role.get("loader", [])
+    if skidder_ids:
+        presets = [preset_for(machine_id) for machine_id in skidder_ids]
+        cycle = sum(float(preset["cycle_multiplier"]) for preset in presets) / len(presets)
+        setup = sum(float(preset["setup_delay_s"]) for preset in presets) / len(presets)
+        args["skidder_empty_speed"] = round(1.4 / max(0.5, cycle), 4)
+        args["skidder_loaded_speed"] = round(1.1 / max(0.5, cycle), 4)
+        args["skidder_load_fixed"] = round(max(0.0, 45.0 * cycle + setup * 0.5), 3)
+        args["skidder_unload_fixed"] = round(max(0.0, 45.0 * cycle + setup * 0.5), 3)
+        args["skidder_load_per_log"] = round(5.0 * cycle, 3)
+        args["skidder_unload_per_log"] = round(3.0 * cycle, 3)
+        if any(float(preset["cycle_multiplier"]) > 1.05 for preset in presets):
+            args["max_skidder_grade"] = min(float(args.get("max_skidder_grade", 35.0)), 30.0)
+    if loader_ids:
+        preset = preset_for(loader_ids[0])
+        cycle = float(preset["cycle_multiplier"])
+        args["loader_process_fixed"] = round(
+            max(0.0, 45.0 * cycle + float(preset["setup_delay_s"]) * 0.5), 3
+        )
+        args["loader_process_per_log"] = round(4.0 * cycle, 3)
+    return args
+
+
 def materialize_case(project_root: Path, project: dict[str, Any], base_case: Case) -> Case:
     """Create a disposable case directory for running an edited project."""
     project_id = str(project["project_id"])
@@ -655,8 +695,9 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
         ]
         for tree in residual_rows
     ]
-    sync_system_args(project)
+    apply_operator_policies(project)
     manifest["system_args"] = project["system_args"]
+    manifest["operator_policies"] = project.get("operator_policies", {})
     if isinstance(manifest.get("cable"), dict):
         manifest["cable"]["yarder"] = project.get("landing") or manifest["cable"].get("yarder")
     # Update lightweight stand totals for the derived view.

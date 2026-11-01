@@ -1,3 +1,12 @@
+# 2026-11-01 — Retention presets and operator-policy translation
+
+- Added retention clump type presets: retention clump, riparian buffer, and
+  no-harvest corridor, in both 2D and 3D editors.
+- Added operator-policy translation for feller productivity, skidder speeds and
+  handling times, loader handling times, and grade caution into the derived run.
+- Added policy translation tests.
+- Verification: Studio pytest and JS syntax checks.
+
 # 2026-11-01 — Retention clumps and clump-aware routing
 
 - Added retention clump polygons to the Studio project model.

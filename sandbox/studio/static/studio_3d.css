@@ -34,3 +34,5 @@ header a#replay-link { color: #f08a24; text-decoration: none; font-weight: 650; 
 #run-output ul { margin: 4px 0 0 14px; padding: 0; }
 #stats .add-row { display: flex; gap: 5px; margin-top: 10px; }
 #stats .add-row button { width: auto; }
+
+#tools select { width: 100%; background: #0c1214; color: #e6eef2; border: 1px solid #2b3a40; border-radius: 5px; padding: 4px; }

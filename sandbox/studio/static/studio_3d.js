@@ -605,7 +605,13 @@ function finalizeClump() {
   if (tool !== "clump" || clumpDraft.length < 3) return;
   pushHistory();
   project.retention.clumps = project.retention.clumps || [];
-  project.retention.clumps.push({ id: `clump-${Date.now().toString(36)}`, label: "retention clump", polygon: clumpDraft.slice() });
+  const kind = $("#clump-kind")?.value || "retention";
+  project.retention.clumps.push({
+    id: `clump-${Date.now().toString(36)}`,
+    label: kind === "riparian" ? "riparian buffer" : kind === "corridor" ? "no-harvest corridor" : "retention clump",
+    kind,
+    polygon: clumpDraft.slice(),
+  });
   clumpDraft = [];
   buildOverlays();
   markDirty();

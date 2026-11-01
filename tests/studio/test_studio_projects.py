@@ -71,3 +71,18 @@ def test_retention_clump_filters_trees(tmp_path: Path) -> None:
     assert len(inventory.rows) < 900
     assert derived.manifest["retention_clumps"]
     assert derived.manifest["obstacles"]
+
+
+def test_operator_policy_translation(tmp_path: Path) -> None:
+    """Machine policy presets translate into runnable system arguments."""
+    from sandbox.studio.projects import apply_operator_policies
+
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    skidder = next(item for item in project["machines"] if "skidder" in item["role"])
+    loader = next(item for item in project["machines"] if item["role"] == "loader")
+    project["operator_policies"][skidder["id"]] = "throughput"
+    project["operator_policies"][loader["id"]] = "careful"
+    args = apply_operator_policies(project)
+    assert args["skidder_empty_speed"] > 1.4
+    assert args["loader_process_fixed"] > 45.0
