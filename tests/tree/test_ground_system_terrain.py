@@ -74,6 +74,7 @@ def test_ground_system_dem_and_road_routing(tmp_path: Path) -> None:
     assert travel
     assert all(event.distance_m > 0 for event in travel)
     assert any(event.max_grade_percent > 0 for event in travel)
+    assert any(len(event.path) > 2 for event in travel)
 
 
 def test_ground_system_blocks_steep_route(tmp_path: Path) -> None:

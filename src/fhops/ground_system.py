@@ -407,6 +407,7 @@ class GroundSystemEvent:
     status: str = ""
     distance_m: float = 0.0
     max_grade_percent: float = 0.0
+    path: tuple[tuple[float, float], ...] = ()
 
     def to_dict(self) -> dict[str, object]:
         """Return the event as a JSON-serializable mapping."""
@@ -425,6 +426,7 @@ class GroundSystemEvent:
             "status": self.status,
             "distance_m": self.distance_m,
             "max_grade_percent": self.max_grade_percent,
+            "path": [[float(x), float(y)] for x, y in self.path],
         }
 
 
@@ -1460,6 +1462,7 @@ def _simulate_skidders(
                 status="empty",
                 distance_m=route.distance_m,
                 max_grade_percent=route.max_grade_percent,
+                path=tuple(route.path),
             )
         )
         load_start = max(empty_end, bunch.ready_s)
@@ -1496,6 +1499,7 @@ def _simulate_skidders(
                 status="loaded",
                 distance_m=route.distance_m,
                 max_grade_percent=route.max_grade_percent,
+                path=tuple(reversed(route.path)),
             )
         )
         unload_end = _schedule_task(calendar, loaded_end, unload_time, machine)[1]

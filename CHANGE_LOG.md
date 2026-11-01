@@ -1,3 +1,15 @@
+# 2026-11-01 — Shared core routing and access map
+
+- TerrainRouter now generates an alternate A* route when the direct/road route
+  exceeds the machine grade limit, and returns the actual path geometry.
+- Skidder travel events persist that path for planning and replay.
+- The 3D replay uses persisted core paths; the viewer A* remains a fallback for
+  older runs and non-DEM scenes. Retained-tree obstacle avoidance remains active.
+- Added a skidder access-map overlay to the 3D editor (green/yellow/red).
+- Added route-path assertions to the terrain test.
+- Verification: terrain and Studio pytest, ruff, JS syntax, and 3D access-map
+  browser smoke test.
+
 # 2026-11-01 — Terrain-aware machine playback routing
 
 - Added an A* route cache in the 3D replay viewer for machine travel segments.

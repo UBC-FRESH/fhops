@@ -20,6 +20,7 @@ let tool = "orbit";
 let brush = 25;
 let dragging = null;
 let dirty = false;
+let accessMode = false;
 let history = [];
 let future = [];
 
@@ -140,8 +141,19 @@ function buildTerrain() {
   }
   const colors = [];
   for (let index = 0; index < position.count; index += 1) {
-    const f = Math.max(0, Math.min(1, (position.getY(index) - minH) / Math.max(1, maxH - minH)));
-    colors.push(0.18 + f * 0.44, 0.30 + f * 0.30, 0.16 + f * 0.14);
+    if (accessMode) {
+      const x = position.getX(index);
+      const z = position.getZ(index);
+      const dzdx = Math.abs(terrainHeight(x + 5, z) - terrainHeight(x - 5, z)) / 10 * 100;
+      const dzdy = Math.abs(terrainHeight(x, z + 5) - terrainHeight(x, z - 5)) / 10 * 100;
+      const grade = Math.max(dzdx, dzdy);
+      if (grade > 35) colors.push(0.72, 0.16, 0.12);
+      else if (grade > 25) colors.push(0.82, 0.58, 0.12);
+      else colors.push(0.16, 0.48, 0.28);
+    } else {
+      const f = Math.max(0, Math.min(1, (position.getY(index) - minH) / Math.max(1, maxH - minH)));
+      colors.push(0.18 + f * 0.44, 0.30 + f * 0.30, 0.16 + f * 0.14);
+    }
   }
   geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
   geometry.computeVertexNormals();
@@ -537,6 +549,7 @@ $("#rename").addEventListener("click", renameProject);
 $("#duplicate").addEventListener("click", duplicateProject);
 $("#fit").addEventListener("click", fitView);
 $("#brush").addEventListener("input", () => { brush = Number($("#brush").value); $("#brush-label").textContent = `${brush} m`; });
+$("#access-map").addEventListener("change", () => { accessMode = $("#access-map").checked; buildTerrain(); buildOverlays(); updateStats(); });
 renderer.domElement.addEventListener("pointerdown", onPointerDown);
 renderer.domElement.addEventListener("pointermove", onPointerMove);
 renderer.domElement.addEventListener("pointerup", onPointerUp);

@@ -411,7 +411,9 @@ export function createViewer(container, { onTime } = {}) {
       const state = segmentAt(id, t);
       if (!state) continue;
       const segment = state.segment;
-      const path = routeSegment(id, segment);
+      const path = Array.isArray(segment.path) && segment.path.length > 1
+        ? segment.path.map((point) => [Number(point[0]), Number(point[1])])
+        : routeSegment(id, segment);
       const point = pathPoint(path, state.f);
       let x = point.x;
       let y = point.y;
