@@ -13,7 +13,7 @@ import math
 import re
 import secrets
 import shutil
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -419,6 +419,82 @@ def polygon_area_ha(polygon: list[list[float]]) -> float:
     return abs(area) / 2.0 / 10000.0
 
 
+def stream_buffer_polygon(points: Sequence[Sequence[float]], width_m: float) -> list[list[float]]:
+    """Buffer a stream centreline into a closed riparian-retention polygon.
+
+    The Studio uses this helper when an operator draws a stream. The returned
+    polygon is stored as a ``riparian`` retention clump, so the existing tree
+    filtering, felling exclusion, and machine-routing obstacle rules apply
+    without a separate simulation path.
+
+    Parameters
+    ----------
+    points : Sequence[Sequence[float]]
+        Centreline vertices as ``[x_m, y_m]`` in the project CRS. At least two
+        distinct vertices are required. Consecutive duplicate points are
+        discarded.
+    width_m : float
+        Full buffer width in metres. Must be positive and finite. The centreline
+        is offset by ``width_m / 2`` on each side.
+
+    Returns
+    -------
+    list[list[float]]
+        Closed polygon vertices in ``[x_m, y_m]`` order. The first and last
+        vertices are not repeated; callers should treat the ring as closed.
+
+    Raises
+    ------
+    StudioError
+        If the centreline has fewer than two distinct points or the width is
+        not positive and finite.
+
+    Notes
+    -----
+    This is a planar, single-ring offset suitable for authoring. Sharp turns
+    can create small self-intersections; the point-in-polygon retention test is
+    still conservative because the full offset band remains inside the ring's
+    outer boundary. It is not a hydraulic or survey-grade stream buffer.
+    """
+    if not math.isfinite(width_m) or width_m <= 0:
+        raise StudioError("Stream buffer width must be positive and finite.")
+    clean: list[tuple[float, float]] = []
+    for point in points:
+        if len(point) != 2:
+            raise StudioError("Stream points must contain exactly two coordinates.")
+        x, y = float(point[0]), float(point[1])
+        if not math.isfinite(x) or not math.isfinite(y):
+            raise StudioError("Stream coordinates must be finite.")
+        if not clean or math.hypot(x - clean[-1][0], y - clean[-1][1]) > 1e-6:
+            clean.append((x, y))
+    if len(clean) < 2:
+        raise StudioError("A stream buffer needs at least two distinct points.")
+    half = width_m / 2.0
+    left: list[list[float]] = []
+    right: list[list[float]] = []
+    previous_tangent = (1.0, 0.0)
+    for index, (x, y) in enumerate(clean):
+        if index == 0:
+            tx, ty = clean[1][0] - x, clean[1][1] - y
+        elif index == len(clean) - 1:
+            tx, ty = x - clean[index - 1][0], y - clean[index - 1][1]
+        else:
+            before = math.hypot(x - clean[index - 1][0], y - clean[index - 1][1])
+            after = math.hypot(clean[index + 1][0] - x, clean[index + 1][1] - y)
+            tx = (x - clean[index - 1][0]) / before + (clean[index + 1][0] - x) / after
+            ty = (y - clean[index - 1][1]) / before + (clean[index + 1][1] - y) / after
+        length = math.hypot(tx, ty)
+        if length <= 1e-9:
+            tx, ty = previous_tangent
+            length = math.hypot(tx, ty)
+        tx, ty = tx / length, ty / length
+        previous_tangent = (tx, ty)
+        nx, ny = -ty, tx
+        left.append([round(x + nx * half, 3), round(y + ny * half, 3)])
+        right.append([round(x - nx * half, 3), round(y - ny * half, 3)])
+    return left + list(reversed(right))
+
+
 def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
     """Synchronize the active machine list into Tree Lab system arguments."""
     args = json.loads(json.dumps(project.get("system_args") or {}))
@@ -564,6 +640,15 @@ def apply_operator_policies(project: dict[str, Any]) -> dict[str, Any]:
             max(0.0, 45.0 * cycle + float(preset["setup_delay_s"]) * 0.5), 3
         )
         args["loader_process_per_log"] = round(4.0 * cycle, 3)
+    processor_ids = [
+        machine_id
+        for role in ("roadside_processor", "processor")
+        for machine_id in by_role.get(role, [])
+    ]
+    if processor_ids:
+        presets = [preset_for(machine_id) for machine_id in processor_ids]
+        cycle = sum(float(preset["cycle_multiplier"]) for preset in presets) / len(presets)
+        args["processor_productivity_multiplier"] = round(1.0 / max(0.5, cycle), 4)
     return args
 
 

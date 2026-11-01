@@ -1,3 +1,26 @@
+# 2026-11-01 — P22.1–P22.2 processor policies and stream buffers
+
+- Started Phase 22 (#324) with children #325 (processor policy coefficients) and
+  #326 (stream-aware retention and closeout corrections) on
+  `feature/p22-scenario-followups`, based on merged `main` (`e16582b2`).
+- Added `processor_productivity_multiplier` to the core ground-system runner,
+  the `fhops tree system` CLI, and the Tree Lab runner option map. The multiplier
+  scales fixed, per-cubic-metre, and per-log processor time and is recorded in
+  provenance.
+- Studio operator policies now translate processor presets into the processor
+  multiplier, in addition to feller, skidder, loader, and grade coefficients.
+- Added `stream_buffer_polygon` and `POST /api/geometry/stream-buffer`. The 2D
+  and 3D editors now expose a Stream tool that draws a centreline and creates a
+  `riparian` retention clump of the selected width. Riparian clumps render blue
+  and use the existing tree-filtering, felling, and routing obstacle path.
+- Corrected the Phase 21 closeout report to match the merged `main` state and
+  updated the Phase 21 note and roadmap.
+- Verification: `ruff format src tests sandbox`, `ruff check src tests sandbox`,
+  `mypy src`, `pytest -q tests/studio/test_studio_app.py
+  tests/studio/test_studio_projects.py tests/tree/test_ground_system.py`
+  (24 passed), `node --check` for both Studio bundles, `py_compile` for the
+  Studio server modules, and `pre-commit run --all-files`.
+
 # 2026-11-01 — P21.4 green CI and merge approval
 
 - PR #323 (`feature/p21-demo-integration` -> `main`) is green:

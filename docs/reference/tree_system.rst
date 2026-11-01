@@ -73,6 +73,12 @@ For stand-specific calibration, pass a JSON processor-spec file:
 `seconds_per_m3` is productive time per cubic metre; `fixed_s` is the fixed
 per-load setup. Explicit specs are recorded as `custom_specs`.
 
+``--processor-productivity-multiplier`` scales processor output without changing
+the selected model or explicit spec. Values above 1 shorten fixed,
+per-cubic-metre, and per-log processor time; values below 1 lengthen them. The
+multiplier is recorded under ``rate_provenance.processor`` and is used by the
+Studio operator-policy translation.
+
 The default ``--rate-model calibrated`` uses:
 
 - the Han et al. (2018) whole-tree grapple-skidder regression with the GNSS

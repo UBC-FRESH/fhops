@@ -609,6 +609,7 @@ def simulate_ground_system(
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     feller_processing_time_multiplier: float = 1.0,
+    processor_productivity_multiplier: float = 1.0,
     path_mode: Literal["nearest", "swath"] = "nearest",
     obstacles: tuple[Obstacle, ...] = (),
     skidder_specs: Mapping[str, MachineSpec] | None = None,
@@ -711,6 +712,10 @@ def simulate_ground_system(
     feller_processing_time_multiplier:
         Multiplier on feller-buncher per-tree processing time. Selection-cut
         care and other slow-work adjustments use values above one.
+    processor_productivity_multiplier:
+        Positive multiplier on roadside-processor productive output. Values
+        above one shorten fixed, per-cubic-metre, and per-log processor time;
+        values below one lengthen them. Defaults to ``1.0``.
     path_mode:
         ``swath`` uses a boustrophedon feller path; ``nearest`` preserves the
         original nearest-tree behavior.
@@ -753,6 +758,11 @@ def simulate_ground_system(
         raise GroundSystemError("bunch_volume_m3 must be positive and finite.")
     if rate_model not in RATE_MODELS:
         raise GroundSystemError(f"rate_model must be one of {sorted(RATE_MODELS)}.")
+    if (
+        not math.isfinite(processor_productivity_multiplier)
+        or processor_productivity_multiplier <= 0
+    ):
+        raise GroundSystemError("processor_productivity_multiplier must be positive and finite.")
     if feller_machine_id in skidders or loader_machine_id in skidders:
         raise GroundSystemError("Feller and loader machines must not also be skidders.")
     if feller_machine_id == loader_machine_id:
@@ -821,6 +831,16 @@ def simulate_ground_system(
                 "processor_spec is only valid with a single processor; use processor_specs."
             )
         processor_models[processors[0]] = processor_spec
+    if processor_productivity_multiplier != 1.0:
+        processor_models = {
+            machine: ProcessorSpec(
+                machine_id=spec.machine_id,
+                seconds_per_m3=spec.seconds_per_m3 / processor_productivity_multiplier,
+                fixed_s=spec.fixed_s / processor_productivity_multiplier,
+                per_log_s=spec.per_log_s / processor_productivity_multiplier,
+            )
+            for machine, spec in processor_models.items()
+        }
     stems = stem_inventory
     if stems is None:
         try:
@@ -973,6 +993,7 @@ def simulate_ground_system(
     if processor_models:
         rate_provenance["processor"] = {
             "model": processor_model or ("custom_specs" if processor_specs else "tn103_area_a"),
+            "productivity_multiplier": processor_productivity_multiplier,
             "model_description": "TN-103 feller-bunched processor"
             if processor_model in {None, "tn103_area_a", "tn103_combined"}
             else (

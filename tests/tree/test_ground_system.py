@@ -7,6 +7,7 @@ import json
 import shutil
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from fhops.cli.main import app
@@ -131,6 +132,48 @@ def test_ground_system_processor_stage(tmp_path: Path) -> None:
         event.end_s for event in processor_events
     )
     assert result.rate_provenance["processor"]["model"] == "tn103_area_a"
+
+
+def test_processor_productivity_multiplier_scales_processor_cycle(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    base = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        processor_machine_ids=("H5",),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+    )
+    fast = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        processor_machine_ids=("H5",),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        processor_productivity_multiplier=2.0,
+    )
+    base_spec = base.rate_provenance["processor"]["machines"]["H5"]
+    fast_spec = fast.rate_provenance["processor"]["machines"]["H5"]
+    assert fast.rate_provenance["processor"]["productivity_multiplier"] == 2.0
+    assert fast_spec["seconds_per_m3"] == base_spec["seconds_per_m3"] / 2.0
+    assert fast.machine_summaries["H5"]["busy_s"] < base.machine_summaries["H5"]["busy_s"]
+
+
+def test_processor_productivity_multiplier_rejects_non_positive(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    with pytest.raises(GroundSystemError, match="processor_productivity_multiplier"):
+        simulate_ground_system(
+            scenario,
+            block_id="B01",
+            feller_machine_id="H1",
+            skidder_machine_ids=("H2", "H3"),
+            loader_machine_id="H4",
+            processor_machine_ids=("H5",),
+            processor_productivity_multiplier=0.0,
+        )
 
 
 def test_ground_system_shift_windows_delay_work(tmp_path: Path) -> None:
