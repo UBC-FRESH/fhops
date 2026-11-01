@@ -1,3 +1,16 @@
+# 2026-11-01 — fix Studio terrain elevation alignment (#332)
+
+- Fixed `_write_project_inventory` so derived tree elevations use the edited
+  terrain heightfield instead of the original inventory elevation.
+- Expanded replay terrain bounds to include the block, landing, road, and a
+  margin, and resampled the edited heightfield onto that display grid. This
+  keeps retained trees, landings, machines, and clumps on the same surface.
+- Added `test_materialized_tree_elevations_follow_terrain`.
+- Reprocessed the user’s Gavin project in a temporary Studio instance: new scene
+  tree y range `751.74…787.75`, matching the edited terrain with base `781.74`.
+- Existing runs retain their old scene elevations; rerun is required to
+  regenerate scenes after this fix.
+
 # 2026-11-01 — 3D replay retention visibility and timeline (#330)
 
 - Made retained and stream-buffer trees readable at normal replay zoom with

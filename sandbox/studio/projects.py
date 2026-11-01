@@ -569,7 +569,11 @@ def _write_project_inventory(
                     "block_id": tree.block_id,
                     "x_m": tree.x_m,
                     "y_m": tree.y_m,
-                    "elevation_m": tree.elevation_m,
+                    "elevation_m": (
+                        elevation_fn(tree.x_m, tree.y_m)
+                        if elevation_fn is not None
+                        else tree.elevation_m
+                    ),
                     "species_code": tree.species_code,
                     "dbh_cm": tree.dbh_cm,
                     "height_m": tree.height_m,
