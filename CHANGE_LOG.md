@@ -1,3 +1,13 @@
+# 2026-11-01 — P21.4 phase closeout report and public deployment
+
+- Pushed `feature/p21-scenario-studio` to origin.
+- Added `notes/reports/p21-closeout.md` with delivered behavior, verification
+  evidence, deviations, and the requested base/PR decision.
+- Updated the public `fhops.01101.dev` checkout with Studio, 3D editor, replay,
+  clumps, terrain routing, and operator-policy changes.
+- Public checkout commits: `5e97f9eb`, `22d6b439`.
+- No merge, tag, release, or settings change was made.
+
 # 2026-11-01 — P21.4 verification sweep (#322)
 
 - Repository gates: `ruff check .` pass, `ruff format --check .` pass,

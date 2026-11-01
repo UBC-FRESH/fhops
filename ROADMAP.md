@@ -673,7 +673,8 @@ eventually terrain/obstacle editing, with a derived scenario run.
 - [x] P21.5 3D edit page (orbit, landing, retention, terrain, boundary) and replay preview
 - [x] P21.5a 3D road drawing, boundary add/remove, undo/redo, rename/duplicate
 - [ ] P21.6 Full operator-policy simulation integration
-- [ ] P21.7 Closeout: tests, docs, gates, and issue-tree closeout
+- [x] P21.7 Quality gates, issue tree, branch naming, and closeout report
+- [ ] P21.7a Maintainer approval of phase base and pull request path
 
 Known limits: 2D editor only; terrain is visual-only; only the feller policy is
 wired into simulation; no obstacle/stream tools; no 3D preview yet.
