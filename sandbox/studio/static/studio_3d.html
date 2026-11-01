@@ -13,6 +13,8 @@
     <strong>FHOPS Studio 3D</strong>
     <span id="project-name">loading…</span>
     <span id="status" class="muted">ready</span>
+    <button id="undo" class="secondary">Undo</button>
+    <button id="redo" class="secondary">Redo</button>
     <button id="save">Save 3D edits</button>
     <button id="run" class="secondary">Run scenario</button>
     <a id="replay-link" href="#" target="_blank" hidden>Open 3D replay →</a>
@@ -25,6 +27,7 @@
       <button data-tool="landing">Move landing</button>
       <button data-tool="retain">Retain trees</button>
       <button data-tool="terrain">Terraform</button>
+      <button data-tool="road">Draw road</button>
       <button data-tool="boundary">Boundary vertices</button>
       <label>Brush radius <output id="brush-label">25 m</output></label>
       <input id="brush" type="range" min="5" max="120" step="5" value="25" />
@@ -36,6 +39,8 @@
       <h2>Scene</h2>
       <div id="scene-stats" class="muted">loading…</div>
       <p id="project-id" class="hint"></p>
+      <div id="run-output" class="hint"></div>
+      <div class="add-row"><button id="rename" class="secondary">Rename</button><button id="duplicate" class="secondary">Duplicate</button></div>
       <p class="hint">3D editing writes the same project used by the plan editor and simulation.</p>
     </aside>
   </main>

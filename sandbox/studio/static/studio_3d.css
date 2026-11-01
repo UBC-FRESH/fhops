@@ -29,3 +29,8 @@ h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .7px; color: #9
 
 header button.secondary { background: #263237; color: #e6eef2; border: 1px solid #52656b; }
 header a#replay-link { color: #f08a24; text-decoration: none; font-weight: 650; margin-left: 4px; }
+
+#run-output { margin-top: 10px; max-height: 220px; overflow: auto; }
+#run-output ul { margin: 4px 0 0 14px; padding: 0; }
+#stats .add-row { display: flex; gap: 5px; margin-top: 10px; }
+#stats .add-row button { width: auto; }

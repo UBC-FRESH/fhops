@@ -1,3 +1,13 @@
+# 2026-11-01 — Studio 3D workflow polish
+
+- Added 3D road drawing, Shift-click boundary vertex insertion, Delete removal,
+  undo/redo, rename, and duplicate to the 3D editor.
+- Added project ID, run history, and direct replay links to the plan UI.
+- Added run warnings and replay link feedback directly in the 3D editor.
+- Blocked steep routes now complete with warnings instead of aborting the run.
+- Verification: Playwright plan/3D smoke tests, run-history load, duplicate API,
+  terrain/Studio pytest, ruff, and JS checks.
+
 # 2026-11-01 — Studio 3D editor run loop
 
 - The 3D editor now has a Run scenario button that saves the project, runs the

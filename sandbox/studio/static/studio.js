@@ -694,6 +694,47 @@ function saveProject() {
   }).catch((error) => setStatus(`Save failed: ${error.message}`, true));
 }
 
+function renameProject() {
+  if (!state.project) return;
+  const next = prompt("Project name", state.project.label || "");
+  if (next === null || !next.trim()) return;
+  pushHistory();
+  state.project.label = next.trim();
+  markDirty();
+  renderProjectMeta();
+}
+
+async function duplicateProject() {
+  if (!state.project) return;
+  try {
+    const copied = await api(`projects/${encodeURIComponent(state.project.project_id)}/duplicate`, { method: "POST" });
+    await refreshProjectSelect();
+    await loadProject(copied.project_id);
+  } catch (error) { setStatus(`Duplicate failed: ${error.message}`, true); }
+}
+
+async function loadRunHistory() {
+  if (!state.project) return;
+  try {
+    const payload = await api(`projects/${encodeURIComponent(state.project.project_id)}/runs`);
+    const runs = payload.runs || [];
+    const node = $("#run-history");
+    if (!runs.length) { node.textContent = "No runs yet."; return; }
+    node.innerHTML = "";
+    for (const run of runs.slice(0, 8)) {
+      const link = document.createElement("a");
+      link.href = `replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(run.run_id)}`;
+      link.target = "_blank";
+      link.textContent = `${run.run_id} · ${run.status || "unknown"}`;
+      link.style.display = "block";
+      link.style.color = "var(--accent)";
+      link.style.fontSize = "11px";
+      link.style.margin = "3px 0";
+      node.append(link);
+    }
+  } catch (_error) { /* history is non-critical */ }
+}
+
 async function loadProject(projectId) {
   setStatus("Loading project…");
   try {
@@ -712,6 +753,7 @@ async function loadProject(projectId) {
     fitView();
     setStatus(`Loaded ${state.project.label}`);
     history.replaceState(null, "", `?project=${encodeURIComponent(projectId)}`);
+    await loadRunHistory();
   } catch (error) {
     setStatus(`Load failed: ${error.message}`, true);
   }
@@ -778,6 +820,7 @@ async function runScenario() {
     $("#run-result").innerHTML = `<b>Run ${escapeHtml(record.run_id)}</b><div class="stat-grid" style="margin-top:7px">${rows.map(([label, value]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("")}</div>${warningHtml}<p><a class="back" href="replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(record.run_id)}" target="_blank">Open 3D replay →</a></p>`;
     setStatus(`Run complete · ${record.run_id}`);
     renderProjectMeta();
+    await loadRunHistory();
   } catch (error) {
     setStatus(`Run failed: ${error.message}`, true);
     $("#run-result").textContent = `Run failed: ${error.message}`;
@@ -802,6 +845,8 @@ function bindEvents() {
   $("#redo").addEventListener("click", redo);
   $("#save").addEventListener("click", saveProject);
   $("#run").addEventListener("click", runScenario);
+  $("#rename").addEventListener("click", renameProject);
+  $("#duplicate").addEventListener("click", duplicateProject);
   $("#add-machine").addEventListener("click", addMachine);
   $("#new-project").addEventListener("click", openNewDialog);
   $("#project-select").addEventListener("change", (event) => { if (event.target.value) loadProject(event.target.value); });

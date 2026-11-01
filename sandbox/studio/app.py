@@ -24,6 +24,7 @@ from sandbox.studio.projects import (
     POLICY_PRESETS,
     StudioError,
     create_project,
+    duplicate_project,
     list_projects,
     load_project,
     materialize_case,
@@ -141,6 +142,15 @@ def create_app(config: StudioConfig) -> FastAPI:
                 raise StudioError("Project id does not match the URL.")
             return save_project(config.projects_root, payload)
         except (StudioError, ValueError, KeyError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.post("/api/projects/{project_id}/duplicate")
+    def duplicate(project_id: str) -> dict[str, Any]:
+        try:
+            return duplicate_project(
+                config.projects_root, load_project(config.projects_root, project_id)
+            )
+        except StudioError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @app.delete("/api/projects/{project_id}")

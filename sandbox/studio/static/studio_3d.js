@@ -20,6 +20,8 @@ let tool = "orbit";
 let brush = 25;
 let dragging = null;
 let dirty = false;
+let history = [];
+let future = [];
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0e1214);
@@ -37,6 +39,33 @@ sun.position.set(100, 300, 120);
 scene.add(sun);
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
+
+function pushHistory() {
+  if (!project) return;
+  history.push(JSON.stringify(project));
+  if (history.length > 50) history.shift();
+  future = [];
+}
+
+function restoreProject(json) {
+  project = JSON.parse(json);
+  dirty = true;
+  rebuildAll();
+  updateStats();
+  setStatus("Undo applied");
+}
+
+function undo() {
+  if (!history.length) return;
+  future.push(JSON.stringify(project));
+  restoreProject(history.pop());
+}
+
+function redo() {
+  if (!future.length) return;
+  history.push(JSON.stringify(project));
+  restoreProject(future.pop());
+}
 
 function setStatus(text, error = false) {
   $("#status").textContent = text;
@@ -295,16 +324,20 @@ function toggleRetention(event) {
   pointerRay(event);
   const hit = raycaster.intersectObjects(treeMeshes, false)[0];
   if (!hit) return;
-  const id = hit.object.userData.treeId;
-  if (!id) return;
+  pushHistory();
+  const point = hit.point;
   const retained = new Set(project.retention?.tree_ids || []);
-  if (retained.has(id)) retained.delete(id); else retained.add(id);
-  project.retention.tree_ids = [...retained];
-  const item = treeById.get(id);
-  if (item) {
-    item.crown.material.color.setHex(retained.has(id) ? 0x2fbfb0 : item.tree.inside ? 0x4f9a56 : 0x476064);
-    item.tree.retained = retained.has(id);
+  const erase = event.shiftKey;
+  let changed = false;
+  for (const item of treeById.values()) {
+    if (Math.hypot(item.tree.x - point.x, item.tree.y - point.z) > brush) continue;
+    if (erase) retained.delete(item.tree.tree_id); else retained.add(item.tree.tree_id);
+    item.tree.retained = retained.has(item.tree.tree_id);
+    item.crown.material.color.setHex(retained.has(item.tree.tree_id) ? 0x2fbfb0 : item.tree.inside ? 0x4f9a56 : 0x476064);
+    changed = true;
   }
+  if (!changed) return;
+  project.retention.tree_ids = [...retained];
   markDirty();
   updateStats();
 }
@@ -333,10 +366,11 @@ function onPointerDown(event) {
   if (!project || !terrainMesh) return;
   if (event.button !== 0 || tool === "orbit") return;
   if (tool === "retain") { toggleRetention(event); return; }
-  if (tool === "terrain") { paintTerrain(event); dragging = { type: "terrain" }; controls.enabled = false; return; }
+  if (tool === "terrain") { pushHistory(); paintTerrain(event); dragging = { type: "terrain" }; controls.enabled = false; return; }
   if (tool === "landing") {
     const point = groundPoint(event);
     if (!point) return;
+    pushHistory();
     project.landing = { x: point.x, y: point.z };
     buildOverlays();
     updateStats();
@@ -346,11 +380,30 @@ function onPointerDown(event) {
   if (tool === "boundary") {
     pointerRay(event);
     const hit = raycaster.intersectObjects(handleMeshes, false)[0];
-    if (!hit) return;
-    selectedHandle = hit.object.userData.vertex;
-    dragging = { type: "vertex" };
-    controls.enabled = false;
+    if (hit) {
+      pushHistory();
+      selectedHandle = hit.object.userData.vertex;
+      dragging = { type: "vertex" };
+      controls.enabled = false;
+      buildOverlays();
+    } else if (event.shiftKey) {
+      const point = groundPoint(event);
+      if (!point) return;
+      pushHistory();
+      project.block.polygon.push([point.x, point.z]);
+      selectedHandle = project.block.polygon.length - 1;
+      buildOverlays();
+      markDirty();
+    }
+  }
+  if (tool === "road") {
+    const point = groundPoint(event);
+    if (!point) return;
+    pushHistory();
+    project.road.points = project.road.points || [];
+    project.road.points.push([point.x, point.z]);
     buildOverlays();
+    markDirty();
   }
 }
 
@@ -408,11 +461,39 @@ async function runScenario() {
     const link = $("#replay-link");
     link.href = `replay?project=${encodeURIComponent(projectId)}&run=${encodeURIComponent(record.run_id)}`;
     link.hidden = false;
-    const warnings = Array.isArray(record.warnings) ? record.warnings.length : 0;
-    setStatus(`Run ${record.run_id} complete${warnings ? ` · ${warnings} warning(s)` : ""}`);
+    const warnings = Array.isArray(record.warnings) ? record.warnings : [];
+    $("#run-output").innerHTML = warnings.length
+      ? `<b>Blocked / warnings</b><ul>${warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul>`
+      : "No warnings.";
+    setStatus(`Run ${record.run_id} complete${warnings.length ? ` · ${warnings.length} warning(s)` : ""}`);
   } catch (error) {
     setStatus(`Run failed: ${error.message}`, true);
   }
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
+}
+
+function renameProject() {
+  if (!project) return;
+  const next = prompt("Project name", project.label || "");
+  if (next === null || !next.trim()) return;
+  pushHistory();
+  project.label = next.trim();
+  $("#project-name").textContent = `${project.label} · revision ${project.revision}`;
+  markDirty();
+}
+
+async function duplicateProject() {
+  if (!project) return;
+  try {
+    const copied = await fetch(`${API}projects/${encodeURIComponent(projectId)}/duplicate`, { method: "POST" }).then((response) => {
+      if (!response.ok) throw new Error(`duplicate ${response.status}`);
+      return response.json();
+    });
+    location.href = `3d?project=${encodeURIComponent(copied.project_id)}`;
+  } catch (error) { setStatus(`Duplicate failed: ${error.message}`, true); }
 }
 
 async function init() {
@@ -450,12 +531,25 @@ function animate() {
 document.querySelectorAll("#tools [data-tool]").forEach((button) => button.addEventListener("click", () => setTool(button.dataset.tool)));
 $("#save").addEventListener("click", save);
 $("#run").addEventListener("click", runScenario);
+$("#undo").addEventListener("click", undo);
+$("#redo").addEventListener("click", redo);
+$("#rename").addEventListener("click", renameProject);
+$("#duplicate").addEventListener("click", duplicateProject);
 $("#fit").addEventListener("click", fitView);
 $("#brush").addEventListener("input", () => { brush = Number($("#brush").value); $("#brush-label").textContent = `${brush} m`; });
 renderer.domElement.addEventListener("pointerdown", onPointerDown);
 renderer.domElement.addEventListener("pointermove", onPointerMove);
 renderer.domElement.addEventListener("pointerup", onPointerUp);
 renderer.domElement.addEventListener("pointercancel", onPointerUp);
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Delete" && tool === "boundary" && selectedHandle != null && project.block.polygon.length > 3) {
+    pushHistory();
+    project.block.polygon.splice(selectedHandle, 1);
+    selectedHandle = null;
+    buildOverlays();
+    markDirty();
+  }
+});
 window.addEventListener("resize", resize);
 resize();
 animate();

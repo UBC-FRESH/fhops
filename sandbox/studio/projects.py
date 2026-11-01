@@ -303,6 +303,17 @@ def save_project(root: Path, project: dict[str, Any]) -> dict[str, Any]:
     return project
 
 
+def duplicate_project(root: Path, project: dict[str, Any]) -> dict[str, Any]:
+    """Copy one project under a new stable project id."""
+    copied = json.loads(json.dumps(project))
+    copied["project_id"] = _project_id(str(project.get("base_case_id", "studio")))
+    copied["label"] = f"{project.get('label', 'Studio project')} — copy"
+    copied["revision"] = 0
+    copied["created_utc"] = _now()
+    copied["updated_utc"] = _now()
+    return save_project(root, copied)
+
+
 def list_projects(root: Path) -> list[dict[str, Any]]:
     """Return lightweight project summaries, newest first."""
     if not root.is_dir():
