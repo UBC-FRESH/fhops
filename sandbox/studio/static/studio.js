@@ -13,6 +13,7 @@ const state = {
   selectedTree: null,
   selectedVertex: null,
   clumpDraft: [],
+  streamDraft: [],
   brush: 25,
   scale: 1,
   ox: 0,
@@ -230,9 +231,9 @@ function draw() {
       if (index === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
     });
     ctx.closePath();
-    ctx.fillStyle = "rgba(47,191,176,0.14)";
+    ctx.fillStyle = clump.kind === "riparian" ? "rgba(74,159,216,0.16)" : "rgba(47,191,176,0.14)";
     ctx.fill();
-    ctx.strokeStyle = "#2fbfb0";
+    ctx.strokeStyle = clump.kind === "riparian" ? "#4a9fd8" : "#2fbfb0";
     ctx.lineWidth = 2;
     ctx.stroke();
   }
@@ -244,6 +245,24 @@ function draw() {
     });
     ctx.strokeStyle = "#8ff0e5";
     ctx.setLineDash([5, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  if (state.streamDraft.length) {
+    ctx.beginPath();
+    state.streamDraft.forEach((point, index) => {
+      const [sx, sy] = worldToScreen(Number(point[0]), Number(point[1]));
+      if (index === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+    });
+    ctx.strokeStyle = "#68b6ff";
+    ctx.lineWidth = Math.max(2, Number($("#stream-width")?.value || 30) * state.scale * 0.35);
+    ctx.lineCap = "round";
+    ctx.globalAlpha = 0.55;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = "#b9e1ff";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
     ctx.stroke();
     ctx.setLineDash([]);
   }
@@ -468,6 +487,7 @@ function redo() {
 
 function setTool(tool) {
   if (tool !== "clump") state.clumpDraft = [];
+  if (tool !== "stream") state.streamDraft = [];
   state.tool = tool;
   state.selectedVertex = null;
   document.querySelectorAll("#tools [data-tool]").forEach((button) => button.classList.toggle("active", button.dataset.tool === tool));
@@ -477,6 +497,7 @@ function setTool(tool) {
     boundary: "Drag boundary vertices; double-click an edge to insert; Delete removes selected vertex.",
     retain: "Paint retention trees. Hold Shift to clear retention.",
     clump: "Click to draw a retention clump. Double-click to close it. Trees inside are retained.",
+    stream: "Click along the stream centreline. Double-click to generate a riparian buffer clump.",
     road: "Click to append road points. The road is stored with the project.",
     terraform: "Raise terrain with Terrain selected; hold Shift to lower. Visual prototype.",
   };
@@ -641,6 +662,11 @@ function onPointerDown(event) {
     render();
     return;
   }
+  if (state.tool === "stream") {
+    state.streamDraft.push([world[0], world[1]]);
+    render();
+    return;
+  }
   if (state.tool === "retain") {
     pushHistory();
     state.dragging = { type: "retain" };
@@ -693,7 +719,41 @@ function onPointerUp() {
   state.dragging = null;
 }
 
-function onDoubleClick(event) {
+async function finishStream() {
+  if (!state.project || state.streamDraft.length < 2) return;
+  const width = Math.max(1, Number($("#stream-width")?.value || 30));
+  const centerline = state.streamDraft.slice();
+  try {
+    const result = await api("geometry/stream-buffer", {
+      method: "POST",
+      body: JSON.stringify({ points: centerline, width_m: width }),
+    });
+    pushHistory();
+    state.project.retention.clumps = state.project.retention.clumps || [];
+    state.project.retention.clumps.push({
+      id: `stream-${Date.now().toString(36)}`,
+      label: `stream riparian buffer (${width} m)`,
+      kind: "riparian",
+      source: "stream",
+      buffer_m: width,
+      centerline,
+      polygon: result.polygon,
+    });
+    state.streamDraft = [];
+    recomputeStats();
+    markDirty();
+    render();
+    setStatus(`Added ${width} m stream riparian buffer`);
+  } catch (error) {
+    setStatus(`Stream buffer failed: ${error.message}`, true);
+  }
+}
+
+async function onDoubleClick(event) {
+  if (state.tool === "stream" && state.project && state.streamDraft.length >= 2) {
+    await finishStream();
+    return;
+  }
   if (state.tool === "clump" && state.project && state.clumpDraft.length >= 3) {
     pushHistory();
     state.project.retention.clumps = state.project.retention.clumps || [];
@@ -962,6 +1022,10 @@ function bindEvents() {
   $("#brush-radius").addEventListener("input", () => {
     state.brush = Number($("#brush-radius").value);
     $("#brush-output").textContent = `${state.brush} m`;
+  });
+  $("#stream-width").addEventListener("input", () => {
+    $("#stream-width-output").textContent = `${Number($("#stream-width").value)} m`;
+    render();
   });
   $("#undo").addEventListener("click", undo);
   $("#redo").addEventListener("click", redo);

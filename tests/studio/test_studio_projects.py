@@ -4,12 +4,17 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from fhops.tree_inventory import load_tree_inventory
 from sandbox.studio.projects import (
+    apply_operator_policies,
     create_project,
     materialize_case,
+    polygon_area_ha,
     project_dataset,
     save_project,
+    stream_buffer_polygon,
 )
 from sandbox.tree_lab.cases import load_case
 
@@ -75,14 +80,55 @@ def test_retention_clump_filters_trees(tmp_path: Path) -> None:
 
 def test_operator_policy_translation(tmp_path: Path) -> None:
     """Machine policy presets translate into runnable system arguments."""
-    from sandbox.studio.projects import apply_operator_policies
-
     case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
     project = create_project(case)
     skidder = next(item for item in project["machines"] if "skidder" in item["role"])
     loader = next(item for item in project["machines"] if item["role"] == "loader")
+    processor = next(
+        item for item in project["machines"] if item["role"] in {"roadside_processor", "processor"}
+    )
     project["operator_policies"][skidder["id"]] = "throughput"
     project["operator_policies"][loader["id"]] = "careful"
+    project["operator_policies"][processor["id"]] = "throughput"
     args = apply_operator_policies(project)
     assert args["skidder_empty_speed"] > 1.4
     assert args["loader_process_fixed"] > 45.0
+    assert args["processor_productivity_multiplier"] > 1.0
+    project["operator_policies"][processor["id"]] = "careful"
+    args = apply_operator_policies(project)
+    assert args["processor_productivity_multiplier"] < 1.0
+
+
+def test_stream_buffer_polygon_area_and_width() -> None:
+    """A stream centreline becomes a closed buffer polygon with the requested width."""
+    polygon = stream_buffer_polygon([[0.0, 0.0], [0.0, 30.0]], 20.0)
+    assert len(polygon) == 4
+    assert polygon_area_ha(polygon) == pytest.approx(0.06, rel=1e-6)
+    assert min(point[0] for point in polygon) == pytest.approx(-10.0)
+    assert max(point[0] for point in polygon) == pytest.approx(10.0)
+
+
+def test_stream_buffer_clump_retains_trees_and_blocks_routing(tmp_path: Path) -> None:
+    """A stream buffer follows the normal riparian clump retention and obstacle path."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    tree = next(item for item in project_dataset(case, project)["trees"] if item["inside"])
+    x, y = float(tree["x"]), float(tree["y"])
+    polygon = stream_buffer_polygon([[x, y - 20.0], [x, y + 20.0]], 20.0)
+    project["retention"]["clumps"] = [
+        {
+            "id": "stream-test",
+            "label": "stream riparian buffer (20 m)",
+            "kind": "riparian",
+            "source": "stream",
+            "buffer_m": 20.0,
+            "centerline": [[x, y - 20.0], [x, y + 20.0]],
+            "polygon": polygon,
+        }
+    ]
+    dataset = project_dataset(case, project)
+    assert dataset["stats"]["clump_count"] == 1
+    assert dataset["stats"]["retained_tree_count"] >= 1
+    derived = materialize_case(tmp_path, project, case)
+    assert derived.manifest["retention_clumps"][0]["kind"] == "riparian"
+    assert derived.manifest["obstacles"]

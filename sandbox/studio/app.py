@@ -33,6 +33,7 @@ from sandbox.studio.projects import (
     project_path,
     promote_run,
     save_project,
+    stream_buffer_polygon,
 )
 from sandbox.tree_lab.cases import CaseError, discover_cases, load_case
 from sandbox.tree_lab.runner import RunError, run_case
@@ -87,6 +88,19 @@ def create_app(config: StudioConfig) -> FastAPI:
     @app.get("/api/policies")
     def policies() -> dict[str, Any]:
         return {"presets": POLICY_PRESETS}
+
+    @app.post("/api/geometry/stream-buffer")
+    async def stream_buffer(request: Request) -> dict[str, Any]:
+        """Convert a stream centreline and width into a riparian clump polygon."""
+        try:
+            payload = await request.json()
+            points = payload.get("points")
+            width_m = float(payload.get("width_m", 30.0))
+            if not isinstance(points, list):
+                raise StudioError("Stream points must be a list.")
+            return {"polygon": stream_buffer_polygon(points, width_m), "width_m": width_m}
+        except (StudioError, TypeError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @app.get("/api/cases")
     def cases() -> dict[str, Any]:

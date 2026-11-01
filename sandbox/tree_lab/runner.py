@@ -204,6 +204,7 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         "feller_reach_m": "--feller-reach",
         "feller_speed_mps": "--feller-speed",
         "feller_productivity_multiplier": "--feller-productivity-multiplier",
+        "processor_productivity_multiplier": "--processor-productivity-multiplier",
         "skidder_empty_speed": "--skidder-empty-speed",
         "skidder_loaded_speed": "--skidder-loaded-speed",
         "skidder_load_fixed": "--skidder-load-fixed",

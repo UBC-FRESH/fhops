@@ -676,8 +676,25 @@ eventually terrain/obstacle editing, with a derived scenario run.
 - [x] P21.7 Quality gates, issue tree, branch naming, and closeout report
 - [x] P21.7a Maintainer approval, clean main-based PR, and green CI
 
-Known limits: 2D editor only; terrain is visual-only; only the feller policy is
-wired into simulation; no obstacle/stream tools; no 3D preview yet.
+Known limits: terrain and routing remain reference approximations; operator
+policies map cycle/output coefficients but do not model continuous policy-state
+physics; stream buffers are authoring geometry, not surveyed hydrology; no
+multi-landing or road-network routing yet.
+
+## Phase 22 — Scenario Studio follow-ups
+
+Parent issue: #324. Branch: `feature/p22-scenario-followups`. Status: in progress.
+Plan: `notes/phase22_followups.md`. Children: #325, #326.
+
+Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups.
+
+- [ ] P22.1 Processor-specific operator-policy coefficients (#325)
+  - [ ] Core and CLI processor productivity multiplier
+  - [ ] Studio processor policy translation and provenance
+- [ ] P22.2 Stream-aware retention and closeout corrections (#326)
+  - [ ] Stream-centreline authoring in 2D and 3D
+  - [ ] Riparian clump generation, rendering, and routing exclusion
+  - [ ] Correct the Phase 21 closeout record
 
 ## Backlog & Ideas
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.

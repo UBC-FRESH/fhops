@@ -42,15 +42,25 @@ rewriting project storage.
 
 ## Explicit limitations in this slice
 
-- 2D top-down editor, not yet direct 3D manipulation
-- Terrain edits generate a DEM and are used for route/grade checks; the feller and skidder route models remain reference approximations and can reject steep terrain
-- Operator policies are stored for every machine, but only the feller policy is
-  currently mapped into the simulation runner
-- Retention clumps are tree-level selections; no filled clump polygons yet
-- No obstacle or stream tools yet
-- No multi-landing or road-network routing yet
-- 3D replay is available for derived runs, but 3D *editing* is still the next slice.
-- No authentication; this is a local development tool
+- Terrain edits generate a DEM and are used for route/grade checks; the feller and
+  skidder route models remain reference approximations and can reject steep terrain.
+- Operator policies map feller, skidder, loader, grade, and processor output
+  coefficients; continuous policy-state physics is not modelled.
+- Retention clumps are filled polygons and block felling and machine routing;
+  stream buffers are authoring geometry, not surveyed hydrology.
+- No multi-landing or road-network routing yet.
+- No authentication; this is a local development tool.
+
+## Delivered in Phase 21
+
+- 2D and 3D editing pages, including terrain, road, boundary, landing, retention,
+  and undo/redo.
+- Derived-case materialization with DEM/road handoff, persisted routes, and
+  blocked-work warnings.
+- Retention clumps and riparian/corridor presets with tree exclusion and routing
+  obstacles.
+- Operator-policy translation for feller, skidder, loader, grade, and processor.
+- 3D replay, run history, KPI comparison, export/import, and Tree Lab promotion.
 
 ## Run locally
 
@@ -60,15 +70,10 @@ cd /home/gep/projects/fhops-scenario-studio
 # open http://127.0.0.1:8791/
 ```
 
-## Next slices
+## Follow-ups
 
-1. Add a 3D edit/preview pane using the existing tree scene and brush raycasting.
-2. Add terrain simulation hook (DEM/heightfield + route grade).
-3. Add retention clump polygons, riparian buffers, and no-harvest obstacles.
-4. Add machine operator policy coefficients for skidders, processors, and loaders.
-5. Add editable road networks, multiple landings, and landing capacity checks.
-6. Add a 3D replay preview for the derived run.
-7. Add project comparison against the base case and promotion to a game level.
+See `notes/phase22_followups.md` for processor-specific policy coefficients,
+stream-centreline authoring, and closeout corrections.
 
 ## Verification
 

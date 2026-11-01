@@ -33,20 +33,20 @@ Not passing / not run:
 
 - Full `pytest` stops at the pre-existing HiGHS `iteration_count` option-error assertion in `tests/model/test_milp_driver_robustness.py`; unrelated to Phase 21.
 - Sphinx cannot complete because Pandoc is unavailable (`nbsphinx.NotebookError: PandocMissing`).
-- CI on PR #323 is green at `83288bad` (runs 41274821255 and 41274824233).
+- CI on PR #323 was green at `83288bad` (runs 41274821255 and 41274824233) and again at the final head `e34628aa` (runs 41275784979 and 41275788712). Main CI run `41276592250` passed after merge.
 
-## Deviations requiring approval
+## Deviations and resolution
 
-1. The phase branch is based on the public-demo line, not `main`. A clean PR would need either:
-   - approval to use the public-demo base, or
-   - a clean branch reconstructed from `main` with only the Studio work.
-2. The implementation preceded issue creation (#318–#322); the issue tree now exists and this deviation is recorded.
-3. The phase pull request is open as #323. Per-child PRs were not opened; the phase branch carries the work.
-4. Full repository gates remain blocked by the environment/pre-existing test issues above.
+1. The original feature branch was based on the public-demo line. This was resolved by reconstructing a clean `feature/p21-demo-integration` branch from `main` and porting only the game, sandbox/Tree Lab, Studio, tests, and documentation.
+2. The implementation preceded issue creation (#318–#322); the issue tree was created and linked, and the deviation is recorded.
+3. The phase was delivered as one PR (#323) rather than child PRs, with the child issues closed against the merged phase record.
+4. Full local repository gates remain blocked by the pre-existing HiGHS `iteration_count` assertion and missing Pandoc noted above. CI passed on the same tree.
 
-## Decision requested
+## Outcome
 
-The clean `main`-based branch and green CI satisfy the base/PR path. The phase is approved for merge into `main`; no tag, release, or settings change is part of this phase.
+PR #323 was squash-merged into `main` as `e16582b2e9ba71721e9ef1bc2d001f66599ea17d`.
+Phase and child issues #318–#322 are closed. No tag, release, host networking,
+or settings change was part of this phase.
 
 ## Live deployment
 
