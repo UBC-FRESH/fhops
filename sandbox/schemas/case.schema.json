@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fhops.local/schemas/tree_lab_case.schema.json",
+  "title": "FHOPS Tree Lab case manifest",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "case_id",
+    "label",
+    "block_id",
+    "landing_id",
+    "scenario",
+    "inventory",
+    "metadata",
+    "system_args",
+    "provenance",
+    "caveats"
+  ],
+  "properties": {
+    "schema_version": {"const": "fhops.tree_lab.case.v1"},
+    "case_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"},
+    "label": {"type": "string", "minLength": 1, "maxLength": 200},
+    "block_id": {"type": "string", "minLength": 1, "maxLength": 64},
+    "landing_id": {"type": "string", "minLength": 1, "maxLength": 64},
+    "scenario": {"$ref": "#/$defs/relative_path"},
+    "inventory": {"$ref": "#/$defs/relative_path"},
+    "metadata": {"$ref": "#/$defs/relative_path"},
+    "assignments": {"$ref": "#/$defs/relative_path"},
+    "terrain": {
+      "type": "object",
+      "properties": {
+        "dem": {"type": ["string", "null"]},
+        "road": {"type": ["string", "null"]}
+      }
+    },
+    "system_args": {
+      "type": "object",
+      "required": ["feller", "skidders", "loader"],
+      "properties": {
+        "feller": {"type": "string", "minLength": 1},
+        "skidders": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "processors": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "loader": {"type": "string", "minLength": 1},
+        "bunch_volume_m3": {"type": "number", "exclusiveMinimum": 0},
+        "rate_model": {"enum": ["calibrated", "reference"]},
+        "shift_days": {"type": "integer", "minimum": 1},
+        "shifts_per_day": {"type": "integer", "minimum": 1},
+        "hours_per_shift": {"type": "number", "exclusiveMinimum": 0, "maximum": 24},
+        "truck_capacity_m3": {"type": "number", "exclusiveMinimum": 0},
+        "truck_count": {"type": "integer", "minimum": 1},
+        "landing_capacity_m3": {"type": "number", "exclusiveMinimum": 0},
+        "skidder_capacity_m3": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "harvest": {
+      "type": "object",
+      "description": "Harvest prescription applied to the stand inventory. The runner derives the cut list.",
+      "required": ["type", "marking_rule", "target_basal_area_fraction"],
+      "properties": {
+        "type": {"enum": ["clear_cut", "partial"]},
+        "marking_rule": {"type": "string", "minLength": 1},
+        "target_basal_area_fraction": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "source_stand_stems": {"type": "integer", "minimum": 0},
+        "removed_stems": {"type": "integer", "minimum": 0},
+        "removed_basal_area_m2": {"type": "number", "minimum": 0},
+        "source_stand_basal_area_m2": {"type": "number", "minimum": 0},
+        "removed_volume_m3": {"type": "number", "minimum": 0},
+        "residual_stems": {"type": "integer", "minimum": 0}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["tree_list", "stand_footprint", "review_status"],
+      "properties": {
+        "tree_list": {"type": "string"},
+        "stand_footprint": {"type": "string"},
+        "review_status": {
+          "enum": ["not_reviewed", "review_pending", "reviewed", "reviewed_with_conditions"]
+        }
+      }
+    },
+    "caveats": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+  },
+  "$defs": {
+    "relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+$"
+    }
+  }
+}

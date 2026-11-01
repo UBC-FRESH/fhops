@@ -1,0 +1,37 @@
+{
+  "schema_version": "fhops.tree.inventory.v1",
+  "inventory_id": "mkrf-k80-cable-synthetic",
+  "generated_utc": "2026-10-30T23:50:29+00:00",
+  "source_id": "synthetic-mkrf-k80-cable",
+  "producer": "FHOPS Tree Lab synthetic generator",
+  "method": "Deterministic synthetic point list inside the actual FEMIC forest-cover polygon; not an ITD/ITC product or tree map.",
+  "crs": "EPSG:3005",
+  "units": {
+    "x_y": "m",
+    "elevation": "m",
+    "dbh": "cm",
+    "height": "m",
+    "crown_radius": "m"
+  },
+  "review_status": "not_reviewed",
+  "block_ids": [
+    "MKRF_K80_666"
+  ],
+  "tree_count": 900,
+  "inventory_sha256": "377365596b2f82d13e95345e86cfbc2134c18736b2062090e3bfe4e65589c7c1",
+  "stand_source": {
+    "forest_cover_id": 666,
+    "operability": "Low Operability",
+    "area_ha": 7.7931,
+    "age_2020": 74,
+    "bec_variant": "CWHvm1",
+    "source": "MKRF FEMIC runtime/spatial/fragments_attr_safe_025.gpkg",
+    "note": "Actual FEMIC forest-cover stand polygon; not a harvest-block or tree-map claim."
+  },
+  "caveats": [
+    "Synthetic tree list; not a surveyed stand or tree map.",
+    "Footprint is the actual FEMIC forest-cover polygon, not a surveyed harvest block.",
+    "The 60% slope is a scenario assumption for the cable demonstration.",
+    "Merchantable volume computed with the FHOPS reference stem model: 2759.075 m3."
+  ]
+}

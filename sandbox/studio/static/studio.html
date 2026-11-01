@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FHOPS Scenario Studio</title>
+  <link rel="stylesheet" href="static/studio.css" />
+</head>
+<body>
+  <header id="topbar">
+    <div class="brand">FHOPS Scenario Studio <span>experimental</span></div>
+    <select id="project-select" title="Open project"><option value="">Projects…</option></select>
+    <button id="new-project" class="btn">New project</button>
+    <a id="export" class="btn" href="#" download>Export</a>
+    <button id="import" class="btn">Import</button>
+    <input id="import-file" type="file" accept="application/json" hidden />
+    <span class="sep"></span>
+    <button id="undo" class="btn" title="Undo (Ctrl+Z)">Undo</button>
+    <button id="redo" class="btn" title="Redo (Ctrl+Shift+Z)">Redo</button>
+    <button id="save" class="btn primary">Save</button>
+    <a id="edit-3d" class="btn" href="3d">3D edit</a>
+    <button id="run" class="btn">Run scenario</button>
+    <span id="status">Ready</span>
+  </header>
+
+  <main id="workspace">
+    <aside id="tools" aria-label="Editor tools">
+      <button class="tool active" data-tool="select" title="Select and inspect">↖<small>Select</small></button>
+      <button class="tool" data-tool="landing" title="Move the landing">◉<small>Landing</small></button>
+      <button class="tool" data-tool="boundary" title="Edit block boundary">⬡<small>Boundary</small></button>
+      <button class="tool" data-tool="retain" title="Mark retention trees">♣<small>Retain</small></button>
+      <button class="tool" data-tool="clump" title="Draw a retention clump">◌<small>Clump</small></button>
+      <button class="tool" data-tool="road" title="Draw the block road">╱<small>Road</small></button>
+      <button class="tool" data-tool="terraform" title="Visual terrain brush">⛰<small>Terrain</small></button>
+      <div class="tool-options">
+        <label for="clump-kind">Clump type</label>
+        <select id="clump-kind">
+          <option value="retention">Retention clump</option>
+          <option value="riparian">Riparian buffer</option>
+          <option value="corridor">No-harvest corridor</option>
+        </select>
+        <label for="brush-radius">Brush <output id="brush-output">25 m</output></label>
+        <input id="brush-radius" type="range" min="5" max="120" step="5" value="25" />
+      </div>
+      <button id="fit" class="tool-small" title="Fit view">Fit</button>
+    </aside>
+
+    <section id="canvas-shell">
+      <canvas id="map"></canvas>
+      <div id="hint">Drag to pan · wheel to zoom · select a tool</div>
+      <div id="legend">
+        <span><i class="swatch tree"></i>tree</span>
+        <span><i class="swatch retained"></i>retained</span>
+        <span><i class="swatch outside"></i>outside block</span>
+        <span><i class="swatch road"></i>road</span>
+        <span><i class="swatch landing"></i>landing</span>
+      </div>
+    </section>
+
+    <aside id="inspector">
+      <section class="panel" id="project-panel">
+        <h2>Project</h2>
+        <div id="project-meta" class="muted">Open or create a project.</div>
+        <div class="add-row"><button id="rename" class="btn small">Rename</button><button id="duplicate" class="btn small">Duplicate</button></div>
+      </section>
+      <section class="panel">
+        <h2>Stand & retention</h2>
+        <div id="stand-stats" class="stat-grid"></div>
+        <label class="field">Target retention (% BA)
+          <input id="retention-target" type="number" min="0" max="100" step="1" value="0" />
+        </label>
+        <p class="note">Click trees with the Retain tool. Retained trees stay in the stand and are excluded from the derived harvest.</p>
+      </section>
+      <section class="panel">
+        <h2>Machines</h2>
+        <div id="machine-list"></div>
+        <div class="add-row">
+          <select id="machine-catalog"></select>
+          <button id="add-machine" class="btn small">+ Add</button>
+        </div>
+        <p class="note">Machine role edits are stored in the project. Operator policies are presets that will feed the simulation policy layer.</p>
+      </section>
+      <section class="panel">
+        <h2>Block boundary</h2>
+        <div id="boundary-info" class="muted"></div>
+        <button id="reset-boundary" class="btn small">Reset to base</button>
+      </section>
+      <section class="panel">
+        <h2>Run result</h2>
+        <div id="run-result" class="muted">Save a project and run it to see simulation KPIs.</div>
+      </section>
+      <section class="panel">
+        <h2>Run comparison</h2>
+        <div id="run-compare" class="muted">Need two runs to compare.</div>
+      </section>
+      <section class="panel">
+        <h2>Run history</h2>
+        <div id="run-history" class="muted">No runs yet.</div>
+      </section>
+      <section class="panel">
+        <h2>Notes</h2>
+        <textarea id="notes" rows="4" placeholder="Author notes, assumptions, intent…"></textarea>
+      </section>
+    </aside>
+  </main>
+
+  <dialog id="new-dialog">
+    <form method="dialog" id="new-form">
+      <h2>New Studio project</h2>
+      <p class="muted">Start from an immutable Tree Lab case. The base case is never modified.</p>
+      <label class="field">Case
+        <select id="case-select"></select>
+      </label>
+      <div class="dialog-actions">
+        <button class="btn" value="cancel">Cancel</button>
+        <button class="btn primary" id="create-project" value="default">Create</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="static/studio.js"></script>
+</body>
+</html>

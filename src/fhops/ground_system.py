@@ -34,7 +34,7 @@ from fhops.productivity.skidder_ft import (
     get_skidder_speed_profile,
 )
 from fhops.scenario.io import load_scenario
-from fhops.spatial_machine import SpatialMachineError, simulate_block
+from fhops.spatial_machine import Obstacle, SpatialMachineError, simulate_block
 from fhops.stem import StemInventory, build_stem_inventory
 from fhops.terrain import TerrainError, TerrainRouter
 
@@ -407,6 +407,7 @@ class GroundSystemEvent:
     status: str = ""
     distance_m: float = 0.0
     max_grade_percent: float = 0.0
+    path: tuple[tuple[float, float], ...] = ()
 
     def to_dict(self) -> dict[str, object]:
         """Return the event as a JSON-serializable mapping."""
@@ -425,6 +426,7 @@ class GroundSystemEvent:
             "status": self.status,
             "distance_m": self.distance_m,
             "max_grade_percent": self.max_grade_percent,
+            "path": [[float(x), float(y)] for x, y in self.path],
         }
 
 
@@ -608,6 +610,7 @@ def simulate_ground_system(
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     feller_processing_time_multiplier: float = 1.0,
     path_mode: Literal["nearest", "swath"] = "nearest",
+    obstacles: tuple[Obstacle, ...] = (),
     skidder_specs: Mapping[str, MachineSpec] | None = None,
     loader_spec: MachineSpec | None = None,
     processor_spec: ProcessorSpec | None = None,
@@ -711,6 +714,8 @@ def simulate_ground_system(
     path_mode:
         ``swath`` uses a boustrophedon feller path; ``nearest`` preserves the
         original nearest-tree behavior.
+    obstacles:
+        Circular exclusion zones, such as retained-tree patches.
     skidder_specs:
         Optional per-skidder cycle-time overrides.
     loader_spec:
@@ -834,6 +839,7 @@ def simulate_ground_system(
             travel_speed_m_per_s=feller_travel_speed_m_per_s,
             processing_time_multiplier=feller_processing_time_multiplier,
             path_mode=path_mode,
+            obstacles=obstacles,
         )
     except SpatialMachineError as exc:
         raise GroundSystemError(str(exc)) from exc
@@ -1054,22 +1060,18 @@ def simulate_ground_system(
             f"({max_bunch_volume_m3:.2f} m3)."
         )
     bunches = _build_bunches(trees, bunch_volume_m3, max_bunch_volume_m3)
-    try:
-        loads = _simulate_skidders(
-            events,
-            bunches,
-            skidders,
-            skidder_specs,
-            landing_x,
-            landing_y,
-            rate_model=rate_model,
-            speed_profile=speed_profile,
-            router=router,
-            calendar=calendar,
-        )
-    except TerrainError as exc:
-        router.close()
-        raise GroundSystemError(str(exc)) from exc
+    loads, skidder_warnings = _simulate_skidders(
+        events,
+        bunches,
+        skidders,
+        skidder_specs,
+        landing_x,
+        landing_y,
+        rate_model=rate_model,
+        speed_profile=speed_profile,
+        router=router,
+        calendar=calendar,
+    )
     if processor_models:
         try:
             processor_total, loads = _simulate_processor(
@@ -1150,6 +1152,7 @@ def simulate_ground_system(
             f"{fb_sim.unreachable_count} tree(s) were unreachable by the feller-buncher."
         )
     warnings.extend(fb_sim.warnings)
+    warnings.extend(skidder_warnings)
     warnings.extend(truck_warnings)
     router.close()
     return GroundSystemResult(
@@ -1399,8 +1402,9 @@ def _simulate_skidders(
     speed_profile: SkidderSpeedProfile | None,
     router: TerrainRouter,
     calendar: _ShiftCalendar | None,
-) -> list[_Load]:
+) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
+    blocked: list[str] = []
     available = {machine: 0.0 for machine in skidder_ids}
     for bunch in bunches:
         machine = min(skidder_ids, key=lambda item: available[item])
@@ -1412,7 +1416,11 @@ def _simulate_skidders(
             )
         start = available[machine]
         bx, by = bunch.x, bunch.y
-        route = router.route((landing_x, landing_y), (bx, by))
+        try:
+            route = router.route((landing_x, landing_y), (bx, by))
+        except TerrainError as exc:
+            blocked.append(f"{bunch.bunch_id} ({bunch.volume_m3:.2f} m3) blocked: {exc}")
+            continue
         distance = route.distance_m
         empty_start = start
         if rate_model == "calibrated":
@@ -1454,6 +1462,7 @@ def _simulate_skidders(
                 status="empty",
                 distance_m=route.distance_m,
                 max_grade_percent=route.max_grade_percent,
+                path=tuple(route.path),
             )
         )
         load_start = max(empty_end, bunch.ready_s)
@@ -1490,6 +1499,7 @@ def _simulate_skidders(
                 status="loaded",
                 distance_m=route.distance_m,
                 max_grade_percent=route.max_grade_percent,
+                path=tuple(reversed(route.path)),
             )
         )
         unload_end = _schedule_task(calendar, loaded_end, unload_time, machine)[1]
@@ -1520,7 +1530,11 @@ def _simulate_skidders(
                 tree_ids=bunch.tree_ids,
             )
         )
-    return loads
+    if blocked:
+        blocked.append(
+            f"{len(blocked)} bunch(es) could not be routed; volume excluded from skidding."
+        )
+    return loads, blocked
 
 
 def _simulate_processor(

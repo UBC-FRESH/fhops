@@ -51,6 +51,7 @@ class RouteProfile:
     mean_grade_percent: float
     speed_factor: float
     samples: int
+    path: tuple[tuple[float, float], ...] = ()
 
 
 class TerrainRouter:
@@ -116,7 +117,7 @@ class TerrainRouter:
         return str(self._dataset.crs) if self._dataset.crs else None
 
     def route(self, start: tuple[float, float], end: tuple[float, float]) -> RouteProfile:
-        """Return the terrain profile for a start/end pair."""
+        """Return the terrain profile and actual route geometry for a start/end pair."""
         if isinstance(self._road, _RoadNetwork):
             points = self._road.path(start, end)
         elif self._road is not None:
@@ -125,6 +126,29 @@ class TerrainRouter:
             points = [start, end]
         points = _deduplicate(points)
         points = _densify(points, self.sample_step_m)
+        profile = self._profile(points)
+        if profile.max_grade_percent > self.max_grade_percent + 1e-9 and self._dataset is not None:
+            alternate = self._grid_path(start, end)
+            if alternate:
+                points = _densify(alternate, self.sample_step_m)
+                profile = self._profile(points)
+        if profile.max_grade_percent > self.max_grade_percent + 1e-9:
+            raise TerrainError(
+                f"Route maximum grade {profile.max_grade_percent:.1f}% exceeds "
+                f"{self.max_grade_percent:.1f}% even after alternate routing."
+            )
+        return RouteProfile(
+            distance_m=profile.distance_m,
+            elevation_gain_m=profile.elevation_gain_m,
+            elevation_loss_m=profile.elevation_loss_m,
+            max_grade_percent=profile.max_grade_percent,
+            mean_grade_percent=profile.mean_grade_percent,
+            speed_factor=profile.speed_factor,
+            samples=profile.samples,
+            path=tuple(points),
+        )
+
+    def _profile(self, points: list[tuple[float, float]]) -> RouteProfile:
         elevations = [self._elevation(x, y) for x, y in points]
         distance = 0.0
         gain = 0.0
@@ -147,10 +171,6 @@ class TerrainRouter:
             else:
                 loss += -dz
         mean_grade = weighted_grade / distance if distance > 0 else 0.0
-        if max_grade > self.max_grade_percent + 1e-9:
-            raise TerrainError(
-                f"Route maximum grade {max_grade:.1f}% exceeds {self.max_grade_percent:.1f}%."
-            )
         speed_factor = max(0.4, min(1.2, 1.0 - self.grade_speed_factor * mean_grade))
         return RouteProfile(
             distance_m=distance,
@@ -161,6 +181,86 @@ class TerrainRouter:
             speed_factor=speed_factor,
             samples=len(elevations),
         )
+
+    def _grid_path(
+        self, start: tuple[float, float], end: tuple[float, float]
+    ) -> list[tuple[float, float]] | None:
+        if self._dataset is None:
+            return None
+        left, bottom, right, top = self._dataset.bounds
+        pad = 40.0
+        min_x = max(left, min(start[0], end[0]) - pad)
+        max_x = min(right, max(start[0], end[0]) + pad)
+        min_y = max(bottom, min(start[1], end[1]) - pad)
+        max_y = min(top, max(start[1], end[1]) + pad)
+        if max_x <= min_x or max_y <= min_y:
+            return None
+        res = 36
+        dx = (max_x - min_x) / res
+        dy = (max_y - min_y) / res
+
+        def cell(point: tuple[float, float]) -> tuple[int, int]:
+            return (
+                max(0, min(res - 1, int((point[0] - min_x) / max(1e-9, max_x - min_x) * res))),
+                max(0, min(res - 1, int((point[1] - min_y) / max(1e-9, max_y - min_y) * res))),
+            )
+
+        start_cell = cell(start)
+        end_cell = cell(end)
+
+        def center(node: tuple[int, int]) -> tuple[float, float]:
+            return (min_x + (node[0] + 0.5) * dx, min_y + (node[1] + 0.5) * dy)
+
+        def key(node: tuple[int, int]) -> int:
+            return node[1] * res + node[0]
+
+        open_nodes: list[tuple[float, tuple[int, int]]] = [(0.0, start_cell)]
+        best = {key(start_cell): 0.0}
+        parents: dict[int, tuple[int, int]] = {}
+        closed: set[int] = set()
+        found = False
+        while open_nodes:
+            _, node = heapq.heappop(open_nodes)
+            node_key = key(node)
+            if node_key in closed:
+                continue
+            closed.add(node_key)
+            if node == end_cell:
+                found = True
+                break
+            cx, cy = center(node)
+            cz = self._elevation(cx, cy)
+            for ddx, ddy in ((-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)):
+                next_node = (node[0] + ddx, node[1] + ddy)
+                if (
+                    next_node[0] < 0
+                    or next_node[1] < 0
+                    or next_node[0] >= res
+                    or next_node[1] >= res
+                ):
+                    continue
+                next_key = key(next_node)
+                if next_key in closed:
+                    continue
+                nx, ny = center(next_node)
+                horizontal = math.hypot(nx - cx, ny - cy)
+                grade = abs(self._elevation(nx, ny) - cz) / max(1e-9, horizontal) * 100.0
+                if grade > self.max_grade_percent and next_node != end_cell:
+                    continue
+                candidate = best[node_key] + horizontal * (1.0 + grade / 100.0)
+                if candidate >= best.get(next_key, float("inf")):
+                    continue
+                best[next_key] = candidate
+                parents[next_key] = node
+                heuristic = math.hypot(nx - end[0], ny - end[1])
+                heapq.heappush(open_nodes, (candidate + heuristic, next_node))
+        if not found:
+            return None
+        nodes = [end_cell]
+        while nodes[-1] != start_cell:
+            nodes.append(parents[key(nodes[-1])])
+        nodes.reverse()
+        return _deduplicate([start, *[center(node) for node in nodes], end])
 
     def provenance(self) -> dict[str, object]:
         """Return route configuration and source metadata."""

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FHOPS Studio 3D</title>
+  <link rel="stylesheet" href="static/studio_3d.css" />
+  <script type="importmap">{"imports":{"three":"./lab/vendor/three/three.module.js"}}</script>
+</head>
+<body>
+  <header>
+    <a class="back" href="?project=" id="back-plan">← plan</a>
+    <strong>FHOPS Studio 3D</strong>
+    <span id="project-name">loading…</span>
+    <span id="status" class="muted">ready</span>
+    <button id="undo" class="secondary">Undo</button>
+    <button id="redo" class="secondary">Redo</button>
+    <button id="save">Save 3D edits</button>
+    <button id="run" class="secondary">Run scenario</button>
+    <a id="replay-link" href="#" target="_blank" hidden>Open 3D replay →</a>
+  </header>
+  <main>
+    <div id="scene"></div>
+    <aside id="tools">
+      <h2>Tools</h2>
+      <button data-tool="orbit" class="active">Orbit</button>
+      <button data-tool="landing">Move landing</button>
+      <button data-tool="retain">Retain trees</button>
+      <button data-tool="clump">Retain clump</button>
+      <button data-tool="terrain">Terraform</button>
+      <button data-tool="road">Draw road</button>
+      <button data-tool="boundary">Boundary vertices</button>
+      <label>Clump type
+        <select id="clump-kind">
+          <option value="retention">Retention clump</option>
+          <option value="riparian">Riparian buffer</option>
+          <option value="corridor">No-harvest corridor</option>
+        </select>
+      </label>
+      <label>Brush radius <output id="brush-label">25 m</output></label>
+      <input id="brush" type="range" min="5" max="120" step="5" value="25" />
+      <label class="check"><input id="lower" type="checkbox" /> Lower terrain (Shift)</label>
+      <label class="check"><input id="access-map" type="checkbox" /> Access map (skidder grade)</label>
+      <button id="fit" class="secondary">Fit view</button>
+      <div class="hint">Click trees to toggle retention. Drag boundary handles. Click terrain to raise; Shift-click lowers.</div>
+    </aside>
+    <aside id="stats">
+      <h2>Scene</h2>
+      <div id="scene-stats" class="muted">loading…</div>
+      <p id="project-id" class="hint"></p>
+      <div id="run-output" class="hint"></div>
+      <div class="add-row"><button id="rename" class="secondary">Rename</button><button id="duplicate" class="secondary">Duplicate</button></div>
+      <p class="hint">3D editing writes the same project used by the plan editor and simulation.</p>
+    </aside>
+  </main>
+  <script type="module" src="static/studio_3d.js"></script>
+</body>
+</html>

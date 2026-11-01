@@ -12,6 +12,20 @@
     #bar input[type=range] { flex: 1; accent-color: #f08a24; }
     #bar select { background: #263237; color: #e8eef2; border: 1px solid #52656b; border-radius: 6px; padding: 6px; }
     #bar span { color: #9eb0b7; min-width: 100px; text-align: right; font-variant-numeric: tabular-nums; }
+    #timeline-toggle { margin-left: 4px; }
+    #timeline-panel { position: fixed; left: 0; right: 0; bottom: 0; height: 42vh; z-index: 20; display: none; overflow: auto; padding: 10px 16px 16px; background: #101416f5; border-top: 1px solid #52656b; box-shadow: 0 -8px 28px #0008; }
+    #timeline-panel h3 { margin: 0 0 8px; font-size: .9rem; color: #b7c6cc; }
+    .timeline-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .timeline-machine { display: grid; grid-template-columns: 42px 1fr; gap: 8px; align-items: center; margin: 3px 0; }
+    .timeline-label { color: #9eb0b7; font-size: .72rem; text-align: right; }
+    .timeline-track { position: relative; height: 13px; background: #1d292d; border-radius: 3px; overflow: hidden; }
+    .timeline-bar { position: absolute; top: 0; height: 100%; min-width: 1px; }
+    .timeline-bar:hover { outline: 1px solid #fff; z-index: 2; }
+    .timeline-playhead { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #fff; box-shadow: 0 0 0 1px #101416; transform: translateX(-1px); pointer-events: none; z-index: 3; }
+    .timeline-track { cursor: ew-resize; touch-action: none; }
+    .timeline-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; color: #b7c6cc; font-size: .72rem; }
+    .timeline-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+    @media (max-width: 900px) { .timeline-columns { grid-template-columns: 1fr; } }
     #panes { display: grid; grid-template-columns: 1fr 1fr; height: calc(100% - 55px); gap: 2px; background: #34444a; }
     .pane { position: relative; background: #101416; min-width: 0; }
     .label { position: absolute; left: 12px; top: 12px; z-index: 2; background: #101416d9; border: 1px solid #52656b; border-radius: 7px; padding: 6px 9px; font-weight: 600; }
@@ -34,6 +48,12 @@
       <option value="8">8×</option>
     </select>
     <span id="clock">0:00 / 0:00</span>
+    <button id="timeline-toggle">Timeline</button>
+  </div>
+  <div id="timeline-panel">
+    <h3>Machine timelines</h3>
+    <div class="timeline-columns"><div id="timeline-left"></div><div id="timeline-right"></div></div>
+    <div class="timeline-legend"><span><i style="background:#f08a24"></i>felling</span><span><i style="background:#2e86de"></i>skid</span><span><i style="background:#f1c40f"></i>process</span><span><i style="background:#27ae60"></i>load</span><span><i style="background:#8e44ad"></i>truck</span></div>
   </div>
   <div id="panes">
     <div class="pane"><div class="label">Optimal plan</div><iframe id="left"></iframe></div>
@@ -45,6 +65,8 @@
     const prefix = location.pathname.replace(/\/game\/replay\/?$/, '');
     const assetUrl = (value) => value && value.startsWith('/api/') ? prefix + value : value;
     left.src = assetUrl(params.get('left')); right.src = assetUrl(params.get('right'));
+    const leftEventsUrl = params.get('leftEvents');
+    const rightEventsUrl = params.get('rightEvents');
     const leftDuration = Number(params.get('leftDuration') || 1);
     const rightDuration = Number(params.get('rightDuration') || 1);
     const duration = Math.max(leftDuration, rightDuration, 1);
@@ -59,6 +81,11 @@
         if (win && win.__setTime) { win.__pause?.(); win.__setTime(current); }
       }
       scrub.value = String(current); clock.textContent = `${fmt(current)} / ${fmt(duration)}`;
+      document.querySelectorAll('.timeline-track').forEach((track) => {
+        const trackDuration = Number(track.dataset.duration) || duration;
+        const playhead = track.querySelector('.timeline-playhead');
+        if (playhead) playhead.style.left = `${100 * Math.min(trackDuration, current) / trackDuration}%`;
+      });
     }
     function loop(now) {
       requestAnimationFrame(loop);
@@ -74,6 +101,106 @@
     document.getElementById('reset').onclick = () => { playing = false; document.getElementById('play').textContent = 'Play'; current = 0; apply(); };
     scrub.oninput = () => { current = Number(scrub.value); apply(); };
     speedEl.onchange = () => { speed = Number(speedEl.value); };
+
+    const timelinePanel = document.getElementById('timeline-panel');
+    let timelineLoaded = false;
+    const timelinePalette = { process: '#f1c40f', load: '#27ae60', unload: '#27ae60', travel_empty: '#2e86de', travel_loaded: '#2e86de', load_dispatch: '#8e44ad', truck: '#8e44ad' };
+    function timelineBarColor(type) {
+      if (type && (type.includes('travel'))) return '#2e86de';
+      if (type && (type.includes('load') || type.includes('unload'))) return '#27ae60';
+      if (type && (type.includes('process'))) return '#f1c40f';
+      if (type && (type.includes('truck'))) return '#8e44ad';
+      return '#f08a24';
+    }
+    function renderTimelineSide(root, data) {
+      const duration = Number(data.duration_s) || 1;
+      const machines = Object.keys(data.machines || {});
+      root.innerHTML = '';
+      for (const machine of machines) {
+        const events = (data.timeline || []).filter((event) => event.machine === machine && event.end_s > event.start_s).sort((a, b) => a.start_s - b.start_s);
+        const merged = [];
+        for (const event of events) {
+          const last = merged[merged.length - 1];
+          if (last && last.type === event.type && event.start_s <= last.end_s + 60) {
+            last.end_s = Math.max(last.end_s, event.end_s);
+          } else {
+            merged.push({ ...event });
+          }
+        }
+        const row = document.createElement('div');
+        row.className = 'timeline-machine';
+        const label = document.createElement('div');
+        label.className = 'timeline-label';
+        label.textContent = machine;
+        const track = document.createElement('div');
+        track.className = 'timeline-track';
+        track.dataset.duration = String(duration);
+        for (const event of merged) {
+          const bar = document.createElement('span');
+          bar.className = 'timeline-bar';
+          bar.style.left = `${100 * event.start_s / duration}%`;
+          bar.style.width = `${Math.max(0.15, 100 * (event.end_s - event.start_s) / duration)}%`;
+          bar.style.background = timelineBarColor(event.type);
+          bar.title = `${machine} · ${event.type} · ${Math.round(event.start_s)}–${Math.round(event.end_s)} s`;
+          track.appendChild(bar);
+        }
+        const playhead = document.createElement('span');
+        playhead.className = 'timeline-playhead';
+        track.appendChild(playhead);
+        row.append(label, track);
+        root.appendChild(row);
+      }
+    }
+    async function loadTimeline() {
+      if (timelineLoaded) return;
+      timelineLoaded = true;
+      document.getElementById('timeline-left').textContent = 'Loading timeline…';
+      document.getElementById('timeline-right').textContent = 'Loading timeline…';
+      try {
+        const [leftData, rightData] = await Promise.all([
+          fetch(assetUrl(leftEventsUrl)).then((response) => response.json()),
+          fetch(assetUrl(rightEventsUrl)).then((response) => response.json()),
+        ]);
+        renderTimelineSide(document.getElementById('timeline-left'), leftData);
+        renderTimelineSide(document.getElementById('timeline-right'), rightData);
+        apply();
+      } catch (error) {
+        document.getElementById('timeline-left').textContent = `Timeline unavailable: ${String(error)}`;
+        document.getElementById('timeline-right').textContent = '';
+        timelineLoaded = false;
+      }
+    }
+    let timelineScrubTrack = null;
+    function seekFromTimeline(event) {
+      const track = event.target.closest?.('.timeline-track');
+      if (!track) return;
+      timelineScrubTrack = track;
+      scrubTimelineTo(event.clientX);
+      playing = false;
+      document.getElementById('play').textContent = 'Play';
+      track.setPointerCapture?.(event.pointerId);
+    }
+    function scrubTimelineTo(clientX) {
+      if (!timelineScrubTrack) return;
+      const trackDuration = Number(timelineScrubTrack.dataset.duration) || duration;
+      const rect = timelineScrubTrack.getBoundingClientRect();
+      const fraction = Math.min(1, Math.max(0, (clientX - rect.left) / Math.max(1, rect.width)));
+      current = fraction * trackDuration;
+      apply();
+    }
+    timelinePanel.addEventListener('pointerdown', seekFromTimeline);
+    timelinePanel.addEventListener('pointermove', (event) => {
+      if (timelineScrubTrack && event.buttons) scrubTimelineTo(event.clientX);
+    });
+    timelinePanel.addEventListener('pointerup', () => { timelineScrubTrack = null; });
+    timelinePanel.addEventListener('pointercancel', () => { timelineScrubTrack = null; });
+
+    document.getElementById('timeline-toggle').onclick = async () => {
+      const showing = timelinePanel.style.display === 'block';
+      timelinePanel.style.display = showing ? 'none' : 'block';
+      document.getElementById('timeline-toggle').textContent = showing ? 'Timeline' : 'Hide timeline';
+      if (!showing) await loadTimeline();
+    };
     left.addEventListener('load', () => { setTimeout(apply, 500); });
     right.addEventListener('load', () => { setTimeout(apply, 500); });
     apply(); requestAnimationFrame(loop);

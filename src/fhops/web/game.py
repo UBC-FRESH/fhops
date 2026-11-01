@@ -516,6 +516,8 @@ class GameService:
             "level_id": entry.level_id,
             "optimal_url": f"/api/game/replay-assets/{optimal_token}/viewer.html",
             "player_url": f"/api/game/replay-assets/{player_token}/viewer.html",
+            "optimal_events_url": f"/api/game/replay-assets/{optimal_token}/system_events.json",
+            "player_events_url": f"/api/game/replay-assets/{player_token}/system_events.json",
             "optimal_duration_s": optimal_meta["duration_s"],
             "player_duration_s": player_meta["duration_s"],
             "optimal_choices": optimal_choices,

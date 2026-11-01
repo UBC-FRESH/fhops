@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FHOPS Tree Lab</title>
+  <link rel="stylesheet" href="./static/style.css?v={{BUILD}}">
+  <script type="importmap">
+    {"imports": {"three": "./static/vendor/three/three.module.js?v={{BUILD}}"}}
+  </script>
+</head>
+<body>
+  <div style="background:#7a4b00;color:#fff;padding:7px 14px;font:600 12px/1.4 system-ui;text-align:center">Public experimental demo · no login · agent enabled</div>
+  <header>
+    <div class="brand">FHOPS Tree Lab <small>local sandbox · demonstration only</small></div>
+    <button id="up-level" class="btn ghost" title="Back to case list" hidden>↑ Cases</button>
+    <nav id="nav">
+      <button data-view="cases" class="active">Cases</button>
+      <button data-view="run">Run</button>
+      <button data-view="scene">3D</button>
+      <button data-view="agent">Agent</button>
+      <button data-view="data">Data</button>
+    </nav>
+    <div id="health"><span class="pill"><span class="dot" id="health-dot"></span><span id="health-text">connecting…</span></span><span class="pill" id="build-pill">build …</span></div>
+  </header>
+
+  <main>
+    <section class="view active" id="view-cases">
+      <h2>Demo cases</h2>
+      <p class="lede">
+        Four research-forest demo cases with synthetic, plot-conditioned tree lists. Three use
+        placeholder rectangles; the K80 cable concept uses an actual FEMIC forest-cover stand polygon
+        with a synthetic tree list and a 60% scenario slope. None is a surveyed tree map or an
+        operational plan; the cable-yarder layout and cycle model are reference concepts.
+      </p>
+      <div id="cases-grid" class="grid"></div>
+      <h3 style="margin-top:24px">Candidate cases</h3>
+      <div id="candidates-summary" class="muted">No candidates yet. Ask the Agent view to generate one.</div>
+    </section>
+
+    <section class="view" id="view-run">
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+        <h2 id="run-title">Run</h2>
+        <span class="muted" id="run-subtitle">Select a case and start a run.</span>
+        <span style="margin-left:auto" class="muted" id="run-status"></span>
+      </div>
+      <div id="run-body">
+        <p class="lede">No run selected yet. Open <b>Cases</b> and press <b>Run</b>.</p>
+      </div>
+    </section>
+
+    <section class="view full" id="view-scene">
+      <div id="scene-wrap">
+        <div id="scene-canvas"></div>
+        <div id="scene-hud">
+          <h1 id="scene-title">3D machine simulation</h1>
+          <div class="muted" id="scene-subtitle">Select a completed run to load a scene.</div>
+          <div id="scene-status">loading…</div>
+          <div id="scene-decks"></div>
+          <div id="scene-bar"><div></div></div>
+          <div id="machine-cards"></div>
+        </div>
+        <div id="timeline-strip"></div>
+        <div id="scene-controls">
+          <button class="btn" id="scene-play">pause</button>
+          <button class="btn ghost" id="scene-back">← cases</button>
+          <button class="btn ghost" id="scene-reset">reset</button>
+          <button class="btn ghost" id="scene-fit">fit view</button>
+          <input id="scene-scrub" type="range" min="0" max="1000" value="0">
+          <select id="scene-speed">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option>
+            <option value="8">8×</option>
+          </select>
+          <button class="btn ghost" id="scene-timeline-toggle">timeline</button>
+        </div>
+        <div id="scene-legend">
+          <span class="swatch" style="background:var(--feller)"></span>Feller
+          <span class="swatch" style="background:var(--skidder)"></span>Skidder
+          <span class="swatch" style="background:var(--processor)"></span>Processor
+          <span class="swatch" style="background:var(--loader)"></span>Loader
+          <span class="swatch" style="background:#c678dd"></span>Cable yarder
+          <span class="swatch" style="background:var(--truck)"></span>Truck
+          <span class="swatch" style="background:#2f7f78"></span>Residual
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-agent">
+      <h2>Agent case console</h2>
+      <p class="lede">
+        The console invokes the locally configured <code>opencode</code> CLI to create a candidate case
+        under <code>sandbox/cases/_candidates/</code>. Candidates are validated (schema, inventory
+        contract, scenario load, smoke run) and never accepted or run automatically.
+      </p>
+      <div id="agent-banner"></div>
+      <div class="agent-grid">
+        <div class="card">
+          <h3>Request</h3>
+          <textarea id="agent-prompt" placeholder="e.g. Create a partial-harvest case with two skidders and 30% of the basal area removed."></textarea>
+          <div class="chips" id="agent-examples"></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn primary" id="agent-run">Generate candidate</button>
+            <span class="muted" id="agent-meta"></span>
+          </div>
+          <div id="agent-response" style="margin-top:14px"></div>
+        </div>
+        <div class="card">
+          <h3>Candidates</h3>
+          <div id="agent-candidates" class="muted">No candidates yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-data">
+      <h2 id="data-title">Case data</h2>
+      <p class="lede">Inventory contract, provenance, checksums, and scenario inputs.</p>
+      <div id="data-body"><p class="muted">Select a case first.</p></div>
+    </section>
+  </main>
+
+  <script type="module" src="./static/app.20261031i.js"></script>
+</body>
+</html>
