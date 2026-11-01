@@ -1,8 +1,8 @@
 # Phase 21 closeout report — Scenario Studio
 
-Parent issue: #318  
-Children: #319, #320, #321, #322  
-Branch: `feature/p21-demo-integration` (pushed to origin)  
+Parent issue: #318
+Children: #319, #320, #321, #322
+Branch: `feature/p21-demo-integration` (pushed to origin)
 Report date: 2026-11-01
 
 ## Delivered
