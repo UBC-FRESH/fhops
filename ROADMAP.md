@@ -645,7 +645,7 @@ loader replaces it.
 
 ## Phase 21 — Scenario Studio
 
-Parent issue: #318. Branch: `feature/p21-demo-integration`. Status: in progress. Plan:
+Parent issue: #318. Branch: `feature/p21-demo-integration`. Status: complete (PR #323). Plan:
 `notes/phase21_scenario_studio.md`. Issue tree: `notes/phase21_issue_tree.md`.
 
 Goal: add an interactive authoring layer over immutable Tree Lab cases for
@@ -674,7 +674,7 @@ eventually terrain/obstacle editing, with a derived scenario run.
 - [x] P21.5a 3D road drawing, boundary add/remove, undo/redo, rename/duplicate
 - [ ] P21.6 Full operator-policy simulation integration
 - [x] P21.7 Quality gates, issue tree, branch naming, and closeout report
-- [ ] P21.7a Maintainer approval of phase base and pull request path
+- [x] P21.7a Maintainer approval, clean main-based PR, and green CI
 
 Known limits: 2D editor only; terrain is visual-only; only the feller policy is
 wired into simulation; no obstacle/stream tools; no 3D preview yet.

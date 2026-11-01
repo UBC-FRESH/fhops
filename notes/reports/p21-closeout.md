@@ -3,6 +3,7 @@
 Parent issue: #318
 Children: #319, #320, #321, #322
 Branch: `feature/p21-demo-integration` (pushed to origin)
+Pull request: #323
 Report date: 2026-11-01
 
 ## Delivered
@@ -32,7 +33,7 @@ Not passing / not run:
 
 - Full `pytest` stops at the pre-existing HiGHS `iteration_count` option-error assertion in `tests/model/test_milp_driver_robustness.py`; unrelated to Phase 21.
 - Sphinx cannot complete because Pandoc is unavailable (`nbsphinx.NotebookError: PandocMissing`).
-- No CI run exists for the pushed phase branch.
+- CI on PR #323 is green at `83288bad` (runs 41274821255 and 41274824233).
 
 ## Deviations requiring approval
 
@@ -40,12 +41,12 @@ Not passing / not run:
    - approval to use the public-demo base, or
    - a clean branch reconstructed from `main` with only the Studio work.
 2. The implementation preceded issue creation (#318–#322); the issue tree now exists and this deviation is recorded.
-3. No phase pull request or per-child PR was opened.
+3. The phase pull request is open as #323. Per-child PRs were not opened; the phase branch carries the work.
 4. Full repository gates remain blocked by the environment/pre-existing test issues above.
 
 ## Decision requested
 
-The maintainer should choose the base and approve the PR path. No merge, tag, release, or settings change has been performed.
+The clean `main`-based branch and green CI satisfy the base/PR path. The phase is approved for merge into `main`; no tag, release, or settings change is part of this phase.
 
 ## Live deployment
 

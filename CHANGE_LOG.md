@@ -1,3 +1,12 @@
+# 2026-11-01 — P21.4 green CI and merge approval
+
+- PR #323 (`feature/p21-demo-integration` -> `main`) is green:
+  - run 41274821255 — `lint-test-docs` pass
+  - run 41274824233 — `lint-test-docs` pass
+  - `deploy-history` skipped as expected for the PR
+- Cleanup commit `83288bad` fixed the final pre-commit whitespace issue.
+- Phase 21 marked complete for merge. No tag, release, or settings change is part of this phase.
+
 # 2026-11-01 — P21 clean main integration branch
 
 - Created `feature/p21-demo-integration` from `main` and ported the game, Tree Lab/sandbox, public-demo wrapper, Studio, required core/runtime changes, and tests.
