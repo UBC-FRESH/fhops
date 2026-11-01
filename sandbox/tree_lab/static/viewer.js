@@ -803,7 +803,12 @@ export function createViewer(container, { onTime } = {}) {
       if (polygon.length < 3) continue;
       const color = clump.kind === "riparian" ? 0x4a9fd8 : 0x2fbfb0;
       const material = new THREE.MeshBasicMaterial({
-        color, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false,
+        color,
+        transparent: true,
+        opacity: clump.kind === "riparian" ? 0.22 : 0.16,
+        side: THREE.DoubleSide,
+        depthTest: false,
+        depthWrite: false,
       });
       const shape = new THREE.Shape();
       polygon.forEach(([x, y], index) => {
@@ -813,9 +818,39 @@ export function createViewer(container, { onTime } = {}) {
       geometry.rotateX(Math.PI / 2);
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.y = sampleHeight(polygon[0][0], polygon[0][1]) + 0.8;
+      mesh.renderOrder = 3;
       group.add(mesh);
       const points = polygon.map(([x, y]) => new THREE.Vector3(Number(x), sampleHeight(Number(x), Number(y)) + 1.0, Number(y)));
-      group.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color: 0x8ff0e5 })));
+      const outline = new THREE.LineLoop(
+        new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.LineBasicMaterial({
+          color: clump.kind === "riparian" ? 0x9fd8ff : 0x8ff0e5,
+          depthTest: false,
+        }),
+      );
+      outline.renderOrder = 4;
+      group.add(outline);
+
+      const cx = polygon.reduce((sum, point) => sum + Number(point[0]), 0) / polygon.length;
+      const cy = polygon.reduce((sum, point) => sum + Number(point[1]), 0) / polygon.length;
+      const labelCanvas = document.createElement('canvas');
+      labelCanvas.width = 512;
+      labelCanvas.height = 96;
+      const labelCtx = labelCanvas.getContext('2d');
+      labelCtx.fillStyle = 'rgba(16,20,22,0.82)';
+      labelCtx.fillRect(0, 0, 512, 96);
+      labelCtx.fillStyle = clump.kind === "riparian" ? '#b9e1ff' : '#8ff0e5';
+      labelCtx.font = 'bold 30px system-ui';
+      labelCtx.fillText(String(clump.label || clump.kind || 'retention clump').slice(0, 34), 12, 58);
+      const label = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: new THREE.CanvasTexture(labelCanvas),
+        depthTest: false,
+        transparent: true,
+      }));
+      label.position.set(cx, sampleHeight(cx, cy) + 14, cy);
+      label.scale.set(42, 7.9, 1);
+      label.renderOrder = 10;
+      group.add(label);
     }
     scene.add(group);
   }
@@ -825,29 +860,63 @@ export function createViewer(container, { onTime } = {}) {
     const group = new THREE.Group();
     group.name = 'residual_trees';
     const trunkGeo = new THREE.CylinderGeometry(0.16, 0.22, 1, 5);
-    const crownGeo = new THREE.ConeGeometry(1, 1, 7);
+    const crownGeo = new THREE.ConeGeometry(1, 1, 8);
+    const ringGeo = new THREE.RingGeometry(1, 1.35, 14);
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5a4632, roughness: 0.9 });
-    // Teal tint so leave trees are visually distinct from the harvested stand.
-    const crownMat = new THREE.MeshStandardMaterial({ color: 0x2f7f78, roughness: 0.95 });
+    // Bright teal and a ground ring keep leave trees readable against the
+    // darker harvested stand at the replay camera scale.
+    const crownMat = new THREE.MeshStandardMaterial({
+      color: 0x2fe0c8,
+      emissive: 0x0d5f58,
+      emissiveIntensity: 0.75,
+      roughness: 0.6,
+      metalness: 0.05,
+      transparent: true,
+      opacity: 0.82,
+      depthTest: false,
+      depthWrite: false,
+    });
+    const markerMat = new THREE.MeshBasicMaterial({
+      color: 0x7dfff0,
+      transparent: true,
+      opacity: 0.95,
+      depthTest: false,
+      depthWrite: false,
+    });
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x7dfff0,
+      transparent: true,
+      opacity: 0.85,
+      side: THREE.DoubleSide,
+      depthTest: false,
+      depthWrite: false,
+    });
     for (const tree of payload.trees) {
-      const height = Math.max(2, Number(tree.height_m) || 20);
+      const height = Math.max(6, Number(tree.height_m) || 20);
       const dbh = Math.max(0.1, (Number(tree.dbh_cm) || 30) / 100);
-      const crownRadius = Math.max(0.6, Number(tree.crown_radius_m) || dbh * 3);
+      const crownRadius = Math.max(2.5, Number(tree.crown_radius_m) || dbh * 3);
       const x = Number(tree.x);
       const y = Number(tree.y);
       const base = sampleHeight(x, y);
       const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-      trunk.scale.set(dbh * 1.2, height * 0.4, dbh * 1.2);
-      trunk.position.set(x, base + height * 0.2, y);
+      trunk.scale.set(dbh * 1.5, height * 0.48, dbh * 1.5);
+      trunk.position.set(x, base + height * 0.24, y);
       const crown = new THREE.Mesh(crownGeo, crownMat);
-      crown.scale.set(crownRadius * 1.15, height * 0.7, crownRadius * 1.15);
-      crown.position.set(x, base + height * 0.6, y);
+      crown.scale.set(crownRadius * 1.55, height * 0.9, crownRadius * 1.55);
+      crown.position.set(x, base + height * 0.55, y);
+      crown.renderOrder = 8;
       const marker = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.9, 1.2, 3.0, 7),
-        new THREE.MeshBasicMaterial({ color: 0x2fbfb0, transparent: true, opacity: 0.9 }),
+        new THREE.CylinderGeometry(1.15, 1.5, 8.0, 8),
+        markerMat,
       );
-      marker.position.set(x, base + 1.5, y);
-      group.add(trunk, crown, marker);
+      marker.position.set(x, base + 4.0, y);
+      marker.renderOrder = 9;
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = -Math.PI / 2;
+      ring.scale.setScalar(Math.max(2.5, crownRadius * 1.8));
+      ring.position.set(x, base + 0.25, y);
+      ring.renderOrder = 9;
+      group.add(trunk, crown, marker, ring);
     }
     residualGroup = group;
     scene.add(group);
