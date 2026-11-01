@@ -144,8 +144,11 @@ def _git_commit() -> str | None:
     return completed.stdout.strip() or None
 
 
-def _edge_landing(cut_list: Path) -> tuple[float, float] | None:
-    """Place the landing just south-east of the block edge."""
+def _edge_landing(case: Case, cut_list: Path) -> tuple[float, float] | None:
+    """Return a manifest landing, or place one just south-east of the block edge."""
+    landing = case.manifest.get("landing")
+    if isinstance(landing, dict) and "x" in landing and "y" in landing:
+        return float(landing["x"]), float(landing["y"])
     try:
         with cut_list.open(encoding="utf-8", newline="") as handle:
             rows = list(csv.DictReader(handle))
@@ -177,10 +180,16 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
     for processor in args.get("processors") or []:
         command.extend(["--processor", str(processor)])
     command.extend(["--loader", str(args["loader"])])
-    edge = _edge_landing(run_dir / "inputs" / "tree_inventory" / "cut_list.csv")
+    edge = _edge_landing(case, run_dir / "inputs" / "tree_inventory" / "cut_list.csv")
     if edge is not None:
         command.extend(["--landing-x", f"{edge[0]:.3f}", "--landing-y", f"{edge[1]:.3f}"])
     command.extend(["--path-mode", str(args.get("path_mode", "swath"))])
+    for obstacle in case.manifest.get("obstacles") or []:
+        try:
+            x, y, radius = (float(value) for value in obstacle)
+        except (TypeError, ValueError):
+            continue
+        command.extend(["--obstacle", f"{x:.3f},{y:.3f},{max(0.1, radius):.3f}"])
     option_map = {
         "bunch_volume_m3": "--bunch-volume",
         "rate_model": "--rate-model",
@@ -194,6 +203,15 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         "skidder_capacity_m3": "--skidder-capacity",
         "feller_reach_m": "--feller-reach",
         "feller_speed_mps": "--feller-speed",
+        "feller_productivity_multiplier": "--feller-productivity-multiplier",
+        "skidder_empty_speed": "--skidder-empty-speed",
+        "skidder_loaded_speed": "--skidder-loaded-speed",
+        "skidder_load_fixed": "--skidder-load-fixed",
+        "skidder_load_per_log": "--skidder-load-per-log",
+        "skidder_unload_fixed": "--skidder-unload-fixed",
+        "skidder_unload_per_log": "--skidder-unload-per-log",
+        "loader_process_fixed": "--loader-process-fixed",
+        "loader_process_per_log": "--loader-process-per-log",
         "max_skidder_grade": "--max-skidder-grade",
     }
     for key, flag in option_map.items():
@@ -207,9 +225,13 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         command.extend(["--processor-model", str(args["processor_model"])])
     if args.get("processor_rate"):
         command.extend(["--processor-rate", str(args["processor_rate"])])
-    if args.get("dem"):
+    if case.manifest.get("dem"):
         command.extend(["--dem", str(case.path("dem"))])
-    if args.get("road"):
+    elif args.get("dem"):
+        command.extend(["--dem", str(case.path("dem"))])
+    if case.manifest.get("road"):
+        command.extend(["--road", str(case.path("road"))])
+    elif args.get("road"):
         command.extend(["--road", str(case.path("road"))])
     command.extend(["--out", str(run_dir / "system")])
     return command

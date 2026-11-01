@@ -15,6 +15,8 @@ from starlette.routing import Route
 from fhops.web.app import ServiceConfig, create_app
 from sandbox.tree_lab.app import ServiceConfig as TreeLabConfig
 from sandbox.tree_lab.app import create_app as create_tree_lab_app
+from sandbox.studio.app import StudioConfig
+from sandbox.studio.app import create_app as create_studio_app
 
 ROOT = Path(__file__).resolve().parent
 LANDING = ROOT / "demo.html"
@@ -54,6 +56,24 @@ tree_lab_app = create_tree_lab_app(
 )
 app.mount("/sandbox-v20261031i", tree_lab_app)
 app.mount("/sandbox", tree_lab_app)
+
+# Scenario Studio is a separate app mounted under the public demo. It keeps its
+# own project/run storage and uses the same sandbox cases.
+studio_app = create_studio_app(
+    StudioConfig(
+        cases_root=ROOT / "sandbox" / "cases",
+        projects_root=ROOT / "build" / "studio_projects",
+        workspace=ROOT,
+    )
+)
+app.mount("/studio", studio_app)
+
+
+async def _studio_replay_redirect(_request: Request) -> RedirectResponse:
+    return RedirectResponse("/studio/replay", status_code=302)
+
+
+app.router.routes.insert(0, Route("/replay", _studio_replay_redirect, methods=["GET"]))
 
 # Simple app-level public-demo guardrails. Nginx should still enforce its own
 # request limits; these caps keep a direct loopback client from bypassing them.
@@ -102,7 +122,7 @@ async def no_store_public_demo(request: Request, call_next: Any) -> Any:
     """Never let browsers cache the demo shell or its modules."""
     response = await call_next(request)
     path = request.url.path
-    if path.startswith(("/game", "/sandbox", "/static")):
+    if path.startswith(("/game", "/sandbox", "/studio", "/static")):
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"

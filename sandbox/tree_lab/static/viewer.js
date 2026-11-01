@@ -173,6 +173,10 @@ export function createViewer(container, { onTime } = {}) {
   let loaded = false;
   let userInteracted = false;
   let blockOutline = null;
+  let retainedObstacles = [];
+  let retentionClumps = [];
+  let machineSpecs = {};
+  let routeCache = new WeakMap();
 
   controls.addEventListener('start', () => { userInteracted = true; });
 
@@ -210,11 +214,32 @@ export function createViewer(container, { onTime } = {}) {
     cumulativeVolume = [];
     terrain = null;
     blockOutline = null;
+    retainedObstacles = [];
+    retentionClumps = [];
+    machineSpecs = {};
+    routeCache = new WeakMap();
     payload = null;
   }
 
   function terrainHeight(x, y) {
     if (!terrain) return baseElevation;
+    if (Array.isArray(terrain.heights) && terrain.heights.length) {
+      const bounds = terrain.bounds;
+      if (Array.isArray(bounds) && bounds.length === 4) {
+        const [minX, minY, maxX, maxY] = bounds.map(Number);
+        const res = Math.max(2, Number(terrain.resolution) || 24);
+        const fx = Math.max(0, Math.min(res - 1, ((Number(x) - minX) / Math.max(1, maxX - minX)) * (res - 1)));
+        const fy = Math.max(0, Math.min(res - 1, ((Number(y) - minY) / Math.max(1, maxY - minY)) * (res - 1)));
+        const x0 = Math.floor(fx), y0 = Math.floor(fy);
+        const x1 = Math.min(res - 1, x0 + 1), y1 = Math.min(res - 1, y0 + 1);
+        const dx = fx - x0, dy = fy - y0;
+        const h00 = Number(terrain.heights[y0 * res + x0]) || 0;
+        const h10 = Number(terrain.heights[y0 * res + x1]) || 0;
+        const h01 = Number(terrain.heights[y1 * res + x0]) || 0;
+        const h11 = Number(terrain.heights[y1 * res + x1]) || 0;
+        return baseElevation + (h00 * (1 - dx) + h10 * dx) * (1 - dy) + (h01 * (1 - dx) + h11 * dx) * dy;
+      }
+    }
     const origin = terrain.origin || [0, 0];
     const uphill = terrain.uphill || [0, -1];
     const slope = Number(terrain.slope_percent || 0) / 100;
@@ -251,13 +276,160 @@ export function createViewer(container, { onTime } = {}) {
     return states;
   }
 
+  function pointInPolygon(x, y, polygon) {
+    let inside = false;
+    for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
+      const xi = Number(polygon[index][0]), yi = Number(polygon[index][1]);
+      const xj = Number(polygon[previous][0]), yj = Number(polygon[previous][1]);
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+
+  function routeAroundObstacles(x0, y0, x1, y1) {
+    let best = null;
+    let bestDistance = Infinity;
+    const dx = x1 - x0;
+    const dy = y1 - y0;
+    const lengthSq = dx * dx + dy * dy || 1;
+    for (const obstacle of retainedObstacles) {
+      const t = Math.max(0, Math.min(1, ((obstacle.x - x0) * dx + (obstacle.y - y0) * dy) / lengthSq));
+      const px = x0 + dx * t;
+      const py = y0 + dy * t;
+      const distance = Math.hypot(obstacle.x - px, obstacle.y - py);
+      if (distance < obstacle.radius + 4 && distance < bestDistance) {
+        best = { obstacle, t, px, py, length: Math.hypot(dx, dy) };
+        bestDistance = distance;
+      }
+    }
+    if (!best || bestDistance > best.obstacle.radius + 4) return [[x0, y0], [x1, y1]];
+    const normalX = -(dy / Math.max(1, best.length));
+    const normalY = dx / Math.max(1, best.length);
+    const side = ((x0 - best.obstacle.x) * normalX + (y0 - best.obstacle.y) * normalY) >= 0 ? 1 : -1;
+    const offset = best.obstacle.radius + 6;
+    const via = [best.obstacle.x + normalX * offset * side, best.obstacle.y + normalY * offset * side];
+    return [[x0, y0], via, [x1, y1]];
+  }
+
+  function routeGridBounds(x0, y0, x1, y1) {
+    let minX = Math.min(x0, x1), maxX = Math.max(x0, x1);
+    let minY = Math.min(y0, y1), maxY = Math.max(y0, y1);
+    if (Array.isArray(terrain?.bounds) && terrain.bounds.length === 4) {
+      minX = Math.min(minX, Number(terrain.bounds[0]));
+      minY = Math.min(minY, Number(terrain.bounds[1]));
+      maxX = Math.max(maxX, Number(terrain.bounds[2]));
+      maxY = Math.max(maxY, Number(terrain.bounds[3]));
+    }
+    const pad = 20;
+    return [minX - pad, minY - pad, maxX + pad, maxY + pad];
+  }
+
+  function machineGradeLimit(id) {
+    const type = machineSpecs[id]?.type || '';
+    if (type.includes('feller') || type.includes('harvester') || type.includes('hand_faller')) return 55;
+    if (type.includes('skidder') || type.includes('forwarder') || type.includes('yarder')) return 35;
+    return 45;
+  }
+
+  function routeSegment(id, segment) {
+    if (routeCache.has(segment)) return routeCache.get(segment);
+    const x0 = Number(segment.x0), y0 = Number(segment.y0);
+    const x1 = Number(segment.x1), y1 = Number(segment.y1);
+    if (Math.hypot(x1 - x0, y1 - y0) < 0.5) {
+      const direct = [[x0, y0], [x1, y1]];
+      routeCache.set(segment, direct);
+      return direct;
+    }
+    if (!terrain || !Array.isArray(terrain.heights) || !terrain.heights.length) {
+      const fallback = routeAroundObstacles(x0, y0, x1, y1);
+      routeCache.set(segment, fallback);
+      return fallback;
+    }
+    const [minX, minY, maxX, maxY] = routeGridBounds(x0, y0, x1, y1);
+    const res = 42;
+    const dx = (maxX - minX) / res;
+    const dy = (maxY - minY) / res;
+    const noGo = retainedObstacles;
+    const blocked = (col, row) => {
+      const x = minX + (col + 0.5) * dx;
+      const y = minY + (row + 0.5) * dy;
+      return noGo.some((obstacle) => Math.hypot(obstacle.x - x, obstacle.y - y) < obstacle.radius + 1.5)
+        || retentionClumps.some((clump) => pointInPolygon(x, y, clump.polygon || []));
+    };
+    const cellOf = (x, y) => [
+      Math.max(0, Math.min(res - 1, Math.floor((x - minX) / Math.max(1e-9, maxX - minX) * res))),
+      Math.max(0, Math.min(res - 1, Math.floor((y - minY) / Math.max(1e-9, maxY - minY) * res))),
+    ];
+    const [startCol, startRow] = cellOf(x0, y0);
+    const [endCol, endRow] = cellOf(x1, y1);
+    const key = (col, row) => row * res + col;
+    const open = [{ col: startCol, row: startRow, g: 0, f: 0, parent: null }];
+    const closed = new Set();
+    const best = new Map([[key(startCol, startRow), 0]]);
+    const limit = machineGradeLimit(id);
+    let found = null;
+    while (open.length) {
+      open.sort((a, b) => a.f - b.f);
+      const current = open.shift();
+      const currentKey = key(current.col, current.row);
+      if (closed.has(currentKey)) continue;
+      closed.add(currentKey);
+      if (current.col === endCol && current.row === endRow) { found = current; break; }
+      const currentX = minX + (current.col + 0.5) * dx;
+      const currentY = minY + (current.row + 0.5) * dy;
+      const currentZ = terrainHeight(currentX, currentY);
+      for (let dc = -1; dc <= 1; dc += 1) {
+        for (let dr = -1; dr <= 1; dr += 1) {
+          if (!dc && !dr) continue;
+          const col = current.col + dc, row = current.row + dr;
+          if (col < 0 || row < 0 || col >= res || row >= res) continue;
+          const nextKey = key(col, row);
+          if (closed.has(nextKey)) continue;
+          if (blocked(col, row) && !(col === endCol && row === endRow)) continue;
+          const nextX = minX + (col + 0.5) * dx;
+          const nextY = minY + (row + 0.5) * dy;
+          const horizontal = Math.hypot(nextX - currentX, nextY - currentY);
+          const grade = Math.abs(terrainHeight(nextX, nextY) - currentZ) / Math.max(1e-9, horizontal) * 100;
+          if (grade > limit && !(col === endCol && row === endRow)) continue;
+          const g = current.g + horizontal * (1 + grade / 100);
+          if (g >= (best.get(nextKey) ?? Infinity)) continue;
+          const h = Math.hypot(nextX - x1, nextY - y1);
+          best.set(nextKey, g);
+          open.push({ col, row, g, f: g + h, parent: current });
+        }
+      }
+    }
+    if (!found) {
+      const fallback = routeAroundObstacles(x0, y0, x1, y1);
+      routeCache.set(segment, fallback);
+      return fallback;
+    }
+    const cells = [];
+    for (let node = found; node; node = node.parent) cells.push(node);
+    cells.reverse();
+    const path = [[x0, y0], ...cells.map((node) => [minX + (node.col + 0.5) * dx, minY + (node.row + 0.5) * dy]), [x1, y1]];
+    const simplified = [path[0]];
+    for (let index = 1; index < path.length - 1; index += 1) {
+      const a = simplified[simplified.length - 1], b = path[index], c = path[index + 1];
+      const cross = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+      if (Math.abs(cross) > 0.5) simplified.push(b);
+    }
+    simplified.push(path[path.length - 1]);
+    routeCache.set(segment, simplified);
+    return simplified;
+  }
+
   function updateMachines(t) {
     for (const [id, group] of Object.entries(machines)) {
       const state = segmentAt(id, t);
       if (!state) continue;
       const segment = state.segment;
-      let x = segment.x0 + (segment.x1 - segment.x0) * state.f;
-      let y = segment.y0 + (segment.y1 - segment.y0) * state.f;
+      const path = Array.isArray(segment.path) && segment.path.length > 1
+        ? segment.path.map((point) => [Number(point[0]), Number(point[1])])
+        : routeSegment(id, segment);
+      const point = pathPoint(path, state.f);
+      let x = point.x;
+      let y = point.y;
       const offset = MACHINE_OFFSETS[id] || [0, 0];
       x += offset[0]; y += offset[1];
       group.position.set(x, sampleHeight(x, y) + 2.8, y);
@@ -622,6 +794,31 @@ export function createViewer(container, { onTime } = {}) {
     trucks[id] = group;
   }
 
+  function addRetentionClumps(clumps) {
+    if (!Array.isArray(clumps) || !clumps.length) return;
+    const group = new THREE.Group();
+    group.name = "retention_clumps";
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x2fbfb0, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false,
+    });
+    for (const clump of clumps) {
+      const polygon = clump.polygon || [];
+      if (polygon.length < 3) continue;
+      const shape = new THREE.Shape();
+      polygon.forEach(([x, y], index) => {
+        if (index === 0) shape.moveTo(Number(x), Number(y)); else shape.lineTo(Number(x), Number(y));
+      });
+      const geometry = new THREE.ShapeGeometry(shape);
+      geometry.rotateX(Math.PI / 2);
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.y = sampleHeight(polygon[0][0], polygon[0][1]) + 0.8;
+      group.add(mesh);
+      const points = polygon.map(([x, y]) => new THREE.Vector3(Number(x), sampleHeight(Number(x), Number(y)) + 1.0, Number(y)));
+      group.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color: 0x8ff0e5 })));
+    }
+    scene.add(group);
+  }
+
   function addResidualTrees(payload) {
     if (!payload || !Array.isArray(payload.trees) || !payload.trees.length) return;
     const group = new THREE.Group();
@@ -642,9 +839,14 @@ export function createViewer(container, { onTime } = {}) {
       trunk.scale.set(dbh * 1.2, height * 0.4, dbh * 1.2);
       trunk.position.set(x, base + height * 0.2, y);
       const crown = new THREE.Mesh(crownGeo, crownMat);
-      crown.scale.set(crownRadius, height * 0.65, crownRadius);
-      crown.position.set(x, base + height * 0.55, y);
-      group.add(trunk, crown);
+      crown.scale.set(crownRadius * 1.15, height * 0.7, crownRadius * 1.15);
+      crown.position.set(x, base + height * 0.6, y);
+      const marker = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.9, 1.2, 3.0, 7),
+        new THREE.MeshBasicMaterial({ color: 0x2fbfb0, transparent: true, opacity: 0.9 }),
+      );
+      marker.position.set(x, base + 1.5, y);
+      group.add(trunk, crown, marker);
     }
     residualGroup = group;
     scene.add(group);
@@ -666,19 +868,39 @@ export function createViewer(container, { onTime } = {}) {
     geometry.rotateX(-Math.PI / 2);
     const mesh = new THREE.Mesh(
       geometry,
-      new THREE.MeshStandardMaterial({ color: 0x737a55, roughness: 1.0, metalness: 0.0 }),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1.0, metalness: 0.0, vertexColors: true }),
     );
     mesh.name = 'terrain';
     mesh.position.set((minx + maxx) / 2, 0, (miny + maxy) / 2);
     const position = geometry.attributes.position;
+    let minHeight = Infinity;
+    let maxHeight = -Infinity;
     for (let index = 0; index < position.count; index += 1) {
       const x = mesh.position.x + position.getX(index);
       const z = mesh.position.z + position.getZ(index);
-      position.setY(index, terrainHeight(x, z));
+      const y = terrainHeight(x, z);
+      position.setY(index, y);
+      minHeight = Math.min(minHeight, y);
+      maxHeight = Math.max(maxHeight, y);
     }
+    const colors = [];
+    const span = Math.max(1, maxHeight - minHeight);
+    for (let index = 0; index < position.count; index += 1) {
+      const f = Math.max(0, Math.min(1, (position.getY(index) - minHeight) / span));
+      // Low ground is dark green; high ground warms toward dry olive/brown.
+      colors.push(0.18 + f * 0.42, 0.30 + f * 0.28, 0.16 + f * 0.12);
+    }
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
     position.needsUpdate = true;
     geometry.computeVertexNormals();
     scene.add(mesh);
+    const wireframe = new THREE.Mesh(
+      geometry.clone(),
+      new THREE.MeshBasicMaterial({ color: 0x1b2b24, wireframe: true, transparent: true, opacity: 0.22 }),
+    );
+    wireframe.position.copy(mesh.position);
+    wireframe.name = 'terrain_wireframe';
+    scene.add(wireframe);
 
     for (const node of treeNodes.values()) {
       const x = node.position.x;
@@ -867,6 +1089,7 @@ export function createViewer(container, { onTime } = {}) {
         }
 
         const spec = { ...events.machines };
+        machineSpecs = { ...spec };
         const typeCounts = {};
         let skidderIndex = 0;
         for (const [id, machine] of Object.entries(spec)) {
@@ -934,6 +1157,11 @@ export function createViewer(container, { onTime } = {}) {
         for (const tree of sorted) { sum += tree.volume_m3 || 0; cumulativeVolume.push(sum); }
 
         addResidualTrees(residual);
+        retentionClumps = residual?.clumps || [];
+        addRetentionClumps(retentionClumps);
+        retainedObstacles = (residual?.trees || []).map((tree) => ({
+          x: Number(tree.x), y: Number(tree.y), radius: Math.max(2, (Number(tree.crown_radius_m) || 3) * 0.55),
+        }));
         addRoad(events);
 
         if (events.landing) {

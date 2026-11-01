@@ -1,3 +1,18 @@
+# 2026-11-01 — Public demo: Studio and 3D editor routes
+
+- Mounted Scenario Studio under `/studio/` on the `fhops.01101.dev` demo
+  checkout, with `/studio/3d` and `/studio/replay` routes and a `/replay`
+  redirect.
+- Added the Studio door to the public landing page.
+- Synced the latest terrain routing, retention clump, viewer, runner, and CLI
+  changes into the public checkout.
+- Copied the current Studio demo project/run artifacts into the public checkout
+  build directory for immediate viewing.
+- No host nginx, JupyterHub, or portal configuration was changed.
+- Verification: local `/studio/`, `/studio/3d`, `/studio/replay`, and
+  `/studio/api/health` return 200; `/replay` redirects to `/studio/replay`;
+  Playwright 3D editor smoke test passed.
+
 # 2026-10-29 — FHOPS 1.2.0 release
 
 - Bumped the package version to `1.2.0` and added `docs/releases/v1.2.0.md`.

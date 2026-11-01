@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Studio 3D replay</title>
+  <link rel="stylesheet" href="static/studio_replay.css" />
+  <script type="importmap">{"imports":{"three":"./lab/vendor/three/three.module.js"}}</script>
+</head>
+<body>
+  <header>
+    <a href="/" class="back">← Studio</a>
+    <strong>Studio 3D replay</strong>
+    <span id="run-label" class="muted">loading…</span>
+    <a id="download" class="back" href="#" hidden>Download events</a>
+  </header>
+  <main>
+    <div id="scene"></div>
+    <div id="hud">
+      <h1 id="title">Edited scenario</h1>
+      <div id="status">loading scene and events…</div>
+      <div id="machines"></div>
+    </div>
+    <div id="controls">
+      <button id="play">pause</button>
+      <button id="reset">reset</button>
+      <button id="fit">fit view</button>
+      <input id="scrub" type="range" min="0" max="1000" value="0" />
+      <select id="speed">
+        <option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option>
+        <option value="2">2×</option>
+        <option value="4">4×</option>
+      </select>
+    </div>
+  </main>
+  <script type="module" src="static/studio_replay.js"></script>
+</body>
+</html>
