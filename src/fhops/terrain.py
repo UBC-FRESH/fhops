@@ -214,13 +214,13 @@ class TerrainRouter:
         def key(node: tuple[int, int]) -> int:
             return node[1] * res + node[0]
 
-        open_nodes = [(0.0, start_cell, None)]
+        open_nodes: list[tuple[float, tuple[int, int]]] = [(0.0, start_cell)]
         best = {key(start_cell): 0.0}
         parents: dict[int, tuple[int, int]] = {}
         closed: set[int] = set()
         found = False
         while open_nodes:
-            _, node, _ = heapq.heappop(open_nodes)
+            _, node = heapq.heappop(open_nodes)
             node_key = key(node)
             if node_key in closed:
                 continue
@@ -253,7 +253,7 @@ class TerrainRouter:
                 best[next_key] = candidate
                 parents[next_key] = node
                 heuristic = math.hypot(nx - end[0], ny - end[1])
-                heapq.heappush(open_nodes, (candidate + heuristic, next_node, node))
+                heapq.heappush(open_nodes, (candidate + heuristic, next_node))
         if not found:
             return None
         nodes = [end_cell]
