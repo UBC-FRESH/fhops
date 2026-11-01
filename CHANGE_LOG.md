@@ -1,3 +1,9 @@
+# 2026-11-01 — deploy P22 processor policies and stream buffers
+
+- Synced `src/fhops/ground_system.py`, `src/fhops/cli/tree.py`, Tree Lab runner/viewer, and Studio 2D/3D assets from merged `main` (`56865cf0`).
+- Adds processor productivity policy coefficients and stream-centreline riparian buffers to the live public demo.
+- No host networking or routing changes.
+
 # 2026-11-01 — Public demo: Studio and 3D editor routes
 
 - Mounted Scenario Studio under `/studio/` on the `fhops.01101.dev` demo

@@ -798,12 +798,13 @@ export function createViewer(container, { onTime } = {}) {
     if (!Array.isArray(clumps) || !clumps.length) return;
     const group = new THREE.Group();
     group.name = "retention_clumps";
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x2fbfb0, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false,
-    });
     for (const clump of clumps) {
       const polygon = clump.polygon || [];
       if (polygon.length < 3) continue;
+      const color = clump.kind === "riparian" ? 0x4a9fd8 : 0x2fbfb0;
+      const material = new THREE.MeshBasicMaterial({
+        color, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false,
+      });
       const shape = new THREE.Shape();
       polygon.forEach(([x, y], index) => {
         if (index === 0) shape.moveTo(Number(x), Number(y)); else shape.lineTo(Number(x), Number(y));

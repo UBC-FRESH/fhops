@@ -430,6 +430,11 @@ def tree_system(
     processor_rate: float | None = typer.Option(
         None, "--processor-rate", help="Custom processor productivity (m3/SMH)."
     ),
+    processor_productivity_multiplier: float = typer.Option(
+        1.0,
+        "--processor-productivity-multiplier",
+        help="Multiplier on processor productive output (>1 is faster).",
+    ),
     processor_specs: Path | None = typer.Option(
         None,
         "--processor-specs",
@@ -618,6 +623,8 @@ def tree_system(
             )
         if feller_productivity_multiplier <= 0:
             raise GroundSystemError("feller-productivity-multiplier must be positive.")
+        if processor_productivity_multiplier <= 0:
+            raise GroundSystemError("processor-productivity-multiplier must be positive.")
         result = simulate_ground_system(
             scenario,
             block_id=block,
@@ -667,6 +674,7 @@ def tree_system(
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
             feller_processing_time_multiplier=1.0 / feller_productivity_multiplier,
+            processor_productivity_multiplier=processor_productivity_multiplier,
             path_mode=path_mode,  # type: ignore[arg-type]
             obstacles=tuple(_parse_obstacle(value) for value in (obstacle or [])),
             stem_inventory=stem_inventory,

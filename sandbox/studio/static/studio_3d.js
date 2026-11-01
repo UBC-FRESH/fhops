@@ -22,6 +22,7 @@ let dragging = null;
 let dirty = false;
 let accessMode = false;
 let clumpDraft = [];
+let streamDraft = [];
 let history = [];
 let future = [];
 
@@ -275,10 +276,11 @@ function buildOverlays() {
   for (const clump of clumps) {
     const polygon = clump.polygon || [];
     if (polygon.length < 3) continue;
+    const color = clump.kind === "riparian" ? 0x4a9fd8 : 0x2fbfb0;
     const points = polygon.map(([x, y]) => new THREE.Vector3(Number(x), terrainHeight(Number(x), Number(y)) + 0.9, Number(y)));
     const outline = new THREE.LineLoop(
       new THREE.BufferGeometry().setFromPoints(points),
-      new THREE.LineBasicMaterial({ color: 0x2fbfb0 }),
+      new THREE.LineBasicMaterial({ color }),
     );
     boundaryGroup.add(outline);
     const shape = new THREE.Shape();
@@ -289,7 +291,7 @@ function buildOverlays() {
     geometry.rotateX(Math.PI / 2);
     const fill = new THREE.Mesh(
       geometry,
-      new THREE.MeshBasicMaterial({ color: 0x2fbfb0, transparent: true, opacity: 0.14, side: THREE.DoubleSide, depthWrite: false }),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.14, side: THREE.DoubleSide, depthWrite: false }),
     );
     fill.position.y = terrainHeight(polygon[0][0], polygon[0][1]) + 0.9;
     boundaryGroup.add(fill);
@@ -300,6 +302,24 @@ function buildOverlays() {
       new THREE.BufferGeometry().setFromPoints(points),
       new THREE.LineBasicMaterial({ color: 0x8ff0e5 }),
     ));
+  }
+  if (streamDraft.length) {
+    const halfWidth = Math.max(1, Number($("#stream-width")?.value || 30)) / 2;
+    const points = streamDraft.map(([x, y]) => new THREE.Vector3(Number(x), terrainHeight(Number(x), Number(y)) + 1.1, Number(y)));
+    boundaryGroup.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(points),
+      new THREE.LineBasicMaterial({ color: 0x68b6ff, linewidth: 3 }),
+    ));
+    for (const [x, y] of [streamDraft[0], streamDraft[streamDraft.length - 1]]) {
+      if (!Number.isFinite(Number(x))) continue;
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(Math.max(0.5, halfWidth - 0.6), halfWidth, 24),
+        new THREE.MeshBasicMaterial({ color: 0x68b6ff, transparent: true, opacity: 0.35, side: THREE.DoubleSide, depthWrite: false }),
+      );
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.set(Number(x), terrainHeight(Number(x), Number(y)) + 1.0, Number(y));
+      boundaryGroup.add(ring);
+    }
   }
   landingGroup = new THREE.Group();
   const [lx, ly] = [Number(project.landing.x), Number(project.landing.y)];
@@ -356,10 +376,22 @@ function fitView() {
 
 function setTool(next) {
   tool = next;
+  if (next !== "clump") clumpDraft = [];
+  if (next !== "stream") streamDraft = [];
   document.querySelectorAll("#tools [data-tool]").forEach((button) => button.classList.toggle("active", button.dataset.tool === next));
   controls.enableRotate = next === "orbit";
   controls.enablePan = true;
-  setStatus(next === "orbit" ? "Orbit" : `${next} tool — click/drag in the scene`);
+  const hints = {
+    orbit: "Orbit",
+    stream: "Click along the stream centreline; double-click to generate the riparian buffer",
+    clump: "Click a clump ring; double-click to close it",
+    retain: "Click trees to toggle retention",
+    terrain: "Click to raise terrain; shift-click lowers",
+    road: "Click to append road points",
+    boundary: "Drag a boundary handle; shift-click to add a vertex",
+    landing: "Click to move the landing",
+  };
+  setStatus(hints[next] || `${next} tool — click/drag in the scene`);
 }
 
 function pointerRay(event) {
@@ -438,6 +470,13 @@ function onPointerDown(event) {
     clumpDraft.push([point.x, point.z]);
     buildOverlays();
     markDirty();
+    return;
+  }
+  if (tool === "stream") {
+    const point = groundPoint(event);
+    if (!point) return;
+    streamDraft.push([point.x, point.z]);
+    buildOverlays();
     return;
   }
   if (tool === "boundary") {
@@ -601,6 +640,46 @@ $("#duplicate").addEventListener("click", duplicateProject);
 $("#fit").addEventListener("click", fitView);
 $("#brush").addEventListener("input", () => { brush = Number($("#brush").value); $("#brush-label").textContent = `${brush} m`; });
 $("#access-map").addEventListener("change", () => { accessMode = $("#access-map").checked; buildTerrain(); buildOverlays(); updateStats(); });
+$("#stream-width").addEventListener("input", () => {
+  $("#stream-width-label").textContent = `${Number($("#stream-width").value)} m`;
+  buildOverlays();
+});
+async function finishStream() {
+  if (!project || streamDraft.length < 2) return;
+  const width = Math.max(1, Number($("#stream-width")?.value || 30));
+  const centerline = streamDraft.slice();
+  setStatus(`Building ${width} m stream buffer…`);
+  try {
+    const response = await fetch(`${API}geometry/stream-buffer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ points: centerline, width_m: width }),
+    });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(payload.detail || response.statusText);
+    }
+    const result = await response.json();
+    pushHistory();
+    project.retention.clumps = project.retention.clumps || [];
+    project.retention.clumps.push({
+      id: `stream-${Date.now().toString(36)}`,
+      label: `stream riparian buffer (${width} m)`,
+      kind: "riparian",
+      source: "stream",
+      buffer_m: width,
+      centerline,
+      polygon: result.polygon,
+    });
+    streamDraft = [];
+    buildOverlays();
+    updateStats();
+    markDirty();
+    setStatus(`Added ${width} m stream riparian buffer`);
+  } catch (error) {
+    setStatus(`Stream buffer failed: ${error.message}`, true);
+  }
+}
 function finalizeClump() {
   if (tool !== "clump" || clumpDraft.length < 3) return;
   pushHistory();
@@ -619,7 +698,10 @@ function finalizeClump() {
 }
 
 renderer.domElement.addEventListener("pointerdown", onPointerDown);
-renderer.domElement.addEventListener("dblclick", finalizeClump);
+renderer.domElement.addEventListener("dblclick", () => {
+  if (tool === "stream") finishStream();
+  else finalizeClump();
+});
 renderer.domElement.addEventListener("pointermove", onPointerMove);
 renderer.domElement.addEventListener("pointerup", onPointerUp);
 renderer.domElement.addEventListener("pointercancel", onPointerUp);
