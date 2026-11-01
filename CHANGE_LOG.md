@@ -1,3 +1,182 @@
+# 2026-11-01 — P21.4 phase closeout report and public deployment
+
+- Pushed `feature/p21-scenario-studio` to origin.
+- Added `notes/reports/p21-closeout.md` with delivered behavior, verification
+  evidence, deviations, and the requested base/PR decision.
+- Updated the public `fhops.01101.dev` checkout with Studio, 3D editor, replay,
+  clumps, terrain routing, and operator-policy changes.
+- Public checkout commits: `5e97f9eb`, `22d6b439`.
+- No merge, tag, release, or settings change was made.
+
+# 2026-11-01 — P21.4 verification sweep (#322)
+
+- Repository gates: `ruff check .` pass, `ruff format --check .` pass,
+  `mypy src` pass (188 files), `pre-commit run --all-files` pass.
+- Targeted tests: `tests/studio/test_studio_projects.py` and
+  `tests/tree/test_ground_system_terrain.py` pass.
+- Full `pytest` remains blocked by the pre-existing HiGHS `iteration_count`
+  option-error assertion in `tests/model/test_milp_driver_robustness.py`.
+- Sphinx build remains blocked by missing Pandoc (`nbsphinx`), an environment
+  gap rather than a Phase 21 code failure.
+- No phase PR, merge, tag, release, or settings change yet.
+
+# 2026-11-01 — Phase 21 compliance recovery (P21.4, #322)
+
+- Renamed the phase branch to `feature/p21-scenario-studio`.
+- Created parent issue #318 and child issues #319–#322, and linked children as
+  GitHub sub-issues.
+- Recorded the historical deviations in `notes/phase21_compliance_audit.md`:
+  implementation preceded issue creation, branch based on the public-demo line,
+  no per-child PRs/closeout yet, and no full dashboard/CI run.
+- Targeted verification still consists of Studio/terrain pytest, ruff, Python
+  compile, and JavaScript syntax checks. No tag, release, merge, or settings
+  change was made.
+
+# 2026-11-01 — Run-to-run comparison
+
+- Added latest-versus-previous run comparison in the Studio plan editor:
+  volume, makespan, tree count, and warning deltas.
+- Added KPI summary to the 3D editor run output alongside blocked warnings.
+- Verification: Playwright plan comparison smoke test; no browser errors.
+
+# 2026-11-01 — Retention presets and operator-policy translation
+
+- Added retention clump type presets: retention clump, riparian buffer, and
+  no-harvest corridor, in both 2D and 3D editors.
+- Added operator-policy translation for feller productivity, skidder speeds and
+  handling times, loader handling times, and grade caution into the derived run.
+- Added policy translation tests.
+- Verification: Studio pytest and JS syntax checks.
+
+# 2026-11-01 — Retention clumps and clump-aware routing
+
+- Added retention clump polygons to the Studio project model.
+- Added 2D and 3D clump authoring with filled/outlined clump display.
+- Trees inside clumps are excluded from the derived harvest and rendered retained.
+- Clump interiors block the viewer A* machine routes and appear in the access map.
+- Clump polygon metadata and derived obstacles flow into the materialized case.
+- Added a clump materialization test; run/replay smoke-tested with one clump.
+- Verification: Studio pytest, ruff, JS syntax checks, and 3D replay smoke test.
+
+# 2026-11-01 — Shared core routing and access map
+
+- TerrainRouter now generates an alternate A* route when the direct/road route
+  exceeds the machine grade limit, and returns the actual path geometry.
+- Skidder travel events persist that path for planning and replay.
+- The 3D replay uses persisted core paths; the viewer A* remains a fallback for
+  older runs and non-DEM scenes. Retained-tree obstacle avoidance remains active.
+- Added a skidder access-map overlay to the 3D editor (green/yellow/red).
+- Added route-path assertions to the terrain test.
+- Verification: terrain and Studio pytest, ruff, JS syntax, and 3D access-map
+  browser smoke test.
+
+# 2026-11-01 — Terrain-aware machine playback routing
+
+- Added an A* route cache in the 3D replay viewer for machine travel segments.
+- Skidder/feller movement now follows a route around terrain cells above the
+  machine grade limit and around retained-tree obstacles.
+- Routes are cached per segment; fallback behavior is retained when no feasible
+  path exists.
+- Added a 3D replay smoke test against the terrain demo.
+- Verification: Playwright replay at 1440×900; no browser errors.
+
+# 2026-11-01 — Studio 3D workflow polish
+
+- Added 3D road drawing, Shift-click boundary vertex insertion, Delete removal,
+  undo/redo, rename, and duplicate to the 3D editor.
+- Added project ID, run history, and direct replay links to the plan UI.
+- Added run warnings and replay link feedback directly in the 3D editor.
+- Blocked steep routes now complete with warnings instead of aborting the run.
+- Verification: Playwright plan/3D smoke tests, run-history load, duplicate API,
+  terrain/Studio pytest, ruff, and JS checks.
+
+# 2026-11-01 — Studio 3D editor run loop
+
+- The 3D editor now has a Run scenario button that saves the project, runs the
+  derived case, and exposes an Open 3D replay link.
+- The 3D editor displays the persistent project ID.
+- Steep/inaccessible skidder routes now complete as blocked-bunch warnings rather
+  than aborting the whole run; the run status and warning count are reported.
+- Verification: Playwright 3D editor run against the terrain demo; completed run
+  with 86 blocked-route warnings and a valid replay link.
+
+# 2026-11-01 — 3D editing and graceful terrain blocking
+
+- Added `/3d` Studio editing page using Three.js: orbit, landing movement,
+  retention toggling, terrain raising/lowering, and boundary vertex dragging.
+- Added a 2D/3D editor link and save flow against the same Studio project record.
+- Changed skidder route failures from whole-run aborts to per-bunch blocked
+  warnings; blocked volume is excluded and reported in the run warnings.
+- Added warning rendering to the Studio run result panel.
+- Updated terrain tests and Studio documentation/roadmap.
+- Verification: `pytest` for terrain + Studio tests, ruff, JS syntax checks,
+  and Playwright 3D editor smoke test.
+
+# 2026-11-01 — Studio terrain visualization demo
+
+- Added height-colored terrain shading and a wireframe overlay to the Studio 3D
+  replay so edited terrain is visibly distinct from a flat ground plane.
+- Added a dedicated “Terrain demo — Gavin ridge” project with a pronounced ridge,
+  mound, and cut, and generated a successfull run against it.
+- Runs can now use an edited terrain DEM and road; extreme grades are rejected
+  instead of silently ignored.
+- Verification: Playwright replay smoke test at 1440×900; no browser errors.
+
+# 2026-10-31 — Studio retained trees, obstacles, terrain, and runnable replay
+
+- Studio projects now materialize retained trees as simulation obstacles and
+  render retained trees in teal in the 3D replay.
+- Studio terrain heightfields are exported as a GeoTIFF DEM and the edited road
+  is exported as GeoJSON for route/grade checks.
+- Derived inventory tree elevations follow the edited terrain heightfield.
+- Studio replay renders terrain and retained trees and visually routes machine
+  travel around retained obstacles.
+- Added retained/terrain indicators to the replay header and obstacle assertions
+  in Studio tests.
+- Known behavior: extreme terrain edits can correctly reject a run with a
+  maximum-grade error; use a smoother/flatter edit or adjust route settings.
+- Verification: targeted Studio tests, lint/syntax checks, and replay browser
+  smoke test.
+
+# 2026-10-31 — Studio retained trees, obstacles, and terrain replay
+
+- Studio-derived runs now pass retained trees to the feller simulation as
+  circular obstacles.
+- Studio 3D replay renders retained trees in teal so they no longer disappear;
+  machines visually detour around retained-tree obstacles.
+- Studio 3D replay receives the edited terrain heightfield and applies it to the
+  scene, replacing the flat ground plane.
+- Added retained/terrain badges to the replay header and obstacle assertions to
+  the materialization test.
+- Verification: targeted Studio tests and browser replay load.
+
+# 2026-10-31 — Phase 21 Studio 3D replay
+
+- Added a `/replay` route to Scenario Studio that opens the generated scene and
+  event stream for a Studio run in the existing Tree Lab 3D viewer.
+- Added run list/events/summary/scene endpoints and a “Open 3D replay” link in
+  the Studio run result panel.
+- The public demo remains unchanged; Studio runs stay under
+  `build/studio_projects/<project>/runs/`.
+- Verification: Playwright load of a generated run at 1440×900; 3D scene,
+  machine cards, timing controls, and no browser errors.
+
+# 2026-10-31 — Phase 21 Scenario Studio first slice (branch phase21-scenario-studio)
+
+- Added a separate `sandbox/studio` FastAPI service and static editor.
+- Added immutable project overlays under `build/studio_projects/` with create,
+  list, load, save, delete, dataset, and JSON export endpoints.
+- Added a 2D plan editor for block boundaries, landings, roads, retention trees,
+  machine systems, operator policies, and a visual terrain brush.
+- Added derived-case materialization that filters boundary/retention, applies
+  landing and machine-system edits, and runs the existing Tree Lab simulation
+  pipeline. Feller operator policy is mapped to a productivity multiplier.
+- Added Studio project/materialization smoke tests and the Phase 21 plan,
+  issue-tree manifest, and roadmap entry.
+- Verification: `PYTHONPATH=src:. /home/gep/projects/fhops/.venv/bin/python -m pytest -q tests/studio/test_studio_projects.py`
+  (2 passed); `node --check sandbox/studio/static/studio.js`; Studio Python
+  compile check. Full repository gates not run for this slice.
+
 # 2026-10-29 — FHOPS 1.2.0 release
 
 - Bumped the package version to `1.2.0` and added `docs/releases/v1.2.0.md`.

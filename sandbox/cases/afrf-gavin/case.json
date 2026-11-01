@@ -1,0 +1,65 @@
+{
+  "schema_version": "fhops.tree_lab.case.v1",
+  "case_id": "afrf-gavin",
+  "label": "AFRF Gavin Lake \u2014 synthetic tree list",
+  "block_id": "AFRF_GAVIN_485",
+  "landing_id": "L1",
+  "scenario": "scenario/scenario.yaml",
+  "inventory": "tree_inventory/tree_inventory.csv",
+  "metadata": "tree_inventory/tree_inventory.meta.json",
+  "assignments": "assignments.csv",
+  "system_args": {
+    "feller": "H1",
+    "skidders": [
+      "H2",
+      "H3"
+    ],
+    "processors": [
+      "H5"
+    ],
+    "loader": "H4",
+    "bunch_volume_m3": 8.0,
+    "rate_model": "calibrated",
+    "shift_days": 5,
+    "shifts_per_day": 2,
+    "hours_per_shift": 10,
+    "truck_capacity_m3": 30.0,
+    "truck_count": 2,
+    "truck_cycle_s": 3600.0,
+    "landing_capacity_m3": 120.0,
+    "skidder_capacity_m3": 40.0
+  },
+  "terrain": {
+    "dem": null,
+    "road": null
+  },
+  "stand": {
+    "area_ha": 6.91,
+    "age_years": 77,
+    "bec_zone": "SBSdw1",
+    "centre_wgs84": [
+      -121.6167,
+      52.4667
+    ],
+    "crs": "EPSG:3005",
+    "tree_count": 900,
+    "merchantable_volume_m3": 1355.9835,
+    "volume_per_ha_m3": 196.235
+  },
+  "provenance": {
+    "tree_list": "synthetic",
+    "stand_footprint": "synthetic placeholder rectangle (published area, not the surveyed polygon)",
+    "stand_attributes": "published research-forest values",
+    "review_status": "not_reviewed"
+  },
+  "caveats": [
+    "Synthetic tree list; not a surveyed stand or tree map.",
+    "Reference machine model; not an operational plan.",
+    "Block footprint is a placeholder rectangle, not the surveyed polygon."
+  ],
+  "harvest": {
+    "type": "clear_cut",
+    "marking_rule": "all",
+    "target_basal_area_fraction": 1.0
+  }
+}

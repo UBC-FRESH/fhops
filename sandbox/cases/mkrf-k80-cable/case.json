@@ -1,0 +1,103 @@
+{
+  "schema_version": "fhops.tree_lab.case.v1",
+  "case_id": "mkrf-k80-cable",
+  "label": "MKRF K80 / Raven Creek \u2014 steep cable-yarder concept (FEMIC stand 666)",
+  "block_id": "MKRF_K80_666",
+  "landing_id": "K80_L1",
+  "scenario": "scenario/scenario.yaml",
+  "inventory": "tree_inventory/tree_inventory.csv",
+  "metadata": "tree_inventory/tree_inventory.meta.json",
+  "assignments": "assignments.csv",
+  "footprint": "footprint.geojson",
+  "system_kind": "cable_standing",
+  "system_args": {
+    "feller": "H1",
+    "skidders": [
+      "Y1"
+    ],
+    "processors": [],
+    "loader": "L1",
+    "bunch_volume_m3": 1.8,
+    "rate_model": "reference",
+    "shift_days": 10,
+    "shifts_per_day": 1,
+    "hours_per_shift": 10,
+    "truck_capacity_m3": 30.0,
+    "truck_count": 1,
+    "truck_cycle_s": 3600.0,
+    "landing_capacity_m3": 20.0
+  },
+  "terrain": {
+    "dem": null,
+    "road": null,
+    "slope_percent": 60.0,
+    "uphill": [
+      0.0,
+      -1.0
+    ],
+    "base_m": 300.0,
+    "origin": [
+      1251290.9,
+      487982.18
+    ],
+    "bounds": [
+      1251116.21,
+      487551.72,
+      1251456.87,
+      488346.17
+    ],
+    "visual": "synthetic planar slope for the concept scene"
+  },
+  "cable": {
+    "yarder": {
+      "x": 1251286.54,
+      "y": 487526.72
+    },
+    "spar": {
+      "x": 1251286.54,
+      "y": 488371.17
+    },
+    "yarder_position": "K80 road / south high edge",
+    "spar_position": "beyond north treeline near Raven Creek",
+    "span_m": 844.5,
+    "spar_height_m": 42.0,
+    "model": "standing skyline; Aubuchon (1982) turn-time helper",
+    "note": "Reference concept layout; not a surveyed road/landing or engineering design."
+  },
+  "stand": {
+    "area_ha": 7.7931,
+    "age_years": 74,
+    "bec_zone": "CWHvm1",
+    "centre_wgs84": [
+      -122.542648,
+      49.352941
+    ],
+    "crs": "EPSG:3005",
+    "tree_count": 900,
+    "merchantable_volume_m3": 2759.075015,
+    "volume_per_ha_m3": 354.041,
+    "forest_cover_id": 666,
+    "operability": "Low Operability",
+    "slope_percent": 60.0
+  },
+  "provenance": {
+    "stand_geometry": "actual FEMIC forest-cover polygon (FOREST_COV=666) from the MKRF instance",
+    "stand_attributes": "published FEMIC MKRF attributes: 7.7931 ha, age 74 in 2020, CWHvm1, Low Operability",
+    "tree_list": "synthetic deterministic point list inside the actual stand polygon",
+    "slope": "60% scenario assumption for the cable concept; not a measured DEM slope",
+    "cable_model": "sandbox reference model using FHOPS cable-logging helpers; not field-calibrated",
+    "review_status": "not_reviewed"
+  },
+  "harvest": {
+    "type": "clear_cut",
+    "marking_rule": "all",
+    "target_basal_area_fraction": 1.0
+  },
+  "caveats": [
+    "Footprint is an actual FEMIC forest-cover stand polygon, but the tree list is synthetic.",
+    "Not a surveyed harvest block, tree map, road design, or operational plan.",
+    "The 60% slope is a scenario assumption, not a DEM-derived value.",
+    "Cable yarder cycle and layout are a reference concept, not a calibrated engineering design.",
+    "No operational, financial, or regulatory claim is made."
+  ]
+}

@@ -1,0 +1,35 @@
+name: MKRF K80 / Raven Creek — steep cable-yarder concept
+num_days: 10
+start_date: '2026-01-01'
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+  harvest_systems: data/harvest_systems.yaml
+
+geo:
+  crs: EPSG:3005
+  notes: Actual FEMIC forest-cover stand 666 footprint; synthetic tree list and 60% scenario slope.
+
+tree_inventory:
+  inventory_id: mkrf-k80-cable-synthetic
+  inventory_sha256: 377365596b2f82d13e95345e86cfbc2134c18736b2062090e3bfe4e65589c7c1
+  metadata_sha256: ebeb68fabddeb6ff06876b5063772dacfa50bc9f329bd5026aca4e919de77a22
+  inventory_path: ../tree_inventory/tree_inventory.csv
+  metadata_path: ../tree_inventory/tree_inventory.meta.json
+  crs: EPSG:3005
+  review_status: not_reviewed
+  source_id: synthetic-mkrf-k80-cable
+  producer: FHOPS Tree Lab synthetic generator
+  method: Deterministic synthetic point list inside the actual FEMIC forest-cover
+    polygon; not an ITD/ITC product or tree map.
+  tree_count: 900
+  block_ids:
+  - MKRF_K80_666
+  caveats:
+  - Synthetic tree list; not a surveyed stand or tree map.
+  - Footprint is the actual FEMIC forest-cover polygon, not a surveyed harvest block.
+  - The 60% slope is a scenario assumption for the cable demonstration.
+  - 'Merchantable volume computed with the FHOPS reference stem model: 2759.075 m3.'

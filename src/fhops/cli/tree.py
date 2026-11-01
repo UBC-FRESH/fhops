@@ -455,6 +455,11 @@ def tree_system(
     road: Path | None = typer.Option(
         None, "--road", help="Optional GeoJSON line for a single connected road corridor."
     ),
+    obstacle: list[str] | None = typer.Option(
+        None,
+        "--obstacle",
+        help="Circular obstacle as x,y,radius_m. Repeat for retained-tree exclusions.",
+    ),
     terrain_step: float = typer.Option(
         10.0, "--terrain-step", help="DEM sampling interval along a route (m)."
     ),
@@ -523,6 +528,11 @@ def tree_system(
         1.0,
         "--feller-productivity-multiplier",
         help="Multiplier on feller processing productivity (<1 slows selection-cut work).",
+    ),
+    path_mode: str = typer.Option(
+        "nearest",
+        "--path-mode",
+        help="Feller path: nearest (legacy) or swath (contiguous boustrophedon rows).",
     ),
     stem_form_factor: float | None = typer.Option(
         None,
@@ -657,6 +667,8 @@ def tree_system(
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
             feller_processing_time_multiplier=1.0 / feller_productivity_multiplier,
+            path_mode=path_mode,  # type: ignore[arg-type]
+            obstacles=tuple(_parse_obstacle(value) for value in (obstacle or [])),
             stem_inventory=stem_inventory,
             skidder_specs=skidder_specs,
             loader_spec=loader_spec,

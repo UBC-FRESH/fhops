@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FHOPS Public Demo</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: radial-gradient(circle at top left, #dcecdf, #f3f6f1 55%, #e7eee8); color: #17201b; }
+    main { width: min(980px, calc(100vw - 36px)); padding: 40px 0; }
+    h1 { margin: 0 0 8px; font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -.04em; }
+    p.lead { max-width: 720px; margin: 0 0 30px; color: #4c5c52; font-size: 1.05rem; line-height: 1.55; }
+    .doors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    a.door { display: block; min-height: 220px; padding: 24px; border-radius: 16px; text-decoration: none; color: inherit; background: #fff; box-shadow: 0 12px 36px #173d2a1c; border: 1px solid #c9d8ce; transition: transform .15s ease, box-shadow .15s ease; }
+    a.door:hover { transform: translateY(-3px); box-shadow: 0 16px 44px #173d2a28; }
+    .kicker { color: #1f6b43; text-transform: uppercase; letter-spacing: .12em; font-size: .72rem; font-weight: 700; }
+    h2 { margin: 10px 0 8px; font-size: 1.35rem; }
+    .door p { color: #52645a; line-height: 1.45; }
+    .arrow { margin-top: 20px; color: #1f6b43; font-weight: 700; }
+    footer { margin-top: 22px; color: #63736a; font-size: .8rem; }
+    @media (max-width: 720px) { .doors { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="kicker">FHOPS · public experimental demo · no login · agent enabled</div>
+    <h1>Two ways into the forest.</h1>
+    <p class="lead">The serious game is a timed, instructor-style planning challenge. The digital twin sandbox is a free-play 3D tree-system simulation. Both use the same FHOPS engine and a shared stand library.</p>
+    <div class="doors">
+      <a class="door" href="/game">
+        <div class="kicker">Door 01 · serious game</div>
+        <h2>Plan the operation</h2>
+        <p>Choose a contractor, fleet, landing, and bucking policy. Buy consultant tips if you dare. Submit one plan and see the score, debrief, and dual replay.</p>
+        <div class="arrow">Enter the game →</div>
+      </a>
+      <a class="door" href="/studio/">
+        <div class="kicker">Door 03 · authoring</div>
+        <h2>Scenario Studio</h2>
+        <p>Edit block boundaries, landings, roads, retention clumps, terrain, machines, and operator policies, then run and replay the result.</p>
+        <div class="arrow">Open Studio →</div>
+      </a>
+      <a class="door" href="/sandbox/">
+        <div class="kicker">Door 02 · digital twin</div>
+        <h2>Explore the 3D sandbox</h2>
+        <p>Open the tree-system playback viewer. Orbit, zoom, scrub the machine timeline, and inspect the feller, skidder, processor, and loader at your own pace.</p>
+        <div class="arrow">Open Tree Lab →</div>
+      </a>
+    </div>
+    <footer>FHOPS public demo · local service · no login · experimental simulation</footer>
+  </main>
+</body>
+</html>
