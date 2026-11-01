@@ -63,6 +63,7 @@ async function load() {
   document.getElementById("run-label").textContent += ` · ${retainedTrees.length} retained`;
   if (events.terrain) document.getElementById("run-label").textContent += " · terrain";
   const residual = {
+    clumps: project?.retention?.clumps || [],
     trees: retainedTrees
       .map((tree) => ({
         tree_id: tree.tree_id, x: tree.x, y: tree.y, dbh_cm: tree.dbh_cm,

@@ -21,6 +21,7 @@ let brush = 25;
 let dragging = null;
 let dirty = false;
 let accessMode = false;
+let clumpDraft = [];
 let history = [];
 let future = [];
 
@@ -92,6 +93,16 @@ function terrainInfo() {
   return { minX, minY, maxX, maxY, res, heights };
 }
 
+function pointInPolygon(x, z, polygon) {
+  let inside = false;
+  for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
+    const xi = Number(polygon[index][0]), zi = Number(polygon[index][1]);
+    const xj = Number(polygon[previous][0]), zj = Number(polygon[previous][1]);
+    if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
 function terrainHeight(x, z) {
   const { minX, minY, maxX, maxY, res, heights } = terrainInfo();
   const fx = Math.max(0, Math.min(res - 1, (x - minX) / Math.max(1e-9, maxX - minX) * (res - 1)));
@@ -147,7 +158,8 @@ function buildTerrain() {
       const dzdx = Math.abs(terrainHeight(x + 5, z) - terrainHeight(x - 5, z)) / 10 * 100;
       const dzdy = Math.abs(terrainHeight(x, z + 5) - terrainHeight(x, z - 5)) / 10 * 100;
       const grade = Math.max(dzdx, dzdy);
-      if (grade > 35) colors.push(0.72, 0.16, 0.12);
+      const inClump = (project.retention?.clumps || []).some((clump) => pointInPolygon(x, z, clump.polygon || []));
+      if (inClump || grade > 35) colors.push(0.72, 0.16, 0.12);
       else if (grade > 25) colors.push(0.82, 0.58, 0.12);
       else colors.push(0.16, 0.48, 0.28);
     } else {
@@ -259,6 +271,36 @@ function buildOverlays() {
     );
     scene.add(roadLine);
   }
+  const clumps = project.retention?.clumps || [];
+  for (const clump of clumps) {
+    const polygon = clump.polygon || [];
+    if (polygon.length < 3) continue;
+    const points = polygon.map(([x, y]) => new THREE.Vector3(Number(x), terrainHeight(Number(x), Number(y)) + 0.9, Number(y)));
+    const outline = new THREE.LineLoop(
+      new THREE.BufferGeometry().setFromPoints(points),
+      new THREE.LineBasicMaterial({ color: 0x2fbfb0 }),
+    );
+    boundaryGroup.add(outline);
+    const shape = new THREE.Shape();
+    polygon.forEach(([x, y], index) => {
+      if (index === 0) shape.moveTo(Number(x), Number(y)); else shape.lineTo(Number(x), Number(y));
+    });
+    const geometry = new THREE.ShapeGeometry(shape);
+    geometry.rotateX(Math.PI / 2);
+    const fill = new THREE.Mesh(
+      geometry,
+      new THREE.MeshBasicMaterial({ color: 0x2fbfb0, transparent: true, opacity: 0.14, side: THREE.DoubleSide, depthWrite: false }),
+    );
+    fill.position.y = terrainHeight(polygon[0][0], polygon[0][1]) + 0.9;
+    boundaryGroup.add(fill);
+  }
+  if (clumpDraft.length) {
+    const points = clumpDraft.map(([x, y]) => new THREE.Vector3(Number(x), terrainHeight(Number(x), Number(y)) + 1.0, Number(y)));
+    boundaryGroup.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(points),
+      new THREE.LineBasicMaterial({ color: 0x8ff0e5 }),
+    ));
+  }
   landingGroup = new THREE.Group();
   const [lx, ly] = [Number(project.landing.x), Number(project.landing.y)];
   const pad = new THREE.Mesh(
@@ -288,7 +330,8 @@ function updateStats() {
   const terrain = terrainInfo();
   const range = terrain.heights.length ? `${Math.min(...terrain.heights).toFixed(1)} … ${Math.max(...terrain.heights).toFixed(1)} m` : "flat";
   const area = stateArea(project.block.polygon);
-  $("#scene-stats").innerHTML = `<b>${area.toFixed(2)} ha</b> block<br><b>${dataset.trees.filter((tree) => tree.inside).length.toLocaleString()}</b> trees in block<br><b>${retained.size.toLocaleString()}</b> retained<br><b>${terrain.res}</b>× terrain grid<br><b>${range}</b> relief<br><span class="hint">${dirty ? "unsaved edits" : "saved"}</span>`;
+  const clumps = project.retention?.clumps || [];
+  $("#scene-stats").innerHTML = `<b>${area.toFixed(2)} ha</b> block<br><b>${dataset.trees.filter((tree) => tree.inside).length.toLocaleString()}</b> trees in block<br><b>${retained.size.toLocaleString()}</b> retained<br><b>${clumps.length}</b> clumps<br><b>${terrain.res}</b>× terrain grid<br><b>${range}</b> relief<br><span class="hint">${dirty ? "unsaved edits" : "saved"}</span>`;
   $("#project-id").textContent = `Project ID: ${project.project_id}`;
 }
 
@@ -386,6 +429,14 @@ function onPointerDown(event) {
     project.landing = { x: point.x, y: point.z };
     buildOverlays();
     updateStats();
+    markDirty();
+    return;
+  }
+  if (tool === "clump") {
+    const point = groundPoint(event);
+    if (!point) return;
+    clumpDraft.push([point.x, point.z]);
+    buildOverlays();
     markDirty();
     return;
   }
@@ -550,7 +601,19 @@ $("#duplicate").addEventListener("click", duplicateProject);
 $("#fit").addEventListener("click", fitView);
 $("#brush").addEventListener("input", () => { brush = Number($("#brush").value); $("#brush-label").textContent = `${brush} m`; });
 $("#access-map").addEventListener("change", () => { accessMode = $("#access-map").checked; buildTerrain(); buildOverlays(); updateStats(); });
+function finalizeClump() {
+  if (tool !== "clump" || clumpDraft.length < 3) return;
+  pushHistory();
+  project.retention.clumps = project.retention.clumps || [];
+  project.retention.clumps.push({ id: `clump-${Date.now().toString(36)}`, label: "retention clump", polygon: clumpDraft.slice() });
+  clumpDraft = [];
+  buildOverlays();
+  markDirty();
+  updateStats();
+}
+
 renderer.domElement.addEventListener("pointerdown", onPointerDown);
+renderer.domElement.addEventListener("dblclick", finalizeClump);
 renderer.domElement.addEventListener("pointermove", onPointerMove);
 renderer.domElement.addEventListener("pointerup", onPointerUp);
 renderer.domElement.addEventListener("pointercancel", onPointerUp);

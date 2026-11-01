@@ -174,6 +174,7 @@ export function createViewer(container, { onTime } = {}) {
   let userInteracted = false;
   let blockOutline = null;
   let retainedObstacles = [];
+  let retentionClumps = [];
   let machineSpecs = {};
   let routeCache = new WeakMap();
 
@@ -214,6 +215,7 @@ export function createViewer(container, { onTime } = {}) {
     terrain = null;
     blockOutline = null;
     retainedObstacles = [];
+    retentionClumps = [];
     machineSpecs = {};
     routeCache = new WeakMap();
     payload = null;
@@ -272,6 +274,16 @@ export function createViewer(container, { onTime } = {}) {
       states[id] = active ? state.segment.type.replaceAll('_', ' ') : 'idle';
     }
     return states;
+  }
+
+  function pointInPolygon(x, y, polygon) {
+    let inside = false;
+    for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
+      const xi = Number(polygon[index][0]), yi = Number(polygon[index][1]);
+      const xj = Number(polygon[previous][0]), yj = Number(polygon[previous][1]);
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
   }
 
   function routeAroundObstacles(x0, y0, x1, y1) {
@@ -341,7 +353,8 @@ export function createViewer(container, { onTime } = {}) {
     const blocked = (col, row) => {
       const x = minX + (col + 0.5) * dx;
       const y = minY + (row + 0.5) * dy;
-      return noGo.some((obstacle) => Math.hypot(obstacle.x - x, obstacle.y - y) < obstacle.radius + 1.5);
+      return noGo.some((obstacle) => Math.hypot(obstacle.x - x, obstacle.y - y) < obstacle.radius + 1.5)
+        || retentionClumps.some((clump) => pointInPolygon(x, y, clump.polygon || []));
     };
     const cellOf = (x, y) => [
       Math.max(0, Math.min(res - 1, Math.floor((x - minX) / Math.max(1e-9, maxX - minX) * res))),
@@ -781,6 +794,31 @@ export function createViewer(container, { onTime } = {}) {
     trucks[id] = group;
   }
 
+  function addRetentionClumps(clumps) {
+    if (!Array.isArray(clumps) || !clumps.length) return;
+    const group = new THREE.Group();
+    group.name = "retention_clumps";
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x2fbfb0, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false,
+    });
+    for (const clump of clumps) {
+      const polygon = clump.polygon || [];
+      if (polygon.length < 3) continue;
+      const shape = new THREE.Shape();
+      polygon.forEach(([x, y], index) => {
+        if (index === 0) shape.moveTo(Number(x), Number(y)); else shape.lineTo(Number(x), Number(y));
+      });
+      const geometry = new THREE.ShapeGeometry(shape);
+      geometry.rotateX(Math.PI / 2);
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.y = sampleHeight(polygon[0][0], polygon[0][1]) + 0.8;
+      group.add(mesh);
+      const points = polygon.map(([x, y]) => new THREE.Vector3(Number(x), sampleHeight(Number(x), Number(y)) + 1.0, Number(y)));
+      group.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color: 0x8ff0e5 })));
+    }
+    scene.add(group);
+  }
+
   function addResidualTrees(payload) {
     if (!payload || !Array.isArray(payload.trees) || !payload.trees.length) return;
     const group = new THREE.Group();
@@ -1119,6 +1157,8 @@ export function createViewer(container, { onTime } = {}) {
         for (const tree of sorted) { sum += tree.volume_m3 || 0; cumulativeVolume.push(sum); }
 
         addResidualTrees(residual);
+        retentionClumps = residual?.clumps || [];
+        addRetentionClumps(retentionClumps);
         retainedObstacles = (residual?.trees || []).map((tree) => ({
           x: Number(tree.x), y: Number(tree.y), radius: Math.max(2, (Number(tree.crown_radius_m) || 3) * 0.55),
         }));

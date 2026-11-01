@@ -12,6 +12,7 @@ const state = {
   tool: "select",
   selectedTree: null,
   selectedVertex: null,
+  clumpDraft: [],
   brush: 25,
   scale: 1,
   ox: 0,
@@ -219,6 +220,34 @@ function draw() {
     ctx.stroke();
   }
 
+  const clumps = state.project.retention?.clumps || [];
+  for (const clump of clumps) {
+    const polygon = clump.polygon || [];
+    if (polygon.length < 3) continue;
+    ctx.beginPath();
+    polygon.forEach((point, index) => {
+      const [sx, sy] = worldToScreen(Number(point[0]), Number(point[1]));
+      if (index === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+    });
+    ctx.closePath();
+    ctx.fillStyle = "rgba(47,191,176,0.14)";
+    ctx.fill();
+    ctx.strokeStyle = "#2fbfb0";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  if (state.clumpDraft.length) {
+    ctx.beginPath();
+    state.clumpDraft.forEach((point, index) => {
+      const [sx, sy] = worldToScreen(Number(point[0]), Number(point[1]));
+      if (index === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+    });
+    ctx.strokeStyle = "#8ff0e5";
+    ctx.setLineDash([5, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
   const radius = treeRadiusPx();
   for (const tree of state.trees) {
     const [sx, sy] = worldToScreen(tree.x, tree.y);
@@ -289,13 +318,14 @@ function recomputeStats() {
   if (!state.project) return;
   const polygon = state.project.block.polygon;
   const retained = new Set(state.project.retention?.tree_ids || []);
+  const clumps = state.project.retention?.clumps || [];
   let insideCount = 0;
   let retainedCount = 0;
   let totalBa = 0;
   let retainedBa = 0;
   for (const tree of state.trees) {
     tree.inside = pointInPolygon(tree.x, tree.y, polygon);
-    tree.retained = retained.has(tree.tree_id);
+    tree.retained = retained.has(tree.tree_id) || clumps.some((clump) => pointInPolygon(tree.x, tree.y, clump.polygon || []));
     const ba = Math.PI / 4 * (tree.dbh_cm / 100) ** 2;
     if (tree.inside) {
       insideCount += 1;
@@ -313,6 +343,8 @@ function recomputeStats() {
     retained_tree_count: retainedCount,
     retained_basal_area_fraction: totalBa ? retainedBa / totalBa : 0,
     total_basal_area_m2: totalBa,
+    clump_count: clumps.length,
+    clump_area_ha: clumps.reduce((sum, clump) => sum + polygonAreaHa(clump.polygon || []), 0),
   };
 }
 
@@ -324,6 +356,7 @@ function renderStats() {
     [stats.inside_tree_count.toLocaleString(), "trees in block"],
     [`${Math.round(stats.retained_basal_area_fraction * 100)}%`, "retained BA"],
     [stats.retained_tree_count.toLocaleString(), "retained trees"],
+    [(stats.clump_count || 0).toLocaleString(), "clumps"],
   ];
   $("#stand-stats").innerHTML = items.map(([value, label]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("");
   $("#boundary-info").innerHTML = `${state.project.block.polygon.length} vertices · ${stats.block_area_ha.toFixed(2)} ha<br><span class="muted">Drag vertices; double-click an edge to add one; Delete removes the selected vertex.</span>`;
@@ -432,6 +465,7 @@ function redo() {
 }
 
 function setTool(tool) {
+  if (tool !== "clump") state.clumpDraft = [];
   state.tool = tool;
   state.selectedVertex = null;
   document.querySelectorAll("#tools [data-tool]").forEach((button) => button.classList.toggle("active", button.dataset.tool === tool));
@@ -440,6 +474,7 @@ function setTool(tool) {
     landing: "Click to move the landing.",
     boundary: "Drag boundary vertices; double-click an edge to insert; Delete removes selected vertex.",
     retain: "Paint retention trees. Hold Shift to clear retention.",
+    clump: "Click to draw a retention clump. Double-click to close it. Trees inside are retained.",
     road: "Click to append road points. The road is stored with the project.",
     terraform: "Raise terrain with Terrain selected; hold Shift to lower. Visual prototype.",
   };
@@ -599,6 +634,11 @@ function onPointerDown(event) {
     }
     return;
   }
+  if (state.tool === "clump") {
+    state.clumpDraft.push([world[0], world[1]]);
+    render();
+    return;
+  }
   if (state.tool === "retain") {
     pushHistory();
     state.dragging = { type: "retain" };
@@ -652,6 +692,20 @@ function onPointerUp() {
 }
 
 function onDoubleClick(event) {
+  if (state.tool === "clump" && state.project && state.clumpDraft.length >= 3) {
+    pushHistory();
+    state.project.retention.clumps = state.project.retention.clumps || [];
+    state.project.retention.clumps.push({
+      id: `clump-${Date.now().toString(36)}`,
+      label: "retention clump",
+      polygon: state.clumpDraft.slice(),
+    });
+    state.clumpDraft = [];
+    recomputeStats();
+    markDirty();
+    render();
+    return;
+  }
   if (state.tool !== "boundary" || !state.project) return;
   const rect = canvas.getBoundingClientRect();
   const edge = nearestBoundaryEdge(event.clientX - rect.left, event.clientY - rect.top);

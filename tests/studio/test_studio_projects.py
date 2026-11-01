@@ -43,3 +43,31 @@ def test_materialized_case_filters_retention(tmp_path: Path) -> None:
     assert derived.manifest["landing"]["x"] == saved["landing"]["x"]
     assert derived.manifest["system_args"]["feller"] == "H1"
     assert len(derived.manifest["obstacles"]) == 2
+
+
+def test_retention_clump_filters_trees(tmp_path: Path) -> None:
+    """Clump polygons retain trees and flow into materialized obstacles."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    initial = project_dataset(case, project)
+    tree = next(item for item in initial["trees"] if item["inside"])
+    x, y = float(tree["x"]), float(tree["y"])
+    project["retention"]["clumps"] = [
+        {
+            "id": "test-clump",
+            "label": "test retention clump",
+            "polygon": [[x - 8, y - 8], [x + 8, y - 8], [x + 8, y + 8], [x - 8, y + 8]],
+        }
+    ]
+    saved = save_project(tmp_path, project)
+    dataset = project_dataset(case, saved)
+    assert dataset["stats"]["clump_count"] == 1
+    assert dataset["stats"]["clump_area_ha"] > 0
+    assert dataset["stats"]["retained_tree_count"] >= 1
+    derived = materialize_case(tmp_path, saved, case)
+    inventory = load_tree_inventory(
+        derived.path("inventory"), metadata_path=derived.path("metadata")
+    )
+    assert len(inventory.rows) < 900
+    assert derived.manifest["retention_clumps"]
+    assert derived.manifest["obstacles"]

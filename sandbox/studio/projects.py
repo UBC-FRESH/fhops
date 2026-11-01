@@ -236,7 +236,7 @@ def create_project(case: Case) -> dict[str, Any]:
         },
         "landing": landing,
         "road": road,
-        "retention": {"tree_ids": [], "target_fraction_basal_area": 0.0},
+        "retention": {"tree_ids": [], "clumps": [], "target_fraction_basal_area": 0.0},
         "machines": _active_machines(case, catalog),
         "catalog": catalog,
         "system_args": _system_args(case),
@@ -290,6 +290,13 @@ def save_project(root: Path, project: dict[str, Any]) -> dict[str, Any]:
     machines = project.get("machines")
     if not isinstance(machines, list):
         raise StudioError("Project machines must be a list.")
+    clumps = project.get("retention", {}).get("clumps", [])
+    if not isinstance(clumps, list):
+        raise StudioError("Retention clumps must be a list.")
+    for clump in clumps:
+        polygon_clump = clump.get("polygon") if isinstance(clump, dict) else None
+        if not isinstance(polygon_clump, list) or len(polygon_clump) < 3:
+            raise StudioError("Each retention clump needs at least three points.")
     sync_system_args(project)
     project["updated_utc"] = _now()
     project["revision"] = int(project.get("revision") or 0) + 1
@@ -348,6 +355,24 @@ def _point_in_polygon(x: float, y: float, polygon: list[list[float]]) -> bool:
             inside = not inside
         j = i
     return inside
+
+
+def _retention_clumps(project: dict[str, Any]) -> list[dict[str, Any]]:
+    retention = project.get("retention") or {}
+    clumps = retention.get("clumps") or []
+    return [
+        clump
+        for clump in clumps
+        if isinstance(clump, dict) and isinstance(clump.get("polygon"), list)
+    ]
+
+
+def _in_any_clump(x: float, y: float, clumps: list[dict[str, Any]]) -> bool:
+    return any(_point_in_polygon(x, y, clump.get("polygon") or []) for clump in clumps)
+
+
+def _clump_area_ha(clumps: list[dict[str, Any]]) -> float:
+    return sum(polygon_area_ha(clump.get("polygon") or []) for clump in clumps)
 
 
 def polygon_area_ha(polygon: list[list[float]]) -> float:
@@ -481,15 +506,19 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     )
     polygon = project.get("block", {}).get("polygon") or []
     retained = set(project.get("retention", {}).get("tree_ids") or [])
+    clumps = _retention_clumps(project)
     rows = [
         tree
         for tree in inventory.rows
-        if tree.tree_id not in retained and _point_in_polygon(tree.x_m, tree.y_m, polygon)
+        if tree.tree_id not in retained
+        and not _in_any_clump(tree.x_m, tree.y_m, clumps)
+        and _point_in_polygon(tree.x_m, tree.y_m, polygon)
     ]
     residual_rows = [
         tree
         for tree in inventory.rows
-        if tree.tree_id in retained and _point_in_polygon(tree.x_m, tree.y_m, polygon)
+        if (tree.tree_id in retained or _in_any_clump(tree.x_m, tree.y_m, clumps))
+        and _point_in_polygon(tree.x_m, tree.y_m, polygon)
     ]
     if not rows:
         raise StudioError("The edited block and retention rules leave no harvestable trees.")
@@ -617,6 +646,7 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
             encoding="utf-8",
         )
         manifest["road"] = str(road_path.relative_to(root))
+    manifest["retention_clumps"] = clumps
     manifest["obstacles"] = [
         [
             round(tree.x_m, 3),
@@ -644,6 +674,7 @@ def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
     inventory = load_tree_inventory(case.path("inventory"), metadata_path=case.path("metadata"))
     polygon = project.get("block", {}).get("polygon") or []
     retained = set(project.get("retention", {}).get("tree_ids") or [])
+    clumps = _retention_clumps(project)
     model = ReferenceStemModel()
     trees = []
     inside_count = 0
@@ -655,7 +686,7 @@ def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
         volume = model.evaluate(tree).merchantable_volume_m3
         ba = math.pi / 4.0 * (tree.dbh_cm / 100.0) ** 2
         total_ba += ba if inside else 0.0
-        is_retained = tree.tree_id in retained
+        is_retained = tree.tree_id in retained or _in_any_clump(tree.x_m, tree.y_m, clumps)
         if inside:
             inside_count += 1
         if is_retained:
@@ -684,6 +715,8 @@ def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
             "retained_tree_count": retained_count,
             "retained_basal_area_fraction": round(retained_ba / total_ba, 6) if total_ba else 0.0,
             "total_basal_area_m2": round(total_ba, 4),
+            "clump_count": len(clumps),
+            "clump_area_ha": round(_clump_area_ha(clumps), 6),
         },
         "policy_presets": POLICY_PRESETS,
     }

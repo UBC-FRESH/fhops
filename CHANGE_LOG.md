@@ -1,3 +1,13 @@
+# 2026-11-01 — Retention clumps and clump-aware routing
+
+- Added retention clump polygons to the Studio project model.
+- Added 2D and 3D clump authoring with filled/outlined clump display.
+- Trees inside clumps are excluded from the derived harvest and rendered retained.
+- Clump interiors block the viewer A* machine routes and appear in the access map.
+- Clump polygon metadata and derived obstacles flow into the materialized case.
+- Added a clump materialization test; run/replay smoke-tested with one clump.
+- Verification: Studio pytest, ruff, JS syntax checks, and 3D replay smoke test.
+
 # 2026-11-01 — Shared core routing and access map
 
 - TerrainRouter now generates an alternate A* route when the direct/road route
