@@ -1,3 +1,13 @@
+# 2026-11-01 — Studio terrain visualization demo
+
+- Added height-colored terrain shading and a wireframe overlay to the Studio 3D
+  replay so edited terrain is visibly distinct from a flat ground plane.
+- Added a dedicated “Terrain demo — Gavin ridge” project with a pronounced ridge,
+  mound, and cut, and generated a successfull run against it.
+- Runs can now use an edited terrain DEM and road; extreme grades are rejected
+  instead of silently ignored.
+- Verification: Playwright replay smoke test at 1440×900; no browser errors.
+
 # 2026-10-31 — Studio retained trees, obstacles, terrain, and runnable replay
 
 - Studio projects now materialize retained trees as simulation obstacles and

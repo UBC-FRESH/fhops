@@ -717,19 +717,39 @@ export function createViewer(container, { onTime } = {}) {
     geometry.rotateX(-Math.PI / 2);
     const mesh = new THREE.Mesh(
       geometry,
-      new THREE.MeshStandardMaterial({ color: 0x737a55, roughness: 1.0, metalness: 0.0 }),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1.0, metalness: 0.0, vertexColors: true }),
     );
     mesh.name = 'terrain';
     mesh.position.set((minx + maxx) / 2, 0, (miny + maxy) / 2);
     const position = geometry.attributes.position;
+    let minHeight = Infinity;
+    let maxHeight = -Infinity;
     for (let index = 0; index < position.count; index += 1) {
       const x = mesh.position.x + position.getX(index);
       const z = mesh.position.z + position.getZ(index);
-      position.setY(index, terrainHeight(x, z));
+      const y = terrainHeight(x, z);
+      position.setY(index, y);
+      minHeight = Math.min(minHeight, y);
+      maxHeight = Math.max(maxHeight, y);
     }
+    const colors = [];
+    const span = Math.max(1, maxHeight - minHeight);
+    for (let index = 0; index < position.count; index += 1) {
+      const f = Math.max(0, Math.min(1, (position.getY(index) - minHeight) / span));
+      // Low ground is dark green; high ground warms toward dry olive/brown.
+      colors.push(0.18 + f * 0.42, 0.30 + f * 0.28, 0.16 + f * 0.12);
+    }
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
     position.needsUpdate = true;
     geometry.computeVertexNormals();
     scene.add(mesh);
+    const wireframe = new THREE.Mesh(
+      geometry.clone(),
+      new THREE.MeshBasicMaterial({ color: 0x1b2b24, wireframe: true, transparent: true, opacity: 0.22 }),
+    );
+    wireframe.position.copy(mesh.position);
+    wireframe.name = 'terrain_wireframe';
+    scene.add(wireframe);
 
     for (const node of treeNodes.values()) {
       const x = node.position.x;

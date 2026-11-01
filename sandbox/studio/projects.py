@@ -490,7 +490,7 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     )
     elevation_fn = None
     if heights:
-        base_elevation = float(terrain.get("base_m", base_elevation))
+        base_elevation = float(terrain.get("base_m") or base_elevation)
 
         def elevation_fn(x: float, y: float) -> float:
             return _terrain_elevation(project, base_elevation, x, y)
