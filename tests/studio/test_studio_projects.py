@@ -8,6 +8,7 @@ import pytest
 
 from fhops.tree_inventory import load_tree_inventory
 from sandbox.studio.projects import (
+    _terrain_elevation,
     apply_operator_policies,
     create_project,
     materialize_case,
@@ -48,6 +49,27 @@ def test_materialized_case_filters_retention(tmp_path: Path) -> None:
     assert derived.manifest["landing"]["x"] == saved["landing"]["x"]
     assert derived.manifest["system_args"]["feller"] == "H1"
     assert len(derived.manifest["obstacles"]) == 2
+
+
+def test_materialized_tree_elevations_follow_terrain(tmp_path: Path) -> None:
+    """Derived inventory elevations use the edited terrain heightfield."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    xs = [point[0] for point in project["block"]["polygon"]]
+    ys = [point[1] for point in project["block"]["polygon"]]
+    project["terrain"] = {
+        "resolution": 2,
+        "heights": [0.0, 10.0, 20.0, 30.0],
+        "bounds": [min(xs), min(ys), max(xs), max(ys)],
+        "base_m": 500.0,
+    }
+    derived = materialize_case(tmp_path, project, case)
+    inventory = load_tree_inventory(
+        derived.path("inventory"), metadata_path=derived.path("metadata")
+    )
+    for tree in inventory.rows[:20]:
+        expected = _terrain_elevation(project, 500.0, tree.x_m, tree.y_m)
+        assert tree.elevation_m == pytest.approx(expected, abs=1e-6)
 
 
 def test_retention_clump_filters_trees(tmp_path: Path) -> None:
