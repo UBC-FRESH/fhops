@@ -683,18 +683,19 @@ multi-landing or road-network routing yet.
 
 ## Phase 22 — Scenario Studio follow-ups
 
-Parent issue: #324. Branch: `feature/p22-scenario-followups`. Status: in progress.
-Plan: `notes/phase22_followups.md`. Children: #325, #326.
+Parent issue: #324. Branch: `feature/p22-scenario-followups`. Status: complete
+(PR #327, merge `56865cf0`). Plan: `notes/phase22_followups.md`. Children: #325,
+#326.
 
 Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups.
 
-- [ ] P22.1 Processor-specific operator-policy coefficients (#325)
-  - [ ] Core and CLI processor productivity multiplier
-  - [ ] Studio processor policy translation and provenance
-- [ ] P22.2 Stream-aware retention and closeout corrections (#326)
-  - [ ] Stream-centreline authoring in 2D and 3D
-  - [ ] Riparian clump generation, rendering, and routing exclusion
-  - [ ] Correct the Phase 21 closeout record
+- [x] P22.1 Processor-specific operator-policy coefficients (#325)
+  - [x] Core and CLI processor productivity multiplier
+  - [x] Studio processor policy translation and provenance
+- [x] P22.2 Stream-aware retention and closeout corrections (#326)
+  - [x] Stream-centreline authoring in 2D and 3D
+  - [x] Riparian clump generation, rendering, and routing exclusion
+  - [x] Correct the Phase 21 closeout record
 
 ## Backlog & Ideas
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
