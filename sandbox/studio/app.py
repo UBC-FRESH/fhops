@@ -25,6 +25,8 @@ from sandbox.studio.projects import (
     StudioError,
     create_project,
     duplicate_project,
+    import_project,
+    promote_run,
     list_projects,
     load_project,
     materialize_case,
@@ -150,6 +152,24 @@ def create_app(config: StudioConfig) -> FastAPI:
             return duplicate_project(
                 config.projects_root, load_project(config.projects_root, project_id)
             )
+        except StudioError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.post("/api/projects/import")
+    async def import_project_endpoint(request: Request) -> dict[str, Any]:
+        try:
+            payload = await request.json()
+            base_case_id = str(payload.get("base_case_id", ""))
+            _case(config, base_case_id)
+            return import_project(config.projects_root, payload)
+        except (StudioError, CaseError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.post("/api/projects/{project_id}/runs/{run_id}/promote")
+    def promote(project_id: str, run_id: str) -> dict[str, str]:
+        try:
+            project = load_project(config.projects_root, project_id)
+            return promote_run(config.projects_root, project, run_id)
         except StudioError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 

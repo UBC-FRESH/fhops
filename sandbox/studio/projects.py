@@ -24,6 +24,7 @@ from sandbox.tree_lab.cases import Case, load_case, sha256_file
 from sandbox.tree_lab.harvest import INVENTORY_FIELDS
 
 PROJECT_SCHEMA = "fhops.studio.project.v1"
+REPO_ROOT = Path(__file__).resolve().parents[2]
 PROJECT_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{2,79}$")
 MAX_PROJECT_BYTES = 2 * 1024 * 1024
 POLICY_PRESETS: dict[str, dict[str, Any]] = {
@@ -319,6 +320,38 @@ def duplicate_project(root: Path, project: dict[str, Any]) -> dict[str, Any]:
     copied["created_utc"] = _now()
     copied["updated_utc"] = _now()
     return save_project(root, copied)
+
+
+def import_project(root: Path, payload: dict[str, Any]) -> dict[str, Any]:
+    """Import a project JSON as a new project id."""
+    if not isinstance(payload, dict) or payload.get("schema_version") != PROJECT_SCHEMA:
+        raise StudioError("Unsupported Studio project payload.")
+    copied = json.loads(json.dumps(payload))
+    copied["project_id"] = _project_id(str(copied.get("base_case_id", "studio")))
+    copied["label"] = f"{copied.get('label', 'Studio project')} — imported"
+    copied["revision"] = 0
+    copied["created_utc"] = _now()
+    copied["updated_utc"] = _now()
+    return save_project(root, copied)
+
+
+def promote_run(root: Path, project: dict[str, Any], run_id: str) -> dict[str, str]:
+    """Copy a Studio run into the Tree Lab case run directory."""
+    if not run_id or "/" in run_id or ".." in run_id:
+        raise StudioError("Invalid run id.")
+    base_case_id = str(project.get("base_case_id", ""))
+    if not base_case_id:
+        raise StudioError("Project has no base case.")
+    project_id = str(project.get("project_id", ""))
+    source = project_path(root, project_id) / "runs" / run_id
+    if not source.is_dir():
+        raise StudioError(f"Unknown run {run_id!r}.")
+    target = REPO_ROOT / "sandbox" / "runs" / base_case_id / run_id
+    if target.exists():
+        raise StudioError(f"Tree Lab run {run_id!r} already exists.")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(source, target)
+    return {"run_id": run_id, "base_case_id": base_case_id, "path": str(target)}
 
 
 def list_projects(root: Path) -> list[dict[str, Any]]:

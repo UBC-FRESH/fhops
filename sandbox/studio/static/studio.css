@@ -81,3 +81,6 @@ textarea { width: 100%; resize: vertical; }
 .compare-grid .muted { color: var(--muted); }
 .delta-ok { color: var(--ok); }
 .delta-bad { color: #ff8b80; }
+
+.run-row { display: flex; align-items: center; gap: 6px; justify-content: space-between; margin: 3px 0; }
+.run-row button { padding: 2px 5px; font-size: 10px; }

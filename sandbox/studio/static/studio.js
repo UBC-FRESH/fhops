@@ -371,6 +371,8 @@ function renderProjectMeta() {
   $("#project-meta").innerHTML = `<b>${escapeHtml(state.project.label)}</b><br><span class="muted">${escapeHtml(base?.label || state.project.base_case_id)} · revision ${state.project.revision || 1}${state.dirty ? " · unsaved" : ""}</span>`;
   const edit3d = $("#edit-3d");
   if (edit3d) edit3d.href = `3d?project=${encodeURIComponent(state.project.project_id)}`;
+  const exportLink = $("#export");
+  if (exportLink) exportLink.href = `${API}projects/${encodeURIComponent(state.project.project_id)}/project.json`;
 }
 
 function escapeHtml(value) {
@@ -815,17 +817,44 @@ async function loadRunHistory() {
     renderRunComparison(runs);
     node.innerHTML = "";
     for (const run of runs.slice(0, 8)) {
+      const row = document.createElement("div");
+      row.className = "run-row";
       const link = document.createElement("a");
       link.href = `replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(run.run_id)}`;
       link.target = "_blank";
       link.textContent = `${run.run_id} · ${run.status || "unknown"}`;
-      link.style.display = "block";
       link.style.color = "var(--accent)";
       link.style.fontSize = "11px";
-      link.style.margin = "3px 0";
-      node.append(link);
+      const promote = document.createElement("button");
+      promote.className = "btn small";
+      promote.textContent = "Tree Lab";
+      promote.title = "Copy this run into the Tree Lab case run list";
+      promote.addEventListener("click", async () => {
+        try {
+          const result = await api(`projects/${encodeURIComponent(state.project.project_id)}/runs/${encodeURIComponent(run.run_id)}/promote`, { method: "POST" });
+          setStatus(`Promoted to Tree Lab · ${result.path}`);
+          promote.textContent = "Promoted";
+          promote.disabled = true;
+        } catch (error) { setStatus(`Promote failed: ${error.message}`, true); }
+      });
+      row.append(link, promote);
+      node.append(row);
     }
   } catch (_error) { /* history is non-critical */ }
+}
+
+function importProjectFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const payload = JSON.parse(String(reader.result));
+      const project = await api("projects/import", { method: "POST", body: JSON.stringify(payload) });
+      await refreshProjectSelect();
+      await loadProject(project.project_id);
+    } catch (error) { setStatus(`Import failed: ${error.message}`, true); }
+  };
+  reader.readAsText(file);
 }
 
 async function loadProject(projectId) {
@@ -942,6 +971,8 @@ function bindEvents() {
   $("#duplicate").addEventListener("click", duplicateProject);
   $("#add-machine").addEventListener("click", addMachine);
   $("#new-project").addEventListener("click", openNewDialog);
+  $("#import").addEventListener("click", () => $("#import-file").click());
+  $("#import-file").addEventListener("change", (event) => { importProjectFile(event.target.files?.[0]); event.target.value = ""; });
   $("#project-select").addEventListener("change", (event) => { if (event.target.value) loadProject(event.target.value); });
   $("#retention-target").addEventListener("change", () => {
     if (!state.project) return;
