@@ -1,3 +1,15 @@
+# 2026-11-01 — P22 closeout and public deployment
+
+- PR #327 (Phase 22, #324/#325/#326) squash-merged to `main` as
+  `56865cf0bf4df027e94b3550a1b9d90321ef9e90`.
+- CI on the PR head passed both `lint-test-docs` jobs (runs 41280133750 and
+  41280149252); `deploy-history` skipped as expected. Main CI run `41335961913`
+  passed `lint-test-docs` and `deploy-history`.
+- Public demo deployment commit `300516d8` synced the P22 core/Studio/runtime
+  changes to the `public-demo` branch and the live service on `127.0.0.1:8780`.
+- Closed #324–#326 and marked Phase 22 complete. No tag, release, host-network,
+  or settings change was part of this phase.
+
 # 2026-11-01 — P22.1–P22.2 processor policies and stream buffers
 
 - Started Phase 22 (#324) with children #325 (processor policy coefficients) and

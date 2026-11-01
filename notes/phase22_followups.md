@@ -1,7 +1,7 @@
 # Phase 22 — Scenario Studio follow-ups
 
 Parent issue: #324. Children: #325, #326. Branch: `feature/p22-scenario-followups`.
-Status: active.
+Status: complete (PR #327, merge `56865cf0`).
 
 ## Scope
 
@@ -76,6 +76,11 @@ Sphinx remains blocked locally by missing Pandoc (Phase 21 closeout).
 
 ## Closeout
 
-- Update `ROADMAP.md`, `CHANGE_LOG.md`, and this note.
-- Record CI results on the phase PR.
-- Do not merge, tag, or change settings without explicit approval.
+- PR #327 was squash-merged into `main` as
+  `56865cf0bf4df027e94b3550a1b9d90321ef9e90`.
+- PR CI passed both `lint-test-docs` jobs (runs 41280133750 and 41280149252).
+- Main CI run `41335961913` passed `lint-test-docs` and `deploy-history`.
+- Issues #324–#326 are closed.
+- Public demo deployment commit: `300516d8` on the `public-demo` branch; the
+  live service serves `/studio/` and the stream-buffer API on `127.0.0.1:8780`.
+- No tag, release, host-network, or settings change was part of this phase.
