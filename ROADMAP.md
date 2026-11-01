@@ -645,7 +645,7 @@ loader replaces it.
 
 ## Phase 21 — Scenario Studio
 
-Parent issue: TBD. Branch: `phase21-scenario-studio`. Status: in progress. Plan:
+Parent issue: #318. Branch: `feature/p21-scenario-studio`. Status: in progress. Plan:
 `notes/phase21_scenario_studio.md`. Issue tree: `notes/phase21_issue_tree.md`.
 
 Goal: add an interactive authoring layer over immutable Tree Lab cases for

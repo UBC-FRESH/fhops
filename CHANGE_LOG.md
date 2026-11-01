@@ -1,3 +1,15 @@
+# 2026-11-01 — Phase 21 compliance recovery (P21.4, #322)
+
+- Renamed the phase branch to `feature/p21-scenario-studio`.
+- Created parent issue #318 and child issues #319–#322, and linked children as
+  GitHub sub-issues.
+- Recorded the historical deviations in `notes/phase21_compliance_audit.md`:
+  implementation preceded issue creation, branch based on the public-demo line,
+  no per-child PRs/closeout yet, and no full dashboard/CI run.
+- Targeted verification still consists of Studio/terrain pytest, ruff, Python
+  compile, and JavaScript syntax checks. No tag, release, merge, or settings
+  change was made.
+
 # 2026-11-01 — Run-to-run comparison
 
 - Added latest-versus-previous run comparison in the Studio plan editor:
