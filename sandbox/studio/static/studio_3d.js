@@ -248,6 +248,7 @@ function updateStats() {
   const range = terrain.heights.length ? `${Math.min(...terrain.heights).toFixed(1)} … ${Math.max(...terrain.heights).toFixed(1)} m` : "flat";
   const area = stateArea(project.block.polygon);
   $("#scene-stats").innerHTML = `<b>${area.toFixed(2)} ha</b> block<br><b>${dataset.trees.filter((tree) => tree.inside).length.toLocaleString()}</b> trees in block<br><b>${retained.size.toLocaleString()}</b> retained<br><b>${terrain.res}</b>× terrain grid<br><b>${range}</b> relief<br><span class="hint">${dirty ? "unsaved edits" : "saved"}</span>`;
+  $("#project-id").textContent = `Project ID: ${project.project_id}`;
 }
 
 function stateArea(polygon) {
@@ -372,7 +373,7 @@ function onPointerUp() {
 }
 
 async function save() {
-  if (!project) return;
+  if (!project) return null;
   setStatus("Saving…");
   try {
     project = await fetch(`${API}projects/${encodeURIComponent(projectId)}`, {
@@ -387,7 +388,31 @@ async function save() {
     $("#project-name").textContent = `${project.label} · revision ${project.revision}`;
     setStatus("Saved");
     updateStats();
-  } catch (error) { setStatus(`Save failed: ${error.message}`, true); }
+    return project;
+  } catch (error) {
+    setStatus(`Save failed: ${error.message}`, true);
+    return null;
+  }
+}
+
+async function runScenario() {
+  if (!project) return;
+  const saved = await save();
+  if (!saved) return;
+  setStatus("Running edited scenario…");
+  try {
+    const record = await fetch(`${API}projects/${encodeURIComponent(projectId)}/run`, { method: "POST" }).then((response) => {
+      if (!response.ok) throw new Error(`run ${response.status}`);
+      return response.json();
+    });
+    const link = $("#replay-link");
+    link.href = `replay?project=${encodeURIComponent(projectId)}&run=${encodeURIComponent(record.run_id)}`;
+    link.hidden = false;
+    const warnings = Array.isArray(record.warnings) ? record.warnings.length : 0;
+    setStatus(`Run ${record.run_id} complete${warnings ? ` · ${warnings} warning(s)` : ""}`);
+  } catch (error) {
+    setStatus(`Run failed: ${error.message}`, true);
+  }
 }
 
 async function init() {
@@ -424,6 +449,7 @@ function animate() {
 
 document.querySelectorAll("#tools [data-tool]").forEach((button) => button.addEventListener("click", () => setTool(button.dataset.tool)));
 $("#save").addEventListener("click", save);
+$("#run").addEventListener("click", runScenario);
 $("#fit").addEventListener("click", fitView);
 $("#brush").addEventListener("input", () => { brush = Number($("#brush").value); $("#brush-label").textContent = `${brush} m`; });
 renderer.domElement.addEventListener("pointerdown", onPointerDown);

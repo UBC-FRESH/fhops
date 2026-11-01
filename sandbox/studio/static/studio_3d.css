@@ -26,3 +26,6 @@ h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .7px; color: #9
 .hint { color: #93a6ae; font-size: 10px; line-height: 1.4; margin-top: 14px; }
 #scene-stats { font-size: 11px; line-height: 1.7; }
 #scene-stats b { color: #e6eef2; }
+
+header button.secondary { background: #263237; color: #e6eef2; border: 1px solid #52656b; }
+header a#replay-link { color: #f08a24; text-decoration: none; font-weight: 650; margin-left: 4px; }

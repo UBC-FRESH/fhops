@@ -1,3 +1,13 @@
+# 2026-11-01 — Studio 3D editor run loop
+
+- The 3D editor now has a Run scenario button that saves the project, runs the
+  derived case, and exposes an Open 3D replay link.
+- The 3D editor displays the persistent project ID.
+- Steep/inaccessible skidder routes now complete as blocked-bunch warnings rather
+  than aborting the whole run; the run status and warning count are reported.
+- Verification: Playwright 3D editor run against the terrain demo; completed run
+  with 86 blocked-route warnings and a valid replay link.
+
 # 2026-11-01 — 3D editing and graceful terrain blocking
 
 - Added `/3d` Studio editing page using Three.js: orbit, landing movement,
