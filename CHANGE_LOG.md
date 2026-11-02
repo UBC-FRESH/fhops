@@ -1,3 +1,10 @@
+# 2026-11-02 — P33 closeout
+
+- PR #358 squash-merged to `main` as
+  `78afbc72c1f6b444ccf3e6ad598ed51ef5985b31`; main CI `41494881155` passed.
+- Public demo deployment `3e471570`; live truck-spec panel rendered cleanly.
+- No tag, release, host-network, or settings change.
+
 # 2026-11-02 — per-landing truck equipment specs (#357)
 
 - Added core `landing_truck_specs` and `--landing-truck-specs` JSON mapping.
