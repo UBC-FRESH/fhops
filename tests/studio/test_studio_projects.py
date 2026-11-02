@@ -183,6 +183,7 @@ def test_materialized_case_carries_landing_fleets(tmp_path: Path) -> None:
                 "type": "loader",
                 "policy": "steady",
                 "landing_id": "north",
+                "spec": {"process_fixed_s": 10.0},
             },
             {
                 "id": "H5-B",
@@ -190,6 +191,7 @@ def test_materialized_case_carries_landing_fleets(tmp_path: Path) -> None:
                 "type": "roadside_processor",
                 "policy": "steady",
                 "landing_id": "north",
+                "spec": {"seconds_per_m3": 30.0},
             },
         ]
     )
@@ -197,6 +199,8 @@ def test_materialized_case_carries_landing_fleets(tmp_path: Path) -> None:
     fleet = derived.manifest["landing_fleets"]["north"]
     assert fleet["loader"] == "H4-B"
     assert fleet["processors"] == ["H5-B"]
+    assert derived.manifest["loader_specs"]["H4-B"]["process_fixed_s"] == 10.0
+    assert derived.manifest["processor_specs"]["H5-B"]["seconds_per_m3"] == 30.0
     machine_rows = (derived.root / "scenario" / "data" / "machines.csv").read_text(encoding="utf-8")
     assert "H4-B" in machine_rows
     assert "H5-B" in machine_rows

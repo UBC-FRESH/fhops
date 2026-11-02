@@ -1,3 +1,14 @@
+# 2026-11-02 — per-machine fleet spec editing (#354)
+
+- Added core `loader_specs` mapping and CLI `--loader-specs`/`--skidder-specs`
+  JSON overrides; processor specs now preserve `per_log_s`.
+- Studio machine-spec panel edits loader, processor, and skidder cycle fields.
+- Derived cases persist spec mappings; Tree Lab runner writes spec JSON inputs
+  and passes them to the CLI.
+- Verified an end-to-end derived run with custom `H4-B` loader and `H5-B`
+  processor specs.
+- Truck capacity/cycle remain global.
+
 # 2026-11-02 — include landing truck counts in freshness (#352)
 
 - `project_edit_signature` now covers `landing_trucks`, so changing truck

@@ -121,6 +121,17 @@ When per-landing counts are supplied, every landing receives its own truck
 availability list and truck IDs such as ``T-main-01``. Blank/omitted counts use
 the shared ``--truck-count`` fleet.
 
+Per-machine cycle overrides can be supplied as JSON mappings:
+
+.. code-block:: bash
+
+   --loader-specs loader_specs.json \
+   --skidder-specs skidder_specs.json \
+   --processor-specs processor_specs.json
+
+Loader/skidder mappings use the ``MachineSpec`` cycle fields; processor mappings
+use ``seconds_per_m3``, ``fixed_s``, and ``per_log_s``.
+
 Optional terrain routing:
 
 .. code-block:: bash

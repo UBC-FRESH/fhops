@@ -276,6 +276,53 @@ def _load_processor_specs(path: Path) -> dict[str, ProcessorSpec]:
             machine_id=str(machine),
             seconds_per_m3=float(values.get("seconds_per_m3", 3600.0 / 35.0)),
             fixed_s=float(values.get("fixed_s", 60.0)),
+            per_log_s=float(values.get("per_log_s", 0.5)),
+        )
+    return specs
+
+
+def _load_loader_specs(path: Path) -> dict[str, MachineSpec]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Loader specs JSON must be an object mapping machine ids.")
+    specs: dict[str, MachineSpec] = {}
+    for machine, values in payload.items():
+        if not isinstance(values, dict):
+            raise ValueError(f"Loader spec for {machine!r} must be an object.")
+        specs[str(machine)] = MachineSpec(
+            machine_id=str(machine),
+            machine_type="loader",
+            capacity_m3=float(values.get("capacity_m3", 40.0)),
+            empty_speed_mps=float(values.get("empty_speed_mps", 1.4)),
+            loaded_speed_mps=float(values.get("loaded_speed_mps", 1.1)),
+            load_fixed_s=float(values.get("load_fixed_s", 45.0)),
+            load_per_log_s=float(values.get("load_per_log_s", 5.0)),
+            unload_fixed_s=float(values.get("unload_fixed_s", 45.0)),
+            unload_per_log_s=float(values.get("unload_per_log_s", 3.0)),
+            process_fixed_s=float(values.get("process_fixed_s", 45.0)),
+            process_per_log_s=float(values.get("process_per_log_s", 4.0)),
+        )
+    return specs
+
+
+def _load_skidder_specs(path: Path) -> dict[str, MachineSpec]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Skidder specs JSON must be an object mapping machine ids.")
+    specs: dict[str, MachineSpec] = {}
+    for machine, values in payload.items():
+        if not isinstance(values, dict):
+            raise ValueError(f"Skidder spec for {machine!r} must be an object.")
+        specs[str(machine)] = MachineSpec(
+            machine_id=str(machine),
+            machine_type="grapple_skidder",
+            capacity_m3=float(values.get("capacity_m3", DEFAULT_SKIDDER_CAPACITY_M3)),
+            empty_speed_mps=float(values.get("empty_speed_mps", 1.4)),
+            loaded_speed_mps=float(values.get("loaded_speed_mps", 1.1)),
+            load_fixed_s=float(values.get("load_fixed_s", 45.0)),
+            load_per_log_s=float(values.get("load_per_log_s", 5.0)),
+            unload_fixed_s=float(values.get("unload_fixed_s", 45.0)),
+            unload_per_log_s=float(values.get("unload_per_log_s", 3.0)),
         )
     return specs
 
@@ -679,6 +726,16 @@ def tree_system(
     loader_process_per_log: float = typer.Option(
         4.0, "--loader-process-per-log", help="Loader processing time per log (s)."
     ),
+    loader_specs_path: Path | None = typer.Option(
+        None,
+        "--loader-specs",
+        help="JSON mapping machine id to loader cycle fields (capacity_m3, process_fixed_s, ...).",
+    ),
+    skidder_specs_path: Path | None = typer.Option(
+        None,
+        "--skidder-specs",
+        help="JSON mapping machine id to skidder cycle fields (capacity_m3, speeds, load/unload times).",
+    ),
     dry_run: bool = typer.Option(
         False, "--dry-run", help="Print the system result without writing outputs."
     ),
@@ -699,6 +756,11 @@ def tree_system(
             )
             for machine in skidder
         }
+        if skidder_specs_path is not None:
+            skidder_specs.update(_load_skidder_specs(skidder_specs_path))
+        loader_specs_map = (
+            _load_loader_specs(loader_specs_path) if loader_specs_path is not None else None
+        )
         loader_spec = MachineSpec(
             machine_id=loader,
             machine_type="loader",
@@ -783,6 +845,7 @@ def tree_system(
             stem_inventory=stem_inventory,
             skidder_specs=skidder_specs,
             loader_spec=loader_spec,
+            loader_specs=loader_specs_map,
         )
         paths = None if dry_run or out is None else write_ground_system(result, out)
     except (GroundSystemError, StemModelError, ValueError) as exc:
