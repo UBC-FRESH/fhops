@@ -1,3 +1,9 @@
+# 2026-11-02 — deploy per-landing fleets
+
+- Synced per-landing loader/processor fleets, machine assignment, and clone-machine derived rows from merged `main` (`d1093882`).
+- Studio machine rows assign loaders/processors to landings.
+- No host networking or routing changes.
+
 # 2026-11-02 — deploy per-landing inventory
 
 - Synced grade-aware landing selection and per-landing inventory/capacity from merged `main` (`104eb8f5`).

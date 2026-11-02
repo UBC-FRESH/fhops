@@ -53,7 +53,7 @@ button, select, input, textarea { font: inherit; }
 .field { display: flex; flex-direction: column; gap: 3px; color: var(--muted); font-size: 10.5px; margin: 7px 0; }
 .field input, .field select, textarea, select { background: #0c1214; color: var(--text); border: 1px solid var(--line); border-radius: 5px; padding: 5px 7px; }
 textarea { width: 100%; resize: vertical; }
-.machine { display: grid; grid-template-columns: 46px minmax(0,1fr) auto; gap: 5px; align-items: center; padding: 4px 0; border-bottom: 1px solid #202b2f; }
+.machine { display: grid; grid-template-columns: 46px minmax(0,1fr) auto auto; gap: 5px; align-items: center; padding: 4px 0; border-bottom: 1px solid #202b2f; }
 .machine .id { font-weight: 650; font-size: 12px; }
 .machine .role { color: var(--muted); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .machine select { font-size: 10px; padding: 3px 4px; width: 100%; }

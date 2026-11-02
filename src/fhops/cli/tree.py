@@ -17,6 +17,7 @@ from fhops.ground_system import (
     DowntimeWindow,
     GroundSystemError,
     Landing,
+    LandingFleet,
     MachineSpec,
     ProcessorSpec,
     simulate_ground_system,
@@ -330,6 +331,40 @@ def _parse_landing(value: str, index: int) -> Landing:
     return Landing(landing_id=landing_id, x_m=x, y_m=y)
 
 
+def _parse_landing_fleets(
+    loaders: list[str] | None, processors: list[str] | None
+) -> tuple[LandingFleet, ...]:
+    loader_map: dict[str, str] = {}
+    processor_map: dict[str, list[str]] = {}
+    for value in loaders or []:
+        parts = value.split(":", 1)
+        if len(parts) != 2 or not all(part.strip() for part in parts):
+            raise ValueError(f"Landing loader {value!r} must be landing_id:machine_id.")
+        landing_id, machine_id = (part.strip() for part in parts)
+        if landing_id in loader_map:
+            raise ValueError(f"Landing {landing_id!r} has more than one loader assignment.")
+        loader_map[landing_id] = machine_id
+    for value in processors or []:
+        parts = value.split(":", 1)
+        if len(parts) != 2 or not all(part.strip() for part in parts):
+            raise ValueError(f"Landing processor {value!r} must be landing_id:machine_id.")
+        landing_id, machine_id = (part.strip() for part in parts)
+        processor_map.setdefault(landing_id, []).append(machine_id)
+    missing = set(processor_map) - set(loader_map)
+    if missing:
+        raise ValueError(
+            "Landing processors require a landing loader for: " + ", ".join(sorted(missing))
+        )
+    return tuple(
+        LandingFleet(
+            landing_id=landing_id,
+            loader_machine_id=loader_machine_id,
+            processor_machine_ids=tuple(processor_map.get(landing_id, [])),
+        )
+        for landing_id, loader_machine_id in loader_map.items()
+    )
+
+
 @tree_app.command("replay")
 def tree_replay(
     scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
@@ -477,6 +512,16 @@ def tree_system(
         None,
         "--landing",
         help="Named landing as id,x,y or x,y. Repeat to route bunches to multiple landings.",
+    ),
+    landing_loader: list[str] | None = typer.Option(
+        None,
+        "--landing-loader",
+        help="Per-landing loader as landing_id:machine_id. Repeat.",
+    ),
+    landing_processor: list[str] | None = typer.Option(
+        None,
+        "--landing-processor",
+        help="Per-landing processor as landing_id:machine_id. Repeat.",
     ),
     dem: Path | None = typer.Option(
         None, "--dem", help="Optional GeoTIFF DEM in the scenario CRS."
@@ -652,6 +697,7 @@ def tree_system(
         landing_choices = tuple(
             _parse_landing(value, index) for index, value in enumerate(landing or [])
         )
+        landing_fleets = _parse_landing_fleets(landing_loader, landing_processor)
         result = simulate_ground_system(
             scenario,
             block_id=block,
@@ -667,6 +713,7 @@ def tree_system(
             landing_x_m=landing_x,
             landing_y_m=landing_y,
             landings=landing_choices,
+            landing_fleets=landing_fleets,
             bunch_volume_m3=bunch_volume,
             rate_model=rate_model,  # type: ignore[arg-type]
             dem_path=dem,

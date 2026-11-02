@@ -97,10 +97,19 @@ actual machine payload for operational work.
 When omitted, the mean tree position is used.
 
 For multiple landing choices, repeat ``--landing`` with ``id,x,y`` (or just
-``x,y``). Each bunch is routed to the landing with the shortest valid terrain
-route; the first landing is the primary landing in result metadata. The
-processor and loader are modelled as one shared crew servicing the chosen
-landings. Per-landing fleets and per-landing inventory are not yet simulated.
+``x,y``). Each bunch is routed to the landing with the lowest travel-time proxy
+(``distance / speed_factor``), so terrain grade and speed can make a slightly
+longer route preferable. The first landing is the primary landing in result
+metadata. Inventory and capacity are tracked per landing. By default the
+processor and loader are one shared crew; assign dedicated fleets with:
+
+.. code-block:: bash
+
+   --landing-loader main:H4 --landing-processor main:H5 \
+   --landing-loader north:H4-B --landing-processor north:H5-B
+
+Each landing receiving loads needs one loader. Machines must exist in the
+scenario and may not be assigned to more than one landing.
 
 Optional terrain routing:
 
