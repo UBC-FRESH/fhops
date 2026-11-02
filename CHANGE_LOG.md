@@ -1,3 +1,11 @@
+# 2026-11-02 — P34 closeout
+
+- PR #360 squash-merged to `main` as
+  `4ad83be589167560279ab6b4f4fd83c74c3ae22d`; main CI `41502068526` passed.
+- Public demo deployment `a6be98cc`.
+- Live disconnected-road test showed the warning and returned HTTP 400.
+- No tag, release, host-network, or settings change.
+
 # 2026-11-02 — road connectivity validation and grade-aware routing (#360)
 
 - Studio validates road-segment connectivity, including crossing branches, and

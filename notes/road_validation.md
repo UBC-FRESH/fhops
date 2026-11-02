@@ -27,3 +27,10 @@ Issue: #360. Branch: `issue-360-road-validation`.
 - Validation is geometric, not a full road-engineering connectivity model.
 - Landing access is warned at 30 m but does not itself block a run.
 - Road grade costs require a DEM; without one, routing remains distance-based.
+
+## Closeout
+
+- PR #360 merged to `main` as `4ad83be589167560279ab6b4f4fd83c74c3ae22d`.
+- Main CI `41502068526` passed.
+- Public demo deployment: `a6be98cc`.
+- Live disconnected-road project showed the road warning and run returned HTTP 400.
