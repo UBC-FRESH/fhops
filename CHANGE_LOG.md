@@ -1,3 +1,11 @@
+# 2026-11-02 — P27 closeout
+
+- PR #341 squash-merged to `main` as
+  `1cfbf9c15837f9af72e465f6341405a68d25f096`; main CI `41405758116` passed.
+- Public demo deployment `68d0b0f0`.
+- Existing demo runs remain fresh after legacy signature compatibility.
+- Live two-landing Studio smoke test passed; 31 targeted tests passed.
+
 # 2026-11-02 — Studio multi-landing authoring and skidder assignment (#340)
 
 - Added public `Landing` and `landings` support to the ground-system runner and
