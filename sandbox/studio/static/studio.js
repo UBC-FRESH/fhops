@@ -367,6 +367,7 @@ function render() {
   renderMachines();
   renderMachineSpecs();
   renderTruckSpecs();
+  renderRoadWarning();
   renderProjectMeta();
   $("#notes").value = state.project?.notes || "";
   $("#retention-target").value = Math.round((Number(state.project?.retention?.target_fraction_basal_area) || 0) * 100);
@@ -506,6 +507,16 @@ function renderLandingList() {
     row.append(label, x, y, trucks, actions);
     node.append(row);
   });
+}
+
+function renderRoadWarning() {
+  const node = $("#road-warning");
+  if (!node) return;
+  const warnings = state.dataset?.road_validation?.warnings || [];
+  node.hidden = !warnings.length;
+  node.innerHTML = warnings.length
+    ? `<b>Road check</b><ul>${warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul>`
+    : "";
 }
 
 function renderTruckSpecs() {
@@ -1112,6 +1123,12 @@ function saveProject() {
     render();
     setStatus(`Saved revision ${saved.revision}`);
     refreshProjectSelect();
+    api(`projects/${encodeURIComponent(saved.project_id)}/dataset`)
+      .then((dataset) => {
+        state.dataset.road_validation = dataset.road_validation;
+        renderRoadWarning();
+      })
+      .catch(() => { /* non-critical */ });
   }).catch((error) => setStatus(`Save failed: ${error.message}`, true));
 }
 

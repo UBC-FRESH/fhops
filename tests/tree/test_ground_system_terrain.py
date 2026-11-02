@@ -9,6 +9,7 @@ import pytest
 from test_ground_system import _system_scenario
 
 from fhops.ground_system import simulate_ground_system
+from fhops.terrain import _RoadNetwork
 
 
 def _write_dem_and_road(tmp_path: Path) -> tuple[Path, Path]:
@@ -94,6 +95,24 @@ def test_ground_system_blocks_steep_route(tmp_path: Path) -> None:
     )
     assert any("blocked" in warning.lower() for warning in result.warnings)
     assert not [event for event in result.events if event.type == "travel_loaded"]
+
+
+def test_road_network_prefers_flatter_route() -> None:
+    """Dijkstra edge costs account for grade when a DEM sampler is supplied."""
+    shapely = pytest.importorskip("shapely.geometry")
+    geometry = shapely.MultiLineString(
+        [
+            [(0.0, 0.0), (300.0, 0.0)],
+            [(0.0, 0.0), (0.0, 60.0), (300.0, 60.0), (300.0, 0.0)],
+        ]
+    )
+    network = _RoadNetwork(
+        geometry,
+        elevation=lambda x, y: 1000.0 * x / 300.0 if y == 0 else 0.0,
+        grade_speed_factor=0.02,
+    )
+    path = network.path((0.0, 0.0), (300.0, 0.0))
+    assert (0.0, 60.0) in path
 
 
 def test_terrain_router_uses_connected_road_network(tmp_path: Path) -> None:

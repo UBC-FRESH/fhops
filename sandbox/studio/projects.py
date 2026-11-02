@@ -428,6 +428,129 @@ def road_segments(project: dict[str, Any]) -> list[dict[str, Any]]:
     return segments
 
 
+def _orientation(a: list[float], b: list[float], c: list[float]) -> float:
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def _on_segment(a: list[float], b: list[float], point: list[float]) -> bool:
+    return (
+        min(a[0], b[0]) - 1e-9 <= point[0] <= max(a[0], b[0]) + 1e-9
+        and min(a[1], b[1]) - 1e-9 <= point[1] <= max(a[1], b[1]) + 1e-9
+        and abs(_orientation(a, b, point)) <= 1e-9
+    )
+
+
+def _segments_intersect(a: list[float], b: list[float], c: list[float], d: list[float]) -> bool:
+    o1 = _orientation(a, b, c)
+    o2 = _orientation(a, b, d)
+    o3 = _orientation(c, d, a)
+    o4 = _orientation(c, d, b)
+    if (o1 > 1e-9 and o2 < -1e-9 or o1 < -1e-9 and o2 > 1e-9) and (
+        o3 > 1e-9 and o4 < -1e-9 or o3 < -1e-9 and o4 > 1e-9
+    ):
+        return True
+    return (
+        (abs(o1) <= 1e-9 and _on_segment(a, b, c))
+        or (abs(o2) <= 1e-9 and _on_segment(a, b, d))
+        or (abs(o3) <= 1e-9 and _on_segment(c, d, a))
+        or (abs(o4) <= 1e-9 and _on_segment(c, d, b))
+    )
+
+
+def road_network_validation(project: dict[str, Any], tolerance_m: float = 30.0) -> dict[str, Any]:
+    """Check road-segment connectivity and landing access.
+
+    Parameters
+    ----------
+    project : dict[str, Any]
+        Studio project payload.
+    tolerance_m : float, optional
+        Maximum acceptable distance from each landing to the authored road
+        network, in metres. Defaults to 30 m.
+
+    Returns
+    -------
+    dict[str, Any]
+        ``connected`` (bool), ``components`` (segment-id groups),
+        ``landing_distances_m`` (mapping), and ``warnings`` (list of strings).
+        Segments that intersect at endpoints or interior points are considered
+        connected, so crossing branches are valid.
+    """
+    segments = road_segments(project)
+    if not segments:
+        return {
+            "connected": True,
+            "components": [],
+            "landing_distances_m": {},
+            "warnings": [],
+        }
+    parent = list(range(len(segments)))
+
+    def find(index: int) -> int:
+        while parent[index] != index:
+            parent[index] = parent[parent[index]]
+            index = parent[index]
+        return index
+
+    def union(left: int, right: int) -> None:
+        left_root, right_root = find(left), find(right)
+        if left_root != right_root:
+            parent[right_root] = left_root
+
+    for left in range(len(segments)):
+        for right in range(left + 1, len(segments)):
+            if any(
+                _segments_intersect(a, b, c, d)
+                for a, b in zip(segments[left]["points"][:-1], segments[left]["points"][1:])
+                for c, d in zip(segments[right]["points"][:-1], segments[right]["points"][1:])
+            ):
+                union(left, right)
+    grouped: dict[int, list[str]] = {}
+    for index, segment in enumerate(segments):
+        grouped.setdefault(find(index), []).append(str(segment["id"]))
+
+    def point_segment_distance(point: list[float], a: list[float], b: list[float]) -> float:
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        length_sq = dx * dx + dy * dy
+        if length_sq <= 1e-12:
+            return math.hypot(point[0] - a[0], point[1] - a[1])
+        t = max(
+            0.0,
+            min(1.0, ((point[0] - a[0]) * dx + (point[1] - a[1]) * dy) / length_sq),
+        )
+        return math.hypot(point[0] - (a[0] + dx * t), point[1] - (a[1] + dy * t))
+
+    landing_distances: dict[str, float] = {}
+    for landing in project_landings(project):
+        distance = min(
+            (
+                point_segment_distance([landing["x"], landing["y"]], a, b)
+                for segment in segments
+                for a, b in zip(segment["points"][:-1], segment["points"][1:])
+            ),
+            default=float("inf"),
+        )
+        landing_distances[str(landing["id"])] = round(distance, 3)
+
+    warnings: list[str] = []
+    if len(grouped) > 1:
+        warnings.append(
+            f"Road network has {len(grouped)} disconnected components; connect the branches before running."
+        )
+    for landing_id, distance in landing_distances.items():
+        if distance > tolerance_m:
+            warnings.append(
+                f"Landing {landing_id!r} is {distance:.1f} m from the road network "
+                f"(tolerance {tolerance_m:.0f} m)."
+            )
+    return {
+        "connected": len(grouped) <= 1,
+        "components": list(grouped.values()),
+        "landing_distances_m": landing_distances,
+        "warnings": warnings,
+    }
+
+
 def _system_args(case: Case) -> dict[str, Any]:
     return json.loads(json.dumps(case.manifest.get("system_args") or {}))
 
@@ -1293,6 +1416,7 @@ def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
     return {
         "project": project,
         "trees": trees,
+        "road_validation": road_network_validation(project),
         "stats": {
             "block_area_ha": round(polygon_area_ha(polygon), 6),
             "tree_count": len(trees),

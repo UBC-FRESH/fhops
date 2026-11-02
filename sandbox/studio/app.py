@@ -32,6 +32,7 @@ from sandbox.studio.projects import (
     project_dataset,
     project_path,
     promote_run,
+    road_network_validation,
     run_freshness,
     save_project,
     stream_buffer_polygon,
@@ -204,6 +205,9 @@ def create_app(config: StudioConfig) -> FastAPI:
     def run_project(project_id: str) -> dict[str, Any]:
         try:
             project = load_project(config.projects_root, project_id)
+            road_check = road_network_validation(project)
+            if not road_check["connected"]:
+                raise StudioError(" ".join(road_check["warnings"]))
             base = _case(config, str(project.get("base_case_id", "")))
             derived = materialize_case(config.projects_root, project, base)
             run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")

@@ -16,6 +16,7 @@ from sandbox.studio.projects import (
     polygon_area_ha,
     project_dataset,
     project_edit_signature,
+    road_network_validation,
     road_segments,
     run_freshness,
     save_project,
@@ -72,6 +73,22 @@ def test_road_network_exports_multilinestring(tmp_path: Path) -> None:
     assert geometry["type"] == "MultiLineString"
     assert len(geometry["coordinates"]) == 2
     assert derived.manifest["road_segments"][1]["id"] == "branch"
+
+
+def test_road_network_validation_detects_disconnected_branches() -> None:
+    """Crossing branches are connected; separate branches are flagged."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    project["road"]["segments"] = [
+        {"id": "main", "label": "Main", "points": [[0.0, 0.0], [100.0, 0.0]]},
+        {"id": "branch", "label": "Branch", "points": [[50.0, -40.0], [50.0, 40.0]]},
+    ]
+    validation = road_network_validation(project)
+    assert validation["connected"] is True
+    project["road"]["segments"][1]["points"] = [[200.0, -40.0], [200.0, 40.0]]
+    validation = road_network_validation(project)
+    assert validation["connected"] is False
+    assert any("disconnected" in warning for warning in validation["warnings"])
 
 
 def test_materialized_tree_elevations_follow_terrain(tmp_path: Path) -> None:
