@@ -185,6 +185,44 @@ def test_ground_system_assigns_loader_fleets_per_landing(tmp_path: Path) -> None
     assert {"H4", "H5", "H6", "H7"} <= process_machines
 
 
+def test_ground_system_assigns_trucks_per_landing(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    base = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+    )
+    xs = [tree.x_m for tree in base.trees]
+    ys = [tree.y_m for tree in base.trees]
+    landings = (
+        Landing("west", min(xs) - 20.0, min(ys) - 20.0),
+        Landing("east", max(xs) + 20.0, max(ys) + 20.0),
+    )
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        landings=landings,
+        truck_capacity_m3=1.0,
+        truck_cycle_time_s=60.0,
+        truck_count=1,
+        landing_truck_counts={"west": 1, "east": 1},
+        truck_load_time_s=10.0,
+        landing_capacity_m3=5.0,
+    )
+    truck_ids = {event.machine for event in result.truck_events}
+    assert "T-west-01" in truck_ids
+    assert "T-east-01" in truck_ids
+    assert result.truck_summary is not None
+    assert result.rate_provenance["trucking"]["landing_truck_counts"] == {"west": 1, "east": 1}
+
+
 def test_landing_route_cost_prefers_faster_route() -> None:
     flat = RouteProfile(
         distance_m=100.0,

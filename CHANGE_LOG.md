@@ -1,3 +1,13 @@
+# 2026-11-02 — per-landing truck fleets (#349)
+
+- Added per-landing truck counts to the core runner and repeatable
+  `--landing-truck landing_id:count`.
+- Each landing now has independent deterministic truck availability and truck
+  IDs; the shared fleet remains the default when no counts are supplied.
+- Studio landing rows expose a truck-count field.
+- Mill/service settings remain global.
+- Added core and manifest tests for per-landing truck dispatch.
+
 # 2026-11-02 — P29 closeout
 
 - PR #346 squash-merged to `main` as
