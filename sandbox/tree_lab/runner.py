@@ -200,6 +200,18 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
             command.extend(["--landing-processor", f"{landing_id}:{processor_id}"])
     for landing_id, count in (case.manifest.get("landing_truck_counts") or {}).items():
         command.extend(["--landing-truck", f"{landing_id}:{int(count)}"])
+    for key, flag in (
+        ("loader_specs", "--loader-specs"),
+        ("skidder_specs", "--skidder-specs"),
+        ("processor_specs", "--processor-specs"),
+    ):
+        values = args.get(key)
+        if not isinstance(values, dict) or not values:
+            continue
+        spec_path = run_dir / "inputs" / f"{key}.json"
+        spec_path.parent.mkdir(parents=True, exist_ok=True)
+        spec_path.write_text(json.dumps(values, indent=2) + "\n", encoding="utf-8")
+        command.extend([flag, str(spec_path)])
     command.extend(["--path-mode", str(args.get("path_mode", "swath"))])
     for obstacle in case.manifest.get("obstacles") or []:
         try:

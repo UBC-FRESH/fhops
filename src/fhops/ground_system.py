@@ -684,6 +684,7 @@ def simulate_ground_system(
     obstacles: tuple[Obstacle, ...] = (),
     skidder_specs: Mapping[str, MachineSpec] | None = None,
     loader_spec: MachineSpec | None = None,
+    loader_specs: Mapping[str, MachineSpec] | None = None,
     processor_spec: ProcessorSpec | None = None,
     processor_specs: Mapping[str, ProcessorSpec] | None = None,
     processor_model: str | None = None,
@@ -811,7 +812,10 @@ def simulate_ground_system(
     skidder_specs:
         Optional per-skidder cycle-time overrides.
     loader_spec:
-        Optional loader cycle-time override.
+        Optional loader cycle-time override for the primary loader.
+    loader_specs:
+        Optional loader overrides keyed by machine id. Used for per-landing
+        fleet loaders; the primary ``loader_spec`` remains a fallback.
     processor_spec:
         Optional processor cycle-time override for a single processor.
     processor_specs:
@@ -1011,11 +1015,18 @@ def simulate_ground_system(
     loader = loader_spec or default_loader_spec(loader_machine_id)
     if loader.machine_id != loader_machine_id:
         raise GroundSystemError("Loader spec ID does not match loader_machine_id.")
+    explicit_loader_specs = dict(loader_specs or {})
+    for machine, spec in explicit_loader_specs.items():
+        if spec.machine_id != machine:
+            raise GroundSystemError(f"Loader spec ID does not match {machine!r}.")
     loader_specs_by_landing: dict[str, MachineSpec] = {}
     for landing_id, (fleet_loader_id, _fleet_processors) in fleet_by_landing.items():
-        loader_specs_by_landing[landing_id] = (
-            loader if fleet_loader_id == loader_machine_id else default_loader_spec(fleet_loader_id)
-        )
+        if fleet_loader_id in explicit_loader_specs:
+            loader_specs_by_landing[landing_id] = explicit_loader_specs[fleet_loader_id]
+        elif fleet_loader_id == loader_machine_id:
+            loader_specs_by_landing[landing_id] = loader
+        else:
+            loader_specs_by_landing[landing_id] = default_loader_spec(fleet_loader_id)
     speed_profile: SkidderSpeedProfile | None = None
     loader_seconds_per_m3: float | None = None
     rate_provenance: dict[str, object]

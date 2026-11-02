@@ -768,6 +768,52 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
     args["loader"] = primary_fleet["loader"]
     args["processors"] = primary_fleet["processors"]
     args["landing_fleets"] = fleets
+    loader_specs: dict[str, dict[str, float]] = {}
+    skidder_specs: dict[str, dict[str, float]] = {}
+    processor_specs: dict[str, dict[str, float]] = {}
+    for machine in machines:
+        spec = machine.get("spec")
+        if not isinstance(spec, dict):
+            continue
+        machine_id = str(machine.get("id") or "")
+        role = str(machine.get("role") or "")
+        if not machine_id:
+            continue
+        if role == "loader":
+            loader_specs[machine_id] = {
+                key: float(spec[key])
+                for key in ("process_fixed_s", "process_per_log_s")
+                if key in spec
+            }
+        elif role in {"roadside_processor", "processor"}:
+            processor_specs[machine_id] = {
+                key: float(spec[key])
+                for key in ("seconds_per_m3", "fixed_s", "per_log_s")
+                if key in spec
+            }
+        elif role in {"grapple_skidder", "skidder"}:
+            skidder_specs[machine_id] = {
+                key: float(spec[key])
+                for key in (
+                    "capacity_m3",
+                    "empty_speed_mps",
+                    "loaded_speed_mps",
+                    "load_fixed_s",
+                    "load_per_log_s",
+                    "unload_fixed_s",
+                    "unload_per_log_s",
+                )
+                if key in spec
+            }
+    for key, values in (
+        ("loader_specs", loader_specs),
+        ("skidder_specs", skidder_specs),
+        ("processor_specs", processor_specs),
+    ):
+        if values:
+            args[key] = values
+        else:
+            args.pop(key, None)
     truck_counts = project.get("landing_trucks")
     if isinstance(truck_counts, dict) and truck_counts:
         args["landing_truck_counts"] = {
@@ -1151,6 +1197,9 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     manifest["system_args"] = project["system_args"]
     manifest["landing_fleets"] = project["system_args"].get("landing_fleets") or {}
     manifest["landing_truck_counts"] = project["system_args"].get("landing_truck_counts") or {}
+    manifest["loader_specs"] = project["system_args"].get("loader_specs") or {}
+    manifest["skidder_specs"] = project["system_args"].get("skidder_specs") or {}
+    manifest["processor_specs"] = project["system_args"].get("processor_specs") or {}
     manifest["operator_policies"] = project.get("operator_policies", {})
     manifest["studio_edit_signature"] = project_edit_signature(project)
     manifest["studio_terrain_signature"] = terrain_signature(project)
