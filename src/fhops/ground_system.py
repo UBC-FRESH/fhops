@@ -558,6 +558,7 @@ class GroundSystemResult:
     landing_inventory_final_m3: float
     landing_inventory_max_m3: float
     landing_inventory: dict[str, dict[str, float]]
+    machine_types: dict[str, str]
     trees: tuple[GroundSystemTree, ...]
     events: tuple[GroundSystemEvent, ...]
     machine_summaries: dict[str, dict[str, float | int]]
@@ -625,13 +626,8 @@ class GroundSystemResult:
             "events": [event.to_dict() for event in self.events],
             "duration_s": self.makespan_s,
             "machines": {
-                **{self.feller_machine_id: {"type": "feller_buncher"}},
-                **{machine: {"type": "grapple_skidder"} for machine in self.skidder_machine_ids},
-                **{
-                    machine: {"type": "roadside_processor"}
-                    for machine in self.processor_machine_ids
-                },
-                self.loader_machine_id: {"type": "loader"},
+                machine: {"type": machine_type}
+                for machine, machine_type in self.machine_types.items()
             },
             "warnings": list(self.warnings),
             "caveats": list(self.caveats),
@@ -1361,6 +1357,7 @@ def simulate_ground_system(
             )
         )
     )
+    machine_types = {machine: str(machines[machine].role or "machine") for machine in machine_ids}
     for machine in machine_ids:
         machine_events = [event for event in events if event.machine == machine]
         busy = sum(event.end_s - event.start_s for event in machine_events)
@@ -1422,6 +1419,7 @@ def simulate_ground_system(
         landing_inventory_final_m3=landing_final,
         landing_inventory_max_m3=landing_max,
         landing_inventory=landing_inventory,
+        machine_types=machine_types,
         trees=tuple(trees),
         events=tuple(events),
         machine_summaries=summaries,

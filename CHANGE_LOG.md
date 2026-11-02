@@ -1,3 +1,11 @@
+# 2026-11-02 — event machine types from scenario roles (#365)
+
+- `GroundSystemResult` now carries scenario machine roles and serializes them
+  into `system_events.json`, so harvester/forwarder CTL replays show the correct
+  machine types.
+- Added forwarder role color/label (`FW`) in the viewer.
+- Added a forwarder label assertion.
+
 # 2026-11-02 — harvester/forwarder role propagation (#363)
 
 - Core accepts `forwarder` as a skidder-equivalent machine role.
