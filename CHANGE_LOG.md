@@ -1,3 +1,11 @@
+# 2026-11-02 — P30 closeout
+
+- PR #349 squash-merged to `main` as
+  `4580115946b7c594c8c28a6e382244f871f2f098`; main CI `41422164978` passed.
+- Public demo deployment `22094577`.
+- Live Studio landing truck input rendered without page errors.
+- No tag, release, host-network, or settings change.
+
 # 2026-11-02 — per-landing truck fleets (#349)
 
 - Added per-landing truck counts to the core runner and repeatable
