@@ -440,6 +440,13 @@ function renderLandingList() {
     y.step = "0.1";
     y.value = Number(landing.y).toFixed(1);
     y.title = "Northing (m)";
+    const trucks = document.createElement("input");
+    trucks.type = "number";
+    trucks.min = "0";
+    trucks.step = "1";
+    trucks.placeholder = "trucks";
+    trucks.value = state.project.landing_trucks?.[landing.id] ?? "";
+    trucks.title = "Dedicated truck count; blank uses the shared fleet";
     const actions = document.createElement("div");
     const primary = document.createElement("button");
     primary.className = "btn small";
@@ -485,7 +492,16 @@ function renderLandingList() {
     label.addEventListener("change", update);
     x.addEventListener("change", update);
     y.addEventListener("change", update);
-    row.append(label, x, y, actions);
+    trucks.addEventListener("change", () => {
+      pushHistory();
+      const counts = state.project.landing_trucks || {};
+      if (trucks.value === "") delete counts[landing.id];
+      else counts[landing.id] = Math.max(0, Number(trucks.value));
+      state.project.landing_trucks = Object.keys(counts).length ? counts : undefined;
+      if (!state.project.landing_trucks) delete state.project.landing_trucks;
+      markDirty();
+    });
+    row.append(label, x, y, trucks, actions);
     node.append(row);
   });
 }

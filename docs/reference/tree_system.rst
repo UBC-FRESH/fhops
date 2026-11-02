@@ -111,6 +111,16 @@ processor and loader are one shared crew; assign dedicated fleets with:
 Each landing receiving loads needs one loader. Machines must exist in the
 scenario and may not be assigned to more than one landing.
 
+Truck fleets can also be split per landing:
+
+.. code-block:: bash
+
+   --landing-truck main:2 --landing-truck north:1
+
+When per-landing counts are supplied, every landing receives its own truck
+availability list and truck IDs such as ``T-main-01``. Blank/omitted counts use
+the shared ``--truck-count`` fleet.
+
 Optional terrain routing:
 
 .. code-block:: bash

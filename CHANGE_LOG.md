@@ -1,3 +1,8 @@
+# 2026-11-02 — deploy per-landing truck fleets
+
+- Synced per-landing truck counts and Studio landing truck fields from merged `main` (`45801159`).
+- No host networking or routing changes.
+
 # 2026-11-02 — deploy per-landing fleets
 
 - Synced per-landing loader/processor fleets, machine assignment, and clone-machine derived rows from merged `main` (`d1093882`).

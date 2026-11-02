@@ -331,6 +331,27 @@ def _parse_landing(value: str, index: int) -> Landing:
     return Landing(landing_id=landing_id, x_m=x, y_m=y)
 
 
+def _parse_landing_truck_counts(values: list[str] | None) -> dict[str, int] | None:
+    if not values:
+        return None
+    counts: dict[str, int] = {}
+    for value in values:
+        parts = value.split(":", 1)
+        if len(parts) != 2 or not all(part.strip() for part in parts):
+            raise ValueError(f"Landing truck {value!r} must be landing_id:count.")
+        landing_id, count_text = (part.strip() for part in parts)
+        try:
+            count = int(count_text)
+        except ValueError as exc:
+            raise ValueError(f"Landing truck count {value!r} must be an integer.") from exc
+        if count < 0:
+            raise ValueError("Landing truck counts must be non-negative.")
+        if landing_id in counts:
+            raise ValueError(f"Landing {landing_id!r} has more than one truck count.")
+        counts[landing_id] = count
+    return counts
+
+
 def _parse_landing_fleets(
     loaders: list[str] | None, processors: list[str] | None
 ) -> tuple[LandingFleet, ...]:
@@ -575,6 +596,11 @@ def tree_system(
         3600.0, "--truck-cycle", help="Truck round trip excluding load (s)."
     ),
     truck_count: int = typer.Option(1, "--truck-count", help="Number of trucks."),
+    landing_truck: list[str] | None = typer.Option(
+        None,
+        "--landing-truck",
+        help="Per-landing truck count as landing_id:count. Repeat.",
+    ),
     truck_load_time: float = typer.Option(
         300.0, "--truck-load-time", help="Truck loading time (s)."
     ),
@@ -698,6 +724,7 @@ def tree_system(
             _parse_landing(value, index) for index, value in enumerate(landing or [])
         )
         landing_fleets = _parse_landing_fleets(landing_loader, landing_processor)
+        landing_truck_counts = _parse_landing_truck_counts(landing_truck)
         result = simulate_ground_system(
             scenario,
             block_id=block,
@@ -739,6 +766,7 @@ def tree_system(
             truck_capacity_m3=truck_capacity,
             truck_cycle_time_s=truck_cycle,
             truck_count=truck_count,
+            landing_truck_counts=landing_truck_counts,
             truck_load_time_s=truck_load_time,
             truck_arrival_interval_s=truck_arrival_interval,
             truck_route_distance_m=truck_route_distance,
