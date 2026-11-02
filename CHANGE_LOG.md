@@ -1,3 +1,11 @@
+# 2026-11-02 — P28 closeout
+
+- PR #344 squash-merged to `main` as
+  `104eb8f51cf7ec8a5ac08daa374f2d13efbf936a`; main CI `41411242696` passed.
+- Public demo deployment `15679a01`.
+- Live two-landing run reported separate stockpiles and replay rendered them.
+- No tag, release, host-network, or settings change.
+
 # 2026-11-02 — per-landing inventory and grade-aware landing choice (#343)
 
 - Added `landing_route_cost = distance / speed_factor`; landing assignment now
@@ -7,6 +15,8 @@
 - Run output adds `landing_inventory` with per-landing final/peak/capacity, and
   replay shows final/peak stockpiles.
 - Added grade-cost and two-landing capacity tests.
+- Documented speed-aware landing choice and per-landing stockpiles in
+  `docs/reference/tree_system.rst`.
 - Existing single-landing trucking/inventory behavior remains compatible.
 
 # 2026-11-02 — P27 closeout

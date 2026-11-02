@@ -97,10 +97,12 @@ actual machine payload for operational work.
 When omitted, the mean tree position is used.
 
 For multiple landing choices, repeat ``--landing`` with ``id,x,y`` (or just
-``x,y``). Each bunch is routed to the landing with the shortest valid terrain
-route; the first landing is the primary landing in result metadata. The
-processor and loader are modelled as one shared crew servicing the chosen
-landings. Per-landing fleets and per-landing inventory are not yet simulated.
+``x,y``). Each bunch is routed to the landing with the lowest travel-time proxy
+(``distance / speed_factor``), so terrain grade and speed can make a slightly
+longer route preferable. The first landing is the primary landing in result
+metadata. Inventory and capacity are tracked per landing; the processor and
+loader remain one shared crew servicing the chosen landings. Per-landing fleets
+are not yet simulated.
 
 Optional terrain routing:
 
