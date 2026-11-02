@@ -1,3 +1,11 @@
+# 2026-11-02 — harvester/forwarder role propagation (#363)
+
+- Core accepts `forwarder` as a skidder-equivalent machine role.
+- Derived scenarios update existing active machine roles from Studio edits, so
+  harvester/forwarder systems run and replay with the correct labels.
+- Added core and Studio role-propagation tests.
+- Forwarders still use the reference grapple-skidder cycle model.
+
 # 2026-11-02 — P34 closeout
 
 - PR #360 squash-merged to `main` as

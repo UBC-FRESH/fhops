@@ -1113,15 +1113,32 @@ def _ensure_derived_machines(root: Path, project: dict[str, Any]) -> None:
         fieldnames = reader.fieldnames or []
         rows = list(reader)
     existing = {row.get("id") for row in rows}
+    fleet_roles = {
+        "feller_buncher",
+        "harvester",
+        "grapple_skidder",
+        "skidder",
+        "forwarder",
+        "loader",
+        "roadside_processor",
+        "processor",
+    }
+    roles_by_id = {
+        str(machine.get("id")): str(machine.get("role"))
+        for machine in project.get("machines") or []
+        if machine.get("id") and str(machine.get("role")) in fleet_roles
+    }
+    changed = False
+    for row in rows:
+        role = roles_by_id.get(str(row.get("id") or ""))
+        if role and row.get("role") != role:
+            row["role"] = role
+            changed = True
     added: list[str] = []
     for machine in project.get("machines") or []:
         machine_id = str(machine.get("id") or "")
         role = str(machine.get("role") or "")
-        if (
-            not machine_id
-            or machine_id in existing
-            or role not in {"loader", "roadside_processor", "processor"}
-        ):
+        if not machine_id or machine_id in existing or role not in fleet_roles:
             continue
         row = {name: "" for name in fieldnames}
         row.update(
@@ -1136,13 +1153,14 @@ def _ensure_derived_machines(root: Path, project: dict[str, Any]) -> None:
         rows.append(row)
         existing.add(machine_id)
         added.append(machine_id)
-    if not added:
+        changed = True
+    if not changed:
         return
     with machine_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
-    if not calendar_path.is_file():
+    if not added or not calendar_path.is_file():
         return
     with calendar_path.open(encoding="utf-8", newline="") as handle:
         reader = csv.DictReader(handle)
