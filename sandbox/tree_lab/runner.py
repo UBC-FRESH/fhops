@@ -190,6 +190,14 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
             continue
         landing_id = str(landing.get("id") or f"landing-{len(command)}")
         command.extend(["--landing", f"{landing_id},{x:.3f},{y:.3f}"])
+    for landing_id, fleet in (case.manifest.get("landing_fleets") or {}).items():
+        if not isinstance(fleet, dict):
+            continue
+        loader_id = fleet.get("loader")
+        if loader_id:
+            command.extend(["--landing-loader", f"{landing_id}:{loader_id}"])
+        for processor_id in fleet.get("processors") or []:
+            command.extend(["--landing-processor", f"{landing_id}:{processor_id}"])
     command.extend(["--path-mode", str(args.get("path_mode", "swath"))])
     for obstacle in case.manifest.get("obstacles") or []:
         try:

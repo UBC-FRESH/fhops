@@ -57,6 +57,7 @@ __all__ = [
     "GroundSystemResult",
     "GroundSystemTree",
     "Landing",
+    "LandingFleet",
     "landing_route_cost",
     "BreakdownConfig",
     "DowntimeWindow",
@@ -110,6 +111,25 @@ def landing_route_cost(route: RouteProfile) -> float:
     """
     speed_factor = route.speed_factor if math.isfinite(route.speed_factor) else 1.0
     return route.distance_m / max(1e-6, speed_factor)
+
+
+@dataclass(frozen=True)
+class LandingFleet:
+    """Roadside processing/loading machines assigned to one landing.
+
+    Parameters
+    ----------
+    landing_id:
+        Landing identifier from the simulation's ``landings`` sequence.
+    loader_machine_id:
+        Loader machine assigned to the landing.
+    processor_machine_ids:
+        Optional roadside processors assigned to the landing.
+    """
+
+    landing_id: str
+    loader_machine_id: str
+    processor_machine_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -631,6 +651,7 @@ def simulate_ground_system(
     landing_x_m: float | None = None,
     landing_y_m: float | None = None,
     landings: Sequence[Landing] = (),
+    landing_fleets: Sequence[LandingFleet] = (),
     bunch_volume_m3: float = DEFAULT_BUNCH_VOLUME_M3,
     rate_model: Literal["calibrated", "reference"] = DEFAULT_RATE_MODEL,
     dem_path: str | Path | None = None,
@@ -704,8 +725,13 @@ def simulate_ground_system(
         Optional named landing choices. When supplied, each bunch is routed to
         the lowest-travel-cost landing with a valid terrain route. The first
         landing is the primary landing used for result metadata. The processor
-        and loader are modelled as one shared crew that services the chosen
-        landings; per-landing fleets are not yet simulated.
+        and loader are modelled as one shared crew unless ``landing_fleets``
+        assigns specific machines to specific landings.
+    landing_fleets:
+        Optional per-landing roadside fleets. Each landing receiving loads must
+        have exactly one loader and may have zero or more processors. Machines
+        must exist in the scenario with compatible roles and cannot be assigned
+        to more than one landing.
     bunch_volume_m3:
         Target bunch volume in cubic metres.
     rate_model:
@@ -830,6 +856,11 @@ def simulate_ground_system(
         processors = (processor_machine_id,)
     if len(set(processors)) != len(processors):
         raise GroundSystemError("Processor machine IDs must be unique.")
+    fleet_loaders = tuple(fleet.loader_machine_id for fleet in landing_fleets)
+    fleet_processors = tuple(
+        machine for fleet in landing_fleets for machine in fleet.processor_machine_ids
+    )
+    all_processors = tuple(dict.fromkeys((*processors, *fleet_processors)))
     scenario_file = Path(scenario_path).expanduser().resolve()
     try:
         scenario = load_scenario(scenario_file)
@@ -837,7 +868,7 @@ def simulate_ground_system(
         raise GroundSystemError(str(exc)) from exc
     machines = {machine.id: machine for machine in scenario.machines}
     requested = (feller_machine_id, *skidders, loader_machine_id)
-    requested = (*requested, *processors)
+    requested = (*requested, *processors, *fleet_loaders, *fleet_processors)
     missing = [machine for machine in requested if machine not in machines]
     if missing:
         raise GroundSystemError("Unknown scenario machine(s): " + ", ".join(missing))
@@ -851,17 +882,19 @@ def simulate_ground_system(
             raise GroundSystemError(
                 f"Skidder {machine!r} has role {machines[machine].role!r}, expected grapple_skidder/skidder."
             )
-    if machines[loader_machine_id].role != "loader":
-        raise GroundSystemError(
-            f"Loader {loader_machine_id!r} has role {machines[loader_machine_id].role!r}, expected loader."
-        )
+    for loader_machine in dict.fromkeys((loader_machine_id, *fleet_loaders)):
+        if machines[loader_machine].role != "loader":
+            raise GroundSystemError(
+                f"Loader {loader_machine!r} has role {machines[loader_machine].role!r}, "
+                "expected loader."
+            )
     if processor_model is not None and processor_model not in PROCESSOR_MODELS:
         raise GroundSystemError(f"processor_model must be one of {sorted(PROCESSOR_MODELS)}.")
     if processor_model is not None and (processor_specs or processor_spec):
         raise GroundSystemError("Pass processor_model or explicit processor specs, not both.")
     processor_specs = dict(processor_specs or {})
     processor_models: dict[str, ProcessorSpec] = {}
-    for machine in processors:
+    for machine in all_processors:
         if machines[machine].role not in {"roadside_processor", "processor"}:
             raise GroundSystemError(
                 f"Processor {machine!r} has role {machines[machine].role!r}, "
@@ -940,6 +973,27 @@ def simulate_ground_system(
         if not all(math.isfinite(value) for value in (landing_x, landing_y)):
             raise GroundSystemError("Landing position must be finite.")
         landing_choices = (Landing("landing-main", landing_x, landing_y),)
+
+    landing_ids = {landing.landing_id for landing in landing_choices}
+    fleet_by_landing: dict[str, tuple[str, tuple[str, ...]]] = {
+        landing.landing_id: (loader_machine_id, processors) for landing in landing_choices
+    }
+    explicit_landing_ids: set[str] = set()
+    explicit_machines: set[str] = set()
+    for fleet in landing_fleets:
+        if fleet.landing_id not in landing_ids:
+            raise GroundSystemError(f"Unknown landing fleet {fleet.landing_id!r}.")
+        if fleet.landing_id in explicit_landing_ids:
+            raise GroundSystemError(f"Landing {fleet.landing_id!r} has more than one fleet.")
+        explicit_landing_ids.add(fleet.landing_id)
+        assigned = (fleet.loader_machine_id, *fleet.processor_machine_ids)
+        if any(machine in explicit_machines for machine in assigned):
+            raise GroundSystemError("A machine cannot be assigned to more than one landing fleet.")
+        explicit_machines.update(assigned)
+        fleet_by_landing[fleet.landing_id] = (
+            fleet.loader_machine_id,
+            tuple(fleet.processor_machine_ids),
+        )
     skidder_specs = dict(skidder_specs or {})
     for machine in skidders:
         skidder_specs.setdefault(machine, default_skidder_spec(machine))
@@ -950,6 +1004,11 @@ def simulate_ground_system(
     loader = loader_spec or default_loader_spec(loader_machine_id)
     if loader.machine_id != loader_machine_id:
         raise GroundSystemError("Loader spec ID does not match loader_machine_id.")
+    loader_specs_by_landing: dict[str, MachineSpec] = {}
+    for landing_id, (fleet_loader_id, _fleet_processors) in fleet_by_landing.items():
+        loader_specs_by_landing[landing_id] = (
+            loader if fleet_loader_id == loader_machine_id else default_loader_spec(fleet_loader_id)
+        )
     speed_profile: SkidderSpeedProfile | None = None
     loader_seconds_per_m3: float | None = None
     rate_provenance: dict[str, object]
@@ -986,6 +1045,14 @@ def simulate_ground_system(
     rate_provenance["landings"] = [
         {"id": item.landing_id, "x": item.x_m, "y": item.y_m} for item in landing_choices
     ]
+    rate_provenance["landing_fleets"] = [
+        {
+            "landing_id": landing_id,
+            "loader": loader_id,
+            "processors": list(processor_ids),
+        }
+        for landing_id, (loader_id, processor_ids) in fleet_by_landing.items()
+    ]
     calendar: _ShiftCalendar | None = None
     shift_windows: tuple[tuple[float, float], ...] = ()
     downtime_windows = tuple(downtime)
@@ -1001,7 +1068,17 @@ def simulate_ground_system(
         shift_windows = pattern.windows()
         breakdown_summary: dict[str, float | int] | None = None
         if breakdown_config is not None:
-            machine_ids = (feller_machine_id, *skidders, loader_machine_id, *processors)
+            machine_ids = tuple(
+                dict.fromkeys(
+                    (
+                        feller_machine_id,
+                        *skidders,
+                        loader_machine_id,
+                        *fleet_loaders,
+                        *all_processors,
+                    )
+                )
+            )
             generated, breakdown_summary = generate_breakdown_windows(
                 machine_ids,
                 shift_windows,
@@ -1161,19 +1238,26 @@ def simulate_ground_system(
         router=router,
         calendar=calendar,
     )
-    if processor_models:
-        try:
-            processor_total, loads = _simulate_processor(
-                events,
-                loads,
-                processor_models,
-                calendar=calendar,
-            )
-        except TerrainError as exc:
-            router.close()
-            raise GroundSystemError(str(exc)) from exc
-    else:
-        processor_total = 0.0
+    processor_total = 0.0
+    processed_loads: list[_Load] = []
+    for landing_id, (_loader_id, landing_processors) in fleet_by_landing.items():
+        landing_loads = [load for load in loads if load.landing_id == landing_id]
+        if landing_processors and landing_loads:
+            try:
+                landing_total, landing_result = _simulate_processor(
+                    events,
+                    landing_loads,
+                    {machine: processor_models[machine] for machine in landing_processors},
+                    calendar=calendar,
+                )
+            except TerrainError as exc:
+                router.close()
+                raise GroundSystemError(str(exc)) from exc
+            processor_total = max(processor_total, landing_total)
+            processed_loads.extend(landing_result)
+        else:
+            processed_loads.extend(landing_loads)
+    loads = sorted(processed_loads, key=lambda item: (item.ready_s, item.load_id))
     try:
         (
             loader_total,
@@ -1187,7 +1271,7 @@ def simulate_ground_system(
         ) = _simulate_loader(
             events,
             loads,
-            loader,
+            loader_specs_by_landing,
             landing_x,
             landing_y,
             rate_model=rate_model,
@@ -1204,8 +1288,17 @@ def simulate_ground_system(
     truck_total = max((event.end_s for event in truck_events), default=0.0)
     makespan = max(fb_total, skidder_total, processor_total, loader_total, truck_total)
     summaries: dict[str, dict[str, float | int]] = {}
-    machine_ids = (feller_machine_id, *skidders, loader_machine_id)
-    machine_ids = (*machine_ids, *processors)
+    machine_ids = tuple(
+        dict.fromkeys(
+            (
+                feller_machine_id,
+                *skidders,
+                loader_machine_id,
+                *fleet_loaders,
+                *all_processors,
+            )
+        )
+    )
     for machine in machine_ids:
         machine_events = [event for event in events if event.machine == machine]
         busy = sum(event.end_s - event.start_s for event in machine_events)
@@ -1700,7 +1793,7 @@ def _simulate_processor(
 def _simulate_loader(
     events: list[GroundSystemEvent],
     loads: list[_Load],
-    spec: MachineSpec,
+    loader_specs: Mapping[str, MachineSpec],
     landing_x: float,
     landing_y: float,
     *,
@@ -1719,7 +1812,7 @@ def _simulate_loader(
     dict[str, dict[str, float]],
     list[str],
 ]:
-    available = 0.0
+    available_by_loader: dict[str, float] = {}
     finishes: dict[str, float] = {}
     truck_events: list[GroundSystemEvent] = []
     truck_available = (
@@ -1797,7 +1890,10 @@ def _simulate_loader(
         return start, load_volume
 
     for load in sorted(loads, key=lambda item: (item.ready_s, item.load_id)):
-        start = max(available, load.ready_s)
+        spec = loader_specs.get(load.landing_id)
+        if spec is None:
+            raise GroundSystemError(f"No loader is assigned to landing {load.landing_id!r}.")
+        start = max(available_by_loader.get(spec.machine_id, 0.0), load.ready_s)
         if rate_model == "calibrated":
             if seconds_per_m3 is None:
                 raise GroundSystemError("Calibrated rate model requires loader seconds per m3.")
@@ -1836,29 +1932,30 @@ def _simulate_loader(
                 status="processing",
             )
         )
+        available_by_loader[spec.machine_id] = end
         inventories[landing_id] = inventories.get(landing_id, 0.0) + load.volume_m3
         max_inventories[landing_id] = max(
             max_inventories.get(landing_id, 0.0), inventories[landing_id]
         )
-        available = end
         finishes[load.load_id] = end
         if truck_spec is not None:
             while inventories[landing_id] >= truck_spec.capacity_m3 - 1e-9:
                 ready_truck = min(truck_available)
-                if ready_truck > available:
+                if ready_truck > end:
                     break
-                dispatch_truck(available, landing_id, load.landing_x_m, load.landing_y_m)
+                dispatch_truck(end, landing_id, load.landing_x_m, load.landing_y_m)
+    loader_finish = max(available_by_loader.values(), default=0.0)
     landing_positions = {load.landing_id: (load.landing_x_m, load.landing_y_m) for load in loads}
     if truck_spec is not None:
         for landing_id, position in landing_positions.items():
             while inventories.get(landing_id, 0.0) >= truck_spec.capacity_m3 - 1e-9:
                 ready_truck = min(truck_available)
                 if ready_truck > max(
-                    available, max((event.end_s for event in truck_events), default=0.0)
+                    loader_finish, max((event.end_s for event in truck_events), default=0.0)
                 ):
                     break
                 dispatch_truck(
-                    max(available, ready_truck),
+                    max(loader_finish, ready_truck),
                     landing_id,
                     position[0],
                     position[1],
@@ -1885,7 +1982,16 @@ def _simulate_loader(
                 f"at: {', '.join(sorted(over_capacity))}."
             )
     if truck_spec is None:
-        return available, finishes, [], None, final_total, max_total, landing_inventory, warnings
+        return (
+            loader_finish,
+            finishes,
+            [],
+            None,
+            final_total,
+            max_total,
+            landing_inventory,
+            warnings,
+        )
     truck_total = max((event.end_s for event in truck_events), default=0.0)
     summary: dict[str, float | int] = {
         "truck_count": truck_spec.count,
@@ -1904,7 +2010,7 @@ def _simulate_loader(
         "truck_total_s": round(truck_total, 3),
     }
     return (
-        available,
+        loader_finish,
         finishes,
         truck_events,
         summary,

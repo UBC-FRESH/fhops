@@ -1,3 +1,14 @@
+# 2026-11-02 — per-landing processor/loader fleets (#346)
+
+- Added public `LandingFleet` and per-landing loader/processor assignment.
+- CLI supports repeatable `--landing-loader` and `--landing-processor`.
+- Processor stages run per landing fleet; loader scheduling is per loader.
+- Studio machine rows assign loaders/processors to landings; fleet-clone
+  machines and derived machine/calendar rows are supported.
+- Run summaries/provenance include fleet machines.
+- Verified an end-to-end derived run with `H4`/`H4-B` loaders and `H5`/`H5-B`
+  processors.
+
 # 2026-11-02 — P28 closeout
 
 - PR #344 squash-merged to `main` as
