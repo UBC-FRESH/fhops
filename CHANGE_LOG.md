@@ -1,3 +1,11 @@
+# 2026-11-02 — P25 closeout
+
+- PR #335 squash-merged to `main` as
+  `c63b80cf92a24bbf03f50686d045298b3657d95c`; main CI `41368063201` passed.
+- Public demo deployment `de28b0d9`; live checks confirmed legacy stale banner,
+  fresh-run behavior, and run-history stale badges/rerun actions.
+- No tag, release, host-network, or settings change.
+
 # 2026-11-02 — Studio run freshness and stale-run UX (#334)
 
 - Added stable `project_edit_signature` and `terrain_signature` hashes for
