@@ -2,13 +2,60 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from fastapi.testclient import TestClient
 
 from sandbox.studio.app import StudioConfig, create_app
+from sandbox.studio.projects import (
+    create_project,
+    project_edit_signature,
+    save_project,
+    terrain_signature,
+)
+from sandbox.tree_lab.cases import load_case
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def test_run_history_marks_stale_after_project_edit(tmp_path: Path) -> None:
+    """Run API records expose freshness and stale reasons."""
+    projects_root = tmp_path / "projects"
+    project = create_project(load_case(ROOT / "sandbox" / "cases" / "afrf-gavin"))
+    saved = save_project(projects_root, project)
+    project_id = saved["project_id"]
+    run_id = "20261102T000000Z"
+    run_dir = projects_root / project_id / "runs" / run_id
+    run_dir.mkdir(parents=True)
+    record = {
+        "schema_version": "fhops.tree_lab.run.v1",
+        "run_id": run_id,
+        "status": "completed",
+        "studio": {
+            "edit_signature": project_edit_signature(saved),
+            "terrain_signature": terrain_signature(saved),
+            "project_revision": saved["revision"],
+        },
+    }
+    (run_dir / "run.json").write_text(json.dumps(record), encoding="utf-8")
+    app = create_app(
+        StudioConfig(cases_root=ROOT / "sandbox" / "cases", projects_root=projects_root)
+    )
+    client = TestClient(app)
+
+    payload = client.get(f"/api/projects/{project_id}/runs").json()
+    assert payload["runs"][0]["freshness"]["stale"] is False
+    metadata = client.get(f"/api/projects/{project_id}/runs/{run_id}").json()
+    assert metadata["freshness"]["stale"] is False
+    assert metadata["run"]["run_id"] == run_id
+
+    saved["retention"]["tree_ids"] = ["T00001"]
+    save_project(projects_root, saved)
+    payload = client.get(f"/api/projects/{project_id}/runs").json()
+    freshness = payload["runs"][0]["freshness"]
+    assert freshness["stale"] is True
+    assert any("Project edits" in reason for reason in freshness["reasons"])
 
 
 def test_stream_buffer_endpoint(tmp_path: Path) -> None:

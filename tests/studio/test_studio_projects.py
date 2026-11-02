@@ -14,8 +14,11 @@ from sandbox.studio.projects import (
     materialize_case,
     polygon_area_ha,
     project_dataset,
+    project_edit_signature,
+    run_freshness,
     save_project,
     stream_buffer_polygon,
+    terrain_signature,
 )
 from sandbox.tree_lab.cases import load_case
 
@@ -70,6 +73,50 @@ def test_materialized_tree_elevations_follow_terrain(tmp_path: Path) -> None:
     for tree in inventory.rows[:20]:
         expected = _terrain_elevation(project, 500.0, tree.x_m, tree.y_m)
         assert tree.elevation_m == pytest.approx(expected, abs=1e-6)
+
+
+def test_project_signatures_detect_run_affecting_changes(tmp_path: Path) -> None:
+    """Run freshness ignores labels but detects retention and terrain edits."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    edit_signature = project_edit_signature(project)
+    terrain_sig = terrain_signature(project)
+    record = {
+        "studio": {
+            "edit_signature": edit_signature,
+            "terrain_signature": terrain_sig,
+            "project_revision": project["revision"],
+        }
+    }
+    assert run_freshness(project, record)["stale"] is False
+
+    project["label"] = "Renamed only"
+    project["revision"] = 99
+    assert project_edit_signature(project) == edit_signature
+    assert run_freshness(project, record)["stale"] is False
+
+    project["retention"]["tree_ids"] = ["T00001"]
+    assert project_edit_signature(project) != edit_signature
+    freshness = run_freshness(project, record)
+    assert freshness["stale"] is True
+    assert any("Project edits" in reason for reason in freshness["reasons"])
+
+    project["terrain"] = {"resolution": 2, "heights": [0.0, 1.0, 2.0, 3.0]}
+    freshness = run_freshness(project, record)
+    assert freshness["stale"] is True
+    assert any("Terrain edits" in reason for reason in freshness["reasons"])
+
+    assert run_freshness(project, {})["stale"] is True
+
+
+def test_materialized_case_carries_project_signatures(tmp_path: Path) -> None:
+    """Derived cases carry the signatures copied into run metadata."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    derived = materialize_case(tmp_path, project, case)
+    assert derived.manifest["studio_edit_signature"] == project_edit_signature(project)
+    assert derived.manifest["studio_terrain_signature"] == terrain_signature(project)
+    assert derived.manifest["studio_project_revision"] == project["revision"]
 
 
 def test_retention_clump_filters_trees(tmp_path: Path) -> None:

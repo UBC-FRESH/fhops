@@ -32,6 +32,7 @@ from sandbox.studio.projects import (
     project_dataset,
     project_path,
     promote_run,
+    run_freshness,
     save_project,
     stream_buffer_polygon,
 )
@@ -222,6 +223,10 @@ def create_app(config: StudioConfig) -> FastAPI:
 
     @app.get("/api/projects/{project_id}/runs")
     def runs(project_id: str) -> dict[str, Any]:
+        try:
+            project = load_project(config.projects_root, project_id)
+        except StudioError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
         root = project_path(config.projects_root, project_id) / "runs"
         items = []
         if root.is_dir():
@@ -232,8 +237,21 @@ def create_app(config: StudioConfig) -> FastAPI:
                         payload = json.loads(record.read_text(encoding="utf-8"))
                     except (OSError, json.JSONDecodeError):
                         continue
+                    payload["freshness"] = run_freshness(project, payload)
                     items.append(payload)
         return {"runs": items}
+
+    @app.get("/api/projects/{project_id}/runs/{run_id}")
+    def run_metadata(project_id: str, run_id: str) -> dict[str, Any]:
+        try:
+            project = load_project(config.projects_root, project_id)
+        except StudioError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        path = _run_path(project_id, run_id) / "run.json"
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="Run metadata not found.")
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return {"run": payload, "freshness": run_freshness(project, payload)}
 
     @app.get("/api/projects/{project_id}/runs/{run_id}/events")
     def run_events(project_id: str, run_id: str) -> FileResponse:
