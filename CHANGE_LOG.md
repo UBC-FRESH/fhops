@@ -1,3 +1,11 @@
+# 2026-11-02 — include landing truck counts in freshness (#352)
+
+- `project_edit_signature` now covers `landing_trucks`, so changing truck
+  allocation marks prior runs stale.
+- Projects without truck counts retain the legacy signature shape, preserving
+  freshness for existing demo runs.
+- Added regression coverage.
+
 # 2026-11-02 — P30 closeout
 
 - PR #349 squash-merged to `main` as
