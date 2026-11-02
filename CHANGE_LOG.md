@@ -1,3 +1,12 @@
+# 2026-11-02 — P29 closeout
+
+- PR #346 squash-merged to `main` as
+  `d1093882b42613a3498008262bfc6a004134b463`; main CI `41416780986` passed.
+- Public demo deployment `b3a2efd9`.
+- Studio showed two landing fleet selectors and clone catalog entries; no page
+  errors.
+- No tag, release, host-network, or settings change.
+
 # 2026-11-02 — per-landing processor/loader fleets (#346)
 
 - Added public `LandingFleet` and per-landing loader/processor assignment.
