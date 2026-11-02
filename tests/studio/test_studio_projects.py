@@ -128,6 +128,20 @@ def test_project_signatures_detect_run_affecting_changes(tmp_path: Path) -> None
 
     assert run_freshness(project, {})["stale"] is True
 
+    truck_project = create_project(case)
+    truck_signature = project_edit_signature(truck_project)
+    truck_record = {
+        "studio": {
+            "edit_signature": truck_signature,
+            "terrain_signature": terrain_signature(truck_project),
+            "project_revision": truck_project["revision"],
+        }
+    }
+    assert run_freshness(truck_project, truck_record)["stale"] is False
+    truck_project["landing_trucks"] = {"landing-main": 2}
+    assert project_edit_signature(truck_project) != truck_signature
+    assert run_freshness(truck_project, truck_record)["stale"] is True
+
 
 def test_materialized_case_carries_multiple_landings(tmp_path: Path) -> None:
     """Multiple project landings flow into the derived case manifest."""
