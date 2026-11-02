@@ -110,6 +110,7 @@ _EDIT_SIGNATURE_FIELDS = (
     "landing",
     "landings",
     "landing_trucks",
+    "landing_truck_specs",
     "road",
     "retention",
     "machines",
@@ -143,10 +144,10 @@ def project_edit_signature(project: dict[str, Any]) -> str:
     Notes
     -----
     The signature covers boundary, landing, road, retention, machines,
-    operator policies, terrain, and per-landing truck counts. Derived system
-    arguments are excluded because they are regenerated from those inputs.
-    Projects without ``landings`` or ``landing_trucks`` keep the older signature
-    shape for backward freshness compatibility. The digest is stored on derived cases and copied
+    operator policies, terrain, per-landing truck counts, and truck specs.
+    Derived system arguments are excluded because they are regenerated from
+    those inputs. Projects without the newer landing/truck fields keep the older
+    signature shape for backward freshness compatibility. The digest is stored on derived cases and copied
     into run records so the Studio can flag stale runs.
     """
     payload = {field: project.get(field) for field in _EDIT_SIGNATURE_FIELDS}
@@ -157,6 +158,8 @@ def project_edit_signature(project: dict[str, Any]) -> str:
     if not project.get("landing_trucks"):
         # Preserve freshness for runs created before per-landing truck counts.
         payload.pop("landing_trucks", None)
+    if not project.get("landing_truck_specs"):
+        payload.pop("landing_truck_specs", None)
     return _stable_signature(payload)
 
 
@@ -821,6 +824,28 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
         }
     else:
         args.pop("landing_truck_counts", None)
+    truck_specs = project.get("landing_truck_specs")
+    if isinstance(truck_specs, dict) and truck_specs:
+        args["landing_truck_specs"] = {
+            landing_id: {
+                key: value
+                for key, value in (truck_specs.get(landing_id) or {}).items()
+                if key
+                in {
+                    "capacity_m3",
+                    "cycle_time_s",
+                    "count",
+                    "load_time_s",
+                    "arrival_interval_s",
+                    "one_way_distance_m",
+                    "speed_mps",
+                }
+            }
+            for landing_id in landing_ids
+            if truck_specs.get(landing_id)
+        }
+    else:
+        args.pop("landing_truck_specs", None)
     policy = project.get("operator_policies", {}).get(feller, "steady")
     preset = POLICY_PRESETS.get(policy, POLICY_PRESETS["steady"])
     args["feller_productivity_multiplier"] = 1.0 / max(0.5, float(preset["cycle_multiplier"]))
@@ -1197,6 +1222,7 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     manifest["system_args"] = project["system_args"]
     manifest["landing_fleets"] = project["system_args"].get("landing_fleets") or {}
     manifest["landing_truck_counts"] = project["system_args"].get("landing_truck_counts") or {}
+    manifest["landing_truck_specs"] = project["system_args"].get("landing_truck_specs") or {}
     manifest["loader_specs"] = project["system_args"].get("loader_specs") or {}
     manifest["skidder_specs"] = project["system_args"].get("skidder_specs") or {}
     manifest["processor_specs"] = project["system_args"].get("processor_specs") or {}

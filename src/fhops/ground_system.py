@@ -669,6 +669,7 @@ def simulate_ground_system(
     truck_cycle_time_s: float = 3600.0,
     truck_count: int = 1,
     landing_truck_counts: Mapping[str, int] | None = None,
+    landing_truck_specs: Mapping[str, TruckSpec] | None = None,
     truck_load_time_s: float = 300.0,
     truck_arrival_interval_s: float = 0.0,
     truck_route_distance_m: float | None = None,
@@ -777,6 +778,11 @@ def simulate_ground_system(
         own truck availability list and truck IDs; landings without an entry
         have no trucks. Capacity, cycle, loading time, mill service, and speed
         remain shared global settings.
+    landing_truck_specs:
+        Optional per-landing ``TruckSpec`` overrides for capacity, cycle,
+        loading time, route distance, and speed. Mill service and bay count
+        remain shared from the primary/global truck spec. Counts come from
+        ``landing_truck_counts`` when provided, otherwise the per-landing spec.
     truck_load_time_s:
         Fixed truck loading time, seconds.
     truck_arrival_interval_s:
@@ -1121,6 +1127,14 @@ def simulate_ground_system(
         )
         if landing_capacity_m3 is None:
             landing_capacity_m3 = truck_spec.capacity_m3 * max(1, truck_spec.count) * 2.0
+    landing_truck_specs_map = dict(landing_truck_specs or {})
+    for landing_id in landing_truck_specs_map:
+        if landing_id not in {landing.landing_id for landing in landing_choices}:
+            raise GroundSystemError(f"Unknown landing in truck specs: {landing_id!r}.")
+    if landing_truck_specs_map and truck_spec is None:
+        truck_spec = next(iter(landing_truck_specs_map.values()))
+        if landing_capacity_m3 is None:
+            landing_capacity_m3 = truck_spec.capacity_m3 * max(1, truck_spec.count) * 2.0
     truck_counts_by_landing: dict[str, int] | None = None
     if landing_truck_counts is not None:
         if truck_spec is None:
@@ -1132,6 +1146,10 @@ def simulate_ground_system(
             if not isinstance(count, int) or count < 0:
                 raise GroundSystemError("Landing truck counts must be non-negative integers.")
             truck_counts_by_landing[landing_id] = count
+    elif landing_truck_specs_map:
+        truck_counts_by_landing = {
+            landing_id: spec.count for landing_id, spec in landing_truck_specs_map.items()
+        }
     if landing_capacity_m3 is not None and (
         not math.isfinite(landing_capacity_m3) or landing_capacity_m3 <= 0
     ):
@@ -1165,6 +1183,17 @@ def simulate_ground_system(
             "mill_bays": truck_spec.mill_bays,
             "landing_capacity_m3": landing_capacity_m3,
             "landing_truck_counts": truck_counts_by_landing,
+            "landing_truck_specs": {
+                landing_id: {
+                    "capacity_m3": spec.capacity_m3,
+                    "cycle_time_s": spec.cycle_time_s,
+                    "count": spec.count,
+                    "load_time_s": spec.load_time_s,
+                    "one_way_distance_m": spec.one_way_distance_m or 0.0,
+                    "speed_mps": spec.speed_mps,
+                }
+                for landing_id, spec in landing_truck_specs_map.items()
+            },
         }
     if processor_models:
         rate_provenance["processor"] = {
@@ -1309,6 +1338,7 @@ def simulate_ground_system(
             calendar=calendar,
             truck_spec=truck_spec,
             landing_truck_counts=truck_counts_by_landing,
+            landing_truck_specs=landing_truck_specs_map,
             landing_capacity_m3=landing_capacity_m3,
         )
     except TerrainError as exc:
@@ -1833,6 +1863,7 @@ def _simulate_loader(
     calendar: _ShiftCalendar | None,
     truck_spec: TruckSpec | None,
     landing_truck_counts: Mapping[str, int] | None,
+    landing_truck_specs: Mapping[str, TruckSpec] | None,
     landing_capacity_m3: float | None,
 ) -> tuple[
     float,
@@ -1855,11 +1886,14 @@ def _simulate_loader(
                 index * truck_spec.arrival_interval_s for index in range(truck_spec.count)
             ]
         else:
-            truck_available_by_landing = {
-                landing_id: [index * truck_spec.arrival_interval_s for index in range(count)]
-                for landing_id, count in landing_truck_counts.items()
-                if count > 0
-            }
+            truck_available_by_landing = {}
+            for landing_id, count in landing_truck_counts.items():
+                if count <= 0:
+                    continue
+                truck_spec_choice = (landing_truck_specs or {}).get(landing_id, truck_spec)
+                truck_available_by_landing[landing_id] = [
+                    index * truck_spec_choice.arrival_interval_s for index in range(count)
+                ]
     mill_available = [0.0] * (truck_spec.mill_bays if truck_spec else 0)
     mill_wait_s = 0.0
     inventories: dict[str, float] = {}
@@ -1876,7 +1910,8 @@ def _simulate_loader(
     ) -> tuple[float, float]:
         nonlocal dispatched, dispatched_volume
         available_volume = inventories.get(truck_landing_id, 0.0)
-        if truck_spec is None or available_volume <= 1e-9:
+        truck_choice = (landing_truck_specs or {}).get(truck_landing_id, truck_spec)
+        if truck_choice is None or available_volume <= 1e-9:
             return start_s, 0.0
         if landing_truck_counts is None:
             availability = truck_available
@@ -1888,21 +1923,22 @@ def _simulate_loader(
             raise GroundSystemError(f"No trucks are assigned to landing {truck_landing_id!r}.")
         truck_index = min(range(len(availability)), key=lambda index: availability[index])
         start = max(start_s, availability[truck_index])
-        load_volume = min(truck_spec.capacity_m3, available_volume)
+        load_volume = min(truck_choice.capacity_m3, available_volume)
         truck_id = f"{truck_prefix}-{truck_index + 1:02d}"
-        start, load_end = _schedule_task(calendar, start, truck_spec.load_time_s, truck_id)
-        if truck_spec.one_way_distance_m is not None:
+        start, load_end = _schedule_task(calendar, start, truck_choice.load_time_s, truck_id)
+        if truck_choice.one_way_distance_m is not None:
             nonlocal mill_wait_s
-            travel_s = truck_spec.one_way_distance_m / truck_spec.speed_mps
+            travel_s = truck_choice.one_way_distance_m / truck_choice.speed_mps
             arrival = load_end + travel_s
-            bay = min(range(truck_spec.mill_bays), key=lambda index: mill_available[index])
+            mill_spec = truck_spec or truck_choice
+            bay = min(range(mill_spec.mill_bays), key=lambda index: mill_available[index])
             service_start = max(arrival, mill_available[bay])
             mill_wait_s += service_start - arrival
-            service_end = service_start + truck_spec.mill_service_s
+            service_end = service_start + mill_spec.mill_service_s
             mill_available[bay] = service_end
             return_end = service_end + travel_s
         else:
-            return_end = load_end + truck_spec.cycle_time_s
+            return_end = load_end + truck_choice.cycle_time_s
         truck_events.append(
             GroundSystemEvent(
                 machine=truck_id,

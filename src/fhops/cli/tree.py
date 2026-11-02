@@ -20,6 +20,7 @@ from fhops.ground_system import (
     LandingFleet,
     MachineSpec,
     ProcessorSpec,
+    TruckSpec,
     simulate_ground_system,
     write_ground_system,
 )
@@ -399,6 +400,32 @@ def _parse_landing_truck_counts(values: list[str] | None) -> dict[str, int] | No
     return counts
 
 
+def _load_landing_truck_specs(path: Path) -> dict[str, TruckSpec]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Landing truck specs JSON must be an object mapping landing ids.")
+    specs: dict[str, TruckSpec] = {}
+    for landing_id, values in payload.items():
+        if not isinstance(values, dict):
+            raise ValueError(f"Truck spec for {landing_id!r} must be an object.")
+        specs[str(landing_id)] = TruckSpec(
+            capacity_m3=float(values.get("capacity_m3", 30.0)),
+            cycle_time_s=float(values.get("cycle_time_s", 3600.0)),
+            count=int(values.get("count", 1)),
+            load_time_s=float(values.get("load_time_s", 300.0)),
+            arrival_interval_s=float(values.get("arrival_interval_s", 0.0)),
+            one_way_distance_m=(
+                float(values["one_way_distance_m"])
+                if values.get("one_way_distance_m") is not None
+                else None
+            ),
+            speed_mps=float(values.get("speed_mps", 12.0)),
+            mill_service_s=float(values.get("mill_service_s", 600.0)),
+            mill_bays=int(values.get("mill_bays", 1)),
+        )
+    return specs
+
+
 def _parse_landing_fleets(
     loaders: list[str] | None, processors: list[str] | None
 ) -> tuple[LandingFleet, ...]:
@@ -648,6 +675,11 @@ def tree_system(
         "--landing-truck",
         help="Per-landing truck count as landing_id:count. Repeat.",
     ),
+    landing_truck_specs_path: Path | None = typer.Option(
+        None,
+        "--landing-truck-specs",
+        help="JSON mapping landing id to truck equipment specs.",
+    ),
     truck_load_time: float = typer.Option(
         300.0, "--truck-load-time", help="Truck loading time (s)."
     ),
@@ -787,6 +819,11 @@ def tree_system(
         )
         landing_fleets = _parse_landing_fleets(landing_loader, landing_processor)
         landing_truck_counts = _parse_landing_truck_counts(landing_truck)
+        landing_truck_specs = (
+            _load_landing_truck_specs(landing_truck_specs_path)
+            if landing_truck_specs_path is not None
+            else None
+        )
         result = simulate_ground_system(
             scenario,
             block_id=block,
@@ -829,6 +866,7 @@ def tree_system(
             truck_cycle_time_s=truck_cycle,
             truck_count=truck_count,
             landing_truck_counts=landing_truck_counts,
+            landing_truck_specs=landing_truck_specs,
             truck_load_time_s=truck_load_time,
             truck_arrival_interval_s=truck_arrival_interval,
             truck_route_distance_m=truck_route_distance,
