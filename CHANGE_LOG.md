@@ -1,3 +1,10 @@
+# 2026-11-02 — deploy Studio run freshness
+
+- Synced Studio freshness/signature and run-history/replay UI from merged `main` (`c63b80cf`).
+- Stale runs now show a badge and rerun action in Studio, plus a replay banner.
+- Legacy runs without signatures are marked stale.
+- No host networking or routing changes.
+
 # 2026-11-01 — deploy Studio terrain elevation fix
 
 - Synced `sandbox/studio/projects.py` and replay terrain resampling from merged `main` (`70da4cb2`).

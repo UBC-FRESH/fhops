@@ -15,6 +15,9 @@ const timelinePanel = document.getElementById("timeline-panel");
 const timelineCanvas = document.getElementById("timeline-canvas");
 const timelineToggle = document.getElementById("timeline-toggle");
 const timelineCursor = document.getElementById("timeline-cursor");
+const staleBanner = document.getElementById("stale-banner");
+const staleText = document.getElementById("stale-text");
+const rerunButton = document.getElementById("rerun");
 let events = null;
 let duration = 1;
 let currentTime = 0;
@@ -240,16 +243,24 @@ async function load() {
   download.href = `${API}projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}/events`;
   download.hidden = false;
   document.getElementById("run-label").textContent = `${projectId} · ${runId}`;
-  const [loadedEvents, project, dataset] = await Promise.all([
+  const [loadedEvents, project, dataset, runMetadata] = await Promise.all([
     fetch(`${API}projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}/events`).then((response) => {
       if (!response.ok) throw new Error(`events ${response.status}`);
       return response.json();
     }),
     fetch(`${API}projects/${encodeURIComponent(projectId)}`).then((response) => response.json()),
     fetch(`${API}projects/${encodeURIComponent(projectId)}/dataset`).then((response) => response.json()),
+    fetch(`${API}projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}`).then((response) => (
+      response.ok ? response.json() : null
+    )),
   ]);
   events = loadedEvents;
   events.terrain = replayTerrain(project);
+  const freshness = runMetadata?.freshness;
+  if (freshness?.stale) {
+    staleText.textContent = ` ${freshness.reasons?.join(" ") || "Project edits changed after this run."}`;
+    staleBanner.hidden = false;
+  }
   const retainedTrees = (dataset.trees || []).filter((tree) => tree.retained);
   document.getElementById("run-label").textContent += ` · ${retainedTrees.length} retained`;
   if (events.terrain) document.getElementById("run-label").textContent += " · terrain";
@@ -311,5 +322,24 @@ window.addEventListener("mouseup", () => { seekingTimeline = false; });
 window.addEventListener("resize", () => {
   viewer.resize();
   if (!timelinePanel.hidden) drawTimeline();
+});
+rerunButton.addEventListener("click", async () => {
+  rerunButton.disabled = true;
+  rerunButton.textContent = "Running…";
+  try {
+    const response = await fetch(`${API}projects/${encodeURIComponent(projectId)}/run`, { method: "POST" });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(payload.detail || response.statusText);
+    }
+    const record = await response.json();
+    const next = new URL(location.href);
+    next.searchParams.set("run", record.run_id);
+    location.href = next.toString();
+  } catch (error) {
+    staleText.textContent = ` Rerun failed: ${error.message}`;
+    rerunButton.disabled = false;
+    rerunButton.textContent = "Rerun project";
+  }
 });
 load().catch((error) => { status.textContent = `failed: ${error.message}`; });
