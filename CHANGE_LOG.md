@@ -1,3 +1,11 @@
+# 2026-11-02 — P32 closeout
+
+- PR #355 squash-merged to `main` as
+  `9bf15c08176b4771d4be038763628070e65ce628`; main CI `41487343948` passed.
+- Public demo deployment `032315cf`.
+- Live Studio spec panel rendered 4 groups / 19 fields with no page errors.
+- No tag, release, host-network, or settings change.
+
 # 2026-11-02 — per-machine fleet spec editing (#354)
 
 - Added core `loader_specs` mapping and CLI `--loader-specs`/`--skidder-specs`
