@@ -156,6 +156,7 @@ def test_ground_system_accepts_forwarder_roles(tmp_path: Path) -> None:
         bunch_volume_m3=1.0,
     )
     assert result.tree_count > 0
+    assert result.to_dict()["machines"]["H2"]["type"] == "forwarder"
 
 
 def test_ground_system_assigns_loader_fleets_per_landing(tmp_path: Path) -> None:
