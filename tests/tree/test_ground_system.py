@@ -16,6 +16,7 @@ from fhops.ground_system import (
     DowntimeWindow,
     GroundSystemError,
     Landing,
+    LandingFleet,
     landing_route_cost,
     simulate_ground_system,
     write_ground_system,
@@ -135,6 +136,53 @@ def test_ground_system_processor_stage(tmp_path: Path) -> None:
         event.end_s for event in processor_events
     )
     assert result.rate_provenance["processor"]["model"] == "tn103_area_a"
+
+
+def test_ground_system_assigns_loader_fleets_per_landing(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    root = scenario.parent.parent
+    machines = root / "scenario" / "data" / "machines.csv"
+    with machines.open("a", encoding="utf-8") as handle:
+        handle.write("H7,CH7,24.0,950.0,loader\n")
+    calendar = root / "scenario" / "data" / "calendar.csv"
+    with calendar.open("a", encoding="utf-8") as handle:
+        for day in range(1, 8):
+            handle.write(f"H7,{day},1\n")
+    base = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+    )
+    xs = [tree.x_m for tree in base.trees]
+    ys = [tree.y_m for tree in base.trees]
+    landings = (
+        Landing("west", min(xs) - 20.0, min(ys) - 20.0),
+        Landing("east", max(xs) + 20.0, max(ys) + 20.0),
+    )
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        landings=landings,
+        landing_fleets=(
+            LandingFleet("west", "H4", ("H5",)),
+            LandingFleet("east", "H7", ("H6",)),
+        ),
+    )
+    assert "H4" in result.machine_summaries
+    assert "H7" in result.machine_summaries
+    process_machines = {
+        event.machine
+        for event in result.events
+        if event.type == "process" and event.machine in {"H4", "H5", "H6", "H7"}
+    }
+    assert {"H4", "H5", "H6", "H7"} <= process_machines
 
 
 def test_landing_route_cost_prefers_faster_route() -> None:

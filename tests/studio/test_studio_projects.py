@@ -147,6 +147,45 @@ def test_materialized_case_carries_multiple_landings(tmp_path: Path) -> None:
     assert derived.manifest["landing"]["x"] == project["landing"]["x"]
 
 
+def test_materialized_case_carries_landing_fleets(tmp_path: Path) -> None:
+    """Fleet machine assignments and clone machine rows reach the derived case."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    project["landings"].append(
+        {
+            "id": "north",
+            "label": "North",
+            "x": project["landing"]["x"] + 40,
+            "y": project["landing"]["y"] + 40,
+        }
+    )
+    project["machines"].extend(
+        [
+            {
+                "id": "H4-B",
+                "role": "loader",
+                "type": "loader",
+                "policy": "steady",
+                "landing_id": "north",
+            },
+            {
+                "id": "H5-B",
+                "role": "roadside_processor",
+                "type": "roadside_processor",
+                "policy": "steady",
+                "landing_id": "north",
+            },
+        ]
+    )
+    derived = materialize_case(tmp_path, project, case)
+    fleet = derived.manifest["landing_fleets"]["north"]
+    assert fleet["loader"] == "H4-B"
+    assert fleet["processors"] == ["H5-B"]
+    machine_rows = (derived.root / "scenario" / "data" / "machines.csv").read_text(encoding="utf-8")
+    assert "H4-B" in machine_rows
+    assert "H5-B" in machine_rows
+
+
 def test_materialized_case_carries_project_signatures(tmp_path: Path) -> None:
     """Derived cases carry the signatures copied into run metadata."""
     case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")

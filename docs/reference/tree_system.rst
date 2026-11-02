@@ -100,9 +100,16 @@ For multiple landing choices, repeat ``--landing`` with ``id,x,y`` (or just
 ``x,y``). Each bunch is routed to the landing with the lowest travel-time proxy
 (``distance / speed_factor``), so terrain grade and speed can make a slightly
 longer route preferable. The first landing is the primary landing in result
-metadata. Inventory and capacity are tracked per landing; the processor and
-loader remain one shared crew servicing the chosen landings. Per-landing fleets
-are not yet simulated.
+metadata. Inventory and capacity are tracked per landing. By default the
+processor and loader are one shared crew; assign dedicated fleets with:
+
+.. code-block:: bash
+
+   --landing-loader main:H4 --landing-processor main:H5 \
+   --landing-loader north:H4-B --landing-processor north:H5-B
+
+Each landing receiving loads needs one loader. Machines must exist in the
+scenario and may not be assigned to more than one landing.
 
 Optional terrain routing:
 

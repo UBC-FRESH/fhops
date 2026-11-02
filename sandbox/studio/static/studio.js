@@ -539,13 +539,27 @@ function renderMachines() {
   const active = new Set(state.project.machines.map((machine) => machine.id));
   const list = $("#machine-list");
   list.innerHTML = "";
+  const landings = projectLandings();
   for (const machine of state.project.machines) {
     const row = document.createElement("div");
     row.className = "machine";
+    const fleetRole = ["loader", "roadside_processor", "processor"].includes(machine.role);
+    const landingSelect = fleetRole
+      ? `<select data-landing="${escapeHtml(machine.id)}">${landings.map((landing) => `<option value="${escapeHtml(landing.id)}" ${landing.id === (machine.landing_id || landings[0]?.id) ? "selected" : ""}>${escapeHtml(landing.label || landing.id)}</option>`).join("")}</select>`
+      : "";
     row.innerHTML = `<div><div class="id">${escapeHtml(machine.id)}</div><div class="role">${escapeHtml(machine.role)}</div></div>
+      ${landingSelect}
       <select data-machine="${escapeHtml(machine.id)}">${policyOptions(machine.policy || "steady")}</select>
       <button title="Remove machine" data-remove="${escapeHtml(machine.id)}">×</button>`;
     list.append(row);
+  }
+  for (const select of list.querySelectorAll("select[data-landing]")) {
+    select.addEventListener("change", () => {
+      pushHistory();
+      const machine = state.project.machines.find((item) => item.id === select.dataset.landing);
+      machine.landing_id = select.value;
+      markDirty();
+    });
   }
   for (const select of list.querySelectorAll("select[data-machine]")) {
     select.addEventListener("change", () => {
@@ -574,7 +588,16 @@ function addMachine() {
   const source = catalog.find((machine) => machine.id === id);
   if (!source) return;
   pushHistory();
-  state.project.machines.push({ id: source.id, role: source.role, type: source.role, policy: "steady", source: "added" });
+  state.project.machines.push({
+    id: source.id,
+    role: source.role,
+    type: source.role,
+    policy: "steady",
+    source: "added",
+    landing_id: ["loader", "roadside_processor", "processor"].includes(source.role)
+      ? projectLandings()[0]?.id || "landing-main"
+      : null,
+  });
   state.project.operator_policies[source.id] = "steady";
   markDirty();
   render();

@@ -264,6 +264,9 @@ def _active_machines(case: Case, catalog: list[dict[str, str]]) -> list[dict[str
                 "type": role,
                 "policy": "steady",
                 "source": "base",
+                "landing_id": "landing-main"
+                if role in {"loader", "roadside_processor", "processor"}
+                else None,
             }
         )
     return result
@@ -427,6 +430,9 @@ def create_project(case: Case) -> dict[str, Any]:
     inventory = load_tree_inventory(case.path("inventory"), metadata_path=case.path("metadata"))
     polygon = _block_polygon(case, inventory)
     catalog = _machine_catalog(case)
+    for source in list(catalog):
+        if source["role"] in {"loader", "roadside_processor", "processor"}:
+            catalog.append({"id": f"{source['id']}-B", "role": source["role"]})
     landing = _edge_landing(case, inventory)
     road = _road_for_landing(polygon, landing)
     return {
@@ -735,6 +741,29 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
     args["processors"] = [
         machine for machine, role in roles if role in {"roadside_processor", "processor"}
     ]
+    landing_ids = [landing["id"] for landing in project_landings(project)]
+    default_landing = landing_ids[0] if landing_ids else "landing-main"
+    fleets: dict[str, dict[str, Any]] = {}
+    for machine in machines:
+        role = str(machine.get("role", ""))
+        if role not in {"loader", "roadside_processor", "processor"}:
+            continue
+        landing_id = str(machine.get("landing_id") or default_landing)
+        if landing_id not in landing_ids:
+            raise StudioError(f"Machine {machine.get('id')!r} references unknown landing.")
+        fleet = fleets.setdefault(landing_id, {"loader": None, "processors": []})
+        if role == "loader":
+            if fleet["loader"] is not None:
+                raise StudioError(f"Landing {landing_id!r} has more than one loader.")
+            fleet["loader"] = str(machine.get("id"))
+        else:
+            fleet["processors"].append(str(machine.get("id")))
+    primary_fleet = fleets.get(default_landing)
+    if not primary_fleet or not primary_fleet.get("loader"):
+        raise StudioError("The primary landing needs one loader.")
+    args["loader"] = primary_fleet["loader"]
+    args["processors"] = primary_fleet["processors"]
+    args["landing_fleets"] = fleets
     policy = project.get("operator_policies", {}).get(feller, "steady")
     preset = POLICY_PRESETS.get(policy, POLICY_PRESETS["steady"])
     args["feller_productivity_multiplier"] = 1.0 / max(0.5, float(preset["cycle_multiplier"]))
@@ -868,6 +897,63 @@ def apply_operator_policies(project: dict[str, Any]) -> dict[str, Any]:
     return args
 
 
+def _ensure_derived_machines(root: Path, project: dict[str, Any]) -> None:
+    """Append Studio fleet-clone machines to a derived scenario dataset."""
+    machine_path = root / "scenario" / "data" / "machines.csv"
+    calendar_path = root / "scenario" / "data" / "calendar.csv"
+    if not machine_path.is_file():
+        return
+    with machine_path.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        fieldnames = reader.fieldnames or []
+        rows = list(reader)
+    existing = {row.get("id") for row in rows}
+    added: list[str] = []
+    for machine in project.get("machines") or []:
+        machine_id = str(machine.get("id") or "")
+        role = str(machine.get("role") or "")
+        if (
+            not machine_id
+            or machine_id in existing
+            or role not in {"loader", "roadside_processor", "processor"}
+        ):
+            continue
+        row = {name: "" for name in fieldnames}
+        row.update(
+            {
+                "id": machine_id,
+                "crew": machine_id,
+                "daily_hours": "24.0",
+                "operating_cost": "950.0",
+                "role": role,
+            }
+        )
+        rows.append(row)
+        existing.add(machine_id)
+        added.append(machine_id)
+    if not added:
+        return
+    with machine_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    if not calendar_path.is_file():
+        return
+    with calendar_path.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        calendar_fields = reader.fieldnames or []
+        calendar_rows = list(reader)
+    days = [int(row["day"]) for row in calendar_rows if str(row.get("day", "")).isdigit()]
+    last_day = max(days, default=1)
+    for machine_id in added:
+        for day in range(1, last_day + 1):
+            calendar_rows.append({"machine_id": machine_id, "day": str(day), "available": "1"})
+    with calendar_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=calendar_fields, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(calendar_rows)
+
+
 def materialize_case(project_root: Path, project: dict[str, Any], base_case: Case) -> Case:
     """Create a disposable case directory for running an edited project."""
     project_id = str(project["project_id"])
@@ -875,6 +961,7 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     if root.exists():
         shutil.rmtree(root)
     shutil.copytree(base_case.root, root)
+    _ensure_derived_machines(root, project)
     inventory = load_tree_inventory(
         base_case.path("inventory"), metadata_path=base_case.path("metadata")
     )
@@ -1051,6 +1138,7 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     ]
     apply_operator_policies(project)
     manifest["system_args"] = project["system_args"]
+    manifest["landing_fleets"] = project["system_args"].get("landing_fleets") or {}
     manifest["operator_policies"] = project.get("operator_policies", {})
     manifest["studio_edit_signature"] = project_edit_signature(project)
     manifest["studio_terrain_signature"] = terrain_signature(project)
@@ -1068,6 +1156,19 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
 
 def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
     """Build the editor dataset for a project against its immutable base case."""
+    catalog = project.setdefault("catalog", [])
+    existing = {str(item.get("id")) for item in catalog if isinstance(item, dict)}
+    for source in list(catalog):
+        if not isinstance(source, dict):
+            continue
+        if source.get("role") not in {"loader", "roadside_processor", "processor"}:
+            continue
+        if str(source.get("id") or "").endswith("-B"):
+            continue
+        clone_id = f"{source.get('id')}-B"
+        if clone_id not in existing:
+            catalog.append({"id": clone_id, "role": source["role"]})
+            existing.add(clone_id)
     inventory = load_tree_inventory(case.path("inventory"), metadata_path=case.path("metadata"))
     polygon = project.get("block", {}).get("polygon") or []
     retained = set(project.get("retention", {}).get("tree_ids") or [])
