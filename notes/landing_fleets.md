@@ -35,3 +35,11 @@ Issue: #346. Branch: `issue-346-landing-fleets`.
 - Clone machines use the base machine templates and default rates.
 - Truck fleet remains shared; per-landing truck fleets are a future extension.
 - If a landing has processors but no loader, configuration validation rejects it.
+
+## Closeout
+
+- PR #346 merged to `main` as `d1093882b42613a3498008262bfc6a004134b463`.
+- Main CI `41416780986` passed.
+- Public demo deployment: `b3a2efd9`.
+- End-to-end run completed with `H4`/`H4-B` loaders and `H5`/`H5-B`
+  processors; Studio showed two landing selectors and clone catalog entries.
