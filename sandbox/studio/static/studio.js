@@ -365,6 +365,7 @@ function render() {
   draw();
   renderStats();
   renderMachines();
+  renderMachineSpecs();
   renderProjectMeta();
   $("#notes").value = state.project?.notes || "";
   $("#retention-target").value = Math.round((Number(state.project?.retention?.target_fraction_basal_area) || 0) * 100);
@@ -595,6 +596,79 @@ function renderMachines() {
     ? available.map((machine) => `<option value="${escapeHtml(machine.id)}">${escapeHtml(machine.id)} · ${escapeHtml(machine.role)}</option>`).join("")
     : '<option value="">No machines left in catalog</option>';
   $("#add-machine").disabled = !available.length;
+}
+
+const SPEC_FIELDS = {
+  loader: [
+    ["process_fixed_s", "fixed process time (s)"],
+    ["process_per_log_s", "process time per log (s)"],
+  ],
+  roadside_processor: [
+    ["seconds_per_m3", "seconds per m³"],
+    ["fixed_s", "fixed setup (s)"],
+    ["per_log_s", "per log (s)"],
+  ],
+  processor: [
+    ["seconds_per_m3", "seconds per m³"],
+    ["fixed_s", "fixed setup (s)"],
+    ["per_log_s", "per log (s)"],
+  ],
+  grapple_skidder: [
+    ["capacity_m3", "payload (m³)"],
+    ["empty_speed_mps", "empty speed (m/s)"],
+    ["loaded_speed_mps", "loaded speed (m/s)"],
+    ["load_fixed_s", "load fixed (s)"],
+    ["load_per_log_s", "load per log (s)"],
+    ["unload_fixed_s", "unload fixed (s)"],
+    ["unload_per_log_s", "unload per log (s)"],
+  ],
+  skidder: [
+    ["capacity_m3", "payload (m³)"],
+    ["empty_speed_mps", "empty speed (m/s)"],
+    ["loaded_speed_mps", "loaded speed (m/s)"],
+    ["load_fixed_s", "load fixed (s)"],
+    ["load_per_log_s", "load per log (s)"],
+    ["unload_fixed_s", "unload fixed (s)"],
+    ["unload_per_log_s", "unload per log (s)"],
+  ],
+};
+
+function renderMachineSpecs() {
+  const node = $("#spec-list");
+  if (!node || !state.project) return;
+  node.innerHTML = "";
+  for (const machine of state.project.machines) {
+    const fields = SPEC_FIELDS[machine.role];
+    if (!fields) continue;
+    const group = document.createElement("div");
+    group.className = "spec-group";
+    group.innerHTML = `<div class="spec-title">${escapeHtml(machine.id)} · ${escapeHtml(machine.role)}</div>`;
+    const spec = machine.spec || {};
+    for (const [key, label] of fields) {
+      const row = document.createElement("div");
+      row.className = "spec-field";
+      const text = document.createElement("label");
+      text.textContent = label;
+      const input = document.createElement("input");
+      input.type = "number";
+      input.step = "any";
+      input.placeholder = "default";
+      input.value = spec[key] ?? "";
+      input.addEventListener("change", () => {
+        pushHistory();
+        const next = machine.spec || {};
+        if (input.value === "") delete next[key];
+        else next[key] = Number(input.value);
+        if (Object.keys(next).length) machine.spec = next;
+        else delete machine.spec;
+        markDirty();
+      });
+      row.append(text, input);
+      group.append(row);
+    }
+    node.append(group);
+  }
+  if (!node.children.length) node.textContent = "No editable fleet machines.";
 }
 
 function addMachine() {
