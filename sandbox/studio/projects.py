@@ -315,10 +315,57 @@ def _road_for_landing(polygon: list[list[float]], landing: dict[str, float]) -> 
     if not xs or not ys:
         return {"points": [], "width_m": 10.0}
     road_y = min(min(ys) - 12.0, landing["y"])
+    points = [[min(xs) - 60.0, road_y], [max(xs) + 60.0, road_y]]
     return {
-        "points": [[min(xs) - 60.0, road_y], [max(xs) + 60.0, road_y]],
+        "points": points,
+        "segments": [{"id": "road-main", "label": "Main road", "points": points}],
         "width_m": 10.0,
     }
+
+
+def road_segments(project: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return the project's road segments, including legacy single roads.
+
+    Parameters
+    ----------
+    project : dict[str, Any]
+        Studio project payload. ``road.segments`` is the current representation;
+        older projects stored only ``road.points``.
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        Segments with ``id``, ``label``, and a ``points`` list of
+        ``[x_m, y_m]`` vertices. Segments with fewer than two points are
+        omitted. Legacy ``road.points`` become one segment with id
+        ``road-main`` when no valid segments exist.
+    """
+    road = project.get("road") if isinstance(project.get("road"), dict) else {}
+    segments: list[dict[str, Any]] = []
+    for index, segment in enumerate(road.get("segments") or []):
+        if not isinstance(segment, dict):
+            continue
+        points = segment.get("points")
+        if not isinstance(points, list) or len(points) < 2:
+            continue
+        segments.append(
+            {
+                "id": str(segment.get("id") or f"road-{index + 1}"),
+                "label": str(segment.get("label") or f"Road {index + 1}"),
+                "points": [[float(point[0]), float(point[1])] for point in points],
+            }
+        )
+    if not segments:
+        points = road.get("points")
+        if isinstance(points, list) and len(points) >= 2:
+            segments.append(
+                {
+                    "id": "road-main",
+                    "label": str(road.get("label") or "Main road"),
+                    "points": [[float(point[0]), float(point[1])] for point in points],
+                }
+            )
+    return segments
 
 
 def _system_args(case: Case) -> dict[str, Any]:
@@ -834,7 +881,11 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
             if len(bounds) == 4:
                 min_x, min_y, max_x, max_y = (float(value) for value in bounds)
                 landing = project.get("landing") or {}
-                road_points = (project.get("road") or {}).get("points") or []
+                road_points = [
+                    point
+                    for segment in road_segments(project)
+                    for point in segment.get("points") or []
+                ]
                 margin = 60.0
                 dem_min_x = min(
                     [
@@ -895,11 +946,19 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
         except Exception:
             # A visual terrain edit must not prevent a run if rasterio is unavailable.
             pass
-    road = project.get("road") or {}
-    road_points = road.get("points") or []
-    if len(road_points) >= 2:
+    segments = road_segments(project)
+    if segments:
         road_path = root / "approaches" / "studio_road.geojson"
         road_path.parent.mkdir(parents=True, exist_ok=True)
+        lines = [
+            [[float(point[0]), float(point[1])] for point in segment["points"]]
+            for segment in segments
+        ]
+        geometry = (
+            {"type": "LineString", "coordinates": lines[0]}
+            if len(lines) == 1
+            else {"type": "MultiLineString", "coordinates": lines}
+        )
         road_path.write_text(
             json.dumps(
                 {
@@ -907,11 +966,14 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
                     "features": [
                         {
                             "type": "Feature",
-                            "properties": {"source": "studio"},
-                            "geometry": {
-                                "type": "LineString",
-                                "coordinates": [[float(x), float(y)] for x, y in road_points],
+                            "properties": {
+                                "source": "studio",
+                                "segments": [
+                                    {"id": segment["id"], "label": segment["label"]}
+                                    for segment in segments
+                                ],
                             },
+                            "geometry": geometry,
                         }
                     ],
                 },
@@ -921,6 +983,7 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
             encoding="utf-8",
         )
         manifest["road"] = str(road_path.relative_to(root))
+        manifest["road_segments"] = segments
     manifest["retention_clumps"] = clumps
     manifest["obstacles"] = [
         [

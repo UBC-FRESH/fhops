@@ -48,7 +48,8 @@ rewriting project storage.
   coefficients; continuous policy-state physics is not modelled.
 - Retention clumps are filled polygons and block felling and machine routing;
   stream buffers are authoring geometry, not surveyed hydrology.
-- No multi-landing or road-network routing yet.
+- Multi-segment road-network authoring/routing is now tracked in #337; multiple
+  landings and per-landing fleets remain open.
 - No authentication; this is a local development tool.
 
 ## Delivered in Phase 21

@@ -12,7 +12,7 @@ let treeGroup = null;
 let treeMeshes = [];
 let treeById = new Map();
 let boundaryGroup = null;
-let roadLine = null;
+let roadLines = [];
 let landingGroup = null;
 let handleMeshes = [];
 let selectedHandle = null;
@@ -236,12 +236,34 @@ function updateTreeHeights() {
   }
 }
 
+function roadSegments(source = project) {
+  const road = source?.road || {};
+  const segments = (road.segments || []).filter((segment) => Array.isArray(segment.points) && segment.points.length >= 2);
+  if (segments.length) return segments;
+  if (Array.isArray(road.points) && road.points.length >= 2) {
+    return [{ id: "road-main", label: "Main road", points: road.points }];
+  }
+  return [];
+}
+
+function ensureRoadSegments(project) {
+  if (!project.road) project.road = { points: [] };
+  if (!Array.isArray(project.road.segments) || !project.road.segments.length) {
+    project.road.segments = [{
+      id: "road-main",
+      label: "Main road",
+      points: Array.isArray(project.road.points) ? project.road.points.slice() : [],
+    }];
+  }
+  return project.road.segments;
+}
+
 function buildOverlays() {
   if (boundaryGroup) scene.remove(boundaryGroup);
-  if (roadLine) scene.remove(roadLine);
+  for (const line of roadLines) scene.remove(line);
   if (landingGroup) scene.remove(landingGroup);
   boundaryGroup = new THREE.Group();
-  roadLine = null;
+  roadLines = [];
   handleMeshes = [];
   const polygon = project.block?.polygon || [];
   if (polygon.length >= 3) {
@@ -263,14 +285,16 @@ function buildOverlays() {
     });
   }
   scene.add(boundaryGroup);
-  const road = project.road?.points || [];
-  if (road.length > 1) {
+  for (const segment of roadSegments()) {
+    const road = segment.points || [];
+    if (road.length < 2) continue;
     const points = road.map(([x, y]) => new THREE.Vector3(Number(x), terrainHeight(Number(x), Number(y)) + 0.8, Number(y)));
-    roadLine = new THREE.Line(
+    const line = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(points),
       new THREE.LineBasicMaterial({ color: 0xd8c58a }),
     );
-    scene.add(roadLine);
+    roadLines.push(line);
+    scene.add(line);
   }
   const clumps = project.retention?.clumps || [];
   for (const clump of clumps) {
@@ -387,7 +411,7 @@ function setTool(next) {
     clump: "Click a clump ring; double-click to close it",
     retain: "Click trees to toggle retention",
     terrain: "Click to raise terrain; shift-click lowers",
-    road: "Click to append road points",
+    road: "Click to append road points; Shift-click starts a new branch",
     boundary: "Drag a boundary handle; shift-click to add a vertex",
     landing: "Click to move the landing",
   };
@@ -502,8 +526,16 @@ function onPointerDown(event) {
     const point = groundPoint(event);
     if (!point) return;
     pushHistory();
-    project.road.points = project.road.points || [];
-    project.road.points.push([point.x, point.z]);
+    const segments = ensureRoadSegments(project);
+    if (event.shiftKey || !segments.length) {
+      segments.push({
+        id: `road-${Date.now().toString(36)}`,
+        label: `Road ${segments.length + 1}`,
+        points: [],
+      });
+    }
+    segments[segments.length - 1].points.push([point.x, point.z]);
+    project.road.points = segments[0].points;
     buildOverlays();
     markDirty();
   }

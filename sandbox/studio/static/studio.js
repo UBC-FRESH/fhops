@@ -27,6 +27,28 @@ const state = {
   lastStatus: "",
 };
 
+function roadSegments(project = state.project) {
+  const road = project?.road || {};
+  const segments = (road.segments || []).filter((segment) => Array.isArray(segment.points) && segment.points.length >= 2);
+  if (segments.length) return segments;
+  if (Array.isArray(road.points) && road.points.length >= 2) {
+    return [{ id: "road-main", label: "Main road", points: road.points }];
+  }
+  return [];
+}
+
+function ensureRoadSegments(project) {
+  if (!project.road) project.road = { points: [] };
+  if (!Array.isArray(project.road.segments) || !project.road.segments.length) {
+    project.road.segments = [{
+      id: "road-main",
+      label: "Main road",
+      points: Array.isArray(project.road.points) ? project.road.points.slice() : [],
+    }];
+  }
+  return project.road.segments;
+}
+
 const COLORS = {
   block: "#1d3526",
   blockLine: "#f08a24",
@@ -81,7 +103,9 @@ function fitView() {
   for (const point of state.project.block?.polygon || []) points.push([Number(point[0]), Number(point[1])]);
   for (const tree of state.trees) points.push([tree.x, tree.y]);
   if (state.project.landing) points.push([Number(state.project.landing.x), Number(state.project.landing.y)]);
-  for (const point of state.project.road?.points || []) points.push([Number(point[0]), Number(point[1])]);
+  for (const segment of roadSegments()) {
+    for (const point of segment.points || []) points.push([Number(point[0]), Number(point[1])]);
+  }
   if (!points.length) return;
   const xs = points.map((point) => point[0]);
   const ys = points.map((point) => point[1]);
@@ -205,8 +229,9 @@ function draw() {
     ctx.stroke();
   }
 
-  const road = state.project.road?.points || [];
-  if (road.length > 1) {
+  for (const segment of roadSegments()) {
+    const road = segment.points || [];
+    if (road.length < 2) continue;
     ctx.beginPath();
     for (let index = 0; index < road.length; index += 1) {
       const [sx, sy] = worldToScreen(Number(road[index][0]), Number(road[index][1]));
@@ -498,7 +523,7 @@ function setTool(tool) {
     retain: "Paint retention trees. Hold Shift to clear retention.",
     clump: "Click to draw a retention clump. Double-click to close it. Trees inside are retained.",
     stream: "Click along the stream centreline. Double-click to generate a riparian buffer clump.",
-    road: "Click to append road points. The road is stored with the project.",
+    road: "Click to append road points; Shift-click starts a new road branch.",
     terraform: "Raise terrain with Terrain selected; hold Shift to lower. Visual prototype.",
   };
   $("#hint").textContent = hints[tool] || "";
@@ -625,10 +650,10 @@ function onPointerDown(event) {
   if (state.tool === "landing") {
     pushHistory();
     let next = [world[0], world[1]];
-    const road = state.project.road?.points || [];
-    if (road.length > 1) {
-      let best = null;
-      let bestDistance = 45;
+    let best = null;
+    let bestDistance = 45;
+    for (const segment of roadSegments()) {
+      const road = segment.points || [];
       for (let index = 0; index < road.length - 1; index += 1) {
         const a = road[index];
         const b = road[index + 1];
@@ -639,8 +664,8 @@ function onPointerDown(event) {
         const distance = Math.hypot(world[0] - px, world[1] - py);
         if (distance < bestDistance) { best = [px, py]; bestDistance = distance; }
       }
-      if (best) next = best;
     }
+    if (best) next = best;
     state.project.landing = { x: next[0], y: next[1] };
     markDirty();
     render();
@@ -676,8 +701,17 @@ function onPointerDown(event) {
   }
   if (state.tool === "road") {
     pushHistory();
-    if (!state.project.road.points) state.project.road.points = [];
-    state.project.road.points.push([world[0], world[1]]);
+    const segments = ensureRoadSegments(state.project);
+    if (event.shiftKey || !segments.length) {
+      segments.push({
+        id: `road-${Date.now().toString(36)}`,
+        label: `Road ${segments.length + 1}`,
+        points: [],
+      });
+    }
+    const segment = segments[segments.length - 1];
+    segment.points.push([world[0], world[1]]);
+    state.project.road.points = segments[0].points;
     markDirty();
     render();
     return;
