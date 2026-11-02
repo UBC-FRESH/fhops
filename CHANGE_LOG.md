@@ -1,3 +1,8 @@
+# 2026-11-02 — deploy per-landing truck specs
+
+- Synced per-landing truck equipment overrides and Studio truck-spec panel from merged `main` (`78afbc72`).
+- No host networking or routing changes.
+
 # 2026-11-02 — deploy per-machine fleet specs
 
 - Synced per-machine loader/processor/skidder spec editing and CLI spec-file inputs from merged `main` (`9bf15c08`).

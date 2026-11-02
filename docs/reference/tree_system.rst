@@ -132,6 +132,16 @@ Per-machine cycle overrides can be supplied as JSON mappings:
 Loader/skidder mappings use the ``MachineSpec`` cycle fields; processor mappings
 use ``seconds_per_m3``, ``fixed_s``, and ``per_log_s``.
 
+Per-landing truck equipment can be overridden with a JSON mapping:
+
+.. code-block:: bash
+
+   --landing-truck-specs landing_trucks.json
+
+Supported fields include ``capacity_m3``, ``cycle_time_s``, ``count``,
+``load_time_s``, ``arrival_interval_s``, ``one_way_distance_m``, and
+``speed_mps``. Mill service time and bay count remain global.
+
 Optional terrain routing:
 
 .. code-block:: bash

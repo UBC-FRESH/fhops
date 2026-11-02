@@ -204,6 +204,7 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         ("loader_specs", "--loader-specs"),
         ("skidder_specs", "--skidder-specs"),
         ("processor_specs", "--processor-specs"),
+        ("landing_truck_specs", "--landing-truck-specs"),
     ):
         values = args.get(key)
         if not isinstance(values, dict) or not values:

@@ -366,6 +366,7 @@ function render() {
   renderStats();
   renderMachines();
   renderMachineSpecs();
+  renderTruckSpecs();
   renderProjectMeta();
   $("#notes").value = state.project?.notes || "";
   $("#retention-target").value = Math.round((Number(state.project?.retention?.target_fraction_basal_area) || 0) * 100);
@@ -505,6 +506,49 @@ function renderLandingList() {
     row.append(label, x, y, trucks, actions);
     node.append(row);
   });
+}
+
+function renderTruckSpecs() {
+  const node = $("#truck-spec-list");
+  if (!node || !state.project) return;
+  node.innerHTML = "";
+  const specs = state.project.landing_truck_specs || {};
+  const fields = [
+    ["capacity_m3", "payload (m³)"],
+    ["cycle_time_s", "cycle (s)"],
+    ["load_time_s", "load time (s)"],
+  ];
+  for (const landing of projectLandings()) {
+    const group = document.createElement("div");
+    group.className = "spec-group";
+    group.innerHTML = `<div class="spec-title">${escapeHtml(landing.label || landing.id)} · truck spec</div>`;
+    for (const [key, label] of fields) {
+      const row = document.createElement("div");
+      row.className = "spec-field";
+      const text = document.createElement("label");
+      text.textContent = label;
+      const input = document.createElement("input");
+      input.type = "number";
+      input.step = "any";
+      input.placeholder = "global";
+      input.value = specs[landing.id]?.[key] ?? "";
+      input.addEventListener("change", () => {
+        pushHistory();
+        const next = state.project.landing_truck_specs || {};
+        const current = next[landing.id] || {};
+        if (input.value === "") delete current[key];
+        else current[key] = Number(input.value);
+        if (Object.keys(current).length) next[landing.id] = current;
+        else delete next[landing.id];
+        state.project.landing_truck_specs = Object.keys(next).length ? next : undefined;
+        if (!state.project.landing_truck_specs) delete state.project.landing_truck_specs;
+        markDirty();
+      });
+      row.append(text, input);
+      group.append(row);
+    }
+    node.append(group);
+  }
 }
 
 function addLanding() {
