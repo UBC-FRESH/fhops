@@ -51,3 +51,11 @@ these into a `studio` block in `run.json`.
 - A rerun generates a new run id; prior run artifacts remain immutable.
 - Old runs created before this change are marked legacy/stale and need a rerun
   to pick up current project edits.
+
+## Closeout
+
+- PR #335 merged to `main` as `c63b80cf92a24bbf03f50686d045298b3657d95c`.
+- Main CI `41368063201` passed.
+- Public demo deployment: `de28b0d9`.
+- Live checks: legacy run shows the stale banner; fresh run
+  `20261102T003731Z` is fresh; run history shows stale badges and rerun actions.
