@@ -93,8 +93,14 @@ field-validated machine rates. The default skidder capacity is 40 m³ so
 tree-length loads from the mature demo are not silently refused; set it to the
 actual machine payload for operational work.
 
-``--landing-x`` and ``--landing-y`` set the landing in the scenario CRS. When
-omitted, the mean tree position is used.
+``--landing-x`` and ``--landing-y`` set the primary landing in the scenario CRS.
+When omitted, the mean tree position is used.
+
+For multiple landing choices, repeat ``--landing`` with ``id,x,y`` (or just
+``x,y``). Each bunch is routed to the landing with the shortest valid terrain
+route; the first landing is the primary landing in result metadata. The
+processor and loader are modelled as one shared crew servicing the chosen
+landings. Per-landing fleets and per-landing inventory are not yet simulated.
 
 Optional terrain routing:
 

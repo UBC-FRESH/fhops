@@ -9,6 +9,8 @@
 - Derived cases pass landing choices to the Tree Lab runner; replay renders all
   landing pads.
 - Processor/loader remain one shared crew; per-landing fleets are a follow-up.
+- Documented the repeatable `--landing` CLI and shared-crew limitation in
+  `docs/reference/tree_system.rst`.
 - Verified a temporary project run with 79 unloads split across two landings and
   a browser replay smoke test.
 
