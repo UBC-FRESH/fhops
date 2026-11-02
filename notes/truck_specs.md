@@ -27,3 +27,10 @@ Issue: #357. Branch: `issue-357-truck-specs`.
 
 - Mill service/bays remain global.
 - Truck specs are reference-model equipment parameters, not field calibration.
+
+## Closeout
+
+- PR #358 merged to `main` as `78afbc72c1f6b444ccf3e6ad598ed51ef5985b31`.
+- Main CI `41494881155` passed.
+- Public demo deployment: `3e471570`.
+- Live Studio truck-spec panel rendered one group / three fields with no errors.
