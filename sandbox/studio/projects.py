@@ -108,6 +108,7 @@ _EDIT_SIGNATURE_FIELDS = (
     "block_id",
     "block",
     "landing",
+    "landings",
     "road",
     "retention",
     "machines",
@@ -323,6 +324,49 @@ def _road_for_landing(polygon: list[list[float]], landing: dict[str, float]) -> 
     }
 
 
+def project_landings(project: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return normalized landing choices for a project.
+
+    Parameters
+    ----------
+    project : dict[str, Any]
+        Studio project payload. ``landings`` is the multi-landing model;
+        legacy projects have only the primary ``landing`` mapping.
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        Landing mappings with ``id``, ``label``, ``x``, and ``y``. The first
+        entry is the primary landing. Finite coordinates are required.
+    """
+    items: list[dict[str, Any]] = []
+    for index, landing in enumerate(project.get("landings") or []):
+        if not isinstance(landing, dict):
+            continue
+        try:
+            x, y = float(landing["x"]), float(landing["y"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if not (math.isfinite(x) and math.isfinite(y)):
+            continue
+        items.append(
+            {
+                "id": str(landing.get("id") or f"landing-{index + 1}"),
+                "label": str(landing.get("label") or f"Landing {index + 1}"),
+                "x": x,
+                "y": y,
+            }
+        )
+    if not items:
+        primary = project.get("landing") if isinstance(project.get("landing"), dict) else {}
+        try:
+            x, y = float(primary["x"]), float(primary["y"])
+        except (KeyError, TypeError, ValueError):
+            x = y = 0.0
+        items.append({"id": "landing-main", "label": "Landing", "x": x, "y": y})
+    return items
+
+
 def road_segments(project: dict[str, Any]) -> list[dict[str, Any]]:
     """Return the project's road segments, including legacy single roads.
 
@@ -394,6 +438,7 @@ def create_project(case: Case) -> dict[str, Any]:
             "source": "base",
         },
         "landing": landing,
+        "landings": [{"id": "landing-main", "label": "Landing", **landing}],
         "road": road,
         "retention": {"tree_ids": [], "clumps": [], "target_fraction_basal_area": 0.0},
         "machines": _active_machines(case, catalog),
@@ -456,6 +501,9 @@ def save_project(root: Path, project: dict[str, Any]) -> dict[str, Any]:
         polygon_clump = clump.get("polygon") if isinstance(clump, dict) else None
         if not isinstance(polygon_clump, list) or len(polygon_clump) < 3:
             raise StudioError("Each retention clump needs at least three points.")
+    landings = project_landings(project)
+    project["landings"] = landings
+    project["landing"] = {"x": landings[0]["x"], "y": landings[0]["y"]}
     sync_system_args(project)
     project["updated_utc"] = _now()
     project["revision"] = int(project.get("revision") or 0) + 1
@@ -867,7 +915,9 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
         "marking_rule": "all",
         "target_basal_area_fraction": 1.0,
     }
-    manifest["landing"] = project.get("landing")
+    landings = project_landings(project)
+    manifest["landing"] = {"x": landings[0]["x"], "y": landings[0]["y"]}
+    manifest["landings"] = landings
     manifest["studio_project_id"] = project_id
     manifest["studio_project_revision"] = int(project.get("revision") or 1)
     manifest["studio_project_updated_utc"] = project.get("updated_utc")
@@ -880,7 +930,7 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
             bounds = terrain.get("bounds") or []
             if len(bounds) == 4:
                 min_x, min_y, max_x, max_y = (float(value) for value in bounds)
-                landing = project.get("landing") or {}
+                landing_points = [[item["x"], item["y"]] for item in landings]
                 road_points = [
                     point
                     for segment in road_segments(project)
@@ -891,28 +941,28 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
                     [
                         min_x,
                         *[float(point[0]) - margin for point in road_points],
-                        float(landing.get("x", min_x)) - margin,
+                        *[float(point[0]) - margin for point in landing_points],
                     ]
                 )
                 dem_min_y = min(
                     [
                         min_y,
                         *[float(point[1]) - margin for point in road_points],
-                        float(landing.get("y", min_y)) - margin,
+                        *[float(point[1]) - margin for point in landing_points],
                     ]
                 )
                 dem_max_x = max(
                     [
                         max_x,
                         *[float(point[0]) + margin for point in road_points],
-                        float(landing.get("x", max_x)) + margin,
+                        *[float(point[0]) + margin for point in landing_points],
                     ]
                 )
                 dem_max_y = max(
                     [
                         max_y,
                         *[float(point[1]) + margin for point in road_points],
-                        float(landing.get("y", max_y)) + margin,
+                        *[float(point[1]) + margin for point in landing_points],
                     ]
                 )
                 dem_res = 40

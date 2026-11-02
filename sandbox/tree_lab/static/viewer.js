@@ -1046,37 +1046,45 @@ export function createViewer(container, { onTime } = {}) {
       addRoadRibbon(roadPoints);
     }
 
-    let nearest = roadPoints[0];
-    let nearestDistance = Infinity;
-    for (const segment of authored.length ? authored : [{ points: roadPoints }]) {
-      for (const point of segment.points) {
-        const distance = Math.hypot(Number(point[0]) - Number(landing.x), Number(point[1]) - Number(landing.y));
+    const roadPointList = authored.length
+      ? authored.flatMap((segment) => segment.points)
+      : roadPoints;
+    const landingChoices = Array.isArray(events.landings) && events.landings.length
+      ? events.landings
+      : [{ id: "landing-main", x: landing.x, y: landing.y }];
+    landingChoices.forEach((choice, index) => {
+      const lx = Number(choice.x);
+      const ly = Number(choice.y);
+      let nearest = roadPointList[0] || [lx, ly];
+      let nearestDistance = Infinity;
+      for (const point of roadPointList) {
+        const distance = Math.hypot(Number(point[0]) - lx, Number(point[1]) - ly);
         if (distance < nearestDistance) {
           nearest = point;
           nearestDistance = distance;
         }
       }
-    }
-    const spur = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(Number(nearest[0]), roadHeight(Number(nearest[0]), Number(nearest[1])), Number(nearest[1])),
-        new THREE.Vector3(Number(landing.x), roadHeight(Number(landing.x), Number(landing.y)), Number(landing.y)),
-      ]),
-      new THREE.LineBasicMaterial({ color: 0xd8c58a, transparent: true, opacity: 0.9 }),
-    );
-    spur.name = 'landing_spur';
-    scene.add(spur);
-    const pad = new THREE.Mesh(
-      new THREE.CircleGeometry(22, 32),
-      new THREE.MeshStandardMaterial({ color: 0x8b876e, roughness: 0.95, side: THREE.DoubleSide }),
-    );
-    pad.rotation.x = -Math.PI / 2;
-    pad.position.set(Number(landing.x), sampleHeight(Number(landing.x), Number(landing.y)) + 0.5, Number(landing.y));
-    pad.name = 'landing_pad';
-    scene.add(pad);
-    const label = makeTextSprite('landing', 2.5);
-    label.sprite.position.set(Number(landing.x), sampleHeight(Number(landing.x), Number(landing.y)) + 16, Number(landing.y));
-    scene.add(label.sprite);
+      const spur = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(Number(nearest[0]), roadHeight(Number(nearest[0]), Number(nearest[1])), Number(nearest[1])),
+          new THREE.Vector3(lx, roadHeight(lx, ly), ly),
+        ]),
+        new THREE.LineBasicMaterial({ color: 0xd8c58a, transparent: true, opacity: 0.9 }),
+      );
+      spur.name = 'landing_spur';
+      scene.add(spur);
+      const pad = new THREE.Mesh(
+        new THREE.CircleGeometry(index === 0 ? 22 : 16, 32),
+        new THREE.MeshStandardMaterial({ color: 0x8b876e, roughness: 0.95, side: THREE.DoubleSide }),
+      );
+      pad.rotation.x = -Math.PI / 2;
+      pad.position.set(lx, sampleHeight(lx, ly) + 0.5, ly);
+      pad.name = 'landing_pad';
+      scene.add(pad);
+      const label = makeTextSprite(index === 0 ? 'landing' : String(choice.id || `landing ${index + 1}`), 2.2);
+      label.sprite.position.set(lx, sampleHeight(lx, ly) + (index === 0 ? 16 : 12), ly);
+      scene.add(label.sprite);
+    });
   }
 
   function addCable(cable) {
