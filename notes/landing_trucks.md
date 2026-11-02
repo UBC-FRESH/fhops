@@ -28,3 +28,10 @@ Issue: #349. Branch: `issue-349-landing-trucks`.
   are a future extension.
 - A landing with zero trucks raises a clear error if its stockpile needs
   dispatch.
+
+## Closeout
+
+- PR #349 merged to `main` as `4580115946b7c594c8c28a6e382244f871f2f098`.
+- Main CI `41422164978` passed.
+- Public demo deployment: `22094577`.
+- Live Studio smoke test showed the landing truck input with no page errors.
