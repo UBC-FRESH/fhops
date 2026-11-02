@@ -16,9 +16,11 @@ from fhops.ground_system import (
     DowntimeWindow,
     GroundSystemError,
     Landing,
+    landing_route_cost,
     simulate_ground_system,
     write_ground_system,
 )
+from fhops.terrain import RouteProfile
 from fhops.tree_mapping import register_tree_inventory
 
 runner = CliRunner()
@@ -135,6 +137,28 @@ def test_ground_system_processor_stage(tmp_path: Path) -> None:
     assert result.rate_provenance["processor"]["model"] == "tn103_area_a"
 
 
+def test_landing_route_cost_prefers_faster_route() -> None:
+    flat = RouteProfile(
+        distance_m=100.0,
+        elevation_gain_m=0.0,
+        elevation_loss_m=0.0,
+        max_grade_percent=0.0,
+        mean_grade_percent=0.0,
+        speed_factor=1.0,
+        samples=2,
+    )
+    steep_short = RouteProfile(
+        distance_m=80.0,
+        elevation_gain_m=10.0,
+        elevation_loss_m=0.0,
+        max_grade_percent=30.0,
+        mean_grade_percent=20.0,
+        speed_factor=0.5,
+        samples=2,
+    )
+    assert landing_route_cost(flat) < landing_route_cost(steep_short)
+
+
 def test_ground_system_routes_bunches_to_multiple_landings(tmp_path: Path) -> None:
     scenario = _system_scenario(tmp_path)
     base = simulate_ground_system(
@@ -159,13 +183,21 @@ def test_ground_system_routes_bunches_to_multiple_landings(tmp_path: Path) -> No
         loader_machine_id="H4",
         bunch_volume_m3=1.0,
         landings=landings,
+        truck_capacity_m3=1.0,
+        truck_cycle_time_s=60.0,
+        truck_count=2,
+        truck_load_time_s=10.0,
+        landing_capacity_m3=5.0,
     )
     assert result.landings == landings
     unloads = [event for event in result.events if event.type == "unload"]
     assert unloads
     assert {round(event.x0, 3) for event in unloads} <= {min(xs) - 20.0, max(xs) + 20.0}
     assert len({round(event.x0, 3) for event in unloads}) == 2
+    assert set(result.landing_inventory) == {"west", "east"}
+    assert all(info["max_m3"] <= 5.0 for info in result.landing_inventory.values())
     assert result.to_dict()["landings"][0]["id"] == "west"
+    assert result.to_dict()["landing_inventory"]["west"]["capacity_m3"] == 5.0
 
 
 def test_processor_productivity_multiplier_scales_processor_cycle(tmp_path: Path) -> None:

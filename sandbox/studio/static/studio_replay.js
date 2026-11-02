@@ -280,6 +280,13 @@ async function load() {
     staleText.textContent = ` ${freshness.reasons?.join(" ") || "Project edits changed after this run."}`;
     staleBanner.hidden = false;
   }
+  const landingInventory = events.landing_inventory || {};
+  const inventoryText = Object.entries(landingInventory)
+    .map(([id, info]) => `${id}: ${Number(info.final_m3 || 0).toFixed(1)} / ${Number(info.max_m3 || 0).toFixed(1)} m³`)
+    .join(" · ");
+  document.getElementById("landing-inventory").textContent = inventoryText
+    ? `landing stockpiles (final / peak): ${inventoryText}`
+    : "";
   const retainedTrees = (dataset.trees || []).filter((tree) => tree.retained);
   document.getElementById("run-label").textContent += ` · ${retainedTrees.length} retained`;
   if (events.terrain) document.getElementById("run-label").textContent += " · terrain";

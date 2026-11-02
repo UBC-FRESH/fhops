@@ -1,3 +1,14 @@
+# 2026-11-02 — per-landing inventory and grade-aware landing choice (#343)
+
+- Added `landing_route_cost = distance / speed_factor`; landing assignment now
+  accounts for terrain speed/grade rather than raw distance alone.
+- Loader inventory and capacity are tracked per landing; trucks draw from the
+  selected landing and capacity dispatch is landing-local.
+- Run output adds `landing_inventory` with per-landing final/peak/capacity, and
+  replay shows final/peak stockpiles.
+- Added grade-cost and two-landing capacity tests.
+- Existing single-landing trucking/inventory behavior remains compatible.
+
 # 2026-11-02 — P27 closeout
 
 - PR #341 squash-merged to `main` as

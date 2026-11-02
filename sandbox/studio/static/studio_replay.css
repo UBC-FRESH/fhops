@@ -14,6 +14,7 @@ main { position: relative; flex: 1 1 auto; min-height: 0; }
 #hud h1 { font-size: 14px; margin: 0 0 3px; }
 #status { color: #b7c6cc; margin: 7px 0; font-size: 12px; }
 #machines { display: flex; gap: 8px; flex-wrap: wrap; }
+#landing-inventory { color: #9fc9d3; margin-top: 7px; font-size: 10px; }
 .mcard { border: 1px solid #2b3a40; border-radius: 6px; padding: 4px 7px; min-width: 104px; }
 .mcard b { display: block; font-size: 11px; }
 .mcard span { color: #93a6ae; font-size: 10px; }
