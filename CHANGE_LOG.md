@@ -1,3 +1,12 @@
+# 2026-11-02 — per-landing truck equipment specs (#357)
+
+- Added core `landing_truck_specs` and `--landing-truck-specs` JSON mapping.
+- Per-landing capacity/cycle/load time/distance/speed are respected; mill
+  service remains shared.
+- Studio truck-spec panel edits payload/cycle/load time per landing.
+- Derived cases and runner propagate the spec file.
+- Added core and manifest tests.
+
 # 2026-11-02 — P32 closeout
 
 - PR #355 squash-merged to `main` as

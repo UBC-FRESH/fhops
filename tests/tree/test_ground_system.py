@@ -17,6 +17,7 @@ from fhops.ground_system import (
     GroundSystemError,
     Landing,
     LandingFleet,
+    TruckSpec,
     landing_route_cost,
     simulate_ground_system,
     write_ground_system,
@@ -221,6 +222,53 @@ def test_ground_system_assigns_trucks_per_landing(tmp_path: Path) -> None:
     assert "T-east-01" in truck_ids
     assert result.truck_summary is not None
     assert result.rate_provenance["trucking"]["landing_truck_counts"] == {"west": 1, "east": 1}
+
+
+def test_ground_system_uses_per_landing_truck_specs(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    base = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+    )
+    xs = [tree.x_m for tree in base.trees]
+    ys = [tree.y_m for tree in base.trees]
+    landings = (
+        Landing("west", min(xs) - 20.0, min(ys) - 20.0),
+        Landing("east", max(xs) + 20.0, max(ys) + 20.0),
+    )
+    specs = {
+        "west": TruckSpec(capacity_m3=1.0, cycle_time_s=60.0, count=1, load_time_s=10.0),
+        "east": TruckSpec(capacity_m3=2.0, cycle_time_s=60.0, count=1, load_time_s=10.0),
+    }
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        landings=landings,
+        landing_truck_specs=specs,
+        landing_capacity_m3=5.0,
+    )
+    west_volumes = [
+        event.volume_m3
+        for event in result.truck_events
+        if event.machine.startswith("T-west") and event.type == "truck_load"
+    ]
+    east_volumes = [
+        event.volume_m3
+        for event in result.truck_events
+        if event.machine.startswith("T-east") and event.type == "truck_load"
+    ]
+    assert west_volumes and max(west_volumes) <= 1.0 + 1e-9
+    assert east_volumes and max(east_volumes) <= 2.0 + 1e-9
+    provenance = result.rate_provenance["trucking"]["landing_truck_specs"]
+    assert provenance["west"]["capacity_m3"] == 1.0
 
 
 def test_landing_route_cost_prefers_faster_route() -> None:

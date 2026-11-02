@@ -156,11 +156,16 @@ def test_materialized_case_carries_multiple_landings(tmp_path: Path) -> None:
         }
     )
     project["landing_trucks"] = {"landing-main": 1, "north": 2}
+    project["landing_truck_specs"] = {
+        "landing-main": {"capacity_m3": 25.0, "cycle_time_s": 2400.0},
+        "north": {"capacity_m3": 35.0, "cycle_time_s": 3000.0},
+    }
     derived = materialize_case(tmp_path, project, case)
     assert len(derived.manifest["landings"]) == 2
     assert derived.manifest["landings"][1]["id"] == "north"
     assert derived.manifest["landing"]["x"] == project["landing"]["x"]
     assert derived.manifest["landing_truck_counts"] == {"landing-main": 1, "north": 2}
+    assert derived.manifest["landing_truck_specs"]["north"]["capacity_m3"] == 35.0
 
 
 def test_materialized_case_carries_landing_fleets(tmp_path: Path) -> None:
