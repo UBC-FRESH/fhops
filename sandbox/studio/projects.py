@@ -8,6 +8,7 @@ stores only edits and references its base case; source fixtures under
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import math
 import re
@@ -100,6 +101,116 @@ class StudioError(RuntimeError):
 
 def _now() -> str:
     return datetime.now(UTC).replace(microsecond=0).isoformat()
+
+
+_EDIT_SIGNATURE_FIELDS = (
+    "base_case_id",
+    "block_id",
+    "block",
+    "landing",
+    "road",
+    "retention",
+    "machines",
+    "operator_policies",
+    "terrain",
+)
+
+
+def _stable_signature(payload: dict[str, Any]) -> str:
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def project_edit_signature(project: dict[str, Any]) -> str:
+    """Return a stable hash of the edits that affect derived runs.
+
+    Parameters
+    ----------
+    project : dict[str, Any]
+        Studio project payload. Missing fields are hashed as ``None`` so
+        incomplete older projects remain comparable.
+
+    Returns
+    -------
+    str
+        Lower-case SHA-256 digest. Project metadata such as ``label``,
+        ``notes``, timestamps, and the monotonically increasing revision are
+        intentionally excluded; the digest changes only when run-affecting
+        project content changes.
+
+    Notes
+    -----
+    The signature covers boundary, landing, road, retention, machines,
+    operator policies, and terrain. Derived system arguments are excluded
+    because they are regenerated from those inputs. The digest is stored on
+    derived cases and copied into run records so the Studio can flag stale
+    runs.
+    """
+    return _stable_signature({field: project.get(field) for field in _EDIT_SIGNATURE_FIELDS})
+
+
+def terrain_signature(project: dict[str, Any]) -> str:
+    """Return a stable hash of the project terrain heightfield.
+
+    Parameters
+    ----------
+    project : dict[str, Any]
+        Studio project payload.
+
+    Returns
+    -------
+    str
+        SHA-256 digest of the terrain mapping, including bounds, resolution,
+        heights, and base elevation. A project without terrain still receives a
+        stable digest.
+    """
+    return _stable_signature({"terrain": project.get("terrain")})
+
+
+def run_freshness(project: dict[str, Any], record: dict[str, Any]) -> dict[str, Any]:
+    """Compare a persisted run record with the current project edits.
+
+    Parameters
+    ----------
+    project : dict[str, Any]
+        Current Studio project.
+    record : dict[str, Any]
+        Persisted ``run.json`` payload. Phase 22 and earlier records may not
+        contain the ``studio`` signature block.
+
+    Returns
+    -------
+    dict[str, Any]
+        Mapping with ``stale`` (bool), ``reasons`` (list of human-readable
+        strings), ``run_revision`` (int or ``None``), and
+        ``current_revision`` (int or ``None``). Missing signature metadata is
+        treated as stale because freshness cannot be established.
+    """
+    studio = record.get("studio") if isinstance(record.get("studio"), dict) else {}
+    run_revision = studio.get("project_revision") if studio else None
+    current_revision = project.get("revision")
+    current_edit = project_edit_signature(project)
+    current_terrain = terrain_signature(project)
+    run_edit = studio.get("edit_signature") if studio else None
+    run_terrain = studio.get("terrain_signature") if studio else None
+    if not run_edit or not run_terrain:
+        return {
+            "stale": True,
+            "reasons": ["Legacy run has no project signature; rerun to refresh."],
+            "run_revision": run_revision,
+            "current_revision": current_revision,
+        }
+    reasons: list[str] = []
+    if run_terrain != current_terrain:
+        reasons.append("Terrain edits changed after this run.")
+    if run_edit != current_edit and run_terrain == current_terrain:
+        reasons.append("Project edits changed after this run.")
+    return {
+        "stale": bool(reasons),
+        "reasons": reasons,
+        "run_revision": run_revision,
+        "current_revision": current_revision,
+    }
 
 
 def _project_id(case_id: str) -> str:
@@ -711,6 +822,8 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     }
     manifest["landing"] = project.get("landing")
     manifest["studio_project_id"] = project_id
+    manifest["studio_project_revision"] = int(project.get("revision") or 1)
+    manifest["studio_project_updated_utc"] = project.get("updated_utc")
     if heights:
         try:
             import numpy as np
@@ -820,6 +933,8 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     apply_operator_policies(project)
     manifest["system_args"] = project["system_args"]
     manifest["operator_policies"] = project.get("operator_policies", {})
+    manifest["studio_edit_signature"] = project_edit_signature(project)
+    manifest["studio_terrain_signature"] = terrain_signature(project)
     if isinstance(manifest.get("cable"), dict):
         manifest["cable"]["yarder"] = project.get("landing") or manifest["cable"].get("yarder")
     # Update lightweight stand totals for the derived view.

@@ -368,6 +368,17 @@ def run_case(
         raise RunError("Simulation did not produce system_summary.json and system_events.json.")
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     events = json.loads(events_path.read_text(encoding="utf-8"))
+    studio = {
+        key.removeprefix("studio_"): case.manifest.get(key)
+        for key in (
+            "studio_project_id",
+            "studio_project_revision",
+            "studio_project_updated_utc",
+            "studio_edit_signature",
+            "studio_terrain_signature",
+        )
+        if case.manifest.get(key) is not None
+    }
 
     record = {
         "schema_version": RUN_SCHEMA,
@@ -386,6 +397,7 @@ def run_case(
             or {"type": "clear_cut", "marking_rule": "all"},
             "derived": derived.to_dict(),
         },
+        "studio": studio or None,
         "inputs": validation.get("hashes", {}),
         "artifacts": {
             "events_json": "system/system_events.json",

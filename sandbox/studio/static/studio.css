@@ -84,3 +84,4 @@ textarea { width: 100%; resize: vertical; }
 
 .run-row { display: flex; align-items: center; gap: 6px; justify-content: space-between; margin: 3px 0; }
 .run-row button { padding: 2px 5px; font-size: 10px; }
+.stale-badge { color: #ffb35a; border: 1px solid #8d5420; border-radius: 4px; padding: 1px 4px; font-size: 9px; text-transform: uppercase; letter-spacing: 0.04em; }

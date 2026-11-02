@@ -6,6 +6,11 @@ header .muted { color: #93a6ae; margin-left: auto; }
 main { position: relative; flex: 1 1 auto; min-height: 0; }
 #scene { position: absolute; inset: 0; }
 #hud { position: absolute; left: 14px; top: 14px; width: min(430px, calc(100vw - 28px)); background: #101416e8; border: 1px solid #2b3a40; border-radius: 10px; padding: 12px 14px; }
+#stale-banner { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 5; display: flex; align-items: center; gap: 14px; max-width: min(720px, calc(100vw - 28px)); background: #3a2412f2; border: 1px solid #b76a22; border-radius: 9px; padding: 8px 11px; color: #ffe2bd; font-size: 12px; box-shadow: 0 5px 18px #0008; }
+#stale-banner[hidden] { display: none; }
+#stale-banner strong { color: #ffb35a; margin-right: 7px; }
+#stale-banner button { flex: 0 0 auto; background: #f08a24; color: #17120c; border: 0; border-radius: 5px; padding: 5px 9px; cursor: pointer; font-weight: 700; }
+#stale-banner button:disabled { opacity: 0.6; cursor: wait; }
 #hud h1 { font-size: 14px; margin: 0 0 3px; }
 #status { color: #b7c6cc; margin: 7px 0; font-size: 12px; }
 #machines { display: flex; gap: 8px; flex-wrap: wrap; }

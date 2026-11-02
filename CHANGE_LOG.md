@@ -1,3 +1,17 @@
+# 2026-11-02 — Studio run freshness and stale-run UX (#334)
+
+- Added stable `project_edit_signature` and `terrain_signature` hashes for
+  run-affecting project edits.
+- Derived cases now carry project revision, update timestamp, edit signature,
+  and terrain signature; run records persist them under `studio`.
+- Added `run_freshness` with terrain-specific, project-edit, and legacy-run
+  reasons.
+- Run history now marks stale runs, shows reasons in a tooltip, and offers a
+  **Rerun** action.
+- Replay now shows a stale-run banner and a **Rerun project** button.
+- Added tests for signature stability, derived-case signatures, stale detection,
+  and API freshness metadata.
+
 # 2026-11-01 — fix Studio terrain elevation alignment (#332)
 
 - Fixed `_write_project_inventory` so derived tree elevations use the edited

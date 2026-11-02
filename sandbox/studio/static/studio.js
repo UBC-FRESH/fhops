@@ -885,6 +885,32 @@ async function loadRunHistory() {
       link.textContent = `${run.run_id} · ${run.status || "unknown"}`;
       link.style.color = "var(--accent)";
       link.style.fontSize = "11px";
+      const stale = run.freshness?.stale;
+      let staleBadge = null;
+      if (stale) {
+        staleBadge = document.createElement("span");
+        staleBadge.className = "stale-badge";
+        staleBadge.textContent = "stale";
+        staleBadge.title = (run.freshness?.reasons || ["Project edits changed after this run."]).join(" ");
+      }
+      const rerun = document.createElement("button");
+      rerun.className = "btn small";
+      rerun.textContent = "Rerun";
+      rerun.title = "Run the current project edits and create a fresh run";
+      rerun.hidden = !stale;
+      rerun.addEventListener("click", async () => {
+        rerun.disabled = true;
+        rerun.textContent = "Running…";
+        try {
+          const record = await api(`projects/${encodeURIComponent(state.project.project_id)}/run`, { method: "POST" });
+          setStatus(`Fresh run complete · ${record.run_id}`);
+          await loadRunHistory();
+        } catch (error) {
+          setStatus(`Rerun failed: ${error.message}`, true);
+          rerun.disabled = false;
+          rerun.textContent = "Rerun";
+        }
+      });
       const promote = document.createElement("button");
       promote.className = "btn small";
       promote.textContent = "Tree Lab";
@@ -897,7 +923,9 @@ async function loadRunHistory() {
           promote.disabled = true;
         } catch (error) { setStatus(`Promote failed: ${error.message}`, true); }
       });
-      row.append(link, promote);
+      row.append(link);
+      if (staleBadge) row.append(staleBadge);
+      row.append(rerun, promote);
       node.append(row);
     }
   } catch (_error) { /* history is non-critical */ }
