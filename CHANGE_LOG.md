@@ -1,3 +1,10 @@
+# 2026-11-02 — deploy per-landing inventory
+
+- Synced grade-aware landing selection and per-landing inventory/capacity from merged `main` (`104eb8f5`).
+- Replay shows per-landing final/peak stockpiles.
+- Processor/loader remain one shared crew.
+- No host networking or routing changes.
+
 # 2026-11-02 — deploy Studio multi-landing assignment
 
 - Synced core `Landing` routing, repeatable `--landing`, Studio landing panel, and replay landing pads from merged `main` (`1cfbf9c1`).

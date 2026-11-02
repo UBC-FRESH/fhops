@@ -46,5 +46,13 @@ Landing values may be `id,x,y` or `x,y`.
 ## Limits
 
 - Shared processing/loading crew.
-- Global landing inventory rather than per-landing stockpiles.
-- Landing assignment is distance-based; grade-adjusted cost can be added later.
+- Per-landing stockpiles and grade/speed-aware assignment landed in #343.
+- Per-landing processor/loader fleets remain the next fleet slice.
+
+## Closeout
+
+- PR #341 merged to `main` as `1cfbf9c15837f9af72e465f6341405a68d25f096`.
+- Main CI `41405758116` passed.
+- Public demo deployment: `68d0b0f0`.
+- Existing demo runs remain fresh after preserving the pre-multi-landing signature shape.
+- Live two-landing Studio smoke test passed with two landing rows and no page errors.
