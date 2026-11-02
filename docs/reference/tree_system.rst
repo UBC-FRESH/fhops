@@ -151,9 +151,12 @@ Optional terrain routing:
 ``--dem`` samples elevation along each skidder route and refuses routes above
 ``--max-skidder-grade``. ``--road`` reads GeoJSON LineStrings; a single line uses
 projected corridor routing, while a MultiLineString is treated as a connected
-road network and routed with a shortest path. DEM and road coordinates must use
-the same CRS as the inventory. Install the optional dependencies with
-``pip install "fhops[lidar]"``.
+road network and routed with a shortest path. Network edge costs account for
+DEM-derived grade/speed when a DEM is supplied, so a longer flatter branch can
+beat a shorter steep one. DEM and road coordinates must use the same CRS as the
+inventory. Install the optional dependencies with ``pip install "fhops[lidar]"``.
+Studio blocks runs with disconnected road components and warns when a landing is
+more than 30 m from the network.
 
 Shift and trucking controls:
 

@@ -1,3 +1,13 @@
+# 2026-11-02 — road connectivity validation and grade-aware routing (#360)
+
+- Studio validates road-segment connectivity, including crossing branches, and
+  blocks runs with disconnected components; the 2D editor shows road/landing
+  warnings.
+- `_RoadNetwork` edge costs use DEM-derived speed loss, so flatter detours can
+  beat shorter steep routes.
+- Added Studio and terrain tests.
+- Landing access warnings use a 30 m threshold.
+
 # 2026-11-02 — P33 closeout
 
 - PR #358 squash-merged to `main` as
