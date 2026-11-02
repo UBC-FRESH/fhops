@@ -109,6 +109,7 @@ _EDIT_SIGNATURE_FIELDS = (
     "block",
     "landing",
     "landings",
+    "landing_trucks",
     "road",
     "retention",
     "machines",
@@ -142,10 +143,10 @@ def project_edit_signature(project: dict[str, Any]) -> str:
     Notes
     -----
     The signature covers boundary, landing, road, retention, machines,
-    operator policies, and terrain. Derived system arguments are excluded
-    because they are regenerated from those inputs. Projects without a
-    ``landings`` field keep the pre-multi-landing signature shape for backward
-    freshness compatibility. The digest is stored on derived cases and copied
+    operator policies, terrain, and per-landing truck counts. Derived system
+    arguments are excluded because they are regenerated from those inputs.
+    Projects without ``landings`` or ``landing_trucks`` keep the older signature
+    shape for backward freshness compatibility. The digest is stored on derived cases and copied
     into run records so the Studio can flag stale runs.
     """
     payload = {field: project.get(field) for field in _EDIT_SIGNATURE_FIELDS}
@@ -153,6 +154,9 @@ def project_edit_signature(project: dict[str, Any]) -> str:
         # Preserve freshness for pre-multi-landing runs, whose signatures had
         # no landings field at all.
         payload.pop("landings", None)
+    if not project.get("landing_trucks"):
+        # Preserve freshness for runs created before per-landing truck counts.
+        payload.pop("landing_trucks", None)
     return _stable_signature(payload)
 
 
