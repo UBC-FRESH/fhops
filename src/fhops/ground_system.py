@@ -36,7 +36,7 @@ from fhops.productivity.skidder_ft import (
 from fhops.scenario.io import load_scenario
 from fhops.spatial_machine import Obstacle, SpatialMachineError, simulate_block
 from fhops.stem import StemInventory, build_stem_inventory
-from fhops.terrain import TerrainError, TerrainRouter
+from fhops.terrain import RouteProfile, TerrainError, TerrainRouter
 
 GROUND_SYSTEM_SCHEMA = "fhops.tree.ground_system.v1"
 DEFAULT_BUNCH_VOLUME_M3 = 8.0
@@ -57,6 +57,7 @@ __all__ = [
     "GroundSystemResult",
     "GroundSystemTree",
     "Landing",
+    "landing_route_cost",
     "BreakdownConfig",
     "DowntimeWindow",
     "PROCESSOR_MODELS",
@@ -90,6 +91,25 @@ class Landing:
     landing_id: str
     x_m: float
     y_m: float
+
+
+def landing_route_cost(route: RouteProfile) -> float:
+    """Return a travel-time proxy for choosing between landing routes.
+
+    Parameters
+    ----------
+    route : RouteProfile
+        Terrain route returned by :class:`fhops.terrain.TerrainRouter`.
+
+    Returns
+    -------
+    float
+        ``distance_m / speed_factor``, clipped to a positive speed factor.
+        This makes a longer but flatter/faster route preferable to a shorter,
+        steep route while remaining deterministic.
+    """
+    speed_factor = route.speed_factor if math.isfinite(route.speed_factor) else 1.0
+    return route.distance_m / max(1e-6, speed_factor)
 
 
 @dataclass(frozen=True)
@@ -517,6 +537,7 @@ class GroundSystemResult:
     truck_summary: dict[str, float | int] | None
     landing_inventory_final_m3: float
     landing_inventory_max_m3: float
+    landing_inventory: dict[str, dict[str, float]]
     trees: tuple[GroundSystemTree, ...]
     events: tuple[GroundSystemEvent, ...]
     machine_summaries: dict[str, dict[str, float | int]]
@@ -562,6 +583,7 @@ class GroundSystemResult:
             "truck_summary": self.truck_summary,
             "landing_inventory_final_m3": self.landing_inventory_final_m3,
             "landing_inventory_max_m3": self.landing_inventory_max_m3,
+            "landing_inventory": self.landing_inventory,
             "tree_count": self.tree_count,
             "processed_volume_m3": self.processed_volume_m3,
             "unreachable_count": self.unreachable_count,
@@ -1160,6 +1182,7 @@ def simulate_ground_system(
             truck_summary,
             landing_final,
             landing_max,
+            landing_inventory,
             truck_warnings,
         ) = _simulate_loader(
             events,
@@ -1243,6 +1266,7 @@ def simulate_ground_system(
         truck_summary=truck_summary,
         landing_inventory_final_m3=landing_final,
         landing_inventory_max_m3=landing_max,
+        landing_inventory=landing_inventory,
         trees=tuple(trees),
         events=tuple(events),
         machine_summaries=summaries,
@@ -1493,7 +1517,9 @@ def _simulate_skidders(
             except TerrainError as exc:
                 route_errors.append(f"{candidate.landing_id}: {exc}")
                 continue
-            if selected_route is None or candidate_route.distance_m < selected_route.distance_m:
+            if selected_route is None or landing_route_cost(candidate_route) < landing_route_cost(
+                selected_route
+            ):
                 selected_landing = candidate
                 selected_route = candidate_route
         if selected_landing is None or selected_route is None:
@@ -1690,6 +1716,7 @@ def _simulate_loader(
     dict[str, float | int] | None,
     float,
     float,
+    dict[str, dict[str, float]],
     list[str],
 ]:
     available = 0.0
@@ -1702,21 +1729,25 @@ def _simulate_loader(
     )
     mill_available = [0.0] * (truck_spec.mill_bays if truck_spec else 0)
     mill_wait_s = 0.0
-    inventory = 0.0
-    max_inventory = 0.0
+    inventories: dict[str, float] = {}
+    max_inventories: dict[str, float] = {}
     dispatched = 0
     dispatched_volume = 0.0
     warnings: list[str] = []
 
     def dispatch_truck(
-        start_s: float, truck_landing_x: float, truck_landing_y: float
+        start_s: float,
+        truck_landing_id: str,
+        truck_landing_x: float,
+        truck_landing_y: float,
     ) -> tuple[float, float]:
-        nonlocal inventory, dispatched, dispatched_volume
-        if truck_spec is None or inventory <= 1e-9:
+        nonlocal dispatched, dispatched_volume
+        available_volume = inventories.get(truck_landing_id, 0.0)
+        if truck_spec is None or available_volume <= 1e-9:
             return start_s, 0.0
         truck_index = min(range(truck_spec.count), key=lambda index: truck_available[index])
         start = max(start_s, truck_available[truck_index])
-        load_volume = min(truck_spec.capacity_m3, inventory)
+        load_volume = min(truck_spec.capacity_m3, available_volume)
         truck_id = f"T-{truck_index + 1:02d}"
         start, load_end = _schedule_task(calendar, start, truck_spec.load_time_s, truck_id)
         if truck_spec.one_way_distance_m is not None:
@@ -1759,7 +1790,7 @@ def _simulate_loader(
                 status="returning",
             )
         )
-        inventory -= load_volume
+        inventories[truck_landing_id] = available_volume - load_volume
         dispatched += 1
         dispatched_volume += load_volume
         truck_available[truck_index] = return_end
@@ -1774,16 +1805,19 @@ def _simulate_loader(
             process_time += spec.process_per_log_s * load.logs
         else:
             process_time = spec.process_fixed_s + spec.process_per_log_s * load.logs
+        landing_id = load.landing_id
         if truck_spec is not None and landing_capacity_m3 is not None:
-            while inventory + load.volume_m3 > landing_capacity_m3 + 1e-9:
-                if inventory <= 1e-9:
+            while inventories.get(landing_id, 0.0) + load.volume_m3 > landing_capacity_m3 + 1e-9:
+                if inventories.get(landing_id, 0.0) <= 1e-9:
                     raise GroundSystemError(
-                        f"Landing capacity {landing_capacity_m3:.2f} m3 is smaller than load "
-                        f"{load.load_id} ({load.volume_m3:.2f} m3)."
+                        f"Landing {landing_id!r} capacity {landing_capacity_m3:.2f} m3 is smaller "
+                        f"than load {load.load_id} ({load.volume_m3:.2f} m3)."
                     )
                 truck_index = min(range(truck_spec.count), key=lambda index: truck_available[index])
                 wait_until = max(start, truck_available[truck_index])
-                truck_start, _ = dispatch_truck(wait_until, load.landing_x_m, load.landing_y_m)
+                truck_start, _ = dispatch_truck(
+                    wait_until, landing_id, load.landing_x_m, load.landing_y_m
+                )
                 start = max(start, truck_start)
         start, end = _schedule_task(calendar, start, process_time)
         events.append(
@@ -1802,23 +1836,56 @@ def _simulate_loader(
                 status="processing",
             )
         )
-        inventory += load.volume_m3
-        max_inventory = max(max_inventory, inventory)
+        inventories[landing_id] = inventories.get(landing_id, 0.0) + load.volume_m3
+        max_inventories[landing_id] = max(
+            max_inventories.get(landing_id, 0.0), inventories[landing_id]
+        )
         available = end
         finishes[load.load_id] = end
         if truck_spec is not None:
-            while inventory >= truck_spec.capacity_m3 - 1e-9:
+            while inventories[landing_id] >= truck_spec.capacity_m3 - 1e-9:
                 ready_truck = min(truck_available)
                 if ready_truck > available:
                     break
-                dispatch_truck(available, load.landing_x_m, load.landing_y_m)
+                dispatch_truck(available, landing_id, load.landing_x_m, load.landing_y_m)
+    landing_positions = {load.landing_id: (load.landing_x_m, load.landing_y_m) for load in loads}
+    if truck_spec is not None:
+        for landing_id, position in landing_positions.items():
+            while inventories.get(landing_id, 0.0) >= truck_spec.capacity_m3 - 1e-9:
+                ready_truck = min(truck_available)
+                if ready_truck > max(
+                    available, max((event.end_s for event in truck_events), default=0.0)
+                ):
+                    break
+                dispatch_truck(
+                    max(available, ready_truck),
+                    landing_id,
+                    position[0],
+                    position[1],
+                )
+    landing_inventory = {
+        landing_id: {
+            "final_m3": round(final, 3),
+            "max_m3": round(max_inventories.get(landing_id, 0.0), 3),
+            "capacity_m3": round(landing_capacity_m3 or 0.0, 3),
+        }
+        for landing_id, final in inventories.items()
+    }
+    final_total = sum(inventories.values())
+    max_total = sum(max_inventories.values())
+    if landing_capacity_m3 is not None:
+        over_capacity = [
+            landing_id
+            for landing_id, value in max_inventories.items()
+            if value > landing_capacity_m3 + 1e-9
+        ]
+        if over_capacity:
+            warnings.append(
+                f"Landing inventory exceeded per-landing capacity {landing_capacity_m3:.2f} m3 "
+                f"at: {', '.join(sorted(over_capacity))}."
+            )
     if truck_spec is None:
-        return available, finishes, [], None, 0.0, 0.0, []
-    while inventory >= truck_spec.capacity_m3 - 1e-9:
-        ready_truck = min(truck_available)
-        if ready_truck > max(available, max((event.end_s for event in truck_events), default=0.0)):
-            break
-        dispatch_truck(max(available, ready_truck), landing_x, landing_y)
+        return available, finishes, [], None, final_total, max_total, landing_inventory, warnings
     truck_total = max((event.end_s for event in truck_events), default=0.0)
     summary: dict[str, float | int] = {
         "truck_count": truck_spec.count,
@@ -1831,17 +1898,21 @@ def _simulate_loader(
         "mill_wait_s": round(mill_wait_s, 3),
         "dispatched_loads": dispatched,
         "dispatched_volume_m3": round(dispatched_volume, 3),
-        "landing_inventory_final_m3": round(inventory, 3),
-        "landing_inventory_max_m3": round(max_inventory, 3),
+        "landing_inventory_final_m3": round(final_total, 3),
+        "landing_inventory_max_m3": round(max_total, 3),
         "landing_capacity_m3": landing_capacity_m3 or 0.0,
         "truck_total_s": round(truck_total, 3),
     }
-    if landing_capacity_m3 is not None and max_inventory > landing_capacity_m3 + 1e-9:
-        warnings.append(
-            f"Landing inventory peaked at {max_inventory:.2f} m3, above capacity "
-            f"{landing_capacity_m3:.2f} m3."
-        )
-    return available, finishes, truck_events, summary, inventory, max_inventory, warnings
+    return (
+        available,
+        finishes,
+        truck_events,
+        summary,
+        final_total,
+        max_total,
+        landing_inventory,
+        warnings,
+    )
 
 
 def write_ground_system(result: GroundSystemResult, out_dir: Path) -> dict[str, Path]:

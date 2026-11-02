@@ -46,8 +46,8 @@ Landing values may be `id,x,y` or `x,y`.
 ## Limits
 
 - Shared processing/loading crew.
-- Global landing inventory rather than per-landing stockpiles.
-- Landing assignment is distance-based; grade-adjusted cost can be added later.
+- Per-landing stockpiles and grade/speed-aware assignment landed in #343.
+- Per-landing processor/loader fleets remain the next fleet slice.
 
 ## Closeout
 
