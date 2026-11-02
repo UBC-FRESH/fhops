@@ -31,3 +31,11 @@ Issue: #343. Branch: `issue-343-landing-inventory`.
   out later.
 - Grade affects route speed and landing choice; a separate landing-construction
   cost model is out of scope.
+
+## Closeout
+
+- PR #344 merged to `main` as `104eb8f51cf7ec8a5ac08daa374f2d13efbf936a`.
+- Main CI `41411242696` passed.
+- Public demo deployment: `15679a01`.
+- Live two-landing run reported separate stockpiles (`north 24.9/37.1 m³`,
+  `south 11.1/47.4 m³`) and replay rendered the inventory text.
