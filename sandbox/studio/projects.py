@@ -764,6 +764,13 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
     args["loader"] = primary_fleet["loader"]
     args["processors"] = primary_fleet["processors"]
     args["landing_fleets"] = fleets
+    truck_counts = project.get("landing_trucks")
+    if isinstance(truck_counts, dict) and truck_counts:
+        args["landing_truck_counts"] = {
+            landing_id: max(0, int(truck_counts.get(landing_id, 0))) for landing_id in landing_ids
+        }
+    else:
+        args.pop("landing_truck_counts", None)
     policy = project.get("operator_policies", {}).get(feller, "steady")
     preset = POLICY_PRESETS.get(policy, POLICY_PRESETS["steady"])
     args["feller_productivity_multiplier"] = 1.0 / max(0.5, float(preset["cycle_multiplier"]))
@@ -1139,6 +1146,7 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
     apply_operator_policies(project)
     manifest["system_args"] = project["system_args"]
     manifest["landing_fleets"] = project["system_args"].get("landing_fleets") or {}
+    manifest["landing_truck_counts"] = project["system_args"].get("landing_truck_counts") or {}
     manifest["operator_policies"] = project.get("operator_policies", {})
     manifest["studio_edit_signature"] = project_edit_signature(project)
     manifest["studio_terrain_signature"] = terrain_signature(project)

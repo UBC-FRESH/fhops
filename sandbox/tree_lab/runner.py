@@ -198,6 +198,8 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
             command.extend(["--landing-loader", f"{landing_id}:{loader_id}"])
         for processor_id in fleet.get("processors") or []:
             command.extend(["--landing-processor", f"{landing_id}:{processor_id}"])
+    for landing_id, count in (case.manifest.get("landing_truck_counts") or {}).items():
+        command.extend(["--landing-truck", f"{landing_id}:{int(count)}"])
     command.extend(["--path-mode", str(args.get("path_mode", "swath"))])
     for obstacle in case.manifest.get("obstacles") or []:
         try:
