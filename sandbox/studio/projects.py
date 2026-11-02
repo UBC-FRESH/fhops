@@ -143,11 +143,17 @@ def project_edit_signature(project: dict[str, Any]) -> str:
     -----
     The signature covers boundary, landing, road, retention, machines,
     operator policies, and terrain. Derived system arguments are excluded
-    because they are regenerated from those inputs. The digest is stored on
-    derived cases and copied into run records so the Studio can flag stale
-    runs.
+    because they are regenerated from those inputs. Projects without a
+    ``landings`` field keep the pre-multi-landing signature shape for backward
+    freshness compatibility. The digest is stored on derived cases and copied
+    into run records so the Studio can flag stale runs.
     """
-    return _stable_signature({field: project.get(field) for field in _EDIT_SIGNATURE_FIELDS})
+    payload = {field: project.get(field) for field in _EDIT_SIGNATURE_FIELDS}
+    if not project.get("landings"):
+        # Preserve freshness for pre-multi-landing runs, whose signatures had
+        # no landings field at all.
+        payload.pop("landings", None)
+    return _stable_signature(payload)
 
 
 def terrain_signature(project: dict[str, Any]) -> str:
