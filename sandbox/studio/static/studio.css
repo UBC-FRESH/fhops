@@ -85,3 +85,6 @@ textarea { width: 100%; resize: vertical; }
 .run-row { display: flex; align-items: center; gap: 6px; justify-content: space-between; margin: 3px 0; }
 .run-row button { padding: 2px 5px; font-size: 10px; }
 .stale-badge { color: #ffb35a; border: 1px solid #8d5420; border-radius: 4px; padding: 1px 4px; font-size: 9px; text-transform: uppercase; letter-spacing: 0.04em; }
+.landing-row { display: grid; grid-template-columns: minmax(70px, 1fr) 80px 80px auto; gap: 4px; align-items: center; margin: 3px 0; }
+.landing-row input { min-width: 0; background: #11181b; color: #e6eef2; border: 1px solid #3e5056; border-radius: 4px; padding: 2px 4px; font-size: 10px; }
+.landing-row button { padding: 2px 5px; font-size: 10px; }

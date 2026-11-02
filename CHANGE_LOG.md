@@ -1,3 +1,9 @@
+# 2026-11-02 — deploy Studio multi-landing assignment
+
+- Synced core `Landing` routing, repeatable `--landing`, Studio landing panel, and replay landing pads from merged `main` (`1cfbf9c1`).
+- Bunches are assigned to the cheapest valid landing; processor/loader remain one shared crew.
+- No host networking or routing changes.
+
 # 2026-11-02 — deploy Studio road-network authoring
 
 - Synced multi-segment road authoring, GeoJSON MultiLineString handoff, and replay road ribbons from merged `main` (`e8b1f979`).

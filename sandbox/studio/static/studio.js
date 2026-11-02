@@ -27,6 +27,17 @@ const state = {
   lastStatus: "",
 };
 
+function projectLandings(project = state.project) {
+  const items = (project?.landings || []).filter(
+    (landing) => Number.isFinite(Number(landing.x)) && Number.isFinite(Number(landing.y)),
+  );
+  if (items.length) return items;
+  if (project?.landing) {
+    return [{ id: "landing-main", label: "Landing", x: project.landing.x, y: project.landing.y }];
+  }
+  return [];
+}
+
 function roadSegments(project = state.project) {
   const road = project?.road || {};
   const segments = (road.segments || []).filter((segment) => Array.isArray(segment.points) && segment.points.length >= 2);
@@ -102,7 +113,7 @@ function fitView() {
   const points = [];
   for (const point of state.project.block?.polygon || []) points.push([Number(point[0]), Number(point[1])]);
   for (const tree of state.trees) points.push([tree.x, tree.y]);
-  if (state.project.landing) points.push([Number(state.project.landing.x), Number(state.project.landing.y)]);
+  for (const landing of projectLandings()) points.push([Number(landing.x), Number(landing.y)]);
   for (const segment of roadSegments()) {
     for (const point of segment.points || []) points.push([Number(point[0]), Number(point[1])]);
   }
@@ -309,26 +320,27 @@ function draw() {
     }
   }
 
-  if (state.project.landing) {
-    const [sx, sy] = worldToScreen(Number(state.project.landing.x), Number(state.project.landing.y));
+  const landings = projectLandings();
+  for (const [landingIndex, landing] of landings.entries()) {
+    const [sx, sy] = worldToScreen(Number(landing.x), Number(landing.y));
     const landingRadius = Math.max(7, 18 * Math.min(state.scale, 2.5));
     ctx.beginPath();
     ctx.arc(sx, sy, landingRadius, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(240,138,36,0.35)";
+    ctx.fillStyle = landingIndex === 0 ? "rgba(240,138,36,0.35)" : "rgba(240,138,36,0.2)";
     ctx.fill();
     ctx.strokeStyle = COLORS.landing;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = landingIndex === 0 ? 2 : 1.2;
     ctx.stroke();
     ctx.fillStyle = "#f3c795";
     ctx.font = "11px system-ui";
-    ctx.fillText("landing", sx + landingRadius + 4, sy + 4);
+    ctx.fillText(landingIndex === 0 ? "landing" : landing.label || landing.id, sx + landingRadius + 4, sy + 4);
   }
 
-  if (state.project.machines) {
+  if (state.project.machines && landings.length) {
     let index = 0;
     for (const machine of state.project.machines) {
       if (!["feller", "loader", "processor", "skidder", "yarder"].some((role) => machine.role.includes(role))) continue;
-      const [sx, sy] = worldToScreen(Number(state.project.landing.x) + (index - 1) * 2.8, Number(state.project.landing.y));
+      const [sx, sy] = worldToScreen(Number(landings[0].x) + (index - 1) * 2.8, Number(landings[0].y));
       ctx.fillStyle = machine.role.includes("loader") ? "#27ae60" : machine.role.includes("processor") ? "#f1c40f" : machine.role.includes("yarder") ? "#c678dd" : "#f08a24";
       ctx.fillRect(sx - 3, sy - 3, 6, 6);
       index += 1;
@@ -404,6 +416,99 @@ function renderStats() {
   ];
   $("#stand-stats").innerHTML = items.map(([value, label]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("");
   $("#boundary-info").innerHTML = `${state.project.block.polygon.length} vertices · ${stats.block_area_ha.toFixed(2)} ha<br><span class="muted">Drag vertices; double-click an edge to add one; Delete removes the selected vertex.</span>`;
+}
+
+function renderLandingList() {
+  const node = $("#landing-list");
+  if (!node || !state.project) return;
+  const landings = projectLandings();
+  state.project.landings = landings;
+  node.innerHTML = "";
+  landings.forEach((landing, index) => {
+    const row = document.createElement("div");
+    row.className = "landing-row";
+    const label = document.createElement("input");
+    label.value = landing.label || landing.id || `Landing ${index + 1}`;
+    label.title = "Landing label";
+    const x = document.createElement("input");
+    x.type = "number";
+    x.step = "0.1";
+    x.value = Number(landing.x).toFixed(1);
+    x.title = "Easting (m)";
+    const y = document.createElement("input");
+    y.type = "number";
+    y.step = "0.1";
+    y.value = Number(landing.y).toFixed(1);
+    y.title = "Northing (m)";
+    const actions = document.createElement("div");
+    const primary = document.createElement("button");
+    primary.className = "btn small";
+    primary.textContent = index === 0 ? "primary" : "set";
+    primary.title = index === 0 ? "Primary landing" : "Make this the primary landing";
+    primary.disabled = index === 0;
+    primary.addEventListener("click", () => {
+      pushHistory();
+      const [chosen] = landings.splice(index, 1);
+      landings.unshift(chosen);
+      state.project.landings = landings;
+      state.project.landing = { x: Number(chosen.x), y: Number(chosen.y) };
+      markDirty();
+      render();
+      renderLandingList();
+    });
+    const remove = document.createElement("button");
+    remove.className = "btn small";
+    remove.textContent = "×";
+    remove.title = "Remove landing";
+    remove.disabled = landings.length < 2;
+    remove.addEventListener("click", () => {
+      if (landings.length < 2) return;
+      pushHistory();
+      landings.splice(index, 1);
+      state.project.landings = landings;
+      state.project.landing = { x: Number(landings[0].x), y: Number(landings[0].y) };
+      markDirty();
+      render();
+      renderLandingList();
+    });
+    actions.append(primary, remove);
+    const update = () => {
+      pushHistory();
+      landing.label = label.value.trim() || `Landing ${index + 1}`;
+      landing.x = Number(x.value);
+      landing.y = Number(y.value);
+      state.project.landings = landings;
+      if (index === 0) state.project.landing = { x: landing.x, y: landing.y };
+      markDirty();
+      render();
+    };
+    label.addEventListener("change", update);
+    x.addEventListener("change", update);
+    y.addEventListener("change", update);
+    row.append(label, x, y, actions);
+    node.append(row);
+  });
+}
+
+function addLanding() {
+  if (!state.project) return;
+  pushHistory();
+  const polygon = state.project.block?.polygon || [];
+  const xs = polygon.map((point) => Number(point[0]));
+  const ys = polygon.map((point) => Number(point[1]));
+  const landings = projectLandings();
+  const x = (xs.length ? Math.max(...xs) : 0) - 30 - landings.length * 12;
+  const y = (ys.length ? Math.min(...ys) : 0) - 20 - landings.length * 10;
+  landings.push({
+    id: `landing-${Date.now().toString(36)}`,
+    label: `Landing ${landings.length + 1}`,
+    x,
+    y,
+  });
+  state.project.landings = landings;
+  markDirty();
+  render();
+  renderLandingList();
 }
 
 function renderProjectMeta() {
@@ -518,7 +623,7 @@ function setTool(tool) {
   document.querySelectorAll("#tools [data-tool]").forEach((button) => button.classList.toggle("active", button.dataset.tool === tool));
   const hints = {
     select: "Inspect trees. Drag empty space to pan.",
-    landing: "Click to move the landing.",
+    landing: "Click to move the primary landing; use the Landings panel to add or promote others.",
     boundary: "Drag boundary vertices; double-click an edge to insert; Delete removes selected vertex.",
     retain: "Paint retention trees. Hold Shift to clear retention.",
     clump: "Click to draw a retention clump. Double-click to close it. Trees inside are retained.",
@@ -667,8 +772,15 @@ function onPointerDown(event) {
     }
     if (best) next = best;
     state.project.landing = { x: next[0], y: next[1] };
+    const landings = projectLandings();
+    if (landings.length) {
+      landings[0].x = next[0];
+      landings[0].y = next[1];
+      state.project.landings = landings;
+    }
     markDirty();
     render();
+    renderLandingList();
     return;
   }
   if (state.tool === "boundary") {
@@ -993,6 +1105,7 @@ async function loadProject(projectId) {
     state.selectedVertex = null;
     state.scale = 1;
     recomputeStats();
+    renderLandingList();
     resizeCanvas();
     fitView();
     setStatus(`Loaded ${state.project.label}`);
@@ -1096,6 +1209,7 @@ function bindEvents() {
   $("#rename").addEventListener("click", renameProject);
   $("#duplicate").addEventListener("click", duplicateProject);
   $("#add-machine").addEventListener("click", addMachine);
+  $("#add-landing").addEventListener("click", addLanding);
   $("#new-project").addEventListener("click", openNewDialog);
   $("#import").addEventListener("click", () => $("#import-file").click());
   $("#import-file").addEventListener("change", (event) => { importProjectFile(event.target.files?.[0]); event.target.value = ""; });

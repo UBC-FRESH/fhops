@@ -16,6 +16,7 @@ from fhops.ground_system import (
     BreakdownConfig,
     DowntimeWindow,
     GroundSystemError,
+    Landing,
     MachineSpec,
     ProcessorSpec,
     simulate_ground_system,
@@ -311,6 +312,24 @@ def _parse_obstacle(value: str) -> Obstacle:
     return Obstacle(x_m=x, y_m=y, radius_m=radius)
 
 
+def _parse_landing(value: str, index: int) -> Landing:
+    parts = [part.strip() for part in value.split(",")]
+    if len(parts) == 2:
+        landing_id = f"landing-{index + 1}"
+        x_text, y_text = parts
+    elif len(parts) == 3:
+        landing_id, x_text, y_text = parts
+    else:
+        raise ValueError(f"Landing {value!r} must be id,x,y or x,y.")
+    try:
+        x, y = float(x_text), float(y_text)
+    except ValueError as exc:
+        raise ValueError(f"Landing {value!r} must contain numeric coordinates.") from exc
+    if not landing_id:
+        raise ValueError("Landing id must not be empty.")
+    return Landing(landing_id=landing_id, x_m=x, y_m=y)
+
+
 @tree_app.command("replay")
 def tree_replay(
     scenario: Path = typer.Argument(..., help="FHOPS scenario YAML with a tree-inventory pin."),
@@ -454,6 +473,11 @@ def tree_system(
     ),
     landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
     landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
+    landing: list[str] | None = typer.Option(
+        None,
+        "--landing",
+        help="Named landing as id,x,y or x,y. Repeat to route bunches to multiple landings.",
+    ),
     dem: Path | None = typer.Option(
         None, "--dem", help="Optional GeoTIFF DEM in the scenario CRS."
     ),
@@ -625,6 +649,9 @@ def tree_system(
             raise GroundSystemError("feller-productivity-multiplier must be positive.")
         if processor_productivity_multiplier <= 0:
             raise GroundSystemError("processor-productivity-multiplier must be positive.")
+        landing_choices = tuple(
+            _parse_landing(value, index) for index, value in enumerate(landing or [])
+        )
         result = simulate_ground_system(
             scenario,
             block_id=block,
@@ -639,6 +666,7 @@ def tree_system(
             loader_machine_id=loader,
             landing_x_m=landing_x,
             landing_y_m=landing_y,
+            landings=landing_choices,
             bunch_volume_m3=bunch_volume,
             rate_model=rate_model,  # type: ignore[arg-type]
             dem_path=dem,

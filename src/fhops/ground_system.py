@@ -56,6 +56,7 @@ __all__ = [
     "GroundSystemEvent",
     "GroundSystemResult",
     "GroundSystemTree",
+    "Landing",
     "BreakdownConfig",
     "DowntimeWindow",
     "PROCESSOR_MODELS",
@@ -72,6 +73,23 @@ __all__ = [
 
 class GroundSystemError(RuntimeError):
     """Raised when a ground-based system simulation cannot be completed."""
+
+
+@dataclass(frozen=True)
+class Landing:
+    """A named landing position used for skidder routing.
+
+    Parameters
+    ----------
+    landing_id:
+        Stable identifier in the scenario/project.
+    x_m, y_m:
+        Landing coordinates in the scenario CRS.
+    """
+
+    landing_id: str
+    x_m: float
+    y_m: float
 
 
 @dataclass(frozen=True)
@@ -451,7 +469,10 @@ class GroundSystemResult:
     loader_machine_id:
         Loader identifier.
     landing_x_m, landing_y_m:
-        Landing position in the block CRS.
+        Primary landing position in the block CRS.
+    landings:
+        All landing choices used for skidder assignment. The first entry is the
+        primary landing.
     bunch_volume_m3:
         Target bunch volume.
     trees:
@@ -483,6 +504,7 @@ class GroundSystemResult:
     loader_machine_id: str
     landing_x_m: float
     landing_y_m: float
+    landings: tuple[Landing, ...]
     bunch_volume_m3: float
     rate_model: str
     rate_provenance: dict[str, object]
@@ -517,6 +539,9 @@ class GroundSystemResult:
             "skidder_machine_ids": list(self.skidder_machine_ids),
             "loader_machine_id": self.loader_machine_id,
             "landing": {"x": self.landing_x_m, "y": self.landing_y_m},
+            "landings": [
+                {"id": item.landing_id, "x": item.x_m, "y": item.y_m} for item in self.landings
+            ],
             "bunch_volume_m3": self.bunch_volume_m3,
             "rate_model": self.rate_model,
             "rate_provenance": self.rate_provenance,
@@ -583,6 +608,7 @@ def simulate_ground_system(
     stem_inventory: StemInventory | None = None,
     landing_x_m: float | None = None,
     landing_y_m: float | None = None,
+    landings: Sequence[Landing] = (),
     bunch_volume_m3: float = DEFAULT_BUNCH_VOLUME_M3,
     rate_model: Literal["calibrated", "reference"] = DEFAULT_RATE_MODEL,
     dem_path: str | Path | None = None,
@@ -651,7 +677,13 @@ def simulate_ground_system(
     stem_inventory:
         Optional precomputed stem inventory.
     landing_x_m, landing_y_m:
-        Landing position. Defaults to the mean tree position.
+        Primary landing position. Defaults to the mean tree position.
+    landings:
+        Optional named landing choices. When supplied, each bunch is routed to
+        the lowest-travel-cost landing with a valid terrain route. The first
+        landing is the primary landing used for result metadata. The processor
+        and loader are modelled as one shared crew that services the chosen
+        landings; per-landing fleets are not yet simulated.
     bunch_volume_m3:
         Target bunch volume in cubic metres.
     rate_model:
@@ -867,13 +899,25 @@ def simulate_ground_system(
     processed_events = [event for event in fb_sim.events if event.status == "processed"]
     if not processed_events:
         raise GroundSystemError(f"Block {block_id!r} produced no processed trees.")
-    if landing_x_m is None or landing_y_m is None:
-        landing_x = sum(tree.x_m for tree in processed_events) / len(processed_events)
-        landing_y = sum(tree.y_m for tree in processed_events) / len(processed_events)
+    landing_choices = tuple(landings)
+    if landing_choices:
+        if len({item.landing_id for item in landing_choices}) != len(landing_choices):
+            raise GroundSystemError("Landing IDs must be unique.")
+        if any(
+            not math.isfinite(item.x_m) or not math.isfinite(item.y_m) for item in landing_choices
+        ):
+            raise GroundSystemError("Landing positions must be finite.")
+        primary_landing = landing_choices[0]
+        landing_x, landing_y = primary_landing.x_m, primary_landing.y_m
     else:
-        landing_x, landing_y = landing_x_m, landing_y_m
-    if not all(math.isfinite(value) for value in (landing_x, landing_y)):
-        raise GroundSystemError("Landing position must be finite.")
+        if landing_x_m is None or landing_y_m is None:
+            landing_x = sum(tree.x_m for tree in processed_events) / len(processed_events)
+            landing_y = sum(tree.y_m for tree in processed_events) / len(processed_events)
+        else:
+            landing_x, landing_y = landing_x_m, landing_y_m
+        if not all(math.isfinite(value) for value in (landing_x, landing_y)):
+            raise GroundSystemError("Landing position must be finite.")
+        landing_choices = (Landing("landing-main", landing_x, landing_y),)
     skidder_specs = dict(skidder_specs or {})
     for machine in skidders:
         skidder_specs.setdefault(machine, default_skidder_spec(machine))
@@ -917,6 +961,9 @@ def simulate_ground_system(
     except TerrainError as exc:
         raise GroundSystemError(str(exc)) from exc
     rate_provenance["terrain"] = router.provenance()
+    rate_provenance["landings"] = [
+        {"id": item.landing_id, "x": item.x_m, "y": item.y_m} for item in landing_choices
+    ]
     calendar: _ShiftCalendar | None = None
     shift_windows: tuple[tuple[float, float], ...] = ()
     downtime_windows = tuple(downtime)
@@ -1086,8 +1133,7 @@ def simulate_ground_system(
         bunches,
         skidders,
         skidder_specs,
-        landing_x,
-        landing_y,
+        landing_choices,
         rate_model=rate_model,
         speed_profile=speed_profile,
         router=router,
@@ -1099,8 +1145,6 @@ def simulate_ground_system(
                 events,
                 loads,
                 processor_models,
-                landing_x,
-                landing_y,
                 calendar=calendar,
             )
         except TerrainError as exc:
@@ -1186,6 +1230,7 @@ def simulate_ground_system(
         loader_machine_id=loader_machine_id,
         landing_x_m=landing_x,
         landing_y_m=landing_y,
+        landings=landing_choices,
         bunch_volume_m3=bunch_volume_m3,
         rate_model=rate_model,
         rate_provenance=rate_provenance,
@@ -1238,6 +1283,9 @@ class _Load:
     logs: int
     ready_s: float
     tree_ids: tuple[str, ...]
+    landing_id: str = "landing-main"
+    landing_x_m: float = 0.0
+    landing_y_m: float = 0.0
 
 
 def generate_breakdown_windows(
@@ -1416,8 +1464,7 @@ def _simulate_skidders(
     bunches: list[_Bunch],
     skidder_ids: tuple[str, ...],
     specs: Mapping[str, MachineSpec],
-    landing_x: float,
-    landing_y: float,
+    landings: Sequence[Landing],
     *,
     rate_model: str,
     speed_profile: SkidderSpeedProfile | None,
@@ -1437,11 +1484,24 @@ def _simulate_skidders(
             )
         start = available[machine]
         bx, by = bunch.x, bunch.y
-        try:
-            route = router.route((landing_x, landing_y), (bx, by))
-        except TerrainError as exc:
-            blocked.append(f"{bunch.bunch_id} ({bunch.volume_m3:.2f} m3) blocked: {exc}")
+        selected_landing: Landing | None = None
+        selected_route = None
+        route_errors: list[str] = []
+        for candidate in landings:
+            try:
+                candidate_route = router.route((candidate.x_m, candidate.y_m), (bx, by))
+            except TerrainError as exc:
+                route_errors.append(f"{candidate.landing_id}: {exc}")
+                continue
+            if selected_route is None or candidate_route.distance_m < selected_route.distance_m:
+                selected_landing = candidate
+                selected_route = candidate_route
+        if selected_landing is None or selected_route is None:
+            detail = "; ".join(route_errors) if route_errors else "no landing route"
+            blocked.append(f"{bunch.bunch_id} ({bunch.volume_m3:.2f} m3) blocked: {detail}")
             continue
+        landing = selected_landing
+        route = selected_route
         distance = route.distance_m
         empty_start = start
         if rate_model == "calibrated":
@@ -1476,8 +1536,8 @@ def _simulate_skidders(
                 type="travel_empty",
                 start_s=empty_start,
                 end_s=empty_end,
-                x0=landing_x,
-                y0=landing_y,
+                x0=landing.x_m,
+                y0=landing.y_m,
                 x1=bx,
                 y1=by,
                 status="empty",
@@ -1513,8 +1573,8 @@ def _simulate_skidders(
                 end_s=loaded_end,
                 x0=bx,
                 y0=by,
-                x1=landing_x,
-                y1=landing_y,
+                x1=landing.x_m,
+                y1=landing.y_m,
                 volume_m3=bunch.volume_m3,
                 logs=bunch.logs,
                 status="loaded",
@@ -1530,10 +1590,10 @@ def _simulate_skidders(
                 type="unload",
                 start_s=loaded_end,
                 end_s=unload_end,
-                x0=landing_x,
-                y0=landing_y,
-                x1=landing_x,
-                y1=landing_y,
+                x0=landing.x_m,
+                y0=landing.y_m,
+                x1=landing.x_m,
+                y1=landing.y_m,
                 volume_m3=bunch.volume_m3,
                 logs=bunch.logs,
                 status="unloading",
@@ -1549,6 +1609,9 @@ def _simulate_skidders(
                 logs=bunch.logs,
                 ready_s=unload_end,
                 tree_ids=bunch.tree_ids,
+                landing_id=landing.landing_id,
+                landing_x_m=landing.x_m,
+                landing_y_m=landing.y_m,
             )
         )
     if blocked:
@@ -1562,8 +1625,6 @@ def _simulate_processor(
     events: list[GroundSystemEvent],
     loads: list[_Load],
     specs: Mapping[str, ProcessorSpec],
-    landing_x: float,
-    landing_y: float,
     *,
     calendar: _ShiftCalendar | None,
 ) -> tuple[float, list[_Load]]:
@@ -1582,10 +1643,10 @@ def _simulate_processor(
                 type="process",
                 start_s=start,
                 end_s=end,
-                x0=landing_x,
-                y0=landing_y,
-                x1=landing_x,
-                y1=landing_y,
+                x0=load.landing_x_m,
+                y0=load.landing_y_m,
+                x1=load.landing_x_m,
+                y1=load.landing_y_m,
                 volume_m3=load.volume_m3,
                 logs=load.logs,
                 tree_ids=load.tree_ids,
@@ -1601,6 +1662,9 @@ def _simulate_processor(
                 logs=load.logs,
                 ready_s=end,
                 tree_ids=load.tree_ids,
+                landing_id=load.landing_id,
+                landing_x_m=load.landing_x_m,
+                landing_y_m=load.landing_y_m,
             )
         )
         available[machine] = end
@@ -1644,7 +1708,9 @@ def _simulate_loader(
     dispatched_volume = 0.0
     warnings: list[str] = []
 
-    def dispatch_truck(start_s: float) -> tuple[float, float]:
+    def dispatch_truck(
+        start_s: float, truck_landing_x: float, truck_landing_y: float
+    ) -> tuple[float, float]:
         nonlocal inventory, dispatched, dispatched_volume
         if truck_spec is None or inventory <= 1e-9:
             return start_s, 0.0
@@ -1671,10 +1737,10 @@ def _simulate_loader(
                 type="truck_load",
                 start_s=start,
                 end_s=load_end,
-                x0=landing_x,
-                y0=landing_y,
-                x1=landing_x,
-                y1=landing_y,
+                x0=truck_landing_x,
+                y0=truck_landing_y,
+                x1=truck_landing_x,
+                y1=truck_landing_y,
                 volume_m3=load_volume,
                 status="loading",
             )
@@ -1685,10 +1751,10 @@ def _simulate_loader(
                 type="truck_return",
                 start_s=load_end,
                 end_s=return_end,
-                x0=landing_x,
-                y0=landing_y,
-                x1=landing_x,
-                y1=landing_y,
+                x0=truck_landing_x,
+                y0=truck_landing_y,
+                x1=truck_landing_x,
+                y1=truck_landing_y,
                 volume_m3=load_volume,
                 status="returning",
             )
@@ -1717,7 +1783,7 @@ def _simulate_loader(
                     )
                 truck_index = min(range(truck_spec.count), key=lambda index: truck_available[index])
                 wait_until = max(start, truck_available[truck_index])
-                truck_start, _ = dispatch_truck(wait_until)
+                truck_start, _ = dispatch_truck(wait_until, load.landing_x_m, load.landing_y_m)
                 start = max(start, truck_start)
         start, end = _schedule_task(calendar, start, process_time)
         events.append(
@@ -1726,10 +1792,10 @@ def _simulate_loader(
                 type="process",
                 start_s=start,
                 end_s=end,
-                x0=landing_x,
-                y0=landing_y,
-                x1=landing_x,
-                y1=landing_y,
+                x0=load.landing_x_m,
+                y0=load.landing_y_m,
+                x1=load.landing_x_m,
+                y1=load.landing_y_m,
                 volume_m3=load.volume_m3,
                 logs=load.logs,
                 tree_ids=load.tree_ids,
@@ -1745,14 +1811,14 @@ def _simulate_loader(
                 ready_truck = min(truck_available)
                 if ready_truck > available:
                     break
-                dispatch_truck(available)
+                dispatch_truck(available, load.landing_x_m, load.landing_y_m)
     if truck_spec is None:
         return available, finishes, [], None, 0.0, 0.0, []
     while inventory >= truck_spec.capacity_m3 - 1e-9:
         ready_truck = min(truck_available)
         if ready_truck > max(available, max((event.end_s for event in truck_events), default=0.0)):
             break
-        dispatch_truck(max(available, ready_truck))
+        dispatch_truck(max(available, ready_truck), landing_x, landing_y)
     truck_total = max((event.end_s for event in truck_events), default=0.0)
     summary: dict[str, float | int] = {
         "truck_count": truck_spec.count,

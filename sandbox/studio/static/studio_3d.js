@@ -236,6 +236,17 @@ function updateTreeHeights() {
   }
 }
 
+function projectLandings(source = project) {
+  const items = (source?.landings || []).filter(
+    (landing) => Number.isFinite(Number(landing.x)) && Number.isFinite(Number(landing.y)),
+  );
+  if (items.length) return items;
+  if (source?.landing) {
+    return [{ id: "landing-main", label: "Landing", x: source.landing.x, y: source.landing.y }];
+  }
+  return [];
+}
+
 function roadSegments(source = project) {
   const road = source?.road || {};
   const segments = (road.segments || []).filter((segment) => Array.isArray(segment.points) && segment.points.length >= 2);
@@ -346,20 +357,23 @@ function buildOverlays() {
     }
   }
   landingGroup = new THREE.Group();
-  const [lx, ly] = [Number(project.landing.x), Number(project.landing.y)];
-  const pad = new THREE.Mesh(
-    new THREE.CircleGeometry(16, 24),
-    new THREE.MeshStandardMaterial({ color: 0x8b876e, roughness: 0.95, side: THREE.DoubleSide }),
-  );
-  pad.rotation.x = -Math.PI / 2;
-  pad.position.set(lx, terrainHeight(lx, ly) + 0.9, ly);
-  landingGroup.add(pad);
-  const pole = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.8, 1.3, 8, 8),
-    new THREE.MeshStandardMaterial({ color: 0xf08a24 }),
-  );
-  pole.position.set(lx, terrainHeight(lx, ly) + 5, ly);
-  landingGroup.add(pole);
+  for (const [index, landing] of projectLandings().entries()) {
+    const lx = Number(landing.x);
+    const ly = Number(landing.y);
+    const pad = new THREE.Mesh(
+      new THREE.CircleGeometry(index === 0 ? 16 : 12, 24),
+      new THREE.MeshStandardMaterial({ color: 0x8b876e, roughness: 0.95, side: THREE.DoubleSide }),
+    );
+    pad.rotation.x = -Math.PI / 2;
+    pad.position.set(lx, terrainHeight(lx, ly) + 0.9, ly);
+    landingGroup.add(pad);
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.8, 1.3, index === 0 ? 8 : 5, 8),
+      new THREE.MeshStandardMaterial({ color: index === 0 ? 0xf08a24 : 0xd8a35a }),
+    );
+    pole.position.set(lx, terrainHeight(lx, ly) + (index === 0 ? 5 : 3), ly);
+    landingGroup.add(pole);
+  }
   scene.add(landingGroup);
 }
 
@@ -375,7 +389,7 @@ function updateStats() {
   const range = terrain.heights.length ? `${Math.min(...terrain.heights).toFixed(1)} … ${Math.max(...terrain.heights).toFixed(1)} m` : "flat";
   const area = stateArea(project.block.polygon);
   const clumps = project.retention?.clumps || [];
-  $("#scene-stats").innerHTML = `<b>${area.toFixed(2)} ha</b> block<br><b>${dataset.trees.filter((tree) => tree.inside).length.toLocaleString()}</b> trees in block<br><b>${retained.size.toLocaleString()}</b> retained<br><b>${clumps.length}</b> clumps<br><b>${terrain.res}</b>× terrain grid<br><b>${range}</b> relief<br><span class="hint">${dirty ? "unsaved edits" : "saved"}</span>`;
+  $("#scene-stats").innerHTML = `<b>${area.toFixed(2)} ha</b> block<br><b>${dataset.trees.filter((tree) => tree.inside).length.toLocaleString()}</b> trees in block<br><b>${retained.size.toLocaleString()}</b> retained<br><b>${clumps.length}</b> clumps<br><b>${projectLandings().length}</b> landings<br><b>${terrain.res}</b>× terrain grid<br><b>${range}</b> relief<br><span class="hint">${dirty ? "unsaved edits" : "saved"}</span>`;
   $("#project-id").textContent = `Project ID: ${project.project_id}`;
 }
 
@@ -483,6 +497,12 @@ function onPointerDown(event) {
     if (!point) return;
     pushHistory();
     project.landing = { x: point.x, y: point.z };
+    const landings = projectLandings();
+    if (landings.length) {
+      landings[0].x = point.x;
+      landings[0].y = point.z;
+      project.landings = landings;
+    }
     buildOverlays();
     updateStats();
     markDirty();
@@ -670,6 +690,24 @@ $("#redo").addEventListener("click", redo);
 $("#rename").addEventListener("click", renameProject);
 $("#duplicate").addEventListener("click", duplicateProject);
 $("#fit").addEventListener("click", fitView);
+$("#add-landing").addEventListener("click", () => {
+  if (!project) return;
+  pushHistory();
+  const polygon = project.block?.polygon || [];
+  const xs = polygon.map((point) => Number(point[0]));
+  const ys = polygon.map((point) => Number(point[1]));
+  const landings = projectLandings();
+  landings.push({
+    id: `landing-${Date.now().toString(36)}`,
+    label: `Landing ${landings.length + 1}`,
+    x: (xs.length ? Math.max(...xs) : 0) - 30 - landings.length * 12,
+    y: (ys.length ? Math.min(...ys) : 0) - 20 - landings.length * 10,
+  });
+  project.landings = landings;
+  buildOverlays();
+  updateStats();
+  markDirty();
+});
 $("#brush").addEventListener("input", () => { brush = Number($("#brush").value); $("#brush-label").textContent = `${brush} m`; });
 $("#access-map").addEventListener("change", () => { accessMode = $("#access-map").checked; buildTerrain(); buildOverlays(); updateStats(); });
 $("#stream-width").addEventListener("input", () => {
