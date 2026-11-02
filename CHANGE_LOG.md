@@ -1,3 +1,9 @@
+# 2026-11-02 — deploy Studio road-network authoring
+
+- Synced multi-segment road authoring, GeoJSON MultiLineString handoff, and replay road ribbons from merged `main` (`e8b1f979`).
+- Shift-click in the 2D/3D road tool starts a branch.
+- No host networking or routing changes.
+
 # 2026-11-02 — deploy Studio run freshness
 
 - Synced Studio freshness/signature and run-history/replay UI from merged `main` (`c63b80cf`).

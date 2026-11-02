@@ -178,6 +178,22 @@ function drawTimeline() {
   timelineCursor.textContent = `T+${fmt(cursor)}`;
 }
 
+function replayRoadSegments(project) {
+  const road = project?.road || {};
+  const segments = (road.segments || [])
+    .filter((segment) => Array.isArray(segment.points) && segment.points.length >= 2)
+    .map((segment) => ({
+      id: segment.id || "road",
+      label: segment.label || "Road",
+      points: segment.points,
+    }));
+  if (segments.length) return segments;
+  if (Array.isArray(road.points) && road.points.length >= 2) {
+    return [{ id: "road-main", label: "Main road", points: road.points }];
+  }
+  return [];
+}
+
 function replayTerrain(project) {
   const terrain = project?.terrain;
   if (!terrain || !Array.isArray(terrain.heights) || !terrain.heights.length) return null;
@@ -212,9 +228,11 @@ function replayTerrain(project) {
   const landing = project.landing || {};
   if (Number.isFinite(Number(landing.x))) xs.push(Number(landing.x));
   if (Number.isFinite(Number(landing.y))) ys.push(Number(landing.y));
-  for (const point of project.road?.points || []) {
-    if (Number.isFinite(Number(point[0]))) xs.push(Number(point[0]));
-    if (Number.isFinite(Number(point[1]))) ys.push(Number(point[1]));
+  for (const segment of replayRoadSegments(project)) {
+    for (const point of segment.points) {
+      if (Number.isFinite(Number(point[0]))) xs.push(Number(point[0]));
+      if (Number.isFinite(Number(point[1]))) ys.push(Number(point[1]));
+    }
   }
   xs.push(sourceMinX, sourceMaxX);
   ys.push(sourceMinY, sourceMaxY);
@@ -256,6 +274,7 @@ async function load() {
   ]);
   events = loadedEvents;
   events.terrain = replayTerrain(project);
+  events.road_segments = replayRoadSegments(project);
   const freshness = runMetadata?.freshness;
   if (freshness?.stale) {
     staleText.textContent = ` ${freshness.reasons?.join(" ") || "Project edits changed after this run."}`;

@@ -984,35 +984,83 @@ export function createViewer(container, { onTime } = {}) {
   }
 
   function addRoad(events) {
-    const bounds = treeBounds(events);
     const landing = events.landing;
-    if (!bounds || !landing) return;
-    const roadY = Math.min(Number(landing.y), bounds.minY - 12);
-    const left = bounds.minX - 60;
-    const right = bounds.maxX + 60;
-    roadEndpoints = [[left, roadY], [right, roadY]];
+    if (!landing) return;
     const roadHeight = (x, y) => sampleHeight(x, y) + 0.9;
     const halfWidth = 5.5;
-    const positions = [
-      left, roadHeight(left, roadY - halfWidth), roadY - halfWidth,
-      left, roadHeight(left, roadY + halfWidth), roadY + halfWidth,
-      right, roadHeight(right, roadY - halfWidth), roadY - halfWidth,
-      right, roadHeight(right, roadY + halfWidth), roadY + halfWidth,
-    ];
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geometry.setIndex([0, 2, 1, 1, 2, 3]);
-    geometry.computeVertexNormals();
-    const road = new THREE.Mesh(
-      geometry,
-      new THREE.MeshStandardMaterial({ color: 0x66685a, roughness: 0.95, side: THREE.DoubleSide }),
-    );
-    road.name = 'block_road';
-    scene.add(road);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x66685a,
+      roughness: 0.95,
+      side: THREE.DoubleSide,
+    });
+
+    function addRoadRibbon(points) {
+      if (!Array.isArray(points) || points.length < 2) return;
+      const positions = [];
+      const indices = [];
+      for (let index = 0; index < points.length; index += 1) {
+        const [x, y] = points[index].map(Number);
+        const before = points[Math.max(0, index - 1)];
+        const after = points[Math.min(points.length - 1, index + 1)];
+        const dx = Number(after[0]) - Number(before[0]);
+        const dy = Number(after[1]) - Number(before[1]);
+        const length = Math.hypot(dx, dy) || 1;
+        const nx = -dy / length;
+        const ny = dx / length;
+        positions.push(x + nx * halfWidth, roadHeight(x + nx * halfWidth, y + ny * halfWidth), y + ny * halfWidth);
+        positions.push(x - nx * halfWidth, roadHeight(x - nx * halfWidth, y - ny * halfWidth), y - ny * halfWidth);
+        if (index < points.length - 1) {
+          const offset = index * 2;
+          indices.push(offset, offset + 2, offset + 1, offset + 1, offset + 2, offset + 3);
+        }
+      }
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+      const road = new THREE.Mesh(geometry, material);
+      road.name = 'block_road';
+      scene.add(road);
+    }
+
+    const authored = Array.isArray(events.road_segments)
+      ? events.road_segments.filter((segment) => Array.isArray(segment.points) && segment.points.length >= 2)
+      : [];
+    let roadPoints = [];
+    if (authored.length) {
+      for (const segment of authored) addRoadRibbon(segment.points);
+      const longest = authored.reduce(
+        (best, segment) => (segment.points.length > best.points.length ? segment : best),
+        authored[0],
+      );
+      roadPoints = longest.points.map(([x, y]) => [Number(x), Number(y)]);
+      roadEndpoints = [roadPoints[0], roadPoints[roadPoints.length - 1]];
+    } else {
+      const bounds = treeBounds(events);
+      if (!bounds) return;
+      const roadY = Math.min(Number(landing.y), bounds.minY - 12);
+      const left = bounds.minX - 60;
+      const right = bounds.maxX + 60;
+      roadPoints = [[left, roadY], [right, roadY]];
+      roadEndpoints = roadPoints;
+      addRoadRibbon(roadPoints);
+    }
+
+    let nearest = roadPoints[0];
+    let nearestDistance = Infinity;
+    for (const segment of authored.length ? authored : [{ points: roadPoints }]) {
+      for (const point of segment.points) {
+        const distance = Math.hypot(Number(point[0]) - Number(landing.x), Number(point[1]) - Number(landing.y));
+        if (distance < nearestDistance) {
+          nearest = point;
+          nearestDistance = distance;
+        }
+      }
+    }
     const spur = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(landing.x, roadHeight(landing.x, roadY), roadY),
-        new THREE.Vector3(landing.x, roadHeight(landing.x, landing.y), landing.y),
+        new THREE.Vector3(Number(nearest[0]), roadHeight(Number(nearest[0]), Number(nearest[1])), Number(nearest[1])),
+        new THREE.Vector3(Number(landing.x), roadHeight(Number(landing.x), Number(landing.y)), Number(landing.y)),
       ]),
       new THREE.LineBasicMaterial({ color: 0xd8c58a, transparent: true, opacity: 0.9 }),
     );
