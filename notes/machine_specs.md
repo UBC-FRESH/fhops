@@ -28,3 +28,10 @@ Issue: #354. Branch: `issue-354-machine-specs`.
 
 - Truck capacity/cycle remain global.
 - Spec overrides are numeric reference-model parameters, not field calibration.
+
+## Closeout
+
+- PR #355 merged to `main` as `9bf15c08176b4771d4be038763628070e65ce628`.
+- Main CI `41487343948` passed.
+- Public demo deployment: `032315cf`.
+- Live Studio showed 4 spec groups / 19 fields with no page errors.
