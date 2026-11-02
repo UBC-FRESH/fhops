@@ -895,9 +895,10 @@ def simulate_ground_system(
             "expected feller_buncher/harvester/hand_faller."
         )
     for machine in skidders:
-        if machines[machine].role not in {"grapple_skidder", "skidder"}:
+        if machines[machine].role not in {"grapple_skidder", "skidder", "forwarder"}:
             raise GroundSystemError(
-                f"Skidder {machine!r} has role {machines[machine].role!r}, expected grapple_skidder/skidder."
+                f"Skidder/forwarder {machine!r} has role {machines[machine].role!r}, "
+                "expected grapple_skidder/skidder/forwarder."
             )
     for loader_machine in dict.fromkeys((loader_machine_id, *fleet_loaders)):
         if machines[loader_machine].role != "loader":

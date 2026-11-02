@@ -139,6 +139,25 @@ def test_ground_system_processor_stage(tmp_path: Path) -> None:
     assert result.rate_provenance["processor"]["model"] == "tn103_area_a"
 
 
+def test_ground_system_accepts_forwarder_roles(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    machines = scenario.parent.parent / "scenario" / "data" / "machines.csv"
+    text = machines.read_text(encoding="utf-8")
+    machines.write_text(
+        text.replace("H2,CH2,24.0,950.0,grapple_skidder", "H2,CH2,24.0,950.0,forwarder"),
+        encoding="utf-8",
+    )
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+    )
+    assert result.tree_count > 0
+
+
 def test_ground_system_assigns_loader_fleets_per_landing(tmp_path: Path) -> None:
     scenario = _system_scenario(tmp_path)
     root = scenario.parent.parent

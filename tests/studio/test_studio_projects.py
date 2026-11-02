@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 
@@ -226,6 +227,25 @@ def test_materialized_case_carries_landing_fleets(tmp_path: Path) -> None:
     machine_rows = (derived.root / "scenario" / "data" / "machines.csv").read_text(encoding="utf-8")
     assert "H4-B" in machine_rows
     assert "H5-B" in machine_rows
+
+
+def test_materialized_case_updates_harvester_forwarder_roles(tmp_path: Path) -> None:
+    """Project role edits are written into the derived scenario machine CSV."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    roles = {"H1": "harvester", "H2": "forwarder", "H3": "forwarder"}
+    for machine in project["machines"]:
+        if machine["id"] in roles:
+            machine["role"] = roles[machine["id"]]
+            machine["type"] = roles[machine["id"]]
+    derived = materialize_case(tmp_path, project, case)
+    with (derived.root / "scenario" / "data" / "machines.csv").open(
+        encoding="utf-8", newline=""
+    ) as handle:
+        rows = {row["id"]: row["role"] for row in csv.DictReader(handle)}
+    assert rows["H1"] == "harvester"
+    assert rows["H2"] == "forwarder"
+    assert rows["H3"] == "forwarder"
 
 
 def test_materialized_case_carries_project_signatures(tmp_path: Path) -> None:
