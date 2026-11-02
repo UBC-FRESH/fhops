@@ -11,6 +11,7 @@ from __future__ import annotations
 import heapq
 import json
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -322,7 +323,11 @@ class TerrainRouter:
         if merged.geom_type == "LineString":
             return merged
         if merged.geom_type == "MultiLineString":
-            return _RoadNetwork(merged)
+            return _RoadNetwork(
+                merged,
+                elevation=self._elevation,
+                grade_speed_factor=self.grade_speed_factor,
+            )
         raise TerrainError("Road geometry must be a LineString or MultiLineString.")
 
     def _road_points(
@@ -351,9 +356,26 @@ class TerrainRouter:
 class _RoadNetwork:
     """Small undirected graph over a connected Shapely line network."""
 
-    def __init__(self, geometry: Any) -> None:
+    def __init__(
+        self,
+        geometry: Any,
+        *,
+        elevation: Callable[[float, float], float] | None = None,
+        grade_speed_factor: float = 0.02,
+    ) -> None:
         self._coords: dict[int, tuple[float, float]] = {}
         self._adjacency: dict[int, list[tuple[int, float]]] = {}
+        self._elevation = elevation
+        self._grade_speed_factor = max(0.0, grade_speed_factor)
+
+        def edge_cost(a: tuple[float, float], b: tuple[float, float], length: float) -> float:
+            if self._elevation is None or length <= 0:
+                return length
+            grade = abs(self._elevation(b[0], b[1]) - self._elevation(a[0], a[1]))
+            grade_percent = grade / length * 100.0
+            speed_factor = max(0.4, 1.0 - self._grade_speed_factor * grade_percent)
+            return length / speed_factor
+
         parts = list(geometry.geoms) if geometry.geom_type == "MultiLineString" else [geometry]
         node_ids: dict[tuple[float, float], int] = {}
 
@@ -377,8 +399,9 @@ class _RoadNetwork:
                 length = math.hypot(b[0] - a[0], b[1] - a[1])
                 if length <= 0:
                     continue
-                self._adjacency[ia].append((ib, length))
-                self._adjacency[ib].append((ia, length))
+                cost = edge_cost(a, b, length)
+                self._adjacency[ia].append((ib, cost))
+                self._adjacency[ib].append((ia, cost))
         if not self._coords:
             raise TerrainError("Road network contains no usable line segments.")
 

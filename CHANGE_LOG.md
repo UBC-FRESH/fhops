@@ -1,3 +1,8 @@
+# 2026-11-02 — deploy road validation and grade-aware routing
+
+- Synced Studio road connectivity blocking and DEM-grade road-network costs from merged `main` (`4ad83be5`).
+- No host networking or routing changes.
+
 # 2026-11-02 — deploy per-landing truck specs
 
 - Synced per-landing truck equipment overrides and Studio truck-spec panel from merged `main` (`78afbc72`).
