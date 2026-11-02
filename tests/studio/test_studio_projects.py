@@ -129,6 +129,24 @@ def test_project_signatures_detect_run_affecting_changes(tmp_path: Path) -> None
     assert run_freshness(project, {})["stale"] is True
 
 
+def test_materialized_case_carries_multiple_landings(tmp_path: Path) -> None:
+    """Multiple project landings flow into the derived case manifest."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    project["landings"].append(
+        {
+            "id": "north",
+            "label": "North landing",
+            "x": project["landing"]["x"] + 40,
+            "y": project["landing"]["y"] + 40,
+        }
+    )
+    derived = materialize_case(tmp_path, project, case)
+    assert len(derived.manifest["landings"]) == 2
+    assert derived.manifest["landings"][1]["id"] == "north"
+    assert derived.manifest["landing"]["x"] == project["landing"]["x"]
+
+
 def test_materialized_case_carries_project_signatures(tmp_path: Path) -> None:
     """Derived cases carry the signatures copied into run metadata."""
     case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")

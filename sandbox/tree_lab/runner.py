@@ -183,6 +183,13 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
     edge = _edge_landing(case, run_dir / "inputs" / "tree_inventory" / "cut_list.csv")
     if edge is not None:
         command.extend(["--landing-x", f"{edge[0]:.3f}", "--landing-y", f"{edge[1]:.3f}"])
+    for landing in case.manifest.get("landings") or []:
+        try:
+            x, y = float(landing["x"]), float(landing["y"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        landing_id = str(landing.get("id") or f"landing-{len(command)}")
+        command.extend(["--landing", f"{landing_id},{x:.3f},{y:.3f}"])
     command.extend(["--path-mode", str(args.get("path_mode", "swath"))])
     for obstacle in case.manifest.get("obstacles") or []:
         try:

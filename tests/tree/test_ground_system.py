@@ -15,6 +15,7 @@ from fhops.ground_system import (
     BreakdownConfig,
     DowntimeWindow,
     GroundSystemError,
+    Landing,
     simulate_ground_system,
     write_ground_system,
 )
@@ -132,6 +133,39 @@ def test_ground_system_processor_stage(tmp_path: Path) -> None:
         event.end_s for event in processor_events
     )
     assert result.rate_provenance["processor"]["model"] == "tn103_area_a"
+
+
+def test_ground_system_routes_bunches_to_multiple_landings(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    base = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+    )
+    xs = [tree.x_m for tree in base.trees]
+    ys = [tree.y_m for tree in base.trees]
+    landings = (
+        Landing("west", min(xs) - 20.0, min(ys) - 20.0),
+        Landing("east", max(xs) + 20.0, max(ys) + 20.0),
+    )
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        landings=landings,
+    )
+    assert result.landings == landings
+    unloads = [event for event in result.events if event.type == "unload"]
+    assert unloads
+    assert {round(event.x0, 3) for event in unloads} <= {min(xs) - 20.0, max(xs) + 20.0}
+    assert len({round(event.x0, 3) for event in unloads}) == 2
+    assert result.to_dict()["landings"][0]["id"] == "west"
 
 
 def test_processor_productivity_multiplier_scales_processor_cycle(tmp_path: Path) -> None:
