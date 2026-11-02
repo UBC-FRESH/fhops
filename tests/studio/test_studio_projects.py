@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -15,6 +16,7 @@ from sandbox.studio.projects import (
     polygon_area_ha,
     project_dataset,
     project_edit_signature,
+    road_segments,
     run_freshness,
     save_project,
     stream_buffer_polygon,
@@ -52,6 +54,24 @@ def test_materialized_case_filters_retention(tmp_path: Path) -> None:
     assert derived.manifest["landing"]["x"] == saved["landing"]["x"]
     assert derived.manifest["system_args"]["feller"] == "H1"
     assert len(derived.manifest["obstacles"]) == 2
+
+
+def test_road_network_exports_multilinestring(tmp_path: Path) -> None:
+    """Multiple authored branches export as a GeoJSON MultiLineString."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    project["road"]["segments"] = [
+        {"id": "main", "label": "Main haul", "points": [[0.0, 0.0], [100.0, 0.0]]},
+        {"id": "branch", "label": "North branch", "points": [[50.0, 0.0], [50.0, 80.0]]},
+    ]
+    assert len(road_segments(project)) == 2
+    derived = materialize_case(tmp_path, project, case)
+    geometry = json.loads((derived.root / "approaches" / "studio_road.geojson").read_text())[
+        "features"
+    ][0]["geometry"]
+    assert geometry["type"] == "MultiLineString"
+    assert len(geometry["coordinates"]) == 2
+    assert derived.manifest["road_segments"][1]["id"] == "branch"
 
 
 def test_materialized_tree_elevations_follow_terrain(tmp_path: Path) -> None:

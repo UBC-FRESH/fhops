@@ -679,7 +679,7 @@ eventually terrain/obstacle editing, with a derived scenario run.
 Known limits: terrain and routing remain reference approximations; operator
 policies map cycle/output coefficients but do not model continuous policy-state
 physics; stream buffers are authoring geometry, not surveyed hydrology; no
-multi-landing or road-network routing yet.
+multi-landing routing yet; multi-segment road authoring is tracked as #337.
 
 ## Phase 22 — Scenario Studio follow-ups
 
@@ -701,6 +701,7 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
 - [x] 3D replay retention visibility, retained/stream legend, and machine-event timeline (#330).
 - [x] Studio terrain elevation alignment for derived trees, retained trees, landings, and replay terrain (#332).
 - [x] Studio run freshness signatures, stale-run badges, and replay rerun action (#334; PR #335).
+- [ ] Studio multi-segment road-network authoring and GeoJSON MultiLineString handoff (#337).
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [x] Integration with Nemora sampling outputs for downstream operations analytics (P19 tree-inventory handoff).

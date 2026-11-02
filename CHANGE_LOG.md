@@ -1,3 +1,16 @@
+# 2026-11-02 — Studio multi-segment road network (#337)
+
+- Project road model now supports `road.segments` with legacy `road.points`
+  migration.
+- 2D and 3D road tools append to the active segment; Shift-click starts a new
+  branch.
+- Derived cases export a GeoJSON `LineString` for one segment or
+  `MultiLineString` for a network, and manifest `road_segments` metadata.
+- Replay renders the authored road network and landing spur instead of the
+  synthetic single road.
+- Added `test_road_network_exports_multilinestring`.
+- Regenerated all four live demo project runs with the P25 freshness build.
+
 # 2026-11-02 — P25 closeout
 
 - PR #335 squash-merged to `main` as
