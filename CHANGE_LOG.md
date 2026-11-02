@@ -1,3 +1,11 @@
+# 2026-11-02 — P26 closeout
+
+- PR #338 squash-merged to `main` as
+  `e8b1f979e1dd644aec017803576ebe05d802966d`; main CI `41397871126` passed.
+- Public demo deployment `d96183bc`.
+- Temporary two-branch browser smoke test passed; all four demo projects were
+  regenerated with fresh runs.
+
 # 2026-11-02 — Studio multi-segment road network (#337)
 
 - Project road model now supports `road.segments` with legacy `road.points`

@@ -36,3 +36,13 @@ or pass a network through the derived-case handoff.
   landings and per-landing machine fleets remain the next slice.
 - Branches must be geometrically connected for the core network router to find
   connected paths.
+
+## Closeout
+
+- PR #338 merged to `main` as `e8b1f979e1dd644aec017803576ebe05d802966d`.
+- Main CI `41397871126` passed.
+- Public demo deployment: `d96183bc`.
+- All four live demo projects were regenerated with fresh P25 runs before this
+  slice.
+- Temporary two-branch project smoke test rendered both roads in 2D with no
+  browser errors.
