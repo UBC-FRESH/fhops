@@ -1,3 +1,10 @@
+# 2026-11-03 — comparison charts and JSON export (#384)
+
+- Comparison page adds visual bars for makespan, machine cost, cost/m³, and
+  warnings.
+- Added a downloadable JSON comparison payload including run summaries,
+  economics, freshness, and landing inventory.
+
 # 2026-11-03 — scenario comparison economics (#379)
 
 - Studio catalog retains scenario machine operating cost and daily hours; `-B`
