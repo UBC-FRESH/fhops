@@ -42,16 +42,19 @@ processors are the critical path (about 14.0 h / 10.1 h).
 
 ## Economics
 
-The page reports machine operating cost as:
+The page reports:
 
-```text
-sum(daily operating cost × makespan_hours / daily_hours)
-```
+- scheduled machine cost: daily operating cost × makespan / daily hours;
+- productive machine cost: daily operating cost × busy hours / daily hours;
+- truck cost: truck count × truck $/h × makespan;
+- labor cost: active machines × labor $/machine-h × makespan;
+- total cost and cost per m³.
 
-for every active machine, plus cost per m³. Scenario machine costs are copied
-into the Studio catalog (base machines and `-B` fleet clones), so existing
-projects are enriched on dataset load. This is a proportional machine-cost
-view, not a full ownership/repair/fuel accounting model.
+`truck_hourly_cost` and `labor_hourly_cost` are read from project
+`system_args`. Scenario machine costs are copied into the Studio catalog (base
+machines and `-B` fleet clones), so existing projects are enriched on dataset
+load. This remains a proportional planning view, not full ownership, repair,
+fuel, or finance accounting.
 
 ## Tests
 

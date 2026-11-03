@@ -47,6 +47,24 @@ def test_deterministic_simulation_processes_all_trees(tmp_path: Path) -> None:
     assert all(event.status == "processed" for event in first.events)
 
 
+def test_harvester_processing_model_uses_bucked_logs(tmp_path: Path) -> None:
+    scenario = _reconciled_scenario(tmp_path)
+    kwargs = {
+        "block_id": "B01",
+        "machine_id": "H1",
+        "start_x_m": 881700.0,
+        "start_y_m": 627500.0,
+        "travel_speed_m_per_s": 1.0,
+    }
+    feller = simulate_block(scenario, processing_model="feller_buncher", **kwargs)
+    harvester = simulate_block(scenario, processing_model="harvester", **kwargs)
+    assert feller.processing_time_s != harvester.processing_time_s
+    assert harvester.processing_time_s > 0
+    assert [event.log_count for event in feller.events] == [
+        event.log_count for event in harvester.events
+    ]
+
+
 def test_reach_changes_travel_distance(tmp_path: Path) -> None:
     scenario = _reconciled_scenario(tmp_path)
     short = simulate_block(

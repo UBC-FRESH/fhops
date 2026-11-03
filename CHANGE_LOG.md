@@ -1,3 +1,16 @@
+# 2026-11-03 — P45 harvester model, economics refinement, cleanup (#386)
+
+- Added role-aware harvester processing model:
+  - feller-buncher uses whole-tree reference assumption;
+  - harvester uses bucked-log count/mean log length in ADV6N10 CTL regression.
+  - Ground-system provenance/caveats record the selected model.
+- Comparison economics now shows scheduled vs productive machine cost, truck
+  cost, labor cost, total cost, and cost/m³. Rates come from project
+  `system_args`.
+- Added harvester/spatial-machine tests.
+- Reconciled completed roadmap items and documented remaining full-test/Sphinx
+  environment limitations.
+
 # 2026-11-03 — comparison charts and JSON export (#384)
 
 - Comparison page adds visual bars for makespan, machine cost, cost/m³, and
