@@ -285,6 +285,7 @@ def simulate_block(
     travel_speed_m_per_s: float = DEFAULT_TRAVEL_SPEED_M_PER_S,
     max_slope_percent: float = DEFAULT_MAX_SLOPE_PERCENT,
     processing_time_multiplier: float = 1.0,
+    processing_model: Literal["feller_buncher", "harvester"] = "feller_buncher",
     path_mode: Literal["nearest", "swath"] = "nearest",
     swath_band_height_m: float | None = None,
     max_total_time_s: float | None = None,
@@ -324,6 +325,10 @@ def simulate_block(
         Multiplier on each tree processing time. Values above one model slower
         harvester work (for example selection-cut care); values below one model
         faster work. Travel time is unaffected.
+    processing_model : {"feller_buncher", "harvester"}, optional
+        Processing-time assumption. ``harvester`` accounts for stump-side
+        multi-product bucking using the tree's bucked log count and mean log
+        length; ``feller_buncher`` uses the legacy whole-tree assumption.
     path_mode : {"nearest", "swath"}, optional
         ``swath`` uses boustrophedon bands for a contiguous harvest pattern;
         ``nearest`` preserves the original nearest-tree behavior.
@@ -384,6 +389,8 @@ def simulate_block(
         raise SpatialMachineError(f"Block {block_id!r} has no tree records.")
     if path_mode not in {"nearest", "swath"}:
         raise SpatialMachineError("path_mode must be 'nearest' or 'swath'.")
+    if processing_model not in {"feller_buncher", "harvester"}:
+        raise SpatialMachineError("processing_model must be 'feller_buncher' or 'harvester'.")
     ordered_trees = (
         _swath_order(
             trees,
@@ -412,6 +419,7 @@ def simulate_block(
         travel_speed_m_per_s=travel_speed_m_per_s,
         max_slope_percent=max_slope_percent,
         processing_time_multiplier=processing_time_multiplier,
+        processing_model=processing_model,
         max_total_time_s=max_total_time_s,
         target_merchantable_volume_m3=target_merchantable_volume_m3,
         obstacles=obstacles,
@@ -561,6 +569,7 @@ def _simulate_events(
     travel_speed_m_per_s: float,
     max_slope_percent: float,
     processing_time_multiplier: float,
+    processing_model: Literal["feller_buncher", "harvester"],
     max_total_time_s: float | None,
     target_merchantable_volume_m3: float | None,
     obstacles: tuple[Obstacle, ...],
@@ -660,7 +669,7 @@ def _simulate_events(
         horizontal = math.hypot(target.x_m - current_x, target.y_m - current_y)
         slope = abs(terrain_z - current_z) / horizontal * 100.0 if horizontal > 0 else 0.0
         move_time = move_distance / travel_speed_m_per_s
-        processing_time = _processing_time(target) * processing_time_multiplier
+        processing_time = _processing_time(target, processing_model) * processing_time_multiplier
         start_s = elapsed
         elapsed += move_time + processing_time
         events.append(
@@ -692,16 +701,24 @@ def _simulate_events(
     return events
 
 
-def _processing_time(tree: StemResult) -> float:
+def _processing_time(
+    tree: StemResult, processing_model: Literal["feller_buncher", "harvester"]
+) -> float:
     if tree.merchantable_volume_m3 <= 0:
         return 0.0
-    # Felling handles the whole tree. Bucking length belongs to the processor,
-    # not to feller-buncher productivity.
+    if processing_model == "harvester" and tree.logs:
+        products_count = float(max(1, len(tree.logs)))
+        mean_log_length = sum(log.length_m for log in tree.logs) / len(tree.logs)
+    else:
+        # Felling handles the whole tree; bucking length belongs to the
+        # processor, not feller-buncher productivity.
+        products_count = 1.0
+        mean_log_length = max(tree.height_m, 1e-9)
     inputs = ADV6N10HarvesterInputs(
         stem_volume_m3=tree.merchantable_volume_m3,
-        products_count=1.0,
+        products_count=products_count,
         stems_per_cycle=1.0,
-        mean_log_length_m=max(tree.height_m, 1e-9),
+        mean_log_length_m=max(mean_log_length, 1e-9),
     )
     productivity = estimate_harvester_productivity_adv6n10(inputs)
     return tree.merchantable_volume_m3 / productivity * 3600.0

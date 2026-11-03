@@ -82,7 +82,11 @@ function economics(data) {
   const makespanH = Number(run.kpis?.makespan_s || 0) / 3600;
   const catalog = new Map((data.dataset?.project?.catalog || []).map((item) => [item.id, item]));
   const machineIds = Object.keys(run.kpis?.machine_summaries || {});
-  let cost = 0;
+  const systemArgs = data.dataset?.project?.system_args || {};
+  const truckRate = Number(systemArgs.truck_hourly_cost || 0);
+  const laborRate = Number(systemArgs.labor_hourly_cost || 0);
+  let scheduled = 0;
+  let productive = 0;
   let priced = 0;
   for (const id of machineIds) {
     const item = catalog.get(id);
@@ -90,16 +94,29 @@ function economics(data) {
     const hours = Number(item?.daily_hours || 24);
     if (daily > 0) {
       priced += 1;
-      cost += daily * (makespanH / Math.max(1, hours));
+      scheduled += daily * (makespanH / Math.max(1, hours));
+      const summary = run.kpis?.machine_summaries?.[id] || {};
+      productive += daily * ((Number(summary.busy_s || 0) / 3600) / Math.max(1, hours));
     }
   }
+  const truckCount = Number(run.kpis?.truck_summary?.truck_count || 0);
+  const truckCost = truckCount * truckRate * makespanH;
+  const laborCost = machineIds.length * laborRate * makespanH;
+  const total = scheduled + truckCost + laborCost;
   const volume = Number(run.kpis?.processed_volume_m3 || 0);
   return {
     machineCount: machineIds.length,
     pricedMachineCount: priced,
     makespanH,
-    cost,
-    costPerM3: volume > 0 && priced > 0 ? cost / volume : null,
+    scheduled,
+    productive,
+    truckCount,
+    truckRate,
+    laborRate,
+    truckCost,
+    laborCost,
+    total,
+    costPerM3: volume > 0 ? total / volume : null,
   };
 }
 
@@ -109,7 +126,11 @@ function economicsRows(left, right) {
   const rows = [
     ["Active machines", a.machineCount, b.machineCount],
     ["Costed machines", a.pricedMachineCount, b.pricedMachineCount],
-    ["Machine operating cost", a.pricedMachineCount ? `$${a.cost.toFixed(0)}` : "unavailable", b.pricedMachineCount ? `$${b.cost.toFixed(0)}` : "unavailable"],
+    ["Machine cost — scheduled", `$${a.scheduled.toFixed(0)}`, `$${b.scheduled.toFixed(0)}`],
+    ["Machine cost — productive", `$${a.productive.toFixed(0)}`, `$${b.productive.toFixed(0)}`],
+    ["Truck cost", `$${a.truckCost.toFixed(0)} (${a.truckCount} @ $${a.truckRate}/h)`, `$${b.truckCost.toFixed(0)} (${b.truckCount} @ $${b.truckRate}/h)`],
+    ["Labor cost", `$${a.laborCost.toFixed(0)} ($${a.laborRate}/machine-h)`, `$${b.laborCost.toFixed(0)} ($${b.laborRate}/machine-h)`],
+    ["Total cost", `$${a.total.toFixed(0)}`, `$${b.total.toFixed(0)}`],
     ["Cost per m³", a.costPerM3 == null ? "unavailable" : `$${a.costPerM3.toFixed(2)}`, b.costPerM3 == null ? "unavailable" : `$${b.costPerM3.toFixed(2)}`],
   ];
   return rows.map(([label, av, bv]) => `<tr><th>${label}</th><td class="num">${av}</td><td class="num">${bv}</td></tr>`).join("");
@@ -174,7 +195,7 @@ function renderCharts(left, right) {
   const b = economics(right);
   const metrics = [
     ["Makespan h", Number(left.meta.run.kpis?.makespan_s || 0) / 3600, Number(right.meta.run.kpis?.makespan_s || 0) / 3600, (v) => fmt(v)],
-    ["Machine cost", a.cost, b.cost, (v) => `$${fmt(v, 0)}`],
+    ["Total cost", a.total, b.total, (v) => `$${fmt(v, 0)}`],
     ["Cost / m³", a.costPerM3 || 0, b.costPerM3 || 0, (v) => `$${fmt(v, 2)}`],
     ["Warnings", (left.meta.run.warnings || []).length, (right.meta.run.warnings || []).length, (v) => `${v}`],
   ];
