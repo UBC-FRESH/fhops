@@ -36,6 +36,14 @@ Results:
 | Makespan | 20.3 h | 18.8 h |
 | Warnings | 0 | 0 |
 | Truck loads | 25 | 25 |
+| Scheduled machine cost | $4,027 | $5,221 |
+| Productive machine cost | $2,142 | $2,180 |
+| Truck + labor cost | $9,462 | $10,458 |
+| Total cost | **$13,489** | **$15,679** |
+| Cost per m³ | **$17.38** | **$20.20** |
+
+Rates for the demo: truck $120/h, labor $45/machine-h.
+
 
 The CTL forwarders are the critical path (about 15.6 h busy each); full-tree
 processors are the critical path (about 14.0 h / 10.1 h).
