@@ -1,0 +1,1379 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Telemetry-Driven Tuning &mdash; FHOPS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Telemetry Ops Runbook" href="telemetry_ops.html" />
+    <link rel="prev" title="Thesis Evaluation Workflow (Chapter 2)" href="thesis_eval.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            FHOPS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#automation-pipeline">Automation pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#quick-demo">Quick demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#baseline-workflows">Baseline Workflows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#bootstrap-environment">Bootstrap Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#workbench-examples-tiny7">Workbench: <code class="docutils literal notranslate"><span class="pre">examples/tiny7</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#regression-fixture-phase-1-baseline">Regression Fixture (Phase 1 Baseline)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#rolling-horizon-loop-playback-kpis">Rolling horizon loop (playback + KPIs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#shift-enabled-scenarios">Shift-enabled scenarios</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tree_scale.html">Tree-Scale Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#synthetic-fixture">Synthetic fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#run-the-complete-path">Run the complete path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#fail-closed-behavior">Fail-closed behavior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_contract.html">Data Contract Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#cross-references-validators">Cross References &amp; Validators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#optional-extras">Optional Extras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#timeline-example">Timeline Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#shift-calendars-defaults">Shift Calendars &amp; Defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#schedule-locking">Schedule Locking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#initial-state-resuming-mid-operation">Initial State (Resuming Mid-Operation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#compatibility-with-fhops-1-0-0">Compatibility with FHOPS 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#geojson-ingestion-distances">GeoJSON Ingestion &amp; Distances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#machine-rate-defaults-costing-helper">Machine-Rate Defaults &amp; Costing Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#road-construction-tables-validation">Road Construction Tables &amp; Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#skyline-stand-profiles">Skyline Stand Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#log-hauling-extension">Log Hauling Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#lidarbc-products">LidarBC Products</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#tree-inventories">Tree Inventories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#authoring-checklist">Authoring Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#fixture-gallery">Fixture Gallery</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">Benchmarking Harness</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#cli-options">CLI Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#watching-heuristic-progress">Watching heuristic progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#faq-watch-mode">FAQ – Watch Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#standard-manuscript-pipeline">Standard Manuscript Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#optional-gurobi-backend-linux">Optional Gurobi backend (Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#interpreting-outputs">Interpreting Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#comparing-mip-and-heuristic-objectives">Comparing MIP and heuristic objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#shared-kpi-roll-up">Shared KPI roll-up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#operator-telemetry">Operator Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#visual-comparisons">Visual Comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#regression-fixture">Regression Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#future-work">Future Work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="heuristic_presets.html">Heuristic Presets &amp; Registry Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#shared-solver-cheat-sheet">Shared Solver Cheat Sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#preset-overview">Preset Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#applying-presets">Applying Presets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#explicit-overrides">Explicit Overrides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#solver-specific-parameters">Solver-Specific Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#parallel-advanced-features">Parallel &amp; Advanced Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#operator-catalogue">Operator Catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#telemetry-benchmarking">Telemetry &amp; Benchmarking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#objective-weights-automatic-overrides-and-hard-violations">Objective Weights, Automatic Overrides, and Hard Violations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mip_warm_starts.html">Operational MILP Warm Starts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#workflow">Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#solver-support">Solver support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#solve-outcomes">Solve outcomes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#current-limitations">Current limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#practical-guidance">Practical guidance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#future-work">Future work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="optimization_formulation.html">Operational MILP Formulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parallel_heuristics.html">Parallel Heuristic Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#multi-start-runs">Multi-start Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#batched-neighbour-evaluation">Batched Neighbour Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#api-reference">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#profiling-notes">Profiling Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#running-deterministic-playback">Running deterministic playback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#optional-flags">Optional flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#reporting-templates">Reporting templates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#parquet-and-markdown-exports">Parquet and Markdown exports</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#quickstart-example">Quickstart example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#aggregation-helper-reference">Aggregation helper reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#kpi-formulas-required-signals">KPI formulas &amp; required signals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#empty-and-partial-plans">Empty and partial plans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#weather-downtime-cost-assumptions">Weather &amp; downtime cost assumptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#stochastic-playback-toggles">Stochastic playback toggles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#stochastic-event-semantics">Stochastic event semantics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#relationship-to-kpi-evaluation">Relationship to KPI evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="thesis_eval.html">Thesis Evaluation Workflow (Chapter 2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#context-goals">Context &amp; Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#pipeline-overview">Pipeline Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#worked-example-med42-template">Worked Example (med42 Template)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#tips-references">Tips &amp; References</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Telemetry-Driven Tuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-1-collect-telemetry">Step 1 – Collect Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-2-generate-a-comparison-report">Step 2 – Generate a Comparison Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sample-output">Sample Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-3-iterate">Step 3 – Iterate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-4-compare-multiple-reports">Step 4 – Compare Multiple Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#historical-trends">Historical Trends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#delta-snapshot-summary">Delta Snapshot Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpreting-dashboards">Interpreting Dashboards</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#history-summary-html-trend-radar">history_summary.html ― trend radar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#latest-history-summary-html-md-csv-current-leaderboard">latest_history_summary.{html,md,csv} ― current leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#latest-tuner-report-html-md-csv-raw-per-algorithm-stats">latest_tuner_report.{html,md,csv} ― raw per-algorithm stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#latest-tuner-comparison-latest-tuner-leaderboard">latest_tuner_comparison &amp; latest_tuner_leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tuner-difficulty-html-md-csv">tuner_difficulty*.{html,md,csv}</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-new-dashboard-assets">Adding new dashboard assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#release-candidate-presets">Release candidate presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#automated-sweeps">Automated Sweeps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#parallel-execution">Parallel execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#benchmark-plans">Benchmark plans</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#notebook-execution-cadence">Notebook execution cadence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#heuristic-parameter-catalogue">Heuristic parameter catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#convergence-metrics">Convergence metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tuner-metadata-summary">Tuner metadata summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#bundle-aliases">Bundle Aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ci-automation">CI Automation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-ci-reports">Downloading CI Reports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telemetry_ops.html">Telemetry Ops Runbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#weekly-notebook-pipeline">Weekly Notebook Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#telemetry-store-maintenance">Telemetry Store Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#automation-checklist">Automation Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#runbook-template-per-week">Runbook Template (per week)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release_playbook.html">Release &amp; Contribution Playbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release_playbook.html#release-preparation">Release Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_playbook.html#contribution-checklist">Contribution Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_playbook.html#where-to-update-next">Where to Update Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="synthetic_datasets.html">Synthetic Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#reference-bundles">Reference bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#fleet-roles-and-harvest-systems">Fleet roles and harvest systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#block-enrichment-crews-and-blackouts">Block enrichment, crews, and blackouts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#cli-walkthrough">CLI walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#regenerating-bundles">Regenerating bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#where-to-go-next">Where to go next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="system_sequencing.html">Harvest System Sequencing How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#configuring-scenarios">Configuring Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#sequencing-semantics">Sequencing Semantics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="system_sequencing.html#locks-and-the-operational-milp">Locks and the operational MILP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#running-the-solvers">Running the Solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="system_sequencing.html#mip">MIP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_sequencing.html#simulated-annealing">Simulated Annealing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#inspection-kpis">Inspection &amp; KPIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#benchmarking-with-sequencing">Benchmarking with Sequencing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ils.html">Iterated Local Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ils.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ils.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ils.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tabu.html">Tabu Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tabu.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tabu.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tabu.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rolling_horizon.html">Rolling-Horizon Planning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#when-to-use">When to use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#key-parameters">Key parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#how-state-carries-between-windows">How state carries between windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#milp-windows-earliness-tie-break">MILP windows: earliness tie-break</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#windows-without-a-plan">Windows without a plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#cli-usage">CLI usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#worked-example-tiny7">Worked example (tiny7)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#milp-example-with-solver-options">MILP example with solver options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#evaluating-rolling-plans">Evaluating rolling plans</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rolling_horizon.html#empty-rolling-plans-and-baselines">Empty rolling plans and baselines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#rolling-comparison-helper">Rolling comparison helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#masc-experiments-plots">MASc experiments &amp; plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#sample-artefacts">Sample artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#artefact-provenance-regeneration">Artefact provenance &amp; regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#gotchas">Gotchas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#notes">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#limitations">Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tactical_operational.html">Tactical–Operational Scenario Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#canonical-formulation">Canonical formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#loading-and-validation">Loading and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#period-templates">Period templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#core-milp-formulation">Core MILP formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#optional-infrastructure-modules">Optional infrastructure modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#scenario-overlays-diffs-and-batch-reports">Scenario overlays, diffs, and batch reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#tactical-to-operational-handoff">Tactical-to-operational handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#scale-benchmarks-and-uncertainty-envelopes">Scale benchmarks and uncertainty envelopes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#practitioner-scale-validation-case">Practitioner-scale validation case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#guided-tactical-planner-notebook">Guided tactical planner notebook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hauling.html">Log Hauling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#schema-version">Schema version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#minimal-example">Minimal example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#marine-and-barge-legs">Marine and barge legs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#entity-rules">Entity rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#contractor-eligibility">Contractor eligibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#units-and-defaults">Units and defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#phase-i-solve">Phase I solve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#phase-ii-schedule">Phase II schedule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#phase-iii-simulated-annealing">Phase III simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#stable-artefacts">Stable artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#operational-and-tactical-handoff">Operational and tactical handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#scale-case">Scale case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#limitations">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#see-also">See also</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hydrology_quickstart.html">Hydrology Quickstart — FEMIC to WS4 to FHOPS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#version-matrix">Version Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#build-the-synthetic-workspace">Build the Synthetic Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#ws4-landscape-screening">WS4 Landscape Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#fhops-consumer-and-operational-check">FHOPS Consumer and Operational Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#what-this-demonstrates">What This Demonstrates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#what-this-does-not-prove">What This Does Not Prove</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#docs-check">Docs Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#further-reference">Further Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="web.html">FHOPS Web UI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="web.html#shell-and-navigation">Shell and navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#install-and-run">Install and run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#run-discovery">Run discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#run-manifest">Run manifest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#service-surface">Service surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#map-and-layers">Map and layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#domain-panels">Domain panels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#live-runs">Live runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#scenario-editing">Scenario editing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#skins">Skins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#assistant">Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.html"><code class="docutils literal notranslate"><span class="pre">fhops</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.scenario.html"><code class="docutils literal notranslate"><span class="pre">fhops.scenario</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scenario.html#quickstart">Quickstart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.scheduling.html"><code class="docutils literal notranslate"><span class="pre">fhops.scheduling</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.timeline.BlackoutWindow"><code class="docutils literal notranslate"><span class="pre">BlackoutWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.timeline.ShiftDefinition"><code class="docutils literal notranslate"><span class="pre">ShiftDefinition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.timeline.TimelineConfig"><code class="docutils literal notranslate"><span class="pre">TimelineConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.BlockDistance"><code class="docutils literal notranslate"><span class="pre">BlockDistance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.MachineMobilisation"><code class="docutils literal notranslate"><span class="pre">MachineMobilisation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.MobilisationConfig"><code class="docutils literal notranslate"><span class="pre">MobilisationConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.build_distance_lookup"><code class="docutils literal notranslate"><span class="pre">build_distance_lookup()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.HarvestSystem"><code class="docutils literal notranslate"><span class="pre">HarvestSystem</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.SystemJob"><code class="docutils literal notranslate"><span class="pre">SystemJob</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.default_system_registry"><code class="docutils literal notranslate"><span class="pre">default_system_registry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.get_system_road_defaults"><code class="docutils literal notranslate"><span class="pre">get_system_road_defaults()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.system_productivity_overrides"><code class="docutils literal notranslate"><span class="pre">system_productivity_overrides()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.optimization.html"><code class="docutils literal notranslate"><span class="pre">fhops.optimization</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.optimization.html#deprecated-legacy-mip-1-0-1-127">Deprecated legacy MIP (1.0.1, #127)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.evaluation.html"><code class="docutils literal notranslate"><span class="pre">fhops.evaluation</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.DaySummary"><code class="docutils literal notranslate"><span class="pre">DaySummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.DowntimeEvent"><code class="docutils literal notranslate"><span class="pre">DowntimeEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.DowntimeEventConfig"><code class="docutils literal notranslate"><span class="pre">DowntimeEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.EnsembleResult"><code class="docutils literal notranslate"><span class="pre">EnsembleResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.KPIResult"><code class="docutils literal notranslate"><span class="pre">KPIResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.LandingShockConfig"><code class="docutils literal notranslate"><span class="pre">LandingShockConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.LandingShockEvent"><code class="docutils literal notranslate"><span class="pre">LandingShockEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackConfig"><code class="docutils literal notranslate"><span class="pre">PlaybackConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackEvent"><code class="docutils literal notranslate"><span class="pre">PlaybackEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackRecord"><code class="docutils literal notranslate"><span class="pre">PlaybackRecord</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackResult"><code class="docutils literal notranslate"><span class="pre">PlaybackResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackSample"><code class="docutils literal notranslate"><span class="pre">PlaybackSample</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.SamplingConfig"><code class="docutils literal notranslate"><span class="pre">SamplingConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.SamplingContext"><code class="docutils literal notranslate"><span class="pre">SamplingContext</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.SamplingEventConfig"><code class="docutils literal notranslate"><span class="pre">SamplingEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.ShiftSummary"><code class="docutils literal notranslate"><span class="pre">ShiftSummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.WeatherEvent"><code class="docutils literal notranslate"><span class="pre">WeatherEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.WeatherEventConfig"><code class="docutils literal notranslate"><span class="pre">WeatherEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.assignments_to_records"><code class="docutils literal notranslate"><span class="pre">assignments_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_kpis"><code class="docutils literal notranslate"><span class="pre">compute_kpis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_makespan_metrics"><code class="docutils literal notranslate"><span class="pre">compute_makespan_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_utilisation_metrics"><code class="docutils literal notranslate"><span class="pre">compute_utilisation_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.export_playback"><code class="docutils literal notranslate"><span class="pre">export_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.playback_summary_metrics"><code class="docutils literal notranslate"><span class="pre">playback_summary_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.render_markdown_summary"><code class="docutils literal notranslate"><span class="pre">render_markdown_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.run_playback"><code class="docutils literal notranslate"><span class="pre">run_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.run_stochastic_playback"><code class="docutils literal notranslate"><span class="pre">run_stochastic_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.schedule_to_records"><code class="docutils literal notranslate"><span class="pre">schedule_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.summarise_days"><code class="docutils literal notranslate"><span class="pre">summarise_days()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.summarise_shifts"><code class="docutils literal notranslate"><span class="pre">summarise_shifts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning.tactical_operational</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.BlockRoadAccess"><code class="docutils literal notranslate"><span class="pre">BlockRoadAccess</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Economics"><code class="docutils literal notranslate"><span class="pre">Economics</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.ExternalSupply"><code class="docutils literal notranslate"><span class="pre">ExternalSupply</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Facility"><code class="docutils literal notranslate"><span class="pre">Facility</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FacilityDemand"><code class="docutils literal notranslate"><span class="pre">FacilityDemand</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetCapacity"><code class="docutils literal notranslate"><span class="pre">FleetCapacity</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetOption"><code class="docutils literal notranslate"><span class="pre">FleetOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.HarvestSystemOption"><code class="docutils literal notranslate"><span class="pre">HarvestSystemOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.InitialInventory"><code class="docutils literal notranslate"><span class="pre">InitialInventory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PeriodLevel"><code class="docutils literal notranslate"><span class="pre">PeriodLevel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningPeriod"><code class="docutils literal notranslate"><span class="pre">PlanningPeriod</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningUnit"><code class="docutils literal notranslate"><span class="pre">PlanningUnit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Product"><code class="docutils literal notranslate"><span class="pre">Product</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadDependency"><code class="docutils literal notranslate"><span class="pre">RoadDependency</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadProject"><code class="docutils literal notranslate"><span class="pre">RoadProject</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.SilvicultureTransition"><code class="docutils literal notranslate"><span class="pre">SilvicultureTransition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalScenario</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TransportArc"><code class="docutils literal notranslate"><span class="pre">TransportArc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.children_by_parent"><code class="docutils literal notranslate"><span class="pre">children_by_parent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.four_week_periods"><code class="docutils literal notranslate"><span class="pre">four_week_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.load_tactical_operational_scenario"><code class="docutils literal notranslate"><span class="pre">load_tactical_operational_scenario()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.seasonal_periods"><code class="docutils literal notranslate"><span class="pre">seasonal_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_dimensions"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_dimensions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.validate_period_hierarchy"><code class="docutils literal notranslate"><span class="pre">validate_period_hierarchy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.model.milp.tactical_operational</span></code> Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.DemandBasis"><code class="docutils literal notranslate"><span class="pre">DemandBasis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalHarvestMode"><code class="docutils literal notranslate"><span class="pre">TacticalHarvestMode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpBundle"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpBundle</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_bundle"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_bundle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_model"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.solve_tactical_operational_milp"><code class="docutils literal notranslate"><span class="pre">solve_tactical_operational_milp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_from_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_to_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#solve-mip-deprecated-alias-outcomes-and-exit-codes"><code class="docutils literal notranslate"><span class="pre">solve-mip</span></code> (deprecated alias) outcomes and exit codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#heuristic-configuration-reference">Heuristic configuration reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#dataset-command-cheat-sheet">Dataset command cheat sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#log-hauling-commands">Log-hauling commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#web-commands">Web commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/playback_aggregates.html">Aggregation Helpers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/playback_aggregates.html#module-fhops.evaluation.playback.aggregates">API summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/harvest_systems.html">Harvest System Registry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#data-model">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#default-systems">Default Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#using-the-registry">Using the Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#scenario-cross-links">Scenario Cross-Links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#extending-systems">Extending Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#preset-usage-cheat-sheet">Preset Usage Cheat Sheet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#forwarder-productivity">Forwarder Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#grapple-skidder-shovel-logger-productivity">Grapple Skidder &amp; Shovel Logger Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#skyline-helicopter-productivity">Skyline &amp; Helicopter Productivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#forwarder-productivity-models">Forwarder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#roadside-processor-productivity-models">Roadside Processor Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#landing-processor-and-loader-coverage-cheat-sheet">Landing processor and loader coverage cheat sheet</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#optional-dataset-cookbook">Optional Dataset Cookbook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#med42-large84-cost-overlays">Med42 / Large84 cost overlays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#partial-cut-mixed-system-assignments">Partial-cut / mixed system assignments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#road-construction-add-ons">Road construction add-ons</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#burned-timber-salvage-guidance-adv1n5">Burned-Timber Salvage Guidance (ADV1N5)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#loader-forwarder-productivity-models">Loader-Forwarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#loader-harvest-system-overrides">Loader harvest-system overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#coordinating-with-forwarder-skidder-models">Coordinating with forwarder / skidder models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#grapple-skidder-productivity-models">Grapple Skidder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#grapple-yarder-productivity-models">Grapple Yarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#grapple-harvest-system-presets">Grapple harvest-system presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#shovel-logger-hoe-chucker-productivity">Shovel Logger (Hoe-Chucker) Productivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#skyline-productivity-models">Skyline Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#tr-127-predictor-ranges">TR-127 predictor ranges</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#skyline-cost-matrix">Skyline cost matrix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#tn-258-fncy12-support-utilisation">TN-258 / FNCY12 support utilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#partial-cut-profile-registry">Partial-cut profile registry</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#road-subgrade-construction-references">Road &amp; Subgrade Construction References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#handfalling-cost-reference">Handfalling Cost Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#ctl-harvester-productivity-models">CTL Harvester Productivity Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling.html#key-models">Key models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hauling_formulation.html">Log-Hauling Formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-i-monthly-daily-flows">Phase I: monthly daily flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-ii-daily-truck-and-loader-scheduling">Phase II: daily truck and loader scheduling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-iii-simulated-annealing">Phase III: simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#implementation-notes-and-corrections">Implementation notes and corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/web.html#key-objects">Key objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/web.html#cli">CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/telemetry.html">Telemetry Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#schema">Schema</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/telemetry.html#example">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/telemetry.html#solver-specific-fields">Solver-specific fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#usage-notes">Usage Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#cli-reporting">CLI Reporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#historical-trends">Historical Trends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/dashboards.html">Live Dashboards</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/dashboards.html#embedded-previews">Embedded previews</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/source_bibliography.html">Source Bibliography and Document Access</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/source_bibliography.html#public-bibliography">Public bibliography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/source_bibliography.html#private-full-text-vault">Private full-text vault</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_lidar.html">FEMIC LidarBC Products</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#scenario-pin-and-support">Scenario Pin and Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#operability-report">Operability Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#operator-workflow">Operator Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#shared-parity">Shared Parity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#phase-close-out">Phase Close-Out</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_lidar_fixture.html">TFL 6 LidarBC Fixture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#what-it-exercises">What It Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#terrain-and-canopy-evidence">Terrain And Canopy Evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#commands">Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#regeneration">Regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#parity-and-limits">Parity And Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_hydrology.html">FEMIC Hydrology Response Bundles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#readiness">Readiness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#scenario-pin">Scenario Pin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#support-mapping">Support Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#schedule-bound-exposure">Schedule-Bound Exposure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#screening">Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-hazard-windows">Operational Hazard Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#road-and-culvert-assets">Road and Culvert Assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-constraint-check">Operational Constraint Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#end-to-end-path">End-to-End Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#solver-boundary">Solver Boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-end-to-end-path">Operational End-to-End Path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hydrology_contract_index.html">Hydrology Contract and Schema Index</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#contract-layers">Contract Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#femic-producer-contracts">FEMIC Producer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#ws4-landscape-consumer-contracts">WS4 Landscape Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#fhops-operational-consumer-contracts">FHOPS Operational Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#shared-exposure-contract">Shared Exposure Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#failure-matrix">Failure Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#what-is-not-a-contract">What Is Not a Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#version-compatibility">Version Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_inventory.html">Tree Inventory Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#inventory-format">Inventory Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#scenario-pin-and-block-map">Scenario Pin and Block Map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/stem_models.html">Stem Volume and Bucking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#reference-model">Reference Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_replay.html">Tree-Scale Schedule Replay</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#input">Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_scene.html">Tree Scene Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/robustness.html">Stochastic Robustness Walkthrough</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#code-walkthrough">Code Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#interpretation">Interpretation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/analytics/index.html">Analytics Notebooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/playback_walkthrough.html">Playback Walkthrough</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/playback_walkthrough.html#Production-by-Day">Production by Day</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/stochastic_robustness.html">Stochastic Robustness Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/stochastic_robustness.html#Production-Distribution">Production Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/what_if_analysis.html">What-If Scenario Tweaks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/what_if_analysis.html#Adjusted-Sampling">Adjusted Sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/landing_congestion.html">Landing Congestion Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Baseline-Ensemble-Snapshot">Baseline Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Landing-Shock-Ensemble-Snapshot">Landing Shock Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#KPI-Comparison">KPI Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Production-Distributions">Production Distributions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/system_mix.html">Harvest System Mix Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#System-Mix-Metadata">System Mix Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Machine-Roles-in-Scenario">Machine Roles in Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Generate-Custom-Mix">Generate Custom Mix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Role-Comparison">Role Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html">KPI Decomposition Deep Dive</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Scenario-Overview">Scenario Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Production-vs-Mobilisation">Production vs Mobilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Sequencing-&amp;-Downtime">Sequencing &amp; Downtime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Visualise-Utilisation">Visualise Utilisation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html">Ensemble Resilience Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html#Production-Distributions">Production Distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html#Downtime-Summary">Downtime Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/operator_sweep.html">Operator/Benchmark Sweep</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/operator_sweep.html#Objective-Comparison">Objective Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/operator_sweep.html#Runtime-Comparison">Runtime Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html">Telemetry &amp; Solver Diagnostics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html#Objective-Trace">Objective Trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html#Acceptance-Summary">Acceptance Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html">Telemetry Report Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Load-Reports">Load Reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Visualize-Best-Objectives">Visualize Best Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Delta-Table">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Machine-Cost-Summary-Pivot">Machine-Cost Summary Pivot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Machine-Cost-Trend-Chart">Machine-Cost Trend Chart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Compare-Against-Historical-Summary">Compare Against Historical Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Repair-Usage-Alerts">Repair-Usage Alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html">Telemetry History Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Load-History-Snapshot">Load History Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Compute-Deltas">Compute Deltas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Visualize-Trends">Visualize Trends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Next-Steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/benchmark_summary.html">Benchmark Summary Notebook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/benchmark_summary.html#Objective-vs-Scenario">Objective vs Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/benchmark_summary.html#Runtime-Overview">Runtime Overview</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Processes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#developer-onboarding">Developer onboarding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#command-cadence-local-loop">Command cadence (local loop)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#debugging-and-profiling">Debugging and profiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#re-running-published-artefacts">Re-running published artefacts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../roadmap.html">Roadmap Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobilisation_geo.html">Mobilisation Geospatial Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mobilisation_geo.html#command-examples">Command Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mobilisation_geo.html#tooling-notes">Tooling Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mobilisation_geo.html#troubleshooting-diagnostics">Troubleshooting &amp; Diagnostics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../planning/productivity_gaps.html">Productivity Catalog Gaps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#arnvik-appendix-8-scope">Arnvik Appendix 8 scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#implications">Implications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#forwarder-equation-stack-bc-roll-out">Forwarder equation stack (BC roll-out)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../planning/productivity_gaps.html#sources-in-hand">Sources in hand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../planning/productivity_gaps.html#caveats-and-pending-confirmations">Caveats and pending confirmations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FHOPS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Telemetry-Driven Tuning</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/howto/telemetry_tuning.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="telemetry-driven-tuning">
+<h1>Telemetry-Driven Tuning<a class="headerlink" href="#telemetry-driven-tuning" title="Link to this heading"></a></h1>
+<p>The hyperparameter tuning CLIs (<cite>fhops tune-random</cite>, <cite>fhops tune-grid</cite>, <cite>fhops tune-bayes</cite>)
+log every run to JSONL and automatically mirror the same data into
+<code class="docutils literal notranslate"><span class="pre">telemetry/runs.sqlite</span></code>. This guide walks through a lightweight sweep,
+generating a tuning report, and interpreting the resulting artefacts.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>FHOPS installed in your virtual environment (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.[dev]</span></code>).</p></li>
+<li><p>The example scenarios shipped under <code class="docutils literal notranslate"><span class="pre">examples/</span></code> (installed with the project).</p></li>
+</ul>
+</section>
+<section id="step-1-collect-telemetry">
+<h2>Step 1 – Collect Telemetry<a class="headerlink" href="#step-1-collect-telemetry" title="Link to this heading"></a></h2>
+<p>Pick a directory for the telemetry bundle and point each tuning command at the
+same <code class="docutils literal notranslate"><span class="pre">--telemetry-log</span></code> path. FHOPS will create the JSONL file plus a mirrored
+SQLite database alongside it.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>tmp/tuner-demo
+
+fhops<span class="w"> </span>tune-random<span class="w"> </span>examples/tiny7/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--runs<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--iters<span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--telemetry-log<span class="w"> </span>tmp/tuner-demo/runs.jsonl
+
+fhops<span class="w"> </span>tune-grid<span class="w"> </span>examples/tiny7/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--batch-size<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--batch-size<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--preset<span class="w"> </span>balanced<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--preset<span class="w"> </span>explore<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--iters<span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--telemetry-log<span class="w"> </span>tmp/tuner-demo/runs.jsonl
+
+fhops<span class="w"> </span>tune-bayes<span class="w"> </span>examples/tiny7/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--trials<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--iters<span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--telemetry-log<span class="w"> </span>tmp/tuner-demo/runs.jsonl
+</pre></div>
+</div>
+<p>You can now supply <strong>scenario bundles</strong> instead of individual paths. The built-in
+aliases <code class="docutils literal notranslate"><span class="pre">baseline</span></code> (tiny7 + med42), <code class="docutils literal notranslate"><span class="pre">synthetic</span></code> (small/medium/large tiers),
+and the tier-specific aliases (<code class="docutils literal notranslate"><span class="pre">synthetic-small</span></code> etc.) expand to their component
+scenarios. Point the tuning commands at a bundle with <code class="docutils literal notranslate"><span class="pre">--bundle</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>tune-random<span class="w"> </span>--bundle<span class="w"> </span>baseline<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--runs<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--iters<span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--telemetry-log<span class="w"> </span>tmp/tuner-demo/runs.jsonl
+
+fhops<span class="w"> </span>tune-bayes<span class="w"> </span>--bundle<span class="w"> </span>synthetic-small<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--trials<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--iters<span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--telemetry-log<span class="w"> </span>tmp/tuner-demo/runs.jsonl
+</pre></div>
+</div>
+<p>Bundle specs also accept <code class="docutils literal notranslate"><span class="pre">alias=path</span></code> so you can wire custom manifests or directories
+containing <code class="docutils literal notranslate"><span class="pre">metadata.yaml</span></code>. See <a class="reference internal" href="#telemetry-bundle-aliases"><span class="std std-ref">Bundle Aliases</span></a> below for details.</p>
+<p>After those commands complete you will have:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tmp/tuner-demo/runs.jsonl</span></code> — append-only log of each run.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tmp/tuner-demo/runs.sqlite</span></code> — structured tables (<cite>runs</cite>, <cite>run_metrics</cite>,
+<cite>run_kpis</cite>, and <cite>tuner_summaries</cite>) that mirror the JSONL payload.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tmp/tuner-demo/steps/&lt;run_id&gt;.jsonl</span></code> — optional per-step logs (only when
+the solver emits granular snapshots).</p></li>
+</ul>
+</section>
+<section id="step-2-generate-a-comparison-report">
+<h2>Step 2 – Generate a Comparison Report<a class="headerlink" href="#step-2-generate-a-comparison-report" title="Link to this heading"></a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">telemetry</span> <span class="pre">report</span></code> subcommand to aggregate the SQLite store into
+machine-readable (CSV) and human-readable (Markdown) summaries:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>telemetry<span class="w"> </span>report<span class="w"> </span>tmp/tuner-demo/runs.sqlite<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-csv<span class="w"> </span>tmp/tuner-demo/tuner_report.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-markdown<span class="w"> </span>tmp/tuner-demo/tuner_report.md
+</pre></div>
+</div>
+<p>The command prints a Markdown table to stdout by default; passing <code class="docutils literal notranslate"><span class="pre">--out-*</span></code>
+flags writes the same content to disk. The generated CSV columns include
+aggregated statistics (best/mean objective, run counts) plus any matching
+<code class="docutils literal notranslate"><span class="pre">tuner_summaries</span></code> rows added by the CLI commands, along with a
+<code class="docutils literal notranslate"><span class="pre">machine_costs_summary</span></code> column that captures the owning/operating/repair
+allowance (and FPInnovations usage bucket) applied during the best run. When
+the KPI layer detects a non-default FPInnovations bucket (<code class="docutils literal notranslate"><span class="pre">repair_usage_hours</span></code>
+≠ 10 000 h) the new <code class="docutils literal notranslate"><span class="pre">repair_usage_alert</span></code> column calls it out, and the CLI
+prints a warning summarising which scenarios/algorithms deviated. Continuous
+integration executes this pipeline for <strong>tiny7</strong> and <strong>med42</strong> so the
+published artefacts already contain multiple scenarios.</p>
+<p>Add <code class="docutils literal notranslate"><span class="pre">--out-summary-csv</span></code> / <code class="docutils literal notranslate"><span class="pre">--out-summary-markdown</span></code> to emit a per-scenario
+scoreboard showing the best algorithm/objective for each report label (baseline,
+experiment, etc.). The summary files are ideal for dashboard badges or CI checks
+because they surface the top performer per scenario without manually inspecting
+the full table.</p>
+</section>
+<section id="sample-output">
+<h2>Sample Output<a class="headerlink" href="#sample-output" title="Link to this heading"></a></h2>
+<p>Markdown table (<code class="docutils literal notranslate"><span class="pre">tmp/tuner-demo/tuner_report.md</span></code>) for a short sweep:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>| Algorithm | Scenario | Best Objective | Mean Objective | Runs | Summary Best | Configurations |
+| --- | --- | --- | --- | --- | --- | --- |
+| bayes | FHOPS Tiny7 | 8.125 | 8.125 | 1 | 8.125 | 3 |
+| grid | FHOPS Tiny7 | 7.750 | 7.438 | 4 | 7.750 | 4 |
+| random | FHOPS Tiny7 | 7.375 | 6.812 | 2 | 7.375 | 2 |
+</pre></div>
+</div>
+</section>
+<section id="step-3-iterate">
+<h2>Step 3 – Iterate<a class="headerlink" href="#step-3-iterate" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Use the CSV file for deeper analysis in pandas/Polars or to drive dashboards.</p></li>
+<li><p>Inspect the Markdown report (or the uploaded CI artefact) in code reviews to
+track how a branch affects tuning performance.</p></li>
+<li><p>Because the report operates directly on the SQLite store, you can rerun it at
+any time without regenerating telemetry.</p></li>
+</ul>
+</section>
+<section id="step-4-compare-multiple-reports">
+<h2>Step 4 – Compare Multiple Reports<a class="headerlink" href="#step-4-compare-multiple-reports" title="Link to this heading"></a></h2>
+<p>To track changes across branches or nightly runs, use
+<code class="docutils literal notranslate"><span class="pre">scripts/analyze_tuner_reports.py</span></code> to merge several <code class="docutils literal notranslate"><span class="pre">tuner_report.csv</span></code> files
+and compute deltas against a baseline:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/analyze_tuner_reports.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">baseline</span><span class="o">=</span>tmp/ci-telemetry/tuner_report.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">experiment</span><span class="o">=</span>tmp/local/tuner_report.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-markdown<span class="w"> </span>tmp/comparison.md<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-csv<span class="w"> </span>tmp/comparison.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-chart<span class="w"> </span>tmp/comparison.html
+</pre></div>
+</div>
+<p>The script aligns records on (algorithm, scenario) and appends <code class="docutils literal notranslate"><span class="pre">best_delta_*</span></code>
+columns showing the improvement relative to the first report label.
+Passing <code class="docutils literal notranslate"><span class="pre">--out-chart</span></code> generates an Altair HTML visualization of best objectives per algorithm.</p>
+</section>
+<section id="historical-trends">
+<h2>Historical Trends<a class="headerlink" href="#historical-trends" title="Link to this heading"></a></h2>
+<p>Keep dated copies of <code class="docutils literal notranslate"><span class="pre">tuner_report.csv</span></code> snapshots (for example, download the
+<code class="docutils literal notranslate"><span class="pre">telemetry-report</span></code> artifact from multiple CI runs) and place them in a single
+directory. Then call <code class="docutils literal notranslate"><span class="pre">analyze_tuner_reports.py</span></code> with <code class="docutils literal notranslate"><span class="pre">--history-dir</span></code> to
+produce a longitudinal view:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/analyze_tuner_reports.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--report<span class="w"> </span><span class="nv">latest</span><span class="o">=</span>tmp/ci-telemetry/tuner_report.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--history-dir<span class="w"> </span>docs/examples/analytics/data/tuner_reports<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-history-csv<span class="w"> </span>tmp/history.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-history-markdown<span class="w"> </span>tmp/history.md<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-history-chart<span class="w"> </span>tmp/history.html
+</pre></div>
+</div>
+<p>The generated history table lists the best/mean objectives per algorithm and
+scenario across snapshots (derived from the filename stem). When the source
+telemetry includes extra KPIs (total production, mobilisation cost, downtime
+hours, weather severity, utilisation ratios) they appear as additional columns in
+the history summary. The optional Altair chart highlights objective trends at a
+glance.</p>
+<p>Continuous integration already copies the tiny7 smoke sweep into the
+<code class="docutils literal notranslate"><span class="pre">history/</span></code> subdirectory of the <code class="docutils literal notranslate"><span class="pre">telemetry-report</span></code> artifact using UTC
+timestamps, so you can download successive runs and feed them directly to the
+history command. The workflow also generates <code class="docutils literal notranslate"><span class="pre">history_summary.{csv,md,html}</span></code>
+via <code class="docutils literal notranslate"><span class="pre">analyze_tuner_reports.py</span> <span class="pre">--history-dir</span></code> so you can inspect trends
+immediately after downloading the artifact.</p>
+<p>If your repository enables GitHub Pages for the documentation or telemetry site,
+the CI workflow publishes the HTML history to
+<code class="docutils literal notranslate"><span class="pre">https://&lt;org&gt;.github.io/&lt;repo&gt;/telemetry/history_summary.html</span></code>. The README links
+to the live page (see the FHOPS reference deployment at
+<code class="docutils literal notranslate"><span class="pre">https://ubc-fresh.github.io/fhops/telemetry/history_summary.html</span></code>), so you can
+share the same chart without downloading artifacts.</p>
+</section>
+<section id="delta-snapshot-summary">
+<h2>Delta Snapshot Summary<a class="headerlink" href="#delta-snapshot-summary" title="Link to this heading"></a></h2>
+<p>For a quick “what changed since last snapshot” view, pass <code class="docutils literal notranslate"><span class="pre">--out-history-delta-*</span></code> when
+invoking <code class="docutils literal notranslate"><span class="pre">analyze_tuner_reports.py</span></code>. The CI workflow already produces
+<code class="docutils literal notranslate"><span class="pre">history_delta.{csv,md}</span></code>, summarising the latest vs. previous snapshot for objectives and KPIs.
+Example command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/analyze_tuner_reports.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--history-dir<span class="w"> </span>docs/examples/analytics/data/tuner_reports<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-history-delta-csv<span class="w"> </span>tmp/history_delta.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-history-delta-markdown<span class="w"> </span>tmp/history_delta.md
+</pre></div>
+</div>
+<figure class="align-center" id="id1">
+<img alt="Sample telemetry history chart" src="../_images/history_summary.png" />
+<figcaption>
+<p><span class="caption-text">Sample telemetry history derived from the committed demo data. Actual CI
+artefacts contain the latest tiny7 and med42 measurements.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The delta outputs are versioned alongside the HTML chart. When CI finishes it
+emits <code class="docutils literal notranslate"><span class="pre">history_delta.{csv,md}</span></code> (and any optional PNG/HTML charts you request),
+mirroring the GitHub Pages snapshot. Monitoring those files or wiring them into a
+status badge is a simple way to highlight regressions without manually opening the
+full report.</p>
+</section>
+<section id="interpreting-dashboards">
+<span id="telemetry-dashboard-interpretation"></span><h2>Interpreting Dashboards<a class="headerlink" href="#interpreting-dashboards" title="Link to this heading"></a></h2>
+<p>The Pages site (<a class="reference external" href="../README.html#live-dashboards">live links in the README</a>) mirrors the
+artefacts generated in this guide. Each page now renders as both Markdown and HTML (look
+for <code class="docutils literal notranslate"><span class="pre">.html</span></code> suffixes if your browser should display tables instead of raw pipes). Use
+the playbook below whenever CI publishes new telemetry.</p>
+<section id="history-summary-html-trend-radar">
+<h3>history_summary.html ― trend radar<a class="headerlink" href="#history-summary-html-trend-radar" title="Link to this heading"></a></h3>
+<p>Plots best objective/KPI progression per scenario/bundle across snapshots. Hover over a
+point to see the report label, algorithm, best objective, gap vs. baseline, and any KPI
+columns included in the telemetry store.</p>
+<ul class="simple">
+<li><p><strong>Watch for</strong>: inflection points (gap grows &gt;1 % week-over-week), flat lines (no new
+entries for a scenario), or metrics moving opposite to expectations (runtime spikes).</p></li>
+<li><p><strong>Next action</strong>: confirm the problematic scenario in <code class="docutils literal notranslate"><span class="pre">latest_tuner_report</span></code> and re-run
+the relevant tuner locally with <code class="docutils literal notranslate"><span class="pre">--summary-label</span></code> matching the failing branch. Most
+teams gate merges on “≤5 % gap” or “no KPI regressions,” so record the offending label
+in the PR thread.</p></li>
+</ul>
+</section>
+<section id="latest-history-summary-html-md-csv-current-leaderboard">
+<h3>latest_history_summary.{html,md,csv} ― current leaderboard<a class="headerlink" href="#latest-history-summary-html-md-csv-current-leaderboard" title="Link to this heading"></a></h3>
+<p>Tabulates the latest snapshot only, one row per scenario with the best algorithm, best
+objective, and basic deltas.</p>
+<ul class="simple">
+<li><p><strong>Watch for</strong>: missing scenarios (telemetry not produced), different algorithms suddenly
+leading (could be good or bad), or best objectives worse than the baseline.</p></li>
+<li><p><strong>Next action</strong>: treat this page as a regression gate. If SA on med42 falls outside its
+±2 % guardrail, open the telemetry SQLite file and inspect the corresponding run for
+configuration drift or scenario regressions.</p></li>
+</ul>
+</section>
+<section id="latest-tuner-report-html-md-csv-raw-per-algorithm-stats">
+<h3>latest_tuner_report.{html,md,csv} ― raw per-algorithm stats<a class="headerlink" href="#latest-tuner-report-html-md-csv-raw-per-algorithm-stats" title="Link to this heading"></a></h3>
+<p>Lists every (algorithm, scenario) pair with best/mean objectives, runtimes, run counts,
+and configuration references.</p>
+<ul class="simple">
+<li><p><strong>Watch for</strong>: lower run counts (tuner crashed), unexpectedly high runtime mean, or
+missing KPI columns (telemetry logging failed).</p></li>
+<li><p><strong>Next action</strong>: when a reviewer asks “what changed?”, cite the specific row. Drill into
+<code class="docutils literal notranslate"><span class="pre">runs.jsonl</span></code> / <code class="docutils literal notranslate"><span class="pre">runs.sqlite</span></code> via <code class="docutils literal notranslate"><span class="pre">best_run_id</span></code> to replay the exact configuration or
+attach the JSONL snippet to the PR.</p></li>
+</ul>
+</section>
+<section id="latest-tuner-comparison-latest-tuner-leaderboard">
+<h3>latest_tuner_comparison &amp; latest_tuner_leaderboard<a class="headerlink" href="#latest-tuner-comparison-latest-tuner-leaderboard" title="Link to this heading"></a></h3>
+<p>Derived by <code class="docutils literal notranslate"><span class="pre">scripts/analyze_tuner_reports.py</span></code> to highlight win counts, runtime ratios,
+and deltas for every algorithm across the whole bundle.</p>
+<ul class="simple">
+<li><p><strong>Watch for</strong>: an algorithm’s win rate dropping after a feature lands, or runtime ratios
+diverging (e.g., grid becomes 3× slower than SA).</p></li>
+<li><p><strong>Next action</strong>: use the leaderboard to justify tuning investments (“grid wins fewer
+scenarios but halves runtime”) or to flag regressions. If a regression is limited to a
+single scenario, prioritise that dataset in the next sweep plan.</p></li>
+</ul>
+</section>
+<section id="tuner-difficulty-html-md-csv">
+<h3>tuner_difficulty*.{html,md,csv}<a class="headerlink" href="#tuner-difficulty-html-md-csv" title="Link to this heading"></a></h3>
+<p>Difficulty indices bucketed by bundle/tier. Columns include soft/hard success rates
+(≤5 % and ≤1 % gaps), average delta to the best algorithm, and MIP gap when available.</p>
+<ul class="simple">
+<li><p><strong>Watch for</strong>: bundles that never reach the hard success rate, or scenarios where the
+second-best delta is minuscule (indicating redundant algorithms).</p></li>
+<li><p><strong>Next action</strong>: bump iteration budgets or introduce specialised heuristics for chronic
+failures before expanding the benchmark matrix. If only the synthetic tiers struggle,
+log a follow-up in <code class="docutils literal notranslate"><span class="pre">notes/metaheuristic_hyperparam_tuning.md</span></code> so we keep attacking the
+right difficulty bucket.</p></li>
+</ul>
+</section>
+<section id="adding-new-dashboard-assets">
+<h3>Adding new dashboard assets<a class="headerlink" href="#adding-new-dashboard-assets" title="Link to this heading"></a></h3>
+<p>Whenever you publish a new artefact under <code class="docutils literal notranslate"><span class="pre">tmp/ci-telemetry/telemetry/</span></code> add the link to
+the README and <code class="docutils literal notranslate"><span class="pre">docs/reference/dashboards.rst</span></code> so users can discover it during reviews.</p>
+</section>
+<section id="release-candidate-presets">
+<h3>Release candidate presets<a class="headerlink" href="#release-candidate-presets" title="Link to this heading"></a></h3>
+<p>The latest release-candidate tuning sweep stores its best configurations in
+<code class="docutils literal notranslate"><span class="pre">notes/release_tuned_presets.json</span></code> (generated via <code class="docutils literal notranslate"><span class="pre">scripts/run_tuning_benchmarks.py</span></code> and the
+analysis helpers). Each entry includes the scenario, algorithm, objective, seed, and operator
+weights. To reuse a preset, parse the JSON and forward the operator weights to the CLI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'PY'</span>
+<span class="s">import json</span>
+<span class="s">presets = json.load(open('notes/release_tuned_presets.json'))</span>
+<span class="s">target = next(p for p in presets if p["scenario"] == "FHOPS Medium42" and p["algorithm"] == "random")</span>
+<span class="s">print(target["config"]["operators"])</span>
+<span class="s">PY</span>
+
+<span class="c1"># feed into fhops tune-random --operator-weight swap=... etc.</span>
+</pre></div>
+</div>
+<p>This preserves the tuned improvements documented in <code class="docutils literal notranslate"><span class="pre">notes/release_tuning_results.md</span></code> and the
+release notes.</p>
+</section>
+</section>
+<section id="automated-sweeps">
+<h2>Automated Sweeps<a class="headerlink" href="#automated-sweeps" title="Link to this heading"></a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">scripts/run_tuning_benchmarks.py</span></code> to orchestrate random/grid/Bayesian sweeps over
+the canonical bundles and emit aggregate reports in one go:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/run_tuning_benchmarks.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bundle<span class="w"> </span>baseline<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tier<span class="w"> </span>short<span class="w"> </span>--tier<span class="w"> </span>medium<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-dir<span class="w"> </span>tmp/tuning-benchmarks<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--random-runs<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--grid-iters<span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bayes-trials<span class="w"> </span><span class="m">4</span>
+</pre></div>
+</div>
+<p>The script resets (or appends to) the telemetry log, runs the requested tuners, calls
+<code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">telemetry</span> <span class="pre">report</span></code> to generate <code class="docutils literal notranslate"><span class="pre">tuner_report.{csv,md}</span></code>, and invokes
+<code class="docutils literal notranslate"><span class="pre">analyze_tuner_reports.py</span></code> with <code class="docutils literal notranslate"><span class="pre">--out-summary-*</span></code> so you get a concise per-scenario
+leaderboard. Adjust <code class="docutils literal notranslate"><span class="pre">--bundle</span></code> and tuner-specific options to suit larger sweeps or
+CI smoke passes. Repeating <code class="docutils literal notranslate"><span class="pre">--tier</span></code> runs each budget tier sequentially and forwards
+<code class="docutils literal notranslate"><span class="pre">--tier-label</span></code> to the CLI tuners so telemetry collectors can pivot results by tier.
+Include <code class="docutils literal notranslate"><span class="pre">--tuner</span> <span class="pre">ils</span> <span class="pre">--tuner</span> <span class="pre">tabu</span></code> (or rely on plan defaults) to sweep Iterated Local Search
+and Tabu Search alongside the simulated annealing tuners; use <code class="docutils literal notranslate"><span class="pre">--ils-runs</span></code> / <code class="docutils literal notranslate"><span class="pre">--ils-iters</span></code> and
+<code class="docutils literal notranslate"><span class="pre">--tabu-runs</span></code> / <code class="docutils literal notranslate"><span class="pre">--tabu-iters</span></code> to override the tier budgets when experimenting locally.</p>
+<p>In addition to the per-scenario summaries, the script now emits:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tuner_comparison.{csv,md}</span></code> — per-scenario/per-algorithm table with best objective, mean objective, mean runtime, and delta vs. the scenario leader.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tuner_leaderboard.{csv,md}</span></code> — aggregate win rates, average metrics, and deltas per algorithm across all scenarios.</p></li>
+</ul>
+<section id="parallel-execution">
+<h3>Parallel execution<a class="headerlink" href="#parallel-execution" title="Link to this heading"></a></h3>
+<p>Longer sweeps benefit from process-level parallelism. Pass <code class="docutils literal notranslate"><span class="pre">--max-workers</span></code> to fan
+out <cite>(scenario, tier, tuner)</cite> jobs across a process pool while keeping telemetry
+safe:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/run_tuning_benchmarks.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--plan<span class="w"> </span>full-spectrum<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--max-workers<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-dir<span class="w"> </span>tmp/tuning-benchmarks/full-spectrum-parallel<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--summary-label<span class="w"> </span>full-spectrum-parallel
+</pre></div>
+</div>
+<p>Each worker writes to its own JSONL/SQLite <code class="docutils literal notranslate"><span class="pre">chunks/</span></code> directory. When the pool
+finishes, the script merges those chunks into <code class="docutils literal notranslate"><span class="pre">telemetry/runs.jsonl</span></code> and the
+SQLite store before deleting the fragments. The merged log retains the same schema
+as the serial run, so <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">telemetry</span> <span class="pre">report</span></code> and
+<code class="docutils literal notranslate"><span class="pre">scripts/analyze_tuner_reports.py</span></code> work unchanged.</p>
+<p>Resource tips:</p>
+<ul class="simple">
+<li><p>On the 72-core staging node we leave ~8 cores idle and run with
+<code class="docutils literal notranslate"><span class="pre">--max-workers</span> <span class="pre">16</span></code>; each CLI tuner can still use light threading (e.g.
+<code class="docutils literal notranslate"><span class="pre">--parallel-workers</span></code>) without oversubscribing the host.</p></li>
+<li><p>Cap per-run RSS to roughly 8 GB when launching large bundles so the node stays
+responsive while 16 workers stream telemetry.</p></li>
+<li><p>The process pool bumps the random tuners’ base seeds by scenario index, ensuring
+the parallel sweep produces identical configurations to the serial harness.</p></li>
+</ul>
+</section>
+<section id="benchmark-plans">
+<h3>Benchmark plans<a class="headerlink" href="#benchmark-plans" title="Link to this heading"></a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--plan</span></code> to reuse the curated budgets across bundles:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 35.0%" />
+<col style="width: 15.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Plan</p></th>
+<th class="head"><p>Coverage</p></th>
+<th class="head"><p>Default tiers</p></th>
+<th class="head"><p>Tier overrides (random / grid / bayes)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">baseline-smoke</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">examples/tiny7</span></code> + <code class="docutils literal notranslate"><span class="pre">examples/med42</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">short</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">×</span> <span class="pre">250</span> <span class="pre">iters</span></code> / <code class="docutils literal notranslate"><span class="pre">(balanced,</span> <span class="pre">explore)</span> <span class="pre">×</span> <span class="pre">batch</span> <span class="pre">{1,2}</span> <span class="pre">×</span> <span class="pre">250</span></code> / <code class="docutils literal notranslate"><span class="pre">30</span> <span class="pre">trials</span> <span class="pre">×</span> <span class="pre">250</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">synthetic-smoke</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">examples/synthetic/{small,medium,large}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">short</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">×</span> <span class="pre">300</span> <span class="pre">iters</span></code> / <code class="docutils literal notranslate"><span class="pre">(balanced,</span> <span class="pre">explore)</span> <span class="pre">×</span> <span class="pre">batch</span> <span class="pre">{1,2}</span> <span class="pre">×</span> <span class="pre">300</span></code> / <code class="docutils literal notranslate"><span class="pre">30</span> <span class="pre">trials</span> <span class="pre">×</span> <span class="pre">300</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">full-spectrum</span></code></p></td>
+<td><p>baseline + synthetic bundles</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">short</span></code>, <code class="docutils literal notranslate"><span class="pre">medium</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">medium</span></code> tier extends to <code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">×</span> <span class="pre">450</span> <span class="pre">iters</span></code> / <code class="docutils literal notranslate"><span class="pre">(balanced,</span> <span class="pre">explore)</span> <span class="pre">×</span> <span class="pre">batch</span> <span class="pre">{1,2}</span> <span class="pre">×</span> <span class="pre">450</span></code> / <code class="docutils literal notranslate"><span class="pre">45</span> <span class="pre">trials</span> <span class="pre">×</span> <span class="pre">450</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Tier defaults (short/medium/long) are embedded in the runner; omit overrides to pick up
+<code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">×</span> <span class="pre">150</span></code> / <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">×</span> <span class="pre">300</span></code> / <code class="docutils literal notranslate"><span class="pre">5</span> <span class="pre">×</span> <span class="pre">600</span></code> iteration schedules for random/grid/bayesian respectively.
+Budgets deliver a 3–5 minute sweep locally on <code class="docutils literal notranslate"><span class="pre">short</span></code>; bump to <code class="docutils literal notranslate"><span class="pre">medium</span></code> or <code class="docutils literal notranslate"><span class="pre">long</span></code> when you need
+convergence traces for modelling. Override any option (e.g., <code class="docutils literal notranslate"><span class="pre">--random-runs</span></code>) as needed.
+When running full benchmark suites on shared hardware, pin at least 64 CPU cores to the job and cap
+per-run RSS to ~8 GB to avoid starving other workloads while we expand the benchmark matrix.
+ILS/Tabu inherit the same tier labels: <code class="docutils literal notranslate"><span class="pre">short</span></code> executes two restarts with ~200/1 200 iterations,
+<code class="docutils literal notranslate"><span class="pre">medium</span></code> scales to three restarts with ~350/2 000 iterations, and <code class="docutils literal notranslate"><span class="pre">long</span></code> extends to five restarts
+(ILS enables the hybrid MIP warm start) with ~700/3 000 iterations. Adjust the respective <code class="docutils literal notranslate"><span class="pre">--ils-*</span></code>
+and <code class="docutils literal notranslate"><span class="pre">--tabu-*</span></code> flags when you need lighter smoke runs or deeper convergence traces.</p>
+</section>
+</section>
+<section id="notebook-execution-cadence">
+<h2>Notebook execution cadence<a class="headerlink" href="#notebook-execution-cadence" title="Link to this heading"></a></h2>
+<p>CI currently runs <code class="docutils literal notranslate"><span class="pre">scripts/run_analytics_notebooks.py</span> <span class="pre">--light</span></code> on every push/PR to keep the
+documentation builds fast and to guarantee that deterministic figures regenerate without manual
+intervention. The stochastic notebooks (telemetry diagnostics, stochastic robustness, etc.) still
+exercise live sampling even in light mode, so maintainers should schedule <strong>full</strong> notebook runs
+without the <code class="docutils literal notranslate"><span class="pre">--light</span></code> flag at least weekly (or nightly on a beefier runner) to guard against
+parameter regressions that only appear with larger ensemble sizes.</p>
+<p>Recommended workflow (automated by <code class="docutils literal notranslate"><span class="pre">.github/workflows/analytics-notebooks.yml</span></code>):</p>
+<ol class="arabic simple">
+<li><p>For day-to-day development run the light suite locally or rely on CI for coverage.</p></li>
+<li><p>Once per week execute <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scripts/run_analytics_notebooks.py</span> <span class="pre">--timeout</span> <span class="pre">900</span></code> (no light flag)
+on your workstation or a scheduled GitHub Actions workflow and upload the refreshed artefacts to
+the telemetry Pages bundle (<code class="docutils literal notranslate"><span class="pre">tmp/pages/telemetry</span></code>). The scheduled workflow already uploads the
+executed notebooks and metadata as a downloadable artifact (retained for 28 days) and redeploys
+GitHub Pages so the embedded dashboards stay current even if no new commits land that week.</p></li>
+<li><p>If a notebook fails only in full mode, open an issue referencing the relevant scenario bundle and
+record the failure in <code class="docutils literal notranslate"><span class="pre">notes/metaheuristic_hyperparam_tuning.md</span></code> so it feeds the roadmap.</p></li>
+</ol>
+<p>Document the cadence (and links to historical runs) in team ops notes so newcomers know which sweep
+establishes the “truth” for dashboards and KPIs.</p>
+</section>
+<section id="heuristic-parameter-catalogue">
+<h2>Heuristic parameter catalogue<a class="headerlink" href="#heuristic-parameter-catalogue" title="Link to this heading"></a></h2>
+<p>Use the table below to map CLI flags to the tuning surface. The benchmark tiers above seed default
+budgets; you can override any parameter when experimenting locally or defining Optuna search spaces.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 35.0%" />
+<col style="width: 25.0%" />
+<col style="width: 18.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Layer</p></th>
+<th class="head"><p>Parameters / flags</p></th>
+<th class="head"><p>Typical range / notes</p></th>
+<th class="head"><p>Tier coverage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Simulated Annealing (<code class="docutils literal notranslate"><span class="pre">solve-heur</span></code>, <code class="docutils literal notranslate"><span class="pre">tune-random/grid/bayes</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--iters</span></code> (150/300/600), <code class="docutils literal notranslate"><span class="pre">--temperature0</span></code> (50–500), <code class="docutils literal notranslate"><span class="pre">--cooling-rate</span></code> (0.90–0.999)</p></td>
+<td><p>Iteration horizon + geometric cooling schedule</p></td>
+<td><p>short/medium/long</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--batch-neighbours</span></code> (1–5), <code class="docutils literal notranslate"><span class="pre">--parallel-workers</span></code> (1–4)</p></td>
+<td><p>Batched neighbour evaluation with optional thread pool</p></td>
+<td><p>grid presets cover batch; medium/long enable workers</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--operator</span></code>, <code class="docutils literal notranslate"><span class="pre">--operator-weight</span></code>, <code class="docutils literal notranslate"><span class="pre">--operator-preset</span></code> (balanced/explore/mobilisation/agentic)</p></td>
+<td><p>Operator activation/weights; searchers toggle presets or sample weights</p></td>
+<td><p>All tiers via grid/random/bayes</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--multi-start</span></code>, profile extras (reheating, schedule families)</p></td>
+<td><p>Multi-start counts, seed progression, reheating cadence</p></td>
+<td><p>Enabled in medium/long profiles; agentic tuner mutates via <code class="docutils literal notranslate"><span class="pre">tuner_meta</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Iterated Local Search (<code class="docutils literal notranslate"><span class="pre">solve-ils</span></code>/tuning drivers)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--iters</span></code> (200/350/700)</p></td>
+<td><p>Outer perturbation/local-search cycles</p></td>
+<td><p>All tiers</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--perturbation-strength</span></code> (1–6), <code class="docutils literal notranslate"><span class="pre">--stall-limit</span></code> (8–20)</p></td>
+<td><p>Diversification vs. exploitation</p></td>
+<td><p>Random/Bayesian search + medium/long defaults</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--hybrid-use-mip</span></code>, <code class="docutils literal notranslate"><span class="pre">--hybrid-mip-time-limit</span></code> (30–180 s)</p></td>
+<td><p>Hybrid restart when stalled</p></td>
+<td><p>Long tier default, optional elsewhere</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>Operator/preset flags, batching options</p></td>
+<td><p>Shares registry knobs with SA so presets stay aligned</p></td>
+<td><p>All tiers</p></td>
+</tr>
+<tr class="row-even"><td><p>Tabu Search (<code class="docutils literal notranslate"><span class="pre">solve-tabu</span></code>/tuning drivers)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--iters</span></code> (1 200/2 000/3 000)</p></td>
+<td><p>Search horizon per tier</p></td>
+<td><p>All tiers</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--tabu-tenure</span></code> (auto → machine count, sweep 20–120), <code class="docutils literal notranslate"><span class="pre">--stall-limit</span></code> (150–250)</p></td>
+<td><p>List length &amp; stagnation window</p></td>
+<td><p>Random/Bayesian search + tier overrides</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>Operator/preset weights, batching</p></td>
+<td><p>Mirrors SA/ILS for cross-tuner parity</p></td>
+<td><p>All tiers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tuner budgets</p></td>
+<td><p>Random: <code class="docutils literal notranslate"><span class="pre">--runs</span></code>, <code class="docutils literal notranslate"><span class="pre">--iters</span></code>; Grid: <code class="docutils literal notranslate"><span class="pre">--iters</span></code>, <code class="docutils literal notranslate"><span class="pre">--batch-size</span></code>, <code class="docutils literal notranslate"><span class="pre">--preset</span></code>; Bayes: <code class="docutils literal notranslate"><span class="pre">--trials</span></code>, <code class="docutils literal notranslate"><span class="pre">--iters</span></code></p></td>
+<td><p>Tier presets define default budgets; plans override for smokes/full suites</p></td>
+<td><p>Documented above</p></td>
+</tr>
+<tr class="row-even"><td><p>Meta / agentic extensions</p></td>
+<td><p>Telemetry-derived features (gap slope, acceptance trajectory, scenario descriptors)</p></td>
+<td><p>Stored in <code class="docutils literal notranslate"><span class="pre">tuner_meta</span></code> / <code class="docutils literal notranslate"><span class="pre">context</span></code> for future AutoML/LLM agents</p></td>
+<td><p>Planned Phase 3 enhancement</p></td>
+</tr>
+</tbody>
+</table>
+<p>CI publishes the latest summary tables to GitHub Pages; check
+<code class="docutils literal notranslate"><span class="pre">https://&lt;org&gt;.github.io/&lt;repo&gt;/telemetry/latest_tuner_summary.md</span></code> (per-scenario
+leaderboard) and <code class="docutils literal notranslate"><span class="pre">latest_history_summary.md</span></code> (delta vs. previous snapshot) to spot regression
+signals without grabbing artefacts.
+The comparison and leaderboard tables are also available at
+<code class="docutils literal notranslate"><span class="pre">.../latest_tuner_comparison.{md,csv}</span></code> and <code class="docutils literal notranslate"><span class="pre">.../latest_tuner_leaderboard.{md,csv}</span></code>.
+Bundle-specific variants (<code class="docutils literal notranslate"><span class="pre">tuner_comparison_baseline.*</span></code>, <code class="docutils literal notranslate"><span class="pre">tuner_leaderboard_synthetic.*</span></code>) are published alongside a difficulty table (<code class="docutils literal notranslate"><span class="pre">tuner_difficulty*.{md,csv}</span></code>) containing best-algorithm deltas, second-best gaps, and MIP gaps when available.</p>
+</section>
+<section id="convergence-metrics">
+<h2>Convergence metrics<a class="headerlink" href="#convergence-metrics" title="Link to this heading"></a></h2>
+<p>Once sweeps finish, derive time-to-quality signals with
+<code class="docutils literal notranslate"><span class="pre">scripts/analyze_tuner_reports.py</span></code>. Provide the generated report (or directory) and
+the telemetry log so the script can inspect step logs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/analyze_tuner_reports.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--report<span class="w"> </span>tmp/tuning-benchmarks/tuner_report.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--telemetry-log<span class="w"> </span>tmp/tuning-benchmarks/telemetry/runs.jsonl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-convergence-csv<span class="w"> </span>tmp/tuning-benchmarks/convergence_runs.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-convergence-summary-csv<span class="w"> </span>tmp/tuning-benchmarks/convergence_summary.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-convergence-summary-markdown<span class="w"> </span>tmp/tuning-benchmarks/convergence_summary.md
+</pre></div>
+</div>
+<p>The summary tallies, per scenario/algorithm/tier, how many runs reach a ≤1 % gap versus
+the recorded MIP optimum, plus the mean/median iteration counts required. Step logs
+must be present (the runner writes them to <code class="docutils literal notranslate"><span class="pre">telemetry/steps/&lt;run_id&gt;.jsonl</span></code>) and each
+scenario needs a matching <code class="docutils literal notranslate"><span class="pre">solve-mip</span></code> baseline in the telemetry store. Adjust
+<code class="docutils literal notranslate"><span class="pre">--convergence-threshold</span></code> if you need a different gap target.
+When the default HiGHS setup struggles on larger instances, run <code class="docutils literal notranslate"><span class="pre">scripts/ingest_mip_baselines.py</span></code>
+with <code class="docutils literal notranslate"><span class="pre">--driver</span> <span class="pre">gurobi</span></code> (after installing <code class="docutils literal notranslate"><span class="pre">fhops[gurobi]</span></code> and configuring the Gurobi license) to
+log the exact optimum using the commercial solver, then rerun the analyzer.</p>
+<section id="tuner-metadata-summary">
+<h3>Tuner metadata summary<a class="headerlink" href="#tuner-metadata-summary" title="Link to this heading"></a></h3>
+<p>Runs now embed high-level metadata (algorithm, budgets, progress) via <code class="docutils literal notranslate"><span class="pre">tuner_meta</span></code>. Use
+<code class="docutils literal notranslate"><span class="pre">scripts/summarize_tuner_meta.py</span></code> to inspect the aggregated view:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/summarize_tuner_meta.py<span class="w"> </span>telemetry/runs.sqlite<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--out-markdown<span class="w"> </span>tmp/tuner_meta_summary.md
+</pre></div>
+</div>
+<p>The summary table lists algorithms, number of runs, unique scenarios, and representative budgets.</p>
+</section>
+</section>
+<section id="bundle-aliases">
+<span id="telemetry-bundle-aliases"></span><h2>Bundle Aliases<a class="headerlink" href="#bundle-aliases" title="Link to this heading"></a></h2>
+<p>The tuning commands accept <code class="docutils literal notranslate"><span class="pre">--bundle</span></code> to expand a manifest of scenarios. FHOPS ships
+the following aliases:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">baseline</span></code> → <code class="docutils literal notranslate"><span class="pre">examples/tiny7/scenario.yaml</span></code> and <code class="docutils literal notranslate"><span class="pre">examples/med42/scenario.yaml</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">synthetic</span></code> → the <code class="docutils literal notranslate"><span class="pre">small</span></code>, <code class="docutils literal notranslate"><span class="pre">medium</span></code>, and <code class="docutils literal notranslate"><span class="pre">large</span></code> synthetic tiers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">synthetic-small</span></code> / <code class="docutils literal notranslate"><span class="pre">synthetic-medium</span></code> / <code class="docutils literal notranslate"><span class="pre">synthetic-large</span></code> → individual synthetic tiers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tiny7</span></code> / <code class="docutils literal notranslate"><span class="pre">med42</span></code> / <code class="docutils literal notranslate"><span class="pre">large84</span></code> → convenience handles for the built-in evaluation set</p></li>
+</ul>
+<p>Aliases are case-insensitive and you can specify multiple <code class="docutils literal notranslate"><span class="pre">--bundle</span></code> flags in a single
+command. For custom bundles, pass <code class="docutils literal notranslate"><span class="pre">alias=/path/to/metadata.yaml</span></code> (or the directory
+containing <code class="docutils literal notranslate"><span class="pre">metadata.yaml</span></code>). Each entry inside the metadata file is resolved relative to
+its location, so <code class="docutils literal notranslate"><span class="pre">examples/synthetic/metadata.yaml</span></code> gives you <code class="docutils literal notranslate"><span class="pre">synthetic-small</span></code> et al.</p>
+<p>Bundle members are logged in telemetry context as <code class="docutils literal notranslate"><span class="pre">bundle</span></code> / <code class="docutils literal notranslate"><span class="pre">bundle_member</span></code> and appear
+in the aggregated <code class="docutils literal notranslate"><span class="pre">tuner_summary</span></code> records as <code class="docutils literal notranslate"><span class="pre">bundle:member</span></code> keys. This keeps the
+history/delta tooling aware of the scenario family without changing existing report formats.</p>
+</section>
+<section id="ci-automation">
+<h2>CI Automation<a class="headerlink" href="#ci-automation" title="Link to this heading"></a></h2>
+<p>The main CI workflow runs a nightly smoke sweep on <code class="docutils literal notranslate"><span class="pre">examples/tiny7</span></code> and
+uploads <code class="docutils literal notranslate"><span class="pre">tmp/ci-telemetry/tuner_report.{csv,md}</span></code> as build artefacts. Use those
+artefacts as a baseline when evaluating new heuristics or tuning strategies.</p>
+<p>For longer experiments (e.g., synthetic bundles or larger iteration budgets),
+reuse the same workflow with adjusted <code class="docutils literal notranslate"><span class="pre">--runs</span></code> / <code class="docutils literal notranslate"><span class="pre">--trials</span></code> / <code class="docutils literal notranslate"><span class="pre">--iters</span></code>
+parameters and point the telemetry log at a scenario-specific directory.</p>
+</section>
+<section id="downloading-ci-reports">
+<h2>Downloading CI Reports<a class="headerlink" href="#downloading-ci-reports" title="Link to this heading"></a></h2>
+<p>Each CI run exposes a <code class="docutils literal notranslate"><span class="pre">telemetry-report</span></code> artefact containing the latest
+<code class="docutils literal notranslate"><span class="pre">tuner_report.{csv,md}</span></code> files alongside the raw telemetry bundle. To download:</p>
+<ul>
+<li><p>Via the GitHub web UI: open the completed workflow run, expand the <strong>Artifacts</strong>
+section, and click <code class="docutils literal notranslate"><span class="pre">telemetry-report</span></code> to fetch the zip file.</p></li>
+<li><p>Via the command line (requires <cite>gh</cite>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gh<span class="w"> </span>run<span class="w"> </span>download<span class="w"> </span>--repo<span class="w"> </span>&lt;owner&gt;/&lt;repo&gt;<span class="w"> </span>--name<span class="w"> </span>telemetry-report<span class="w"> </span>--dir<span class="w"> </span>tmp/ci-telemetry
+</pre></div>
+</div>
+</li>
+</ul>
+<p>After extraction, inspect <code class="docutils literal notranslate"><span class="pre">tuner_report.md</span></code> directly or load
+<code class="docutils literal notranslate"><span class="pre">tuner_report.csv</span></code> into pandas/Polars for deeper analysis.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="thesis_eval.html" class="btn btn-neutral float-left" title="Thesis Evaluation Workflow (Chapter 2)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="telemetry_ops.html" class="btn btn-neutral float-right" title="Telemetry Ops Runbook" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, UBC FRESH Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -5403,5 +5403,6 @@ PY
   and `solve_kernel_sa` over `fresh-solutions` 0.9. The adapter keeps the FHOPS schedule,
   repair/sanitizer, objective weights, and exact planned-score replay; the kernel supplies
   simulated annealing. Tests: `tests/meta/test_kernel_adapter.py` and the existing
-  `tests/heuristics` suite pass. This is an integration proof, not yet a parity replacement;
-  tabu/ILS and the delta path remain next.
+  `tests/heuristics` suite pass. Added kernel Tabu and ILS plus a dirty-repair fast SA path;
+  all three replay exactly on the simple and Tiny7 scenario gates. This is an integration proof,
+  not yet a behaviour-parity replacement; the delta path remains next.

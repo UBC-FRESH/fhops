@@ -13,7 +13,10 @@ from fhops.optimization.meta import (
     FhopsProblem,
     schedule_assignments,
     slot_diff,
+    solve_kernel_ils,
     solve_kernel_sa,
+    solve_kernel_sa_fast,
+    solve_kernel_tabu,
 )
 from fhops.scenario.contract import (
     Block,
@@ -138,3 +141,30 @@ def test_empty_schedule_exports_an_empty_table() -> None:
         "shift_id",
         "assigned",
     ]
+
+
+def test_kernel_tabu_returns_a_replayable_assignment_table() -> None:
+    """The kernel tabu result round-trips through the FHOPS exact planned score."""
+    pb = _simple_problem()
+    result = solve_kernel_tabu(pb, iters=40, seed=3, samples=4)
+    assert result["meta"]["solver"] == "kernel-tabu"
+    assert result["meta"]["samples"] == 4
+    assert result["objective"] == pytest.approx(evaluate_assignments(pb, result["assignments"]))
+
+
+def test_kernel_ils_returns_a_replayable_assignment_table() -> None:
+    """The kernel ILS result round-trips through the FHOPS exact planned score."""
+    pb = _simple_problem()
+    result = solve_kernel_ils(pb, iters=10, seed=4, perturbation=2)
+    assert result["meta"]["solver"] == "kernel-ils"
+    assert result["meta"]["perturbation"] == 2
+    assert result["objective"] == pytest.approx(evaluate_assignments(pb, result["assignments"]))
+
+
+def test_kernel_fast_path_replays_exactly() -> None:
+    """The dirty-repair search path reports a full exact score and replays exactly."""
+    pb = _simple_problem()
+    result = solve_kernel_sa_fast(pb, iters=40, seed=6)
+    assert result["meta"]["approximate_search"] is True
+    assert result["meta"]["solver"] == "kernel-sa-fast"
+    assert result["objective"] == pytest.approx(evaluate_assignments(pb, result["assignments"]))

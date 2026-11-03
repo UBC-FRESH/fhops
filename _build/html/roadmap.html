@@ -1,0 +1,1398 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roadmap Summary &mdash; FHOPS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Mobilisation Geospatial Workflow" href="howto/mobilisation_geo.html" />
+    <link rel="prev" title="Contributing" href="contributing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FHOPS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#automation-pipeline">Automation pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#quick-demo">Quick demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#baseline-workflows">Baseline Workflows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/quickstart.html">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/quickstart.html#bootstrap-environment">Bootstrap Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/quickstart.html#workbench-examples-tiny7">Workbench: <code class="docutils literal notranslate"><span class="pre">examples/tiny7</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/quickstart.html#regression-fixture-phase-1-baseline">Regression Fixture (Phase 1 Baseline)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/quickstart.html#rolling-horizon-loop-playback-kpis">Rolling horizon loop (playback + KPIs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/quickstart.html#shift-enabled-scenarios">Shift-enabled scenarios</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/tree_scale.html">Tree-Scale Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/tree_scale.html#synthetic-fixture">Synthetic fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tree_scale.html#run-the-complete-path">Run the complete path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tree_scale.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tree_scale.html#fail-closed-behavior">Fail-closed behavior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tree_scale.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/data_contract.html">Data Contract Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#cross-references-validators">Cross References &amp; Validators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#optional-extras">Optional Extras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#timeline-example">Timeline Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#shift-calendars-defaults">Shift Calendars &amp; Defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#schedule-locking">Schedule Locking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#initial-state-resuming-mid-operation">Initial State (Resuming Mid-Operation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#compatibility-with-fhops-1-0-0">Compatibility with FHOPS 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#geojson-ingestion-distances">GeoJSON Ingestion &amp; Distances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#machine-rate-defaults-costing-helper">Machine-Rate Defaults &amp; Costing Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#road-construction-tables-validation">Road Construction Tables &amp; Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#skyline-stand-profiles">Skyline Stand Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#log-hauling-extension">Log Hauling Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#lidarbc-products">LidarBC Products</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#tree-inventories">Tree Inventories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#authoring-checklist">Authoring Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#fixture-gallery">Fixture Gallery</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/benchmarks.html">Benchmarking Harness</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#cli-options">CLI Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#watching-heuristic-progress">Watching heuristic progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#faq-watch-mode">FAQ – Watch Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#standard-manuscript-pipeline">Standard Manuscript Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#optional-gurobi-backend-linux">Optional Gurobi backend (Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#interpreting-outputs">Interpreting Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#comparing-mip-and-heuristic-objectives">Comparing MIP and heuristic objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#shared-kpi-roll-up">Shared KPI roll-up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#operator-telemetry">Operator Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#visual-comparisons">Visual Comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#regression-fixture">Regression Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/benchmarks.html#future-work">Future Work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/heuristic_presets.html">Heuristic Presets &amp; Registry Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#shared-solver-cheat-sheet">Shared Solver Cheat Sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#preset-overview">Preset Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#applying-presets">Applying Presets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#explicit-overrides">Explicit Overrides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#solver-specific-parameters">Solver-Specific Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#parallel-advanced-features">Parallel &amp; Advanced Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#operator-catalogue">Operator Catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#telemetry-benchmarking">Telemetry &amp; Benchmarking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#objective-weights-automatic-overrides-and-hard-violations">Objective Weights, Automatic Overrides, and Hard Violations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/heuristic_presets.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/mip_warm_starts.html">Operational MILP Warm Starts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/mip_warm_starts.html#workflow">Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/mip_warm_starts.html#solver-support">Solver support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/mip_warm_starts.html#solve-outcomes">Solve outcomes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/mip_warm_starts.html#current-limitations">Current limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/mip_warm_starts.html#practical-guidance">Practical guidance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/mip_warm_starts.html#future-work">Future work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/optimization_formulation.html">Operational MILP Formulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howto/parallel_heuristics.html">Parallel Heuristic Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/parallel_heuristics.html#multi-start-runs">Multi-start Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/parallel_heuristics.html#batched-neighbour-evaluation">Batched Neighbour Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/parallel_heuristics.html#api-reference">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/parallel_heuristics.html#profiling-notes">Profiling Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/evaluation.html">Evaluation Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/evaluation.html#running-deterministic-playback">Running deterministic playback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/evaluation.html#optional-flags">Optional flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/evaluation.html#reporting-templates">Reporting templates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/evaluation.html#parquet-and-markdown-exports">Parquet and Markdown exports</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/evaluation.html#quickstart-example">Quickstart example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/evaluation.html#aggregation-helper-reference">Aggregation helper reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/evaluation.html#kpi-formulas-required-signals">KPI formulas &amp; required signals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/evaluation.html#empty-and-partial-plans">Empty and partial plans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/evaluation.html#weather-downtime-cost-assumptions">Weather &amp; downtime cost assumptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/evaluation.html#stochastic-playback-toggles">Stochastic playback toggles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/evaluation.html#stochastic-event-semantics">Stochastic event semantics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/evaluation.html#relationship-to-kpi-evaluation">Relationship to KPI evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/thesis_eval.html">Thesis Evaluation Workflow (Chapter 2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/thesis_eval.html#context-goals">Context &amp; Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/thesis_eval.html#pipeline-overview">Pipeline Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/thesis_eval.html#worked-example-med42-template">Worked Example (med42 Template)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/thesis_eval.html#tips-references">Tips &amp; References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/telemetry_tuning.html">Telemetry-Driven Tuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#step-1-collect-telemetry">Step 1 – Collect Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#step-2-generate-a-comparison-report">Step 2 – Generate a Comparison Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#sample-output">Sample Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#step-3-iterate">Step 3 – Iterate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#step-4-compare-multiple-reports">Step 4 – Compare Multiple Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#historical-trends">Historical Trends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#delta-snapshot-summary">Delta Snapshot Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#interpreting-dashboards">Interpreting Dashboards</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#history-summary-html-trend-radar">history_summary.html ― trend radar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#latest-history-summary-html-md-csv-current-leaderboard">latest_history_summary.{html,md,csv} ― current leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#latest-tuner-report-html-md-csv-raw-per-algorithm-stats">latest_tuner_report.{html,md,csv} ― raw per-algorithm stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#latest-tuner-comparison-latest-tuner-leaderboard">latest_tuner_comparison &amp; latest_tuner_leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#tuner-difficulty-html-md-csv">tuner_difficulty*.{html,md,csv}</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#adding-new-dashboard-assets">Adding new dashboard assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#release-candidate-presets">Release candidate presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#automated-sweeps">Automated Sweeps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#parallel-execution">Parallel execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#benchmark-plans">Benchmark plans</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#notebook-execution-cadence">Notebook execution cadence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#heuristic-parameter-catalogue">Heuristic parameter catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#convergence-metrics">Convergence metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/telemetry_tuning.html#tuner-metadata-summary">Tuner metadata summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#bundle-aliases">Bundle Aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#ci-automation">CI Automation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_tuning.html#downloading-ci-reports">Downloading CI Reports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/telemetry_ops.html">Telemetry Ops Runbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_ops.html#weekly-notebook-pipeline">Weekly Notebook Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_ops.html#telemetry-store-maintenance">Telemetry Store Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_ops.html#automation-checklist">Automation Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_ops.html#runbook-template-per-week">Runbook Template (per week)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/telemetry_ops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/release_playbook.html">Release &amp; Contribution Playbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/release_playbook.html#release-preparation">Release Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/release_playbook.html#contribution-checklist">Contribution Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/release_playbook.html#where-to-update-next">Where to Update Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/synthetic_datasets.html">Synthetic Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/synthetic_datasets.html#reference-bundles">Reference bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/synthetic_datasets.html#fleet-roles-and-harvest-systems">Fleet roles and harvest systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/synthetic_datasets.html#block-enrichment-crews-and-blackouts">Block enrichment, crews, and blackouts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/synthetic_datasets.html#cli-walkthrough">CLI walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/synthetic_datasets.html#regenerating-bundles">Regenerating bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/synthetic_datasets.html#where-to-go-next">Where to go next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/system_sequencing.html">Harvest System Sequencing How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/system_sequencing.html#configuring-scenarios">Configuring Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/system_sequencing.html#sequencing-semantics">Sequencing Semantics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/system_sequencing.html#locks-and-the-operational-milp">Locks and the operational MILP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/system_sequencing.html#running-the-solvers">Running the Solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/system_sequencing.html#mip">MIP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/system_sequencing.html#simulated-annealing">Simulated Annealing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/system_sequencing.html#inspection-kpis">Inspection &amp; KPIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/system_sequencing.html#benchmarking-with-sequencing">Benchmarking with Sequencing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/system_sequencing.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/ils.html">Iterated Local Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/ils.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/ils.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/ils.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/tabu.html">Tabu Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/tabu.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tabu.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tabu.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/rolling_horizon.html">Rolling-Horizon Planning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#when-to-use">When to use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#key-parameters">Key parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#how-state-carries-between-windows">How state carries between windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#milp-windows-earliness-tie-break">MILP windows: earliness tie-break</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#windows-without-a-plan">Windows without a plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#cli-usage">CLI usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#worked-example-tiny7">Worked example (tiny7)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#milp-example-with-solver-options">MILP example with solver options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#evaluating-rolling-plans">Evaluating rolling plans</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/rolling_horizon.html#empty-rolling-plans-and-baselines">Empty rolling plans and baselines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#rolling-comparison-helper">Rolling comparison helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#masc-experiments-plots">MASc experiments &amp; plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#sample-artefacts">Sample artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#artefact-provenance-regeneration">Artefact provenance &amp; regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#gotchas">Gotchas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#notes">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/rolling_horizon.html#limitations">Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/tactical_operational.html">Tactical–Operational Scenario Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#canonical-formulation">Canonical formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#loading-and-validation">Loading and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#period-templates">Period templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#core-milp-formulation">Core MILP formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#optional-infrastructure-modules">Optional infrastructure modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#scenario-overlays-diffs-and-batch-reports">Scenario overlays, diffs, and batch reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#tactical-to-operational-handoff">Tactical-to-operational handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#scale-benchmarks-and-uncertainty-envelopes">Scale benchmarks and uncertainty envelopes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#practitioner-scale-validation-case">Practitioner-scale validation case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#guided-tactical-planner-notebook">Guided tactical planner notebook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/hauling.html">Log Hauling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#schema-version">Schema version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#minimal-example">Minimal example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#marine-and-barge-legs">Marine and barge legs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#entity-rules">Entity rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#contractor-eligibility">Contractor eligibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#units-and-defaults">Units and defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#phase-i-solve">Phase I solve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#phase-ii-schedule">Phase II schedule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#phase-iii-simulated-annealing">Phase III simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#stable-artefacts">Stable artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#operational-and-tactical-handoff">Operational and tactical handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#scale-case">Scale case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#limitations">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#see-also">See also</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/hydrology_quickstart.html">Hydrology Quickstart — FEMIC to WS4 to FHOPS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/hydrology_quickstart.html#version-matrix">Version Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hydrology_quickstart.html#build-the-synthetic-workspace">Build the Synthetic Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hydrology_quickstart.html#ws4-landscape-screening">WS4 Landscape Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hydrology_quickstart.html#fhops-consumer-and-operational-check">FHOPS Consumer and Operational Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hydrology_quickstart.html#what-this-demonstrates">What This Demonstrates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hydrology_quickstart.html#what-this-does-not-prove">What This Does Not Prove</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hydrology_quickstart.html#docs-check">Docs Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hydrology_quickstart.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/hydrology_quickstart.html#further-reference">Further Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/web.html">FHOPS Web UI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#shell-and-navigation">Shell and navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#install-and-run">Install and run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#run-discovery">Run discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#run-manifest">Run manifest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#service-surface">Service surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#map-and-layers">Map and layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#domain-panels">Domain panels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#live-runs">Live runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#scenario-editing">Scenario editing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#skins">Skins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#assistant">Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.html"><code class="docutils literal notranslate"><span class="pre">fhops</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.scenario.html"><code class="docutils literal notranslate"><span class="pre">fhops.scenario</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scenario.html#quickstart">Quickstart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.scheduling.html"><code class="docutils literal notranslate"><span class="pre">fhops.scheduling</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.timeline.BlackoutWindow"><code class="docutils literal notranslate"><span class="pre">BlackoutWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.timeline.ShiftDefinition"><code class="docutils literal notranslate"><span class="pre">ShiftDefinition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.timeline.TimelineConfig"><code class="docutils literal notranslate"><span class="pre">TimelineConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.mobilisation.BlockDistance"><code class="docutils literal notranslate"><span class="pre">BlockDistance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.mobilisation.MachineMobilisation"><code class="docutils literal notranslate"><span class="pre">MachineMobilisation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.mobilisation.MobilisationConfig"><code class="docutils literal notranslate"><span class="pre">MobilisationConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.mobilisation.build_distance_lookup"><code class="docutils literal notranslate"><span class="pre">build_distance_lookup()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.systems.HarvestSystem"><code class="docutils literal notranslate"><span class="pre">HarvestSystem</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.systems.SystemJob"><code class="docutils literal notranslate"><span class="pre">SystemJob</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.systems.default_system_registry"><code class="docutils literal notranslate"><span class="pre">default_system_registry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.systems.get_system_road_defaults"><code class="docutils literal notranslate"><span class="pre">get_system_road_defaults()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.scheduling.html#fhops.scheduling.systems.system_productivity_overrides"><code class="docutils literal notranslate"><span class="pre">system_productivity_overrides()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.optimization.html"><code class="docutils literal notranslate"><span class="pre">fhops.optimization</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.optimization.html#deprecated-legacy-mip-1-0-1-127">Deprecated legacy MIP (1.0.1, #127)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.evaluation.html"><code class="docutils literal notranslate"><span class="pre">fhops.evaluation</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.DaySummary"><code class="docutils literal notranslate"><span class="pre">DaySummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.DowntimeEvent"><code class="docutils literal notranslate"><span class="pre">DowntimeEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.DowntimeEventConfig"><code class="docutils literal notranslate"><span class="pre">DowntimeEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.EnsembleResult"><code class="docutils literal notranslate"><span class="pre">EnsembleResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.KPIResult"><code class="docutils literal notranslate"><span class="pre">KPIResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.LandingShockConfig"><code class="docutils literal notranslate"><span class="pre">LandingShockConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.LandingShockEvent"><code class="docutils literal notranslate"><span class="pre">LandingShockEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.PlaybackConfig"><code class="docutils literal notranslate"><span class="pre">PlaybackConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.PlaybackEvent"><code class="docutils literal notranslate"><span class="pre">PlaybackEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.PlaybackRecord"><code class="docutils literal notranslate"><span class="pre">PlaybackRecord</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.PlaybackResult"><code class="docutils literal notranslate"><span class="pre">PlaybackResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.PlaybackSample"><code class="docutils literal notranslate"><span class="pre">PlaybackSample</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.SamplingConfig"><code class="docutils literal notranslate"><span class="pre">SamplingConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.SamplingContext"><code class="docutils literal notranslate"><span class="pre">SamplingContext</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.SamplingEventConfig"><code class="docutils literal notranslate"><span class="pre">SamplingEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.ShiftSummary"><code class="docutils literal notranslate"><span class="pre">ShiftSummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.WeatherEvent"><code class="docutils literal notranslate"><span class="pre">WeatherEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.WeatherEventConfig"><code class="docutils literal notranslate"><span class="pre">WeatherEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.assignments_to_records"><code class="docutils literal notranslate"><span class="pre">assignments_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.compute_kpis"><code class="docutils literal notranslate"><span class="pre">compute_kpis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.compute_makespan_metrics"><code class="docutils literal notranslate"><span class="pre">compute_makespan_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.compute_utilisation_metrics"><code class="docutils literal notranslate"><span class="pre">compute_utilisation_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.export_playback"><code class="docutils literal notranslate"><span class="pre">export_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.playback_summary_metrics"><code class="docutils literal notranslate"><span class="pre">playback_summary_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.render_markdown_summary"><code class="docutils literal notranslate"><span class="pre">render_markdown_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.run_playback"><code class="docutils literal notranslate"><span class="pre">run_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.run_stochastic_playback"><code class="docutils literal notranslate"><span class="pre">run_stochastic_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.schedule_to_records"><code class="docutils literal notranslate"><span class="pre">schedule_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.summarise_days"><code class="docutils literal notranslate"><span class="pre">summarise_days()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.evaluation.html#fhops.evaluation.summarise_shifts"><code class="docutils literal notranslate"><span class="pre">summarise_shifts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.planning.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning.tactical_operational</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.BlockRoadAccess"><code class="docutils literal notranslate"><span class="pre">BlockRoadAccess</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Economics"><code class="docutils literal notranslate"><span class="pre">Economics</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.ExternalSupply"><code class="docutils literal notranslate"><span class="pre">ExternalSupply</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Facility"><code class="docutils literal notranslate"><span class="pre">Facility</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FacilityDemand"><code class="docutils literal notranslate"><span class="pre">FacilityDemand</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetCapacity"><code class="docutils literal notranslate"><span class="pre">FleetCapacity</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetOption"><code class="docutils literal notranslate"><span class="pre">FleetOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.HarvestSystemOption"><code class="docutils literal notranslate"><span class="pre">HarvestSystemOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.InitialInventory"><code class="docutils literal notranslate"><span class="pre">InitialInventory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PeriodLevel"><code class="docutils literal notranslate"><span class="pre">PeriodLevel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningPeriod"><code class="docutils literal notranslate"><span class="pre">PlanningPeriod</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningUnit"><code class="docutils literal notranslate"><span class="pre">PlanningUnit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Product"><code class="docutils literal notranslate"><span class="pre">Product</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadDependency"><code class="docutils literal notranslate"><span class="pre">RoadDependency</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadProject"><code class="docutils literal notranslate"><span class="pre">RoadProject</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.SilvicultureTransition"><code class="docutils literal notranslate"><span class="pre">SilvicultureTransition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalScenario</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TransportArc"><code class="docutils literal notranslate"><span class="pre">TransportArc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.children_by_parent"><code class="docutils literal notranslate"><span class="pre">children_by_parent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.four_week_periods"><code class="docutils literal notranslate"><span class="pre">four_week_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.load_tactical_operational_scenario"><code class="docutils literal notranslate"><span class="pre">load_tactical_operational_scenario()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.seasonal_periods"><code class="docutils literal notranslate"><span class="pre">seasonal_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_dimensions"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_dimensions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.validate_period_hierarchy"><code class="docutils literal notranslate"><span class="pre">validate_period_hierarchy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.model.milp.tactical_operational</span></code> Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.DemandBasis"><code class="docutils literal notranslate"><span class="pre">DemandBasis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalHarvestMode"><code class="docutils literal notranslate"><span class="pre">TacticalHarvestMode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpBundle"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpBundle</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_bundle"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_bundle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_model"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.solve_tactical_operational_milp"><code class="docutils literal notranslate"><span class="pre">solve_tactical_operational_milp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_from_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_to_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#solve-mip-deprecated-alias-outcomes-and-exit-codes"><code class="docutils literal notranslate"><span class="pre">solve-mip</span></code> (deprecated alias) outcomes and exit codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#heuristic-configuration-reference">Heuristic configuration reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#dataset-command-cheat-sheet">Dataset command cheat sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#log-hauling-commands">Log-hauling commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#web-commands">Web commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/playback_aggregates.html">Aggregation Helpers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/playback_aggregates.html#module-fhops.evaluation.playback.aggregates">API summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/harvest_systems.html">Harvest System Registry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#data-model">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#default-systems">Default Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#using-the-registry">Using the Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#scenario-cross-links">Scenario Cross-Links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#extending-systems">Extending Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#preset-usage-cheat-sheet">Preset Usage Cheat Sheet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#forwarder-productivity">Forwarder Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#grapple-skidder-shovel-logger-productivity">Grapple Skidder &amp; Shovel Logger Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#skyline-helicopter-productivity">Skyline &amp; Helicopter Productivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#forwarder-productivity-models">Forwarder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#roadside-processor-productivity-models">Roadside Processor Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#landing-processor-and-loader-coverage-cheat-sheet">Landing processor and loader coverage cheat sheet</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#optional-dataset-cookbook">Optional Dataset Cookbook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#med42-large84-cost-overlays">Med42 / Large84 cost overlays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#partial-cut-mixed-system-assignments">Partial-cut / mixed system assignments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#road-construction-add-ons">Road construction add-ons</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#burned-timber-salvage-guidance-adv1n5">Burned-Timber Salvage Guidance (ADV1N5)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#loader-forwarder-productivity-models">Loader-Forwarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#loader-harvest-system-overrides">Loader harvest-system overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#coordinating-with-forwarder-skidder-models">Coordinating with forwarder / skidder models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#grapple-skidder-productivity-models">Grapple Skidder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#grapple-yarder-productivity-models">Grapple Yarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#grapple-harvest-system-presets">Grapple harvest-system presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#shovel-logger-hoe-chucker-productivity">Shovel Logger (Hoe-Chucker) Productivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#skyline-productivity-models">Skyline Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#tr-127-predictor-ranges">TR-127 predictor ranges</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#skyline-cost-matrix">Skyline cost matrix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#tn-258-fncy12-support-utilisation">TN-258 / FNCY12 support utilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/harvest_systems.html#partial-cut-profile-registry">Partial-cut profile registry</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#road-subgrade-construction-references">Road &amp; Subgrade Construction References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#handfalling-cost-reference">Handfalling Cost Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/harvest_systems.html#ctl-harvester-productivity-models">CTL Harvester Productivity Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/hauling.html#key-models">Key models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hauling.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/hauling_formulation.html">Log-Hauling Formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/hauling_formulation.html#phase-i-monthly-daily-flows">Phase I: monthly daily flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hauling_formulation.html#phase-ii-daily-truck-and-loader-scheduling">Phase II: daily truck and loader scheduling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hauling_formulation.html#phase-iii-simulated-annealing">Phase III: simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hauling_formulation.html#implementation-notes-and-corrections">Implementation notes and corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/web.html#key-objects">Key objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/web.html#cli">CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/telemetry.html">Telemetry Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/telemetry.html#schema">Schema</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/telemetry.html#example">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/telemetry.html#solver-specific-fields">Solver-specific fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/telemetry.html#usage-notes">Usage Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/telemetry.html#cli-reporting">CLI Reporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/telemetry.html#historical-trends">Historical Trends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/dashboards.html">Live Dashboards</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/dashboards.html#embedded-previews">Embedded previews</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/source_bibliography.html">Source Bibliography and Document Access</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/source_bibliography.html#public-bibliography">Public bibliography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/source_bibliography.html#private-full-text-vault">Private full-text vault</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/femic_lidar.html">FEMIC LidarBC Products</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar.html#scenario-pin-and-support">Scenario Pin and Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar.html#operability-report">Operability Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar.html#operator-workflow">Operator Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar.html#shared-parity">Shared Parity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar.html#phase-close-out">Phase Close-Out</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/femic_lidar_fixture.html">TFL 6 LidarBC Fixture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar_fixture.html#what-it-exercises">What It Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar_fixture.html#terrain-and-canopy-evidence">Terrain And Canopy Evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar_fixture.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar_fixture.html#commands">Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar_fixture.html#regeneration">Regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_lidar_fixture.html#parity-and-limits">Parity And Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/femic_hydrology.html">FEMIC Hydrology Response Bundles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#readiness">Readiness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#scenario-pin">Scenario Pin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#support-mapping">Support Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#schedule-bound-exposure">Schedule-Bound Exposure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#screening">Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#operational-hazard-windows">Operational Hazard Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#road-and-culvert-assets">Road and Culvert Assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#operational-constraint-check">Operational Constraint Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#end-to-end-path">End-to-End Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#solver-boundary">Solver Boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/femic_hydrology.html#operational-end-to-end-path">Operational End-to-End Path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/hydrology_contract_index.html">Hydrology Contract and Schema Index</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/hydrology_contract_index.html#contract-layers">Contract Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hydrology_contract_index.html#femic-producer-contracts">FEMIC Producer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hydrology_contract_index.html#ws4-landscape-consumer-contracts">WS4 Landscape Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hydrology_contract_index.html#fhops-operational-consumer-contracts">FHOPS Operational Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hydrology_contract_index.html#shared-exposure-contract">Shared Exposure Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hydrology_contract_index.html#failure-matrix">Failure Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hydrology_contract_index.html#what-is-not-a-contract">What Is Not a Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/hydrology_contract_index.html#version-compatibility">Version Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/tree_inventory.html">Tree Inventory Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_inventory.html#inventory-format">Inventory Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_inventory.html#scenario-pin-and-block-map">Scenario Pin and Block Map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_inventory.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_inventory.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_inventory.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/stem_models.html">Stem Volume and Bucking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/stem_models.html#reference-model">Reference Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/stem_models.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/stem_models.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/stem_models.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/tree_replay.html">Tree-Scale Schedule Replay</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_replay.html#input">Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_replay.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_replay.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/tree_scene.html">Tree Scene Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_scene.html#what-is-exported">What is exported</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_scene.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/robustness.html">Stochastic Robustness Walkthrough</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/robustness.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/robustness.html#code-walkthrough">Code Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/robustness.html#interpretation">Interpretation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/robustness.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/analytics/index.html">Analytics Notebooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/playback_walkthrough.html">Playback Walkthrough</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/playback_walkthrough.html#Production-by-Day">Production by Day</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/stochastic_robustness.html">Stochastic Robustness Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/stochastic_robustness.html#Production-Distribution">Production Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/what_if_analysis.html">What-If Scenario Tweaks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/what_if_analysis.html#Adjusted-Sampling">Adjusted Sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/landing_congestion.html">Landing Congestion Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/landing_congestion.html#Baseline-Ensemble-Snapshot">Baseline Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/landing_congestion.html#Landing-Shock-Ensemble-Snapshot">Landing Shock Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/landing_congestion.html#KPI-Comparison">KPI Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/landing_congestion.html#Production-Distributions">Production Distributions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/system_mix.html">Harvest System Mix Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/system_mix.html#System-Mix-Metadata">System Mix Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/system_mix.html#Machine-Roles-in-Scenario">Machine Roles in Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/system_mix.html#Generate-Custom-Mix">Generate Custom Mix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/system_mix.html#Role-Comparison">Role Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/kpi_decomposition.html">KPI Decomposition Deep Dive</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/kpi_decomposition.html#Scenario-Overview">Scenario Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/kpi_decomposition.html#Production-vs-Mobilisation">Production vs Mobilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/kpi_decomposition.html#Sequencing-&amp;-Downtime">Sequencing &amp; Downtime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/kpi_decomposition.html#Visualise-Utilisation">Visualise Utilisation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/ensemble_resilience.html">Ensemble Resilience Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/ensemble_resilience.html#Production-Distributions">Production Distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/ensemble_resilience.html#Downtime-Summary">Downtime Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/operator_sweep.html">Operator/Benchmark Sweep</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/operator_sweep.html#Objective-Comparison">Objective Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/operator_sweep.html#Runtime-Comparison">Runtime Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/telemetry_diagnostics.html">Telemetry &amp; Solver Diagnostics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/telemetry_diagnostics.html#Objective-Trace">Objective Trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/telemetry_diagnostics.html#Acceptance-Summary">Acceptance Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/tuner_report_analysis.html">Telemetry Report Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_report_analysis.html#Setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_report_analysis.html#Load-Reports">Load Reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_report_analysis.html#Visualize-Best-Objectives">Visualize Best Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_report_analysis.html#Delta-Table">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_report_analysis.html#Machine-Cost-Summary-Pivot">Machine-Cost Summary Pivot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_report_analysis.html#Machine-Cost-Trend-Chart">Machine-Cost Trend Chart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_report_analysis.html#Compare-Against-Historical-Summary">Compare Against Historical Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_report_analysis.html#Repair-Usage-Alerts">Repair-Usage Alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/tuner_history_analysis.html">Telemetry History Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_history_analysis.html#Load-History-Snapshot">Load History Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_history_analysis.html#Compute-Deltas">Compute Deltas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_history_analysis.html#Visualize-Trends">Visualize Trends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/tuner_history_analysis.html#Next-Steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/analytics/benchmark_summary.html">Benchmark Summary Notebook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/benchmark_summary.html#Objective-vs-Scenario">Objective vs Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/analytics/benchmark_summary.html#Runtime-Overview">Runtime Overview</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Processes</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#developer-onboarding">Developer onboarding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#command-cadence-local-loop">Command cadence (local loop)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#debugging-and-profiling">Debugging and profiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#re-running-published-artefacts">Re-running published artefacts</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Roadmap Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="howto/mobilisation_geo.html">Mobilisation Geospatial Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/mobilisation_geo.html#command-examples">Command Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/mobilisation_geo.html#tooling-notes">Tooling Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/mobilisation_geo.html#troubleshooting-diagnostics">Troubleshooting &amp; Diagnostics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="planning/productivity_gaps.html">Productivity Catalog Gaps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="planning/productivity_gaps.html#arnvik-appendix-8-scope">Arnvik Appendix 8 scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="planning/productivity_gaps.html#implications">Implications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="planning/productivity_gaps.html#forwarder-equation-stack-bc-roll-out">Forwarder equation stack (BC roll-out)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="planning/productivity_gaps.html#sources-in-hand">Sources in hand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planning/productivity_gaps.html#caveats-and-pending-confirmations">Caveats and pending confirmations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FHOPS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Roadmap Summary</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/roadmap.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="roadmap-summary">
+<h1>Roadmap Summary<a class="headerlink" href="#roadmap-summary" title="Link to this heading"></a></h1>
+<p>FHOPS maintains its authoritative roadmap in <code class="docutils literal notranslate"><span class="pre">ROADMAP.md</span></code> at the repository root. The key
+phases are mirrored below; consult the markdown file for live checklists and detailed next steps.</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>This roadmap orchestrates FHOPS’ evolution into a production-ready planning platform. It
+mirrors the multi-level planning system pioneered in Nemora: top-level phases here, with
+module-specific execution plans living in <span class="sb">`notes/`</span>. Update the checklist status and the
+"Detailed Next Steps" section as deliverables land. When in doubt, consult the linked notes
+before proposing new work.
+
+<span class="gu">## Phase 0 — Repository Foundations ✅ (complete)</span>
+<span class="k">-</span><span class="w"> </span>Initial project scaffold (<span class="sb">`pyproject.toml`</span>, CLI entry point, examples).
+<span class="k">-</span><span class="w"> </span>Baseline tests covering core data contract and solver smoke cases.
+<span class="k">-</span><span class="w"> </span>Basic README explaining architecture and usage.
+
+<span class="gu">## Phase 1 — Core Platform Hardening ✅ (complete)</span>
+<span class="k">- [x]</span> Harden data contract validations and scenario loaders (see <span class="sb">`notes/data_contract_enhancements.md`</span> and <span class="sb">`docs/howto/data_contract.rst`</span>).
+<span class="k">- [x]</span> Expand Pyomo model coverage for production constraints and objective variants (see <span class="sb">`notes/mip_model_plan.md`</span>).
+<span class="k">- [x]</span> Stand up modular scaffolding (<span class="sb">`notes/modular_reorg_plan.md`</span>) and shift-level scheduling groundwork (<span class="sb">`scheduling/timeline`</span> + timeline-integrated solvers).
+<span class="k">- [x]</span> Establish deterministic regression fixtures for MIP and heuristic solvers.
+<span class="k">- [x]</span> Document baseline workflows in Sphinx (overview + quickstart).
+<span class="k">- [x]</span> Stand up CI enforcing the agent workflow command suite on every push and PR (see <span class="sb">`notes/ci_cd_expansion.md`</span>).
+<span class="k">- [x]</span> Define geospatial ingestion strategy for block geometries (GeoJSON baseline, distance matrix fallback) to support mobilisation costs (<span class="sb">`notes/mobilisation_plan.md`</span>, <span class="sb">`notes/data_contract_enhancements.md`</span>, <span class="sb">`docs/howto/data_contract.rst`</span>).
+
+<span class="gu">## Phase 2 — Solver &amp; Heuristic Expansion</span>
+<span class="k">- [x]</span> Scenario scaling benchmarks &amp; tuning harness (phase kickoff task).
+<span class="k">- [ ]</span> Shift-based scheduling architecture (data contract → solvers → KPIs) (<span class="sb">`notes/modular_reorg_plan.md`</span>, <span class="sb">`notes/mip_model_plan.md`</span>, <span class="sb">`notes/simulation_eval_plan.md`</span>).
+<span class="k">- [x]</span> Metaheuristic roadmap execution (Simulated Annealing refinements, Tabu/ILS activation).
+<span class="k">- [x]</span> Mobilisation penalty calibration &amp; distance QA across benchmark scenarios (<span class="sb">`notes/mobilisation_plan.md`</span>).
+<span class="k">- [x]</span> Harvest system sequencing parity and machine-to-system mapping (<span class="sb">`notes/system_sequencing_plan.md`</span>).
+<span class="k">- [x]</span> CLI ergonomics for solver configuration profiles.
+
+<span class="gu">## Phase 3 — Evaluation &amp; Analytics</span>
+<span class="k">- [x]</span> Robust schedule playback with stochastic extensions (downtime/weather sampling) and shift/day reporting.
+<span class="w">  </span><span class="k">- [x]</span> Playback engine audit
+<span class="w">    </span><span class="k">- [x]</span> Inventory deterministic playback path (<span class="sb">`fhops/eval`</span>, <span class="sb">`scheduling/timeline`</span>) and capture gaps in <span class="sb">`notes/simulation_eval_plan.md`</span>.
+<span class="w">    </span><span class="k">- [x]</span> Spec shift/day reporting interfaces and required data contract updates.
+<span class="w">    </span><span class="k">- [x]</span> Produce migration checklist for refactoring playback modules and regression fixtures.
+<span class="w">  </span><span class="k">- [x]</span> Stochastic sampling extensions
+<span class="w">    </span><span class="k">- [x]</span> Design RNG seeding + scenario ensemble API and land it as a draft in <span class="sb">`notes/simulation_eval_plan.md`</span>.
+<span class="w">    </span><span class="k">- [x]</span> Implement downtime/weather sampling operators with unit and property-based tests.
+<span class="w">    </span><span class="k">- [x]</span> Integrate sampling toggles into CLI/automation commands (document defaults in <span class="sb">`docs/howto/evaluation.rst`</span>).
+<span class="w">  </span><span class="k">- [x]</span> Shift/day reporting deliverables
+<span class="w">    </span><span class="k">- [x]</span> Define aggregation schemas for shift/day calendars and extend KPI dataclasses.
+<span class="w">    </span><span class="k">- [x]</span> Add exporters (CSV/Parquet + Markdown summary) wired into playback CLI.
+<span class="w">    </span><span class="k">- [x]</span> Validate outputs across benchmark scenarios and stash fixtures for CI smoke runs.
+<span class="k">- [x]</span> KPI expansion (cost, makespan, utilisation, mobilisation spend) with reporting templates.
+<span class="w">  </span><span class="k">- [x]</span> Metric specification &amp; alignment
+<span class="w">    </span><span class="k">- [x]</span> Reconcile definitions across <span class="sb">`notes/mip_model_plan.md`</span>, <span class="sb">`notes/mobilisation_plan.md`</span>, and simulation notes.
+<span class="w">    </span><span class="k">- [x]</span> Document final KPI formulas and assumptions in <span class="sb">`docs/howto/evaluation.rst`</span>.
+<span class="w">    </span><span class="k">- [x]</span> Map required raw signals from playback outputs and ensure data contract coverage.
+<span class="w">  </span><span class="k">- [x]</span> Implementation &amp; validation
+<span class="w">    </span><span class="k">- [x]</span> Extend KPI calculators to emit cost, makespan, utilisation, mobilisation spend variants.
+<span class="w">    </span><span class="k">- [x]</span> Add regression fixtures and property-based checks confirming KPI ranges per scenario tier.
+<span class="w">    </span><span class="k">- [x]</span> Wire KPIs into CLI reporting with configurable profiles and smoke tests.
+<span class="w">  </span><span class="k">- [x]</span> Reporting templates
+<span class="w">    </span><span class="k">- [x]</span> Draft tabular templates (CSV/Markdown) plus optional visuals for docs/notebooks.
+<span class="w">    </span><span class="k">- [x]</span> Provide Sphinx snippets and CLI help examples showcasing new KPI bundles.
+<span class="w">    </span><span class="k">- [x]</span> Capture follow-up backlog items for advanced dashboards (e.g., Plotly) if deferred (defer to backlog).
+<span class="k">- [x]</span> Synthetic dataset generator &amp; benchmarking suite (<span class="sb">`notes/synthetic_dataset_plan.md`</span>).
+<span class="w">  </span><span class="k">- [x]</span> Design &amp; planning
+<span class="w">    </span><span class="k">- [x]</span> Finalise dataset taxonomy and parameter ranges in <span class="sb">`notes/synthetic_dataset_plan.md`</span>.
+<span class="w">    </span><span class="k">- [x]</span> Align generator requirements with Phase 2 benchmarking harness expectations.
+<span class="w">    </span><span class="k">- [x]</span> Identify storage strategy and naming for generated scenarios (<span class="sb">`data/synthetic/`</span>).
+<span class="w">  </span><span class="k">- [x]</span> Generator implementation
+<span class="w">    </span><span class="k">- [x]</span> Build core sampling utilities (terrain, system mix, downtime patterns) with tests.
+<span class="w">    </span><span class="k">- [x]</span> Expose CLI entry (<span class="sb">`fhops synth`</span>) and configuration schema for batch generation.
+<span class="w">    </span><span class="k">- [x]</span> Add validation suite ensuring generated datasets meet contract + KPI sanity bounds.
+<span class="w">  </span><span class="k">- [x]</span> Benchmark integration
+<span class="w">    </span><span class="k">- [x]</span> Hook synthetic scenarios into benchmark harness and CI smoke targets.
+<span class="w">    </span><span class="k">- [x]</span> Provide metadata manifests describing each scenario for docs/examples.
+<span class="w">    </span><span class="k">- [x]</span> Outline scaling experiments and capture results in changelog/notes.
+<span class="k">- [x]</span> Reference analytics notebooks integrated into docs/examples.
+<span class="w">  </span><span class="k">- [x]</span> Progressive onboarding series under <span class="sb">`examples/`</span> complete: <span class="sb">`00_fhops_orientation.ipynb`</span>, <span class="sb">`01_fhops_operations_simulation.ipynb`</span>, <span class="sb">`02_fhops_solve_compare.ipynb`</span>, <span class="sb">`03_fhops_playback_kpis.ipynb`</span>, and <span class="sb">`04_fhops_stochastic_what_if.ipynb`</span> cover API/CLI execution, operations simulation, and notebook-local AAM-style helpers.
+<span class="w">  </span><span class="k">- [x]</span> Notebook scaffolding
+<span class="w">    </span><span class="k">- [x]</span> Select representative deterministic + stochastic scenarios (baseline + synthetic).
+<span class="w">    </span><span class="k">- [x]</span> Define notebook storyboards (playback walkthrough, KPI deep-dive, what-if analysis).
+<span class="w">    </span><span class="k">- [x]</span> Create reusable plotting helpers (matplotlib/Altair) shared across notebooks.
+<span class="w">  </span><span class="k">- [x]</span> Notebook authoring
+<span class="w">    </span><span class="k">- [x]</span> Draft notebooks under <span class="sb">`docs/examples/analytics/`</span> with executed outputs.
+<span class="w">    </span><span class="k">- [x]</span> Ensure notebooks call CLI/modules via lightweight wrappers for reproducibility.
+<span class="w">    </span><span class="k">- [x]</span> Capture metadata (runtime, dependencies) and add smoke execution script.
+<span class="w">  </span><span class="k">- [x]</span> Documentation &amp; automation
+<span class="w">    </span><span class="k">- [x]</span> Integrate notebooks into Sphinx (nbsphinx or nbconvert pipeline) with cross-links.
+<span class="w">    </span><span class="k">- [x]</span> Add CI check to execute notebooks (or cached outputs) on critical scenarios.
+<span class="w">    </span><span class="k">- [x]</span> Update README and docs landing pages to advertise analytics assets.
+<span class="k">- [ ]</span> Hyperparameter tuning framework (conventional + agentic) leveraging persistent telemetry (<span class="sb">`notes/metaheuristic_hyperparam_tuning.md`</span>).
+<span class="w">  </span><span class="k">- [x]</span> Telemetry &amp; persistence groundwork
+<span class="w">    </span><span class="k">- [x]</span> Define telemetry schema (solver configuration, KPIs, runtime stats) and storage backend (drafted in <span class="sb">`notes/metaheuristic_hyperparam_tuning.md`</span>).
+<span class="w">    </span><span class="k">- [x]</span> Implement logging hooks in solvers and playback runs, persisting to local store.
+<span class="w">      </span><span class="k">- [x]</span> Simulated Annealing JSONL run logger emitting run/step telemetry (<span class="sb">`RunTelemetryLogger`</span>, <span class="sb">`solve_sa`</span>).
+<span class="w">      </span><span class="k">- [x]</span> ILS + Tabu telemetry integration (run/step logging, CLI wiring).
+<span class="w">      </span><span class="k">- [x]</span> Playback CLI telemetry (run metadata + step logging for day summaries).
+<span class="w">      </span><span class="k">- [x]</span> Enrich telemetry with scenario descriptors and schema versioning for ML tuners.
+<span class="w">    </span><span class="k">- [x]</span> Document data retention/rotation strategy in tuning notes.
+<span class="w">  </span><span class="k">- [ ]</span> Conventional tuning toolkit
+<span class="w">    </span><span class="k">- [x]</span> Implement grid/random/Bayesian search drivers leveraging telemetry store.
+<span class="w">    </span><span class="k">- [x]</span> Provide CLI surfaces for launching tuning sweeps with scenario bundles.
+<span class="w">      </span><span class="k">- [x]</span> Random tuner CLI (<span class="sb">`fhops tune-random`</span>) executing SA sweeps and recording telemetry.
+<span class="w">      </span><span class="k">- [x]</span> Bayesian/SMBO tuner CLI (<span class="sb">`fhops tune-bayes`</span>) built on Optuna.
+<span class="w">    </span><span class="k">- [x]</span> Automate CI sweeps (tiny7 + med42) that publish <span class="sb">`fhops telemetry report`</span> artifacts and history summaries for baseline scenarios (CSV/MD/HTML + published chart).
+<span class="w">    </span><span class="k">- [ ]</span> After merging Phase 3 PR, verify GitHub Pages deployment on <span class="sb">`main`</span> (ensure <span class="sb">`telemetry/history_summary.html`</span> loads).
+<span class="w">      </span><span class="k">- [x]</span> Grid tuner CLI (<span class="sb">`fhops tune-grid`</span>) evaluating preset/batch-size combinations.
+<span class="w">    </span><span class="k">- [x]</span> Add automated comparison reports summarising best configurations per scenario class.
+<span class="w">    </span><span class="k">- [ ]</span> Benchmark tuner strategies (grid vs. random vs. Bayesian/SMBO vs. neural/agentic) and log meta-telemetry for automated model selection.
+<span class="w">    </span><span class="k">- [x]</span> Introduce dual convergence thresholds (soft ≤5%, hard ≤1%) in telemetry analytics so automated stopping criteria have rich signals.
+<span class="w">    </span><span class="k">- [x]</span> Parallelise the tuning harness (≈16 worker processes × 4 threads) with per-worker telemetry merge so sweeps scale linearly with hardware.
+<span class="w">    </span><span class="k">- [x]</span> Add optional Gurobi backend (<span class="sb">`fhops[gurobi]`</span>, <span class="sb">`--driver gurobi`</span>) for MIP solves that outgrow HiGHS.
+<span class="w">    </span><span class="k">- [x]</span> Run long-horizon convergence sweeps (SA/ILS/Tabu, ≥10 000 iterations) on baseline + synthetic bundles to measure iteration/runtime scaling and tune stopping heuristics.
+<span class="w">      </span><span class="k">-</span><span class="w"> </span><span class="sb">`tmp/convergence-long/long_run_summary.csv`</span> captures wall-clock rates and gap progress; only SA/ILS on <span class="sb">`synthetic-medium`</span> reached ≤5 % gap within 10 000 iterations, highlighting the need for deeper budgets or enhanced operators elsewhere.
+<span class="w">      </span><span class="k">-</span><span class="w"> </span>Next: rerun SA/ILS/Tabu with ≥MIP wall-clock budgets (≥10 min) and log Z* vs. iteration/time curves for regression against scenario size/difficulty.
+<span class="w">    </span><span class="k">- [ ]</span> Reporting polish
+<span class="w">      </span><span class="k">- [x]</span> Tighten <span class="sb">`_compute_history_deltas`</span> so percentage columns remain valid and Markdown renders cleanly.
+<span class="w">      </span><span class="k">- [x]</span> Confirm README + docs/how-to explicitly reference the GitHub Pages URL and the exported delta artefacts.
+<span class="w">      </span><span class="k">- [x]</span> Expand <span class="sb">`DESIRED_METRICS`</span> (e.g., downtime) once telemetry logging exposes the required fields.
+<span class="w">  </span><span class="k">- [ ]</span> Agentic tuning integration <span class="ge">*(deferred — see Backlog &amp; Ideas; focus remains on conventional toolkit completion).*</span>
+
+<span class="gu">## Phase 4 — Release &amp; Community Readiness</span>
+<span class="k">- [x]</span> Complete Sphinx documentation set (API, CLI, how-tos, examples) published to Read the Docs (<span class="sb">`notes/sphinx-documentation.md`</span>, <span class="sb">`docs/howto/release_playbook.rst`</span>, <span class="sb">`docs/howto/telemetry_ops.rst`</span>, <span class="sb">`docs/howto/thesis_eval.rst`</span>, API narrative guides).
+<span class="w">  </span><span class="k">-</span><span class="w"> </span>2025-11-24: Closed the Sphinx/docstring audit (feature/api-docstring-enhancements) — all CLI, evaluation, heuristics, and productivity modules now ship NumPy-style docstrings and Sphinx builds are warning-free.
+<span class="k">- [x]</span> Finalise contribution guide, code of conduct alignment, and PR templates (see <span class="sb">`docs/howto/release_playbook.rst`</span>, <span class="sb">`CONTRIBUTING.md`</span>, <span class="sb">`AGENTS.md`</span>).
+<span class="k">- [x]</span> Versioned release notes and public roadmap updates (<span class="sb">`docs/releases/v1.0.0.md`</span>, <span class="sb">`docs/releases/v1.0.0-alpha2.md`</span>, <span class="sb">`docs/releases/v1.0.0-alpha1.md`</span>, <span class="sb">`docs/releases/v0.1.0.md`</span>, <span class="sb">`ROADMAP.md`</span> current).
+<span class="k">- [ ]</span> Outreach plan (blog, seminars, partner briefings).
+
+<span class="gu">## Phase 5 — Formal Model Documentation Synchronization</span>
+<span class="k">- [x]</span> <span class="ni">#57</span> Audit canonical formulation sources and approve the shared source/ADR layout for operational and tactical–operational MILPs (merged via PR <span class="ni">#61</span>).
+<span class="k">- [x]</span> <span class="ni">#58</span> Publish the operational MILP formulation as a canonical source module shared across manuscript and docs, with current <span class="sb">`operational.py`</span>/<span class="sb">`data.py`</span> traceability (merged via PR <span class="ni">#62</span>).
+<span class="k">- [x]</span> <span class="ni">#59</span> Publish the tactical–operational MILP formulation as a canonical source module shared across Sphinx/manuscript assets, with <span class="sb">`tactical_operational.py`</span> traceability (merged via PR <span class="ni">#63</span>).
+<span class="k">- [x]</span> <span class="ni">#60</span> Add regression/drift checks ensuring formulation assets regenerate cleanly (<span class="sb">`export_docs_assets.py`</span> + docs build) (merged via PR <span class="ni">#64</span>).
+
+<span class="gu">## Phase 6 — Tactical–Operational Expansion (TOPM-Inspired)</span>
+<span class="k">- [x]</span> <span class="ni">#37</span> Approve the architecture, scope boundaries, workflow contract, and TOPM/OperMAX provenance baseline in <span class="sb">`notes/tactical_operational_expansion_plan.md`</span> (merged via PR <span class="ni">#45</span>).
+<span class="k">- [x]</span> <span class="ni">#38</span> Add a period-hierarchical, unit-explicit tactical–operational data contract while preserving schema <span class="sb">`1.0.0`</span> operational workflows (merged via PR <span class="ni">#46</span>).
+<span class="k">- [x]</span> <span class="ni">#39</span> Implement the core multi-year harvest/system/period model with semi-continuous minimum cut sizes and discounted economics (merged via PR <span class="ni">#47</span>).
+<span class="k">- [x]</span> <span class="ni">#40</span> Integrate products, transport, facilities, inventory, consumption, and outside purchases (merged via PR <span class="ni">#48</span>).
+<span class="k">- [x]</span> <span class="ni">#41</span> Add optional roads, silviculture transitions, and fleet investment/economic-life modules (merged via PR <span class="ni">#49</span>).
+<span class="k">- [x]</span> <span class="ni">#42</span> Add scenario overlays/diffs, auditable accounting reports, and TOPM-shaped synthetic acceptance fixtures (merged via PR <span class="ni">#50</span>).
+<span class="k">- [x]</span> <span class="ni">#43</span> Couple aggregate tactical decisions to the existing shift-indexed operational and rolling-horizon engines (merged via PR <span class="ni">#51</span>).
+<span class="k">- [x]</span> <span class="ni">#44</span> Benchmark scale/decomposition options only after the integrated core is validated and profiled (merged via PR <span class="ni">#52</span>; full 5-year benchmark and practitioner validation remain follow-up scope).
+
+<span class="gu">## Phase 7 — Tactical Validation Scale-Up and Release Preparation</span>
+<span class="k">- [x]</span> <span class="ni">#75</span> Integrate Phase 7 into <span class="sb">`main`</span> (merged via PR <span class="ni">#84</span>).
+<span class="k">- [x]</span> <span class="ni">#76</span> Run and document the full 5-year / 500+ block TOPM-shaped tactical benchmark with profiling evidence (merged via PR <span class="ni">#80</span>).
+<span class="k">- [x]</span> <span class="ni">#77</span> Build a redistributable practitioner-scale tactical validation case and verify decisions/balances/reports (merged via PR <span class="ni">#81</span>).
+<span class="k">- [x]</span> <span class="ni">#78</span> Add an executable guided tactical planner notebook covering contract → solve → report → operational handoff (merged via PR <span class="ni">#82</span>).
+<span class="k">- [x]</span> <span class="ni">#79</span> Prepare the FHOPS version bump and release notes after validation evidence lands (merged via PR <span class="ni">#83</span>).
+
+<span class="gu">## Phase 8 — 1.0.1 Maintenance (rolling-horizon carry-forward + playback fixes)</span>
+Parent <span class="ni">#90</span>; branch <span class="sb">`feature/phase8-v101-maintenance`</span> (from tag <span class="sb">`v1.0.0`</span>); plan <span class="sb">`notes/v101_maintenance_plan.md`</span>.
+Phases 6–7 (tactical–operational 1.1.0a line) live on <span class="sb">`main`</span>; this phase is forward-ported there.
+<span class="k">- [x]</span> <span class="ni">#91</span> Optional <span class="sb">`Scenario.initial_state`</span> honoured by MILP, heuristics, and playback.
+<span class="k">- [x]</span> <span class="ni">#92</span> Rolling-horizon state carry-forward plus lock/blackout/shift fixes.
+<span class="k">- [x]</span> <span class="ni">#93</span> Stochastic playback event fixes (landing-shock days, downtime duration, <span class="sb">`correlated_days`</span>).
+<span class="k">- [x]</span> <span class="ni">#94</span> Document <span class="sb">`Block.work_required`</span> units (m³).
+<span class="k">- [x]</span> <span class="ni">#95</span> SoftwareX playback figure legibility and regenerated playback assets.
+<span class="k">- [ ]</span> <span class="ni">#96</span> Release FHOPS 1.0.1 and forward-port to <span class="sb">`main`</span>.
+<span class="k">- [x]</span> <span class="ni">#99</span> Working operational-MILP warm start with HiGHS (<span class="sb">`appsi_highs`</span> MIP start, documented per-solver fallback).
+<span class="k">- [x]</span> <span class="ni">#100</span> Validate YAML <span class="sb">`locked_assignments`</span> (and other optional sections) against the scenario in <span class="sb">`load_scenario`</span>.
+<span class="k">- [x]</span> <span class="ni">#108</span> Correct KPIs for empty and partial plans (an empty assignment table no longer reports full delivery).
+<span class="k">- [x]</span> <span class="ni">#109</span> Align operational-MILP and playback/heuristic sequencing semantics (MILP plans replay with zero violations).
+<span class="k">- [x]</span> <span class="ni">#110</span> Enforce timeline blackouts in the operational MILP (zero availability, same slots as the heuristics).
+<span class="k">- [x]</span> <span class="ni">#116</span> Pre-release audit fixes: multi-shift heuristic landing regression, head-start waiver timing, <span class="sb">`shift_id`</span> required on multi-shift playback, index-agnostic events, shift-hours fallback, record-level loss KPIs, landing-shock presets, deprecated sampling fields, <span class="sb">`eval-playback`</span> help.
+<span class="k">- [x]</span> <span class="ni">#118</span> Pre-release audit: lock window/role and <span class="sb">`role_remaining`</span> validation, verified dependency floors, CLI tests in CI, compatibility docs, unrelated <span class="sb">`config/`</span> removed from the repo and sdist.
+<span class="k">- [x]</span> <span class="ni">#115</span> Operational MILP robustness and correctness (audit): no-raise driver with solver-error reporting, idle-feasible locks, per-upstream inventories for joins, dynamic loader threshold, <span class="sb">`min(R, W)`</span>, fleet-wide blackouts on partial shift calendars.
+<span class="k">- [x]</span> <span class="ni">#117</span> Rolling-horizon robustness (audit): no-solution windows recorded and left idle (<span class="sb">`--fail-on-empty-window`</span> to stop), empty-window flags, up-front lock-window check, partial shift calendars, independent replay tests.
+<span class="k">- [x]</span> <span class="ni">#119</span> SoftwareX benchmark asset consistency (audit): stale med42 SA assignment CSVs regenerated (rows reproduced exactly), manuscript tables rebuilt (med42 tuning sense fixed), playback <span class="sb">`metrics.json`</span> reports delivered volume, <span class="sb">`audit_asset_consistency.py`</span> added.
+<span class="k">- [x]</span> <span class="ni">#124</span> Legacy <span class="sb">`solve_mip`</span> / <span class="sb">`fhops solve-mip`</span> / <span class="sb">`fhops benchmark`</span> no longer raise for infeasible, no-incumbent or failed solves (operational-driver result contract, documented exit codes); rolling MILP hook forwards driver <span class="sb">`solver_error`</span>/<span class="sb">`warnings`</span>; in-repo manuscript version and dependency statements corrected.
+<span class="k">- [x]</span> <span class="ni">#127</span> Legacy MIP builder retired: <span class="sb">`fhops solve-mip`</span> / <span class="sb">`solve_mip`</span> are deprecated aliases of the operational MILP (same result contract and exit codes), <span class="sb">`fhops benchmark`</span> uses the operational MILP, and the ILS hybrid step warm-starts the operational MILP from the ILS schedule (closes <span class="ni">#104</span>).
+<span class="k">- [x]</span> <span class="ni">#125</span> Solver consistency: operational-MILP landing capacity per shift slot and hard at <span class="sb">`landing_surplus = 0`</span> (as the heuristics; formulation E11 corrected), multi-shift day locks expanded to every available shift in rolling replay/exports, idle locked slots not flagged by playback, <span class="sb">`fhops evaluate`</span> input errors without traceback.
+<span class="k">- [x]</span> <span class="ni">#136</span> SR-109 green-tree cost multiplier 1.10 → 1.09; unused <span class="sb">`click`</span> dependency dropped; Typer floor corrected to <span class="sb">`typer&gt;=0.15.4`</span>.
+<span class="k">- [x]</span> <span class="ni">#129</span> Block <span class="sb">`harvest_system_id`</span> validated against <span class="sb">`Scenario.harvest_systems`</span> + the default registry (the 1.0.0 check never ran; regression fixture now registers its <span class="sb">`ground_sequence`</span> system); every <span class="sb">`fhops …`</span> command in the README/docs run against the shipped examples and the broken ones fixed.
+<span class="k">- [x]</span> <span class="ni">#103</span> Dataset CLI under Typer ≥ 0.26: <span class="sb">`--fncy12-variant`</span> / harvest-system-default usage errors fixed (option-source check now version-agnostic), <span class="sb">`--kpi-mode`</span> usage errors instead of tracebacks, and the dataset CLI test suites run in CI.
+<span class="k">- [x]</span> <span class="ni">#139</span> Operational MILP objective/semantics (audit 2): staying on a block is no transition, moves across idle slots and from the carried-in block are charged as in the heuristics/KPIs (exact per-machine position network, much smaller model), no-op loader batching integers removed, fork/join/head-start semantics documented, solver exceptions (Gurobi licences) reported with <span class="sb">`auto`</span> → HiGHS fallback, <span class="sb">`fhops build-mip`</span> deprecated onto the operational MILP, deprecation warnings visible from scripts.
+<span class="k">- [x]</span> <span class="ni">#141</span> Rolling-horizon MILP deferral (audit 1, round 2): lexicographic earliness tie-break in rolling MILP windows (base objective unchanged; <span class="sb">`--no-mip-earliness`</span>, <span class="sb">`solve-mip-operational --earliness`</span>), idle lock spans flagged empty, <span class="sb">`--fail-on-empty-window`</span> stops on empty windows (+ <span class="sb">`--fail-on-no-solution`</span>), <span class="sb">`plan rolling`</span> exit codes (1 when no window has a solution, 2 for bad horizons/`--max-iterations`/unavailable solver), MILP hook no longer swallows FHOPS exceptions.
+<span class="k">- [x]</span> <span class="ni">#131</span> Exact heuristic objective and SoftwareX asset regeneration.
+<span class="w">  </span><span class="k">- [x]</span> Code: the SA/ILS/Tabu search score equals a fresh <span class="sb">`evaluate_schedule`</span> of the same plan (complete mobilisation cache, idempotent multi-shift repair, idle locked slots kept, Tabu seed scored with the full repair) and the reported objective is a fresh evaluation of the exported schedule.
+<span class="w">  </span><span class="k">- [x]</span> Regenerate all SoftwareX benchmark/tuning/playback/costing/dataset/scaling assets on the final 1.0.1 candidate (one sequential full run on an idle host, 3 h 48 min; tables and figures rebuilt; <span class="sb">`benchmark_runs.log`</span> entry; asset audit passes with the objective check promoted to pass/fail; manuscript old → new values in <span class="sb">`notes/v101_maintenance_plan.md`</span> §8.21).
+<span class="k">- [x]</span> <span class="ni">#140</span> Heuristic landing guard on every day (capacity-0 landings admit no machine; downstream roles with staged input hold landing places, so hard capacities no longer starve the pipeline), hard-violation penalty that dominates one assignment, planned-production scoring of MILP plans (<span class="sb">`evaluate_assignments`</span>, ILS hybrid adoption), and documented/reported <span class="sb">`AUTO_OBJECTIVE_WEIGHT_OVERRIDES`</span> with like-for-like MIP vs SA comparisons in <span class="sb">`benchmark`</span>/<span class="sb">`bench suite`</span>; med42/synthetic SoftwareX assets to be regenerated.
+<span class="k">- [x]</span> <span class="ni">#144</span> SoftwareX asset provenance hygiene: verifiable assets hash (recipe v2 over the committed files, <span class="sb">`asset_hash.py verify`</span>), repo-relative recorded paths (writers fixed, current assets normalised), Table 5 shows every tuner budget and what Δ compares, in-repo manuscript draft marked superseded with metadata facts corrected, tracked <span class="sb">`.continue/`</span> removed from git and sdists.
+<span class="k">- [x]</span> <span class="ni">#151</span> Heuristic performance regression from <span class="ni">#140</span> fixed without changing any search result: operators decide rejected moves from the edited slots (no schedule copy or full sanitizer pass per try), faster repair (incremental landing counts, best-rate-first block choice); scaling tiers and med42 back at or below 0463fd5 runtimes.
+<span class="k">- [x]</span> <span class="ni">#152</span> Labelled canonical operational formulation: OBJ/OBJ2/E1–E13 (E8a–c)/INIT/D1 labels, Block → Pyomo mapping table, docs page anchor <span class="sb">`operational-milp-formulation`</span> for citation, drift test (no code change).
+<span class="k">- [x]</span> <span class="ni">#147</span> Final SoftwareX asset regeneration on the final 1.0.1 code (50e6f9b, incl. the <span class="ni">#151</span> performance fix): one sequential full pipeline run on an idle host (2 h 57 min; <span class="sb">`assets_hash`</span> 5e069c58…, recipe v2, <span class="sb">`asset_hash.py verify`</span> passes), tables/figures rebuilt, asset audit 0 failures, plans/objectives identical to the superseded a0b2799 run (#150); manuscript values manuscript → committed → new in <span class="sb">`notes/v101_maintenance_plan.md`</span> §8.28.
+<span class="k">- [x]</span> <span class="ni">#158</span> Third-audit heuristic fixes: locked slots produce what their input allows and may idle (no lock-induced sequencing violations; <span class="sb">`ScheduleLock.production`</span> cap), blocks without fleet roles admit no machine (<span class="sb">`fhops validate`</span> warns), repair capped by block remaining; synthetic generator derives fleet roles from the system mix; synthetic tiers regenerated (synthetic-small 39.79 m³ delivered; scaling 13.2/39.3/65.1 s), reference ladder and Jaffray unchanged (plan §8.32).
+
+<span class="gu">## Phase 11 — Log Hauling and Mill Delivery Optimization (Ghotb-Inspired) ✅ (complete)</span>
+Parent <span class="ni">#170</span>; branch <span class="sb">`feature/p11-log-hauling`</span> (merged as <span class="sb">`52462d2`</span>); plan
+<span class="sb">`notes/log_hauling_expansion_plan.md`</span>; issue tree <span class="sb">`notes/log_hauling_issue_tree.md`</span>.
+Adds the operational log-hauling layer missing between harvest and mill demand: Phase I monthly
+daily-flow MIP with contractor workload balance, Phase II continuous-time truck/loader scheduling,
+and a thesis-calibrated SA solver.
+<span class="k">- [x]</span> <span class="ni">#172</span> P11.1 Provenance, hauling contract, and formulation audit.
+<span class="k">- [x]</span> <span class="ni">#173</span> P11.2 Phase I monthly flow MILP and goal programming.
+<span class="k">- [x]</span> <span class="ni">#174</span> P11.3 Phase II daily routing and scheduling MILP.
+<span class="k">- [x]</span> <span class="ni">#175</span> P11.4 SA solution approach, SPT decoder, and calibration.
+<span class="k">- [x]</span> <span class="ni">#176</span> P11.5 FHOPS integration, CLI, reporting, and example case.
+<span class="k">- [x]</span> <span class="ni">#177</span> P11.6 Validation, documentation, formulation sync, and close-out.
+<span class="k">- [x]</span> <span class="ni">#187</span> P11.7 Marine/barge haul legs: explicit <span class="sb">`TransportMode`</span>, <span class="sb">`BargeType`</span>/<span class="sb">`Barge`</span>, <span class="sb">`Port`</span>,
+  <span class="sb">`WaterArc`</span>, <span class="sb">`PortLeg`</span>, and <span class="sb">`MarineRoute`</span>; Phase I water/terminal flow tables; deterministic
+  barge-cycle scheduling with port-load synchronization; Sunshine Coast → Howe Sound fixture and
+  contract/flow/schedule/CLI tests.
+
+<span class="gu">## Phase 12 — FHOPS Web Application (WS4-Style) — complete</span>
+Parent <span class="ni">#171</span>; branch <span class="sb">`feature/p12-web-ui`</span> (active from 2026-10-25); plan
+<span class="sb">`notes/web_ui_expansion_plan.md`</span>; issue tree <span class="sb">`notes/web_ui_issue_tree.md`</span>.
+Adds an optional FastAPI + vanilla-ES-module web surface over the CLI's artefacts, following the
+WS4 web UI design. The same application covers three lenses: shift-level operational planning
+(machine/crew day-shift Gantt, assignments, playback, KPIs), Ghotb-derived log hauling (Phase I
+flows/truckloads, Phase II/III truck/loader schedule, yard inventory, contractor workload, haul
+KPIs), and TOPM-style tactical-operational planning (period harvest decisions, product flows,
+facility demand/inventory, roads, silviculture, fleet). It adds map/layer tree, domain Gantt/tables,
+reports, comparison, live SSE runs, domain skins, and an opt-in assistant.
+<span class="k">- [x]</span> <span class="ni">#178</span> P12.1 Service skeleton, run manifest, artefact discovery, and CLI entry.
+<span class="k">- [x]</span> <span class="ni">#179</span> P12.2 Read-only API, SPA shell, and skin loader.
+<span class="k">- [x]</span> <span class="ni">#180</span> P12.3 Map, layer tree, and day/period control.
+<span class="k">- [x]</span> <span class="ni">#181</span> P12.4 Schedule/Gantt, KPI, report, and comparison panels.
+<span class="k">- [x]</span> <span class="ni">#182</span> P12.5 Live runs, SSE, and run control.
+<span class="k">- [x]</span> <span class="ni">#183</span> P12.6 Editable objective/locks, assistant, packaging, security, docs, and close-out.
+
+<span class="gu">## Phase 13 — Multi-day Marine Barge Cycles — complete</span>
+Parent <span class="ni">#197</span>; branch <span class="sb">`feature/phase13-multiday-marine`</span>; design
+<span class="sb">`notes/multiday_marine_cycles.md`</span>.
+Extends the P11.7 marine path so a barge voyage can span more than one day
+without adding dummy barges or relaxing capacity checks.
+<span class="k">- [x]</span> <span class="ni">#196</span> P13.1 Design multi-day marine cycles and add the failing regression fixture.
+<span class="k">- [x]</span> <span class="ni">#199</span> P13.2 Implement multi-day marine departure/arrival timing.
+<span class="k">- [x]</span> Close-out report: <span class="sb">`notes/reports/p13-closeout.md`</span>.
+
+<span class="gu">## Detailed Next Steps</span>
+<span class="k">0.</span> <span class="gs">**Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#91</span> (<span class="sb">`issue-91-initial-state-contract`</span>) adds optional <span class="sb">`Scenario.initial_state`</span> and <span class="sb">`ScheduleLock.shift_id`</span>, honoured by the operational MILP (first-slot inventory/head-start, role-remaining cap, boundary move, lock constraints), heuristics, and playback, with v1.0.0 regression parity tests. Next: <span class="ni">#92</span> rolling-horizon carry-forward builds on this contract.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#99</span> (<span class="sb">`issue-99-highs-warm-start`</span>) fixes the <span class="sb">`--incumbent`</span> <span class="sb">`TypeError`</span> with HiGHS: seeded HiGHS solves go through Pyomo's <span class="sb">`appsi_highs`</span> MIP start, the result/CLI/telemetry report whether HiGHS accepted the start, unsupported solvers warn (<span class="sb">`MilpWarmStartWarning`</span>), and limit-stopped solves keep their incumbent.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#95</span> (<span class="sb">`issue-95-playback-figure`</span>) redraws the SoftwareX playback figure for legibility (manuscript text width, 9 pt text, legend above the panels) and regenerates only the playback assets with the <span class="ni">#93</span> event fixes; deterministic benchmark/tuning/scaling assets unchanged and SA re-solves reproduce the committed tiny7/small21 summaries.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#92</span> (<span class="sb">`issue-92-rolling-carry-forward`</span>) replays the stitched locked plan on the base scenario after every iteration (<span class="sb">`carry_forward_state`</span>) and slices the next window with remaining volume + <span class="sb">`initial_state`</span>; user locks are merged into every window, blackouts rebased, locks keep <span class="sb">`shift_id`</span>, hooks record runtime and resolve <span class="sb">`solver="auto"`</span> to HiGHS. Follow-ups noted in the plan: empty-plan KPI artefact, MILP blackouts, end-of-window valuation, MILP/playback same-day inventory mismatch.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#108</span> (<span class="sb">`issue-108-empty-plan-kpis`</span>) fixes the empty-plan KPI artefact: playback always carries a sequencing tracker, <span class="sb">`compute_kpis`</span> reports the delivered volume (0 for an empty plan, remaining = Σ <span class="sb">`work_required`</span>), and <span class="sb">`compute_rolling_kpis`</span> scores an empty baseline as zero delivery (an empty rolling plan still raises).
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#109/#110</span> (<span class="sb">`issue-109-milp-playback-alignment`</span>) align the operational MILP, heuristics, and playback sequencing rules (slot-level release, volume head starts, per-role output caps, unsequenced blocks, shift order, planned production in MILP rolling locks) so MILP plans replay without violations, and enforce timeline blackouts in the MILP. Reference-ladder heuristic results unchanged.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#116</span> (<span class="sb">`issue-116-heuristics-playback-audit`</span>) fixes the multi-shift SA/ILS/Tabu regression from <span class="ni">#109</span> (the repair stacked every role of a block on its landing per shift; it now respects landing capacity on multi-shift days — Jaffray ka_6/pg_6/ka_18 SA reach full delivery with 0 penalties), times the head-start waiver like the MILP, requires <span class="sb">`shift_id`</span> on multi-shift playback, and corrects the playback/KPI/stochastic findings of the audit. Reference ladder and SoftwareX playback assets byte-identical.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#118</span> (<span class="sb">`issue-118-contract-packaging-audit`</span>) closes pre-release audit findings: locks outside block windows or on incompatible roles and <span class="sb">`role_remaining &gt; work_required`</span> are rejected; dependency floors raised to verified versions (<span class="sb">`pyomo&gt;=6.9.2`</span>, <span class="sb">`highspy&gt;=1.8.1`</span>, <span class="sb">`typer&gt;=0.12.4`</span>, <span class="sb">`PyYAML&gt;=6.0.1`</span>); operational-MILP/playback CLI tests run in CI; compatibility with 1.0.0 documented; the unrelated <span class="sb">`config/`</span> app state is removed and excluded from builds (secret rotation pending with the maintainer).
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#115</span> (<span class="sb">`issue-115-milp-robustness`</span>, pre-release audit) hardens the operational MILP: the driver never raises for infeasible/no-incumbent solves and reports HiGHS errors as errors; locked machines may sit idle (no lock-induced infeasibility); joins use per-upstream staged inventories; the loader threshold follows the remaining block volume; <span class="sb">`role_remaining`</span> is capped at <span class="sb">`work_required`</span>; blackouts block every grid slot. Linear loader-free models are byte-identical; tiny7 optimum unchanged (4388.082752).
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#117</span> (<span class="sb">`issue-117-rolling-robustness`</span>) hardens rolling horizon after the pre-release audit: MILP windows without a solution no longer crash (recorded, lock span idle, optional <span class="sb">`fail_on_empty_window`</span>; CLI always writes partial outputs), empty windows are flagged and counted, locks outside block windows are rejected up front, windows outside a partial shift calendar get no shifts, and the replay tests are strengthened (independent linear-chain state machine, slot-order aware).
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#119</span> (<span class="sb">`issue-119-softwarex-asset-consistency`</span>) audits every SoftwareX benchmark/table/playback/scaling/tuning asset: all committed benchmark rows reproduce exactly on 1.0.1; the stale med42 SA default/diversify assignment CSVs and the stale manuscript tables are regenerated (published values unchanged), playback <span class="sb">`metrics.json`</span> reports delivered volume. Open: manuscript scaling runtimes come from another run; heuristic objectives omit some cached mobilisation (pre-existing).
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#124</span> (<span class="sb">`issue-124-legacy-mip-hook-warnings`</span>) aligns the legacy <span class="sb">`solve_mip`</span> with the operational driver (no raise; <span class="sb">`has_solution`</span>/<span class="sb">`outcome`</span>/<span class="sb">`solver_error`</span>/<span class="sb">`warnings`</span>; <span class="sb">`solve-mip`</span> exits 1 only on solver error/unavailable), forwards driver errors/warnings through the rolling MILP hook, and fixes the in-repo manuscript's FHOPS version and dependency lists. Finding: the legacy MIP's loader-buffer constraint makes every bundled example infeasible (also in 1.0.0); documented, formulation fix deferred.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#127</span> (<span class="sb">`issue-127-legacy-mip-retirement`</span>) retires the infeasible legacy MIP: <span class="sb">`solve-mip`</span>/<span class="sb">`solve_mip`</span> warn and delegate to the operational MILP (driver mapping documented), <span class="sb">`benchmark`</span> and <span class="sb">`bench suite --driver auto`</span> solve the operational MILP (HiGHS fallback restored), the ILS hybrid step passes the ILS schedule as a HiGHS MIP start (#104), and every <span class="sb">`solve-mip`</span> doc example now uses <span class="sb">`solve-mip-operational`</span>. Reference ladder byte-identical.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#125</span> (<span class="sb">`issue-125-landing-locks-alignment`</span>) makes SA and MILP judge landing feasibility identically: the operational MILP counts machines per landing and shift slot (was machine-shifts per day with a slack that was free at weight 0) and treats the capacity as hard at <span class="sb">`landing_surplus = 0`</span>; locks exceeding a hard capacity raise that slot's limit with a warning. tiny7 MILP optimum 4388.082752 → 279.796036 (capacity-1 landings now bind). Rolling replay/carry-forward/exports expand day-level locks to every available shift; playback no longer flags idle locked slots; <span class="sb">`fhops evaluate`</span> exits 1 with a message on invalid input. Reference ladder and SoftwareX playback assets byte-identical.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#129</span> (<span class="sb">`issue-129-harvest-system-validation-docs`</span>) validates block <span class="sb">`harvest_system_id`</span> at scenario level (model validator; the 1.0.0 field validator never ran because <span class="sb">`harvest_systems`</span> is declared after <span class="sb">`blocks`</span>); only the repository regression fixture was affected (custom <span class="sb">`ground_sequence`</span> system now registered in its YAML; all other repo/SoftwareX scenarios and the nine Jaffray scenarios load unchanged). Docs sweep: every <span class="sb">`fhops …`</span> command in README/docs run or (long-running/Gurobi) parsed and run with small budgets/HiGHS; broken options, ids and snippets fixed.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#131</span> (<span class="sb">`issue-131-heuristic-objective-cache`</span>, code part) makes the heuristic objective exact: candidates' mobilisation caches now cover every machine (unchanged machines were free before), the multi-shift landing guard no longer makes the repair non-idempotent, idle locked slots are kept, Tabu scores its seed with the full repair, and SA/ILS/Tabu report a fresh evaluation of the exported schedule. Heuristic results change on all scenarios with mobilisation (tiny7 plans unchanged, objective −10.748). Next: regenerate the SoftwareX assets once all Phase 8 code has merged.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#103</span> (<span class="sb">`issue-103-dataset-cli-tests`</span>) fixes the 53 gated dataset CLI test failures. All had one root cause: Typer 0.26 vendors Click, so <span class="sb">`_parameter_supplied`</span> (identity check against <span class="sb">`click.core.ParameterSource.DEFAULT`</span>) reported every option as user-supplied. Skyline calls were rejected and harvest-system defaults were never applied (a user-facing bug since Typer 0.26.0, before v1.0.0). The check now compares by name; <span class="sb">`--kpi-mode`</span> uses a <span class="sb">`StrEnum`</span>; the tests are unchanged and now run in CI (+145 tests, ≈ 4 s).
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#131</span> (<span class="sb">`issue-131-regenerate-assets`</span>) regenerates every SoftwareX asset on the final 1.0.1 candidate with the canonical pipeline (benchmarks now sequential, tuning budgets fixed to the published ones, text normalised to the pre-commit rules) and makes FHOPS assets the source of record for the manuscript, scaling runtimes included. All manuscript tables/figures and several prose values change (old → new table in plan §8.21); the asset audit now fails when a reported objective differs from a fresh evaluation of its CSV.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#140</span> (<span class="sb">`issue-140-landing-guard-scoring`</span>, second pre-release audit) applies the heuristic landing guard on single-shift days too (every published med42 heuristic plan overloaded landings 49–61 times; med42 SA 20000 iterations −28662.40 → 24130.32, 0 overloads, 10 completed blocks), scales the hard-violation penalty so an infeasible plan cannot beat the MILP's hard optimum, scores MILP plans with their planned production in the ILS hybrid step, surfaces the Tiny7/Small21 automatic weight overrides (notice, meta/telemetry, scenario-weight objective in <span class="sb">`benchmark`</span>/<span class="sb">`bench suite`</span>), and (audit2-1 <span class="ni">#2</span>) lets downstream roles with staged input hold landing places so a hard capacity no longer starves the pipeline (feller → skidder → loader on a capacity-1 landing: SA 0 → 500 m³ = MILP). tiny7/small21 bench assets byte-identical; Jaffray ka_6/pg_6 SA objectives unchanged (full delivery). Next: regenerate the med42/synthetic SoftwareX assets.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#139</span> (<span class="sb">`issue-139-milp-objective-semantics`</span>) fixes the second audit's MILP findings: transitions only for <span class="sb">`b' ≠ b`</span>; a per-machine position network charges moves across idle slots and from <span class="sb">`last_block_id`</span> into the first worked slot exactly like the heuristics and KPIs (fuzz 400/400 exact; tiny7 optimum unchanged 279.796036, brute-force verified; non-binding-landing tiny7 4388.082752 → 4361.462752; med42 at 600 s finds a 216-assignment incumbent instead of none); loader batching integers removed; solver exceptions never escape, <span class="sb">`solver="auto"`</span> falls back to HiGHS; <span class="sb">`build-mip`</span> deprecated; deprecation warnings attributed to the caller; formulation regenerated.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#144</span> (<span class="sb">`issue-144-asset-hygiene`</span>, audits 3/4) makes the SoftwareX provenance verifiable without re-running anything: <span class="sb">`benchmark_runs.log`</span> hashes only the files git would commit (LC_ALL=C, log excluded; recipe in the manuscript README, <span class="sb">`make verify-assets-hash`</span>), an <span class="sb">`audit_note`</span> entry records the corrected 0463fd5 hash (committed files: 16a4def7…), the pipeline records repo-relative paths (32 committed files normalised, byte-identical otherwise), Table 5 gains a Budget column and a Δ/SA-budget note, the in-repo draft points to UBC-FRESH/fhops-manuscript, and <span class="sb">`.continue/`</span> no longer ships. Next: regenerate the SoftwareX assets on the final code.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#141</span> (<span class="sb">`issue-141-rolling-deferral-cli`</span>) stops rolling MILP windows from deferring work past their lock span: a lexicographic earliness stage (max production-weighted earliness subject to the base objective ≥ stage-1 value − 10⁻⁶ relative) runs in every window whose lock span is shorter than the window (defer.py: days 8–10 → 1–3; ka_6 112/14/7: 59 idle days and work until day 112 → all work by day 27, 0 idle). Idle lock spans now count as empty windows; <span class="sb">`--fail-on-empty-window`</span> stops on them, <span class="sb">`--fail-on-no-solution`</span> keeps the old meaning; <span class="sb">`plan rolling`</span> exits 1 when no window has a solution and 2 for usage errors; formulation documents the tie-break.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-08: <span class="ni">#151</span> (<span class="sb">`issue-151-heuristic-perf`</span>) fixes the heuristic slowdown found by the <span class="ni">#147</span> regeneration (synthetic-small SA 3×, scaling tiers non-monotonic, med42 +41–82 %). Root cause: since <span class="ni">#140</span> the repaired plan is a sanitizer fixed point, so block insertion / cross exchange / mobilisation shake retried ~276 moves per call, each with a full schedule copy and sanitizer pass; on med42 the <span class="ni">#140</span> repair work (reservation scan, landing checks). Fix: <span class="sb">`SanitizerPreview`</span>, incremental landing counts, best-rate-first block choice, exact fast shuffle; identical plans to a0b2799 everywhere tested (plan §8.29).
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-08: <span class="ni">#152</span> (<span class="sb">`issue-152-labelled-formulation`</span>) makes the labelled formulation canonical in FHOPS so the SoftwareX R2 manuscript can replace its 17-page appendix with a compact one citing the versioned source. Content reconciled with the manuscript's labelled copy in favour of the 1.0.1 text (plan §8.30); TeX/RST regenerated; new <span class="sb">`tests/test_docs_formulation_assets.py`</span>.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-08: <span class="ni">#147</span> (<span class="sb">`issue-147-final-asset-regeneration-v2`</span>) regenerates every SoftwareX asset on the final 1.0.1 code (50e6f9b) with the canonical pipeline on an idle host (the a0b2799 run, PR <span class="ni">#150</span>, was superseded by the <span class="ni">#151</span> fix; plans and objectives are byte-identical, only runtimes move). tiny7/small21 unchanged apart from runtimes; med42 objectives become positive with 0 hard violations (ILS 24329.17 best), synthetic-small −53039.79 → −39.79, Table 5 med42 Tabu Δ −990.50; every runtime is lower than in the manuscript and the scaling runtimes stay monotonic (20.69 / 45.86 / 69.22 s). Several manuscript statements change (plan §8.28). Next: manuscript update and <span class="ni">#96</span> release.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-08: <span class="ni">#158</span> (<span class="sb">`issue-158-audit3-heuristics`</span>, third audit) makes locked slots idle instead of violating when their input is missing (fuzz: heuristic-only hard violations 78/200 → 0; lockpull −2200 → −200 = MILP), gives blocks without fleet roles an empty allowed set (phantom production 400 m³ → 0) with a <span class="sb">`fhops validate`</span> warning, and makes synthetic tiers deliverable (fleet roles from the system mix); partial asset regeneration of the synthetic tiers (log entry 17:47:01Z, hash 5be2f878…); tiny7/small21/med42 and Jaffray byte-identical (plan §8.32).
+<span class="k">1.</span> <span class="gs">**Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Lock feature set, refresh install/docs, and draft release notes + Hatch-based packaging checklist ahead of the public milestone.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-06-14: v1.0.0 GA issue tree opened; first child branch (<span class="sb">`issue-15-v100-green-ci`</span>) is restoring the green CI/local verification gate before release metadata changes.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-06-14: second child branch (<span class="sb">`issue-16-v100-version-docs`</span>) bumps package metadata/docs to the final <span class="sb">`1.0.0`</span> release line before artifact and publication work.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-06-14: third child branch (<span class="sb">`issue-17-softwarex-v100-metadata`</span>) aligns in-repo SoftwareX manuscript metadata/prose with the final <span class="sb">`v1.0.0`</span> release links and install path.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-06-14: fourth child branch (<span class="sb">`issue-18-v100-artifact-smoke`</span>) validates final <span class="sb">`1.0.0`</span> artifacts, fixes clean wheel runtime dependencies/package data, moves the full-text reference-document vault to a private <span class="sb">`reference-documents`</span> submodule for copyright-risk control, and records the public-bibliography vs. private-source-document content policy.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-06-14: fifth child branch (<span class="sb">`issue-19-release-surface-audit`</span>) audits public release surfaces, annotates the confusing <span class="sb">`v0.0.1-alpha3`</span> prerelease, fixes the manual release-build path, and hardens the full analytics notebook artifact workflow before the final publication issue.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-06-14: sixth child branch (<span class="sb">`issue-27-docs-readiness`</span>) sweeps user-facing docs before publication, fixing broken README rendering, stale CLI examples, source-checkout/PyPI wording, and release-note status.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-06-15: issue <span class="ni">#20</span> closes the v1.0.0 GA tree by publishing <span class="sb">`fhops==1.0.0`</span> to TestPyPI/PyPI, pushing the annotated <span class="sb">`v1.0.0`</span> tag, verifying the tag-triggered release-build workflow, and creating the public non-prerelease GitHub release.
+<span class="k">2.</span> <span class="gs">**Metaheuristic Roadmap (`notes/metaheuristic_roadmap.md`)**</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Prioritise SA refinements, operator registry work, and benchmarking comparisons with the new harness (including shift-aware neighbourhoods).
+<span class="k">3.</span> <span class="gs">**Shift-Based Scheduling Refactor (`notes/modular_reorg_plan.md`, `notes/mip_model_plan.md`, `notes/simulation_eval_plan.md`)**</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Add shift-indexed data contract fields/validators, migrate loaders + fixtures, update MIP/heuristic decision variables to <span class="sb">`(day, shift)`</span> granularity, and extend playback/KPI exports plus CLI/docs to surface shift-level results.
+<span class="k">4.</span> <span class="gs">**Harvest System Sequencing Plan (`notes/system_sequencing_plan.md`)**</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Close parity gaps between MIP/heuristic sequencing and add stress tests for machine-to-system mapping.
+<span class="k">5.</span> <span class="gs">**CLI &amp; Documentation Plan (`notes/cli_docs_plan.md`)**</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Introduce solver configuration profiles/presets and document shift-based workflows in the CLI reference.
+<span class="k">6.</span> <span class="gs">**Simulation &amp; Evaluation Plan (`notes/simulation_eval_plan.md`)**</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Prepare deterministic/stochastic playback for shift timelines and extended KPI reporting ahead of Phase 3.
+<span class="k">7.</span> <span class="gs">**Telemetry Dashboards &amp; Reporting Polish (`docs/howto/telemetry_tuning.rst`, `docs/reference/dashboards.rst`)**</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Add interpretation/playbook sections for each published dashboard, embed consolidated landing views (iframes or raw HTML) into Sphinx, and backfill testing/automation notes so CI coverage extends to the full notebook suite.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Automate a weekly “full” analytics notebook run (no <span class="sb">`--light`</span>) via a scheduled GitHub Actions workflow that uploads refreshed artefacts to the telemetry bundle and alerts if any notebook fails.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Capture operational expectations (rotation owners, notification channel, artifact retention) in <span class="sb">`notes/metaheuristic_hyperparam_tuning.md`</span> once the workflow lands.
+<span class="k">8.</span> <span class="gs">**Productivity Modeling &amp; Helper Rollout (`notes/dataset_inspection_plan.md`, `docs/reference/harvest_systems.rst`)**</span>
+<span class="w">   </span><span class="k">- [x]</span> Ship CTL forwarder helper module (<span class="sb">`fhops.productivity.forwarder_bc`</span>) covering Ghaffariyan small/large, Kellogg mixed/saw/pulp, and FPInnovations ADV6N10 sorting models, with CLI/test coverage and planning notes.
+<span class="w">   </span><span class="k">- [x]</span> Ship CTL harvester helpers (ADV6N10 regression + CLI, ADV5N30 removal/brushing modifiers, TN292 tree-size/density regression) and document applicability in the CLI/docs.
+<span class="w">   </span><span class="k">- [x]</span> Record TN285 / ADV5N9 / ADV2N21 scenario guidance (ghost trails, removal levels, trail reuse) in the planning docs so scenario authors know when productivity stays flat vs. when to adjust costs.
+<span class="w">   </span><span class="k">- [x]</span> Integrate the new helpers into dataset inspection CLI defaults and synthetic generator presets; refresh fixtures/tests that assume legacy productivity values (landing processor/loader coverage now fully wired, docs/tests refreshed).
+<span class="w">   </span><span class="k">- [x]</span> Keep <span class="sb">`ROADMAP.md`</span> and <span class="sb">`notes/dataset_inspection_plan.md`</span> in sync as additional FPInnovations regressions are ported.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span><span class="gs">**Next focus:**</span> with the TN258 monthly support split, Hi-Skid costing, and ADV4N7/ADV15N3 penalties now wired directly into the cost helper, pivot to the November 2025 FPInnovations drop scan (TN122+/ADV salvage set) so the outstanding “new PDF” backlog can close without waiting for fresh references.
+<span class="k">9.</span> <span class="gs">**SoftwareX Manuscript Phase 2 (`notes/softwarex_manuscript_plan.md`)**</span>
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Resume drafting + reproducibility prep on the new <span class="sb">`feature/softwarex-phase3`</span> branch now that the MIP formulation work merged back into <span class="sb">`main`</span>.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Close the remaining Phase 2 checkboxes (Section 1–3 polish, reproducibility callouts) and queue Phase 3 validation reruns (<span class="sb">`generate_assets.sh`</span>, <span class="sb">`run_synthetic_sweep.py`</span>, <span class="sb">`make pdf`</span>) for the next manuscript sync.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>Sync the manuscript plan + change log after each writing/automation block so roadmap status always reflects the in-flight work.
+<span class="k">10.</span> <span class="gs">**Dataset Inspection CLI (`notes/dataset_inspection_plan.md`)**</span>
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Capture UX/requirements for the post-v0.1.0-a1 dataset-inspection tooling so shipped bundles (tiny7/small21/med42) and synthetic presets no longer ship with unrealistic parameters.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Design the first CLI pass that loads any dataset (by path or canonical name) and emits parameter summaries for GIGO prevention; Python API can follow later.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Resolve open questions around dataset scope, stats vs. raw outputs, and non-interactive flags before implementation starts.
+<span class="k">11.</span> <span class="gs">**Rolling-Horizon Replanning (`notes/rolling_horizon_plan.md`)**</span>
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Build a rolling-horizon orchestration layer (scenario slicing, lock-in state, iterative solve loop) so FHOPS can emit multi-month “locked” plans from tractable subproblems.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Expose both CLI (<span class="sb">`fhops plan rolling`</span>) and Python API helpers, starting with planning machinery (SA baseline) and deferring evaluation/reporting to a later phase.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Log per-iteration telemetry so MASc-led studies can quantify suboptimality vs. full-horizon baselines once the planning engine stabilizes.
+<span class="k">12.</span> <span class="gs">**Formal Model Documentation Sync (#56; `notes/formal_model_sync_issue_tree.md`)**</span>
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Child issues <span class="ni">#57</span>–#60 are merged into <span class="sb">`feature/phase5-formal-model-sync`</span> via PRs <span class="ni">#61</span>–#64.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Canonical operational and tactical–operational MILP formulations are synchronized across Markdown sources, generated TeX/RST includes, Sphinx docs, and manuscript-facing assets.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="sb">`scripts/check_formulation_assets.py`</span> now regenerates formulation assets into a temporary tree and fails on checked-in drift; traceability tests cover both MILP mapping tables.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Final gate complete: Phase 5 integration PR <span class="ni">#65</span> merged into <span class="sb">`main`</span>, closing parent <span class="ni">#56</span>.
+<span class="k">13.</span> <span class="gs">**Tactical–Operational Expansion (#36; `notes/tactical_operational_expansion_plan.md`, `notes/tactical_operational_issue_tree.md`)**</span>
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Parent issue <span class="ni">#36</span> and child issues <span class="ni">#37</span>–#44 are linked via GitHub sub-issues; all child PRs <span class="ni">#45</span>–#52 are merged into <span class="sb">`feature/phase6-tactical-operational-expansion`</span>.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>The phase branch now carries the two-level architecture, tactical contract/MILP, product-flow/inventory/infrastructure modules, scenario overlays/reporting, tactical→operational handoff, and initial scale telemetry.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Final gate complete: Phase 6 integration PR <span class="ni">#53</span> merged into <span class="sb">`main`</span>, closing parent <span class="ni">#36</span>.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Follow-up scope is tracked separately: full 5-year/500+ block benchmark, practitioner case validation, guided planner notebooks, decomposition if measured scale requires it, and the pre-existing notebook full-pre-commit debt.
+<span class="k">14.</span> <span class="gs">**Tactical Validation Scale-Up and Release Preparation (#75; `notes/tactical_validation_issue_tree.md`)**</span>
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Phase branch <span class="sb">`feature/phase7-tactical-validation-release`</span> carried child issues <span class="ni">#76</span>–#79 for full-scale benchmarking, practitioner validation, guided planner documentation, and the FHOPS 1.1.0a1 alpha version bump.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>All child PRs <span class="ni">#80</span>–#83 merged into the phase branch; Phase 7 integration PR <span class="ni">#84</span> merged into <span class="sb">`main`</span>, closing parent <span class="ni">#75</span>.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>The version bump was gated on benchmark and practitioner evidence because Phase 6 materially expands FHOPS's potential use cases.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>SoftwareX manuscript edits are out of scope here; the manuscript lives in the separate <span class="sb">`fhops-manuscript`</span> repository.
+
+<span class="k">15.</span> <span class="gs">**SA Performance and Incremental Repair (#165, #166; `notes/sa_performance_plan.md`, `notes/p10_repair_refactor.md`, ADR 0003)**</span>
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>P9 S4a lazy candidate evaluation (2.1x, identical objectives); S2 (dirty-only repair) dropped and S3 (nested hot path) reverted, both recorded.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>P10 block-separable evaluator, bounded <span class="sb">`cross_exchange`</span> sampling (ADR 0003), lazy pre-repair, and the incremental repair, which is now the SA default and behaviour-identical (72/72 parity; pinned baselines regenerate with no diff).
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Session throughput ~3.6x (geometric mean) on the example ladder; today's P10.5/P10.6 increment ~1.48x.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Close-out report <span class="sb">`notes/reports/p10-closeout.md`</span>; PR <span class="ni">#167</span> queued into <span class="sb">`main`</span>.
+
+<span class="k">16.</span> <span class="gs">**Log Hauling and Mill Delivery (#170; `notes/log_hauling_expansion_plan.md`, `notes/log_hauling_issue_tree.md`)**</span>
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Queued as P11. The phase adds the operational hauling layer between harvest and mill demand:
+      Ghotb's Phase I monthly daily-flow MIP with contractor workload balance, Phase II
+      continuous-time truck/loader scheduling, and the SA solver with an SPT decoder.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Child issues <span class="ni">#172-#177</span> are linked as sub-issues; the phase branch merged as <span class="sb">`52462d2`</span> and the parent is closed.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>The thesis case data is confidential, so acceptance uses structural fidelity, MIP-versus-SA
+      parity on thesis-shaped synthetic instances, and the published qualitative findings. Exact
+      company-dollar reproduction is explicitly not claimed.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="ni">#172-#177</span> are complete. The phase PR <span class="ni">#185</span> merged as <span class="sb">`52462d2`</span>; the close-out report is <span class="sb">`notes/reports/p11-closeout.md`</span>.
+
+<span class="k">17.</span> <span class="gs">**FHOPS Web Application (#171; `notes/web_ui_expansion_plan.md`, `notes/web_ui_issue_tree.md`)**</span>
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,
+      following the WS4 web UI design: map/layer tree, schedule, KPIs, reports, comparison, live SSE
+      runs, skins, and an opt-in assistant.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Child issues <span class="ni">#178-#183</span> are linked as sub-issues; all six are complete on <span class="sb">`feature/p12-web-ui`</span>.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>P12.1 freezes the artefact contract (including a new <span class="sb">`run.json`</span>) before the API and UI work.
+      P11 hauling outputs are optional; missing layers are named, not invented.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="ni">#178-#183</span> (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison, live runs/SSE/control, editing/assistant/packaging/security/close-out) are complete.
+
+<span class="gu">## Phase 14 — Consume FEMIC-compiled LidarBC Products — complete</span>
+
+Parent issue: <span class="ni">#188</span>. Branch: <span class="sb">`feature/phase14-lidar-products`</span>.
+
+Goal: pin and validate FEMIC LidarBC bundles, map terrain/canopy products into
+block/landing support, and preserve native-resolution provenance without
+reimplementing discovery or materialization.
+
+<span class="k">- [x]</span> P14.1 Define the FHOPS consumer contract for FEMIC LidarBC products (#189)
+<span class="w">  </span><span class="k">- [x]</span> Pin bundle id/version and per-product checksums
+<span class="w">  </span><span class="k">- [x]</span> Validate manifest, licence, CRS, resolution, vertical datum, and source tiles
+<span class="w">  </span><span class="k">- [x]</span> Add polygon support summaries without reprojection
+<span class="w">  </span><span class="k">- [x]</span> Add optional scenario <span class="sb">`lidar_products`</span>/<span class="sb">`lidar_support`</span> pins and loader validation
+<span class="w">  </span><span class="k">- [x]</span> Validate shared slope/CHM parity with WS4
+<span class="k">- [x]</span> P14.2 Register and consume FEMIC-packaged products for scenario AOIs (#190)
+<span class="w">  </span><span class="k">- [x]</span> Validate bundles and write stable bundle/manifest/product pins
+<span class="w">  </span><span class="k">- [x]</span> Record scenario AOI bbox and CRS compatibility
+<span class="w">  </span><span class="k">- [x]</span> Add <span class="sb">`fhops scenario lidar validate|register`</span> and operator docs
+<span class="k">- [x]</span> P14.3 Map FEMIC terrain and canopy products into FHOPS scenarios (#191)
+<span class="w">  </span><span class="k">- [x]</span> Summarize native-resolution products over block/landing/road support
+<span class="w">  </span><span class="k">- [x]</span> Record product, aggregation, resolution, valid pixels, support area, and provenance
+<span class="w">  </span><span class="k">- [x]</span> Add <span class="sb">`fhops scenario lidar map`</span> and mapping tests
+<span class="k">- [x]</span> P14.4 Integrate terrain/canopy with harvest-system operability and cost (#192)
+<span class="w">  </span><span class="k">- [x]</span> Add advisory ground/cable/helicopter classification and fallbacks
+<span class="w">  </span><span class="k">- [x]</span> Compare current systems and recommend class-compatible systems
+<span class="w">  </span><span class="k">- [x]</span> Add advisory move-in/landing/road cost context and validation note
+<span class="k">- [x]</span> P14.5 Build and validate a precision-forestry scenario fixture (#193)
+<span class="w">  </span><span class="k">- [x]</span> Commit the public TFL 6 fixture with block/landing/road terrain/canopy support
+<span class="w">  </span><span class="k">- [x]</span> Record bundle/product provenance, licence, and synthetic-table labels
+<span class="w">  </span><span class="k">- [x]</span> Add regeneration script, fixture tests, and cross-repo WS4 parity
+<span class="w">  </span><span class="k">- [x]</span> Record operability and schedule smoke results with limits
+<span class="k">- [x]</span> P14.6 Validate, document, and close out P14 (#194)
+<span class="w">  </span><span class="k">- [x]</span> Run the real-bundle validate/map/operability/smoke-solve path
+<span class="w">  </span><span class="k">- [x]</span> Record WS4 parity, timings, storage, and OGL-BC evidence
+<span class="w">  </span><span class="k">- [x]</span> Fix repeated-section YAML duplication with regression tests
+<span class="w">  </span><span class="k">- [x]</span> Write <span class="sb">`notes/reports/p14-closeout.md`</span> and <span class="sb">`notes/reports/p14-validation.json`</span>
+
+Acceptance:
+
+<span class="k">-</span><span class="w"> </span>FHOPS can validate and pin a FEMIC bundle.
+<span class="k">-</span><span class="w"> </span>Polygon support summaries preserve the product CRS and native resolution.
+<span class="k">-</span><span class="w"> </span>Shared-AOI slope/CHM values match WS4 within the documented tolerance.
+<span class="k">-</span><span class="w"> </span>The public fixture validates, runs, and records licence/provenance and limits.
+<span class="k">-</span><span class="w"> </span>No discovery or materialization is reimplemented in FHOPS.
+
+<span class="gu">## Phase 15 — Consume FEMIC hydrology response bundles — complete</span>
+
+Parent issue: <span class="ni">#218</span>. Branch: <span class="sb">`feature/phase15-hydrology-consumer`</span>.
+
+Goal: pin and validate a FEMIC hydrology bundle, map FHOPS blocks/landings/roads
+through an explicit reviewed crosswalk, consume a schedule-bound road/culvert
+exposure table, and screen one operational schedule. This is a read-only
+consumer and screening phase, not a flood model or real watershed pilot.
+
+Authoritative note: <span class="sb">`notes/phase15_hydrology_consumer.md`</span>.
+Closeout: pull request <span class="ni">#232</span> squash-merged as <span class="sb">`3b404414`</span>; the phase report is
+<span class="sb">`notes/reports/p15-closeout.md`</span>.
+
+<span class="k">- [x]</span> P15.1 Define the FHOPS hydrology consumer contract (#219)
+<span class="w">  </span><span class="k">- [x]</span> Validate the bundle manifest, roles, checksums, identity, and caveats
+<span class="w">  </span><span class="k">- [x]</span> Read optional validation-report and model-card readiness evidence
+<span class="w">  </span><span class="k">- [x]</span> Add <span class="sb">`fhops scenario hydrology validate`</span>, tests, and docs
+<span class="k">- [x]</span> P15.2 Register and pin a hydrology bundle in a scenario (#220)
+<span class="w">  </span><span class="k">- [x]</span> Add the scenario pin and readiness fields
+<span class="w">  </span><span class="k">- [x]</span> Add idempotent registration and stale-manifest rejection
+<span class="w">  </span><span class="k">- [x]</span> Add <span class="sb">`fhops scenario hydrology register`</span>, tests, and docs
+<span class="k">- [x]</span> P15.3 Map FHOPS support to watersheds and receptors (#221)
+<span class="w">  </span><span class="k">- [x]</span> Define the explicit crosswalk and review metadata
+<span class="w">  </span><span class="k">- [x]</span> Enforce complete coverage or recorded gaps
+<span class="w">  </span><span class="k">- [x]</span> Add <span class="sb">`fhops scenario hydrology map`</span>, tests, and docs
+<span class="k">- [x]</span> P15.4 Load schedule-bound road/culvert exposure (#222)
+<span class="w">  </span><span class="k">- [x]</span> Consume the shared <span class="sb">`ws4.hydrology.exposure.v1`</span> contract
+<span class="w">  </span><span class="k">- [x]</span> Bind the table to one schedule hash and refuse missing/duplicate rows
+<span class="w">  </span><span class="k">- [x]</span> Add raw/derived features, tests, and docs
+<span class="k">- [x]</span> P15.5 Screen a schedule and gate on readiness (#223)
+<span class="w">  </span><span class="k">- [x]</span> Emit per-watershed/receptor/period rows and refusals
+<span class="w">  </span><span class="k">- [x]</span> Apply <span class="sb">`allow_provisional`</span>, <span class="sb">`require_reviewed`</span>, and <span class="sb">`require_ready`</span>
+<span class="w">  </span><span class="k">- [x]</span> Refuse fixed exposure in optimizer use and document the boundary
+<span class="k">- [x]</span> P15.6 Validate, document, and close out P15 (#224)
+<span class="w">  </span><span class="k">- [x]</span> Add the synthetic/public fixture and fail-closed matrix
+<span class="w">  </span><span class="k">- [x]</span> Update docs, roadmap, note, and changelog
+<span class="w">  </span><span class="k">- [x]</span> Write the closeout report and merge the phase PR (#232)
+
+Acceptance:
+
+<span class="k">-</span><span class="w"> </span>A valid bundle pins every required artifact by checksum and size.
+<span class="k">-</span><span class="w"> </span>A scenario pin reloads only when the manifest and artifacts still match.
+<span class="k">-</span><span class="w"> </span>Every in-scope support maps explicitly or records a gap.
+<span class="k">-</span><span class="w"> </span>Exposure is reviewed and bound to one schedule.
+<span class="k">-</span><span class="w"> </span>Screening emits deterministic rows and explicit refusals.
+<span class="k">-</span><span class="w"> </span>Missing, unreviewed, or blocked evidence refuses.
+<span class="k">-</span><span class="w"> </span>The fixture covers success and fail-closed paths.
+<span class="k">-</span><span class="w"> </span>No real watershed or regulatory result is claimed.
+<span class="k">-</span><span class="w"> </span>FHOPS quality suite and docs build are green.
+
+Closeout: <span class="sb">`notes/reports/p15-closeout.md`</span>; final PR <span class="ni">#232</span> merged as <span class="sb">`3b404414`</span>.
+
+<span class="gu">## Phase 16 — Flood-aware operational constraints — complete</span>
+
+Parent issue: <span class="ni">#235</span>. Branch: <span class="sb">`feature/phase16-flood-operational-constraints`</span>.
+
+Goal: manage operational flood exposure against a fixed external hazard, not
+optimize watershed flood response. FHOPS checks and constrains schedule activity
+inside watch, warning, and closure windows by watershed and explicit assets.
+
+Authoritative note: <span class="sb">`notes/phase16_flood_operational_constraints.md`</span>.
+Closeout: pull request <span class="ni">#255</span> squash-merged as <span class="sb">`b850275d`</span>; the phase report is
+<span class="sb">`notes/reports/p16-closeout.md`</span>.
+
+<span class="k">- [x]</span> P16.1 Define and implement the operational hazard-window contract (#236)
+<span class="w">  </span><span class="k">- [x]</span> Validate schema, watershed ids, review metadata, day ranges, and overlaps
+<span class="w">  </span><span class="k">- [x]</span> Add severity lookup and validation report
+<span class="w">  </span><span class="k">- [x]</span> Add <span class="sb">`fhops scenario hydrology hazard validate`</span>, tests, and docs
+<span class="k">- [x]</span> P16.2 Load road/culvert asset evidence (#237)
+<span class="w">  </span><span class="k">- [x]</span> Define explicit asset ids, types, watersheds, and review metadata
+<span class="w">  </span><span class="k">- [x]</span> Reject unknown/duplicate assets without geometry inference
+<span class="w">  </span><span class="k">- [x]</span> Add tests and docs
+<span class="k">- [x]</span> P16.3 Check a schedule for hazard-window violations (#238)
+<span class="w">  </span><span class="k">- [x]</span> Map block activity to watersheds through the P15 crosswalk
+<span class="w">  </span><span class="k">- [x]</span> Emit watch/warning/closure events and closure violations
+<span class="w">  </span><span class="k">- [x]</span> Add the constraint-check CLI, CSV/JSON output, tests, and docs
+<span class="k">- [x]</span> P16.4 Integrate fixed hazard constraints where supported (#239)
+<span class="w">  </span><span class="k">- [x]</span> Audit solver decision variables for block/day/shift constraints
+<span class="w">  </span><span class="k">- [x]</span> Keep enforcement at the one-schedule check layer
+<span class="w">  </span><span class="k">- [x]</span> Record the missing shared solver hook and road-work timing limitation
+<span class="k">- [x]</span> P16.5 Prove, document, and close out P16 (#240)
+<span class="w">  </span><span class="k">- [x]</span> Add the synthetic/public fixture and fail-closed matrix
+<span class="w">  </span><span class="k">- [x]</span> Update docs, roadmap, note, and changelog
+<span class="w">  </span><span class="k">- [x]</span> Write the closeout report and queue the phase PR
+
+Acceptance:
+
+<span class="k">-</span><span class="w"> </span>Hazard windows and assets validate explicit ids and review metadata.
+<span class="k">-</span><span class="w"> </span>A schedule reports watch, warning, and closure events.
+<span class="k">-</span><span class="w"> </span>Closure activity fails by default; warning failure is an explicit policy.
+<span class="k">-</span><span class="w"> </span>Missing evidence refuses.
+<span class="k">-</span><span class="w"> </span>Solver integration, if present, is fixed-scenario only.
+<span class="k">-</span><span class="w"> </span>No real watershed, flood map, or regulatory result is claimed.
+<span class="k">-</span><span class="w"> </span>FHOPS quality suite and docs build are green.
+
+<span class="gu">## Phase 17 — Tree-scale inventory and spatial harvesting simulation — complete</span>
+
+Parent issue: <span class="ni">#247</span>. Branch: <span class="sb">`feature/p17-tree-scale`</span>.
+
+Goal: consume a validated individual-tree inventory for FHOPS blocks, derive
+stem-level volume and bucking, simulate one machine processing actual stems,
+replay an existing schedule at tree scale, and export a deterministic 3D scene.
+This is a tree-scale execution layer; the block/day MILP remains the planning
+authority. FHOPS does not implement LiDAR segmentation.
+
+Authoritative note: <span class="sb">`notes/tree_scale_simulation_plan.md`</span>.
+Closeout: <span class="sb">`notes/reports/p17-closeout.md`</span>; final PR <span class="ni">#275</span>.
+
+<span class="k">- [x]</span> P17.1 Define tree inventory contract and synthetic fixture (#248)
+<span class="w">  </span><span class="k">- [x]</span> Record the tree-level data-source audit
+<span class="w">  </span><span class="k">- [x]</span> Define <span class="sb">`fhops.tree.inventory.v1`</span> and metadata
+<span class="w">  </span><span class="k">- [x]</span> Add validation, CLI, synthetic fixture, tests, and docs
+<span class="k">- [x]</span> P17.2 Pin inventory to scenario and build block tree maps (#249)
+<span class="w">  </span><span class="k">- [x]</span> Add the scenario reference and checksum validation
+<span class="w">  </span><span class="k">- [x]</span> Resolve trees to blocks and reconcile block evidence
+<span class="w">  </span><span class="k">- [x]</span> Add the map CLI, manifest, tests, and docs
+<span class="k">- [x]</span> P17.3 Derive stem volume and bucking (#250)
+<span class="w">  </span><span class="k">- [x]</span> Define the pluggable stem model
+<span class="w">  </span><span class="k">- [x]</span> Produce volume, logs, products, and block totals
+<span class="w">  </span><span class="k">- [x]</span> Add the CLI, synthetic model, tests, and docs
+<span class="k">- [x]</span> P17.4 Simulate one machine processing trees in one block (#251)
+<span class="w">  </span><span class="k">- [x]</span> Implement reach, terrain, and deterministic tree selection
+<span class="w">  </span><span class="k">- [x]</span> Emit per-tree cycle events and block totals
+<span class="w">  </span><span class="k">- [x]</span> Add the CLI, tests, and docs
+<span class="k">- [x]</span> P17.5 Replay an existing schedule at tree scale (#252)
+<span class="w">  </span><span class="k">- [x]</span> Drive the simulator from assignments
+<span class="w">  </span><span class="k">- [x]</span> Track tree consumption, leftovers, and discrepancies
+<span class="w">  </span><span class="k">- [x]</span> Add the replay CLI, manifest, tests, and docs
+<span class="k">- [x]</span> P17.6 Export a 3D scene and viewer (#253)
+<span class="w">  </span><span class="k">- [x]</span> Export deterministic glTF/GLB terrain, trees, paths, and logs
+<span class="w">  </span><span class="k">- [x]</span> Add LOD, viewer/import docs, and a camera path
+<span class="w">  </span><span class="k">- [x]</span> Add scene tests
+<span class="k">- [x]</span> P17.7 Validate, document, and close out P17 (#254)
+<span class="w">  </span><span class="k">- [x]</span> Add the end-to-end synthetic fixture and fail-closed matrix
+<span class="w">  </span><span class="k">- [x]</span> Run the quality suite and docs build
+<span class="w">  </span><span class="k">- [x]</span> Write the closeout report and queue the phase PR
+
+Acceptance:
+
+<span class="k">-</span><span class="w"> </span>A valid inventory loads and every tree resolves to one block.
+<span class="k">-</span><span class="w"> </span>Unsafe contracts fail explicitly.
+<span class="k">-</span><span class="w"> </span>Tree totals reconcile with block evidence or report a mismatch.
+<span class="k">-</span><span class="w"> </span>One machine produces deterministic per-tree events.
+<span class="k">-</span><span class="w"> </span>A schedule replay exposes leftovers and discrepancies.
+<span class="k">-</span><span class="w"> </span>The 3D scene is deterministic and opens in a standard glTF viewer.
+<span class="k">-</span><span class="w"> </span>No real tree map, operational decision, or regulatory claim is made.
+<span class="k">-</span><span class="w"> </span>FHOPS quality suite and docs build are green.
+
+<span class="k">&gt; </span><span class="ge">Phase 16 is a separately owned flood-aware operational phase and is not part</span>
+<span class="k">&gt; </span><span class="ge">of this branch. P17 does not modify its issue tree or scope.</span>
+
+<span class="gu">## Phase 18 — Hydrology documentation and reproducibility — complete</span>
+
+Parent issue: <span class="ni">#260</span>. Branch: <span class="sb">`feature/phase18-hydrology-docs`</span>.
+
+Goal: make the FEMIC → WS4 → FHOPS hydrology path reproducible for a new user.
+This is documentation and reproducibility work, not a new hydrology capability.
+P17 is the active tree-scale phase, so this phase uses P18.
+
+Authoritative note: <span class="sb">`notes/phase18_hydrology_docs_reproducibility.md`</span>.
+Closeout: pull request <span class="ni">#276</span> squash-merged as <span class="sb">`919a4fe0`</span>; the phase report is
+<span class="sb">`notes/reports/p18-closeout.md`</span>.
+
+<span class="k">- [x]</span> P18.1 Audit hydrology documentation and reproducibility gaps (#261)
+<span class="w">  </span><span class="k">- [x]</span> Inventory FEMIC, WS4, and FHOPS hydrology docs
+<span class="w">  </span><span class="k">- [x]</span> Record gaps, owners, and data/review blockers
+<span class="w">  </span><span class="k">- [x]</span> Separate documentation gaps from capability gaps
+<span class="k">- [x]</span> P18.2 Publish the pinned cross-repo quickstart (#262)
+<span class="w">  </span><span class="k">- [x]</span> Pin package versions and environment
+<span class="w">  </span><span class="k">- [x]</span> Run the synthetic FEMIC/WS4/FHOPS path
+<span class="w">  </span><span class="k">- [x]</span> Record expected outputs and unsupported steps
+<span class="k">- [x]</span> P18.3 Publish the contract and schema index (#263)
+<span class="w">  </span><span class="k">- [x]</span> List every hydrology, crosswalk, exposure, hazard, and asset contract
+<span class="w">  </span><span class="k">- [x]</span> Record required fields, ownership, and refusal behavior
+<span class="k">- [x]</span> P18.4 Add executable hydrology docs checks (#264)
+<span class="w">  </span><span class="k">- [x]</span> Check links and runnable snippets
+<span class="w">  </span><span class="k">- [x]</span> Run the synthetic quickstart in CI
+<span class="k">- [x]</span> P18.5 Close out the documentation phase (#265)
+<span class="w">  </span><span class="k">- [x]</span> Verify docs and gates
+<span class="w">  </span><span class="k">- [x]</span> Record synthetic/real-data limits and close out
+
+Acceptance:
+
+<span class="k">-</span><span class="w"> </span>Every gap has an owner.
+<span class="k">-</span><span class="w"> </span>The quickstart names versions, fixtures, commands, and expected outputs.
+<span class="k">-</span><span class="w"> </span>The contract index covers every schema in the workflow.
+<span class="k">-</span><span class="w"> </span>Docs checks pass in CI.
+<span class="k">-</span><span class="w"> </span>No new hydrology capability or real watershed result is claimed.
+
+<span class="gu">## Backlog &amp; Ideas</span>
+<span class="k">- [ ]</span> Agentic tuner R&amp;D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
+<span class="k">- [ ]</span> Integration with Nemora sampling outputs for downstream operations analytics.
+<span class="k">- [x]</span> Scenario authoring UI and schema validators for web clients (P12.6, <span class="ni">#183</span>).
+<span class="k">- [ ]</span> Cloud execution harness for large-scale heuristics.
+<span class="k">- [ ]</span> DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
+<span class="k">- [ ]</span> Jaffray MASc thesis alignment checkpoints (<span class="sb">`notes/thesis_alignment.md`</span> TBD).
+<span class="k">- [ ]</span> VSCode keeps firing web apps on various random-sounding ports while running <span class="sb">`injest_mip_baselines.py`</span> and other benchmarking scripts? What is up with that? It is annoyingly resulting in VSCode interface popping up "Your application is running on port XXXX" messages (becaue of the built-in port-forwarding proxy).
+<span class="k">- [ ]</span> Schedule “full” analytics notebook runs (no light flag) on a less frequent cadence (nightly or weekly: leaning towards weekly) to guard against stochastic regression while keeping CI duration manageable.
+<span class="w">  </span><span class="k">- [ ]</span> Extend CI with a <span class="sb">`cron`</span> job that invokes <span class="sb">`scripts/run_analytics_notebooks.py --timeout 900`</span> (no <span class="sb">`--light`</span>) and publishes the resulting reports to the telemetry Pages bundle, keeping a 4-week artifact history for comparison.
+<span class="k">- [ ]</span> <span class="sb">`pre-commit`</span> autoupdate (especially <span class="sb">`pre-commit-hooks`</span>) plus workflow wiring so stage deprecation warnings are resolved before upstream removal.
+<span class="k">- [x]</span> Full <span class="sb">`pre-commit run --all-files`</span> notebook debt: cleaned/approved under issues <span class="ni">#66</span>–#70 so <span class="sb">`main`</span> CI publishes docs again.
+<span class="k">- [ ]</span> Post-Phase 6 validation scale-up: full 5-year/500+ block tactical benchmark, practitioner case validation, guided planner notebooks, and decomposition only if profiling shows a bottleneck.
+<span class="k">- [ ]</span> Hydrology optimizer integration: derive exposure per candidate schedule and gate it on reviewed evidence. Deferred until a route-state contract and a reviewed response surface exist.
+<span class="k">- [ ]</span> Dataset inspection + data-quality polish (see <span class="sb">`notes/dataset_inspection_plan.md`</span>)
+<span class="w">  </span><span class="k">- [ ]</span> Enforce/document 24 h/day machine availability in docs + sample datasets, and flag deviations via the inspector CLI.
+<span class="k">- [ ]</span> Shared metaheuristic kernel adapter: finish FHOPS parity and performance gates for kernel
+  SA/Tabu/ILS, then retire the duplicate solver loops. Design note:
+  <span class="sb">`notes/metaheuristic_kernel_adapter.md`</span>.
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="contributing.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="howto/mobilisation_geo.html" class="btn btn-neutral float-right" title="Mobilisation Geospatial Workflow" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, UBC FRESH Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
