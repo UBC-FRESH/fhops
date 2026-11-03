@@ -90,7 +90,14 @@
           <select id="machine-catalog"></select>
           <button id="add-machine" class="btn small">+ Add</button>
         </div>
-        <p class="note">Machine role edits are stored in the project. Operator policies are presets that will feed the simulation policy layer.</p>
+        <div class="add-row">
+          <select id="system-preset">
+            <option value="full_tree">Full-tree system</option>
+            <option value="ctl">CTL harvester + forwarder</option>
+          </select>
+          <button id="apply-preset" class="btn small">Apply preset</button>
+        </div>
+        <p class="note">Machine role edits are stored in the project. Applying a system preset rebuilds the fleet while preserving terrain, retention, landings, roads, trucks, and economics. Save afterward to run it.</p>
       </section>
       <section class="panel">
         <h2>Policy effects</h2>

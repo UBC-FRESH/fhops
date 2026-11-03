@@ -759,6 +759,129 @@ function renderMachineSpecs() {
   if (!node.children.length) node.textContent = "No editable fleet machines.";
 }
 
+const FORWARDER_PRESET = {
+  capacity_m3: 16.0,
+  empty_speed_mps: 1.2,
+  loaded_speed_mps: 1.0,
+  load_fixed_s: 30.0,
+  load_per_log_s: 2.0,
+  unload_fixed_s: 30.0,
+  unload_per_log_s: 2.0,
+  productivity_m3_per_smh: 22.865797265637397,
+  forwarder_model: "eriksson-final-felling",
+  forwarder_stem_size_m3: 0.3,
+  forwarder_load_fixed_s: 300.0,
+  forwarder_unload_fixed_s: 180.0,
+};
+
+const SYSTEM_PRESETS = {
+  full_tree: {
+    fellerRole: "feller_buncher",
+    extractionRole: "grapple_skidder",
+    processors: true,
+    forwarderSpec: null,
+  },
+  ctl: {
+    fellerRole: "harvester",
+    extractionRole: "forwarder",
+    processors: false,
+    forwarderSpec: FORWARDER_PRESET,
+  },
+};
+
+function applySystemPreset(name) {
+  if (!state.project || !SYSTEM_PRESETS[name]) return;
+  const preset = SYSTEM_PRESETS[name];
+  pushHistory();
+  const landings = projectLandings();
+  const primaryLanding = landings[0]?.id || null;
+  const secondLanding = landings[1]?.id || primaryLanding;
+  const fellerRoles = new Set(["feller_buncher", "harvester", "hand_faller"]);
+  const extractionRoles = new Set([
+    "grapple_skidder", "skidder", "forwarder", "cable_yarder", "skyline_yarder",
+  ]);
+  const processorRoles = new Set(["roadside_processor", "processor"]);
+  const machines = state.project.machines || [];
+  const catalog = state.project.catalog || [];
+
+  const findOrAdd = (predicate, id, role, landing = null) => {
+    let machine = machines.find(predicate);
+    if (!machine) {
+      const source = catalog.find((item) => item.id === id);
+      machine = { id, role, type: role, policy: "steady", source: "preset", landing_id: landing };
+      if (source?.operating_cost != null) machine.operating_cost = source.operating_cost;
+      if (source?.daily_hours != null) machine.daily_hours = source.daily_hours;
+      machines.push(machine);
+    }
+    return machine;
+  };
+
+  const feller = findOrAdd((machine) => fellerRoles.has(machine.role), "H1", preset.fellerRole);
+  feller.role = preset.fellerRole;
+  feller.type = preset.fellerRole;
+  feller.landing_id = null;
+
+  let extraction = machines.filter((machine) => extractionRoles.has(machine.role));
+  if (!extraction.length) {
+    extraction = [
+      findOrAdd(() => false, "H2", preset.extractionRole),
+      findOrAdd(() => false, "H3", preset.extractionRole),
+    ];
+  }
+  for (const machine of extraction) {
+    machine.role = preset.extractionRole;
+    machine.type = preset.extractionRole;
+    machine.landing_id = null;
+    if (preset.forwarderSpec) machine.spec = { ...preset.forwarderSpec };
+    else delete machine.spec;
+  }
+
+  let processors = machines.filter((machine) => processorRoles.has(machine.role));
+  if (preset.processors) {
+    if (!processors.length) {
+      processors = [
+        findOrAdd(() => false, "H5", "roadside_processor", primaryLanding),
+        findOrAdd(() => false, "H5-B", "roadside_processor", secondLanding),
+      ];
+    }
+    processors.forEach((machine, index) => {
+      machine.role = "roadside_processor";
+      machine.type = "roadside_processor";
+      machine.landing_id = index === 0 ? primaryLanding : secondLanding;
+    });
+  } else {
+    state.project.machines = machines.filter((machine) => !processorRoles.has(machine.role));
+  }
+
+  const active = state.project.machines;
+  let loaders = active.filter((machine) => machine.role === "loader");
+  if (!loaders.length) {
+    loaders = [findOrAdd(() => false, "H4", "loader", primaryLanding)];
+  }
+  if (landings.length > 1 && !loaders.some((machine) => machine.id === "H4-B")) {
+    const clone = catalog.find((item) => item.id === "H4-B");
+    if (clone) {
+      const machine = { id: "H4-B", role: "loader", type: "loader", policy: "steady", source: "preset" };
+      if (clone.operating_cost != null) machine.operating_cost = clone.operating_cost;
+      if (clone.daily_hours != null) machine.daily_hours = clone.daily_hours;
+      active.push(machine);
+      loaders.push(machine);
+    }
+  }
+  loaders.forEach((machine, index) => {
+    machine.role = "loader";
+    machine.type = "loader";
+    machine.landing_id = landings[index]?.id || primaryLanding;
+  });
+
+  state.project.operator_policies = Object.fromEntries(
+    active.map((machine) => [machine.id, state.project.operator_policies?.[machine.id] || "steady"]),
+  );
+  markDirty();
+  render();
+  setStatus(`Applied ${name === "ctl" ? "CTL" : "full-tree"} preset — save to run it`);
+}
+
 function addMachine() {
   const id = $("#machine-catalog").value;
   if (!id || !state.project) return;
@@ -1416,6 +1539,7 @@ function bindEvents() {
   $("#rename").addEventListener("click", renameProject);
   $("#duplicate").addEventListener("click", duplicateProject);
   $("#add-machine").addEventListener("click", addMachine);
+  $("#apply-preset").addEventListener("click", () => applySystemPreset($("#system-preset").value));
   $("#add-landing").addEventListener("click", addLanding);
   $("#new-project").addEventListener("click", openNewDialog);
   $("#import").addEventListener("click", () => $("#import-file").click());
