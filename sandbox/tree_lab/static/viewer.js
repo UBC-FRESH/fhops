@@ -979,10 +979,6 @@ export function createViewer(container, { onTime } = {}) {
       const z = node.position.z;
       node.position.y = terrainHeight(x, z);
     }
-    baseElevation = terrainHeight(
-      Number(terrain.origin?.[0] || (minx + maxx) / 2),
-      Number(terrain.origin?.[1] || (miny + maxy) / 2),
-    );
   }
 
   function addRoad(events) {
@@ -1213,9 +1209,11 @@ export function createViewer(container, { onTime } = {}) {
         }
         if (terrain) {
           const heights = Array.isArray(terrain.heights) ? terrain.heights : [];
-          const minimumHeight = heights.length
-            ? Math.min(...heights.map((value) => Number(value) || 0))
-            : 0;
+          const minimumHeight = Number.isFinite(Number(terrain.source_min_height))
+            ? Number(terrain.source_min_height)
+            : heights.length
+              ? Math.min(...heights.map((value) => Number(value) || 0))
+              : 0;
           baseElevation = Number(terrain.base_m ?? (baseElevation - minimumHeight));
           applyTerrain(root);
         }

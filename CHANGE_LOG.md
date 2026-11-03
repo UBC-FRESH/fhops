@@ -1,8 +1,9 @@
 # 2026-11-03 — fix terrain base for negative heightfields (#369)
 
-- Replay terrain base now subtracts the heightfield minimum when no explicit
-  `base_m` is available, aligning terrain and retained/overlay trees with scene
-  tree elevations.
+- Replay now carries project `base_m` and source heightfield minimum; fallback
+  base is `lowest_scene_tree_y - source_min_height`.
+- Removed `applyTerrain`'s post-placement base rewrite, which shifted retained
+  and overlay trees after tree/terrain placement.
 - Fixes retained trees appearing below ground on the CTL Gavin project.
 - Added planning evidence.
 

@@ -4,26 +4,30 @@ Issue: #369. Branch: `issue-369-terrain-base-fix`.
 
 ## Problem
 
-The replay used the lowest scene tree elevation as the terrain base. Edited
-heightfields may contain negative relative heights, so the true base is:
+The replay used inconsistent terrain bases:
 
-```text
-lowest_tree_y - minimum_height
-```
+1. the lowest scene tree elevation was treated as the base, even though edited
+   heightfields can contain negative relative heights;
+2. `applyTerrain` reset `baseElevation` to the terrain height at the block
+   centre, which corrupted the elevation basis used by retained/overlay trees
+   rendered afterward.
 
-Using the lowest tree directly shifted the terrain mesh and retained/overlay
-trees down by the negative height minimum, making retained trees appear below
-the ground.
+With a heightfield minimum of `-30 m`, terrain and retained trees were shifted
+down relative to the scene trees.
 
 ## Fix
 
-- If a terrain `base_m` is present, keep using it.
-- Otherwise derive the base as `lowest_scene_tree_y - min(heightfield)`.
-- Terrain, retained trees, stream clumps, landings, and replay overlays now share
-  the scene tree elevation basis.
+- Replay terrain data carries the project `base_m` and the original source
+  heightfield minimum.
+- The base fallback is `lowest_scene_tree_y - min(source_heightfield)` when no
+  explicit base exists.
+- `applyTerrain` no longer rewrites `baseElevation` after placing the terrain
+  mesh.
+- Terrain, retained trees, clumps, landings, and overlays now share one
+  elevation basis.
 
 ## Verification
 
-- CTL replay with an edited heightfield containing `-30 m` minimum: retained
-  trees align with the terrain surface.
-- Existing positive-height and explicit-base projects remain compatible.
+- CTL replay with a `-30 m` heightfield minimum: `baseElevation` is `781.74`,
+  matching `terrain.base_m`; retained-tree bases sit on the terrain.
+- Existing explicit-base projects remain compatible.

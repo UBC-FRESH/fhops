@@ -253,7 +253,13 @@ function replayTerrain(project) {
       heights[row * resolution + col] = sampleSource(x, y);
     }
   }
-  return { bounds, resolution, heights };
+  return {
+    bounds,
+    resolution,
+    heights,
+    base_m: terrain.base_m,
+    source_min_height: Math.min(...terrain.heights.map((value) => Number(value) || 0)),
+  };
 }
 
 async function load() {
@@ -272,9 +278,10 @@ async function load() {
       response.ok ? response.json() : null
     )),
   ]);
+  const replayProject = dataset.project || project;
   events = loadedEvents;
-  events.terrain = replayTerrain(project);
-  events.road_segments = replayRoadSegments(project);
+  events.terrain = replayTerrain(replayProject);
+  events.road_segments = replayRoadSegments(replayProject);
   const freshness = runMetadata?.freshness;
   if (freshness?.stale) {
     staleText.textContent = ` ${freshness.reasons?.join(" ") || "Project edits changed after this run."}`;
