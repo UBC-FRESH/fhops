@@ -2,6 +2,7 @@ const API = new URL("api/", document.baseURI).pathname;
 const $ = (selector) => document.querySelector(selector);
 const params = new URLSearchParams(location.search);
 let projects = [];
+let lastComparison = null;
 
 async function api(path) {
   const response = await fetch(API + path.replace(/^\/+/, ""));
@@ -168,7 +169,27 @@ function landingRows(left, right) {
   }).join("");
 }
 
+function renderCharts(left, right) {
+  const a = economics(left);
+  const b = economics(right);
+  const metrics = [
+    ["Makespan h", Number(left.meta.run.kpis?.makespan_s || 0) / 3600, Number(right.meta.run.kpis?.makespan_s || 0) / 3600, (v) => fmt(v)],
+    ["Machine cost", a.cost, b.cost, (v) => `$${fmt(v, 0)}`],
+    ["Cost / m³", a.costPerM3 || 0, b.costPerM3 || 0, (v) => `$${fmt(v, 2)}`],
+    ["Warnings", (left.meta.run.warnings || []).length, (right.meta.run.warnings || []).length, (v) => `${v}`],
+  ];
+  $("#charts").innerHTML = `<h2>Visual comparison <span class="muted">orange = left · blue = right</span></h2>` + metrics.map(([label, av, bv, fmtValue]) => {
+    const maximum = Math.max(Number(av) || 0, Number(bv) || 0);
+    return `<div class="chart-row"><span class="chart-label">${label}</span><div class="chart-bars">
+      <div class="chart-bar"><span class="chart-value">${escapeHtml(fmtValue(av))}</span><div class="chart-track"><div class="chart-fill left" style="width:${maximum > 0 ? Math.max(1, (av / maximum) * 100).toFixed(1) : 0}%"></div></div></div>
+      <div class="chart-bar"><span class="chart-value">${escapeHtml(fmtValue(bv))}</span><div class="chart-track"><div class="chart-fill right" style="width:${maximum > 0 ? Math.max(1, (bv / maximum) * 100).toFixed(1) : 0}%"></div></div></div>
+    </div></div>`;
+  }).join("");
+}
+
 function render(left, right) {
+  lastComparison = { left, right };
+  renderCharts(left, right);
   $("#summary").innerHTML = `<h2>Summary</h2><table><thead><tr><th>Metric</th><th>${escapeHtml(left.projectId)}<br><span class="muted">${escapeHtml(left.runId)}</span></th><th>${escapeHtml(right.projectId)}<br><span class="muted">${escapeHtml(right.runId)}</span></th></tr></thead><tbody>${comparisonRows(left, right)}</tbody></table>`;
   $("#economics").innerHTML = `<h2>Economics <span class="muted">(proportional makespan × daily operating cost)</span></h2><table><thead><tr><th>Metric</th><th>Left</th><th>Right</th></tr></thead><tbody>${economicsRows(left, right)}</tbody></table>`;
   $("#machines").innerHTML = `<h2>Machine utilization</h2><table><thead><tr><th>Machine</th><th>Left</th><th>Right</th></tr></thead><tbody>${machineRows(left, right)}</tbody></table>`;
@@ -204,9 +225,36 @@ async function compare() {
   }
 }
 
+function exportComparison() {
+  if (!lastComparison) {
+    $("#status").textContent = "Run a comparison before exporting.";
+    return;
+  }
+  const side = (data) => ({
+    project_id: data.projectId,
+    run_id: data.runId,
+    freshness: data.meta.freshness,
+    run: data.meta.run,
+    economics: economics(data),
+    landing_inventory: data.events?.landing_inventory || {},
+  });
+  const payload = {
+    generated_utc: new Date().toISOString(),
+    left: side(lastComparison.left),
+    right: side(lastComparison.right),
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `fhops-comparison-${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
 $("#left-project").addEventListener("change", (event) => loadRuns("left", event.target.value));
 $("#right-project").addEventListener("change", (event) => loadRuns("right", event.target.value));
 $("#compare").addEventListener("click", compare);
+$("#export").addEventListener("click", exportComparison);
 
 initSelectors().then(compare).catch((error) => {
   $("#status").textContent = `Load failed: ${error.message}`;
