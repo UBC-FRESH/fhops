@@ -930,6 +930,10 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
                     "unload_per_log_s",
                     "productivity_m3_per_smh",
                     "forwarder_stem_size_m3",
+                    "forwarder_load_fixed_s",
+                    "forwarder_load_per_log_s",
+                    "forwarder_unload_fixed_s",
+                    "forwarder_unload_per_log_s",
                 )
                 if key in spec
             }

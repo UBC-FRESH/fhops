@@ -190,6 +190,37 @@ def test_forwarder_productivity_spec_drives_cycle(tmp_path: Path) -> None:
     assert fast.makespan_s < slow.makespan_s
 
 
+def test_forwarder_load_unload_timing_ratio(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    specs = {
+        machine: MachineSpec(
+            machine_id=machine,
+            machine_type="forwarder",
+            capacity_m3=16.0,
+            productivity_m3_per_smh=12.0,
+            forwarder_load_fixed_s=100.0,
+            forwarder_unload_fixed_s=50.0,
+        )
+        for machine in ("H2", "H3")
+    }
+    result = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=4.0,
+        rate_model="reference",
+        skidder_specs=specs,
+    )
+    loads = [e for e in result.events if e.type == "load"]
+    unloads = [e for e in result.events if e.type == "unload"]
+    assert loads and unloads
+    load_duration = loads[0].end_s - loads[0].start_s
+    unload_duration = unloads[0].end_s - unloads[0].start_s
+    assert load_duration == pytest.approx(unload_duration * 2.0, rel=1e-6)
+
+
 def test_forwarder_regression_varies_with_distance() -> None:
     spec = MachineSpec(
         machine_id="H2",

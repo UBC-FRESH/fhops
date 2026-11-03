@@ -679,6 +679,10 @@ const SPEC_FIELDS = {
     ["productivity_m3_per_smh", "calibrated m³/SMH"],
     ["forwarder_model", "forwarder model"],
     ["forwarder_stem_size_m3", "forwarder stem m³"],
+    ["forwarder_load_fixed_s", "fwd load fixed (s)"],
+    ["forwarder_load_per_log_s", "fwd load per log (s)"],
+    ["forwarder_unload_fixed_s", "fwd unload fixed (s)"],
+    ["forwarder_unload_per_log_s", "fwd unload per log (s)"],
   ],
   skidder: [
     ["capacity_m3", "payload (m³)"],
@@ -691,6 +695,10 @@ const SPEC_FIELDS = {
     ["productivity_m3_per_smh", "calibrated m³/SMH"],
     ["forwarder_model", "forwarder model"],
     ["forwarder_stem_size_m3", "forwarder stem m³"],
+    ["forwarder_load_fixed_s", "fwd load fixed (s)"],
+    ["forwarder_load_per_log_s", "fwd load per log (s)"],
+    ["forwarder_unload_fixed_s", "fwd unload fixed (s)"],
+    ["forwarder_unload_per_log_s", "fwd unload per log (s)"],
   ],
 };
 

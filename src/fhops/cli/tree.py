@@ -333,6 +333,26 @@ def _load_skidder_specs(path: Path) -> dict[str, MachineSpec]:
                 str(values["forwarder_model"]) if values.get("forwarder_model") else None
             ),
             forwarder_stem_size_m3=float(values.get("forwarder_stem_size_m3", 0.3)),
+            forwarder_load_fixed_s=(
+                float(values["forwarder_load_fixed_s"])
+                if values.get("forwarder_load_fixed_s") is not None
+                else None
+            ),
+            forwarder_load_per_log_s=(
+                float(values["forwarder_load_per_log_s"])
+                if values.get("forwarder_load_per_log_s") is not None
+                else None
+            ),
+            forwarder_unload_fixed_s=(
+                float(values["forwarder_unload_fixed_s"])
+                if values.get("forwarder_unload_fixed_s") is not None
+                else None
+            ),
+            forwarder_unload_per_log_s=(
+                float(values["forwarder_unload_per_log_s"])
+                if values.get("forwarder_unload_per_log_s") is not None
+                else None
+            ),
         )
     return specs
 
