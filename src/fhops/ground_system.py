@@ -234,6 +234,12 @@ class MachineSpec:
         model is evaluated at the route distance for every bunch.
     forwarder_stem_size_m3:
         Mean stem size for forwarder models that require it.
+    forwarder_load_fixed_s, forwarder_load_per_log_s:
+        Optional calibrated forwarder loading timing. If supplied, the
+        calibrated cycle residual is divided in proportion to these load/unload
+        timings.
+    forwarder_unload_fixed_s, forwarder_unload_per_log_s:
+        Optional calibrated forwarder unloading timing.
     """
 
     machine_id: str
@@ -250,6 +256,10 @@ class MachineSpec:
     productivity_m3_per_smh: float | None = None
     forwarder_model: str | None = None
     forwarder_stem_size_m3: float = 0.3
+    forwarder_load_fixed_s: float | None = None
+    forwarder_load_per_log_s: float | None = None
+    forwarder_unload_fixed_s: float | None = None
+    forwarder_unload_per_log_s: float | None = None
 
     def __post_init__(self) -> None:
         for field, value in (
@@ -273,6 +283,15 @@ class MachineSpec:
             raise GroundSystemError("productivity_m3_per_smh must be positive and finite.")
         if not math.isfinite(self.forwarder_stem_size_m3) or self.forwarder_stem_size_m3 <= 0:
             raise GroundSystemError("forwarder_stem_size_m3 must be positive and finite.")
+        for name in (
+            "forwarder_load_fixed_s",
+            "forwarder_load_per_log_s",
+            "forwarder_unload_fixed_s",
+            "forwarder_unload_per_log_s",
+        ):
+            value = getattr(self, name)
+            if value is not None and (not math.isfinite(value) or value < 0):
+                raise GroundSystemError(f"{name} must be finite and non-negative.")
 
 
 @dataclass(frozen=True)
@@ -1772,8 +1791,20 @@ def _simulate_skidders(
             loaded_time = distance / (spec.loaded_speed_mps * route.speed_factor)
             cycle = bunch.volume_m3 / productivity * 3600.0
             residual = max(1.0, cycle - empty_time - loaded_time)
-            load_time = residual * 0.5
-            unload_time = residual * 0.5
+            pieces = len(bunch.tree_ids)
+            load_nominal = (spec.forwarder_load_fixed_s or 0.0) + (
+                spec.forwarder_load_per_log_s or 0.0
+            ) * pieces
+            unload_nominal = (spec.forwarder_unload_fixed_s or 0.0) + (
+                spec.forwarder_unload_per_log_s or 0.0
+            ) * pieces
+            if load_nominal + unload_nominal > 0:
+                factor = residual / (load_nominal + unload_nominal)
+                load_time = load_nominal * factor
+                unload_time = unload_nominal * factor
+            else:
+                load_time = residual * 0.5
+                unload_time = residual * 0.5
         elif rate_model == "calibrated":
             if speed_profile is None:
                 raise GroundSystemError("Calibrated rate model requires a skidder speed profile.")

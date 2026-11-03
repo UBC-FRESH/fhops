@@ -1,3 +1,11 @@
+# 2026-11-03 — forwarder load/unload timing calibration (#375)
+
+- Added optional forwarder load/unload fixed and per-log timing fields.
+- Calibrated cycle residuals are split in proportion to those timings; 50/50
+  remains the fallback.
+- Studio and skidder-spec JSON expose the fields.
+- Added load/unload ratio and manifest tests.
+
 # 2026-11-03 — distance-varying forwarder calibration (#373)
 
 - Added `forwarder_model` and `forwarder_stem_size_m3` to MachineSpec.

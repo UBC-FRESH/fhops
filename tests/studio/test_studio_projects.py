@@ -242,6 +242,8 @@ def test_materialized_case_updates_harvester_forwarder_roles(tmp_path: Path) -> 
                 machine["spec"] = {
                     "capacity_m3": 16.0,
                     "forwarder_model": "eriksson-final-felling",
+                    "forwarder_load_fixed_s": 100.0,
+                    "forwarder_unload_fixed_s": 50.0,
                 }
     derived = materialize_case(tmp_path, project, case)
     with (derived.root / "scenario" / "data" / "machines.csv").open(
@@ -253,6 +255,7 @@ def test_materialized_case_updates_harvester_forwarder_roles(tmp_path: Path) -> 
     assert rows["H3"] == "forwarder"
     assert derived.manifest["skidder_specs"]["H2"]["capacity_m3"] == 16.0
     assert derived.manifest["skidder_specs"]["H2"]["forwarder_model"] == "eriksson-final-felling"
+    assert derived.manifest["skidder_specs"]["H2"]["forwarder_load_fixed_s"] == 100.0
 
 
 def test_materialized_case_carries_project_signatures(tmp_path: Path) -> None:

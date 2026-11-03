@@ -39,8 +39,16 @@ the Han grapple-skidder whole-tree regression for CTL forwarders.
 - Studio exposes the model and stem-size fields; runner writes them in
   `skidder_specs.json`.
 
+## Forwarder load/unload timing
+
+- Optional `forwarder_load_fixed_s`, `forwarder_load_per_log_s`,
+  `forwarder_unload_fixed_s`, and `forwarder_unload_per_log_s` fields define the
+  split of the calibrated cycle residual.
+- The residual is divided in proportion to the configured load/unload timings;
+  if no timings are configured, the legacy 50/50 split is retained.
+- Studio and skidder-spec JSON expose all four fields.
+
 ## Limits
 
-- Forwarder loading/unloading split is still reference timing.
 - Supported models are limited to those with extraction-distance inputs; Kellogg
   and brushwood models require additional inputs and are not wired.
