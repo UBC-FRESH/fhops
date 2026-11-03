@@ -726,6 +726,8 @@ def test_ground_system_writes_outputs(tmp_path: Path) -> None:
         assert path.is_file()
 
     payload = json.loads(paths["events_json"].read_text(encoding="utf-8"))
+    summary = json.loads(paths["manifest"].read_text(encoding="utf-8"))
+    assert summary["product_mix"] == payload["product_mix"]
     assert payload["schema_version"] == "fhops.tree.ground_system.v1"
     assert payload["duration_s"] == result.makespan_s
     assert payload["rate_model"] == result.rate_model

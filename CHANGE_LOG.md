@@ -1,3 +1,9 @@
+# 2026-11-03 — product mix in system summary (#398)
+
+- Persisted `GroundSystemResult.product_mix` in `system_summary.json`; previously
+  it existed only in the events manifest, so run KPIs lost it.
+- Added a regression assertion.
+
 # 2026-11-03 — CTL product mix and comparison value (#397)
 
 - Added sawlog/pulp volumes to run product mix and KPIs.
