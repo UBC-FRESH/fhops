@@ -130,7 +130,9 @@ Per-machine cycle overrides can be supplied as JSON mappings:
    --processor-specs processor_specs.json
 
 Loader/skidder mappings use the ``MachineSpec`` cycle fields; processor mappings
-use ``seconds_per_m3``, ``fixed_s``, and ``per_log_s``.
+use ``seconds_per_m3``, ``fixed_s``, and ``per_log_s``. A skidder/forwarder spec
+may include ``productivity_m3_per_smh`` to derive cycle time from a calibrated
+forwarder rate instead of the grapple-skidder regression.
 
 Per-landing truck equipment can be overridden with a JSON mapping:
 

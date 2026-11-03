@@ -1,3 +1,13 @@
+# 2026-11-03 — calibrated forwarder productivity (#371)
+
+- Added `MachineSpec.productivity_m3_per_smh`; forwarder cycle time is derived
+  from payload/productivity and route travel instead of the grapple-skidder
+  whole-tree regression.
+- CLI skidder-spec JSON and Studio spec editor expose the field.
+- Added a core slow-vs-fast forwarder test.
+- CTL demo reference: Eriksson & Lindroos (2014), 350 m extraction, 0.3 m³ stems,
+  16 m³ load → 22.87 m³/PMH.
+
 # 2026-11-03 — fix terrain base for negative heightfields (#369)
 
 - Replay now carries project `base_m` and source heightfield minimum; fallback

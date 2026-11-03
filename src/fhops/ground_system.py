@@ -160,6 +160,10 @@ class MachineSpec:
         Fixed loader processing time per load, seconds.
     process_per_log_s:
         Additional loader processing time per log, seconds.
+    productivity_m3_per_smh:
+        Optional calibrated forwarder productivity in m³/SMH. When supplied, the
+        forwarder cycle time is derived from payload/productivity instead of the
+        grapple-skidder regression.
     """
 
     machine_id: str
@@ -173,6 +177,7 @@ class MachineSpec:
     unload_per_log_s: float = 3.0
     process_fixed_s: float = 45.0
     process_per_log_s: float = 4.0
+    productivity_m3_per_smh: float | None = None
 
     def __post_init__(self) -> None:
         for field, value in (
@@ -190,6 +195,10 @@ class MachineSpec:
                 raise GroundSystemError(f"{field} must be finite and non-negative.")
         if self.capacity_m3 <= 0:
             raise GroundSystemError("capacity_m3 must be positive.")
+        if self.productivity_m3_per_smh is not None and (
+            not math.isfinite(self.productivity_m3_per_smh) or self.productivity_m3_per_smh <= 0
+        ):
+            raise GroundSystemError("productivity_m3_per_smh must be positive and finite.")
 
 
 @dataclass(frozen=True)
@@ -1683,7 +1692,14 @@ def _simulate_skidders(
         route = selected_route
         distance = route.distance_m
         empty_start = start
-        if rate_model == "calibrated":
+        if spec.productivity_m3_per_smh is not None:
+            empty_time = distance / (spec.empty_speed_mps * route.speed_factor)
+            loaded_time = distance / (spec.loaded_speed_mps * route.speed_factor)
+            cycle = bunch.volume_m3 / spec.productivity_m3_per_smh * 3600.0
+            residual = max(1.0, cycle - empty_time - loaded_time)
+            load_time = residual * 0.5
+            unload_time = residual * 0.5
+        elif rate_model == "calibrated":
             if speed_profile is None:
                 raise GroundSystemError("Calibrated rate model requires a skidder speed profile.")
             empty_speed = speed_profile.empty_speed_kmh * (1000.0 / 3600.0)
