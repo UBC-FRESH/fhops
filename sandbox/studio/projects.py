@@ -683,7 +683,7 @@ def save_project(root: Path, project: dict[str, Any]) -> dict[str, Any]:
     landings = project_landings(project)
     project["landings"] = landings
     project["landing"] = {"x": landings[0]["x"], "y": landings[0]["y"]}
-    sync_system_args(project)
+    apply_operator_policies(project)
     project["updated_utc"] = _now()
     project["revision"] = int(project.get("revision") or 0) + 1
     encoded = json.dumps(project, indent=2) + "\n"
