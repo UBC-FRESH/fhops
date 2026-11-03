@@ -1,3 +1,12 @@
+# 2026-11-03 — operator-policy effects integration (#391)
+
+- Added Studio policy-effects panel with per-machine cycle, breakdown, break,
+  grade, and damage-risk effects plus aggregate run assumptions.
+- Non-steady policies now derive failure rate, repair hours/CV/seed, and grade
+  caution into system args; runner passes the stochastic controls.
+- Damage risk remains advisory; break policy affects failure rate.
+- Added operator-policy assertions.
+
 # 2026-11-03 — comparison economics assumptions editor (#389)
 
 - Comparison page exposes per-side truck $/h and labor $/machine-h inputs.
