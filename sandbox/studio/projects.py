@@ -237,24 +237,47 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def _machine_catalog(case: Case) -> list[dict[str, str]]:
+def _machine_catalog(case: Case) -> list[dict[str, Any]]:
     path = case.root / "scenario" / "data" / "machines.csv"
     if not path.is_file():
         return []
-    return [
-        {"id": row["id"], "role": row["role"]}
-        for row in _read_csv(path)
-        if row.get("id") and row.get("role")
-    ]
+    catalog: list[dict[str, Any]] = []
+    for row in _read_csv(path):
+        if not row.get("id") or not row.get("role"):
+            continue
+        try:
+            operating_cost = float(row.get("operating_cost") or 0.0)
+        except ValueError:
+            operating_cost = 0.0
+        try:
+            daily_hours = float(row.get("daily_hours") or 24.0)
+        except ValueError:
+            daily_hours = 24.0
+        catalog.append(
+            {
+                "id": row["id"],
+                "role": row["role"],
+                "operating_cost": operating_cost,
+                "daily_hours": daily_hours,
+            }
+        )
+    return catalog
 
 
 def _normalize_role(role: str) -> str:
     return {"skyline_yarder": "cable_yarder"}.get(role, role)
 
 
-def _active_machines(case: Case, catalog: list[dict[str, str]]) -> list[dict[str, Any]]:
+def _active_machines(case: Case, catalog: list[dict[str, Any]]) -> list[dict[str, Any]]:
     args = case.manifest.get("system_args") or {}
     roles = {item["id"]: item["role"] for item in catalog}
+    costs = {
+        item["id"]: {
+            "operating_cost": float(item.get("operating_cost") or 0.0),
+            "daily_hours": float(item.get("daily_hours") or 24.0),
+        }
+        for item in catalog
+    }
     ids: list[str] = []
     for key in ("feller", "loader"):
         if args.get(key):
@@ -274,6 +297,7 @@ def _active_machines(case: Case, catalog: list[dict[str, str]]) -> list[dict[str
                 "landing_id": "landing-main"
                 if role in {"loader", "roadside_processor", "processor"}
                 else None,
+                **costs.get(machine_id, {}),
             }
         )
     return result
@@ -562,7 +586,14 @@ def create_project(case: Case) -> dict[str, Any]:
     catalog = _machine_catalog(case)
     for source in list(catalog):
         if source["role"] in {"loader", "roadside_processor", "processor"}:
-            catalog.append({"id": f"{source['id']}-B", "role": source["role"]})
+            catalog.append(
+                {
+                    "id": f"{source['id']}-B",
+                    "role": source["role"],
+                    "operating_cost": source.get("operating_cost", 0.0),
+                    "daily_hours": source.get("daily_hours", 24.0),
+                }
+            )
     landing = _edge_landing(case, inventory)
     road = _road_for_landing(polygon, landing)
     return {
@@ -1393,6 +1424,17 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
 def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
     """Build the editor dataset for a project against its immutable base case."""
     catalog = project.setdefault("catalog", [])
+    base_catalog = {str(item["id"]): item for item in _machine_catalog(case)}
+    for item in catalog:
+        if not isinstance(item, dict):
+            continue
+        machine_id = str(item.get("id"))
+        source = base_catalog.get(machine_id)
+        if source is None and machine_id.endswith("-B"):
+            source = base_catalog.get(machine_id[:-2])
+        if source:
+            item.setdefault("operating_cost", source.get("operating_cost", 0.0))
+            item.setdefault("daily_hours", source.get("daily_hours", 24.0))
     existing = {str(item.get("id")) for item in catalog if isinstance(item, dict)}
     for source in list(catalog):
         if not isinstance(source, dict):
@@ -1403,7 +1445,14 @@ def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
             continue
         clone_id = f"{source.get('id')}-B"
         if clone_id not in existing:
-            catalog.append({"id": clone_id, "role": source["role"]})
+            catalog.append(
+                {
+                    "id": clone_id,
+                    "role": source["role"],
+                    "operating_cost": source.get("operating_cost", 0.0),
+                    "daily_hours": source.get("daily_hours", 24.0),
+                }
+            )
             existing.add(clone_id)
     inventory = load_tree_inventory(case.path("inventory"), metadata_path=case.path("metadata"))
     terrain = project.get("terrain") or {}

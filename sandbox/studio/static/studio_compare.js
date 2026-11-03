@@ -68,11 +68,50 @@ async function initSelectors() {
 }
 
 async function runData(projectId, runId) {
-  const [meta, events] = await Promise.all([
+  const [meta, events, dataset] = await Promise.all([
     api(`projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}`),
     api(`projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}/events`).catch(() => null),
+    api(`projects/${encodeURIComponent(projectId)}/dataset`).catch(() => null),
   ]);
-  return { projectId, runId, meta, events };
+  return { projectId, runId, meta, events, dataset };
+}
+
+function economics(data) {
+  const run = data.meta.run;
+  const makespanH = Number(run.kpis?.makespan_s || 0) / 3600;
+  const catalog = new Map((data.dataset?.project?.catalog || []).map((item) => [item.id, item]));
+  const machineIds = Object.keys(run.kpis?.machine_summaries || {});
+  let cost = 0;
+  let priced = 0;
+  for (const id of machineIds) {
+    const item = catalog.get(id);
+    const daily = Number(item?.operating_cost || 0);
+    const hours = Number(item?.daily_hours || 24);
+    if (daily > 0) {
+      priced += 1;
+      cost += daily * (makespanH / Math.max(1, hours));
+    }
+  }
+  const volume = Number(run.kpis?.processed_volume_m3 || 0);
+  return {
+    machineCount: machineIds.length,
+    pricedMachineCount: priced,
+    makespanH,
+    cost,
+    costPerM3: volume > 0 && priced > 0 ? cost / volume : null,
+  };
+}
+
+function economicsRows(left, right) {
+  const a = economics(left);
+  const b = economics(right);
+  const rows = [
+    ["Active machines", a.machineCount, b.machineCount],
+    ["Costed machines", a.pricedMachineCount, b.pricedMachineCount],
+    ["Machine operating cost", a.pricedMachineCount ? `$${a.cost.toFixed(0)}` : "unavailable", b.pricedMachineCount ? `$${b.cost.toFixed(0)}` : "unavailable"],
+    ["Cost per m³", a.costPerM3 == null ? "unavailable" : `$${a.costPerM3.toFixed(2)}`, b.costPerM3 == null ? "unavailable" : `$${b.costPerM3.toFixed(2)}`],
+  ];
+  return rows.map(([label, av, bv]) => `<tr><th>${label}</th><td class="num">${av}</td><td class="num">${bv}</td></tr>`).join("");
 }
 
 function comparisonRows(left, right) {
@@ -131,6 +170,7 @@ function landingRows(left, right) {
 
 function render(left, right) {
   $("#summary").innerHTML = `<h2>Summary</h2><table><thead><tr><th>Metric</th><th>${escapeHtml(left.projectId)}<br><span class="muted">${escapeHtml(left.runId)}</span></th><th>${escapeHtml(right.projectId)}<br><span class="muted">${escapeHtml(right.runId)}</span></th></tr></thead><tbody>${comparisonRows(left, right)}</tbody></table>`;
+  $("#economics").innerHTML = `<h2>Economics <span class="muted">(proportional makespan × daily operating cost)</span></h2><table><thead><tr><th>Metric</th><th>Left</th><th>Right</th></tr></thead><tbody>${economicsRows(left, right)}</tbody></table>`;
   $("#machines").innerHTML = `<h2>Machine utilization</h2><table><thead><tr><th>Machine</th><th>Left</th><th>Right</th></tr></thead><tbody>${machineRows(left, right)}</tbody></table>`;
   $("#trucks").innerHTML = `<h2>Trucking</h2><table><thead><tr><th>Metric</th><th>Left</th><th>Right</th></tr></thead><tbody>${truckRows(left, right)}</tbody></table>`;
   $("#landings").innerHTML = `<h2>Landing stockpiles (final / peak)</h2><table><thead><tr><th>Landing</th><th>Left</th><th>Right</th></tr></thead><tbody>${landingRows(left, right)}</tbody></table>`;
