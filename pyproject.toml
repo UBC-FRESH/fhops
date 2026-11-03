@@ -28,7 +28,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-kernel = ["fresh-solutions>=0.9,<0.10"]
+kernel = ["fresh-solutions>=0.9.1,<0.10"]
 dev = [
   "pytest>=8.0.0",
   "pytest-xdist>=3.8.0",
