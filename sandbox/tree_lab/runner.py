@@ -449,6 +449,7 @@ def run_case(
             "landing_inventory_max_m3": summary.get("landing_inventory_max_m3"),
             "landing_inventory_final_m3": summary.get("landing_inventory_final_m3"),
             "unreachable_count": summary.get("unreachable_count"),
+            "product_mix": summary.get("product_mix", {}),
             "machine_summaries": summary.get("machine_summaries", {}),
             "truck_summary": summary.get("truck_summary"),
         },
