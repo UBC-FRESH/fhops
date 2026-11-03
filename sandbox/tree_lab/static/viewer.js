@@ -1212,7 +1212,11 @@ export function createViewer(container, { onTime } = {}) {
           baseElevation = Math.min(...[...treeNodes.values()].map((node) => node.position.y));
         }
         if (terrain) {
-          baseElevation = Number(terrain.base_m ?? baseElevation);
+          const heights = Array.isArray(terrain.heights) ? terrain.heights : [];
+          const minimumHeight = heights.length
+            ? Math.min(...heights.map((value) => Number(value) || 0))
+            : 0;
+          baseElevation = Number(terrain.base_m ?? (baseElevation - minimumHeight));
           applyTerrain(root);
         }
 

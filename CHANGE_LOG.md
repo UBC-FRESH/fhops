@@ -1,3 +1,11 @@
+# 2026-11-03 — fix terrain base for negative heightfields (#369)
+
+- Replay terrain base now subtracts the heightfield minimum when no explicit
+  `base_m` is available, aligning terrain and retained/overlay trees with scene
+  tree elevations.
+- Fixes retained trees appearing below ground on the CTL Gavin project.
+- Added planning evidence.
+
 # 2026-11-03 — forwarder machine specs (#367)
 
 - Studio spec writer now includes `forwarder` in skidder-spec generation.
