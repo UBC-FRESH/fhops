@@ -24,9 +24,11 @@ positive FHOPS objective after the run.
 
 ## What is not done yet
 
-- Kernel SA is one proposal per iteration; the existing FHOPS SA samples a batch per step. The
-  adapter is an integration proof, not yet a behaviour-parity replacement.
-- Tabu and ILS adapters are next; the delta path needs an in-place FHOPS move/undo record.
+- Kernel SA, Tabu, and ILS all use one proposal per iteration; the existing FHOPS solvers sample
+  batches per step. The adapter is an integration proof, not yet a behaviour-parity replacement.
+- The fast path avoids the kernel's deep state copy and uses dirty-slot repair, but it is not a
+  true delta evaluator. An in-place FHOPS move/undo record and the block-separable incremental
+  scorer are the next performance step.
 - Telemetry, tuning, and watch integration still use the FHOPS implementations.
 - Parity gates: Tiny7, Small21, Jaffray, med42, and the synthetic scaling tiers, plus the #151
   performance envelope.
