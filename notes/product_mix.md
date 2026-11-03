@@ -20,8 +20,12 @@ Default demo prices are project-level `system_args.sawlog_price_per_m3` and
 
 ## Verification
 
-- Core test asserts aggregate product mix is populated.
+- Core test asserts aggregate product mix is populated and persisted in the
+  system summary.
 - Comparison page JS syntax check and Studio tests pass.
+- Demo CTL/full-tree runs: 772.8 m³ sawlog + 3.2 m³ pulp; at $85/$35 per m³,
+  product revenue is $65,804; net margins are $52,314 (CTL) and $50,125
+  (full-tree).
 
 ## Limits
 
