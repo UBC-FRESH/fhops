@@ -35,6 +35,7 @@ ensembles.
    howto/tabu
    howto/rolling_horizon
    howto/tactical_operational
+   howto/salvage_shelf_life
    howto/hauling
    howto/hydrology_quickstart
    howto/web

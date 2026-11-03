@@ -6,6 +6,34 @@
   and cost per m³ using proportional makespan allocation.
 - Added catalog cost regression coverage.
 
+# 2026-11-03 — salvage shelf-life and decay module (#380, #381, PR #383)
+
+- Added the shared `fhops.salvage` package with a typed `salvage.decay.v1`
+  curve library, source/boundary records, linear retention interpolation, and
+  advisory product windows.
+- Encoded the published Prestemon and Holmes (2008) mixed-conifer fire-killed
+  net-volume retention factors exactly (1.00, 0.99, 0.89, 0.58, 0.22, 0.00 at
+  years 0-5). No coefficients were fitted or extrapolated.
+- Encoded the Barrette et al. (2015) Canadian boreal shelf-life windows:
+  lumber 1-2 years, pulp up to 3-4 years, then bioenergy.
+- Added `fhops report salvage-shelf-life`, a read-only consumer that joins a
+  `block_id`/`years_since_disturbance` CSV to scenario blocks and reports
+  original volume (`Block.work_required`), retention, retained volume, optional
+  retained value at a caller-supplied `--value-per-m3`, and eligible products.
+- Added CSV/Markdown output, a worked example, Sphinx how-to/API pages, and the
+  authoritative note `notes/carb03_salvage_degradation.md`.
+- No objective, constraint, schedule, heuristic, or solver code changed.
+- Verification: `ruff format src tests`; `ruff check src tests` (clean);
+  `mypy src` (191 files, no issues); `pytest` (full suite); targeted
+  `pytest tests/test_salvage_degradation.py` (18 passed);
+  `FHOPS_RUN_FULL_CLI_TESTS=1 pytest tests/test_cli_report_salvage.py`
+  (5 passed); `sphinx-build -b html docs _build/html -W`; example CLI run on
+  `examples/tiny7/scenario.yaml` + `examples/salvage_shelf_life/storage.csv`.
+- Boundary: the first curve is a US Pacific Northwest reference, not a
+  BC-specific, species-specific, or roadside-storage operational curve.
+  Species/product curves, a dedicated storage curve, and a ws4 consumer remain
+  follow-on work.
+
 # 2026-11-03 — Studio scenario comparison page (#377)
 
 - Added `/studio/compare` with project/run selectors and query-parameter sharing.
