@@ -366,6 +366,7 @@ function render() {
   renderStats();
   renderMachines();
   renderMachineSpecs();
+  renderPolicyEffects();
   renderTruckSpecs();
   renderRoadWarning();
   renderProjectMeta();
@@ -701,6 +702,24 @@ const SPEC_FIELDS = {
     ["forwarder_unload_per_log_s", "fwd unload per log (s)"],
   ],
 };
+
+function renderPolicyEffects() {
+  const node = $("#policy-effects");
+  if (!node || !state.project) return;
+  const effects = state.project.system_args?.policy_effects || {};
+  const aggregate = effects._aggregate || {};
+  const machines = Object.entries(effects).filter(([id]) => id !== "_aggregate");
+  if (!machines.length) {
+    node.textContent = "No active machine policies.";
+    return;
+  }
+  const aggregateText = aggregate.failure_rate_per_machine_hour == null
+    ? "No stochastic breakdowns: steady policies do not set a failure rate."
+    : `Run: ${Number(aggregate.failure_rate_per_machine_hour).toFixed(3)} failures/machine-h · repair ${Number(aggregate.repair_hours).toFixed(1)} h · max grade ${Number(aggregate.max_skidder_grade).toFixed(0)}%`;
+  node.innerHTML = `<div class="policy-row">${escapeHtml(aggregateText)}</div>` + machines.map(([id, effect]) => (
+    `<div class="policy-row"><b>${escapeHtml(id)}</b> · ${escapeHtml(effect.role)} · ${escapeHtml(effect.label)}<br><span>cycle ${Number(effect.cycle_multiplier).toFixed(2)}× · breakdown ${escapeHtml(effect.breakdown_risk)} · break ${escapeHtml(effect.break_policy)} · grade ${escapeHtml(effect.grade_caution)} · damage ${escapeHtml(effect.damage_risk)} (advisory)</span></div>`
+  )).join("");
+}
 
 function renderMachineSpecs() {
   const node = $("#spec-list");
