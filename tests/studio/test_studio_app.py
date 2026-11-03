@@ -58,6 +58,16 @@ def test_run_history_marks_stale_after_project_edit(tmp_path: Path) -> None:
     assert any("Project edits" in reason for reason in freshness["reasons"])
 
 
+def test_compare_page_served(tmp_path: Path) -> None:
+    """The comparison page is served without a project context."""
+    app = create_app(
+        StudioConfig(cases_root=ROOT / "sandbox" / "cases", projects_root=tmp_path / "projects")
+    )
+    response = TestClient(app).get("/compare")
+    assert response.status_code == 200
+    assert "Scenario comparison" in response.text
+
+
 def test_stream_buffer_endpoint(tmp_path: Path) -> None:
     """The stream-buffer endpoint returns a closed riparian polygon."""
     app = create_app(
