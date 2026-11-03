@@ -1,3 +1,12 @@
+# 2026-11-03 — Studio system presets (#393)
+
+- Added full-tree ↔ CTL system preset selector in Studio.
+- Presets rebuild machine roles/fleets and landing assignments, preserve
+  terrain/retention/roads/landings/trucks/economics, and apply/clear the CTL
+  forwarder profile.
+- Added second-loader creation for two-landing projects.
+- Browser smoke test applied both presets with no page errors.
+
 # 2026-11-03 — operator-policy effects integration (#391)
 
 - Added Studio policy-effects panel with per-machine cycle, breakdown, break,
