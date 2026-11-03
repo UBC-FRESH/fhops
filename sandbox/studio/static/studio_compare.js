@@ -212,7 +212,7 @@ function render(left, right) {
   lastComparison = { left, right };
   renderCharts(left, right);
   $("#summary").innerHTML = `<h2>Summary</h2><table><thead><tr><th>Metric</th><th>${escapeHtml(left.projectId)}<br><span class="muted">${escapeHtml(left.runId)}</span></th><th>${escapeHtml(right.projectId)}<br><span class="muted">${escapeHtml(right.runId)}</span></th></tr></thead><tbody>${comparisonRows(left, right)}</tbody></table>`;
-  $("#economics").innerHTML = `<h2>Economics <span class="muted">(proportional makespan × daily operating cost)</span></h2><table><thead><tr><th>Metric</th><th>Left</th><th>Right</th></tr></thead><tbody>${economicsRows(left, right)}</tbody></table>`;
+  $("#economics").innerHTML = `<h2>Economics <span class="muted">(scheduled machine + truck + labor)</span></h2><table><thead><tr><th>Metric</th><th>Left</th><th>Right</th></tr></thead><tbody>${economicsRows(left, right)}</tbody></table>`;
   $("#machines").innerHTML = `<h2>Machine utilization</h2><table><thead><tr><th>Machine</th><th>Left</th><th>Right</th></tr></thead><tbody>${machineRows(left, right)}</tbody></table>`;
   $("#trucks").innerHTML = `<h2>Trucking</h2><table><thead><tr><th>Metric</th><th>Left</th><th>Right</th></tr></thead><tbody>${truckRows(left, right)}</tbody></table>`;
   $("#landings").innerHTML = `<h2>Landing stockpiles (final / peak)</h2><table><thead><tr><th>Landing</th><th>Left</th><th>Right</th></tr></thead><tbody>${landingRows(left, right)}</tbody></table>`;
