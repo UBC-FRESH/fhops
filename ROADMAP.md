@@ -698,6 +698,46 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
   - [x] Riparian clump generation, rendering, and routing exclusion
   - [x] Correct the Phase 21 closeout record
 
+## Phase 43 — Salvage shelf-life and wood degradation (CARB-03) — active
+
+Parent issue: #380. Child issue: #381. Branch:
+`feature/p43-salvage-degradation`. Authoritative note:
+`notes/carb03_salvage_degradation.md`.
+
+Goal: add the first bounded, source-backed salvage degradation surface. The
+phase provides a shared `salvage.decay.v1` curve contract, one published numeric
+retention curve, one Canadian boreal product shelf-life table, and one read-only
+report consumer. It does not change schedules, objectives, constraints,
+heuristics, or solvers.
+
+Sources:
+
+- Prestemon and Holmes (2008), section 4.2.6, for the mixed-conifer fire-killed
+  net-volume retention factors;
+- Barrette et al. (2015), *Forestry* 88:275-290, for the advisory lumber, pulp,
+  and bioenergy shelf-life windows.
+
+- [ ] P43.1 Add the shared decay module and salvage/storage report consumer (#381)
+  - [ ] Define the typed curve library and package data
+  - [ ] Add `fhops report salvage-shelf-life`
+  - [ ] Add unit, consumer, and CLI tests
+  - [ ] Add Sphinx docs, an example, and the note
+  - [ ] Run the FHOPS quality suite
+
+Acceptance:
+
+- The packaged curve reproduces the published whole-year factors and rejects
+  malformed points, duplicate ids, and unknown curves.
+- The report refuses unknown blocks, negative/non-numeric ages, duplicate block
+  rows, missing columns, and negative prices.
+- CSV/Markdown output names the curve, source, boundary, and read-only limits.
+- No solver/objective/constraint code changes.
+- Ruff, mypy, pytest, and Sphinx pass.
+
+Remaining follow-on: a BC or species-specific curve, a dedicated roadside-storage
+curve, a product-value/grade model, and a ws4 consumer. Those need their own
+public or project-approved sources and review.
+
 ## Backlog & Ideas
 - [x] 3D replay retention visibility, retained/stream legend, and machine-event timeline (#330).
 - [x] Studio terrain elevation alignment for derived trees, retained trees, landings, and replay terrain (#332).
