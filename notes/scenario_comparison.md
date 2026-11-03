@@ -59,10 +59,11 @@ The page reports:
 - total cost and cost per m³.
 
 `truck_hourly_cost` and `labor_hourly_cost` are read from project
-`system_args`. Scenario machine costs are copied into the Studio catalog (base
-machines and `-B` fleet clones), so existing projects are enriched on dataset
-load. This remains a proportional planning view, not full ownership, repair,
-fuel, or finance accounting.
+`system_args`; the comparison page exposes them as editable per-side controls
+and saves them back to the project. Scenario machine costs are copied into the
+Studio catalog (base machines and `-B` fleet clones), so existing projects are
+enriched on dataset load. This remains a proportional planning view, not full
+ownership, repair, fuel, or finance accounting.
 
 ## Tests
 

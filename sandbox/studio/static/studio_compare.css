@@ -18,9 +18,10 @@ main { padding: 14px; max-width: 1500px; margin: 0 auto; display: grid; gap: 12p
 .chart-value { color: #d7e3e7; font-variant-numeric: tabular-nums; }
 .side { background: #101416; border: 1px solid #2b3a40; border-radius: 9px; padding: 10px; display: grid; gap: 7px; }
 .side h2 { margin: 0 0 2px; font-size: 12px; color: #f08a24; }
-.side label { display: grid; grid-template-columns: 52px 1fr; gap: 6px; align-items: center; color: #93a6ae; font-size: 10px; }
-select, button { background: #263237; color: #e6eef2; border: 1px solid #52656b; border-radius: 5px; padding: 5px 7px; font-size: 11px; }
+.side label { display: grid; grid-template-columns: 108px 1fr; gap: 6px; align-items: center; color: #93a6ae; font-size: 10px; }
+select, input, button { background: #263237; color: #e6eef2; border: 1px solid #52656b; border-radius: 5px; padding: 4px 6px; font-size: 11px; min-width: 0; }
 button { cursor: pointer; }
+button.small { justify-self: start; padding: 3px 7px; font-size: 10px; }
 #compare { height: 34px; align-self: end; background: #f08a24; color: #17120c; border: 0; font-weight: 700; }
 .panel { background: #101416; border: 1px solid #2b3a40; border-radius: 9px; padding: 12px; }
 .panel:empty { display: none; }
