@@ -17,6 +17,7 @@ from fhops.ground_system import (
     GroundSystemError,
     Landing,
     LandingFleet,
+    MachineSpec,
     TruckSpec,
     landing_route_cost,
     simulate_ground_system,
@@ -157,6 +158,35 @@ def test_ground_system_accepts_forwarder_roles(tmp_path: Path) -> None:
     )
     assert result.tree_count > 0
     assert result.to_dict()["machines"]["H2"]["type"] == "forwarder"
+
+
+def test_forwarder_productivity_spec_drives_cycle(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+
+    def run(productivity: float):
+        specs = {
+            machine: MachineSpec(
+                machine_id=machine,
+                machine_type="forwarder",
+                capacity_m3=16.0,
+                productivity_m3_per_smh=productivity,
+            )
+            for machine in ("H2", "H3")
+        }
+        return simulate_ground_system(
+            scenario,
+            block_id="B01",
+            feller_machine_id="H1",
+            skidder_machine_ids=("H2", "H3"),
+            loader_machine_id="H4",
+            bunch_volume_m3=4.0,
+            rate_model="reference",
+            skidder_specs=specs,
+        )
+
+    slow = run(2.0)
+    fast = run(20.0)
+    assert fast.makespan_s < slow.makespan_s
 
 
 def test_ground_system_assigns_loader_fleets_per_landing(tmp_path: Path) -> None:

@@ -324,6 +324,11 @@ def _load_skidder_specs(path: Path) -> dict[str, MachineSpec]:
             load_per_log_s=float(values.get("load_per_log_s", 5.0)),
             unload_fixed_s=float(values.get("unload_fixed_s", 45.0)),
             unload_per_log_s=float(values.get("unload_per_log_s", 3.0)),
+            productivity_m3_per_smh=(
+                float(values["productivity_m3_per_smh"])
+                if values.get("productivity_m3_per_smh") is not None
+                else None
+            ),
         )
     return specs
 
