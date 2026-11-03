@@ -737,3 +737,6 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
 - [ ] Hydrology optimizer integration: derive exposure per candidate schedule and gate it on reviewed evidence. Deferred until a route-state contract and a reviewed response surface exist.
 - [ ] Dataset inspection + data-quality polish (see `notes/dataset_inspection_plan.md`)
   - [ ] Enforce/document 24 h/day machine availability in docs + sample datasets, and flag deviations via the inspector CLI.
+- [ ] Shared metaheuristic kernel adapter: finish FHOPS parity and performance gates for kernel
+  SA/Tabu/ILS, then retire the duplicate solver loops. Design note:
+  `notes/metaheuristic_kernel_adapter.md`.

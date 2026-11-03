@@ -5397,3 +5397,11 @@ PY
 - 2026-10-31: P20 replay cache invalidation: replay assets are now versioned by
   `path_mode=swath`; the game rejects old nearest-neighbor player caches even if
   their duration metadata matches.
+
+- 2026-11-03: added the shared-kernel adapter proof of concept. `fhops.optimization.meta`
+  provides `FhopsProblem`, `FhopsContext`, `FhopsOperator`, `slot_diff`, `schedule_assignments`,
+  and `solve_kernel_sa` over `fresh-solutions` 0.9. The adapter keeps the FHOPS schedule,
+  repair/sanitizer, objective weights, and exact planned-score replay; the kernel supplies
+  simulated annealing. Tests: `tests/meta/test_kernel_adapter.py` and the existing
+  `tests/heuristics` suite pass. This is an integration proof, not yet a parity replacement;
+  tabu/ILS and the delta path remain next.
