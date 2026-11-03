@@ -1,3 +1,12 @@
+# 2026-11-03 — fix terrain base for negative heightfields (#369)
+
+- Replay now carries project `base_m` and source heightfield minimum; fallback
+  base is `lowest_scene_tree_y - source_min_height`.
+- Removed `applyTerrain`'s post-placement base rewrite, which shifted retained
+  and overlay trees after tree/terrain placement.
+- Fixes retained trees appearing below ground on the CTL Gavin project.
+- Added planning evidence.
+
 # 2026-11-03 — forwarder machine specs (#367)
 
 - Studio spec writer now includes `forwarder` in skidder-spec generation.
