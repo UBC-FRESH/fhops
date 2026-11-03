@@ -917,7 +917,7 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
                 for key in ("seconds_per_m3", "fixed_s", "per_log_s")
                 if key in spec
             }
-        elif role in {"grapple_skidder", "skidder"}:
+        elif role in {"grapple_skidder", "skidder", "forwarder"}:
             skidder_specs[machine_id] = {
                 key: float(spec[key])
                 for key in (
