@@ -1,3 +1,12 @@
+# 2026-11-03 — CTL product mix and comparison value (#397)
+
+- Added sawlog/pulp volumes to run product mix and KPIs.
+- Comparison page adds sawlog/pulp prices, product revenue, net margin, and
+  value/m³; assumptions are editable and saved per project.
+- Added product-mix regression coverage.
+- Product prices are planning assumptions; classification comes from the
+  reference stem model.
+
 # 2026-11-03 — Studio system presets (#393)
 
 - Added full-tree ↔ CTL system preset selector in Studio.

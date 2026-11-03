@@ -63,6 +63,8 @@ async function loadAssumptions(side, projectId) {
     const args = dataset.project?.system_args || {};
     $(`#${side}-truck`).value = Number(args.truck_hourly_cost ?? 0);
     $(`#${side}-labor`).value = Number(args.labor_hourly_cost ?? 0);
+    $(`#${side}-sawlog`).value = Number(args.sawlog_price_per_m3 ?? 0);
+    $(`#${side}-pulp`).value = Number(args.pulp_price_per_m3 ?? 0);
   } catch (_error) { /* non-critical */ }
 }
 
@@ -70,9 +72,13 @@ function assumptionRates(side, data) {
   const systemArgs = data.dataset?.project?.system_args || {};
   const truck = Number($(`#${side}-truck`).value);
   const labor = Number($(`#${side}-labor`).value);
+  const sawlog = Number($(`#${side}-sawlog`).value);
+  const pulp = Number($(`#${side}-pulp`).value);
   return {
     truckRate: Number.isFinite(truck) ? Math.max(0, truck) : Number(systemArgs.truck_hourly_cost || 0),
     laborRate: Number.isFinite(labor) ? Math.max(0, labor) : Number(systemArgs.labor_hourly_cost || 0),
+    sawlogPrice: Number.isFinite(sawlog) ? Math.max(0, sawlog) : Number(systemArgs.sawlog_price_per_m3 || 0),
+    pulpPrice: Number.isFinite(pulp) ? Math.max(0, pulp) : Number(systemArgs.pulp_price_per_m3 || 0),
   };
 }
 
@@ -84,6 +90,8 @@ async function saveAssumptions(side) {
     project.system_args = project.system_args || {};
     project.system_args.truck_hourly_cost = Math.max(0, Number($(`#${side}-truck`).value) || 0);
     project.system_args.labor_hourly_cost = Math.max(0, Number($(`#${side}-labor`).value) || 0);
+    project.system_args.sawlog_price_per_m3 = Math.max(0, Number($(`#${side}-sawlog`).value) || 0);
+    project.system_args.pulp_price_per_m3 = Math.max(0, Number($(`#${side}-pulp`).value) || 0);
     await api(`projects/${encodeURIComponent(projectId)}`, {
       method: "PUT",
       body: JSON.stringify(project),
@@ -149,6 +157,11 @@ function economics(data, side) {
   const laborCost = machineIds.length * laborRate * makespanH;
   const total = scheduled + truckCost + laborCost;
   const volume = Number(run.kpis?.processed_volume_m3 || 0);
+  const mix = run.kpis?.product_mix || {};
+  const sawlog = Number(mix.sawlog_m3 || 0);
+  const pulp = Number(mix.pulp_m3 || 0);
+  const revenue = sawlog * rates.sawlogPrice + pulp * rates.pulpPrice;
+  const margin = revenue - total;
   return {
     machineCount: machineIds.length,
     pricedMachineCount: priced,
@@ -158,10 +171,17 @@ function economics(data, side) {
     truckCount,
     truckRate,
     laborRate,
+    sawlogPrice: rates.sawlogPrice,
+    pulpPrice: rates.pulpPrice,
+    sawlog,
+    pulp,
     truckCost,
     laborCost,
     total,
+    revenue,
+    margin,
     costPerM3: volume > 0 ? total / volume : null,
+    valuePerM3: volume > 0 ? revenue / volume : null,
   };
 }
 
@@ -171,12 +191,15 @@ function economicsRows(left, right) {
   const rows = [
     ["Active machines", a.machineCount, b.machineCount],
     ["Costed machines", a.pricedMachineCount, b.pricedMachineCount],
+    ["Sawlog / pulp m³", `${fmt(a.sawlog)} / ${fmt(a.pulp)}`, `${fmt(b.sawlog)} / ${fmt(b.pulp)}`],
+    ["Product revenue", `$${a.revenue.toFixed(0)} (${fmt(a.sawlogPrice)} / ${fmt(a.pulpPrice)})`, `$${b.revenue.toFixed(0)} (${fmt(b.sawlogPrice)} / ${fmt(b.pulpPrice)})`],
     ["Machine cost — scheduled", `$${a.scheduled.toFixed(0)}`, `$${b.scheduled.toFixed(0)}`],
     ["Machine cost — productive", `$${a.productive.toFixed(0)}`, `$${b.productive.toFixed(0)}`],
     ["Truck cost", `$${a.truckCost.toFixed(0)} (${a.truckCount} @ $${a.truckRate}/h)`, `$${b.truckCost.toFixed(0)} (${b.truckCount} @ $${b.truckRate}/h)`],
     ["Labor cost", `$${a.laborCost.toFixed(0)} ($${a.laborRate}/machine-h)`, `$${b.laborCost.toFixed(0)} ($${b.laborRate}/machine-h)`],
     ["Total cost", `$${a.total.toFixed(0)}`, `$${b.total.toFixed(0)}`],
     ["Cost per m³", a.costPerM3 == null ? "unavailable" : `$${a.costPerM3.toFixed(2)}`, b.costPerM3 == null ? "unavailable" : `$${b.costPerM3.toFixed(2)}`],
+    ["Net margin", `$${a.margin.toFixed(0)}`, `$${b.margin.toFixed(0)}`],
   ];
   return rows.map(([label, av, bv]) => `<tr><th>${label}</th><td class="num">${av}</td><td class="num">${bv}</td></tr>`).join("");
 }
@@ -240,8 +263,10 @@ function renderCharts(left, right) {
   const b = economics(right, "right");
   const metrics = [
     ["Makespan h", Number(left.meta.run.kpis?.makespan_s || 0) / 3600, Number(right.meta.run.kpis?.makespan_s || 0) / 3600, (v) => fmt(v)],
+    ["Product revenue", a.revenue, b.revenue, (v) => `$${fmt(v, 0)}`],
     ["Total cost", a.total, b.total, (v) => `$${fmt(v, 0)}`],
     ["Cost / m³", a.costPerM3 || 0, b.costPerM3 || 0, (v) => `$${fmt(v, 2)}`],
+    ["Net margin", a.margin, b.margin, (v) => `$${fmt(v, 0)}`],
     ["Warnings", (left.meta.run.warnings || []).length, (right.meta.run.warnings || []).length, (v) => `${v}`],
   ];
   $("#charts").innerHTML = `<h2>Visual comparison <span class="muted">orange = left · blue = right</span></h2>` + metrics.map(([label, av, bv, fmtValue]) => {
