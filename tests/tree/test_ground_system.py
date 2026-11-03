@@ -19,6 +19,7 @@ from fhops.ground_system import (
     LandingFleet,
     MachineSpec,
     TruckSpec,
+    forwarder_productivity_for_distance,
     landing_route_cost,
     simulate_ground_system,
     write_ground_system,
@@ -187,6 +188,19 @@ def test_forwarder_productivity_spec_drives_cycle(tmp_path: Path) -> None:
     slow = run(2.0)
     fast = run(20.0)
     assert fast.makespan_s < slow.makespan_s
+
+
+def test_forwarder_regression_varies_with_distance() -> None:
+    spec = MachineSpec(
+        machine_id="H2",
+        machine_type="forwarder",
+        capacity_m3=16.0,
+        forwarder_model="eriksson-final-felling",
+        forwarder_stem_size_m3=0.3,
+    )
+    short = forwarder_productivity_for_distance(spec, 150.0)
+    long = forwarder_productivity_for_distance(spec, 550.0)
+    assert short > long > 0
 
 
 def test_ground_system_assigns_loader_fleets_per_landing(tmp_path: Path) -> None:
