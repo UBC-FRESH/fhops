@@ -40,6 +40,19 @@ Results:
 The CTL forwarders are the critical path (about 15.6 h busy each); full-tree
 processors are the critical path (about 14.0 h / 10.1 h).
 
+## Economics
+
+The page reports machine operating cost as:
+
+```text
+sum(daily operating cost × makespan_hours / daily_hours)
+```
+
+for every active machine, plus cost per m³. Scenario machine costs are copied
+into the Studio catalog (base machines and `-B` fleet clones), so existing
+projects are enriched on dataset load. This is a proportional machine-cost
+view, not a full ownership/repair/fuel accounting model.
+
 ## Tests
 
 - Studio app route smoke test.
