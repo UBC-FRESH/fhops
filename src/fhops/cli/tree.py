@@ -329,6 +329,10 @@ def _load_skidder_specs(path: Path) -> dict[str, MachineSpec]:
                 if values.get("productivity_m3_per_smh") is not None
                 else None
             ),
+            forwarder_model=(
+                str(values["forwarder_model"]) if values.get("forwarder_model") else None
+            ),
+            forwarder_stem_size_m3=float(values.get("forwarder_stem_size_m3", 0.3)),
         )
     return specs
 

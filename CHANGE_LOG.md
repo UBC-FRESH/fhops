@@ -1,3 +1,11 @@
+# 2026-11-03 — distance-varying forwarder calibration (#373)
+
+- Added `forwarder_model` and `forwarder_stem_size_m3` to MachineSpec.
+- Forwarder productivity is evaluated per route distance for Eriksson,
+  ADV1N12, and Ghaffariyan models; scalar productivity remains fallback.
+- Studio spec editor/runner expose the new fields.
+- Added distance-decay and manifest tests.
+
 # 2026-11-03 — calibrated forwarder productivity (#371)
 
 - Added `MachineSpec.productivity_m3_per_smh`; forwarder cycle time is derived

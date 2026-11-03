@@ -28,8 +28,19 @@ the Han grapple-skidder whole-tree regression for CTL forwarders.
 - Core test compares 2 vs 20 m³/SMH forwarders and checks makespan ordering.
 - 37 targeted tests pass; `ruff`, `mypy`, `node --check`, and `pre-commit` pass.
 
+## Distance-varying regression
+
+- `MachineSpec.forwarder_model` accepts `eriksson-final-felling`,
+  `eriksson-thinning`, `adv1n12-shortwood`, `ghaffariyan-small`, or
+  `ghaffariyan-large`.
+- The helper is evaluated with each bunch’s actual route distance; Eriksson
+  models additionally use `forwarder_stem_size_m3` and payload capacity.
+- `productivity_m3_per_smh` remains the scalar fallback.
+- Studio exposes the model and stem-size fields; runner writes them in
+  `skidder_specs.json`.
+
 ## Limits
 
-- The productivity value is a scalar calibrated at a reference distance, not a
-  distance-varying regression inside the event model.
 - Forwarder loading/unloading split is still reference timing.
+- Supported models are limited to those with extraction-distance inputs; Kellogg
+  and brushwood models require additional inputs and are not wired.

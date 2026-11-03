@@ -929,9 +929,12 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
                     "unload_fixed_s",
                     "unload_per_log_s",
                     "productivity_m3_per_smh",
+                    "forwarder_stem_size_m3",
                 )
                 if key in spec
             }
+            if spec.get("forwarder_model"):
+                skidder_specs[machine_id]["forwarder_model"] = str(spec["forwarder_model"])
     for key, values in (
         ("loader_specs", loader_specs),
         ("skidder_specs", skidder_specs),
