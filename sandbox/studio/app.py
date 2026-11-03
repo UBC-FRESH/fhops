@@ -288,6 +288,12 @@ def create_app(config: StudioConfig) -> FastAPI:
     def edit_3d() -> FileResponse:
         return FileResponse(STATIC_DIR / "studio_3d.html", headers={"Cache-Control": "no-store"})
 
+    @app.get("/compare")
+    def compare() -> FileResponse:
+        return FileResponse(
+            STATIC_DIR / "studio_compare.html", headers={"Cache-Control": "no-store"}
+        )
+
     @app.get("/api/projects/{project_id}/project.json")
     def project_file(project_id: str) -> FileResponse:
         try:

@@ -1,3 +1,13 @@
+# 2026-11-03 — Studio scenario comparison page (#377)
+
+- Added `/studio/compare` with project/run selectors and query-parameter sharing.
+- Compares KPIs, freshness, warnings, machine utilization, trucking, and
+  per-landing stockpiles.
+- Added a fair full-tree comparator project using the same terrain, retention,
+  landings, trucks, and grade limit.
+- Demo comparison: CTL 20.3 h vs full-tree 18.8 h; both 553 trees / 776 m³ and
+  zero warnings.
+
 # 2026-11-03 — forwarder load/unload timing calibration (#375)
 
 - Added optional forwarder load/unload fixed and per-log timing fields.
