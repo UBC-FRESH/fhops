@@ -13,7 +13,7 @@ repos:
         args: ["src"]
         pass_filenames: false
         additional_dependencies:
-          - "fresh-solutions @ git+https://github.com/UBC-FRESH/fresh-solutions@v0.9.1"
+          - "fresh-solutions==0.9.3"
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
