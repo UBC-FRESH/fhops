@@ -5406,3 +5406,7 @@ PY
   `tests/heuristics` suite pass. Added kernel Tabu and ILS plus a dirty-repair fast SA path;
   all three replay exactly on the simple and Tiny7 scenario gates. This is an integration proof,
   not yet a behaviour-parity replacement; the delta path remains next.
+- 2026-11-03: added `scripts/benchmark_kernel_paths.py` to reproduce the kernel full-repair vs
+  dirty-repair timing on a scenario. Tiny7, 200 iterations, seed 7: full 0.118 s / -2673.433,
+  fast 0.103 s / -2646.813. The fast search score is approximate; the returned objective is
+  freshly and fully rescored.
