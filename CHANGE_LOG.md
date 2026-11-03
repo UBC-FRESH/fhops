@@ -1,3 +1,9 @@
+# 2026-11-03 — comparison economics assumptions editor (#389)
+
+- Comparison page exposes per-side truck $/h and labor $/machine-h inputs.
+- Assumptions load from project `system_args` and can be saved back.
+- Cost tables/charts/export recompute immediately from overrides.
+
 # 2026-11-03 — P45 closeout
 
 - PR #387 squash-merged to `main` as

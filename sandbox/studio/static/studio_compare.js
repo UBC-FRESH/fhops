@@ -4,8 +4,11 @@ const params = new URLSearchParams(location.search);
 let projects = [];
 let lastComparison = null;
 
-async function api(path) {
-  const response = await fetch(API + path.replace(/^\/+/, ""));
+async function api(path, options = {}) {
+  const response = await fetch(API + path.replace(/^\/+/, ""), {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
   if (!response.ok) {
     let detail = response.statusText;
     try { detail = (await response.json()).detail || detail; } catch (_error) { /* ignore */ }
@@ -53,6 +56,44 @@ async function loadRuns(side, projectId) {
     : "<option value=\"\">No runs</option>";
 }
 
+async function loadAssumptions(side, projectId) {
+  if (!projectId) return;
+  try {
+    const dataset = await api(`projects/${encodeURIComponent(projectId)}/dataset`);
+    const args = dataset.project?.system_args || {};
+    $(`#${side}-truck`).value = Number(args.truck_hourly_cost ?? 0);
+    $(`#${side}-labor`).value = Number(args.labor_hourly_cost ?? 0);
+  } catch (_error) { /* non-critical */ }
+}
+
+function assumptionRates(side, data) {
+  const systemArgs = data.dataset?.project?.system_args || {};
+  const truck = Number($(`#${side}-truck`).value);
+  const labor = Number($(`#${side}-labor`).value);
+  return {
+    truckRate: Number.isFinite(truck) ? Math.max(0, truck) : Number(systemArgs.truck_hourly_cost || 0),
+    laborRate: Number.isFinite(labor) ? Math.max(0, labor) : Number(systemArgs.labor_hourly_cost || 0),
+  };
+}
+
+async function saveAssumptions(side) {
+  const projectId = $(`#${side}-project`).value;
+  if (!projectId) return;
+  try {
+    const project = await api(`projects/${encodeURIComponent(projectId)}`);
+    project.system_args = project.system_args || {};
+    project.system_args.truck_hourly_cost = Math.max(0, Number($(`#${side}-truck`).value) || 0);
+    project.system_args.labor_hourly_cost = Math.max(0, Number($(`#${side}-labor`).value) || 0);
+    await api(`projects/${encodeURIComponent(projectId)}`, {
+      method: "PUT",
+      body: JSON.stringify(project),
+    });
+    $("#status").textContent = `Saved ${side} economics assumptions`;
+  } catch (error) {
+    $("#status").textContent = `Save failed: ${error.message}`;
+  }
+}
+
 async function initSelectors() {
   await loadProjects();
   if (!projects.length) {
@@ -64,6 +105,10 @@ async function initSelectors() {
   $("#left-project").value = leftProject;
   $("#right-project").value = rightProject;
   await Promise.all([loadRuns("left", leftProject), loadRuns("right", rightProject)]);
+  await Promise.all([
+    loadAssumptions("left", leftProject),
+    loadAssumptions("right", rightProject),
+  ]);
   if (params.get("left_run")) $("#left-run").value = params.get("left_run");
   if (params.get("right_run")) $("#right-run").value = params.get("right_run");
 }
@@ -77,14 +122,14 @@ async function runData(projectId, runId) {
   return { projectId, runId, meta, events, dataset };
 }
 
-function economics(data) {
+function economics(data, side) {
   const run = data.meta.run;
   const makespanH = Number(run.kpis?.makespan_s || 0) / 3600;
   const catalog = new Map((data.dataset?.project?.catalog || []).map((item) => [item.id, item]));
   const machineIds = Object.keys(run.kpis?.machine_summaries || {});
-  const systemArgs = data.dataset?.project?.system_args || {};
-  const truckRate = Number(systemArgs.truck_hourly_cost || 0);
-  const laborRate = Number(systemArgs.labor_hourly_cost || 0);
+  const rates = assumptionRates(side, data);
+  const truckRate = rates.truckRate;
+  const laborRate = rates.laborRate;
   let scheduled = 0;
   let productive = 0;
   let priced = 0;
@@ -121,8 +166,8 @@ function economics(data) {
 }
 
 function economicsRows(left, right) {
-  const a = economics(left);
-  const b = economics(right);
+  const a = economics(left, "left");
+  const b = economics(right, "right");
   const rows = [
     ["Active machines", a.machineCount, b.machineCount],
     ["Costed machines", a.pricedMachineCount, b.pricedMachineCount],
@@ -191,8 +236,8 @@ function landingRows(left, right) {
 }
 
 function renderCharts(left, right) {
-  const a = economics(left);
-  const b = economics(right);
+  const a = economics(left, "left");
+  const b = economics(right, "right");
   const metrics = [
     ["Makespan h", Number(left.meta.run.kpis?.makespan_s || 0) / 3600, Number(right.meta.run.kpis?.makespan_s || 0) / 3600, (v) => fmt(v)],
     ["Total cost", a.total, b.total, (v) => `$${fmt(v, 0)}`],
@@ -251,18 +296,18 @@ function exportComparison() {
     $("#status").textContent = "Run a comparison before exporting.";
     return;
   }
-  const side = (data) => ({
+  const side = (data, name) => ({
     project_id: data.projectId,
     run_id: data.runId,
     freshness: data.meta.freshness,
     run: data.meta.run,
-    economics: economics(data),
+    economics: economics(data, name),
     landing_inventory: data.events?.landing_inventory || {},
   });
   const payload = {
     generated_utc: new Date().toISOString(),
-    left: side(lastComparison.left),
-    right: side(lastComparison.right),
+    left: side(lastComparison.left, "left"),
+    right: side(lastComparison.right, "right"),
   };
   const blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], { type: "application/json" });
   const link = document.createElement("a");
@@ -272,8 +317,19 @@ function exportComparison() {
   setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
 
-$("#left-project").addEventListener("change", (event) => loadRuns("left", event.target.value));
-$("#right-project").addEventListener("change", (event) => loadRuns("right", event.target.value));
+$("#left-project").addEventListener("change", async (event) => {
+  await Promise.all([loadRuns("left", event.target.value), loadAssumptions("left", event.target.value)]);
+});
+$("#right-project").addEventListener("change", async (event) => {
+  await Promise.all([loadRuns("right", event.target.value), loadAssumptions("right", event.target.value)]);
+});
+for (const id of ["left-truck", "left-labor", "right-truck", "right-labor"]) {
+  $(`#${id}`).addEventListener("change", () => {
+    if (lastComparison) render(lastComparison.left, lastComparison.right);
+  });
+}
+$("#left-save").addEventListener("click", () => saveAssumptions("left"));
+$("#right-save").addEventListener("click", () => saveAssumptions("right"));
 $("#compare").addEventListener("click", compare);
 $("#export").addEventListener("click", exportComparison);
 
