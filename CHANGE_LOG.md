@@ -1,3 +1,11 @@
+# 2026-11-03 — product mix closeout
+
+- CTL/full-tree demo product mix: 772.8 m³ sawlog + 3.2 m³ pulp.
+- At $85/$35 per m³, revenue is $65,804; net margins are $52,314 (CTL) and
+  $50,125 (full-tree).
+- PR #396 and product-summary fix PR #397 merged; public deployment `f4e60e59`.
+- Main CI `41742670087` passed.
+
 # 2026-11-03 — product mix in system summary (#398)
 
 - Persisted `GroundSystemResult.product_mix` in `system_summary.json`; previously
