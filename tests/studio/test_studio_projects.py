@@ -321,6 +321,12 @@ def test_operator_policy_translation(tmp_path: Path) -> None:
     assert args["skidder_empty_speed"] > 1.4
     assert args["loader_process_fixed"] > 45.0
     assert args["processor_productivity_multiplier"] > 1.0
+    assert args["policy_effects"][skidder["id"]]["breakdown_risk"] == "elevated"
+    assert args["policy_effects"][loader["id"]]["grade_caution"] == "high"
+    if project["system_args"].get("shift_days") is not None:
+        assert args["failure_rate"] > 0
+        assert args["repair_hours"] > 0
+        assert args["max_skidder_grade"] <= 80.0
     project["operator_policies"][processor["id"]] = "careful"
     args = apply_operator_policies(project)
     assert args["processor_productivity_multiplier"] < 1.0

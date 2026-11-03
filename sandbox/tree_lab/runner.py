@@ -244,6 +244,10 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         "loader_process_fixed": "--loader-process-fixed",
         "loader_process_per_log": "--loader-process-per-log",
         "max_skidder_grade": "--max-skidder-grade",
+        "failure_rate": "--failure-rate",
+        "repair_hours": "--repair-hours",
+        "repair_cv": "--repair-cv",
+        "breakdown_seed": "--breakdown-seed",
     }
     for key, flag in option_map.items():
         value = args.get(key)
