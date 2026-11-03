@@ -1,3 +1,10 @@
+# 2026-11-03 — forwarder machine specs (#367)
+
+- Studio spec writer now includes `forwarder` in skidder-spec generation.
+- Forwarder payload/speed/load-time overrides now reach `skidder_specs` and the
+  runner instead of being ignored.
+- Added role/spec propagation coverage.
+
 # 2026-11-02 — event machine types from scenario roles (#365)
 
 - `GroundSystemResult` now carries scenario machine roles and serializes them
