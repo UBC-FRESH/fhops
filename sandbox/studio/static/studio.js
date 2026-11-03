@@ -676,6 +676,7 @@ const SPEC_FIELDS = {
     ["load_per_log_s", "load per log (s)"],
     ["unload_fixed_s", "unload fixed (s)"],
     ["unload_per_log_s", "unload per log (s)"],
+    ["productivity_m3_per_smh", "calibrated m³/SMH"],
   ],
   skidder: [
     ["capacity_m3", "payload (m³)"],
@@ -685,6 +686,7 @@ const SPEC_FIELDS = {
     ["load_per_log_s", "load per log (s)"],
     ["unload_fixed_s", "unload fixed (s)"],
     ["unload_per_log_s", "unload per log (s)"],
+    ["productivity_m3_per_smh", "calibrated m³/SMH"],
   ],
 };
 
