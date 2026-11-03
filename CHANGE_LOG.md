@@ -1,3 +1,11 @@
+# 2026-11-03 — scenario comparison economics (#379)
+
+- Studio catalog retains scenario machine operating cost and daily hours; `-B`
+  clones inherit their source costs.
+- Comparison page adds active/costed machine counts, machine operating cost,
+  and cost per m³ using proportional makespan allocation.
+- Added catalog cost regression coverage.
+
 # 2026-11-03 — Studio scenario comparison page (#377)
 
 - Added `/studio/compare` with project/run selectors and query-parameter sharing.

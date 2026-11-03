@@ -29,6 +29,15 @@ from sandbox.tree_lab.cases import load_case
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def test_project_catalog_has_machine_costs() -> None:
+    """Scenario operating costs are retained for comparison economics."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    h1 = next(item for item in project["catalog"] if item["id"] == "H1")
+    assert h1["operating_cost"] == 950.0
+    assert h1["daily_hours"] == 24.0
+
+
 def test_project_dataset_and_retention(tmp_path: Path) -> None:
     """A project can be created, retained, saved, and read back."""
     case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
