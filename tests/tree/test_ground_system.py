@@ -139,6 +139,9 @@ def test_ground_system_processor_stage(tmp_path: Path) -> None:
         event.end_s for event in processor_events
     )
     assert result.rate_provenance["processor"]["model"] == "tn103_area_a"
+    assert result.product_mix["sawlog_m3"] >= 0
+    assert result.product_mix["pulp_m3"] >= 0
+    assert result.product_mix["sawlog_m3"] + result.product_mix["pulp_m3"] > 0
 
 
 def test_ground_system_reports_harvester_processing_model(tmp_path: Path) -> None:

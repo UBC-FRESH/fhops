@@ -547,6 +547,8 @@ class GroundSystemTree:
     merchantable_volume_m3: float
     log_count: int
     processed_s: float
+    sawlog_volume_m3: float = 0.0
+    pulp_volume_m3: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -660,6 +662,7 @@ class GroundSystemResult:
     landing_inventory_final_m3: float
     landing_inventory_max_m3: float
     landing_inventory: dict[str, dict[str, float]]
+    product_mix: dict[str, float]
     machine_types: dict[str, str]
     trees: tuple[GroundSystemTree, ...]
     events: tuple[GroundSystemEvent, ...]
@@ -707,6 +710,7 @@ class GroundSystemResult:
             "landing_inventory_final_m3": self.landing_inventory_final_m3,
             "landing_inventory_max_m3": self.landing_inventory_max_m3,
             "landing_inventory": self.landing_inventory,
+            "product_mix": self.product_mix,
             "tree_count": self.tree_count,
             "processed_volume_m3": self.processed_volume_m3,
             "unreachable_count": self.unreachable_count,
@@ -1379,15 +1383,20 @@ def simulate_ground_system(
         )
         previous_x, previous_y = event.machine_x_m, event.machine_y_m
         fb_cursor = process_end
+        stem = trees_by_id[event.tree_id]
+        sawlog_volume = sum(log.volume_m3 for log in stem.logs if log.product.lower() == "sawlog")
+        pulp_volume = sum(log.volume_m3 for log in stem.logs if log.product.lower() == "pulp")
         trees.append(
             GroundSystemTree(
                 tree_id=event.tree_id,
                 x_m=event.x_m,
                 y_m=event.y_m,
-                dbh_cm=trees_by_id[event.tree_id].dbh_cm,
+                dbh_cm=stem.dbh_cm,
                 merchantable_volume_m3=event.merchantable_volume_m3,
                 log_count=event.log_count,
                 processed_s=process_end,
+                sawlog_volume_m3=sawlog_volume,
+                pulp_volume_m3=pulp_volume,
             )
         )
     max_bunch_volume_m3 = min(spec.capacity_m3 for spec in skidder_specs.values())
@@ -1472,6 +1481,10 @@ def simulate_ground_system(
         )
     )
     machine_types = {machine: str(machines[machine].role or "machine") for machine in machine_ids}
+    product_mix = {
+        "sawlog_m3": round(sum(tree.sawlog_volume_m3 for tree in trees), 6),
+        "pulp_m3": round(sum(tree.pulp_volume_m3 for tree in trees), 6),
+    }
     harvester_caveat = (
         "Harvester processing uses the reference ADV6N10 CTL regression with "
         "stump-side multi-product bucking assumptions."
@@ -1539,6 +1552,7 @@ def simulate_ground_system(
         landing_inventory_final_m3=landing_final,
         landing_inventory_max_m3=landing_max,
         landing_inventory=landing_inventory,
+        product_mix=product_mix,
         machine_types=machine_types,
         trees=tuple(trees),
         events=tuple(events),
