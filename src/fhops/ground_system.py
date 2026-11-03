@@ -1050,6 +1050,9 @@ def simulate_ground_system(
             stems = build_stem_inventory(scenario_file)
         except Exception as exc:  # noqa: BLE001 - preserve dependency error text
             raise GroundSystemError(str(exc)) from exc
+    processing_model: Literal["feller_buncher", "harvester"] = (
+        "harvester" if machines[feller_machine_id].role == "harvester" else "feller_buncher"
+    )
     try:
         fb_sim = simulate_block(
             scenario_file,
@@ -1061,6 +1064,7 @@ def simulate_ground_system(
             reach_radius_m=feller_reach_radius_m,
             travel_speed_m_per_s=feller_travel_speed_m_per_s,
             processing_time_multiplier=feller_processing_time_multiplier,
+            processing_model=processing_model,
             path_mode=path_mode,
             obstacles=obstacles,
         )
@@ -1165,6 +1169,14 @@ def simulate_ground_system(
     except TerrainError as exc:
         raise GroundSystemError(str(exc)) from exc
     rate_provenance["terrain"] = router.provenance()
+    rate_provenance["harvester"] = {
+        "machine_id": feller_machine_id,
+        "scenario_role": machines[feller_machine_id].role,
+        "processing_model": processing_model,
+        "model": "ADV6N10 CTL harvester regression"
+        if processing_model == "harvester"
+        else "ADV6N10 whole-tree reference",
+    }
     rate_provenance["landings"] = [
         {"id": item.landing_id, "x": item.x_m, "y": item.y_m} for item in landing_choices
     ]
@@ -1460,6 +1472,12 @@ def simulate_ground_system(
         )
     )
     machine_types = {machine: str(machines[machine].role or "machine") for machine in machine_ids}
+    harvester_caveat = (
+        "Harvester processing uses the reference ADV6N10 CTL regression with "
+        "stump-side multi-product bucking assumptions."
+        if processing_model == "harvester"
+        else "Feller-buncher processing uses the existing reference spatial/ADV6N10 model."
+    )
     for machine in machine_ids:
         machine_events = [event for event in events if event.machine == machine]
         busy = sum(event.end_s - event.start_s for event in machine_events)
@@ -1532,7 +1550,7 @@ def simulate_ground_system(
         warnings=tuple(warnings),
         caveats=(
             "Reference multi-machine event model, not a field-calibrated system simulation.",
-            "Feller-buncher processing uses the existing reference spatial/ADV6N10 model.",
+            harvester_caveat,
             "Skidder, processor, and loader cycle times are configurable defaults; queue dispatch is greedy and deterministic.",
             "DEM/road routing is optional; the model uses a direct line or a single connected road corridor and does not solve a full road network.",
             "Shift windows delay tasks that do not fit; tasks are not split across shifts.",
