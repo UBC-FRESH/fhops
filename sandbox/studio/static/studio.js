@@ -677,6 +677,8 @@ const SPEC_FIELDS = {
     ["unload_fixed_s", "unload fixed (s)"],
     ["unload_per_log_s", "unload per log (s)"],
     ["productivity_m3_per_smh", "calibrated m³/SMH"],
+    ["forwarder_model", "forwarder model"],
+    ["forwarder_stem_size_m3", "forwarder stem m³"],
   ],
   skidder: [
     ["capacity_m3", "payload (m³)"],
@@ -687,6 +689,8 @@ const SPEC_FIELDS = {
     ["unload_fixed_s", "unload fixed (s)"],
     ["unload_per_log_s", "unload per log (s)"],
     ["productivity_m3_per_smh", "calibrated m³/SMH"],
+    ["forwarder_model", "forwarder model"],
+    ["forwarder_stem_size_m3", "forwarder stem m³"],
   ],
 };
 
@@ -707,15 +711,15 @@ function renderMachineSpecs() {
       const text = document.createElement("label");
       text.textContent = label;
       const input = document.createElement("input");
-      input.type = "number";
-      input.step = "any";
+      input.type = key === "forwarder_model" ? "text" : "number";
+      if (input.type === "number") input.step = "any";
       input.placeholder = "default";
       input.value = spec[key] ?? "";
       input.addEventListener("change", () => {
         pushHistory();
         const next = machine.spec || {};
         if (input.value === "") delete next[key];
-        else next[key] = Number(input.value);
+        else next[key] = input.type === "text" ? input.value : Number(input.value);
         if (Object.keys(next).length) machine.spec = next;
         else delete machine.spec;
         markDirty();

@@ -22,6 +22,10 @@ from typing import Literal
 
 import numpy as np
 
+from fhops.productivity.forwarder_bc import (
+    ForwarderBCModel,
+    estimate_forwarder_productivity_bc,
+)
 from fhops.productivity.processor_loader import (
     estimate_loader_productivity_barko450,
     estimate_processor_productivity_adv5n6,
@@ -59,6 +63,7 @@ __all__ = [
     "Landing",
     "LandingFleet",
     "landing_route_cost",
+    "forwarder_productivity_for_distance",
     "BreakdownConfig",
     "DowntimeWindow",
     "PROCESSOR_MODELS",
@@ -132,6 +137,65 @@ class LandingFleet:
     processor_machine_ids: tuple[str, ...] = ()
 
 
+def forwarder_productivity_for_distance(spec: MachineSpec, distance_m: float) -> float:
+    """Return a calibrated forwarder productivity for one route distance.
+
+    Parameters
+    ----------
+    spec : MachineSpec
+        Forwarder machine specification. ``forwarder_model`` selects a
+        regression; ``productivity_m3_per_smh`` is the scalar fallback.
+    distance_m : float
+        One-way route distance in metres.
+
+    Returns
+    -------
+    float
+        Productivity in m³/SMH.
+
+    Raises
+    ------
+    GroundSystemError
+        If the model is unknown, required inputs are missing, or no rate is
+        configured.
+    """
+    if spec.forwarder_model:
+        try:
+            model = ForwarderBCModel(spec.forwarder_model)
+        except ValueError as exc:
+            raise GroundSystemError(f"Unknown forwarder model {spec.forwarder_model!r}.") from exc
+        try:
+            if model in {
+                ForwarderBCModel.ERIKSSON_FINAL_FELLING,
+                ForwarderBCModel.ERIKSSON_THINNING,
+            }:
+                result = estimate_forwarder_productivity_bc(
+                    model=model,
+                    mean_extraction_distance_m=distance_m,
+                    mean_stem_size_m3=spec.forwarder_stem_size_m3,
+                    load_capacity_m3=spec.capacity_m3,
+                )
+            elif model in {
+                ForwarderBCModel.ADV1N12_SHORTWOOD,
+                ForwarderBCModel.GHAFFARIYAN_SMALL,
+                ForwarderBCModel.GHAFFARIYAN_LARGE,
+            }:
+                result = estimate_forwarder_productivity_bc(
+                    model=model,
+                    extraction_distance_m=distance_m,
+                )
+            else:
+                raise GroundSystemError(
+                    f"Forwarder model {spec.forwarder_model!r} needs unsupported inputs."
+                )
+        except ValueError as exc:
+            raise GroundSystemError(str(exc)) from exc
+        return float(result.predicted_m3_per_pmh)
+    if spec.productivity_m3_per_smh is not None:
+        return spec.productivity_m3_per_smh
+    raise GroundSystemError("Forwarder productivity is not configured.")
+
+
 @dataclass(frozen=True)
 class MachineSpec:
     """Cycle-time parameters for one skidder or loader.
@@ -164,6 +228,12 @@ class MachineSpec:
         Optional calibrated forwarder productivity in m³/SMH. When supplied, the
         forwarder cycle time is derived from payload/productivity instead of the
         grapple-skidder regression.
+    forwarder_model:
+        Optional forwarder regression identifier (for example
+        ``eriksson-final-felling`` or ``adv1n12-shortwood``). When supplied, the
+        model is evaluated at the route distance for every bunch.
+    forwarder_stem_size_m3:
+        Mean stem size for forwarder models that require it.
     """
 
     machine_id: str
@@ -178,6 +248,8 @@ class MachineSpec:
     process_fixed_s: float = 45.0
     process_per_log_s: float = 4.0
     productivity_m3_per_smh: float | None = None
+    forwarder_model: str | None = None
+    forwarder_stem_size_m3: float = 0.3
 
     def __post_init__(self) -> None:
         for field, value in (
@@ -199,6 +271,8 @@ class MachineSpec:
             not math.isfinite(self.productivity_m3_per_smh) or self.productivity_m3_per_smh <= 0
         ):
             raise GroundSystemError("productivity_m3_per_smh must be positive and finite.")
+        if not math.isfinite(self.forwarder_stem_size_m3) or self.forwarder_stem_size_m3 <= 0:
+            raise GroundSystemError("forwarder_stem_size_m3 must be positive and finite.")
 
 
 @dataclass(frozen=True)
@@ -1692,10 +1766,11 @@ def _simulate_skidders(
         route = selected_route
         distance = route.distance_m
         empty_start = start
-        if spec.productivity_m3_per_smh is not None:
+        if spec.forwarder_model or spec.productivity_m3_per_smh is not None:
+            productivity = forwarder_productivity_for_distance(spec, distance)
             empty_time = distance / (spec.empty_speed_mps * route.speed_factor)
             loaded_time = distance / (spec.loaded_speed_mps * route.speed_factor)
-            cycle = bunch.volume_m3 / spec.productivity_m3_per_smh * 3600.0
+            cycle = bunch.volume_m3 / productivity * 3600.0
             residual = max(1.0, cycle - empty_time - loaded_time)
             load_time = residual * 0.5
             unload_time = residual * 0.5
