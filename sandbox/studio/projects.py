@@ -1398,6 +1398,13 @@ def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
             catalog.append({"id": clone_id, "role": source["role"]})
             existing.add(clone_id)
     inventory = load_tree_inventory(case.path("inventory"), metadata_path=case.path("metadata"))
+    terrain = project.get("terrain") or {}
+    if terrain.get("heights") and terrain.get("base_m") is None:
+        terrain["base_m"] = min(
+            (float(tree.elevation_m) for tree in inventory.rows if tree.elevation_m is not None),
+            default=0.0,
+        )
+        project["terrain"] = terrain
     polygon = project.get("block", {}).get("polygon") or []
     retained = set(project.get("retention", {}).get("tree_ids") or [])
     clumps = _retention_clumps(project)
