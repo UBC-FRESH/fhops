@@ -1,3 +1,15 @@
+# 2026-11-03 — P45 closeout
+
+- PR #387 squash-merged to `main` as
+  `68dafd2cfa2742957c95d45c6a430e526b4916cf`; main CI `41700248178` passed.
+- Comparison economics now includes scheduled/productive machine cost, truck
+  cost, labor, total, and cost/m³; demo rates: truck $120/h, labor $45/machine-h.
+- CTL comparison: $13,489 total / $17.38 m³ vs full-tree $15,679 / $20.20 m³.
+- Role-aware harvester provenance is live; CTL run `20261103T190819Z` reports
+  ADV6N10 CTL processing and the correct caveat.
+- Public demo deployment `960ec45f`.
+- Known full-test/Sphinx environment issues recorded in `notes/gates_status.md`.
+
 # 2026-11-03 — P45 harvester model, economics refinement, cleanup (#386)
 
 - Added role-aware harvester processing model:
