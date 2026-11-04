@@ -102,7 +102,7 @@
       <section class="panel">
         <h2>Policy effects</h2>
         <div id="policy-effects"></div>
-        <p class="note">Cycle multipliers, breakdown risk, break policy, grade caution, and damage risk are translated into the next run. Damage risk is advisory only in this reference model.</p>
+        <p class="note">Cycle multipliers, breakdown risk, break policy, grade caution, and damage risk are translated into the next run. Elevated damage risk downgrades a share of sawlog volume to pulp.</p>
       </section>
       <section class="panel">
         <h2>Machine specs</h2>
@@ -120,7 +120,13 @@
       </section>
       <section class="panel">
         <h2>Run comparison</h2>
+        <div class="compare-controls">
+          <label>Base run <select id="compare-left-run"></select></label>
+          <label>Compare run <select id="compare-right-run"></select></label>
+          <a id="open-compare" class="btn small" href="compare" target="_blank" rel="noopener">Open comparison</a>
+        </div>
         <div id="run-compare" class="muted">Need two runs to compare.</div>
+        <p class="note">The quick delta uses the latest two runs. Choose any pair above for the full comparison page.</p>
       </section>
       <section class="panel">
         <h2>Run history</h2>
