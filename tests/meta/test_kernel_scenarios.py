@@ -5,7 +5,12 @@ from __future__ import annotations
 import pytest
 
 from fhops.optimization.heuristics.common import evaluate_assignments
-from fhops.optimization.meta import solve_kernel_ils, solve_kernel_sa, solve_kernel_tabu
+from fhops.optimization.meta import (
+    solve_kernel_ils,
+    solve_kernel_sa,
+    solve_kernel_sa_incremental,
+    solve_kernel_tabu,
+)
 from fhops.scenario.contract import Problem
 from fhops.scenario.io.loaders import load_scenario
 
@@ -16,6 +21,7 @@ from fhops.scenario.io.loaders import load_scenario
         (solve_kernel_sa, {"iters": 25, "seed": 11}),
         (solve_kernel_tabu, {"iters": 25, "seed": 11, "samples": 4}),
         (solve_kernel_ils, {"iters": 8, "seed": 11, "perturbation": 2}),
+        (solve_kernel_sa_incremental, {"iters": 25, "seed": 11}),
     ],
 )
 def test_tiny7_kernel_results_replay_exactly(solver, kwargs) -> None:

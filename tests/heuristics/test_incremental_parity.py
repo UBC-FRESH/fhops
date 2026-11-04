@@ -129,3 +129,22 @@ def test_sa_incremental_repair_parity() -> None:
     incremental = solve_sa(pb, iters=50, seed=42)
     assert incremental["objective"] == pytest.approx(full["objective"], abs=1e-9)
     assert incremental["assignments"].equals(full["assignments"])
+
+
+def test_evaluator_undo_restores_the_previous_score() -> None:
+    """A rejected incremental move restores the cache exactly."""
+    from fhops.optimization.heuristics.incremental import SeparableEvaluator, slot_diff
+
+    scenario = load_scenario(str(ROOT / "examples" / "tiny7" / "scenario.yaml"))
+    pb = Problem.from_scenario(scenario)
+    ctx = build_operational_problem(pb)
+    base = init_greedy_schedule(pb, ctx)
+    _repair_schedule_cover_blocks(pb, base, ctx, fill_voids=True)
+    evaluator = SeparableEvaluator(pb, ctx)
+    base_score = evaluator.build(base)
+    candidate = _moved_schedules(pb, ctx, base, 1)[1]
+    changed = slot_diff(evaluator.last, candidate)
+    moved_score = evaluator.score_after_move(candidate, changed)
+    evaluator.undo_last_move(base)
+    assert evaluator.score(base) == pytest.approx(base_score, abs=1e-9)
+    assert evaluator.score_after_move(candidate, changed) == pytest.approx(moved_score, abs=1e-9)

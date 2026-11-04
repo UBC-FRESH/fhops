@@ -242,6 +242,19 @@ def slot_diff(a: Schedule, b: Schedule) -> list[Slot]:
     return changed
 
 
+@dataclass
+class _MoveSnapshot:
+    """The evaluator state needed to undo one incremental move."""
+
+    slot_base: dict[Slot, tuple[bool, float]]
+    slot_block: dict[Slot, tuple[bool, str | None]]
+    slots_by_block: dict[str, tuple[Slot, ...]]
+    block_contrib: dict[str, BlockContribution | None]
+    base_penalty: float
+    seq_penalty: float
+    last: Schedule | None
+
+
 class SeparableEvaluator:
     """Incremental, block-separable scorer for the heuristic objective.
 
@@ -280,6 +293,7 @@ class SeparableEvaluator:
         self._base_penalty = 0.0
         self._seq_penalty = 0.0
         self.last: Schedule | None = None
+        self._last_undo: _MoveSnapshot | None = None
 
     def _block_contribution(
         self, sched: Schedule, block_id: str, slots: list[Slot]
@@ -419,10 +433,37 @@ class SeparableEvaluator:
             previous = self._slot_block.get(slot)
             if previous is not None:
                 touched.add(previous)
-            self._resolve_into_cache(sched, machine_id, day, shift_id)
-            resolved = self._slot_block.get(slot)
+            _penalty, block_id, feeds = _resolve_slot(
+                self.pb, self.ctx, sched, machine_id, day, shift_id
+            )
+            resolved = block_id if (block_id is not None and feeds) else None
             if resolved is not None:
                 touched.add(resolved)
+        self._last_undo = _MoveSnapshot(
+            slot_base={
+                (machine_id, day, shift_id): (
+                    (machine_id, day, shift_id) in self._slot_base,
+                    self._slot_base.get((machine_id, day, shift_id), 0.0),
+                )
+                for machine_id, day, shift_id in changed_slots
+            },
+            slot_block={
+                (machine_id, day, shift_id): (
+                    (machine_id, day, shift_id) in self._slot_block,
+                    self._slot_block.get((machine_id, day, shift_id)),
+                )
+                for machine_id, day, shift_id in changed_slots
+            },
+            slots_by_block={
+                block_id: tuple(self._slots_by_block.get(block_id, ())) for block_id in touched
+            },
+            block_contrib={block_id: self._block_contrib.get(block_id) for block_id in touched},
+            base_penalty=self._base_penalty,
+            seq_penalty=self._seq_penalty,
+            last=self.last,
+        )
+        for machine_id, day, shift_id in changed_slots:
+            self._resolve_into_cache(sched, machine_id, day, shift_id)
         for block_id in touched:
             old = self._block_contrib.get(block_id)
             if old is not None:
@@ -437,3 +478,44 @@ class SeparableEvaluator:
         _ensure_mobilisation_stats(sched, self.ctx)
         self.last = sched
         return self.score(sched)
+
+    def undo_last_move(self, sched: Schedule) -> None:
+        """Restore the cache to the state before the last :meth:`score_after_move`.
+
+        Parameters
+        ----------
+        sched : Schedule
+            The schedule the restored cache describes (the pre-move schedule).
+
+        Raises
+        ------
+        ValueError
+            When there is no move to undo.
+        """
+        undo = self._last_undo
+        if undo is None:
+            raise ValueError("no incremental move to undo")
+        for slot, (base_present, base_value) in undo.slot_base.items():
+            if base_present:
+                self._slot_base[slot] = base_value
+            else:
+                self._slot_base.pop(slot, None)
+        for slot, (block_present, block_value) in undo.slot_block.items():
+            if block_present:
+                self._slot_block[slot] = block_value
+            else:
+                self._slot_block.pop(slot, None)
+        for block_id, slots in undo.slots_by_block.items():
+            if slots:
+                self._slots_by_block[block_id] = list(slots)
+            else:
+                self._slots_by_block.pop(block_id, None)
+        for block_id, contribution in undo.block_contrib.items():
+            if contribution is None:
+                self._block_contrib.pop(block_id, None)
+            else:
+                self._block_contrib[block_id] = contribution
+        self._base_penalty = undo.base_penalty
+        self._seq_penalty = undo.seq_penalty
+        self.last = sched
+        self._last_undo = None

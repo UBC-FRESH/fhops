@@ -6,6 +6,7 @@ from .solvers import (
     solve_kernel_ils,
     solve_kernel_sa,
     solve_kernel_sa_fast,
+    solve_kernel_sa_incremental,
     solve_kernel_tabu,
 )
 
@@ -17,6 +18,7 @@ __all__ = [
     "slot_diff",
     "solve_kernel_ils",
     "solve_kernel_sa",
+    "solve_kernel_sa_incremental",
     "solve_kernel_sa_fast",
     "solve_kernel_tabu",
 ]

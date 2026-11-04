@@ -12,7 +12,11 @@ import json
 import time
 from pathlib import Path
 
-from fhops.optimization.meta import solve_kernel_sa, solve_kernel_sa_fast
+from fhops.optimization.meta import (
+    solve_kernel_sa,
+    solve_kernel_sa_fast,
+    solve_kernel_sa_incremental,
+)
 from fhops.scenario.contract import Problem
 from fhops.scenario.io.loaders import load_scenario
 
@@ -26,7 +30,11 @@ def main() -> int:
     args = parser.parse_args()
     pb = Problem.from_scenario(load_scenario(args.scenario))
     records = []
-    for name, solver in (("full", solve_kernel_sa), ("fast", solve_kernel_sa_fast)):
+    for name, solver in (
+        ("full", solve_kernel_sa),
+        ("fast", solve_kernel_sa_fast),
+        ("incremental", solve_kernel_sa_incremental),
+    ):
         started = time.perf_counter()
         result = solver(pb, iters=args.iterations, seed=args.seed)
         seconds = time.perf_counter() - started

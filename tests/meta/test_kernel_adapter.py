@@ -16,6 +16,7 @@ from fhops.optimization.meta import (
     solve_kernel_ils,
     solve_kernel_sa,
     solve_kernel_sa_fast,
+    solve_kernel_sa_incremental,
     solve_kernel_tabu,
 )
 from fhops.scenario.contract import (
@@ -167,4 +168,13 @@ def test_kernel_fast_path_replays_exactly() -> None:
     result = solve_kernel_sa_fast(pb, iters=40, seed=6)
     assert result["meta"]["approximate_search"] is True
     assert result["meta"]["solver"] == "kernel-sa-fast"
+    assert result["objective"] == pytest.approx(evaluate_assignments(pb, result["assignments"]))
+
+
+def test_kernel_incremental_path_replays_exactly() -> None:
+    """The block-separable incremental path reports a full exact score and replays exactly."""
+    pb = _simple_problem()
+    result = solve_kernel_sa_incremental(pb, iters=60, seed=8)
+    assert result["meta"]["incremental_search"] is True
+    assert result["meta"]["solver"] == "kernel-sa-incremental"
     assert result["objective"] == pytest.approx(evaluate_assignments(pb, result["assignments"]))
