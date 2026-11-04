@@ -1,3 +1,15 @@
+# 2026-11-04 — local quality-gate cleanup (#403)
+
+- Updated the two HiGHS option-error robustness tests for highspy 1.12, which
+  reports a configuration `ValueError` naming `iteration_count` instead of the
+  older `ERROR` log line naming `threads`; both diagnostics are accepted.
+- Full local `pytest` is green: 1362 passed, 214 skipped.
+- Documented the local Pandoc setup (`pypandoc_binary` plus venv `PATH`) and
+  verified `sphinx-build -b html docs _build/html -W`.
+- Updated `notes/gates_status.md`; the remaining gate limitations are cleared.
+- Verification: `ruff format`, `ruff check`, `mypy src`, `pytest`, targeted JS
+  syntax checks, `pre-commit run --all-files`, and the Sphinx build.
+
 # 2026-11-04 — damage-risk product recovery (#399)
 
 - Mapped operator-policy damage risk to a sawlog-to-pulp downgrade fraction
