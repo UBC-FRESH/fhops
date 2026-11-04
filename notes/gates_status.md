@@ -1,22 +1,32 @@
-# Gate status after P45
+# Gate status after P52
 
 ## Passing
 
 - `ruff format src tests sandbox`
 - `ruff check src tests sandbox`
-- `mypy src` — 188 source files
+- `mypy src` — 191 source files
+- `pytest` — 1362 passed, 214 skipped
 - `pre-commit run --all-files`
-- Targeted Studio/tree tests — 56 passed
+- `sphinx-build -b html docs _build/html -W` — with the local Pandoc shim below
+- Targeted Studio/tree tests — 46 passed
 - `node --check` for Studio comparison/replay/edit bundles
 
-## Known environment failures
+## Local Pandoc setup
 
-- Full local `pytest` still fails the two pre-existing HiGHS option-error
-  assertions:
-  - `tests/model/test_milp_driver_robustness.py::test_highs_option_error_is_reported_as_solver_error`
-  - `tests/test_legacy_mip_driver.py::test_highs_option_error_is_reported_as_solver_error[highs-exec]`
-- Local Sphinx cannot run because Pandoc is unavailable
-  (`nbsphinx.NotebookError: PandocMissing`).
+CI downloads a standalone Pandoc distribution. Locally the venv already has
+`pypandoc_binary` (Pandoc 3.9), but nbsphinx also requires a `pandoc` executable
+on `PATH`. Use:
 
-These are environment/pre-existing issues, not P45 regressions. CI `lint-test-docs`
-is green on the P45 PR and main.
+```bash
+PATH="$PWD/.venv/bin:$PATH" sphinx-build -b html docs _build/html -W
+```
+
+The venv's `bin/pandoc` is provided by `pypandoc_binary`; if it is missing,
+install it with `python -m pip install pypandoc_binary`.
+
+## Historical note
+
+The earlier HiGHS option-error failures were a highspy 1.12 diagnostics change:
+configuration failures now raise a `ValueError` naming `iteration_count` rather
+than returning the older `ERROR` log line naming `threads`. The robustness tests
+now accept either configuration diagnostic and remain case-insensitive.

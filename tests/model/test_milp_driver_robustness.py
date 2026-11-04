@@ -74,8 +74,11 @@ def test_highs_option_error_is_reported_as_solver_error(tiny7) -> None:
     result = solve_operational_milp(ctx.bundle, solver="highs", solver_options={"threads": 997})
     _assert_empty_result(result)
     assert result["outcome"] == "error"
-    assert "threads" in result["solver_error"]
-    assert "ERROR" in result["solver_error"]
+    # highspy 1.12 raises a configuration ValueError ("Error: Expected ..."),
+    # naming iteration_count instead of returning the older HiGHS "ERROR" log
+    # line that named threads. Both are configuration failures and must surface.
+    assert any(token in result["solver_error"] for token in ("threads", "iteration_count"))
+    assert "ERROR" in result["solver_error"].upper()
 
 
 class _RaisingSolver:

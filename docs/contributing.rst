@@ -41,6 +41,7 @@ Common pitfalls
 - Missing solver/licence setup: HiGHS ships by default; Gurobi requires ``pip install .[gurobi]`` and a valid licence (``GRB_LICENSE_FILE``). Threads can be set via ``GRB_THREADS`` or ``--mip-solver-option Threads=<n>`` on MILP commands.
 - Long-running MILP tests: keep the default ``FHOPS_RUN_FULL_CLI_TESTS`` unset unless you intend to run the heavier CLI regressions; targeted tests under ``tests/planning`` and ``tests/cli`` keep rolling-horizon coverage fast.
 - Large artefacts: rolling comparison CSV/PNG bundles are small and live in-repo. Notebook runs default to light mode via ``FHOPS_ANALYTICS_LIGHT=1``; unset when regenerating full ensembles.
+- Sphinx notebook builds: CI downloads standalone Pandoc, while local environments can install ``pypandoc_binary`` and prepend the venv to ``PATH`` (``PATH="$PWD/.venv/bin:$PATH" sphinx-build -b html docs _build/html -W``). Without ``pandoc`` on ``PATH``, nbsphinx raises ``NotebookError: PandocMissing``.
 
 Debugging and profiling
 -----------------------
