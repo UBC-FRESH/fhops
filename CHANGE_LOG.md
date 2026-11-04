@@ -11,6 +11,13 @@
   model.
 - Verification: `ruff format`, `ruff check`, `mypy`, targeted `pytest`, JS
   syntax checks, and `pre-commit run --all-files`.
+- Full local pytest: 1360 passed, 214 skipped, with only the two pre-existing
+  HiGHS option-error assertions failing.
+- Demo: CTL throughput-policy duplicate `afrf-gavin-20261104t010235-3dfa`, run
+  `20261104T010235Z`, reports 734.2 m³ sawlog + 41.9 m³ pulp with 38.6 m³
+  downgraded, $63,872 revenue, and $45,807 net margin.
+- PR #400 merged as `fb2003aa`; main CI `41751198529` passed. Public demo
+  deployment `d0166e5e`; health endpoint returns `ok`.
 
 # 2026-11-03 — product mix closeout
 

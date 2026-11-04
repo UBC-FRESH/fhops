@@ -721,7 +721,7 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
 - [x] Operator-policy effects integration (#391; PR #391).
 - [x] Studio full-tree/CTL system presets (#393; PR #395).
 - [x] CTL product mix and value comparison (#397; PR #396).
-- [ ] Damage-risk product recovery integration (#399).
+- [x] Damage-risk product recovery integration (#399; PR #400; closeout #401).
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [x] Integration with Nemora sampling outputs for downstream operations analytics (P19 tree-inventory handoff).
