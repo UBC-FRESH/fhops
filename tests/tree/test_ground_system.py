@@ -494,6 +494,31 @@ def test_processor_productivity_multiplier_rejects_non_positive(tmp_path: Path) 
         )
 
 
+def test_damage_fraction_downgrades_sawlog_to_pulp(tmp_path: Path) -> None:
+    scenario = _system_scenario(tmp_path)
+    base = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+    )
+    damaged = simulate_ground_system(
+        scenario,
+        block_id="B01",
+        feller_machine_id="H1",
+        skidder_machine_ids=("H2", "H3"),
+        loader_machine_id="H4",
+        bunch_volume_m3=1.0,
+        damage_downgrade_fraction=0.10,
+    )
+    assert damaged.product_mix["downgraded_m3"] > 0
+    assert damaged.product_mix["sawlog_m3"] < base.product_mix["sawlog_m3"]
+    assert damaged.product_mix["pulp_m3"] > base.product_mix["pulp_m3"]
+    assert damaged.rate_provenance["damage"]["sawlog_to_pulp_fraction"] == 0.10
+
+
 def test_ground_system_shift_windows_delay_work(tmp_path: Path) -> None:
     scenario = _system_scenario(tmp_path)
     result = simulate_ground_system(

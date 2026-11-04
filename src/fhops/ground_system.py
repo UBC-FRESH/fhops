@@ -549,6 +549,7 @@ class GroundSystemTree:
     processed_s: float
     sawlog_volume_m3: float = 0.0
     pulp_volume_m3: float = 0.0
+    downgraded_volume_m3: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -627,6 +628,11 @@ class GroundSystemResult:
         Busy time and utilisation per machine.
     processed_volume_m3:
         Merchantable volume processed by the feller-buncher.
+    product_mix:
+        Reference product recovery in cubic metres. Keys are ``sawlog_m3``,
+        ``pulp_m3``, and ``downgraded_m3`` (the sawlog volume reclassified to
+        pulp by the operator damage assumption). Sawlog plus pulp conserves
+        the summed reference log volume; other products are not included.
     tree_count:
         Processed tree count.
     unreachable_count:
@@ -782,6 +788,7 @@ def simulate_ground_system(
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     feller_processing_time_multiplier: float = 1.0,
+    damage_downgrade_fraction: float = 0.0,
     processor_productivity_multiplier: float = 1.0,
     path_mode: Literal["nearest", "swath"] = "nearest",
     obstacles: tuple[Obstacle, ...] = (),
@@ -908,6 +915,10 @@ def simulate_ground_system(
     feller_processing_time_multiplier:
         Multiplier on feller-buncher per-tree processing time. Selection-cut
         care and other slow-work adjustments use values above one.
+    damage_downgrade_fraction:
+        Fraction of sawlog volume downgraded to pulp by operator damage risk.
+        Must be in ``[0, 1]``; defaults to ``0``. This is a product-recovery
+        assumption, not a physical stem-damage model.
     processor_productivity_multiplier:
         Positive multiplier on roadside-processor productive output. Values
         above one shorten fixed, per-cubic-metre, and per-log processor time;
@@ -962,6 +973,12 @@ def simulate_ground_system(
         or processor_productivity_multiplier <= 0
     ):
         raise GroundSystemError("processor_productivity_multiplier must be positive and finite.")
+    if (
+        not math.isfinite(damage_downgrade_fraction)
+        or damage_downgrade_fraction < 0
+        or damage_downgrade_fraction > 1
+    ):
+        raise GroundSystemError("damage_downgrade_fraction must be between 0 and 1.")
     if feller_machine_id in skidders or loader_machine_id in skidders:
         raise GroundSystemError("Feller and loader machines must not also be skidders.")
     if feller_machine_id == loader_machine_id:
@@ -1181,6 +1198,12 @@ def simulate_ground_system(
         if processing_model == "harvester"
         else "ADV6N10 whole-tree reference",
     }
+    rate_provenance["damage"] = {
+        "sawlog_to_pulp_fraction": damage_downgrade_fraction,
+        "assumption": "Operator-policy product-recovery downgrade; not a physical stem-damage model."
+        if damage_downgrade_fraction
+        else "No product downgrade applied.",
+    }
     rate_provenance["landings"] = [
         {"id": item.landing_id, "x": item.x_m, "y": item.y_m} for item in landing_choices
     ]
@@ -1386,6 +1409,9 @@ def simulate_ground_system(
         stem = trees_by_id[event.tree_id]
         sawlog_volume = sum(log.volume_m3 for log in stem.logs if log.product.lower() == "sawlog")
         pulp_volume = sum(log.volume_m3 for log in stem.logs if log.product.lower() == "pulp")
+        downgraded_volume = sawlog_volume * damage_downgrade_fraction
+        sawlog_volume -= downgraded_volume
+        pulp_volume += downgraded_volume
         trees.append(
             GroundSystemTree(
                 tree_id=event.tree_id,
@@ -1397,6 +1423,7 @@ def simulate_ground_system(
                 processed_s=process_end,
                 sawlog_volume_m3=sawlog_volume,
                 pulp_volume_m3=pulp_volume,
+                downgraded_volume_m3=downgraded_volume,
             )
         )
     max_bunch_volume_m3 = min(spec.capacity_m3 for spec in skidder_specs.values())
@@ -1484,6 +1511,7 @@ def simulate_ground_system(
     product_mix = {
         "sawlog_m3": round(sum(tree.sawlog_volume_m3 for tree in trees), 6),
         "pulp_m3": round(sum(tree.pulp_volume_m3 for tree in trees), 6),
+        "downgraded_m3": round(sum(tree.downgraded_volume_m3 for tree in trees), 6),
     }
     harvester_caveat = (
         "Harvester processing uses the reference ADV6N10 CTL regression with "

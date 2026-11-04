@@ -27,6 +27,13 @@ Default demo prices are project-level `system_args.sawlog_price_per_m3` and
   product revenue is $65,804; net margins are $52,314 (CTL) and $50,125
   (full-tree).
 
+## Damage risk
+
+Operator-policy damage risk now reclassifies sawlog volume as pulp. Product
+mix carries `downgraded_m3`; comparison shows it and uses the adjusted mix for
+revenue. The adjustment conserves log volume and is a planning assumption, not
+a physical stem-damage model. Steady policies use 0%; elevated 5%; high 10%.
+
 ## Limits
 
 - Product prices are planning assumptions, not market contracts.

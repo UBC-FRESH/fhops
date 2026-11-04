@@ -713,11 +713,13 @@ function renderPolicyEffects() {
     node.textContent = "No active machine policies.";
     return;
   }
+  const damage = Number(aggregate.damage_downgrade_fraction || 0);
+  const damageText = damage > 0 ? ` · damage downgrade ${(damage * 100).toFixed(1)}%` : "";
   const aggregateText = aggregate.failure_rate_per_machine_hour == null
-    ? "No stochastic breakdowns: steady policies do not set a failure rate."
-    : `Run: ${Number(aggregate.failure_rate_per_machine_hour).toFixed(3)} failures/machine-h · repair ${Number(aggregate.repair_hours).toFixed(1)} h · max grade ${Number(aggregate.max_skidder_grade).toFixed(0)}%`;
+    ? `No stochastic breakdowns: steady policies do not set a failure rate.${damageText}`
+    : `Run: ${Number(aggregate.failure_rate_per_machine_hour).toFixed(3)} failures/machine-h · repair ${Number(aggregate.repair_hours).toFixed(1)} h · max grade ${Number(aggregate.max_skidder_grade).toFixed(0)}%${damageText}`;
   node.innerHTML = `<div class="policy-row">${escapeHtml(aggregateText)}</div>` + machines.map(([id, effect]) => (
-    `<div class="policy-row"><b>${escapeHtml(id)}</b> · ${escapeHtml(effect.role)} · ${escapeHtml(effect.label)}<br><span>cycle ${Number(effect.cycle_multiplier).toFixed(2)}× · breakdown ${escapeHtml(effect.breakdown_risk)} · break ${escapeHtml(effect.break_policy)} · grade ${escapeHtml(effect.grade_caution)} · damage ${escapeHtml(effect.damage_risk)} (advisory)</span></div>`
+    `<div class="policy-row"><b>${escapeHtml(id)}</b> · ${escapeHtml(effect.role)} · ${escapeHtml(effect.label)}<br><span>cycle ${Number(effect.cycle_multiplier).toFixed(2)}× · breakdown ${escapeHtml(effect.breakdown_risk)} · break ${escapeHtml(effect.break_policy)} · grade ${escapeHtml(effect.grade_caution)} · damage ${escapeHtml(effect.damage_risk)}</span></div>`
   )).join("");
 }
 
