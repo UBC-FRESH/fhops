@@ -130,6 +130,20 @@ Output columns
     volume-retention proxy at a constant caller price, not a price forecast or
     grade-recovery model.
 
+Studio preview
+--------------
+
+Scenario Studio exposes the same reference curve as a read-only side panel.
+Set **Years since disturbance** for the current project block and the panel
+shows retention, retained volume, eligible products, source, and applicability
+boundary. The age is saved with the Studio project and included in project and
+comparison exports.
+
+The overlay does **not** change run KPIs, schedules, trucking, machine
+assignment, economics, or replay. Existing Studio projects start with an empty
+age map. A block without `salvage_processing_mode` is still previewed but is
+marked as a reference-only block.
+
 Adding another curve
 --------------------
 

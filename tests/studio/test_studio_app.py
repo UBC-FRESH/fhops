@@ -115,3 +115,48 @@ def test_studio_page_exposes_run_comparison_launcher(tmp_path: Path) -> None:
     assert 'id="compare-left-run"' in response.text
     assert 'id="compare-right-run"' in response.text
     assert 'id="open-compare"' in response.text
+
+
+def test_salvage_preview_endpoint(tmp_path: Path) -> None:
+    """The read-only salvage endpoint applies the packaged curve to project ages."""
+    projects_root = tmp_path / "projects"
+    saved = save_project(
+        projects_root,
+        create_project(load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")),
+    )
+    app = create_app(
+        StudioConfig(cases_root=ROOT / "sandbox" / "cases", projects_root=projects_root)
+    )
+    client = TestClient(app)
+    project_id = saved["project_id"]
+    block_id = saved["block_id"]
+
+    empty = client.post(f"/api/projects/{project_id}/salvage", json={"ages": {}})
+    assert empty.status_code == 200
+    assert empty.json()["configured"] is False
+
+    response = client.post(
+        f"/api/projects/{project_id}/salvage",
+        json={"ages": {block_id: 2.0}},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["configured"] is True
+    assert payload["curve"]["curve_id"] == "pnw_fire_killed_mixed_conifer"
+    assert payload["rows"][0]["block_id"] == block_id
+    assert payload["rows"][0]["retention_fraction"] == 0.89
+    assert payload["rows"][0]["eligible_products"] == "lumber;pulp"
+
+    invalid = client.post(
+        f"/api/projects/{project_id}/salvage",
+        json={"ages": {block_id: -1}},
+    )
+    assert invalid.status_code == 400
+    assert "non-negative" in invalid.json()["detail"]
+
+    unknown_curve = client.post(
+        f"/api/projects/{project_id}/salvage",
+        json={"ages": {block_id: 1.0}, "curve_id": "missing"},
+    )
+    assert unknown_curve.status_code == 400
+    assert "unknown salvage decay curve" in unknown_curve.json()["detail"]
