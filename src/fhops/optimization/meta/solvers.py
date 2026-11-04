@@ -510,3 +510,147 @@ def solve_kernel_sa_incremental(
             "incremental_search": True,
         },
     )
+
+
+def _best_improving(
+    problem: FhopsProblem,
+    current: Schedule,
+    current_score: float,
+    evaluator: SeparableEvaluator,
+    rng: random.Random,
+) -> tuple[Schedule, float] | None:
+    """Return the best improving candidate from one pass over the enabled operators."""
+    best: Schedule | None = None
+    best_score = current_score
+    for operator in problem.registry.operators:
+        move = operator.apply(current, rng, problem.candidates)
+        if move is None:
+            continue
+        _repair_schedule_cover_blocks(problem.pb, move, problem.operational, fill_voids=True)
+        score = evaluator.score_after_move(move, slot_diff(current, move))
+        evaluator.undo_last_move(current)
+        if score > best_score:
+            best, best_score = move, score
+    if best is None:
+        return None
+    committed = evaluator.score_after_move(best, slot_diff(current, best))
+    return best, committed
+
+
+def _perturb(
+    problem: FhopsProblem,
+    current: Schedule,
+    evaluator: SeparableEvaluator,
+    rng: random.Random,
+    strength: int,
+) -> tuple[Schedule, float] | None:
+    """Apply ``strength`` random moves and commit the resulting schedule."""
+    candidate = current
+    moved = False
+    for _ in range(max(1, strength)):
+        move = problem.registry.pick(rng).apply(candidate, rng, problem.candidates)
+        if move is None:
+            break
+        _repair_schedule_cover_blocks(problem.pb, move, problem.operational, fill_voids=True)
+        candidate = move
+        moved = True
+    if not moved:
+        return None
+    score = evaluator.score_after_move(candidate, slot_diff(current, candidate))
+    return candidate, score
+
+
+def solve_kernel_ils_like(
+    pb: Problem,
+    *,
+    iters: int = 50,
+    seed: int = 42,
+    perturbation: int = 3,
+    stall_limit: int = 10,
+    operators: list[str] | None = None,
+    operator_weights: dict[str, float] | None = None,
+    objective_weight_overrides: dict[str, float] | None = None,
+) -> dict[str, Any]:
+    """Run an ILS with the existing FHOPS local-search and perturbation semantics.
+
+    The local-search pass evaluates one candidate per enabled operator and keeps the best
+    improvement, exactly as the existing FHOPS ILS does. Perturbation applies random operators and
+    always accepts the perturbed schedule. Scoring is block-separable and incremental.
+
+    Parameters
+    ----------
+    pb : Problem
+        The parsed FHOPS scenario.
+    iters : int, optional
+        Number of outer local-search/perturbation iterations. Defaults to 50.
+    seed : int, optional
+        The random seed. Defaults to 42.
+    perturbation : int, optional
+        Moves per perturbation. Defaults to 3.
+    stall_limit : int, optional
+        Restart from the incumbent after this many non-improving outer iterations. Defaults to 10.
+    operators : list of str or None, optional
+        Operator names to enable. ``None`` enables the FHOPS defaults.
+    operator_weights : mapping of str to float or None, optional
+        Weight overrides. Values at or below zero disable an operator.
+    objective_weight_overrides : mapping of str to float or None, optional
+        Objective weights to override. ``None`` applies the FHOPS automatic overrides.
+
+    Returns
+    -------
+    dict of str to Any
+        The same payload as :func:`solve_kernel_sa`, with ILS counters in ``meta``.
+    """
+    problem = FhopsProblem(
+        pb,
+        operators=operators,
+        operator_weights=operator_weights,
+        objective_weight_overrides=objective_weight_overrides,
+    )
+    current = problem.greedy_schedule()
+    _repair_schedule_cover_blocks(pb, current, problem.operational, fill_voids=True)
+    evaluator = SeparableEvaluator(pb, problem.operational)
+    current_score = evaluator.build(current)
+    greedy_score = current_score
+    best = current
+    best_score = current_score
+    rng = random.Random(seed)
+    stalls = 0
+    perturbations = 0
+    restarts = 0
+    for _ in range(max(1, iters)):
+        while True:
+            improved = _best_improving(problem, current, current_score, evaluator, rng)
+            if improved is None:
+                break
+            current, current_score = improved
+        if current_score > best_score:
+            best, best_score = current, current_score
+            stalls = 0
+        else:
+            stalls += 1
+        if stalls >= stall_limit:
+            current = best
+            current_score = evaluator.build(current)
+            stalls = 0
+            restarts += 1
+        perturbed = _perturb(problem, current, evaluator, rng, perturbation)
+        if perturbed is not None:
+            current, current_score = perturbed
+            perturbations += 1
+    return _result(
+        pb,
+        problem,
+        best,
+        greedy_score,
+        {
+            "solver": "kernel-ils-like",
+            "iterations": iters,
+            "seed": seed,
+            "perturbation": perturbation,
+            "stall_limit": stall_limit,
+            "perturbations": perturbations,
+            "restarts": restarts,
+            "incremental_search": True,
+        },
+    )

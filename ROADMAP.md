@@ -750,3 +750,5 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
   kernel results. Remaining: true in-place move/undo and the full parity/performance ladder.
 - [x] Shared metaheuristic kernel adapter: record the Tiny7/Small21/med42 parity ladder. Remaining:
   like-for-like ILS, Jaffray/scaling tiers, and the retirement decision.
+- [x] Shared metaheuristic kernel adapter: add the like-for-like kernel ILS and record its ladder.
+  Remaining: multi-seed/longer-budget confirmation, true in-place move/undo, and retirement.

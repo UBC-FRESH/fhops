@@ -18,6 +18,7 @@ from typing import Any
 from fhops.optimization.heuristics import solve_ils, solve_sa, solve_tabu
 from fhops.optimization.meta import (
     solve_kernel_ils,
+    solve_kernel_ils_like,
     solve_kernel_sa_incremental,
     solve_kernel_tabu,
 )
@@ -59,6 +60,10 @@ def main() -> int:
         "ils": (
             lambda pb, it, seed: solve_ils(pb, iters=it, seed=seed),
             lambda pb, it, seed: solve_kernel_ils(pb, iters=it, seed=seed),
+        ),
+        "ils_like": (
+            lambda pb, it, seed: solve_ils(pb, iters=it, seed=seed),
+            lambda pb, it, seed: solve_kernel_ils_like(pb, iters=it, seed=seed),
         ),
     }
     records: list[dict[str, Any]] = []
