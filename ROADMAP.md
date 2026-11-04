@@ -752,3 +752,5 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
   like-for-like ILS, Jaffray/scaling tiers, and the retirement decision.
 - [x] Shared metaheuristic kernel adapter: add the like-for-like kernel ILS and record its ladder.
   Remaining: multi-seed/longer-budget confirmation, true in-place move/undo, and retirement.
+- [x] Shared metaheuristic kernel adapter: multi-seed ILS-like confirmation. Retirement decision:
+  keep the existing solvers; the kernel path is not yet uniformly better.

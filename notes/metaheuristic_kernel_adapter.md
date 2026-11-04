@@ -158,3 +158,18 @@ incumbent at the stall limit. 50 iterations, seed 7; raw records:
 The like-for-like kernel ILS is slower than the plain kernel ILS (which is a different algorithm)
 but closer to the existing ILS. It matches Tiny7 exactly and improves Small21/med42 at this budget;
 it is not trajectory-identical, so the existing solver stays until a longer multi-seed ladder passes.
+
+
+## Multi-seed ILS-like confirmation (2026-11-04)
+
+Five seeds, 50 iterations, Tiny7/Small21/med42. Raw records:
+`notes/reference/kernel-parity-ils-multiseed-2026-11-04.json`.
+
+| Scenario | Mean objective delta (kernel - existing) | Seeds (1-5) | Mean speed ratio |
+| --- | ---: | --- | ---: |
+| tiny7 | +42.742 | all +42.742 | 0.693 |
+| small21 | +8.924 | -20.722, +0.478, +0.380, +10.894, +53.588 | 0.571 |
+| med42 | -2738.917 | -1751.263, -1099.753, -5845.352, -3094.426, -1903.793 | 0.550 |
+
+The like-for-like ILS is not yet a replacement. It is consistently ~1% worse on Tiny7 and typically
+worse on Small21, while materially better on med42. The existing FHOPS solvers stay in place.

@@ -5488,3 +5488,7 @@ PY
   perturbation, and stall-restart semantics on the incremental evaluator. Tiny7 matches exactly;
   small21/med42 improve at 50 iterations, seed 7. Raw records:
   `notes/reference/kernel-parity-ils-2026-11-04.json`. Existing solvers still stay.
+
+- 2026-11-04: multi-seed ILS-like ladder (5 seeds, 50 iterations). The kernel path is +42.742 on
+  Tiny7 for every seed, mean +8.924 on Small21, and mean -2738.917 on med42. Existing solvers stay.
+  Raw records: `notes/reference/kernel-parity-ils-multiseed-2026-11-04.json`.
