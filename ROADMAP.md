@@ -698,10 +698,10 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
   - [x] Riparian clump generation, rendering, and routing exclusion
   - [x] Correct the Phase 21 closeout record
 
-## Phase 44 — Salvage shelf-life and wood degradation (CARB-03) — implemented, pending merge
+## Phase 44 — Salvage shelf-life and wood degradation (CARB-03) — complete
 
-Parent issue: #380. Child issue: #381. Implementation PR: #383. Branch:
-`feature/p44-salvage-degradation`. Authoritative note:
+Parent issue: #380. Child issue: #381. Implementation PR: #383 (merge
+`22c07ff6`). Branch: `feature/p44-salvage-degradation`. Authoritative note:
 `notes/carb03_salvage_degradation.md`.
 
 Goal: add the first bounded, source-backed salvage degradation surface. The
