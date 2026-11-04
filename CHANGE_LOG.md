@@ -5540,3 +5540,9 @@ PY
 - 2026-11-04: multi-seed ILS-like ladder (5 seeds, 50 iterations). The kernel path is +42.742 on
   Tiny7 for every seed, mean +8.924 on Small21, and mean -2738.917 on med42. Existing solvers stay.
   Raw records: `notes/reference/kernel-parity-ils-multiseed-2026-11-04.json`.
+
+- 2026-11-04: corrected the Jaffray ladder. Scenarios come from
+  `UBC-FRESH/jaffray-masc-fhops-model` (`data/input/scenarios/{ka,ni,pg}_{6,18,40}`), not
+  `examples/`. Added `--scenario-root` and `--solvers` to the comparison script. 6-block results
+  agree closely; 18-block mostly agree; 40-block is high-variance at these budgets. Raw records:
+  `notes/reference/kernel-parity-jaffray-2026-11-04.json`.

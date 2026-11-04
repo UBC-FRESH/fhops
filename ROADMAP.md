@@ -794,3 +794,5 @@ public or project-approved sources and review.
   Remaining: multi-seed/longer-budget confirmation, true in-place move/undo, and retirement.
 - [x] Shared metaheuristic kernel adapter: multi-seed ILS-like confirmation. Retirement decision:
   keep the existing solvers; the kernel path is not yet uniformly better.
+- [x] Shared metaheuristic kernel adapter: run the Jaffray case-study ladder from
+  `jaffray-masc-fhops-model`. 6/18-block agree closely; 40-block needs multi-seed/longer runs.

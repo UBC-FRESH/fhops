@@ -173,3 +173,51 @@ Five seeds, 50 iterations, Tiny7/Small21/med42. Raw records:
 
 The like-for-like ILS is not yet a replacement. It is consistently ~1% worse on Tiny7 and typically
 worse on Small21, while materially better on med42. The existing FHOPS solvers stay in place.
+
+
+## Jaffray case-study ladder (2026-11-04)
+
+Scenarios: `UBC-FRESH/jaffray-masc-fhops-model` at `d726ace2d483c04e8ff54b89e6f8940238648837`, under
+`data/input/scenarios/{ka,ni,pg}_{6,18,40}`. Manuscript repository:
+`UBC-FRESH/fhops-cjfr-rolling-horizon` at `4c800450da741700580f563fd0e9eba64d065b9e`. Raw records:
+`notes/reference/kernel-parity-jaffray-2026-11-04.json`.
+
+6 blocks, 50 iterations, seed 7:
+
+| Scenario | Solver | Existing | Kernel | Delta |
+| --- | --- | ---: | ---: | ---: |
+| ka_6 | SA | 30913.356 | 30913.356 | 0.000 |
+| ka_6 | Tabu | 30913.356 | 30913.356 | 0.000 |
+| ka_6 | ILS-like | 30913.356 | 30913.356 | 0.000 |
+| ni_6 | SA | 111189.356 | 109873.356 | -1316.000 |
+| ni_6 | Tabu | 112505.356 | 109851.782 | -2653.575 |
+| ni_6 | ILS-like | 112505.356 | 109873.356 | -2632.000 |
+| pg_6 | SA | 67923.963 | 67923.963 | 0.000 |
+| pg_6 | Tabu | 67923.963 | 67923.963 | 0.000 |
+| pg_6 | ILS-like | 67923.963 | 67923.963 | 0.000 |
+
+18 blocks, 20 iterations, seed 7:
+
+| Scenario | Solver | Existing | Kernel | Delta |
+| --- | --- | ---: | ---: | ---: |
+| ka_18 | SA/Tabu/ILS-like | 71386.134 | 71386.134 | 0.000 |
+| ni_18 | SA | 137703.772 | 139019.772 | +1316.000 |
+| ni_18 | Tabu | 140335.772 | 139019.772 | -1316.000 |
+| ni_18 | ILS-like | 139019.772 | 139115.639 | +95.868 |
+| pg_18 | SA/Tabu/ILS-like | 321391.625 | 321391.625 | 0.000 or -1316 |
+
+40 blocks, 50 iterations, seed 7, SA/Tabu only (existing ILS makes the full grid impractical):
+
+| Scenario | Solver | Existing | Kernel | Delta |
+| --- | --- | ---: | ---: | ---: |
+| ka_40 | SA | 287591.701 | 286275.701 | -1316.000 |
+| ka_40 | Tabu | 290223.701 | 288907.701 | -1316.000 |
+| ni_40 | SA | 89121.034 | 41745.034 | -47376.000 |
+| ni_40 | Tabu | 128601.034 | 132863.623 | +4262.590 |
+| pg_40 | SA | 177714.205 | 289195.214 | +111481.009 |
+| pg_40 | Tabu | 206666.205 | 360612.599 | +153946.394 |
+
+The 6-block cases agree closely. The 18-block cases mostly agree. The 40-block cases are
+high-variance at these budgets; the kernel path sometimes finds a much better plan and sometimes a
+much worse one. This is not a retirement signal; it is evidence that the 40-block comparison needs
+multiple seeds and longer runs.
