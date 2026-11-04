@@ -77,6 +77,11 @@ textarea { width: 100%; resize: vertical; }
 
 .tool-options select { width: 100%; box-sizing: border-box; background: #0c1214; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px; margin-bottom: 7px; }
 
+.salvage-controls { display: flex; gap: 6px; align-items: end; margin-bottom: 8px; }
+.salvage-controls label { display: grid; gap: 3px; flex: 1; font-size: 9px; color: #93a6ae; }
+.salvage-controls input { min-width: 0; background: #0c1214; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px; font-size: 10px; }
+.salvage-source { margin-top: 6px; font-size: 9px; color: #93a6ae; }
+.salvage-ok { color: var(--ok); }
 .compare-controls { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; align-items: end; margin-bottom: 8px; }
 .compare-controls label { display: grid; gap: 3px; font-size: 9px; color: #93a6ae; }
 .compare-controls select { min-width: 0; background: #0c1214; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px; font-size: 10px; }

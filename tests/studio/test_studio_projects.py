@@ -10,6 +10,7 @@ import pytest
 
 from fhops.tree_inventory import load_tree_inventory
 from sandbox.studio.projects import (
+    StudioError,
     _terrain_elevation,
     apply_operator_policies,
     create_project,
@@ -368,3 +369,33 @@ def test_stream_buffer_clump_retains_trees_and_blocks_routing(tmp_path: Path) ->
     derived = materialize_case(tmp_path, project, case)
     assert derived.manifest["retention_clumps"][0]["kind"] == "riparian"
     assert derived.manifest["obstacles"]
+
+
+def test_salvage_defaults_and_validation(tmp_path: Path) -> None:
+    """Salvage ages are optional, persisted, and validated on save."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    assert project["salvage"]["ages"] == {}
+    assert project["salvage"]["curve_id"]
+
+    legacy = create_project(case)
+    legacy.pop("salvage")
+    saved = save_project(tmp_path / "projects", legacy)
+    assert saved["salvage"]["ages"] == {}
+    assert saved["salvage"]["curve_id"]
+
+    invalid = create_project(case)
+    invalid["salvage"]["ages"]["AFRF_GAVIN_485"] = -1
+    with pytest.raises(StudioError, match="finite and non-negative"):
+        save_project(tmp_path / "projects", invalid)
+
+
+def test_project_dataset_includes_salvage_age(tmp_path: Path) -> None:
+    """Salvage ages ride with the project dataset without changing tree stats."""
+    case = load_case(ROOT / "sandbox" / "cases" / "afrf-gavin")
+    project = create_project(case)
+    project["salvage"]["ages"]["AFRF_GAVIN_485"] = 2.5
+    before = project_dataset(case, project)["stats"]
+    dataset = project_dataset(case, project)
+    assert dataset["project"]["salvage"]["ages"]["AFRF_GAVIN_485"] == 2.5
+    assert dataset["stats"] == before

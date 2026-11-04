@@ -331,6 +331,7 @@ function exportComparison() {
     run: data.meta.run,
     economics: economics(data, name),
     landing_inventory: data.events?.landing_inventory || {},
+    salvage: data.dataset?.project?.salvage || {},
   });
   const payload = {
     generated_utc: new Date().toISOString(),

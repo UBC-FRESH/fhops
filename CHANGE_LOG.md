@@ -1,3 +1,21 @@
+# 2026-11-04 — Studio salvage-age overlay (#418)
+
+- Added optional per-block `salvage.ages` data to Studio projects, with
+  normalization and finite/non-negative validation on load/save.
+- Added a read-only Studio salvage panel and `POST /projects/<id>/salvage`
+  preview endpoint backed by `fhops.salvage`.
+- The panel shows retention, retained volume, eligible products, curve source,
+  and applicability boundary; it explicitly does not alter run KPIs, schedules,
+  trucking, economics, or replay.
+- Project exports include the salvage configuration; comparison JSON includes
+  each side's salvage settings.
+- Existing projects load with an empty age map. Legacy project payloads are
+  normalized on save.
+- Added project/API regression coverage and a browser smoke check (age 2 →
+  0.89 retention on the Gavin project; clear/save removes the age).
+- Verification: targeted Studio tests, full `pytest` (1391 passed, 219
+  skipped), `ruff format`/`ruff check`, `mypy src` (194 files), and Sphinx.
+
 # 2026-11-04 — refresh P44 salvage branch and fix review finding (#381)
 
 - Merged current `main` into the existing P44 PR branch; no salvage code
