@@ -116,3 +116,27 @@ The kernel paths are competitive and usually faster, but they are not trajectory
 kernel ILS is not like-for-like: the existing FHOPS ILS runs a local-search/perturbation loop, while
 the kernel ILS is the kernel's perturb-and-accept loop. The existing FHOPS solvers stay in place
 until a like-for-like ILS and a full ladder (Jaffray and the synthetic scaling tiers) pass.
+
+
+## Scaling ladder (2026-11-04)
+
+50 iterations, seed 7. The same raw record file carries the scaling rows.
+
+| Scenario | Solver | Existing | Kernel | Delta | Kernel speed ratio |
+| --- | --- | ---: | ---: | ---: | ---: |
+| large84 | SA | -213942.207 | -221802.325 | -7860.118 | 0.27 |
+| large84 | Tabu | -218267.868 | -206134.176 | +12133.692 | 0.65 |
+| large84 | ILS | -204723.129 | -223809.013 | -19085.884 | 0.04 |
+| synthetic/small | SA | 39.791 | 39.791 | 0.000 | 0.32 |
+| synthetic/small | Tabu | 39.791 | 39.791 | 0.000 | 1.08 |
+| synthetic/small | ILS | 39.791 | 39.791 | 0.000 | 0.20 |
+| synthetic/medium | SA | 61.887 | 61.887 | 0.000 | 0.32 |
+| synthetic/medium | Tabu | 61.887 | 61.887 | 0.000 | 1.03 |
+| synthetic/medium | ILS | 61.887 | 61.887 | 0.000 | 0.18 |
+| synthetic/large | SA | 46.839 | 46.839 | 0.000 | 0.40 |
+| synthetic/large | Tabu | 64.007 | 46.839 | -17.168 | 1.00 |
+| synthetic/large | ILS | 64.007 | 46.839 | -17.168 | 0.17 |
+
+The synthetic tiers agree exactly on SA and mostly on Tabu/ILS; the large84 Tabu kernel result is
+worse by ~5.6% and reinforces that the existing solvers stay until a like-for-like ILS and the
+retirement decision.

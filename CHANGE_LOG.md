@@ -5478,3 +5478,8 @@ PY
   Tiny7 SA is ~1% worse and Small21 Tabu ~0.1% worse. The existing solvers stay until a like-for-like
   ILS and the full Jaffray/scaling ladder pass. Raw records:
   `notes/reference/kernel-parity-2026-11-04.json`.
+
+- 2026-11-04: extended the parity ladder to large84 and the synthetic small/medium/large tiers at
+  50 iterations. Synthetic SA agrees exactly; large84 Tabu is ~5.6% worse on the kernel path, so
+  the existing solvers stay. Raw records extended in
+  `notes/reference/kernel-parity-2026-11-04.json`.
