@@ -99,6 +99,12 @@ _BREAKDOWN_FAILURE_RATE = {"low": 0.01, "normal": 0.03, "elevated": 0.06, "high"
 _BREAKDOWN_REPAIR_HOURS = {"low": 1.5, "normal": 2.5, "elevated": 4.0, "high": 4.0}
 _BREAK_POLICY_MULTIPLIER = {"minimal": 1.25, "standard": 1.0, "planned": 0.75}
 _GRADE_LIMITS = {"high": 80.0, "normal": None, "relaxed": 150.0}
+_DAMAGE_DOWNGRADE_FRACTION = {
+    "low": 0.0,
+    "normal": 0.0,
+    "elevated": 0.05,
+    "high": 0.10,
+}
 
 
 class StudioError(RuntimeError):
@@ -1149,6 +1155,7 @@ def apply_operator_policies(project: dict[str, Any]) -> dict[str, Any]:
     breakdown_risks: list[str] = []
     break_policies: list[str] = []
     grade_cautions: list[str] = []
+    damage_fractions: list[float] = []
     repair_hours: list[float] = []
     for machine in machines:
         machine_id = str(machine.get("id") or "")
@@ -1167,6 +1174,7 @@ def apply_operator_policies(project: dict[str, Any]) -> dict[str, Any]:
         breakdown_risks.append(str(preset["breakdown_risk"]))
         break_policies.append(str(preset["break_policy"]))
         grade_cautions.append(str(preset["grade_caution"]))
+        damage_fractions.append(_DAMAGE_DOWNGRADE_FRACTION.get(str(preset["damage_risk"]), 0.0))
         repair_hours.append(_BREAKDOWN_REPAIR_HOURS.get(str(preset["breakdown_risk"]), 2.5))
     args["policy_effects"] = effects
     nonsteady = any(effect["policy"] != "steady" for effect in effects.values())
@@ -1191,10 +1199,16 @@ def apply_operator_policies(project: dict[str, Any]) -> dict[str, Any]:
             args["max_skidder_grade"] = max(
                 float(args.get("max_skidder_grade", 100.0)), _GRADE_LIMITS["relaxed"]
             )
+    damage_fraction = sum(damage_fractions) / len(damage_fractions) if damage_fractions else 0.0
+    if damage_fraction > 0:
+        args["damage_downgrade_fraction"] = round(damage_fraction, 4)
+    else:
+        args.pop("damage_downgrade_fraction", None)
     args["policy_effects"]["_aggregate"] = {
         "failure_rate_per_machine_hour": args.get("failure_rate"),
         "repair_hours": args.get("repair_hours"),
         "max_skidder_grade": args.get("max_skidder_grade"),
+        "damage_downgrade_fraction": args.get("damage_downgrade_fraction", 0.0),
     }
     return args
 

@@ -160,6 +160,7 @@ function economics(data, side) {
   const mix = run.kpis?.product_mix || {};
   const sawlog = Number(mix.sawlog_m3 || 0);
   const pulp = Number(mix.pulp_m3 || 0);
+  const downgraded = Number(mix.downgraded_m3 || 0);
   const revenue = sawlog * rates.sawlogPrice + pulp * rates.pulpPrice;
   const margin = revenue - total;
   return {
@@ -175,6 +176,7 @@ function economics(data, side) {
     pulpPrice: rates.pulpPrice,
     sawlog,
     pulp,
+    downgraded,
     truckCost,
     laborCost,
     total,
@@ -192,6 +194,7 @@ function economicsRows(left, right) {
     ["Active machines", a.machineCount, b.machineCount],
     ["Costed machines", a.pricedMachineCount, b.pricedMachineCount],
     ["Sawlog / pulp m³", `${fmt(a.sawlog)} / ${fmt(a.pulp)}`, `${fmt(b.sawlog)} / ${fmt(b.pulp)}`],
+    ["Downgraded sawlog m³", fmt(a.downgraded), fmt(b.downgraded)],
     ["Product revenue", `$${a.revenue.toFixed(0)} (${fmt(a.sawlogPrice)} / ${fmt(a.pulpPrice)})`, `$${b.revenue.toFixed(0)} (${fmt(b.sawlogPrice)} / ${fmt(b.pulpPrice)})`],
     ["Machine cost — scheduled", `$${a.scheduled.toFixed(0)}`, `$${b.scheduled.toFixed(0)}`],
     ["Machine cost — productive", `$${a.productive.toFixed(0)}`, `$${b.productive.toFixed(0)}`],
