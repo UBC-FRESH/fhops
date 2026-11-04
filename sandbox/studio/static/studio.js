@@ -797,22 +797,42 @@ function applySystemPreset(name) {
   pushHistory();
   const landings = projectLandings();
   const primaryLanding = landings[0]?.id || null;
-  const secondLanding = landings[1]?.id || primaryLanding;
   const fellerRoles = new Set(["feller_buncher", "harvester", "hand_faller"]);
   const extractionRoles = new Set([
     "grapple_skidder", "skidder", "forwarder", "cable_yarder", "skyline_yarder",
   ]);
   const processorRoles = new Set(["roadside_processor", "processor"]);
-  const machines = state.project.machines || [];
+  let machines = state.project.machines || [];
   const catalog = state.project.catalog || [];
+  const landingIds = landings.length ? landings.map((landing) => landing.id) : [primaryLanding];
 
-  const findOrAdd = (predicate, id, role, landing = null) => {
+  const uniqueId = (base) => {
+    const used = new Set(machines.map((machine) => String(machine.id)));
+    let candidate = base;
+    let suffix = 2;
+    while (used.has(candidate)) {
+      candidate = `${base}-${suffix}`;
+      suffix += 1;
+    }
+    return candidate;
+  };
+
+  const copySource = (machine, source) => {
+    if (source?.operating_cost != null) machine.operating_cost = source.operating_cost;
+    if (source?.daily_hours != null) machine.daily_hours = source.daily_hours;
+    if (source?.spec && !machine.spec) machine.spec = { ...source.spec };
+  };
+
+  const findOrAdd = (predicate, baseId, role, landing = null) => {
     let machine = machines.find(predicate);
     if (!machine) {
-      const source = catalog.find((item) => item.id === id);
-      machine = { id, role, type: role, policy: "steady", source: "preset", landing_id: landing };
-      if (source?.operating_cost != null) machine.operating_cost = source.operating_cost;
-      if (source?.daily_hours != null) machine.daily_hours = source.daily_hours;
+      const source = catalog.find((item) => item.id === baseId)
+        || catalog.find((item) => item.role === role);
+      machine = {
+        id: uniqueId(baseId), role, type: role, policy: "steady", source: "preset",
+        landing_id: landing,
+      };
+      copySource(machine, source);
       machines.push(machine);
     }
     return machine;
@@ -840,41 +860,45 @@ function applySystemPreset(name) {
 
   let processors = machines.filter((machine) => processorRoles.has(machine.role));
   if (preset.processors) {
-    if (!processors.length) {
-      processors = [
-        findOrAdd(() => false, "H5", "roadside_processor", primaryLanding),
-        findOrAdd(() => false, "H5-B", "roadside_processor", secondLanding),
-      ];
+    const processorBases = ["H5", "H5-B", "H5-C", "H5-D"];
+    while (processors.length < landingIds.length) {
+      const index = processors.length;
+      processors.push(findOrAdd(
+        () => false,
+        processorBases[index] || `H5-${index + 1}`,
+        "roadside_processor",
+        landingIds[index % landingIds.length],
+      ));
     }
     processors.forEach((machine, index) => {
       machine.role = "roadside_processor";
       machine.type = "roadside_processor";
-      machine.landing_id = index === 0 ? primaryLanding : secondLanding;
+      machine.landing_id = landingIds[index % landingIds.length];
     });
   } else {
-    state.project.machines = machines.filter((machine) => !processorRoles.has(machine.role));
+    machines = state.project.machines = machines.filter(
+      (machine) => !processorRoles.has(machine.role),
+    );
   }
 
-  const active = state.project.machines;
-  let loaders = active.filter((machine) => machine.role === "loader");
-  if (!loaders.length) {
-    loaders = [findOrAdd(() => false, "H4", "loader", primaryLanding)];
-  }
-  if (landings.length > 1 && !loaders.some((machine) => machine.id === "H4-B")) {
-    const clone = catalog.find((item) => item.id === "H4-B");
-    if (clone) {
-      const machine = { id: "H4-B", role: "loader", type: "loader", policy: "steady", source: "preset" };
-      if (clone.operating_cost != null) machine.operating_cost = clone.operating_cost;
-      if (clone.daily_hours != null) machine.daily_hours = clone.daily_hours;
-      active.push(machine);
-      loaders.push(machine);
-    }
+  let loaders = machines.filter((machine) => machine.role === "loader");
+  const loaderBases = ["H4", "H4-B", "H4-C", "H4-D"];
+  while (loaders.length < landingIds.length) {
+    const index = loaders.length;
+    loaders.push(findOrAdd(
+      () => false,
+      loaderBases[index] || `H4-${index + 1}`,
+      "loader",
+      landingIds[index % landingIds.length],
+    ));
   }
   loaders.forEach((machine, index) => {
     machine.role = "loader";
     machine.type = "loader";
-    machine.landing_id = landings[index]?.id || primaryLanding;
+    machine.landing_id = landingIds[index % landingIds.length];
   });
+
+  const active = machines;
 
   state.project.operator_policies = Object.fromEntries(
     active.map((machine) => [machine.id, state.project.operator_policies?.[machine.id] || "steady"]),
@@ -1318,14 +1342,55 @@ function formatValue(value, digits = 1) {
   return value == null || !Number.isFinite(Number(value)) ? "—" : Number(value).toFixed(digits);
 }
 
+function comparisonUrl(leftRun = "", rightRun = "") {
+  const projectId = state.project?.project_id;
+  if (!projectId) return "compare";
+  const params = new URLSearchParams({ left_project: projectId, right_project: projectId });
+  if (leftRun) params.set("left_run", leftRun);
+  if (rightRun) params.set("right_run", rightRun);
+  return `compare?${params.toString()}`;
+}
+
+function updateComparisonLinks(leftRun, rightRun) {
+  const ready = Boolean(leftRun && rightRun && leftRun !== rightRun);
+  const href = comparisonUrl(ready ? leftRun : "", ready ? rightRun : "");
+  const open = $("#open-compare");
+  if (open) {
+    open.href = href;
+    open.classList.toggle("disabled", !ready);
+    open.setAttribute("aria-disabled", ready ? "false" : "true");
+  }
+  const top = $("#compare");
+  if (top) top.href = href;
+}
+
+function fillRunSelect(select, runs, selected, fallback = "") {
+  if (!select) return;
+  const exists = runs.some((run) => run.run_id === selected);
+  select.innerHTML = runs.length
+    ? runs.map((run) => (
+      `<option value="${escapeHtml(run.run_id)}">${escapeHtml(run.run_id)}${run.freshness?.stale ? " · stale" : ""}</option>`
+    )).join("")
+    : '<option value="">No runs</option>';
+  select.value = exists ? selected : (fallback || runs[0]?.run_id || "");
+}
+
 function renderRunComparison(runs) {
   const node = $("#run-compare");
+  const leftSelect = $("#compare-left-run");
+  const rightSelect = $("#compare-right-run");
   if (!runs || runs.length < 2) {
+    fillRunSelect(leftSelect, runs || [], "");
+    fillRunSelect(rightSelect, runs || [], "");
+    updateComparisonLinks("", "");
     node.textContent = "Need two runs to compare.";
     return;
   }
   const latest = runs[0];
   const previous = runs[1];
+  fillRunSelect(leftSelect, runs, leftSelect?.value, previous.run_id);
+  fillRunSelect(rightSelect, runs, rightSelect?.value, latest.run_id);
+  updateComparisonLinks(leftSelect?.value, rightSelect?.value);
   const lk = latest.kpis || {};
   const pk = previous.kpis || {};
   const rows = [
@@ -1542,6 +1607,14 @@ function bindEvents() {
   $("#duplicate").addEventListener("click", duplicateProject);
   $("#add-machine").addEventListener("click", addMachine);
   $("#apply-preset").addEventListener("click", () => applySystemPreset($("#system-preset").value));
+  for (const id of ["compare-left-run", "compare-right-run"]) {
+    $(`#${id}`).addEventListener("change", () => {
+      updateComparisonLinks($("#compare-left-run").value, $("#compare-right-run").value);
+    });
+  }
+  $("#open-compare").addEventListener("click", (event) => {
+    if (event.currentTarget.getAttribute("aria-disabled") === "true") event.preventDefault();
+  });
   $("#add-landing").addEventListener("click", addLanding);
   $("#new-project").addEventListener("click", openNewDialog);
   $("#import").addEventListener("click", () => $("#import-file").click());

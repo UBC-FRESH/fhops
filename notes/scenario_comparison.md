@@ -1,6 +1,6 @@
 # Studio scenario comparison page
 
-Issue: #377. Branch: `issue-377-scenario-compare`.
+Issue: #377; run-history launcher follow-up #407. Branch: `issue-407-preset-compare`.
 
 ## Purpose
 
@@ -14,8 +14,11 @@ Compare any two Studio projects/runs without mixing their histories:
 
 ## Usage
 
-Open `/studio/compare` and choose left/right projects and runs. Selections are
-stored in query parameters, so a comparison can be shared:
+Open `/studio/compare` and choose left/right projects and runs. The Studio run
+history panel also has Base/Compare selectors with defaults of the previous and
+latest runs; its **Open comparison** button and the top-bar Compare link carry
+the same project/run query parameters. Selections are stored in query
+parameters, so a comparison can be shared:
 
 ```text
 /studio/compare?left_project=<id>&left_run=<run>&right_project=<id>&right_run=<run>
@@ -68,5 +71,9 @@ ownership, repair, fuel, or finance accounting.
 ## Tests
 
 - Studio app route smoke test.
+- Studio page markup test for the Base/Compare selectors and launcher.
 - Existing run/project API tests.
+- Browser smoke: 22 CTL runs populated both selectors; changing the base run
+  updated both comparison links; the linked page loaded with `comparison ready`
+  and no page errors.
 - JS syntax check.

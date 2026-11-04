@@ -1,3 +1,18 @@
+# 2026-11-04 — custom-fleet presets and comparison launcher (#407)
+
+- System presets now preserve custom machine IDs, avoid duplicate IDs by
+  generating suffixes, keep custom extraction counts, and assign one loader
+  and one processor per landing (round-robin for extra machines).
+- Fixed the processor-removal path so later loader additions persist.
+- Added Base/Compare run selectors to the Studio run-history panel, defaulting
+  to the previous and latest runs; the launcher and top-bar Compare link carry
+  shareable project/run query parameters.
+- Updated the policy note to describe damage-risk product downgrade rather than
+  the old advisory wording.
+- Verification: full `pytest` (1366 passed, 214 skipped), targeted Studio tests,
+  JS syntax checks, pre-commit, and a browser smoke test with custom IDs and 22
+  CTL runs.
+
 # 2026-11-04 — local quality-gate cleanup (#403)
 
 - Updated the two HiGHS option-error robustness tests for highspy 1.12, which
