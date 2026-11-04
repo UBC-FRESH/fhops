@@ -5454,3 +5454,9 @@ PY
   all kernel paths record the applied mapping in `meta`. Tests cover the automatic and explicit
   cases, and the Tiny7 scenario gate now rescoring through the overridden context. Full suite,
   mypy, and Sphinx pass.
+
+- 2026-11-04: added `scripts/compare_kernel_solvers.py` and the 100-iteration Tiny7/Small21/med42
+  parity ladder. Kernel SA/Tabu/ILS are competitive and usually faster, but not trajectory-identical;
+  Tiny7 SA is ~1% worse and Small21 Tabu ~0.1% worse. The existing solvers stay until a like-for-like
+  ILS and the full Jaffray/scaling ladder pass. Raw records:
+  `notes/reference/kernel-parity-2026-11-04.json`.

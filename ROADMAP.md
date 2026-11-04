@@ -747,3 +747,5 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
   gates. Design note: `notes/metaheuristic_kernel_adapter.md`.
 - [x] Shared metaheuristic kernel adapter: align objective-weight overrides and record them in
   kernel results. Remaining: true in-place move/undo and the full parity/performance ladder.
+- [x] Shared metaheuristic kernel adapter: record the Tiny7/Small21/med42 parity ladder. Remaining:
+  like-for-like ILS, Jaffray/scaling tiers, and the retirement decision.

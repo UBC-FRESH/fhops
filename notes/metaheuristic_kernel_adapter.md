@@ -92,3 +92,27 @@ explicit overrides. The applied mapping is recorded in every kernel result's `me
 
 The Tiny7 scenario gate now rescored through the overridden context, and a dedicated test checks
 both the automatic mapping and an explicit override.
+
+
+## Parity ladder (2026-11-04)
+
+`scripts/compare_kernel_solvers.py` runs the existing FHOPS solver and the kernel path with the
+same scenario, seed, and 100-iteration budget. Raw records:
+`notes/reference/kernel-parity-2026-11-04.json`.
+
+| Scenario | Solver | Existing | Kernel | Delta | Kernel speed ratio |
+| --- | --- | ---: | ---: | ---: | ---: |
+| tiny7 | SA | 4295.775 | 4338.517 | +42.742 | 0.34 |
+| tiny7 | Tabu | 4338.517 | 4338.517 | 0.000 | 1.15 |
+| tiny7 | ILS | 4338.517 | 4338.517 | 0.000 | 0.18 |
+| small21 | SA | 15551.329 | 15508.871 | -42.458 | 0.37 |
+| small21 | Tabu | 15563.091 | 15583.627 | +20.536 | 1.12 |
+| small21 | ILS | 15584.345 | 15562.417 | -21.928 | 0.16 |
+| med42 | SA | 20898.340 | 20543.160 | -355.180 | 0.35 |
+| med42 | Tabu | 22444.217 | 22045.206 | -399.011 | 0.84 |
+| med42 | ILS | 23572.070 | 19349.545 | -4222.524 | 0.07 |
+
+The kernel paths are competitive and usually faster, but they are not trajectory-identical. The
+kernel ILS is not like-for-like: the existing FHOPS ILS runs a local-search/perturbation loop, while
+the kernel ILS is the kernel's perturb-and-accept loop. The existing FHOPS solvers stay in place
+until a like-for-like ILS and a full ladder (Jaffray and the synthetic scaling tiers) pass.
