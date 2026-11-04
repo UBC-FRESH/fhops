@@ -9,18 +9,25 @@ from __future__ import annotations
 
 import math
 import random
+from collections.abc import Sequence
 from typing import Any
 
 import pandas as pd
 from fresh_solutions.kernel import (
     TemperatureSchedule,
     patience_reached,
+    reversion_due,
     solve_ils,
     solve_sa,
     solve_tabu,
 )
 
-from fhops.optimization.heuristics.common import Schedule, evaluate_schedule
+from fhops.optimization.heuristics.common import (
+    Schedule,
+    _repair_schedule_cover_blocks,
+    evaluate_schedule,
+)
+from fhops.optimization.heuristics.incremental import SeparableEvaluator, slot_diff
 from fhops.scenario.contract import Problem
 
 from .adapter import FhopsProblem
@@ -350,5 +357,110 @@ def solve_kernel_sa_fast(
             "temperature": start_temperature,
             "cooling": cooling,
             "approximate_search": True,
+        },
+    )
+
+
+def solve_kernel_sa_incremental(
+    pb: Problem,
+    *,
+    iters: int = 2000,
+    seed: int = 42,
+    temperature: float | None = None,
+    cooling: float = 0.995,
+    patience: int = 0,
+    reversion: int = 0,
+    operators: list[str] | None = None,
+    operator_weights: dict[str, float] | None = None,
+) -> dict[str, Any]:
+    """Run kernel annealing with exact block-separable incremental scoring.
+
+    Each candidate is repaired fully, then only the blocks touched by the move are recomputed
+    through :class:`~fhops.optimization.heuristics.incremental.SeparableEvaluator`. A rejected
+    move rolls the evaluator cache back, so no full rescore is needed inside the loop. The returned
+    schedule is always rescored with :func:`evaluate_schedule`.
+
+    Parameters
+    ----------
+    pb : Problem
+        The parsed FHOPS scenario.
+    iters : int, optional
+        The iteration budget. Defaults to 2000.
+    seed : int, optional
+        The random seed. Defaults to 42.
+    temperature : float or None, optional
+        The initial temperature. ``None`` uses ``max(1, greedy_score / 10)``.
+    cooling : float, optional
+        The geometric cooling factor. Defaults to 0.995.
+    patience : int, optional
+        Stop after this many iterations without improvement; ``0`` disables it.
+    reversion : int, optional
+        Reset to the incumbent every this many accepted moves; ``0`` disables it.
+    operators : list of str or None, optional
+        Operator names to enable. ``None`` enables the FHOPS defaults.
+    operator_weights : mapping of str to float or None, optional
+        Weight overrides. Values at or below zero disable an operator.
+
+    Returns
+    -------
+    dict of str to Any
+        The same payload as :func:`solve_kernel_sa`, with incremental-search metadata.
+    """
+    problem = FhopsProblem(pb, operators=operators, operator_weights=operator_weights)
+    current = problem.greedy_schedule()
+    _repair_schedule_cover_blocks(pb, current, problem.operational, fill_voids=True)
+    evaluator = SeparableEvaluator(pb, problem.operational)
+    current_score = evaluator.build(current)
+    greedy_score = current_score
+    best = current
+    best_score = current_score
+    start_temperature = max(1.0, greedy_score / 10.0) if temperature is None else float(temperature)
+    schedule = TemperatureSchedule(
+        initial=start_temperature,
+        cooling=cooling,
+        adaptive=False,
+        window=64,
+    )
+    rng = random.Random(seed)
+    last_improvement = 0
+    accepted = 0
+    for iteration in range(iters):
+        if patience_reached(iteration, last_improvement, patience):
+            break
+        move = problem.registry.pick(rng).apply(current, rng, problem.candidates)
+        if move is None:
+            schedule.observe(0.0, -current_score)
+            continue
+        _repair_schedule_cover_blocks(pb, move, problem.operational, fill_voids=True)
+        changed: Sequence[tuple[str, int, str]] = slot_diff(current, move)
+        move_score = evaluator.score_after_move(move, list(changed))
+        increase = current_score - move_score
+        if move_score >= current_score or rng.random() < math.exp(
+            (move_score - current_score) / max(schedule.temperature, 1e-9)
+        ):
+            current, current_score = move, move_score
+            accepted += 1
+            if move_score > best_score:
+                best, best_score = move, move_score
+                last_improvement = iteration
+            if reversion_due(accepted, reversion):
+                current, current_score = best, best_score
+                evaluator.build(current)
+                accepted = 0
+        else:
+            evaluator.undo_last_move(current)
+        schedule.observe(increase, -current_score)
+    return _result(
+        pb,
+        problem,
+        best,
+        greedy_score,
+        {
+            "solver": "kernel-sa-incremental",
+            "iterations": iters,
+            "seed": seed,
+            "temperature": start_temperature,
+            "cooling": cooling,
+            "incremental_search": True,
         },
     )

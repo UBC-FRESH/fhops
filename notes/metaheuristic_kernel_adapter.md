@@ -27,8 +27,12 @@ positive FHOPS objective after the run.
 - Kernel SA, Tabu, and ILS all use one proposal per iteration; the existing FHOPS solvers sample
   batches per step. The adapter is an integration proof, not yet a behaviour-parity replacement.
 - The fast path avoids the kernel's deep state copy and uses dirty-slot repair, but it is not a
-  true delta evaluator. An in-place FHOPS move/undo record and the block-separable incremental
-  scorer are the next performance step.
+  true delta evaluator.
+- `solve_kernel_sa_incremental` uses the existing block-separable `SeparableEvaluator`, with
+  reversible move scoring (`undo_last_move`). It matches the full objective exactly on Tiny7,
+  Small21, and med42 and is faster on larger scenarios.
+- A true in-place FHOPS move/undo record is still the next step; the current incremental path
+  copies the sanitized candidate and then updates the evaluator cache.
 - Telemetry, tuning, and watch integration still use the FHOPS implementations.
 - Parity gates: Tiny7, Small21, Jaffray, med42, and the synthetic scaling tiers, plus the #151
   performance envelope.
@@ -54,3 +58,27 @@ restriction, and the empty schedule. `tests/heuristics` remains green.
 - Behaviour parity with the existing FHOPS SA/Tabu/ILS loops is **not yet claimed**. The kernel
   paths use one proposal per iteration; the existing solvers sample batches and carry more
   telemetry/watch/tuning state.
+
+
+## Incremental block-separable path (2026-11-04)
+
+`solve_kernel_sa_incremental` repairs each candidate, scores only the blocks touched by
+`slot_diff`, and rolls the evaluator cache back on rejection. The returned schedule is always
+rescored with `evaluate_schedule`.
+
+Tiny7, 200 iterations, seed 7:
+
+| Path | Seconds | Objective |
+| --- | ---: | ---: |
+| full kernel SA | 0.157 | -2673.433 |
+| dirty-repair fast path | 0.109 | -2646.813 |
+| block-separable incremental | 0.108 | -2673.433 |
+
+100-iteration comparison at the same seed:
+
+| Scenario | Full seconds | Incremental seconds | Objective |
+| --- | ---: | ---: | ---: |
+| small21 | 0.214 | 0.196 | 8402.789 |
+| med42 | 0.515 | 0.355 | 20543.16 |
+
+The incremental path is the preferred kernel path: same objective as full scoring, lower cost.

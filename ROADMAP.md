@@ -742,3 +742,6 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
 - [ ] Shared metaheuristic kernel adapter: finish FHOPS parity and performance gates for kernel
   SA/Tabu/ILS, then retire the duplicate solver loops. Design note:
   `notes/metaheuristic_kernel_adapter.md`.
+- [x] Shared metaheuristic kernel adapter: add the block-separable incremental scoring path and
+  reversible move cache. Remaining: true in-place move/undo and like-for-like parity/performance
+  gates. Design note: `notes/metaheuristic_kernel_adapter.md`.

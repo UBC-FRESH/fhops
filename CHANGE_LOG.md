@@ -5443,3 +5443,8 @@ PY
   dirty-repair timing on a scenario. Tiny7, 200 iterations, seed 7: full 0.118 s / -2673.433,
   fast 0.103 s / -2646.813. The fast search score is approximate; the returned objective is
   freshly and fully rescored.
+
+- 2026-11-04: added the block-separable incremental path. `SeparableEvaluator` now supports exact
+  rollback (`undo_last_move`) and `fhops.optimization.meta.solve_kernel_sa_incremental` scores only
+  the blocks a move touches. Tiny7/Small21/med42 match the full objective exactly; med42 was
+  0.355 s vs 0.515 s for full scoring at 100 iterations. The full suite still passes.
