@@ -5,7 +5,7 @@
 - `ruff format src tests sandbox`
 - `ruff check src tests sandbox`
 - `mypy src` — 191 source files
-- `pytest` — 1362 passed, 214 skipped
+- `pytest` — 1366 passed, 214 skipped
 - `pre-commit run --all-files`
 - `sphinx-build -b html docs _build/html -W` — with the local Pandoc shim below
 - Targeted Studio/tree tests — 46 passed
