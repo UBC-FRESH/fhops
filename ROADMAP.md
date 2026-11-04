@@ -738,6 +738,31 @@ Remaining follow-on: a BC or species-specific curve, a dedicated roadside-storag
 curve, a product-value/grade model, and a ws4 consumer. Those need their own
 public or project-approved sources and review.
 
+## Phase 45 — FHOPS ground-summary support report — complete
+
+Parent issue: #422. Child issue: #423. Branch: `feature/p45-ground-summary-support`.
+Authoritative docs: `docs/reference/femic_lidar.rst`.
+
+Goal: consume the FEMIC `femic.ground-summary.v1` CSV as a read-only FHOPS block support
+report. The report matches summary rows to scenario blocks, lists missing/unknown block IDs,
+and shows ground/low fractions plus HAG statistics. It does not write the scenario, change
+`lidar_support`, or change the solver.
+
+- [x] P45.1 Ground-summary reader, CLI report, tests, and docs
+  - [x] Add `fhops.scenario.lidar_ground_summary`
+  - [x] Add `fhops scenario lidar ground-summary`
+  - [x] Support `block_id` and `polygon_id` identifiers
+  - [x] Add unit and CLI tests
+  - [x] Add the FHOPS reference docs
+
+Acceptance:
+
+- A valid CSV returns matched block rows.
+- Missing and unknown block IDs are reported.
+- Bad columns, fractions, counts, and duplicates fail clearly.
+- The command is read-only and does not mutate the scenario.
+- Ruff, mypy, pytest, and Sphinx pass.
+
 ## Backlog & Ideas
 - [x] 3D replay retention visibility, retained/stream legend, and machine-event timeline (#330).
 - [x] Studio terrain elevation alignment for derived trees, retained trees, landings, and replay terrain (#332).
