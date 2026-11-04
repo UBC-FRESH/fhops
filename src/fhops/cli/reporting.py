@@ -83,7 +83,17 @@ def salvage_shelf_life(
         typer.echo(str(exc), err=True)
         raise typer.Exit(1) from exc
 
-    console.print(report.frame.to_string(index=False))
+    display_columns = [
+        "block_id",
+        "years_since_disturbance",
+        "salvage_processing_mode",
+        "retention_fraction",
+        "original_volume_m3",
+        "retained_volume_m3",
+        "eligible_products",
+        "retained_value",
+    ]
+    console.print(report.frame.loc[:, display_columns].to_string(index=False))
     console.print(
         f"\nCurve: {report.curve.curve_id} — {report.curve.name}\n"
         f"Source: {report.curve.source.citation} <{report.curve.source.url}>\n"

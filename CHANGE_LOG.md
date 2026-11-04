@@ -8,7 +8,8 @@
 - Reject non-finite storage ages and non-finite `value_per_m3` inputs.
 - Added leading-zero block-ID and non-finite-input regression coverage.
 - CSV output now repeats curve source/URL/boundary, product-window source, and
-  report limits so the artifact is self-describing.
+  report limits so the artifact is self-describing; the console table stays
+  compact while the full provenance remains in the files.
 - Refreshed the roadmap phase numbering and checkboxes.
 - Verification: full `pytest` (1388 passed, 219 skipped), gated salvage CLI
   tests (5 passed), `ruff format`/`ruff check`, `mypy src` (194 files), and
