@@ -1,0 +1,1378 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fhops.optimization Package &mdash; FHOPS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="fhops.evaluation Package" href="fhops.evaluation.html" />
+    <link rel="prev" title="fhops.scheduling Package" href="fhops.scheduling.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            FHOPS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#automation-pipeline">Automation pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#quick-demo">Quick demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#baseline-workflows">Baseline Workflows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/quickstart.html">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/quickstart.html#bootstrap-environment">Bootstrap Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/quickstart.html#workbench-examples-tiny7">Workbench: <code class="docutils literal notranslate"><span class="pre">examples/tiny7</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/quickstart.html#regression-fixture-phase-1-baseline">Regression Fixture (Phase 1 Baseline)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/quickstart.html#rolling-horizon-loop-playback-kpis">Rolling horizon loop (playback + KPIs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/quickstart.html#shift-enabled-scenarios">Shift-enabled scenarios</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/tree_scale.html">Tree-Scale Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#synthetic-fixture">Synthetic fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#run-the-complete-path">Run the complete path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#fail-closed-behavior">Fail-closed behavior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/data_contract.html">Data Contract Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#cross-references-validators">Cross References &amp; Validators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#optional-extras">Optional Extras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#timeline-example">Timeline Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#shift-calendars-defaults">Shift Calendars &amp; Defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#schedule-locking">Schedule Locking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#initial-state-resuming-mid-operation">Initial State (Resuming Mid-Operation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#compatibility-with-fhops-1-0-0">Compatibility with FHOPS 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#geojson-ingestion-distances">GeoJSON Ingestion &amp; Distances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#machine-rate-defaults-costing-helper">Machine-Rate Defaults &amp; Costing Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#road-construction-tables-validation">Road Construction Tables &amp; Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#skyline-stand-profiles">Skyline Stand Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#log-hauling-extension">Log Hauling Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#lidarbc-products">LidarBC Products</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#tree-inventories">Tree Inventories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#authoring-checklist">Authoring Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#fixture-gallery">Fixture Gallery</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/benchmarks.html">Benchmarking Harness</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#cli-options">CLI Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#watching-heuristic-progress">Watching heuristic progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#faq-watch-mode">FAQ – Watch Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#standard-manuscript-pipeline">Standard Manuscript Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#optional-gurobi-backend-linux">Optional Gurobi backend (Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#interpreting-outputs">Interpreting Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#comparing-mip-and-heuristic-objectives">Comparing MIP and heuristic objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#shared-kpi-roll-up">Shared KPI roll-up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#operator-telemetry">Operator Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#visual-comparisons">Visual Comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#regression-fixture">Regression Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/benchmarks.html#future-work">Future Work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/heuristic_presets.html">Heuristic Presets &amp; Registry Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#shared-solver-cheat-sheet">Shared Solver Cheat Sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#preset-overview">Preset Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#applying-presets">Applying Presets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#explicit-overrides">Explicit Overrides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#solver-specific-parameters">Solver-Specific Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#parallel-advanced-features">Parallel &amp; Advanced Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#operator-catalogue">Operator Catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#telemetry-benchmarking">Telemetry &amp; Benchmarking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#objective-weights-automatic-overrides-and-hard-violations">Objective Weights, Automatic Overrides, and Hard Violations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/heuristic_presets.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/mip_warm_starts.html">Operational MILP Warm Starts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/mip_warm_starts.html#workflow">Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/mip_warm_starts.html#solver-support">Solver support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/mip_warm_starts.html#solve-outcomes">Solve outcomes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/mip_warm_starts.html#current-limitations">Current limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/mip_warm_starts.html#practical-guidance">Practical guidance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/mip_warm_starts.html#future-work">Future work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/optimization_formulation.html">Operational MILP Formulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/parallel_heuristics.html">Parallel Heuristic Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/parallel_heuristics.html#multi-start-runs">Multi-start Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/parallel_heuristics.html#batched-neighbour-evaluation">Batched Neighbour Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/parallel_heuristics.html#api-reference">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/parallel_heuristics.html#profiling-notes">Profiling Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/evaluation.html">Evaluation Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/evaluation.html#running-deterministic-playback">Running deterministic playback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/evaluation.html#optional-flags">Optional flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/evaluation.html#reporting-templates">Reporting templates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/evaluation.html#parquet-and-markdown-exports">Parquet and Markdown exports</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/evaluation.html#quickstart-example">Quickstart example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/evaluation.html#aggregation-helper-reference">Aggregation helper reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/evaluation.html#kpi-formulas-required-signals">KPI formulas &amp; required signals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/evaluation.html#empty-and-partial-plans">Empty and partial plans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/evaluation.html#weather-downtime-cost-assumptions">Weather &amp; downtime cost assumptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/evaluation.html#stochastic-playback-toggles">Stochastic playback toggles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/evaluation.html#stochastic-event-semantics">Stochastic event semantics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/evaluation.html#relationship-to-kpi-evaluation">Relationship to KPI evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/thesis_eval.html">Thesis Evaluation Workflow (Chapter 2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/thesis_eval.html#context-goals">Context &amp; Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/thesis_eval.html#pipeline-overview">Pipeline Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/thesis_eval.html#worked-example-med42-template">Worked Example (med42 Template)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/thesis_eval.html#tips-references">Tips &amp; References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/telemetry_tuning.html">Telemetry-Driven Tuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#step-1-collect-telemetry">Step 1 – Collect Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#step-2-generate-a-comparison-report">Step 2 – Generate a Comparison Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#sample-output">Sample Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#step-3-iterate">Step 3 – Iterate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#step-4-compare-multiple-reports">Step 4 – Compare Multiple Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#historical-trends">Historical Trends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#delta-snapshot-summary">Delta Snapshot Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#interpreting-dashboards">Interpreting Dashboards</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#history-summary-html-trend-radar">history_summary.html ― trend radar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#latest-history-summary-html-md-csv-current-leaderboard">latest_history_summary.{html,md,csv} ― current leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#latest-tuner-report-html-md-csv-raw-per-algorithm-stats">latest_tuner_report.{html,md,csv} ― raw per-algorithm stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#latest-tuner-comparison-latest-tuner-leaderboard">latest_tuner_comparison &amp; latest_tuner_leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#tuner-difficulty-html-md-csv">tuner_difficulty*.{html,md,csv}</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#adding-new-dashboard-assets">Adding new dashboard assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#release-candidate-presets">Release candidate presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#automated-sweeps">Automated Sweeps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#parallel-execution">Parallel execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#benchmark-plans">Benchmark plans</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#notebook-execution-cadence">Notebook execution cadence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#heuristic-parameter-catalogue">Heuristic parameter catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#convergence-metrics">Convergence metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/telemetry_tuning.html#tuner-metadata-summary">Tuner metadata summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#bundle-aliases">Bundle Aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#ci-automation">CI Automation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_tuning.html#downloading-ci-reports">Downloading CI Reports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/telemetry_ops.html">Telemetry Ops Runbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_ops.html#weekly-notebook-pipeline">Weekly Notebook Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_ops.html#telemetry-store-maintenance">Telemetry Store Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_ops.html#automation-checklist">Automation Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_ops.html#runbook-template-per-week">Runbook Template (per week)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/telemetry_ops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/release_playbook.html">Release &amp; Contribution Playbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/release_playbook.html#release-preparation">Release Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/release_playbook.html#contribution-checklist">Contribution Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/release_playbook.html#where-to-update-next">Where to Update Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/synthetic_datasets.html">Synthetic Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/synthetic_datasets.html#reference-bundles">Reference bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/synthetic_datasets.html#fleet-roles-and-harvest-systems">Fleet roles and harvest systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/synthetic_datasets.html#block-enrichment-crews-and-blackouts">Block enrichment, crews, and blackouts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/synthetic_datasets.html#cli-walkthrough">CLI walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/synthetic_datasets.html#regenerating-bundles">Regenerating bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/synthetic_datasets.html#where-to-go-next">Where to go next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/system_sequencing.html">Harvest System Sequencing How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/system_sequencing.html#configuring-scenarios">Configuring Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/system_sequencing.html#sequencing-semantics">Sequencing Semantics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/system_sequencing.html#locks-and-the-operational-milp">Locks and the operational MILP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/system_sequencing.html#running-the-solvers">Running the Solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/system_sequencing.html#mip">MIP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/system_sequencing.html#simulated-annealing">Simulated Annealing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/system_sequencing.html#inspection-kpis">Inspection &amp; KPIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/system_sequencing.html#benchmarking-with-sequencing">Benchmarking with Sequencing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/system_sequencing.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/ils.html">Iterated Local Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/ils.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/ils.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/ils.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/tabu.html">Tabu Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tabu.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tabu.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tabu.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/rolling_horizon.html">Rolling-Horizon Planning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#when-to-use">When to use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#key-parameters">Key parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#how-state-carries-between-windows">How state carries between windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#milp-windows-earliness-tie-break">MILP windows: earliness tie-break</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#windows-without-a-plan">Windows without a plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#cli-usage">CLI usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#worked-example-tiny7">Worked example (tiny7)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#milp-example-with-solver-options">MILP example with solver options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#evaluating-rolling-plans">Evaluating rolling plans</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/rolling_horizon.html#empty-rolling-plans-and-baselines">Empty rolling plans and baselines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#rolling-comparison-helper">Rolling comparison helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#masc-experiments-plots">MASc experiments &amp; plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#sample-artefacts">Sample artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#artefact-provenance-regeneration">Artefact provenance &amp; regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#gotchas">Gotchas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#notes">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/rolling_horizon.html#limitations">Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/tactical_operational.html">Tactical–Operational Scenario Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#canonical-formulation">Canonical formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#loading-and-validation">Loading and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#period-templates">Period templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#core-milp-formulation">Core MILP formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#optional-infrastructure-modules">Optional infrastructure modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#scenario-overlays-diffs-and-batch-reports">Scenario overlays, diffs, and batch reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#tactical-to-operational-handoff">Tactical-to-operational handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#scale-benchmarks-and-uncertainty-envelopes">Scale benchmarks and uncertainty envelopes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#practitioner-scale-validation-case">Practitioner-scale validation case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#guided-tactical-planner-notebook">Guided tactical planner notebook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/hauling.html">Log Hauling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#schema-version">Schema version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#minimal-example">Minimal example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#marine-and-barge-legs">Marine and barge legs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#entity-rules">Entity rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#contractor-eligibility">Contractor eligibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#units-and-defaults">Units and defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#phase-i-solve">Phase I solve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#phase-ii-schedule">Phase II schedule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#phase-iii-simulated-annealing">Phase III simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#stable-artefacts">Stable artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#operational-and-tactical-handoff">Operational and tactical handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#scale-case">Scale case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#limitations">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#see-also">See also</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/hydrology_quickstart.html">Hydrology Quickstart — FEMIC to WS4 to FHOPS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hydrology_quickstart.html#version-matrix">Version Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hydrology_quickstart.html#build-the-synthetic-workspace">Build the Synthetic Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hydrology_quickstart.html#ws4-landscape-screening">WS4 Landscape Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hydrology_quickstart.html#fhops-consumer-and-operational-check">FHOPS Consumer and Operational Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hydrology_quickstart.html#what-this-demonstrates">What This Demonstrates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hydrology_quickstart.html#what-this-does-not-prove">What This Does Not Prove</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hydrology_quickstart.html#docs-check">Docs Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hydrology_quickstart.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/hydrology_quickstart.html#further-reference">Further Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/web.html">FHOPS Web UI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#shell-and-navigation">Shell and navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#install-and-run">Install and run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#run-discovery">Run discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#run-manifest">Run manifest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#service-surface">Service surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#map-and-layers">Map and layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#domain-panels">Domain panels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#live-runs">Live runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#scenario-editing">Scenario editing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#skins">Skins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#assistant">Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fhops.html"><code class="docutils literal notranslate"><span class="pre">fhops</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.scenario.html"><code class="docutils literal notranslate"><span class="pre">fhops.scenario</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scenario.html#quickstart">Quickstart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.scheduling.html"><code class="docutils literal notranslate"><span class="pre">fhops.scheduling</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.timeline.BlackoutWindow"><code class="docutils literal notranslate"><span class="pre">BlackoutWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.timeline.ShiftDefinition"><code class="docutils literal notranslate"><span class="pre">ShiftDefinition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.timeline.TimelineConfig"><code class="docutils literal notranslate"><span class="pre">TimelineConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.mobilisation.BlockDistance"><code class="docutils literal notranslate"><span class="pre">BlockDistance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.mobilisation.MachineMobilisation"><code class="docutils literal notranslate"><span class="pre">MachineMobilisation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.mobilisation.MobilisationConfig"><code class="docutils literal notranslate"><span class="pre">MobilisationConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.mobilisation.build_distance_lookup"><code class="docutils literal notranslate"><span class="pre">build_distance_lookup()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.systems.HarvestSystem"><code class="docutils literal notranslate"><span class="pre">HarvestSystem</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.systems.SystemJob"><code class="docutils literal notranslate"><span class="pre">SystemJob</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.systems.default_system_registry"><code class="docutils literal notranslate"><span class="pre">default_system_registry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.systems.get_system_road_defaults"><code class="docutils literal notranslate"><span class="pre">get_system_road_defaults()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.scheduling.html#fhops.scheduling.systems.system_productivity_overrides"><code class="docutils literal notranslate"><span class="pre">system_productivity_overrides()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">fhops.optimization</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deprecated-legacy-mip-1-0-1-127">Deprecated legacy MIP (1.0.1, #127)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.evaluation.html"><code class="docutils literal notranslate"><span class="pre">fhops.evaluation</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.DaySummary"><code class="docutils literal notranslate"><span class="pre">DaySummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.DowntimeEvent"><code class="docutils literal notranslate"><span class="pre">DowntimeEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.DowntimeEventConfig"><code class="docutils literal notranslate"><span class="pre">DowntimeEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.EnsembleResult"><code class="docutils literal notranslate"><span class="pre">EnsembleResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.KPIResult"><code class="docutils literal notranslate"><span class="pre">KPIResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.LandingShockConfig"><code class="docutils literal notranslate"><span class="pre">LandingShockConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.LandingShockEvent"><code class="docutils literal notranslate"><span class="pre">LandingShockEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.PlaybackConfig"><code class="docutils literal notranslate"><span class="pre">PlaybackConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.PlaybackEvent"><code class="docutils literal notranslate"><span class="pre">PlaybackEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.PlaybackRecord"><code class="docutils literal notranslate"><span class="pre">PlaybackRecord</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.PlaybackResult"><code class="docutils literal notranslate"><span class="pre">PlaybackResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.PlaybackSample"><code class="docutils literal notranslate"><span class="pre">PlaybackSample</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.SamplingConfig"><code class="docutils literal notranslate"><span class="pre">SamplingConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.SamplingContext"><code class="docutils literal notranslate"><span class="pre">SamplingContext</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.SamplingEventConfig"><code class="docutils literal notranslate"><span class="pre">SamplingEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.ShiftSummary"><code class="docutils literal notranslate"><span class="pre">ShiftSummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.WeatherEvent"><code class="docutils literal notranslate"><span class="pre">WeatherEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.WeatherEventConfig"><code class="docutils literal notranslate"><span class="pre">WeatherEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.assignments_to_records"><code class="docutils literal notranslate"><span class="pre">assignments_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.compute_kpis"><code class="docutils literal notranslate"><span class="pre">compute_kpis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.compute_makespan_metrics"><code class="docutils literal notranslate"><span class="pre">compute_makespan_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.compute_utilisation_metrics"><code class="docutils literal notranslate"><span class="pre">compute_utilisation_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.export_playback"><code class="docutils literal notranslate"><span class="pre">export_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.playback_summary_metrics"><code class="docutils literal notranslate"><span class="pre">playback_summary_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.render_markdown_summary"><code class="docutils literal notranslate"><span class="pre">render_markdown_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.run_playback"><code class="docutils literal notranslate"><span class="pre">run_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.run_stochastic_playback"><code class="docutils literal notranslate"><span class="pre">run_stochastic_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.schedule_to_records"><code class="docutils literal notranslate"><span class="pre">schedule_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.summarise_days"><code class="docutils literal notranslate"><span class="pre">summarise_days()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.evaluation.html#fhops.evaluation.summarise_shifts"><code class="docutils literal notranslate"><span class="pre">summarise_shifts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.planning.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning.tactical_operational</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.BlockRoadAccess"><code class="docutils literal notranslate"><span class="pre">BlockRoadAccess</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Economics"><code class="docutils literal notranslate"><span class="pre">Economics</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.ExternalSupply"><code class="docutils literal notranslate"><span class="pre">ExternalSupply</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Facility"><code class="docutils literal notranslate"><span class="pre">Facility</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FacilityDemand"><code class="docutils literal notranslate"><span class="pre">FacilityDemand</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetCapacity"><code class="docutils literal notranslate"><span class="pre">FleetCapacity</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetOption"><code class="docutils literal notranslate"><span class="pre">FleetOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.HarvestSystemOption"><code class="docutils literal notranslate"><span class="pre">HarvestSystemOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.InitialInventory"><code class="docutils literal notranslate"><span class="pre">InitialInventory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PeriodLevel"><code class="docutils literal notranslate"><span class="pre">PeriodLevel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningPeriod"><code class="docutils literal notranslate"><span class="pre">PlanningPeriod</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningUnit"><code class="docutils literal notranslate"><span class="pre">PlanningUnit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Product"><code class="docutils literal notranslate"><span class="pre">Product</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadDependency"><code class="docutils literal notranslate"><span class="pre">RoadDependency</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadProject"><code class="docutils literal notranslate"><span class="pre">RoadProject</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.SilvicultureTransition"><code class="docutils literal notranslate"><span class="pre">SilvicultureTransition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalScenario</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TransportArc"><code class="docutils literal notranslate"><span class="pre">TransportArc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.children_by_parent"><code class="docutils literal notranslate"><span class="pre">children_by_parent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.four_week_periods"><code class="docutils literal notranslate"><span class="pre">four_week_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.load_tactical_operational_scenario"><code class="docutils literal notranslate"><span class="pre">load_tactical_operational_scenario()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.seasonal_periods"><code class="docutils literal notranslate"><span class="pre">seasonal_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_dimensions"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_dimensions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.validate_period_hierarchy"><code class="docutils literal notranslate"><span class="pre">validate_period_hierarchy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.model.milp.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.model.milp.tactical_operational</span></code> Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.DemandBasis"><code class="docutils literal notranslate"><span class="pre">DemandBasis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalHarvestMode"><code class="docutils literal notranslate"><span class="pre">TacticalHarvestMode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpBundle"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpBundle</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_bundle"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_bundle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_model"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.solve_tactical_operational_milp"><code class="docutils literal notranslate"><span class="pre">solve_tactical_operational_milp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_from_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_to_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#solve-mip-deprecated-alias-outcomes-and-exit-codes"><code class="docutils literal notranslate"><span class="pre">solve-mip</span></code> (deprecated alias) outcomes and exit codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#heuristic-configuration-reference">Heuristic configuration reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#dataset-command-cheat-sheet">Dataset command cheat sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#log-hauling-commands">Log-hauling commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#web-commands">Web commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/playback_aggregates.html">Aggregation Helpers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/playback_aggregates.html#module-fhops.evaluation.playback.aggregates">API summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/harvest_systems.html">Harvest System Registry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#data-model">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#default-systems">Default Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#using-the-registry">Using the Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#scenario-cross-links">Scenario Cross-Links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#extending-systems">Extending Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#preset-usage-cheat-sheet">Preset Usage Cheat Sheet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#forwarder-productivity">Forwarder Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#grapple-skidder-shovel-logger-productivity">Grapple Skidder &amp; Shovel Logger Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#skyline-helicopter-productivity">Skyline &amp; Helicopter Productivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#forwarder-productivity-models">Forwarder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#roadside-processor-productivity-models">Roadside Processor Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#landing-processor-and-loader-coverage-cheat-sheet">Landing processor and loader coverage cheat sheet</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#optional-dataset-cookbook">Optional Dataset Cookbook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#med42-large84-cost-overlays">Med42 / Large84 cost overlays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#partial-cut-mixed-system-assignments">Partial-cut / mixed system assignments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#road-construction-add-ons">Road construction add-ons</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#burned-timber-salvage-guidance-adv1n5">Burned-Timber Salvage Guidance (ADV1N5)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#loader-forwarder-productivity-models">Loader-Forwarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#loader-harvest-system-overrides">Loader harvest-system overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#coordinating-with-forwarder-skidder-models">Coordinating with forwarder / skidder models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#grapple-skidder-productivity-models">Grapple Skidder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#grapple-yarder-productivity-models">Grapple Yarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#grapple-harvest-system-presets">Grapple harvest-system presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#shovel-logger-hoe-chucker-productivity">Shovel Logger (Hoe-Chucker) Productivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#skyline-productivity-models">Skyline Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#tr-127-predictor-ranges">TR-127 predictor ranges</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#skyline-cost-matrix">Skyline cost matrix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#tn-258-fncy12-support-utilisation">TN-258 / FNCY12 support utilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#partial-cut-profile-registry">Partial-cut profile registry</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#road-subgrade-construction-references">Road &amp; Subgrade Construction References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#handfalling-cost-reference">Handfalling Cost Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#ctl-harvester-productivity-models">CTL Harvester Productivity Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling.html#key-models">Key models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hauling_formulation.html">Log-Hauling Formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-i-monthly-daily-flows">Phase I: monthly daily flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-ii-daily-truck-and-loader-scheduling">Phase II: daily truck and loader scheduling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-iii-simulated-annealing">Phase III: simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#implementation-notes-and-corrections">Implementation notes and corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/web.html#key-objects">Key objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/web.html#cli">CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/telemetry.html">Telemetry Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#schema">Schema</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/telemetry.html#example">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/telemetry.html#solver-specific-fields">Solver-specific fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#usage-notes">Usage Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#cli-reporting">CLI Reporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#historical-trends">Historical Trends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/dashboards.html">Live Dashboards</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/dashboards.html#embedded-previews">Embedded previews</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/source_bibliography.html">Source Bibliography and Document Access</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/source_bibliography.html#public-bibliography">Public bibliography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/source_bibliography.html#private-full-text-vault">Private full-text vault</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_lidar.html">FEMIC LidarBC Products</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#scenario-pin-and-support">Scenario Pin and Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#operability-report">Operability Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#operator-workflow">Operator Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#shared-parity">Shared Parity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#phase-close-out">Phase Close-Out</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_lidar_fixture.html">TFL 6 LidarBC Fixture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#what-it-exercises">What It Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#terrain-and-canopy-evidence">Terrain And Canopy Evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#commands">Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#regeneration">Regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#parity-and-limits">Parity And Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_hydrology.html">FEMIC Hydrology Response Bundles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#readiness">Readiness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#scenario-pin">Scenario Pin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#support-mapping">Support Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#schedule-bound-exposure">Schedule-Bound Exposure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#screening">Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-hazard-windows">Operational Hazard Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#road-and-culvert-assets">Road and Culvert Assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-constraint-check">Operational Constraint Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#end-to-end-path">End-to-End Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#solver-boundary">Solver Boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-end-to-end-path">Operational End-to-End Path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hydrology_contract_index.html">Hydrology Contract and Schema Index</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#contract-layers">Contract Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#femic-producer-contracts">FEMIC Producer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#ws4-landscape-consumer-contracts">WS4 Landscape Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#fhops-operational-consumer-contracts">FHOPS Operational Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#shared-exposure-contract">Shared Exposure Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#failure-matrix">Failure Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#what-is-not-a-contract">What Is Not a Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#version-compatibility">Version Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_inventory.html">Tree Inventory Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#inventory-format">Inventory Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#scenario-pin-and-block-map">Scenario Pin and Block Map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/stem_models.html">Stem Volume and Bucking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#reference-model">Reference Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_replay.html">Tree-Scale Schedule Replay</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#input">Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_scene.html">Tree Scene Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/robustness.html">Stochastic Robustness Walkthrough</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#code-walkthrough">Code Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#interpretation">Interpretation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/analytics/index.html">Analytics Notebooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/playback_walkthrough.html">Playback Walkthrough</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/playback_walkthrough.html#Production-by-Day">Production by Day</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/stochastic_robustness.html">Stochastic Robustness Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/stochastic_robustness.html#Production-Distribution">Production Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/what_if_analysis.html">What-If Scenario Tweaks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/what_if_analysis.html#Adjusted-Sampling">Adjusted Sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/landing_congestion.html">Landing Congestion Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Baseline-Ensemble-Snapshot">Baseline Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Landing-Shock-Ensemble-Snapshot">Landing Shock Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#KPI-Comparison">KPI Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Production-Distributions">Production Distributions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/system_mix.html">Harvest System Mix Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#System-Mix-Metadata">System Mix Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Machine-Roles-in-Scenario">Machine Roles in Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Generate-Custom-Mix">Generate Custom Mix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Role-Comparison">Role Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html">KPI Decomposition Deep Dive</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Scenario-Overview">Scenario Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Production-vs-Mobilisation">Production vs Mobilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Sequencing-&amp;-Downtime">Sequencing &amp; Downtime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Visualise-Utilisation">Visualise Utilisation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html">Ensemble Resilience Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html#Production-Distributions">Production Distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html#Downtime-Summary">Downtime Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/operator_sweep.html">Operator/Benchmark Sweep</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/operator_sweep.html#Objective-Comparison">Objective Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/operator_sweep.html#Runtime-Comparison">Runtime Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html">Telemetry &amp; Solver Diagnostics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html#Objective-Trace">Objective Trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html#Acceptance-Summary">Acceptance Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html">Telemetry Report Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Load-Reports">Load Reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Visualize-Best-Objectives">Visualize Best Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Delta-Table">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Machine-Cost-Summary-Pivot">Machine-Cost Summary Pivot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Machine-Cost-Trend-Chart">Machine-Cost Trend Chart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Compare-Against-Historical-Summary">Compare Against Historical Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Repair-Usage-Alerts">Repair-Usage Alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html">Telemetry History Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Load-History-Snapshot">Load History Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Compute-Deltas">Compute Deltas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Visualize-Trends">Visualize Trends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Next-Steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/benchmark_summary.html">Benchmark Summary Notebook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/benchmark_summary.html#Objective-vs-Scenario">Objective vs Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/benchmark_summary.html#Runtime-Overview">Runtime Overview</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Processes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#developer-onboarding">Developer onboarding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#command-cadence-local-loop">Command cadence (local loop)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#debugging-and-profiling">Debugging and profiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#re-running-published-artefacts">Re-running published artefacts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../roadmap.html">Roadmap Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/mobilisation_geo.html">Mobilisation Geospatial Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/mobilisation_geo.html#command-examples">Command Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/mobilisation_geo.html#tooling-notes">Tooling Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/mobilisation_geo.html#troubleshooting-diagnostics">Troubleshooting &amp; Diagnostics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../planning/productivity_gaps.html">Productivity Catalog Gaps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#arnvik-appendix-8-scope">Arnvik Appendix 8 scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#implications">Implications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#forwarder-equation-stack-bc-roll-out">Forwarder equation stack (BC roll-out)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../planning/productivity_gaps.html#sources-in-hand">Sources in hand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../planning/productivity_gaps.html#caveats-and-pending-confirmations">Caveats and pending confirmations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FHOPS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Reference</a></li>
+      <li class="breadcrumb-item active"><code class="docutils literal notranslate"><span class="pre">fhops.optimization</span></code> Package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/fhops.optimization.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fhops-optimization-package">
+<h1><code class="docutils literal notranslate"><span class="pre">fhops.optimization</span></code> Package<a class="headerlink" href="#fhops-optimization-package" title="Link to this heading"></a></h1>
+<p>The optimisation stack converts <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.scenario.contract.Problem</span></code> objects into either Pyomo MIP
+models or heuristic schedules. Use these modules when:</p>
+<ul class="simple">
+<li><p>Running simulated annealing / ILS / Tabu heuristics from <code class="xref py py-mod docutils literal notranslate"><span class="pre">fhops.optimization.heuristics</span></code>.</p></li>
+<li><p>Building the operational problem context
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.optimization.operational_problem.build_operational_problem()</span></code>) consumed by the
+operational MILP (<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code>) and the heuristics.</p></li>
+</ul>
+<p>The exact model is the operational MILP (<code class="xref py py-mod docutils literal notranslate"><span class="pre">fhops.model.milp</span></code>, <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip-operational</span></code>),
+the formulation documented in the FHOPS paper:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.contract</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.optimization.operational_problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_operational_problem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.model.milp.driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_operational_milp</span>
+
+<span class="n">pb</span> <span class="o">=</span> <span class="n">Problem</span><span class="o">.</span><span class="n">from_scenario</span><span class="p">(</span><span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/tiny7/scenario.yaml"</span><span class="p">))</span>
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">build_operational_problem</span><span class="p">(</span><span class="n">pb</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">solve_operational_milp</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">bundle</span><span class="p">,</span> <span class="n">time_limit</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">"has_solution"</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"outcome"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"objective"</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"assignments"</span><span class="p">]))</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># "infeasible", "no_solution" (time limit) or "error" (see result["solver_error"])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"outcome"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"solver_error"</span><span class="p">])</span>
+</pre></div>
+</div>
+<section id="deprecated-legacy-mip-1-0-1-127">
+<h2>Deprecated legacy MIP (1.0.1, #127)<a class="headerlink" href="#deprecated-legacy-mip-1-0-1-127" title="Link to this heading"></a></h2>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.optimization.mip.solve_mip()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.optimization.mip.builder.build_model()</span></code>
+remain importable for API compatibility but emit
+<code class="xref py py-class docutils literal notranslate"><span class="pre">LegacyMipDeprecationWarning</span></code> (a
+<a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#DeprecationWarning" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecationWarning</span></code></a>, shown for calls from scripts/notebooks and under pytest):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">solve_mip(pb,</span> <span class="pre">time_limit=60,</span> <span class="pre">driver=&quot;auto&quot;,</span> <span class="pre">debug=False)</span></code> delegates to the operational MILP
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">solve_with_operational_milp()</span></code>). It keeps the 1.0.1
+result contract (<code class="docutils literal notranslate"><span class="pre">objective</span></code>, <code class="docutils literal notranslate"><span class="pre">assignments</span></code>, <code class="docutils literal notranslate"><span class="pre">has_solution</span></code>, <code class="docutils literal notranslate"><span class="pre">outcome</span></code>,
+<code class="docutils literal notranslate"><span class="pre">solver_status</span></code>, <code class="docutils literal notranslate"><span class="pre">termination_condition</span></code>, <code class="docutils literal notranslate"><span class="pre">solver_error</span></code>, <code class="docutils literal notranslate"><span class="pre">warnings</span></code>; plus
+<code class="docutils literal notranslate"><span class="pre">production</span></code>, <code class="docutils literal notranslate"><span class="pre">warm_start</span></code> and <code class="docutils literal notranslate"><span class="pre">solver</span></code>), never raises for infeasible models, time limits
+or solver errors, and raises <code class="xref py py-class docutils literal notranslate"><span class="pre">SolverUnavailable</span></code> only
+for a missing solver and <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> for an unknown driver. Legacy <code class="docutils literal notranslate"><span class="pre">driver</span></code> names map to
+operational solvers via <code class="xref py py-func docutils literal notranslate"><span class="pre">operational_solver_for_driver()</span></code>
+(<code class="docutils literal notranslate"><span class="pre">auto</span></code> → Gurobi when installed, else HiGHS; HiGHS drivers → <code class="docutils literal notranslate"><span class="pre">highs</span></code>; <code class="docutils literal notranslate"><span class="pre">gurobi</span></code> /
+<code class="docutils literal notranslate"><span class="pre">gurobi-appsi</span></code> / <code class="docutils literal notranslate"><span class="pre">gurobi-direct</span></code> → <code class="docutils literal notranslate"><span class="pre">gurobi</span></code> / <code class="docutils literal notranslate"><span class="pre">appsi_gurobi</span></code> / <code class="docutils literal notranslate"><span class="pre">gurobi_direct</span></code>).
+Objectives are operational MILP objectives, not comparable with 1.0.0 <code class="docutils literal notranslate"><span class="pre">solve_mip</span></code> values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_model(pb)</span></code> still builds the legacy day-level Pyomo model, which no solver uses. Its
+loader-buffer constraint demands <code class="docutils literal notranslate"><span class="pre">−batch</span></code> m³ of buffer in the first shift, so it is infeasible
+for every scenario with a loader role (every bundled example, also at v1.0.0). Use
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.operational.build_operational_model()</span></code> instead.</p></li>
+</ul>
+<p id="module-fhops.optimization">Optimization layer (MIP builders, heuristics, constraints).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="fhops.optimization.build_model">
+<span class="sig-prename descclassname"><span class="pre">fhops.optimization.</span></span><span class="sig-name descname"><span class="pre">build_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/optimization/mip/builder.html#build_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fhops.optimization.build_model" title="Link to this definition"></a></dt>
+<dd><p>Build the legacy FHOPS day-level MIP model (deprecated).</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.0.1: </span>Emits <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning</span></code>. The model is
+infeasible whenever a block’s harvest system has a loader role with machines (the
+<code class="docutils literal notranslate"><span class="pre">system_loader_buffer</span></code> rows demand <code class="docutils literal notranslate"><span class="pre">−batch</span></code> m³ of buffer in the first shift), which
+includes the bundled tiny7, small21 and med42 examples. Use the operational MILP
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.operational.build_operational_model()</span></code>,
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code>).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pb</strong> (<em>Problem</em>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.scenario.contract.Problem</span></code> produced by <code class="docutils literal notranslate"><span class="pre">Problem.from_scenario</span></code>.  The helper
+must include the full shift list (<code class="docutils literal notranslate"><span class="pre">pb.shifts</span></code>) so the model can build the <cite>(machine, block,
+day, shift)</cite> assignment tensor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fully constructed model containing decision variables for assignments/production, optional
+transition binaries (when mobilisation or transition penalties are enabled), and the
+objective/constraints described in the FHOPS roadmap.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pyomo.ConcreteModel</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The builder purposely mirrors the documented objective weights:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ObjectiveWeights.production</span></code> – coefficient for total production.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ObjectiveWeights.mobilisation</span></code> – coefficient for mobilisation spend derived from transition
+binaries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ObjectiveWeights.transitions</span></code> – optional penalty for the number of transitions itself.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ObjectiveWeights.landing_surplus</span></code> – enables soft landing-capacity overages using surplus
+variables.</p></li>
+</ul>
+<p>Any change to this function should be reflected in <code class="docutils literal notranslate"><span class="pre">docs/howto/thesis_eval.rst</span></code> and the MIP
+section of the API docs.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Scenario.locked_assignments</span></code> are fixed on the assignment variables: a lock without
+<code class="docutils literal notranslate"><span class="pre">shift_id</span></code> fixes every shift of its day, a lock with <code class="docutils literal notranslate"><span class="pre">shift_id</span></code> fixes only that slot.
+<code class="docutils literal notranslate"><span class="pre">Scenario.initial_state</span></code> is <strong>not</strong> modelled by this legacy builder (a <code class="docutils literal notranslate"><span class="pre">UserWarning</span></code> is
+emitted); use the operational MILP (<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip-operational</span></code>) when carrying state into a horizon.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fhops.optimization.solve_mip">
+<span class="sig-prename descclassname"><span class="pre">fhops.optimization.</span></span><span class="sig-name descname"><span class="pre">solve_mip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/optimization/mip/highs_driver.html#solve_mip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fhops.optimization.solve_mip" title="Link to this definition"></a></dt>
+<dd><p>Solve <code class="docutils literal notranslate"><span class="pre">pb</span></code> with the operational MILP (deprecated legacy entry point).</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.0.1: </span>Emits <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning</span></code> and delegates
+to <code class="xref py py-func docutils literal notranslate"><span class="pre">solve_with_operational_milp()</span></code> (i.e.
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code>). Until 1.0.1 this function solved the
+legacy day-level MIP, which is infeasible for every scenario with a loader role (#124,
+#127). Call <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code> directly.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pb</strong> (<em>Problem</em>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.scenario.contract.Problem</span></code> built with <code class="docutils literal notranslate"><span class="pre">Problem.from_scenario</span></code>.</p></li>
+<li><p><strong>time_limit</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Solver wall-clock limit in seconds (default 60).</p></li>
+<li><p><strong>driver</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – Legacy driver name, mapped by <code class="xref py py-func docutils literal notranslate"><span class="pre">operational_solver_for_driver()</span></code>: <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> (Gurobi
+when installed, otherwise — or after a Gurobi solver error — HiGHS), <code class="docutils literal notranslate"><span class="pre">&quot;highs&quot;</span></code> /
+<code class="docutils literal notranslate"><span class="pre">&quot;highs-appsi&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;appsi&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;highs-exec&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;exec&quot;</span></code> (HiGHS), <code class="docutils literal notranslate"><span class="pre">&quot;gurobi&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;gurobi-appsi&quot;</span></code> (<code class="docutils literal notranslate"><span class="pre">appsi_gurobi</span></code>) or <code class="docutils literal notranslate"><span class="pre">&quot;gurobi-direct&quot;</span></code> (<code class="docutils literal notranslate"><span class="pre">gurobi_direct</span></code>).</p></li>
+<li><p><strong>debug</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>) – Stream the solver log to stdout and print the selected solver.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Same contract as in 1.0.1 (#124); the function never raises because a model is
+infeasible, a limit was reached without an incumbent, or an available solver failed.
+Keys:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">objective</span></code> (float | None)</dt><dd><p>Operational MILP objective of the loaded solution (not comparable with 1.0.0 legacy
+objectives); <code class="docutils literal notranslate"><span class="pre">None</span></code> without a feasible solution. A solve stopped by a limit that
+holds a feasible incumbent reports that incumbent.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">assignments</span></code> (DataFrame)</dt><dd><p>Columns <code class="docutils literal notranslate"><span class="pre">machine_id,</span> <span class="pre">block_id,</span> <span class="pre">day,</span> <span class="pre">shift_id,</span> <span class="pre">assigned,</span> <span class="pre">production</span></code>; one row per
+assigned slot or slot with production &gt; 1e-6. Empty (same columns) without a
+solution.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">has_solution</span></code> (bool)</dt><dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when a feasible solution was loaded into the model.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">outcome</span></code> (str)</dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;optimal&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;feasible&quot;</span></code> (incumbent at a limit), <code class="docutils literal notranslate"><span class="pre">&quot;infeasible&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;no_solution&quot;</span></code> (limit reached without an incumbent) or <code class="docutils literal notranslate"><span class="pre">&quot;error&quot;</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">solver_status</span></code>, <code class="docutils literal notranslate"><span class="pre">termination_condition</span></code> (str)</dt><dd><p>Pyomo solver status and termination condition.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">solver_error</span></code> (str | None)</dt><dd><p>Set when the solver failed rather than proving infeasibility.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">warnings</span></code> (list[str])</dt><dd><p>Driver notes (e.g. a Gurobi failure under <code class="docutils literal notranslate"><span class="pre">driver=&quot;auto&quot;</span></code> before the HiGHS retry)
+followed by the operational driver’s lock warnings.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">production</span></code> (float), <code class="docutils literal notranslate"><span class="pre">warm_start</span></code> (dict), <code class="docutils literal notranslate"><span class="pre">solver</span></code> (str)</dt><dd><p>Added by the delegation (see <code class="xref py py-func docutils literal notranslate"><span class="pre">solve_with_operational_milp()</span></code>).</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>SolverUnavailable</strong> – When the requested solver is not installed (or, for <code class="docutils literal notranslate"><span class="pre">driver=&quot;auto&quot;</span></code>, neither Gurobi
+    nor HiGHS is available).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – For an unknown <code class="docutils literal notranslate"><span class="pre">driver</span></code> name.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Warns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>LegacyMipDeprecationWarning</strong> – On every call.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">solve_mip</span><span class="p">(</span><span class="n">pb</span><span class="p">,</span> <span class="n">time_limit</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># preferred:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fhops.model.milp.driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_operational_milp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fhops.optimization.operational_problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_operational_problem</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">build_operational_problem</span><span class="p">(</span><span class="n">pb</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">solve_operational_milp</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">bundle</span><span class="p">,</span> <span class="n">time_limit</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<p>Pyomo builder for the legacy FHOPS day-level MIP (deprecated since 1.0.1, #127).</p>
+<p>The builder is kept importable for API compatibility only. It is infeasible for every scenario
+whose harvest system has a loader role with machines (see
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">fhops.optimization.mip.deprecation</span></code>), and no FHOPS solver uses it any more: <code class="docutils literal notranslate"><span class="pre">solve_mip</span></code>,
+<code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip</span></code>, <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">benchmark</span></code> and the ILS hybrid step all run the operational MILP
+(<code class="xref py py-mod docutils literal notranslate"><span class="pre">fhops.model.milp</span></code>).</p>
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fhops.optimization.mip.builder.</span></span><span class="sig-name descname"><span class="pre">build_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/optimization/mip/builder.html#build_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Build the legacy FHOPS day-level MIP model (deprecated).</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.0.1: </span>Emits <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning</span></code>. The model is
+infeasible whenever a block’s harvest system has a loader role with machines (the
+<code class="docutils literal notranslate"><span class="pre">system_loader_buffer</span></code> rows demand <code class="docutils literal notranslate"><span class="pre">−batch</span></code> m³ of buffer in the first shift), which
+includes the bundled tiny7, small21 and med42 examples. Use the operational MILP
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.operational.build_operational_model()</span></code>,
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code>).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pb</strong> (<em>Problem</em>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.scenario.contract.Problem</span></code> produced by <code class="docutils literal notranslate"><span class="pre">Problem.from_scenario</span></code>.  The helper
+must include the full shift list (<code class="docutils literal notranslate"><span class="pre">pb.shifts</span></code>) so the model can build the <cite>(machine, block,
+day, shift)</cite> assignment tensor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fully constructed model containing decision variables for assignments/production, optional
+transition binaries (when mobilisation or transition penalties are enabled), and the
+objective/constraints described in the FHOPS roadmap.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pyomo.ConcreteModel</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The builder purposely mirrors the documented objective weights:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ObjectiveWeights.production</span></code> – coefficient for total production.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ObjectiveWeights.mobilisation</span></code> – coefficient for mobilisation spend derived from transition
+binaries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ObjectiveWeights.transitions</span></code> – optional penalty for the number of transitions itself.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ObjectiveWeights.landing_surplus</span></code> – enables soft landing-capacity overages using surplus
+variables.</p></li>
+</ul>
+<p>Any change to this function should be reflected in <code class="docutils literal notranslate"><span class="pre">docs/howto/thesis_eval.rst</span></code> and the MIP
+section of the API docs.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Scenario.locked_assignments</span></code> are fixed on the assignment variables: a lock without
+<code class="docutils literal notranslate"><span class="pre">shift_id</span></code> fixes every shift of its day, a lock with <code class="docutils literal notranslate"><span class="pre">shift_id</span></code> fixes only that slot.
+<code class="docutils literal notranslate"><span class="pre">Scenario.initial_state</span></code> is <strong>not</strong> modelled by this legacy builder (a <code class="docutils literal notranslate"><span class="pre">UserWarning</span></code> is
+emitted); use the operational MILP (<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip-operational</span></code>) when carrying state into a horizon.</p>
+</dd></dl>
+
+<p>Deprecated <code class="docutils literal notranslate"><span class="pre">solve_mip</span></code> entry point (delegates to the operational MILP since 1.0.1, #127).</p>
+<p>This module backs <code class="xref py py-func docutils literal notranslate"><span class="pre">solve_mip()</span></code> and the <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">benchmark</span></code> CLI
+commands. Since FHOPS 1.0.1 (#127) they solve the operational MILP
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code>, the formulation documented in the
+SoftwareX paper) through <code class="xref py py-func docutils literal notranslate"><span class="pre">solve_with_operational_milp()</span></code>; the legacy <code class="docutils literal notranslate"><span class="pre">--driver</span></code> names are
+mapped to operational solver names by <code class="xref py py-func docutils literal notranslate"><span class="pre">operational_solver_for_driver()</span></code>.</p>
+<p>The legacy day-level MIP (<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.optimization.mip.builder.build_model()</span></code>) is infeasible for
+every scenario with a loader role (see <code class="xref py py-mod docutils literal notranslate"><span class="pre">fhops.optimization.mip.deprecation</span></code>). Its 1.0.1 (#124)
+solve path is kept as the private <code class="docutils literal notranslate"><span class="pre">_solve_legacy_mip</span></code> to reproduce that finding; no public entry
+point uses it.</p>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.optimization.mip.highs_driver.</span></span><span class="sig-name descname"><span class="pre">SolverUnavailable</span></span><a class="reference internal" href="../_modules/fhops/optimization/mip/highs_driver.html#SolverUnavailable"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a></p>
+<p>Raised when a requested solver backend is not installed or cannot be created.</p>
+<p>This is the only solver-related exception <code class="xref py py-func docutils literal notranslate"><span class="pre">solve_mip()</span></code> raises; failures of an available
+solver are reported through the result’s <code class="docutils literal notranslate"><span class="pre">solver_error</span></code> instead.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fhops.optimization.mip.highs_driver.</span></span><span class="sig-name descname"><span class="pre">operational_solver_for_driver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">driver</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/optimization/mip/highs_driver.html#operational_solver_for_driver"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Map a legacy MIP <code class="docutils literal notranslate"><span class="pre">driver</span></code> name to the operational MILP solver name(s) to try.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>driver</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – Legacy driver name (case-insensitive): <code class="docutils literal notranslate"><span class="pre">auto</span></code>, <code class="docutils literal notranslate"><span class="pre">highs</span></code>, <code class="docutils literal notranslate"><span class="pre">appsi</span></code>, <code class="docutils literal notranslate"><span class="pre">highs-appsi</span></code>,
+<code class="docutils literal notranslate"><span class="pre">exec</span></code>, <code class="docutils literal notranslate"><span class="pre">highs-exec</span></code>, <code class="docutils literal notranslate"><span class="pre">gurobi</span></code>, <code class="docutils literal notranslate"><span class="pre">gurobi-appsi</span></code> or <code class="docutils literal notranslate"><span class="pre">gurobi-direct</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">SolverFactory</span></code> names in the order they are tried: <code class="docutils literal notranslate"><span class="pre">(&quot;gurobi&quot;,</span> <span class="pre">&quot;highs&quot;)</span></code> for <code class="docutils literal notranslate"><span class="pre">auto</span></code>
+(Gurobi when installed, otherwise or after a Gurobi failure HiGHS — the 1.0.0 <code class="docutils literal notranslate"><span class="pre">auto</span></code>
+rule); <code class="docutils literal notranslate"><span class="pre">(&quot;highs&quot;,)</span></code> for every HiGHS driver (seeded solves still go through
+<code class="docutils literal notranslate"><span class="pre">appsi_highs</span></code>, see <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code>);
+<code class="docutils literal notranslate"><span class="pre">(&quot;gurobi&quot;,)</span></code>, <code class="docutils literal notranslate"><span class="pre">(&quot;appsi_gurobi&quot;,)</span></code> or <code class="docutils literal notranslate"><span class="pre">(&quot;gurobi_direct&quot;,)</span></code> for the Gurobi drivers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a>, …]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – For an unknown driver name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fhops.optimization.mip.highs_driver.</span></span><span class="sig-name descname"><span class="pre">solve_mip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/optimization/mip/highs_driver.html#solve_mip"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Solve <code class="docutils literal notranslate"><span class="pre">pb</span></code> with the operational MILP (deprecated legacy entry point).</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.0.1: </span>Emits <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.optimization.mip.deprecation.LegacyMipDeprecationWarning</span></code> and delegates
+to <code class="xref py py-func docutils literal notranslate"><span class="pre">solve_with_operational_milp()</span></code> (i.e.
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code>). Until 1.0.1 this function solved the
+legacy day-level MIP, which is infeasible for every scenario with a loader role (#124,
+#127). Call <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code> directly.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pb</strong> (<em>Problem</em>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.scenario.contract.Problem</span></code> built with <code class="docutils literal notranslate"><span class="pre">Problem.from_scenario</span></code>.</p></li>
+<li><p><strong>time_limit</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Solver wall-clock limit in seconds (default 60).</p></li>
+<li><p><strong>driver</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – Legacy driver name, mapped by <code class="xref py py-func docutils literal notranslate"><span class="pre">operational_solver_for_driver()</span></code>: <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> (Gurobi
+when installed, otherwise — or after a Gurobi solver error — HiGHS), <code class="docutils literal notranslate"><span class="pre">&quot;highs&quot;</span></code> /
+<code class="docutils literal notranslate"><span class="pre">&quot;highs-appsi&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;appsi&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;highs-exec&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;exec&quot;</span></code> (HiGHS), <code class="docutils literal notranslate"><span class="pre">&quot;gurobi&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;gurobi-appsi&quot;</span></code> (<code class="docutils literal notranslate"><span class="pre">appsi_gurobi</span></code>) or <code class="docutils literal notranslate"><span class="pre">&quot;gurobi-direct&quot;</span></code> (<code class="docutils literal notranslate"><span class="pre">gurobi_direct</span></code>).</p></li>
+<li><p><strong>debug</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>) – Stream the solver log to stdout and print the selected solver.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Same contract as in 1.0.1 (#124); the function never raises because a model is
+infeasible, a limit was reached without an incumbent, or an available solver failed.
+Keys:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">objective</span></code> (float | None)</dt><dd><p>Operational MILP objective of the loaded solution (not comparable with 1.0.0 legacy
+objectives); <code class="docutils literal notranslate"><span class="pre">None</span></code> without a feasible solution. A solve stopped by a limit that
+holds a feasible incumbent reports that incumbent.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">assignments</span></code> (DataFrame)</dt><dd><p>Columns <code class="docutils literal notranslate"><span class="pre">machine_id,</span> <span class="pre">block_id,</span> <span class="pre">day,</span> <span class="pre">shift_id,</span> <span class="pre">assigned,</span> <span class="pre">production</span></code>; one row per
+assigned slot or slot with production &gt; 1e-6. Empty (same columns) without a
+solution.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">has_solution</span></code> (bool)</dt><dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when a feasible solution was loaded into the model.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">outcome</span></code> (str)</dt><dd><p><code class="docutils literal notranslate"><span class="pre">&quot;optimal&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;feasible&quot;</span></code> (incumbent at a limit), <code class="docutils literal notranslate"><span class="pre">&quot;infeasible&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;no_solution&quot;</span></code> (limit reached without an incumbent) or <code class="docutils literal notranslate"><span class="pre">&quot;error&quot;</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">solver_status</span></code>, <code class="docutils literal notranslate"><span class="pre">termination_condition</span></code> (str)</dt><dd><p>Pyomo solver status and termination condition.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">solver_error</span></code> (str | None)</dt><dd><p>Set when the solver failed rather than proving infeasibility.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">warnings</span></code> (list[str])</dt><dd><p>Driver notes (e.g. a Gurobi failure under <code class="docutils literal notranslate"><span class="pre">driver=&quot;auto&quot;</span></code> before the HiGHS retry)
+followed by the operational driver’s lock warnings.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">production</span></code> (float), <code class="docutils literal notranslate"><span class="pre">warm_start</span></code> (dict), <code class="docutils literal notranslate"><span class="pre">solver</span></code> (str)</dt><dd><p>Added by the delegation (see <code class="xref py py-func docutils literal notranslate"><span class="pre">solve_with_operational_milp()</span></code>).</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>SolverUnavailable</strong> – When the requested solver is not installed (or, for <code class="docutils literal notranslate"><span class="pre">driver=&quot;auto&quot;</span></code>, neither Gurobi
+    nor HiGHS is available).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – For an unknown <code class="docutils literal notranslate"><span class="pre">driver</span></code> name.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Warns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>LegacyMipDeprecationWarning</strong> – On every call.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">solve_mip</span><span class="p">(</span><span class="n">pb</span><span class="p">,</span> <span class="n">time_limit</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># preferred:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fhops.model.milp.driver</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_operational_milp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fhops.optimization.operational_problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_operational_problem</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">build_operational_problem</span><span class="p">(</span><span class="n">pb</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">solve_operational_milp</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">bundle</span><span class="p">,</span> <span class="n">time_limit</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fhops.optimization.mip.highs_driver.</span></span><span class="sig-name descname"><span class="pre">solve_with_operational_milp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/optimization/mip/highs_driver.html#solve_with_operational_milp"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Solve the operational MILP for <code class="docutils literal notranslate"><span class="pre">pb</span></code> using a legacy <code class="docutils literal notranslate"><span class="pre">driver</span></code> name (no deprecation).</p>
+<p>This is the implementation behind <code class="xref py py-func docutils literal notranslate"><span class="pre">solve_mip()</span></code>, <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip</span></code> and the MIP step of
+<code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">benchmark</span></code>. It builds the operational problem
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.optimization.operational_problem.build_operational_problem()</span></code>) and calls
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code> with <code class="docutils literal notranslate"><span class="pre">solver</span></code> from
+<code class="xref py py-func docutils literal notranslate"><span class="pre">operational_solver_for_driver()</span></code>, <code class="docutils literal notranslate"><span class="pre">time_limit</span></code>, <code class="docutils literal notranslate"><span class="pre">tee=debug</span></code> and the operational
+context. Equivalent to <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip-operational</span> <span class="pre">SCENARIO</span> <span class="pre">--solver</span> <span class="pre">&lt;solver&gt;</span>
+<span class="pre">--time-limit</span> <span class="pre">&lt;time_limit&gt;</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pb</strong> (<em>Problem</em>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.scenario.contract.Problem</span></code> built with <code class="docutils literal notranslate"><span class="pre">Problem.from_scenario</span></code>.</p></li>
+<li><p><strong>time_limit</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> | </em><em>None</em>) – Solver wall-clock limit in seconds (default 60; <code class="docutils literal notranslate"><span class="pre">None</span></code> leaves the solver default).</p></li>
+<li><p><strong>driver</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – Legacy driver name (see <code class="xref py py-func docutils literal notranslate"><span class="pre">operational_solver_for_driver()</span></code>).</p></li>
+<li><p><strong>debug</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>) – Stream the solver log to stdout and print the selected solver.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.driver.solve_operational_milp()</span></code> result (<code class="docutils literal notranslate"><span class="pre">objective</span></code>,
+<code class="docutils literal notranslate"><span class="pre">production</span></code>, <code class="docutils literal notranslate"><span class="pre">assignments</span></code>, <code class="docutils literal notranslate"><span class="pre">has_solution</span></code>, <code class="docutils literal notranslate"><span class="pre">outcome</span></code>, <code class="docutils literal notranslate"><span class="pre">solver_status</span></code>,
+<code class="docutils literal notranslate"><span class="pre">termination_condition</span></code>, <code class="docutils literal notranslate"><span class="pre">solver_error</span></code>, <code class="docutils literal notranslate"><span class="pre">warnings</span></code>, <code class="docutils literal notranslate"><span class="pre">warm_start</span></code>) plus
+<code class="docutils literal notranslate"><span class="pre">solver</span></code> (the <code class="docutils literal notranslate"><span class="pre">SolverFactory</span></code> name that produced it). Under <code class="docutils literal notranslate"><span class="pre">driver=&quot;auto&quot;</span></code> a Gurobi
+run that reports <code class="docutils literal notranslate"><span class="pre">solver_error</span></code> is retried with HiGHS and the failure is prepended to
+<code class="docutils literal notranslate"><span class="pre">warnings</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>SolverUnavailable</strong> – When no candidate solver is available.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – For an unknown <code class="docutils literal notranslate"><span class="pre">driver</span></code> name (raised before the model is built).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Deprecation notices for the legacy day-level MIP (FHOPS 1.0.1, #127).</p>
+<p>The legacy builder (<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.optimization.mip.builder.build_model()</span></code>) is infeasible for every
+scenario whose harvest system has a loader role with machines: its loader-buffer constraint
+<code class="docutils literal notranslate"><span class="pre">Σ_{≤s}</span> <span class="pre">prod_loader</span> <span class="pre">≤</span> <span class="pre">Σ_{&lt;s}</span> <span class="pre">prod_prereq</span> <span class="pre">−</span> <span class="pre">batch</span></code> cannot hold in the first shift (found in #124;
+the bundled tiny7, small21 and med42 examples are proven infeasible by HiGHS, also at v1.0.0).
+The canonical, published formulation is the operational MILP
+(<code class="xref py py-mod docutils literal notranslate"><span class="pre">fhops.model.milp</span></code>, <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip-operational</span></code>); <code class="docutils literal notranslate"><span class="pre">solve_mip</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip</span></code>
+delegate to it and the builder is kept importable only for API compatibility.</p>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.optimization.mip.deprecation.</span></span><span class="sig-name descname"><span class="pre">LegacyMipDeprecationWarning</span></span><a class="reference internal" href="../_modules/fhops/optimization/mip/deprecation.html#LegacyMipDeprecationWarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#DeprecationWarning" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecationWarning</span></code></a></p>
+<p>Warning emitted by the deprecated legacy MIP entry points.</p>
+<p>Emitted (<code class="docutils literal notranslate"><span class="pre">stacklevel=2</span></code>) by <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.optimization.mip.solve_mip()</span></code> and
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.optimization.mip.builder.build_model()</span></code>. It subclasses <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#DeprecationWarning" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecationWarning</span></code></a>, so
+Python shows it for calls made from <code class="docutils literal notranslate"><span class="pre">__main__</span></code> (scripts, notebooks) and under test runners;
+the <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip</span></code> CLI prints its own one-line notice instead.</p>
+</dd></dl>
+
+<p>Simulated annealing heuristic for FHOPS.</p>
+<dl class="py class">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.optimization.heuristics.sa.</span></span><span class="sig-name descname"><span class="pre">Schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mobilisation_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirty_machines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_remaining_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role_remaining_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirty_blocks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_slots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirty_slots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slot_production</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repair_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watch_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/optimization/heuristics/common.html#Schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Machine assignment plan storing both dict and array views.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plan</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>matrix</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>mobilisation_cache</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>MobilisationStats</em><em>]</em>)</p></li>
+<li><p><strong>dirty_machines</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#set" title="(in Python v3.15)"><em>set</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
+<li><p><strong>block_remaining_cache</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>role_remaining_cache</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>dirty_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#set" title="(in Python v3.15)"><em>set</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
+<li><p><strong>block_slots</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>dirty_slots</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#set" title="(in Python v3.15)"><em>set</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>slot_production</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>, </em><em>SlotProduction</em><em>]</em>)</p></li>
+<li><p><strong>repair_state</strong> (<em>RepairState</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>watch_stats</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><em>Any</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">block_remaining_cache</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">block_slots</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">dirty_blocks</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#set" title="(in Python v3.15)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">dirty_machines</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#set" title="(in Python v3.15)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">dirty_slots</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#set" title="(in Python v3.15)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">matrix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">mobilisation_cache</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MobilisationStats</span><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">plan</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">repair_state</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">RepairState</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">role_remaining_cache</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">slot_production</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SlotProduction</span><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">watch_stats</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">fhops.optimization.heuristics.sa.</span></span><span class="sig-name descname"><span class="pre">solve_sa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operator_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cooling_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">telemetry_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">telemetry_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watch_sink</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watch_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watch_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watch_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_local_repairs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objective_weight_overrides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">milp_objective</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_repair</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commitment_front</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incremental_repair</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adaptive_cooling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cooling_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cooling_initial_acceptance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cooling_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/optimization/heuristics/sa.html#solve_sa"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Solve the scheduling problem with simulated annealing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pb</strong> (<em>fhops.scenario.contract.Problem</em>) – Parsed scenario context describing machines, blocks, and shifts.</p></li>
+<li><p><strong>iters</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>default=2000</em>) – Number of annealing iterations. Higher values increase runtime and solution quality.</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>default=42</em>) – RNG seed used for deterministic runs.</p></li>
+<li><p><strong>operators</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – Optional list of operator names to enable (default: all registered operators).</p></li>
+<li><p><strong>operator_weights</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>] </em><em>| </em><em>None</em>) – Optional weight overrides for operators (values <code class="docutils literal notranslate"><span class="pre">&lt;=</span> <span class="pre">0</span></code> disable an operator).</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> | </em><em>None</em>) – When set, sample up to <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> neighbour candidates per iteration.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> or <code class="docutils literal notranslate"><span class="pre">&lt;=</span> <span class="pre">1</span></code> keeps the sequential single-candidate behaviour.</p></li>
+<li><p><strong>max_workers</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> | </em><em>None</em>) – Maximum worker threads for evaluating batched neighbours. <code class="docutils literal notranslate"><span class="pre">None</span></code>/<code class="docutils literal notranslate"><span class="pre">&lt;=1</span></code> keeps sequential scoring.</p></li>
+<li><p><strong>cooling_rate</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>default=0.999</em>) – Multiplicative cooling factor applied each iteration (0 &lt; rate &lt; 1). Larger values cool more slowly.
+Ignored when <code class="docutils literal notranslate"><span class="pre">adaptive_cooling</span></code> is set.</p></li>
+<li><p><strong>adaptive_cooling</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>default=False</em>) – Use the Aarts and Van Laarhoven (1985) adaptive temperature schedule instead of geometric
+cooling. The first <code class="docutils literal notranslate"><span class="pre">cooling_window</span></code> iterations are a warm-up (every move accepted) that sets
+the initial temperature from the average uphill move; the temperature is then decremented from
+the spread of the scores seen. Tunes itself to the scenario.</p></li>
+<li><p><strong>cooling_window</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> | </em><em>None</em><em>, </em><em>optional</em>) – Iterations per temperature under <code class="docutils literal notranslate"><span class="pre">adaptive_cooling</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> auto-scales to <code class="docutils literal notranslate"><span class="pre">64</span></code> capped
+at half of <code class="docutils literal notranslate"><span class="pre">iters</span></code>.</p></li>
+<li><p><strong>cooling_initial_acceptance</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>default=0.9</em>) – Acceptance ratio the adaptive warm-up targets when setting the initial temperature
+(<code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">1)</span></code>). Ignored unless <code class="docutils literal notranslate"><span class="pre">adaptive_cooling</span></code> is set.</p></li>
+<li><p><strong>cooling_delta</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>default=0.1</em>) – Distance from stationarity the adaptive decrement allows (positive). Ignored unless
+<code class="docutils literal notranslate"><span class="pre">adaptive_cooling</span></code> is set.</p></li>
+<li><p><strong>restart_interval</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> | </em><em>None</em><em>, </em><em>optional</em>) – Number of consecutive non-accepting iterations before restarting from the greedy seed. <code class="docutils literal notranslate"><span class="pre">None</span></code> auto-scales
+to <code class="docutils literal notranslate"><span class="pre">max(1000,</span> <span class="pre">iters</span> <span class="pre">/</span> <span class="pre">5)</span></code>.</p></li>
+<li><p><strong>telemetry_log</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><em>pathlib.Path</em></a><em> | </em><em>None</em>) – Optional telemetry JSONL path. When provided, solver progress and final metrics are logged.</p></li>
+<li><p><strong>telemetry_context</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>) – Additional context merged into telemetry records (scenario metadata, tuner info, etc.).</p></li>
+<li><p><strong>watch_sink</strong> (<em>SnapshotSink</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Optional callback that receives <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.telemetry.watch.Snapshot</span></code> updates for live
+dashboards. When omitted, no live progress is emitted.</p></li>
+<li><p><strong>watch_interval</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> | </em><em>None</em><em>, </em><em>optional</em>) – Iteration interval between snapshot emissions. Defaults to <code class="docutils literal notranslate"><span class="pre">max(1,</span> <span class="pre">iters</span> <span class="pre">/</span> <span class="pre">200)</span></code> when a
+sink is provided.</p></li>
+<li><p><strong>watch_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – Additional metadata (e.g., scenario/solver labels) attached to each snapshot.</p></li>
+<li><p><strong>watch_debug</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>default=False</em>) – When <code class="docutils literal notranslate"><span class="pre">True</span></code> capture sequencing debug stats for watch snapshots (adds overhead).</p></li>
+<li><p><strong>use_local_repairs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>default=False</em>) – When <code class="docutils literal notranslate"><span class="pre">True</span></code> repairs only the slots touched by a candidate before scoring. This is an
+approximate mode: the dirty-slot repair does not refill every idle slot, so a candidate’s
+search score can differ from a full evaluation of the same plan. The final schedule is
+always re-scored with a full repair before reporting.</p></li>
+<li><p><strong>incremental_repair</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>default=True</em>) – Resume each candidate’s repair from the accepted schedule’s per-slot state at its earliest
+changed slot instead of repairing the whole horizon. Provably identical to the full repair
+and faster on large scenarios (~1.15x on large84); it falls back to the full repair
+automatically in the modes where that equivalence is not guaranteed (<code class="docutils literal notranslate"><span class="pre">batch_size</span></code> with
+parallel workers, <code class="docutils literal notranslate"><span class="pre">pre_repair=False</span></code>, or <code class="docutils literal notranslate"><span class="pre">use_local_repairs=True</span></code>).</p></li>
+<li><p><strong>objective_weight_overrides</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) – Override scenario objective weights (keys: <code class="docutils literal notranslate"><span class="pre">production</span></code>, <code class="docutils literal notranslate"><span class="pre">mobilisation</span></code>, <code class="docutils literal notranslate"><span class="pre">transitions</span></code>,
+<code class="docutils literal notranslate"><span class="pre">landing_surplus</span></code>). <code class="docutils literal notranslate"><span class="pre">None</span></code> keeps the scenario weights, except for the scenarios listed in
+<code class="xref py py-data docutils literal notranslate"><span class="pre">AUTO_OBJECTIVE_WEIGHT_OVERRIDES</span></code> (FHOPS
+Tiny7/Small21: production 1.0, mobilisation 0.2, transitions 0.1, soft landing capacity
+0.05), which are applied automatically and recorded in <code class="docutils literal notranslate"><span class="pre">meta</span></code> (#140).</p></li>
+<li><p><strong>milp_objective</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> | </em><em>None</em><em>, </em><em>optional</em>) – Reference MILP objective used for gap reporting (best - MILP) in watch/telemetry output.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> skips gap metrics.</p></li>
+<li><p><strong>pre_repair</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>)</p></li>
+<li><p><strong>commitment_front</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Dictionary with the following keys:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">objective</span></code> (float)</dt><dd><p>Fresh <code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_schedule()</span></code> score of the
+returned schedule (higher is better); it equals a re-evaluation of <code class="docutils literal notranslate"><span class="pre">assignments</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">assignments</span></code> (pandas.DataFrame)</dt><dd><p>Assignment matrix with columns <code class="docutils literal notranslate"><span class="pre">machine_id,</span> <span class="pre">block_id,</span> <span class="pre">day,</span> <span class="pre">shift_id,</span> <span class="pre">assigned</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">meta</span></code> (dict[str, Any])</dt><dd><p>Telemetry payload including <code class="docutils literal notranslate"><span class="pre">operators</span></code> weights, optional <code class="docutils literal notranslate"><span class="pre">operators_stats</span></code>, and
+bookkeeping such as <code class="docutils literal notranslate"><span class="pre">proposals</span></code> or <code class="docutils literal notranslate"><span class="pre">telemetry_run_id</span></code>.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fhops.scheduling.html" class="btn btn-neutral float-left" title="fhops.scheduling Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fhops.evaluation.html" class="btn btn-neutral float-right" title="fhops.evaluation Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, UBC FRESH Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

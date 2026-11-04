@@ -1,0 +1,1397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rolling-Horizon Planning &mdash; FHOPS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tactical–Operational Scenario Contract" href="tactical_operational.html" />
+    <link rel="prev" title="Tabu Search How-to" href="tabu.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            FHOPS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#automation-pipeline">Automation pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#quick-demo">Quick demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#baseline-workflows">Baseline Workflows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#bootstrap-environment">Bootstrap Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#workbench-examples-tiny7">Workbench: <code class="docutils literal notranslate"><span class="pre">examples/tiny7</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#regression-fixture-phase-1-baseline">Regression Fixture (Phase 1 Baseline)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#rolling-horizon-loop-playback-kpis">Rolling horizon loop (playback + KPIs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#shift-enabled-scenarios">Shift-enabled scenarios</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tree_scale.html">Tree-Scale Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#synthetic-fixture">Synthetic fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#run-the-complete-path">Run the complete path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#fail-closed-behavior">Fail-closed behavior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_contract.html">Data Contract Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#cross-references-validators">Cross References &amp; Validators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#optional-extras">Optional Extras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#timeline-example">Timeline Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#shift-calendars-defaults">Shift Calendars &amp; Defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#schedule-locking">Schedule Locking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#initial-state-resuming-mid-operation">Initial State (Resuming Mid-Operation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#compatibility-with-fhops-1-0-0">Compatibility with FHOPS 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#geojson-ingestion-distances">GeoJSON Ingestion &amp; Distances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#machine-rate-defaults-costing-helper">Machine-Rate Defaults &amp; Costing Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#road-construction-tables-validation">Road Construction Tables &amp; Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#skyline-stand-profiles">Skyline Stand Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#log-hauling-extension">Log Hauling Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#lidarbc-products">LidarBC Products</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#tree-inventories">Tree Inventories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#authoring-checklist">Authoring Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#fixture-gallery">Fixture Gallery</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">Benchmarking Harness</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#cli-options">CLI Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#watching-heuristic-progress">Watching heuristic progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#faq-watch-mode">FAQ – Watch Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#standard-manuscript-pipeline">Standard Manuscript Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#optional-gurobi-backend-linux">Optional Gurobi backend (Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#interpreting-outputs">Interpreting Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#comparing-mip-and-heuristic-objectives">Comparing MIP and heuristic objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#shared-kpi-roll-up">Shared KPI roll-up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#operator-telemetry">Operator Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#visual-comparisons">Visual Comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#regression-fixture">Regression Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#future-work">Future Work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="heuristic_presets.html">Heuristic Presets &amp; Registry Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#shared-solver-cheat-sheet">Shared Solver Cheat Sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#preset-overview">Preset Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#applying-presets">Applying Presets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#explicit-overrides">Explicit Overrides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#solver-specific-parameters">Solver-Specific Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#parallel-advanced-features">Parallel &amp; Advanced Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#operator-catalogue">Operator Catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#telemetry-benchmarking">Telemetry &amp; Benchmarking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#objective-weights-automatic-overrides-and-hard-violations">Objective Weights, Automatic Overrides, and Hard Violations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mip_warm_starts.html">Operational MILP Warm Starts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#workflow">Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#solver-support">Solver support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#solve-outcomes">Solve outcomes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#current-limitations">Current limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#practical-guidance">Practical guidance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#future-work">Future work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="optimization_formulation.html">Operational MILP Formulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parallel_heuristics.html">Parallel Heuristic Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#multi-start-runs">Multi-start Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#batched-neighbour-evaluation">Batched Neighbour Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#api-reference">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#profiling-notes">Profiling Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#running-deterministic-playback">Running deterministic playback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#optional-flags">Optional flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#reporting-templates">Reporting templates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#parquet-and-markdown-exports">Parquet and Markdown exports</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#quickstart-example">Quickstart example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#aggregation-helper-reference">Aggregation helper reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#kpi-formulas-required-signals">KPI formulas &amp; required signals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#empty-and-partial-plans">Empty and partial plans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#weather-downtime-cost-assumptions">Weather &amp; downtime cost assumptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#stochastic-playback-toggles">Stochastic playback toggles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#stochastic-event-semantics">Stochastic event semantics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#relationship-to-kpi-evaluation">Relationship to KPI evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="thesis_eval.html">Thesis Evaluation Workflow (Chapter 2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#context-goals">Context &amp; Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#pipeline-overview">Pipeline Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#worked-example-med42-template">Worked Example (med42 Template)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#tips-references">Tips &amp; References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telemetry_tuning.html">Telemetry-Driven Tuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#step-1-collect-telemetry">Step 1 – Collect Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#step-2-generate-a-comparison-report">Step 2 – Generate a Comparison Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#sample-output">Sample Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#step-3-iterate">Step 3 – Iterate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#step-4-compare-multiple-reports">Step 4 – Compare Multiple Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#historical-trends">Historical Trends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#delta-snapshot-summary">Delta Snapshot Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#interpreting-dashboards">Interpreting Dashboards</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#history-summary-html-trend-radar">history_summary.html ― trend radar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#latest-history-summary-html-md-csv-current-leaderboard">latest_history_summary.{html,md,csv} ― current leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#latest-tuner-report-html-md-csv-raw-per-algorithm-stats">latest_tuner_report.{html,md,csv} ― raw per-algorithm stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#latest-tuner-comparison-latest-tuner-leaderboard">latest_tuner_comparison &amp; latest_tuner_leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#tuner-difficulty-html-md-csv">tuner_difficulty*.{html,md,csv}</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#adding-new-dashboard-assets">Adding new dashboard assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#release-candidate-presets">Release candidate presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#automated-sweeps">Automated Sweeps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#parallel-execution">Parallel execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#benchmark-plans">Benchmark plans</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#notebook-execution-cadence">Notebook execution cadence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#heuristic-parameter-catalogue">Heuristic parameter catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#convergence-metrics">Convergence metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#tuner-metadata-summary">Tuner metadata summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#bundle-aliases">Bundle Aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#ci-automation">CI Automation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#downloading-ci-reports">Downloading CI Reports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telemetry_ops.html">Telemetry Ops Runbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#weekly-notebook-pipeline">Weekly Notebook Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#telemetry-store-maintenance">Telemetry Store Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#automation-checklist">Automation Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#runbook-template-per-week">Runbook Template (per week)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release_playbook.html">Release &amp; Contribution Playbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release_playbook.html#release-preparation">Release Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_playbook.html#contribution-checklist">Contribution Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_playbook.html#where-to-update-next">Where to Update Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="synthetic_datasets.html">Synthetic Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#reference-bundles">Reference bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#fleet-roles-and-harvest-systems">Fleet roles and harvest systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#block-enrichment-crews-and-blackouts">Block enrichment, crews, and blackouts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#cli-walkthrough">CLI walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#regenerating-bundles">Regenerating bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#where-to-go-next">Where to go next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="system_sequencing.html">Harvest System Sequencing How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#configuring-scenarios">Configuring Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#sequencing-semantics">Sequencing Semantics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="system_sequencing.html#locks-and-the-operational-milp">Locks and the operational MILP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#running-the-solvers">Running the Solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="system_sequencing.html#mip">MIP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_sequencing.html#simulated-annealing">Simulated Annealing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#inspection-kpis">Inspection &amp; KPIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#benchmarking-with-sequencing">Benchmarking with Sequencing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="system_sequencing.html#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ils.html">Iterated Local Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ils.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ils.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ils.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tabu.html">Tabu Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tabu.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tabu.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tabu.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Rolling-Horizon Planning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#when-to-use">When to use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#key-parameters">Key parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-state-carries-between-windows">How state carries between windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#milp-windows-earliness-tie-break">MILP windows: earliness tie-break</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#windows-without-a-plan">Windows without a plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cli-usage">CLI usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#worked-example-tiny7">Worked example (tiny7)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#milp-example-with-solver-options">MILP example with solver options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluating-rolling-plans">Evaluating rolling plans</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#empty-rolling-plans-and-baselines">Empty rolling plans and baselines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#rolling-comparison-helper">Rolling comparison helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#masc-experiments-plots">MASc experiments &amp; plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sample-artefacts">Sample artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#artefact-provenance-regeneration">Artefact provenance &amp; regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gotchas">Gotchas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#limitations">Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tactical_operational.html">Tactical–Operational Scenario Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#canonical-formulation">Canonical formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#loading-and-validation">Loading and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#period-templates">Period templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#core-milp-formulation">Core MILP formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#optional-infrastructure-modules">Optional infrastructure modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#scenario-overlays-diffs-and-batch-reports">Scenario overlays, diffs, and batch reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#tactical-to-operational-handoff">Tactical-to-operational handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#scale-benchmarks-and-uncertainty-envelopes">Scale benchmarks and uncertainty envelopes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#practitioner-scale-validation-case">Practitioner-scale validation case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#guided-tactical-planner-notebook">Guided tactical planner notebook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hauling.html">Log Hauling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#schema-version">Schema version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#minimal-example">Minimal example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#marine-and-barge-legs">Marine and barge legs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#entity-rules">Entity rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#contractor-eligibility">Contractor eligibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#units-and-defaults">Units and defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#phase-i-solve">Phase I solve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#phase-ii-schedule">Phase II schedule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#phase-iii-simulated-annealing">Phase III simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#stable-artefacts">Stable artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#operational-and-tactical-handoff">Operational and tactical handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#scale-case">Scale case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#limitations">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#see-also">See also</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hydrology_quickstart.html">Hydrology Quickstart — FEMIC to WS4 to FHOPS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#version-matrix">Version Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#build-the-synthetic-workspace">Build the Synthetic Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#ws4-landscape-screening">WS4 Landscape Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#fhops-consumer-and-operational-check">FHOPS Consumer and Operational Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#what-this-demonstrates">What This Demonstrates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#what-this-does-not-prove">What This Does Not Prove</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#docs-check">Docs Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#further-reference">Further Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="web.html">FHOPS Web UI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="web.html#shell-and-navigation">Shell and navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#install-and-run">Install and run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#run-discovery">Run discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#run-manifest">Run manifest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#service-surface">Service surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#map-and-layers">Map and layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#domain-panels">Domain panels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#live-runs">Live runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#scenario-editing">Scenario editing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#skins">Skins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#assistant">Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.html"><code class="docutils literal notranslate"><span class="pre">fhops</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.scenario.html"><code class="docutils literal notranslate"><span class="pre">fhops.scenario</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scenario.html#quickstart">Quickstart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.scheduling.html"><code class="docutils literal notranslate"><span class="pre">fhops.scheduling</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.timeline.BlackoutWindow"><code class="docutils literal notranslate"><span class="pre">BlackoutWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.timeline.ShiftDefinition"><code class="docutils literal notranslate"><span class="pre">ShiftDefinition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.timeline.TimelineConfig"><code class="docutils literal notranslate"><span class="pre">TimelineConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.BlockDistance"><code class="docutils literal notranslate"><span class="pre">BlockDistance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.MachineMobilisation"><code class="docutils literal notranslate"><span class="pre">MachineMobilisation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.MobilisationConfig"><code class="docutils literal notranslate"><span class="pre">MobilisationConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.build_distance_lookup"><code class="docutils literal notranslate"><span class="pre">build_distance_lookup()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.HarvestSystem"><code class="docutils literal notranslate"><span class="pre">HarvestSystem</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.SystemJob"><code class="docutils literal notranslate"><span class="pre">SystemJob</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.default_system_registry"><code class="docutils literal notranslate"><span class="pre">default_system_registry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.get_system_road_defaults"><code class="docutils literal notranslate"><span class="pre">get_system_road_defaults()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.system_productivity_overrides"><code class="docutils literal notranslate"><span class="pre">system_productivity_overrides()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.optimization.html"><code class="docutils literal notranslate"><span class="pre">fhops.optimization</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.optimization.html#deprecated-legacy-mip-1-0-1-127">Deprecated legacy MIP (1.0.1, #127)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.evaluation.html"><code class="docutils literal notranslate"><span class="pre">fhops.evaluation</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.DaySummary"><code class="docutils literal notranslate"><span class="pre">DaySummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.DowntimeEvent"><code class="docutils literal notranslate"><span class="pre">DowntimeEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.DowntimeEventConfig"><code class="docutils literal notranslate"><span class="pre">DowntimeEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.EnsembleResult"><code class="docutils literal notranslate"><span class="pre">EnsembleResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.KPIResult"><code class="docutils literal notranslate"><span class="pre">KPIResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.LandingShockConfig"><code class="docutils literal notranslate"><span class="pre">LandingShockConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.LandingShockEvent"><code class="docutils literal notranslate"><span class="pre">LandingShockEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackConfig"><code class="docutils literal notranslate"><span class="pre">PlaybackConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackEvent"><code class="docutils literal notranslate"><span class="pre">PlaybackEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackRecord"><code class="docutils literal notranslate"><span class="pre">PlaybackRecord</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackResult"><code class="docutils literal notranslate"><span class="pre">PlaybackResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackSample"><code class="docutils literal notranslate"><span class="pre">PlaybackSample</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.SamplingConfig"><code class="docutils literal notranslate"><span class="pre">SamplingConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.SamplingContext"><code class="docutils literal notranslate"><span class="pre">SamplingContext</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.SamplingEventConfig"><code class="docutils literal notranslate"><span class="pre">SamplingEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.ShiftSummary"><code class="docutils literal notranslate"><span class="pre">ShiftSummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.WeatherEvent"><code class="docutils literal notranslate"><span class="pre">WeatherEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.WeatherEventConfig"><code class="docutils literal notranslate"><span class="pre">WeatherEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.assignments_to_records"><code class="docutils literal notranslate"><span class="pre">assignments_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_kpis"><code class="docutils literal notranslate"><span class="pre">compute_kpis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_makespan_metrics"><code class="docutils literal notranslate"><span class="pre">compute_makespan_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_utilisation_metrics"><code class="docutils literal notranslate"><span class="pre">compute_utilisation_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.export_playback"><code class="docutils literal notranslate"><span class="pre">export_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.playback_summary_metrics"><code class="docutils literal notranslate"><span class="pre">playback_summary_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.render_markdown_summary"><code class="docutils literal notranslate"><span class="pre">render_markdown_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.run_playback"><code class="docutils literal notranslate"><span class="pre">run_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.run_stochastic_playback"><code class="docutils literal notranslate"><span class="pre">run_stochastic_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.schedule_to_records"><code class="docutils literal notranslate"><span class="pre">schedule_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.summarise_days"><code class="docutils literal notranslate"><span class="pre">summarise_days()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.summarise_shifts"><code class="docutils literal notranslate"><span class="pre">summarise_shifts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning.tactical_operational</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.BlockRoadAccess"><code class="docutils literal notranslate"><span class="pre">BlockRoadAccess</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Economics"><code class="docutils literal notranslate"><span class="pre">Economics</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.ExternalSupply"><code class="docutils literal notranslate"><span class="pre">ExternalSupply</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Facility"><code class="docutils literal notranslate"><span class="pre">Facility</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FacilityDemand"><code class="docutils literal notranslate"><span class="pre">FacilityDemand</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetCapacity"><code class="docutils literal notranslate"><span class="pre">FleetCapacity</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetOption"><code class="docutils literal notranslate"><span class="pre">FleetOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.HarvestSystemOption"><code class="docutils literal notranslate"><span class="pre">HarvestSystemOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.InitialInventory"><code class="docutils literal notranslate"><span class="pre">InitialInventory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PeriodLevel"><code class="docutils literal notranslate"><span class="pre">PeriodLevel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningPeriod"><code class="docutils literal notranslate"><span class="pre">PlanningPeriod</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningUnit"><code class="docutils literal notranslate"><span class="pre">PlanningUnit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Product"><code class="docutils literal notranslate"><span class="pre">Product</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadDependency"><code class="docutils literal notranslate"><span class="pre">RoadDependency</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadProject"><code class="docutils literal notranslate"><span class="pre">RoadProject</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.SilvicultureTransition"><code class="docutils literal notranslate"><span class="pre">SilvicultureTransition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalScenario</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TransportArc"><code class="docutils literal notranslate"><span class="pre">TransportArc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.children_by_parent"><code class="docutils literal notranslate"><span class="pre">children_by_parent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.four_week_periods"><code class="docutils literal notranslate"><span class="pre">four_week_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.load_tactical_operational_scenario"><code class="docutils literal notranslate"><span class="pre">load_tactical_operational_scenario()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.seasonal_periods"><code class="docutils literal notranslate"><span class="pre">seasonal_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_dimensions"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_dimensions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.validate_period_hierarchy"><code class="docutils literal notranslate"><span class="pre">validate_period_hierarchy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.model.milp.tactical_operational</span></code> Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.DemandBasis"><code class="docutils literal notranslate"><span class="pre">DemandBasis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalHarvestMode"><code class="docutils literal notranslate"><span class="pre">TacticalHarvestMode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpBundle"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpBundle</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_bundle"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_bundle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_model"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.solve_tactical_operational_milp"><code class="docutils literal notranslate"><span class="pre">solve_tactical_operational_milp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_from_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_to_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#solve-mip-deprecated-alias-outcomes-and-exit-codes"><code class="docutils literal notranslate"><span class="pre">solve-mip</span></code> (deprecated alias) outcomes and exit codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#heuristic-configuration-reference">Heuristic configuration reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#dataset-command-cheat-sheet">Dataset command cheat sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#log-hauling-commands">Log-hauling commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#web-commands">Web commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/playback_aggregates.html">Aggregation Helpers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/playback_aggregates.html#module-fhops.evaluation.playback.aggregates">API summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/harvest_systems.html">Harvest System Registry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#data-model">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#default-systems">Default Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#using-the-registry">Using the Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#scenario-cross-links">Scenario Cross-Links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#extending-systems">Extending Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#preset-usage-cheat-sheet">Preset Usage Cheat Sheet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#forwarder-productivity">Forwarder Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#grapple-skidder-shovel-logger-productivity">Grapple Skidder &amp; Shovel Logger Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#skyline-helicopter-productivity">Skyline &amp; Helicopter Productivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#forwarder-productivity-models">Forwarder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#roadside-processor-productivity-models">Roadside Processor Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#landing-processor-and-loader-coverage-cheat-sheet">Landing processor and loader coverage cheat sheet</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#optional-dataset-cookbook">Optional Dataset Cookbook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#med42-large84-cost-overlays">Med42 / Large84 cost overlays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#partial-cut-mixed-system-assignments">Partial-cut / mixed system assignments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#road-construction-add-ons">Road construction add-ons</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#burned-timber-salvage-guidance-adv1n5">Burned-Timber Salvage Guidance (ADV1N5)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#loader-forwarder-productivity-models">Loader-Forwarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#loader-harvest-system-overrides">Loader harvest-system overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#coordinating-with-forwarder-skidder-models">Coordinating with forwarder / skidder models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#grapple-skidder-productivity-models">Grapple Skidder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#grapple-yarder-productivity-models">Grapple Yarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#grapple-harvest-system-presets">Grapple harvest-system presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#shovel-logger-hoe-chucker-productivity">Shovel Logger (Hoe-Chucker) Productivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#skyline-productivity-models">Skyline Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#tr-127-predictor-ranges">TR-127 predictor ranges</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#skyline-cost-matrix">Skyline cost matrix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#tn-258-fncy12-support-utilisation">TN-258 / FNCY12 support utilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#partial-cut-profile-registry">Partial-cut profile registry</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#road-subgrade-construction-references">Road &amp; Subgrade Construction References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#handfalling-cost-reference">Handfalling Cost Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#ctl-harvester-productivity-models">CTL Harvester Productivity Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling.html#key-models">Key models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hauling_formulation.html">Log-Hauling Formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-i-monthly-daily-flows">Phase I: monthly daily flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-ii-daily-truck-and-loader-scheduling">Phase II: daily truck and loader scheduling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-iii-simulated-annealing">Phase III: simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#implementation-notes-and-corrections">Implementation notes and corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/web.html#key-objects">Key objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/web.html#cli">CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/telemetry.html">Telemetry Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#schema">Schema</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/telemetry.html#example">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/telemetry.html#solver-specific-fields">Solver-specific fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#usage-notes">Usage Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#cli-reporting">CLI Reporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#historical-trends">Historical Trends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/dashboards.html">Live Dashboards</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/dashboards.html#embedded-previews">Embedded previews</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/source_bibliography.html">Source Bibliography and Document Access</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/source_bibliography.html#public-bibliography">Public bibliography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/source_bibliography.html#private-full-text-vault">Private full-text vault</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_lidar.html">FEMIC LidarBC Products</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#scenario-pin-and-support">Scenario Pin and Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#operability-report">Operability Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#operator-workflow">Operator Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#shared-parity">Shared Parity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#phase-close-out">Phase Close-Out</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_lidar_fixture.html">TFL 6 LidarBC Fixture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#what-it-exercises">What It Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#terrain-and-canopy-evidence">Terrain And Canopy Evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#commands">Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#regeneration">Regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#parity-and-limits">Parity And Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_hydrology.html">FEMIC Hydrology Response Bundles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#readiness">Readiness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#scenario-pin">Scenario Pin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#support-mapping">Support Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#schedule-bound-exposure">Schedule-Bound Exposure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#screening">Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-hazard-windows">Operational Hazard Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#road-and-culvert-assets">Road and Culvert Assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-constraint-check">Operational Constraint Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#end-to-end-path">End-to-End Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#solver-boundary">Solver Boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-end-to-end-path">Operational End-to-End Path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hydrology_contract_index.html">Hydrology Contract and Schema Index</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#contract-layers">Contract Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#femic-producer-contracts">FEMIC Producer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#ws4-landscape-consumer-contracts">WS4 Landscape Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#fhops-operational-consumer-contracts">FHOPS Operational Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#shared-exposure-contract">Shared Exposure Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#failure-matrix">Failure Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#what-is-not-a-contract">What Is Not a Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#version-compatibility">Version Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_inventory.html">Tree Inventory Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#inventory-format">Inventory Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#scenario-pin-and-block-map">Scenario Pin and Block Map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/stem_models.html">Stem Volume and Bucking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#reference-model">Reference Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_replay.html">Tree-Scale Schedule Replay</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#input">Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_scene.html">Tree Scene Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/robustness.html">Stochastic Robustness Walkthrough</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#code-walkthrough">Code Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#interpretation">Interpretation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/analytics/index.html">Analytics Notebooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/playback_walkthrough.html">Playback Walkthrough</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/playback_walkthrough.html#Production-by-Day">Production by Day</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/stochastic_robustness.html">Stochastic Robustness Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/stochastic_robustness.html#Production-Distribution">Production Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/what_if_analysis.html">What-If Scenario Tweaks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/what_if_analysis.html#Adjusted-Sampling">Adjusted Sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/landing_congestion.html">Landing Congestion Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Baseline-Ensemble-Snapshot">Baseline Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Landing-Shock-Ensemble-Snapshot">Landing Shock Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#KPI-Comparison">KPI Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Production-Distributions">Production Distributions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/system_mix.html">Harvest System Mix Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#System-Mix-Metadata">System Mix Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Machine-Roles-in-Scenario">Machine Roles in Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Generate-Custom-Mix">Generate Custom Mix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Role-Comparison">Role Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html">KPI Decomposition Deep Dive</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Scenario-Overview">Scenario Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Production-vs-Mobilisation">Production vs Mobilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Sequencing-&amp;-Downtime">Sequencing &amp; Downtime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Visualise-Utilisation">Visualise Utilisation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html">Ensemble Resilience Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html#Production-Distributions">Production Distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html#Downtime-Summary">Downtime Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/operator_sweep.html">Operator/Benchmark Sweep</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/operator_sweep.html#Objective-Comparison">Objective Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/operator_sweep.html#Runtime-Comparison">Runtime Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html">Telemetry &amp; Solver Diagnostics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html#Objective-Trace">Objective Trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html#Acceptance-Summary">Acceptance Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html">Telemetry Report Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Load-Reports">Load Reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Visualize-Best-Objectives">Visualize Best Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Delta-Table">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Machine-Cost-Summary-Pivot">Machine-Cost Summary Pivot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Machine-Cost-Trend-Chart">Machine-Cost Trend Chart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Compare-Against-Historical-Summary">Compare Against Historical Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Repair-Usage-Alerts">Repair-Usage Alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html">Telemetry History Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Load-History-Snapshot">Load History Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Compute-Deltas">Compute Deltas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Visualize-Trends">Visualize Trends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Next-Steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/benchmark_summary.html">Benchmark Summary Notebook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/benchmark_summary.html#Objective-vs-Scenario">Objective vs Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/benchmark_summary.html#Runtime-Overview">Runtime Overview</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Processes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#developer-onboarding">Developer onboarding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#command-cadence-local-loop">Command cadence (local loop)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#debugging-and-profiling">Debugging and profiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#re-running-published-artefacts">Re-running published artefacts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../roadmap.html">Roadmap Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobilisation_geo.html">Mobilisation Geospatial Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mobilisation_geo.html#command-examples">Command Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mobilisation_geo.html#tooling-notes">Tooling Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mobilisation_geo.html#troubleshooting-diagnostics">Troubleshooting &amp; Diagnostics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../planning/productivity_gaps.html">Productivity Catalog Gaps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#arnvik-appendix-8-scope">Arnvik Appendix 8 scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#implications">Implications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#forwarder-equation-stack-bc-roll-out">Forwarder equation stack (BC roll-out)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../planning/productivity_gaps.html#sources-in-hand">Sources in hand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../planning/productivity_gaps.html#caveats-and-pending-confirmations">Caveats and pending confirmations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FHOPS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Rolling-Horizon Planning</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/howto/rolling_horizon.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rolling-horizon-planning">
+<h1>Rolling-Horizon Planning<a class="headerlink" href="#rolling-horizon-planning" title="Link to this heading"></a></h1>
+<p>FHOPS can build multi-week plans by solving shorter subproblems and locking in the leading days
+before advancing the horizon. This page outlines the workflow and CLI surface that currently ships
+with stub, SA, and MILP solver hooks, what state is carried from one window to the next, and how to
+evaluate the stitched plan.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>FHOPS 1.0.0 carried <strong>no</strong> state between windows: every window re-planned each block’s full
+<code class="docutils literal notranslate"><span class="pre">work_required</span></code> (including blocks already finished in locked days), staged inventory and
+machine positions reset to zero, user locks were dropped, and blackouts were not rebased. The
+stitched plans it produced therefore under-delivered badly when evaluated against the base
+scenario. FHOPS 1.0.1 fixes this (issue #92); results produced with 1.0.0 rolling runs should be
+regenerated.</p>
+</div>
+<section id="when-to-use">
+<h2>When to use<a class="headerlink" href="#when-to-use" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Need a 12–16 week plan but only want to solve tractable 2–4 week subproblems.</p></li>
+<li><p>Desire a “locked” near-term schedule for contractors while keeping a rolling buffer for course
+corrections.</p></li>
+<li><p>Willing to accept some suboptimality vs. a monolithic solve in exchange for scalability.</p></li>
+</ul>
+</section>
+<section id="key-parameters">
+<h2>Key parameters<a class="headerlink" href="#key-parameters" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">master_days</span></code>: total length of the plan you want to lock (e.g., 84 or 112).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sub_days</span></code>: length of each optimisation window (must be &gt;= <code class="docutils literal notranslate"><span class="pre">lock_days</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lock_days</span></code>: number of leading days to freeze after each solve before advancing.</p></li>
+<li><p>Horizons must fit the scenario: <code class="docutils literal notranslate"><span class="pre">start_day</span> <span class="pre">+</span> <span class="pre">master_days</span> <span class="pre">-</span> <span class="pre">1</span> <span class="pre">&lt;=</span> <span class="pre">Scenario.num_days</span></code>. Adjust the
+values or pick a longer scenario if you hit this guardrail.</p></li>
+</ul>
+</section>
+<section id="how-state-carries-between-windows">
+<h2>How state carries between windows<a class="headerlink" href="#how-state-carries-between-windows" title="Link to this heading"></a></h2>
+<p>Each iteration solves a window <code class="docutils literal notranslate"><span class="pre">[start,</span> <span class="pre">start</span> <span class="pre">+</span> <span class="pre">sub_days</span> <span class="pre">-</span> <span class="pre">1]</span></code> and freezes its first
+<code class="docutils literal notranslate"><span class="pre">lock_days</span></code> days. Before the next window is solved, the orchestrator
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.run_rolling_horizon()</span></code>) does the following:</p>
+<ol class="arabic simple">
+<li><p><strong>Replay the stitched locked plan</strong> (all locks so far, base-day coordinates, <code class="docutils literal notranslate"><span class="pre">shift_id</span></code>
+preserved) against the <strong>base</strong> scenario with the deterministic playback sequencing tracker
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.carry_forward_state()</span></code>). Production follows the playback rule: each locked
+assignment proposes its planned production when the lock carries one (MILP runs store the MILP
+<code class="docutils literal notranslate"><span class="pre">prod</span></code> value in <code class="docutils literal notranslate"><span class="pre">ScheduleLock.production</span></code>) and <code class="docutils literal notranslate"><span class="pre">min(rate,</span> <span class="pre">block</span> <span class="pre">remaining)</span></code> otherwise (SA
+runs, user locks); the tracker caps it by the role’s remaining output and the staged upstream
+inventory (output becomes available downstream from the next shift slot). The carried state is
+exactly what <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.compute_rolling_kpis()</span></code> reports for the same plan, and for MILP
+runs it is the state the window MILP planned, so stitched MILP plans replay without sequencing
+violations. A lock without <code class="docutils literal notranslate"><span class="pre">shift_id</span></code> (day-level lock, e.g. from a custom solver hook) is
+replayed in every shift slot of its day in which the machine is available, which is how the
+operational MILP and the heuristics apply it (since 1.0.1, #125); a day-level lock that carries a
+planned <code class="docutils literal notranslate"><span class="pre">production</span></code> on a day with several such slots is rejected (<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>), because the
+split of that volume over the shifts is ambiguous. The stitched plan stores such locks expanded
+to one lock per shift slot.</p></li>
+<li><p><strong>Derive the window’s boundary state</strong> from the tracker at the end of the last locked day:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Block.work_required</span></code> = remaining terminal volume (finished blocks stay in the window with
+<code class="docutils literal notranslate"><span class="pre">work_required</span> <span class="pre">=</span> <span class="pre">0</span></code>, so their ids remain valid);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Scenario.initial_state</span></code> (see <a class="reference internal" href="data_contract.html#initial-state"><span class="std std-ref">Initial State (Resuming Mid-Operation)</span></a>): per explicit-system block,
+<code class="docutils literal notranslate"><span class="pre">role_remaining</span></code>, <code class="docutils literal notranslate"><span class="pre">staged_inventory</span></code> (non-terminal roles) and <code class="docutils literal notranslate"><span class="pre">role_shift_counts</span></code>; per
+machine, <code class="docutils literal notranslate"><span class="pre">last_block_id</span></code> = the block of its last locked assignment in chronological slot
+order (day, then the scenario’s shift order). Entries at their contract default (zero, or <code class="docutils literal notranslate"><span class="pre">role_remaining</span></code> equal to
+the remaining volume) are omitted.</p></li>
+</ul>
+</li>
+<li><p><strong>Slice the base scenario</strong> for the window: machine and shift calendars, timeline blackouts
+(clipped to the window and shifted so the window start is day 1), block windows, production
+rates, and mobilisation distances are rebased; blocks whose <code class="docutils literal notranslate"><span class="pre">earliest_start</span></code>/<code class="docutils literal notranslate"><span class="pre">latest_finish</span></code>
+window does not overlap the sub-horizon are dropped.</p></li>
+<li><p><strong>Merge user locks</strong>: <code class="docutils literal notranslate"><span class="pre">Scenario.locked_assignments</span></code> entries that fall inside the window are
+rebased (<code class="docutils literal notranslate"><span class="pre">shift_id</span></code> kept) and attached to the window scenario; the solver hooks merge the locks
+they receive with the scenario’s own locks instead of overwriting them, so user locks are
+enforced in every window that covers them and end up in the stitched plan.</p></li>
+</ol>
+<p>If the base scenario already has an <code class="docutils literal notranslate"><span class="pre">initial_state</span></code>, the first window uses it verbatim and the
+replay for later windows starts from it, so user-supplied state and the stitched plan compose. The
+first window otherwise equals the base scenario restricted to <code class="docutils literal notranslate"><span class="pre">sub_days</span></code>; a single-window run
+(<code class="docutils literal notranslate"><span class="pre">master_days</span> <span class="pre">=</span> <span class="pre">sub_days</span> <span class="pre">=</span> <span class="pre">lock_days</span></code>) is identical to a direct solve.</p>
+<p>Per-iteration telemetry (<code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.planning.RollingIterationSummary</span></code>, the <code class="docutils literal notranslate"><span class="pre">iterations</span></code>
+records of <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.summarize_plan()</span></code> and the CLI exports) reports:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">iteration_index</span></code>, <code class="docutils literal notranslate"><span class="pre">start_day</span></code>, <code class="docutils literal notranslate"><span class="pre">horizon_days</span></code>, <code class="docutils literal notranslate"><span class="pre">lock_days</span></code>, <code class="docutils literal notranslate"><span class="pre">locked_assignments</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remaining_work_start</span></code> — terminal m³ still to deliver across all base blocks at the window start;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span></code> — <code class="docutils literal notranslate"><span class="pre">solved</span></code>, <code class="docutils literal notranslate"><span class="pre">no_solution</span></code> or <code class="docutils literal notranslate"><span class="pre">skipped</span></code> (see <a class="reference internal" href="#rolling-no-plan"><span class="std std-ref">Windows without a plan</span></a>), and
+<code class="docutils literal notranslate"><span class="pre">has_solution</span></code> (<code class="docutils literal notranslate"><span class="pre">False</span></code> only for <code class="docutils literal notranslate"><span class="pre">no_solution</span></code>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">planned_delivered</span></code> — m³ the window’s whole plan delivers when replayed on the window scenario;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">locked_delivered</span></code> — m³ the locked span delivers in the stitched-plan replay (these add up to the
+stitched plan’s <code class="docutils literal notranslate"><span class="pre">total_production</span></code>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">locked_production</span></code> — machine m³ (every role) the window plan produces in its lock span (window
+replay);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">empty</span></code> — the window’s blocks still held work but its lock span produces nothing (no locks, or
+only locks without production) or its plan delivers nothing;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">error</span></code> — the solver failure text of a <code class="docutils literal notranslate"><span class="pre">no_solution</span></code> window whose solver failed (e.g. an
+unknown or unlicensed solver), else <code class="docutils literal notranslate"><span class="pre">null</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">objective</span></code> (the base objective; see <a class="reference internal" href="#rolling-earliness"><span class="std std-ref">MILP windows: earliness tie-break</span></a>), the hook’s wall-clock
+<code class="docutils literal notranslate"><span class="pre">runtime_s</span></code>, and <code class="docutils literal notranslate"><span class="pre">warnings</span></code> (solver status and termination condition, the MILP earliness
+stage <code class="docutils literal notranslate"><span class="pre">earliness=&lt;status&gt;</span> <span class="pre">value=&lt;E&gt;</span> <span class="pre">…</span></code>, plus the no-solution / skipped / empty-window notices).</p></li>
+</ul>
+<p>The run summary adds <code class="docutils literal notranslate"><span class="pre">empty_windows</span></code>, <code class="docutils literal notranslate"><span class="pre">no_solution_windows</span></code> and <code class="docutils literal notranslate"><span class="pre">skipped_windows</span></code> counts and the
+<code class="docutils literal notranslate"><span class="pre">empty_window_indices</span></code> / <code class="docutils literal notranslate"><span class="pre">no_solution_window_indices</span></code> lists.</p>
+</section>
+<section id="milp-windows-earliness-tie-break">
+<span id="rolling-earliness"></span><h2>MILP windows: earliness tie-break<a class="headerlink" href="#milp-windows-earliness-tie-break" title="Link to this heading"></a></h2>
+<p>The operational MILP objective rewards delivered volume and charges leftovers, landing surplus and
+moves; it does not depend on <em>when</em> inside the window the work is done. Many window plans are
+therefore tied, and the solver may return one that does the work at the end of the window. Only the
+lock span is kept, so such a window locks idle days and the next window defers again. In the FHOPS
+1.0.1 audit (#141), one machine with 300 m³ at 100 m³/day (<code class="docutils literal notranslate"><span class="pre">master/sub/lock</span> <span class="pre">=</span> <span class="pre">10/6/1</span></code>) worked days
+8–10 instead of 1–3. On the Jaffray <code class="docutils literal notranslate"><span class="pre">ka_6</span></code> scenario (<code class="docutils literal notranslate"><span class="pre">112/14/7</span></code>, HiGHS, 120 s windows), windows
+7–14 locked no production while work remained.</p>
+<p>Since 1.0.1 the MILP hook (<code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.planning.MILPSolver</span></code>) breaks these ties lexicographically
+(<code class="docutils literal notranslate"><span class="pre">earliness=True</span></code>, default):</p>
+<ol class="arabic simple">
+<li><p>Solve the window’s base objective (stage 1, value <code class="docutils literal notranslate"><span class="pre">z1</span></code>).</p></li>
+<li><p>Re-solve with the production-weighted earliness <code class="docutils literal notranslate"><span class="pre">E</span> <span class="pre">=</span> <span class="pre">Σ_s</span> <span class="pre">w_s</span> <span class="pre">Σ_{m,b}</span> <span class="pre">p[m,b,s]</span></code> as the objective
+(<code class="docutils literal notranslate"><span class="pre">w_s</span></code> falls linearly from 1 in the first slot to <code class="docutils literal notranslate"><span class="pre">1/|S|</span></code> in the last), subject to
+<code class="docutils literal notranslate"><span class="pre">objective</span> <span class="pre">≥</span> <span class="pre">z1</span> <span class="pre">−</span> <span class="pre">10⁻⁶·max(1,</span> <span class="pre">|z1|)</span></code>. This solve is warm-started from the stage-1 plan.</p></li>
+</ol>
+<p>The window’s base objective is unchanged (within a relative <code class="docutils literal notranslate"><span class="pre">10⁻⁶</span></code>, 100× tighter than HiGHS’s
+default MIP gap), and work moves into the lock span whenever the base objective allows it. The reported window
+<code class="docutils literal notranslate"><span class="pre">objective</span></code> is the base objective. The earliness stage is reported as an
+<code class="docutils literal notranslate"><span class="pre">earliness=&lt;status&gt;</span> <span class="pre">value=&lt;E&gt;</span> <span class="pre">stage1_value=&lt;E1&gt;</span> <span class="pre">termination_condition=&lt;…&gt;</span></code> warning: <code class="docutils literal notranslate"><span class="pre">applied</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">kept_stage1</span></code> when stage 2 returned no usable solution and the stage-1 plan is kept. A single
+weighted objective <code class="docutils literal notranslate"><span class="pre">OBJ</span> <span class="pre">+</span> <span class="pre">ε·E</span></code> is not used, because no data-independent <code class="docutils literal notranslate"><span class="pre">ε</span></code> can be guaranteed
+safe, and an <code class="docutils literal notranslate"><span class="pre">ε</span></code> small enough to be safe in practice is below the solver’s relative gap (see the
+formulation’s <em>Earliness tie-break</em> paragraph in <a class="reference internal" href="optimization_formulation.html"><span class="doc">Operational MILP Formulation</span></a>).</p>
+<p>Cost: a second solve per window, limited by <code class="docutils literal notranslate"><span class="pre">--mip-earliness-time-limit</span></code> (default
+<code class="docutils literal notranslate"><span class="pre">--mip-time-limit</span></code>), so a window can take up to twice the time limit. The stage is skipped for
+windows whose lock span covers the whole window (the final window, <code class="docutils literal notranslate"><span class="pre">sub_days</span> <span class="pre">==</span> <span class="pre">lock_days</span></code>),
+where timing inside the window does not change what is locked. A single-window run therefore stays
+a direct solve. Disable the stage with <code class="docutils literal notranslate"><span class="pre">--no-mip-earliness</span></code> (<code class="docutils literal notranslate"><span class="pre">mip_earliness=False</span></code> in
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.solve_rolling_plan()</span></code> / <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.get_solver_hook()</span></code>). Standalone
+<code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip-operational</span></code> does not use it by default (<code class="docutils literal notranslate"><span class="pre">--earliness</span></code> enables it), so the
+published single-horizon optimum and its solve time stay unchanged.</p>
+<p>The SA hook does not show this deferral: its construction fills the earliest available slots, and
+on <code class="docutils literal notranslate"><span class="pre">ka_6</span></code> (<code class="docutils literal notranslate"><span class="pre">112/14/7</span></code>, <code class="docutils literal notranslate"><span class="pre">112/7/1</span></code>, <code class="docutils literal notranslate"><span class="pre">112/28/14</span></code>, 500 iterations) its windows never lock idle
+days while work remains.</p>
+</section>
+<section id="windows-without-a-plan">
+<span id="rolling-no-plan"></span><h2>Windows without a plan<a class="headerlink" href="#windows-without-a-plan" title="Link to this heading"></a></h2>
+<p>A window may end without a usable plan: the MILP hits its time limit before finding an incumbent,
+the window is infeasible (e.g. a user lock that cannot be met inside a short window, see
+<a class="reference internal" href="#limitations">Limitations</a>), or the solver fails (unknown or unlicensed solver, solver crash). FHOPS 1.0.1
+(#117) applies one documented policy instead of aborting the run:</p>
+<ol class="arabic simple">
+<li><p>The iteration is recorded with <code class="docutils literal notranslate"><span class="pre">status</span> <span class="pre">=</span> <span class="pre">&quot;no_solution&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">has_solution</span> <span class="pre">=</span> <span class="pre">False</span></code>,
+<code class="docutils literal notranslate"><span class="pre">objective</span> <span class="pre">=</span> <span class="pre">None</span></code> and a warning (also emitted as a Python <code class="docutils literal notranslate"><span class="pre">UserWarning</span></code> and collected in
+<code class="docutils literal notranslate"><span class="pre">RollingPlanResult.warnings</span></code>). The MILP hook reports solver failures (driver
+<code class="docutils literal notranslate"><span class="pre">outcome</span> <span class="pre">=</span> <span class="pre">&quot;error&quot;</span></code>) as <code class="docutils literal notranslate"><span class="pre">solver_error=&lt;text&gt;</span></code> and in the iteration’s <code class="docutils literal notranslate"><span class="pre">error</span></code> field, and keeps
+the solver status/termination condition. Exceptions raised while building the window problem or
+model are FHOPS defects or invalid data: since #141 they propagate (with the run so far attached
+as <code class="docutils literal notranslate"><span class="pre">partial_result</span></code>) instead of being recorded as a window without a solution.</p></li>
+<li><p><strong>No</strong> assignments are locked for its lock span: machines are idle on those days, and user locks
+in that span are not applied either (the warning counts them).</p></li>
+<li><p>The carried state is unchanged across the idle span (nothing was replayed), and the next window is
+solved from it.</p></li>
+<li><p>The result keeps per-iteration status (<code class="docutils literal notranslate"><span class="pre">RollingPlanResult.no_solution_windows</span></code> /
+<code class="docutils literal notranslate"><span class="pre">empty_windows</span></code>, <code class="docutils literal notranslate"><span class="pre">summarize_plan()[&quot;no_solution_windows&quot;]</span></code>).</p></li>
+</ol>
+<p>Windows with nothing to plan (no blocks whose time window overlaps the window, no production rates,
+or no available shift slots — e.g. days not covered by a partial <code class="docutils literal notranslate"><span class="pre">shift_calendar</span></code>) are not passed to
+the solver and are recorded with <code class="docutils literal notranslate"><span class="pre">status</span> <span class="pre">=</span> <span class="pre">&quot;skipped&quot;</span></code>; they are idle as well.</p>
+<p>A <strong>solved</strong> window whose blocks still hold work is flagged <code class="docutils literal notranslate"><span class="pre">empty</span></code> with a warning if its lock span
+produces nothing (no locks, or only locks without production, <code class="docutils literal notranslate"><span class="pre">locked_production</span> <span class="pre">=</span> <span class="pre">0</span></code>) or its
+plan delivers no volume (e.g. an all-zero time-limited incumbent, or a plan that defers all work past
+the lock span). No-solution and skipped windows with remaining work are flagged <code class="docutils literal notranslate"><span class="pre">empty</span></code> too. A
+lock span whose blocks only open later in the window is flagged as well. Before #141 only windows
+without any lock counted, so locks that kept a machine assigned but idle hid deferred windows.</p>
+<p>To stop instead of continuing (<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.solve_rolling_plan()</span></code>,
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.run_rolling_horizon()</span></code>, CLI):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fail_on_no_solution=True</span></code> / <code class="docutils literal notranslate"><span class="pre">--fail-on-no-solution</span></code> stops at the first window without a
+solution;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fail_on_empty_window=True</span></code> / <code class="docutils literal notranslate"><span class="pre">--fail-on-empty-window</span></code> stops at the first window without a
+solution <strong>or</strong> solved to an empty plan (since #141; before, it stopped only at windows without a
+solution, which is now <code class="docutils literal notranslate"><span class="pre">--fail-on-no-solution</span></code>).</p></li>
+</ul>
+<p>Both raise <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.planning.RollingInfeasibleError</span></code> naming the iteration, with the run so far
+in <code class="docutils literal notranslate"><span class="pre">partial_result</span></code>. Skipped windows never raise.</p>
+<p>The CLI <strong>always</strong> writes the requested outputs (<code class="docutils literal notranslate"><span class="pre">--out-json</span></code>, <code class="docutils literal notranslate"><span class="pre">--out-assignments</span></code>, iteration
+JSONL/CSV). On failure they hold the assignments locked so far and the recorded iterations, and the
+JSON summary gets an <code class="docutils literal notranslate"><span class="pre">error</span></code> field. Exit codes of <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">plan</span> <span class="pre">rolling</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> — the run completed and at least one window passed to the solver returned a solution;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> — a <code class="docutils literal notranslate"><span class="pre">--fail-on-*</span></code> flag stopped the run, the run raised, or <strong>no</strong> window returned a
+solution (e.g. every window failed with a solver error; <code class="docutils literal notranslate"><span class="pre">error</span></code> is
+<code class="docutils literal notranslate"><span class="pre">&quot;no</span> <span class="pre">window</span> <span class="pre">returned</span> <span class="pre">a</span> <span class="pre">solution&quot;</span></code>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code> — usage error, printed without a traceback: invalid horizon arguments (<code class="docutils literal notranslate"><span class="pre">--master-days</span></code>
+<code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">1</span></code> or beyond the scenario’s <code class="docutils literal notranslate"><span class="pre">num_days</span></code>, <code class="docutils literal notranslate"><span class="pre">--lock-days</span> <span class="pre">&lt;</span> <span class="pre">1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--sub-days</span> <span class="pre">&lt;</span> <span class="pre">--lock-days</span></code>), <code class="docutils literal notranslate"><span class="pre">--max-iterations</span> <span class="pre">&lt;</span> <span class="pre">1</span></code>, an unknown <code class="docutils literal notranslate"><span class="pre">--solver</span></code>, or a
+<code class="docutils literal notranslate"><span class="pre">--mip-solver</span></code> that Pyomo reports as unavailable (e.g. a typo or a missing Gurobi install).</p></li>
+</ul>
+</section>
+<section id="cli-usage">
+<h2>CLI usage<a class="headerlink" href="#cli-usage" title="Link to this heading"></a></h2>
+<p>Run the rolling planner with either the heuristic or MILP backend:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--master-days<span class="w"> </span><span class="m">42</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--sub-days<span class="w"> </span><span class="m">21</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--lock-days<span class="w"> </span><span class="m">7</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--solver<span class="w"> </span>sa<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--sa-iters<span class="w"> </span><span class="m">500</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--sa-seed<span class="w"> </span><span class="m">42</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-json<span class="w"> </span>tmp/med42_rolling.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-assignments<span class="w"> </span>tmp/med42_rolling_assignments.csv
+</pre></div>
+</div>
+<p>Switch to the operational MILP for each subproblem (long-running: up to <code class="docutils literal notranslate"><span class="pre">--mip-time-limit</span></code> seconds
+per window; HiGHS typically uses the full limit on med42):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--master-days<span class="w"> </span><span class="m">42</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--sub-days<span class="w"> </span><span class="m">21</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--lock-days<span class="w"> </span><span class="m">7</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--solver<span class="w"> </span>mip<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mip-solver<span class="w"> </span>highs<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mip-time-limit<span class="w"> </span><span class="m">300</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-json<span class="w"> </span>tmp/med42_mip_rolling.json
+</pre></div>
+</div>
+<p>Pass solver-specific options directly to the MILP backend using <code class="docutils literal notranslate"><span class="pre">--mip-solver-option</span></code> (repeatable)
+or environment variables such as <code class="docutils literal notranslate"><span class="pre">GRB_THREADS</span></code> (requires a Gurobi licence; long-running):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--master-days<span class="w"> </span><span class="m">42</span><span class="w"> </span>--sub-days<span class="w"> </span><span class="m">21</span><span class="w"> </span>--lock-days<span class="w"> </span><span class="m">7</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--solver<span class="w"> </span>mip<span class="w"> </span>--mip-solver<span class="w"> </span>gurobi<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mip-solver-option<span class="w"> </span><span class="nv">Threads</span><span class="o">=</span><span class="m">64</span><span class="w"> </span>--mip-time-limit<span class="w"> </span><span class="m">600</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-json<span class="w"> </span>tmp/med42_gurobi.json<span class="w"> </span>--out-assignments<span class="w"> </span>tmp/med42_gurobi_assignments.csv
+</pre></div>
+</div>
+</section>
+<section id="worked-example-tiny7">
+<h2>Worked example (tiny7)<a class="headerlink" href="#worked-example-tiny7" title="Link to this heading"></a></h2>
+<p>The tiny7 scenario is short enough to demonstrate the wiring quickly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w"> </span>examples/tiny7/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--master-days<span class="w"> </span><span class="m">7</span><span class="w"> </span>--sub-days<span class="w"> </span><span class="m">7</span><span class="w"> </span>--lock-days<span class="w"> </span><span class="m">7</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--solver<span class="w"> </span>sa<span class="w"> </span>--sa-iters<span class="w"> </span><span class="m">200</span><span class="w"> </span>--sa-seed<span class="w"> </span><span class="m">99</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-json<span class="w"> </span>tmp/tiny7_rolling.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-assignments<span class="w"> </span>tmp/tiny7_rolling_assignments.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-iterations-jsonl<span class="w"> </span>tmp/tiny7_iterations.jsonl<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-iterations-csv<span class="w"> </span>tmp/tiny7_iterations.csv
+</pre></div>
+</div>
+<p>Check the JSON/CSV outputs to see iteration windows and the locked assignments; swap <code class="docutils literal notranslate"><span class="pre">--solver</span>
+<span class="pre">mip</span></code> and set <code class="docutils literal notranslate"><span class="pre">--mip-solver</span> <span class="pre">highs</span></code> for a small MILP-backed run.</p>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>JSON summary (<code class="docutils literal notranslate"><span class="pre">--out-json</span></code>) with the iteration records (see the telemetry fields above),
+<code class="docutils literal notranslate"><span class="pre">total_locked_assignments</span></code>, the empty/no-solution/skipped window counts, warnings, metadata
+(scenario, horizons, solver, MILP backend, <code class="docutils literal notranslate"><span class="pre">mip_earliness</span></code>, <code class="docutils literal notranslate"><span class="pre">fail_on_empty_window</span></code>,
+<code class="docutils literal notranslate"><span class="pre">fail_on_no_solution</span></code>), and <code class="docutils literal notranslate"><span class="pre">error</span></code> when the run failed part-way or no window returned a
+solution.</p></li>
+<li><p>CSV of locked assignments (<code class="docutils literal notranslate"><span class="pre">--out-assignments</span></code>) aggregated across all iterations. Columns:
+<code class="docutils literal notranslate"><span class="pre">machine_id</span></code>, <code class="docutils literal notranslate"><span class="pre">block_id</span></code>, <code class="docutils literal notranslate"><span class="pre">day</span></code> (base-scenario day), <code class="docutils literal notranslate"><span class="pre">shift_id</span></code>, <code class="docutils literal notranslate"><span class="pre">assigned</span></code> (always
+<code class="docutils literal notranslate"><span class="pre">1</span></code>), <code class="docutils literal notranslate"><span class="pre">production</span></code> (MILP runs only: the window MILP’s planned m³ for that slot, which playback
+and <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.compute_rolling_kpis()</span></code> replay instead of the full rate), then the run
+metadata (<code class="docutils literal notranslate"><span class="pre">scenario</span></code>, <code class="docutils literal notranslate"><span class="pre">solver</span></code>, <code class="docutils literal notranslate"><span class="pre">master_days</span></code>, <code class="docutils literal notranslate"><span class="pre">subproblem_days</span></code>, <code class="docutils literal notranslate"><span class="pre">lock_days</span></code>,
+<code class="docutils literal notranslate"><span class="pre">start_day</span></code>). The file drops directly into playback or KPI tooling. <code class="docutils literal notranslate"><span class="pre">shift_id</span></code> keeps
+multi-shift plans unambiguous (one row per machine and shift slot); keep it when post-processing,
+because playback needs it to place multi-shift assignments.</p></li>
+<li><p>Optional per-iteration exports: JSONL (<code class="docutils literal notranslate"><span class="pre">--out-iterations-jsonl</span></code>) and CSV
+(<code class="docutils literal notranslate"><span class="pre">--out-iterations-csv</span></code>) with one record per iteration (same fields as the JSON <code class="docutils literal notranslate"><span class="pre">iterations</span></code>).</p></li>
+</ul>
+</section>
+<section id="milp-example-with-solver-options">
+<h2>MILP example with solver options<a class="headerlink" href="#milp-example-with-solver-options" title="Link to this heading"></a></h2>
+<p>Use Gurobi for subproblems and pass solver options (threads, time limits) through the rolling
+planner:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">GRB_THREADS</span><span class="o">=</span><span class="m">32</span><span class="w"> </span>fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--master-days<span class="w"> </span><span class="m">42</span><span class="w"> </span>--sub-days<span class="w"> </span><span class="m">21</span><span class="w"> </span>--lock-days<span class="w"> </span><span class="m">7</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--solver<span class="w"> </span>mip<span class="w"> </span>--mip-solver<span class="w"> </span>gurobi<span class="w"> </span>--mip-time-limit<span class="w"> </span><span class="m">600</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-json<span class="w"> </span>tmp/med42_gurobi_rolling.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-assignments<span class="w"> </span>tmp/med42_gurobi_rolling_assignments.csv
+</pre></div>
+</div>
+<p>For programmatic control, pass <code class="docutils literal notranslate"><span class="pre">mip_solver_options</span></code> to <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.solve_rolling_plan()</span></code>
+or <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.get_solver_hook()</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">{\&quot;Threads\&quot;:</span> <span class="pre">64,</span> <span class="pre">\&quot;LogFile\&quot;:</span> <span class="pre">\&quot;med42.log\&quot;}</span></code>).
+HiGHS also honours <code class="docutils literal notranslate"><span class="pre">mip_solver_options</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">{\&quot;mip_rel_gap\&quot;:</span> <span class="pre">0.01}</span></code>).</p>
+</section>
+<section id="evaluating-rolling-plans">
+<h2>Evaluating rolling plans<a class="headerlink" href="#evaluating-rolling-plans" title="Link to this heading"></a></h2>
+<p>Always score a rolling run on its <strong>stitched</strong> locked plan replayed against the base scenario, not on
+the objective of individual windows (window objectives cover overlapping, partly discarded
+sub-horizons).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Window objectives are not comparable across versions.</strong> Since 1.0.1 each window solves the
+carried remaining volume, so its objective includes the leftover (unfinished-volume) penalty on
+that carried volume. FHOPS 1.0.0 windows re-planned every block’s full volume. Neither the last
+window’s objective nor a sum of window objectives measures plan quality, and 1.0.1 window
+objectives cannot be compared with 1.0.0 ones. Use the stitched-plan KPIs
+(<code class="docutils literal notranslate"><span class="pre">total_production</span></code>, <code class="docutils literal notranslate"><span class="pre">remaining_work_total</span></code>, mobilisation cost, sequencing violations)
+instead.</p>
+</div>
+<p>Use <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.rolling_assignments_dataframe()</span></code> to obtain a playback-ready DataFrame and <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.compute_rolling_kpis()</span></code> to compare the rolling run against a
+monolithic baseline (<code class="docutils literal notranslate"><span class="pre">master_days</span> <span class="pre">=</span> <span class="pre">sub_days</span> <span class="pre">=</span> <span class="pre">lock_days</span></code>). The stitched-plan KPIs are computed with
+the same playback rule as the carried state, so <code class="docutils literal notranslate"><span class="pre">total_production</span></code> never exceeds the base volume
+and <code class="docutils literal notranslate"><span class="pre">remaining_work_total</span></code> equals the remaining volume the next window would have received:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.planning</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_rolling_kpis</span><span class="p">,</span> <span class="n">solve_rolling_plan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
+
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/med42/scenario.yaml"</span><span class="p">)</span>
+<span class="n">rolling</span> <span class="o">=</span> <span class="n">solve_rolling_plan</span><span class="p">(</span>
+    <span class="n">scenario</span><span class="p">,</span>
+    <span class="n">master_days</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">subproblem_days</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span>
+    <span class="n">lock_days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+    <span class="n">solver</span><span class="o">=</span><span class="s2">"mip"</span><span class="p">,</span>
+    <span class="n">mip_solver</span><span class="o">=</span><span class="s2">"highs"</span><span class="p">,</span>
+    <span class="n">mip_time_limit</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">baseline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_monolithic_assignments.csv"</span><span class="p">)</span>
+<span class="n">comparison</span> <span class="o">=</span> <span class="n">compute_rolling_kpis</span><span class="p">(</span>
+    <span class="n">scenario</span><span class="p">,</span>
+    <span class="n">rolling</span><span class="p">,</span>
+    <span class="n">baseline_assignments</span><span class="o">=</span><span class="n">baseline_df</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">delta_totals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"total_production_delta"</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">comparison</span></code> payload includes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rolling_assignments</span></code> — DataFrame matching the CLI export schema (<code class="docutils literal notranslate"><span class="pre">machine_id</span></code>, <code class="docutils literal notranslate"><span class="pre">block_id</span></code>,
+<code class="docutils literal notranslate"><span class="pre">day</span></code>, <code class="docutils literal notranslate"><span class="pre">shift_id</span></code>, <code class="docutils literal notranslate"><span class="pre">assigned</span></code> plus optional metadata when requested).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rolling_kpis</span></code> — KPI totals computed via deterministic playback.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">baseline_kpis</span></code> — KPI totals for the supplied baseline DataFrame (<code class="docutils literal notranslate"><span class="pre">None</span></code> when omitted).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delta_totals</span></code> — numeric differences keyed by <code class="docutils literal notranslate"><span class="pre">&lt;metric&gt;_delta</span></code> and percentage deltas when the
+baseline metric is non-zero.</p></li>
+</ul>
+<p>For quick CLI-to-evaluation loops, feed <code class="docutils literal notranslate"><span class="pre">--out-assignments</span></code> directly into <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">eval-playback</span></code>
+or stash the JSON summary and KPI deltas alongside telemetry artefacts for later reporting.</p>
+<section id="empty-rolling-plans-and-baselines">
+<span id="rolling-empty-plans"></span><h3>Empty rolling plans and baselines<a class="headerlink" href="#empty-rolling-plans-and-baselines" title="Link to this heading"></a></h3>
+<p>A failed solve must never look like a perfect plan (<a class="reference external" href="https://github.com/UBC-FRESH/fhops/issues/108">#108</a>):</p>
+<ul class="simple">
+<li><p>An empty <strong>rolling</strong> plan (no locked assignments, an empty DataFrame, or an empty lock list) makes
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.compute_rolling_kpis()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.evaluate_rolling_plan()</span></code> raise
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (unchanged from v1.0.0). To score it as a zero-delivery plan, call
+<a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_kpis" title="fhops.evaluation.compute_kpis"><code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.evaluation.compute_kpis()</span></code></a> with an empty frame.</p></li>
+<li><p>An explicitly supplied but empty <strong>baseline</strong> (e.g. a full-horizon MILP that found no solution) is
+scored as a zero-delivery plan: <code class="docutils literal notranslate"><span class="pre">baseline_kpis[&quot;total_production&quot;]</span> <span class="pre">==</span> <span class="pre">0</span></code>,
+<code class="docutils literal notranslate"><span class="pre">remaining_work_total</span></code> equals the scenario volume, and <code class="docutils literal notranslate"><span class="pre">&lt;metric&gt;_pct_delta</span></code> entries are omitted
+where the baseline is zero. FHOPS 1.0.0 silently dropped an empty baseline
+(<code class="docutils literal notranslate"><span class="pre">baseline_kpis=None</span></code>); passing <code class="docutils literal notranslate"><span class="pre">baseline_assignments=None</span></code> still skips the comparison.</p></li>
+<li><p>Rows with <code class="docutils literal notranslate"><span class="pre">assigned</span> <span class="pre">=</span> <span class="pre">0</span></code> deliver nothing, so a frame whose rows are all unassigned is scored as a
+zero-delivery plan.</p></li>
+</ul>
+</section>
+</section>
+<section id="rolling-comparison-helper">
+<h2>Rolling comparison helper<a class="headerlink" href="#rolling-comparison-helper" title="Link to this heading"></a></h2>
+<p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.evaluate_rolling_plan()</span></code> helper runs deterministic playback on the
+locked assignments and compares them against a full-horizon baseline (single MILP/SA run). This
+keeps MASc experiments reproducible without wiring ad-hoc notebooks.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.planning</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate_rolling_plan</span><span class="p">,</span> <span class="n">solve_rolling_plan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
+
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/med42/scenario.yaml"</span><span class="p">)</span>
+<span class="n">rolling</span> <span class="o">=</span> <span class="n">solve_rolling_plan</span><span class="p">(</span>
+    <span class="n">scenario</span><span class="p">,</span>
+    <span class="n">master_days</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">subproblem_days</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span>
+    <span class="n">lock_days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+    <span class="n">solver</span><span class="o">=</span><span class="s2">"sa"</span><span class="p">,</span>
+    <span class="n">sa_iters</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">baseline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_full_horizon.csv"</span><span class="p">)</span>
+<span class="n">comparison</span> <span class="o">=</span> <span class="n">evaluate_rolling_plan</span><span class="p">(</span>
+    <span class="n">rolling</span><span class="p">,</span>
+    <span class="n">scenario</span><span class="p">,</span>
+    <span class="n">baseline_assignments</span><span class="o">=</span><span class="n">baseline_df</span><span class="p">,</span>
+    <span class="n">baseline_label</span><span class="o">=</span><span class="s2">"full_sa"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"total_production_delta"</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="masc-experiments-plots">
+<h2>MASc experiments &amp; plots<a class="headerlink" href="#masc-experiments-plots" title="Link to this heading"></a></h2>
+<p>Use <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.comparison_dataframe()</span></code> to gather rolling vs. baseline KPIs into a tidy
+DataFrame for plotting suboptimality across horizon/lock settings. It takes the result of
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.evaluate_rolling_plan()</span></code> (not the <code class="xref py py-class docutils literal notranslate"><span class="pre">RollingKPIComparison</span></code>
+returned by <code class="xref py py-func docutils literal notranslate"><span class="pre">compute_rolling_kpis()</span></code>, which has <code class="docutils literal notranslate"><span class="pre">delta_totals</span></code> instead).
+Example skeleton:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.planning</span><span class="w"> </span><span class="kn">import</span> <span class="n">comparison_dataframe</span><span class="p">,</span> <span class="n">evaluate_rolling_plan</span><span class="p">,</span> <span class="n">solve_rolling_plan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
+
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/med42/scenario.yaml"</span><span class="p">)</span>
+<span class="n">configs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"42/21/7_sa"</span><span class="p">,</span> <span class="s2">"master"</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">"sub"</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span> <span class="s2">"lock"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">"solver"</span><span class="p">:</span> <span class="s2">"sa"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"42/14/7_sa"</span><span class="p">,</span> <span class="s2">"master"</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">"sub"</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">"lock"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">"solver"</span><span class="p">:</span> <span class="s2">"sa"</span><span class="p">},</span>
+<span class="p">]</span>
+<span class="n">baseline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_full_horizon.csv"</span><span class="p">)</span>
+
+<span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">solve_rolling_plan</span><span class="p">(</span>
+        <span class="n">scenario</span><span class="p">,</span>
+        <span class="n">master_days</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"master"</span><span class="p">],</span>
+        <span class="n">subproblem_days</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"sub"</span><span class="p">],</span>
+        <span class="n">lock_days</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"lock"</span><span class="p">],</span>
+        <span class="n">solver</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"solver"</span><span class="p">],</span>
+        <span class="n">sa_iters</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">comparison</span> <span class="o">=</span> <span class="n">evaluate_rolling_plan</span><span class="p">(</span>
+        <span class="n">result</span><span class="p">,</span>
+        <span class="n">scenario</span><span class="p">,</span>
+        <span class="n">baseline_assignments</span><span class="o">=</span><span class="n">baseline</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">comparison_dataframe</span><span class="p">(</span>
+        <span class="n">comparison</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">"total_production"</span><span class="p">,</span> <span class="s2">"mobilisation_cost"</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"config"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"label"</span><span class="p">]</span>
+    <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">plot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">prod</span> <span class="o">=</span> <span class="n">plot_df</span><span class="p">[</span><span class="n">plot_df</span><span class="p">[</span><span class="s2">"metric"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"total_production"</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">prod</span><span class="p">[</span><span class="s2">"config"</span><span class="p">],</span> <span class="n">prod</span><span class="p">[</span><span class="s2">"pct_delta"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"</span><span class="si">% g</span><span class="s2">ap vs. baseline (total production)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Rolling vs. full-horizon (med42)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The same DataFrame can feed seaborn/Altair plots or Markdown tables for MASc reports. Add additional
+metrics (e.g., utilisation, mobilisation) to the <code class="docutils literal notranslate"><span class="pre">metrics</span></code> list to broaden the comparison.</p>
+</section>
+<section id="sample-artefacts">
+<h2>Sample artefacts<a class="headerlink" href="#sample-artefacts" title="Link to this heading"></a></h2>
+<p>Reference CSV/PNG bundles live under <code class="docutils literal notranslate"><span class="pre">docs/assets/rolling</span></code>. They were produced with FHOPS 1.0.0,
+i.e. <strong>without</strong> state carry-forward, and therefore overstate the rolling-horizon gap; treat them as
+historical examples of the workflow and regenerate them before quoting numbers.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">masc_comparison_tiny7.{csv,png}</span></code> — SA baseline (7/7/7) vs 7/5/3 and 7/4/2 (300 iters, seed 99).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">masc_comparison_med42.{csv,png}</span></code> — Gurobi (Threads=64) baseline vs 21/7 and 14/7 sub/lock windows
+with short 10 s caps (solver may report “aborted with solution”; rerun with longer budgets for
+publication-ready gaps).</p></li>
+</ul>
+</section>
+<section id="artefact-provenance-regeneration">
+<h2>Artefact provenance &amp; regeneration<a class="headerlink" href="#artefact-provenance-regeneration" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Bundle size is small (~57 KB) so the artefacts ship in-repo for reproducibility.</p></li>
+<li><p>med42 assets used Gurobi with <code class="docutils literal notranslate"><span class="pre">Threads=64</span></code> and <code class="docutils literal notranslate"><span class="pre">TimeLimit=10</span></code> on each subproblem (baseline and
+rolling variants), seeded via the CLI flag <code class="docutils literal notranslate"><span class="pre">--mip-solver-option</span></code>. The solver reported
+<code class="docutils literal notranslate"><span class="pre">aborted</span> <span class="pre">with</span> <span class="pre">solution</span></code> under the tight cap; loosen <code class="docutils literal notranslate"><span class="pre">--mip-time-limit</span></code> for higher-quality gaps.</p></li>
+<li><p>tiny7 assets used SA with 300 iterations and <code class="docutils literal notranslate"><span class="pre">--sa-seed</span> <span class="pre">99</span></code>.</p></li>
+</ul>
+<p>To regenerate the med42 bundle locally (Gurobi licence required; the baseline is the single-window
+full-horizon solve):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--master-days<span class="w"> </span><span class="m">42</span><span class="w"> </span>--sub-days<span class="w"> </span><span class="m">42</span><span class="w"> </span>--lock-days<span class="w"> </span><span class="m">42</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--solver<span class="w"> </span>mip<span class="w"> </span>--mip-solver<span class="w"> </span>gurobi<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mip-solver-option<span class="w"> </span><span class="nv">Threads</span><span class="o">=</span><span class="m">64</span><span class="w"> </span>--mip-time-limit<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-json<span class="w"> </span>tmp/med42_baseline.json<span class="w"> </span>--out-assignments<span class="w"> </span>tmp/med42_baseline.csv
+
+fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--master-days<span class="w"> </span><span class="m">42</span><span class="w"> </span>--sub-days<span class="w"> </span><span class="m">21</span><span class="w"> </span>--lock-days<span class="w"> </span><span class="m">7</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--solver<span class="w"> </span>mip<span class="w"> </span>--mip-solver<span class="w"> </span>gurobi<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mip-solver-option<span class="w"> </span><span class="nv">Threads</span><span class="o">=</span><span class="m">64</span><span class="w"> </span>--mip-time-limit<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-json<span class="w"> </span>tmp/med42_roll_21_7.json<span class="w"> </span>--out-assignments<span class="w"> </span>tmp/med42_roll_21_7.csv
+
+fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--master-days<span class="w"> </span><span class="m">42</span><span class="w"> </span>--sub-days<span class="w"> </span><span class="m">14</span><span class="w"> </span>--lock-days<span class="w"> </span><span class="m">7</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--solver<span class="w"> </span>mip<span class="w"> </span>--mip-solver<span class="w"> </span>gurobi<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--mip-solver-option<span class="w"> </span><span class="nv">Threads</span><span class="o">=</span><span class="m">64</span><span class="w"> </span>--mip-time-limit<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--out-json<span class="w"> </span>tmp/med42_roll_14_7.json<span class="w"> </span>--out-assignments<span class="w"> </span>tmp/med42_roll_14_7.csv
+</pre></div>
+</div>
+<p>Then stitch the KPI deltas and plots:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.planning</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_rolling_kpis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
+
+<span class="n">METRICS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"total_production"</span><span class="p">,</span> <span class="s2">"mobilisation_cost"</span><span class="p">]</span>
+
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/med42/scenario.yaml"</span><span class="p">)</span>
+<span class="n">baseline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_baseline.csv"</span><span class="p">)</span>
+<span class="n">configs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"21_7"</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_roll_21_7.csv"</span><span class="p">),</span>
+    <span class="s2">"14_7"</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_roll_14_7.csv"</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">comp</span> <span class="o">=</span> <span class="n">compute_rolling_kpis</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">baseline_assignments</span><span class="o">=</span><span class="n">baseline</span><span class="p">)</span>
+    <span class="n">deltas</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">delta_totals</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">"metric"</span><span class="p">:</span> <span class="n">metric</span><span class="p">,</span>
+            <span class="s2">"rolling"</span><span class="p">:</span> <span class="n">comp</span><span class="o">.</span><span class="n">rolling_kpis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="p">),</span>
+            <span class="s2">"baseline"</span><span class="p">:</span> <span class="n">comp</span><span class="o">.</span><span class="n">baseline_kpis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="p">),</span>
+            <span class="s2">"delta"</span><span class="p">:</span> <span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">_delta"</span><span class="p">),</span>
+            <span class="s2">"pct_delta"</span><span class="p">:</span> <span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">_pct_delta"</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">METRICS</span>
+    <span class="p">)</span>
+    <span class="n">frame</span><span class="p">[</span><span class="s2">"config"</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+    <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+<span class="n">plot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plot_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">"docs/assets/rolling/masc_comparison_med42.csv"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># render your preferred plot (matplotlib/seaborn/altair) and save alongside the CSV</span>
+</pre></div>
+</div>
+</section>
+<section id="gotchas">
+<h2>Gotchas<a class="headerlink" href="#gotchas" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">master_days</span> <span class="pre">+</span> <span class="pre">start_day</span> <span class="pre">-</span> <span class="pre">1</span> <span class="pre">&lt;=</span> <span class="pre">Scenario.num_days</span></code>; otherwise the CLI fails fast with a
+usage error (exit code 2).</p></li>
+<li><p>MILP runs can be slow—set sensible <code class="docutils literal notranslate"><span class="pre">--mip-time-limit</span></code>/<code class="docutils literal notranslate"><span class="pre">mip_solver_options</span></code> and use a Gurobi
+licence when available. <code class="docutils literal notranslate"><span class="pre">--mip-solver</span> <span class="pre">auto</span></code> (the default) uses Gurobi when available and
+falls back to HiGHS, as <code class="docutils literal notranslate"><span class="pre">solve-mip-operational</span> <span class="pre">--solver</span> <span class="pre">auto</span></code> does.</p></li>
+<li><p>Gurobi threads can be set via <code class="docutils literal notranslate"><span class="pre">mip_solver_options</span></code> (<code class="docutils literal notranslate"><span class="pre">{\&quot;Threads\&quot;:</span> <span class="pre">32}</span></code>) or <code class="docutils literal notranslate"><span class="pre">GRB_THREADS</span></code>.</p></li>
+<li><p>When the solver aborts but returns a solution, treat results as heuristics; rerun with larger caps
+if you need high-quality gaps.</p></li>
+</ul>
+<p>The comparison bundle exposes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">comparison.rolling_kpis</span></code> / <code class="docutils literal notranslate"><span class="pre">comparison.baseline_kpis</span></code> — KPIResult mappings with attached
+shift/day calendars.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">comparison.deltas</span></code> — numeric delta/pct-delta entries (e.g., <code class="docutils literal notranslate"><span class="pre">total_production_delta</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">comparison.metadata</span></code> — merges rolling metadata with counts of rolling/baseline assignments and
+the <code class="docutils literal notranslate"><span class="pre">baseline_label</span></code> string so telemetry exports retain traceability.</p></li>
+</ul>
+<p>To feed the locked assignments into playback manually, use
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.rolling_assignments_dataframe()</span></code> to obtain a Pandas DataFrame compatible with
+<code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">eval-playback</span></code> or <a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.run_playback" title="fhops.evaluation.run_playback"><code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.evaluation.run_playback()</span></code></a>.</p>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Locked assignments are treated as immutable across iterations. A window without a solution or with
+nothing to plan leaves its lock span idle and the run continues (see <a class="reference internal" href="#rolling-no-plan"><span class="std std-ref">Windows without a plan</span></a>);
+use <code class="docutils literal notranslate"><span class="pre">--fail-on-no-solution</span></code> or <code class="docutils literal notranslate"><span class="pre">--fail-on-empty-window</span></code> to stop instead.</p></li>
+<li><p>The hooks enforce locks as hard constraints (equality constraints in the operational MILP, the
+lock-aware sanitizer in SA); they do not pass incumbents or warm starts to the solver.</p></li>
+<li><p>Telemetry/reporting layers will evolve; current exports are meant to unblock experimentation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">master_days</span></code> must not exceed the base scenario horizon. Use a scenario with enough days or lower
+the master/sub/lock settings to fit within <code class="docutils literal notranslate"><span class="pre">Scenario.num_days</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--mip-solver</span></code> passes through to Pyomo (use <code class="docutils literal notranslate"><span class="pre">highs</span></code> or <code class="docutils literal notranslate"><span class="pre">gurobi</span></code>; <code class="docutils literal notranslate"><span class="pre">auto</span></code> tries Gurobi and
+falls back to HiGHS); <code class="docutils literal notranslate"><span class="pre">--max-iterations</span> <span class="pre">N</span></code> (<code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">&gt;=</span> <span class="pre">1</span></code>) caps the rolling loop for smoke tests or partial
+plans.</p></li>
+<li><p>User locks outside their block’s <code class="docutils literal notranslate"><span class="pre">earliest_start</span></code>/<code class="docutils literal notranslate"><span class="pre">latest_finish</span></code> window are rejected up front
+with <code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.planning.RollingInfeasibleError</span></code> (before any window is solved), whatever the
+master/sub/lock settings; scenario validation rejects them at load time as well (#118). Valid locks
+always fall in a window that keeps their block. Conflicting locks are rejected by scenario
+validation.</p></li>
+</ul>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>No end-of-window valuation.</strong> Window objectives reward only terminal (delivered) volume, so a
+window shorter than the harvest-system pipeline can see no value in upstream work: e.g. on tiny7
+(four-role chain) a MILP run with <code class="docutils literal notranslate"><span class="pre">master/sub/lock</span> <span class="pre">=</span> <span class="pre">7/3/1</span></code> plans no felling at all. Since MILP
+locks replay their planned production (1.0.1, #109), the window MILP’s choice of how much
+upstream work to do on locked days (any amount its own window cannot finish has no value, so
+equal-objective plans are broken arbitrarily by the solver) carries into the next window: tiny7
+<code class="docutils literal notranslate"><span class="pre">7/4/2</span></code> and <code class="docutils literal notranslate"><span class="pre">7/5/3</span></code> deliver about 3.9 of 4.4 thousand m³ (the earlier rate-based replay
+credited unplanned full-rate upstream work and reported the full volume, together with
+sequencing violations), <code class="docutils literal notranslate"><span class="pre">7/6/3</span></code> about 4.40 and <code class="docutils literal notranslate"><span class="pre">7/7/7</span></code> the full volume. Choose <code class="docutils literal notranslate"><span class="pre">sub_days</span></code>
+comfortably longer than the number of roles plus <code class="docutils literal notranslate"><span class="pre">lock_days</span></code>. Without a terminal value, short
+windows can also make <strong>user locks on downstream roles</strong> infeasible: e.g. a skidder locked on the
+first day of a two-day window that cannot fell (and stage) the wood it needs before that shift. Such
+a window MILP has no solution and is handled by the no-solution policy (idle lock span, warning,
+<code class="docutils literal notranslate"><span class="pre">status</span> <span class="pre">=</span> <span class="pre">&quot;no_solution&quot;</span></code>) rather than aborting the run; SA treats locks as fixed and replays them
+without the missing input. Lengthen <code class="docutils literal notranslate"><span class="pre">sub_days</span></code> or overlap windows (<code class="docutils literal notranslate"><span class="pre">sub_days</span> <span class="pre">&gt;</span> <span class="pre">lock_days</span></code>) when
+this happens.</p></li>
+<li><p><strong>Replay rule vs. MILP plan.</strong> Resolved in 1.0.1 (#109): playback, the heuristics, and the MILP
+share one sequencing semantics (staged output usable from the next shift slot, head-start buffers
+as staged volume, per-role output capped by the block volume), and MILP rolling locks carry the
+planned production, so stitched MILP plans replay without sequencing violations and the carried
+state is the state the window MILP planned.</p></li>
+<li><p><strong>Blocks outside a window</strong> are dropped from that window. If a machine’s carried
+<code class="docutils literal notranslate"><span class="pre">last_block_id</span></code> is such a block (its <code class="docutils literal notranslate"><span class="pre">latest_finish</span></code> has passed), the position is dropped
+for that window with a warning in <code class="docutils literal notranslate"><span class="pre">RollingPlanResult.warnings</span></code> and its next move is not
+charged in the window solve (playback still charges it).</p></li>
+<li><p><strong>Partial shift calendars.</strong> Resolved in 1.0.1 (#117): when the base scenario has a
+<code class="docutils literal notranslate"><span class="pre">shift_calendar</span></code>, days without entries have no shift slots in every window too (a window entirely
+outside the calendar is skipped), so rolling runs no longer invent <code class="docutils literal notranslate"><span class="pre">S1</span></code> capacity there.</p></li>
+<li><p><strong>Blackouts in the MILP.</strong> Resolved in 1.0.1 (#110): rebased blackouts are honoured by the
+operational MILP (zero availability in the blocked slots) as well as by the heuristics, and
+flagged by playback.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tabu.html" class="btn btn-neutral float-left" title="Tabu Search How-to" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tactical_operational.html" class="btn btn-neutral float-right" title="Tactical–Operational Scenario Contract" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, UBC FRESH Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
