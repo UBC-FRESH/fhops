@@ -19,6 +19,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from fhops.salvage import DEFAULT_CURVE_ID
 from fhops.stem import ReferenceStemModel
 from fhops.tree_inventory import TreeInventory, load_tree_inventory
 from sandbox.tree_lab.cases import Case, load_case, sha256_file
@@ -630,6 +631,7 @@ def create_project(case: Case) -> dict[str, Any]:
         "catalog": catalog,
         "system_args": _system_args(case),
         "operator_policies": {item["id"]: "steady" for item in _active_machines(case, catalog)},
+        "salvage": {"curve_id": DEFAULT_CURVE_ID, "ages": {}},
         "terrain": {
             "resolution": 24,
             "heights": [],
@@ -649,6 +651,39 @@ def project_path(root: Path, project_id: str) -> Path:
     return path
 
 
+def _normalize_salvage(project: dict[str, Any]) -> dict[str, Any]:
+    """Validate and normalize optional per-block salvage ages."""
+    salvage = project.get("salvage")
+    if salvage is None:
+        salvage = {}
+    if not isinstance(salvage, dict):
+        raise StudioError("Project salvage settings must be an object.")
+    curve_id = salvage.get("curve_id") or DEFAULT_CURVE_ID
+    if not isinstance(curve_id, str) or not curve_id.strip():
+        raise StudioError("Project salvage curve id must be a non-empty string.")
+    ages_raw = salvage.get("ages") or {}
+    if not isinstance(ages_raw, dict):
+        raise StudioError("Project salvage ages must be an object keyed by block id.")
+    ages: dict[str, float] = {}
+    for block_id, raw_age in ages_raw.items():
+        normalized_id = str(block_id).strip()
+        if not normalized_id:
+            raise StudioError("Project salvage ages need non-empty block ids.")
+        if isinstance(raw_age, bool):
+            raise StudioError(f"Salvage age for {normalized_id!r} must be numeric.")
+        try:
+            age = float(raw_age)
+        except (TypeError, ValueError) as exc:
+            raise StudioError(f"Salvage age for {normalized_id!r} must be numeric.") from exc
+        if not math.isfinite(age) or age < 0:
+            raise StudioError(f"Salvage age for {normalized_id!r} must be finite and non-negative.")
+        ages[normalized_id] = age
+    salvage["curve_id"] = curve_id.strip()
+    salvage["ages"] = ages
+    project["salvage"] = salvage
+    return salvage
+
+
 def load_project(root: Path, project_id: str) -> dict[str, Any]:
     """Load one project JSON document."""
     path = project_path(root, project_id) / "project.json"
@@ -660,6 +695,7 @@ def load_project(root: Path, project_id: str) -> dict[str, Any]:
         raise StudioError(f"Project {project_id!r} is unreadable.") from exc
     if not isinstance(payload, dict) or payload.get("schema_version") != PROJECT_SCHEMA:
         raise StudioError("Unsupported Studio project schema.")
+    _normalize_salvage(payload)
     return payload
 
 
@@ -686,6 +722,7 @@ def save_project(root: Path, project: dict[str, Any]) -> dict[str, Any]:
         polygon_clump = clump.get("polygon") if isinstance(clump, dict) else None
         if not isinstance(polygon_clump, list) or len(polygon_clump) < 3:
             raise StudioError("Each retention clump needs at least three points.")
+    _normalize_salvage(project)
     landings = project_landings(project)
     project["landings"] = landings
     project["landing"] = {"x": landings[0]["x"], "y": landings[0]["y"]}
@@ -1495,6 +1532,7 @@ def materialize_case(project_root: Path, project: dict[str, Any], base_case: Cas
 
 def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
     """Build the editor dataset for a project against its immutable base case."""
+    _normalize_salvage(project)
     catalog = project.setdefault("catalog", [])
     base_catalog = {str(item["id"]): item for item in _machine_catalog(case)}
     for item in catalog:

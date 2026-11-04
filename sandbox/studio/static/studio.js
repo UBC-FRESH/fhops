@@ -1342,6 +1342,106 @@ function formatValue(value, digits = 1) {
   return value == null || !Number.isFinite(Number(value)) ? "—" : Number(value).toFixed(digits);
 }
 
+function salvageAgeForProject() {
+  const blockId = state.project?.block_id;
+  if (!blockId) return null;
+  const value = state.project?.salvage?.ages?.[blockId];
+  return value == null ? null : Number(value);
+}
+
+function syncSalvageInput() {
+  const input = $("#salvage-age");
+  if (!input) return;
+  const age = salvageAgeForProject();
+  input.value = age == null || !Number.isFinite(age) ? "" : String(age);
+}
+
+function renderSalvagePreview(data) {
+  const node = $("#salvage-result");
+  if (!node) return;
+  if (!data?.configured) {
+    node.textContent = data?.message || "Set a storage age to preview retained volume and products.";
+    return;
+  }
+  const rows = data.rows || [];
+  if (!rows.length) {
+    node.textContent = "No scenario block matched the stored age.";
+    return;
+  }
+  const curve = data.curve || {};
+  const source = curve.source || {};
+  node.innerHTML = rows.map((row) => {
+    const products = String(row.eligible_products || "").split(";").filter(Boolean).join(", ") || "—";
+    const value = row.retained_value == null ? "" : ` · value ${formatValue(row.retained_value, 2)}`;
+    return `<div class="salvage-row"><b>${escapeHtml(row.block_id)}</b> · ${escapeHtml(String(row.years_since_disturbance))} years<br>
+      <span class="salvage-ok">${formatValue(row.retention_fraction, 4)} retention</span> ·
+      ${formatValue(row.retained_volume_m3, 1)} m³ retained of ${formatValue(row.original_volume_m3, 1)} m³${value}<br>
+      <span>Products: ${escapeHtml(products)}</span></div>`;
+  }).join("");
+  if (data.blocks_without_salvage_mode?.length) {
+    node.innerHTML += `<div class="banner warn"><b>Reference only</b><br>This block does not declare a salvage_processing_mode; the age still previews the published curve.</div>`;
+  }
+  const url = source.url ? ` · ${escapeHtml(source.url)}` : "";
+  node.innerHTML += `<div class="salvage-source"><b>${escapeHtml(curve.name || curve.curve_id || "Reference curve")}</b>${url}<br>${escapeHtml(source.boundary || "")}</div>`;
+}
+
+async function loadSalvagePreview() {
+  const node = $("#salvage-result");
+  const input = $("#salvage-age");
+  if (!state.project) return;
+  const blockId = state.project.block_id;
+  const age = salvageAgeForProject();
+  if (age == null || !Number.isFinite(age)) {
+    if (node) node.textContent = "Set a storage age to preview retained volume and products.";
+    return;
+  }
+  if (input) input.value = String(age);
+  if (node) node.textContent = "Loading salvage preview…";
+  try {
+    const data = await api(`projects/${encodeURIComponent(state.project.project_id)}/salvage`, {
+      method: "POST",
+      body: JSON.stringify({ ages: { [blockId]: age } }),
+    });
+    renderSalvagePreview(data);
+  } catch (error) {
+    if (node) node.textContent = `Salvage preview failed: ${error.message}`;
+  }
+}
+
+function setSalvageAge(raw) {
+  if (!state.project) return;
+  const blockId = state.project.block_id;
+  if (!blockId) return;
+  const text = String(raw ?? "").trim();
+  if (!text) {
+    if (state.project.salvage?.ages?.[blockId] != null) {
+      pushHistory();
+      delete state.project.salvage.ages[blockId];
+      state.project.salvage.ages = { ...state.project.salvage.ages };
+      markDirty();
+    }
+    syncSalvageInput();
+    loadSalvagePreview();
+    return;
+  }
+  const age = Number(text);
+  if (!Number.isFinite(age) || age < 0) {
+    setStatus("Salvage age must be a finite, non-negative number.", true);
+    syncSalvageInput();
+    return;
+  }
+  if (state.project.salvage?.ages?.[blockId] === age) {
+    loadSalvagePreview();
+    return;
+  }
+  pushHistory();
+  state.project.salvage = state.project.salvage || { curve_id: "", ages: {} };
+  state.project.salvage.ages = { ...(state.project.salvage.ages || {}), [blockId]: age };
+  markDirty();
+  syncSalvageInput();
+  loadSalvagePreview();
+}
+
 function comparisonUrl(leftRun = "", rightRun = "") {
   const projectId = state.project?.project_id;
   if (!projectId) return "compare";
@@ -1507,6 +1607,8 @@ async function loadProject(projectId) {
     fitView();
     setStatus(`Loaded ${state.project.label}`);
     history.replaceState(null, "", `?project=${encodeURIComponent(projectId)}`);
+    syncSalvageInput();
+    await loadSalvagePreview();
     await loadRunHistory();
   } catch (error) {
     setStatus(`Load failed: ${error.message}`, true);
@@ -1615,6 +1717,8 @@ function bindEvents() {
   $("#open-compare").addEventListener("click", (event) => {
     if (event.currentTarget.getAttribute("aria-disabled") === "true") event.preventDefault();
   });
+  $("#salvage-age").addEventListener("change", (event) => setSalvageAge(event.target.value));
+  $("#salvage-clear").addEventListener("click", () => setSalvageAge(""));
   $("#add-landing").addEventListener("click", addLanding);
   $("#new-project").addEventListener("click", openNewDialog);
   $("#import").addEventListener("click", () => $("#import-file").click());

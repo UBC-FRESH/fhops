@@ -11,15 +11,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from fhops.salvage import build_salvage_report
 from sandbox.studio.projects import (
     POLICY_PRESETS,
     StudioError,
@@ -142,6 +145,90 @@ def create_app(config: StudioConfig) -> FastAPI:
             return load_project(config.projects_root, project_id)
         except StudioError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    @app.post("/api/projects/{project_id}/salvage")
+    async def salvage_preview(project_id: str, request: Request) -> dict[str, Any]:
+        """Preview the read-only salvage shelf-life report for a project."""
+        try:
+            project = load_project(config.projects_root, project_id)
+            payload = await request.json()
+            if not isinstance(payload, dict):
+                raise StudioError("Salvage request must be an object.")
+            settings = project.get("salvage") or {}
+            ages_raw = payload.get("ages", settings.get("ages") or {})
+            if not isinstance(ages_raw, dict):
+                raise StudioError("Salvage ages must be an object keyed by block id.")
+            ages: dict[str, float] = {}
+            for block_id, raw_age in ages_raw.items():
+                normalized_id = str(block_id).strip()
+                if not normalized_id or isinstance(raw_age, bool):
+                    raise StudioError("Salvage ages need non-empty block ids and numeric ages.")
+                try:
+                    age = float(raw_age)
+                except (TypeError, ValueError) as exc:
+                    raise StudioError(
+                        f"Salvage age for {normalized_id!r} must be numeric."
+                    ) from exc
+                if not math.isfinite(age) or age < 0:
+                    raise StudioError(
+                        f"Salvage age for {normalized_id!r} must be finite and non-negative."
+                    )
+                ages[normalized_id] = age
+            if not ages:
+                return {
+                    "configured": False,
+                    "message": "Set a storage age to preview retained volume and products.",
+                }
+            curve_id = str(payload.get("curve_id") or settings.get("curve_id") or "")
+            base = _case(config, str(project.get("base_case_id", "")))
+            storage = pd.DataFrame(
+                [
+                    {"block_id": block_id, "years_since_disturbance": age}
+                    for block_id, age in ages.items()
+                ]
+            )
+            report = build_salvage_report(
+                base.path("scenario"),
+                storage,
+                curve_id=curve_id,
+            )
+            rows = []
+            for record in report.frame.to_dict("records"):
+                rows.append(
+                    {
+                        key: (
+                            None if isinstance(value, float) and not math.isfinite(value) else value
+                        )
+                        for key, value in record.items()
+                    }
+                )
+            return {
+                "configured": True,
+                "curve": {
+                    "curve_id": report.curve.curve_id,
+                    "name": report.curve.name,
+                    "retention_definition": report.curve.retention_definition,
+                    "source": report.curve.source.model_dump(),
+                },
+                "product_windows": [
+                    {
+                        "product": window.product,
+                        "min_years": window.min_years,
+                        "max_years": window.max_years,
+                        "note": window.note,
+                        "source": window.source.model_dump(),
+                    }
+                    for window in report.library.product_windows
+                ],
+                "rows": rows,
+                "blocks_without_salvage_mode": list(report.blocks_without_salvage_mode),
+                "totals": {
+                    "original_volume_m3": report.total_original_volume_m3,
+                    "retained_volume_m3": report.total_retained_volume_m3,
+                },
+            }
+        except (StudioError, CaseError, ValueError, KeyError, FileNotFoundError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @app.get("/api/projects/{project_id}/dataset")
     def dataset(project_id: str) -> dict[str, Any]:
