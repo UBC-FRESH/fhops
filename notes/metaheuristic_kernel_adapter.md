@@ -82,3 +82,13 @@ Tiny7, 200 iterations, seed 7:
 | med42 | 0.515 | 0.355 | 20543.16 |
 
 The incremental path is the preferred kernel path: same objective as full scoring, lower cost.
+
+## Objective-weight parity (2026-11-04)
+
+`FhopsProblem` now applies `resolve_objective_weight_overrides` and `override_objective_weights`,
+so the kernel paths use the same built-in Tiny7/Small21 overrides as the existing FHOPS solvers
+(`production=1.0`, `mobilisation=0.2`, `transitions=0.1`, `landing_surplus=0.05`) and honour
+explicit overrides. The applied mapping is recorded in every kernel result's `meta`.
+
+The Tiny7 scenario gate now rescored through the overridden context, and a dedicated test checks
+both the automatic mapping and an explicit override.

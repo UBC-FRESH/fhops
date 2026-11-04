@@ -20,10 +20,15 @@ from fhops.optimization.heuristics.common import (
     Schedule,
     evaluate_schedule,
     init_greedy_schedule,
+    resolve_objective_weight_overrides,
 )
 from fhops.optimization.heuristics.registry import OperatorContext
 from fhops.optimization.heuristics.registry import OperatorRegistry as FhopsRegistry
-from fhops.optimization.operational_problem import OperationalProblem, build_operational_problem
+from fhops.optimization.operational_problem import (
+    OperationalProblem,
+    build_operational_problem,
+    override_objective_weights,
+)
 from fhops.scenario.contract import Problem as ScenarioProblem
 
 Slot = tuple[str, int, str]
@@ -159,6 +164,9 @@ class FhopsProblem(Problem[Schedule, FhopsContext]):
         Operator names to enable. ``None`` enables the FHOPS defaults.
     operator_weights : mapping of str to float or None, optional
         Weight overrides. Values at or below zero disable an operator.
+    objective_weight_overrides : mapping of str to float or None, optional
+        Objective weights to override. ``None`` applies the FHOPS automatic overrides for
+        Tiny7/Small21, matching the existing solvers.
     """
 
     def __init__(
@@ -166,8 +174,14 @@ class FhopsProblem(Problem[Schedule, FhopsContext]):
         pb: ScenarioProblem,
         operators: list[str] | None = None,
         operator_weights: dict[str, float] | None = None,
+        objective_weight_overrides: dict[str, float] | None = None,
     ) -> None:
         operational = build_operational_problem(pb)
+        resolved_overrides = resolve_objective_weight_overrides(pb, objective_weight_overrides)
+        if resolved_overrides:
+            operational = override_objective_weights(operational, resolved_overrides)
+        self.objective_weight_overrides = resolved_overrides
+        self.requested_objective_weight_overrides = objective_weight_overrides
         fhops_registry = FhopsRegistry.from_defaults()
         available = {name.lower(): name for name in fhops_registry.names()}
         if operators:

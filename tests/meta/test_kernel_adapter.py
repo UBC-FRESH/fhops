@@ -29,6 +29,7 @@ from fhops.scenario.contract import (
     Scenario,
 )
 from fhops.scenario.contract.models import ShiftCalendarEntry
+from fhops.scenario.io.loaders import load_scenario
 
 
 def _simple_problem() -> Problem:
@@ -178,3 +179,17 @@ def test_kernel_incremental_path_replays_exactly() -> None:
     assert result["meta"]["incremental_search"] is True
     assert result["meta"]["solver"] == "kernel-sa-incremental"
     assert result["objective"] == pytest.approx(evaluate_assignments(pb, result["assignments"]))
+
+
+def test_tiny7_automatic_weight_overrides_are_recorded() -> None:
+    """The adapter applies the same built-in Tiny7 weight overrides as the existing solvers."""
+    pb = Problem.from_scenario(load_scenario("examples/tiny7/scenario.yaml"))
+    problem = FhopsProblem(pb)
+    assert problem.objective_weight_overrides == {
+        "production": 1.0,
+        "mobilisation": 0.2,
+        "transitions": 0.1,
+        "landing_surplus": 0.05,
+    }
+    overridden = FhopsProblem(pb, objective_weight_overrides={"landing_surplus": 0.0})
+    assert overridden.objective_weight_overrides == {"landing_surplus": 0.0}

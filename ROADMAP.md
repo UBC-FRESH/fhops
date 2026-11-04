@@ -745,3 +745,5 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
 - [x] Shared metaheuristic kernel adapter: add the block-separable incremental scoring path and
   reversible move cache. Remaining: true in-place move/undo and like-for-like parity/performance
   gates. Design note: `notes/metaheuristic_kernel_adapter.md`.
+- [x] Shared metaheuristic kernel adapter: align objective-weight overrides and record them in
+  kernel results. Remaining: true in-place move/undo and the full parity/performance ladder.

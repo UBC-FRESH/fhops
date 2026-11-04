@@ -50,6 +50,7 @@ def _result(
         "operators": problem.registry.weights(),
         "greedy_objective": float(greedy_score),
         "objective_delta_vs_greedy": float(objective - greedy_score),
+        "objective_weight_overrides": problem.objective_weight_overrides,
     }
     payload.update(meta)
     return {
@@ -101,6 +102,7 @@ def solve_kernel_sa(
     cooling: float = 0.995,
     operators: list[str] | None = None,
     operator_weights: dict[str, float] | None = None,
+    objective_weight_overrides: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Run the shared kernel's simulated annealing over a FHOPS scenario.
 
@@ -121,6 +123,9 @@ def solve_kernel_sa(
         Operator names to enable. ``None`` enables the FHOPS defaults.
     operator_weights : mapping of str to float or None, optional
         Weight overrides. Values at or below zero disable an operator.
+    objective_weight_overrides : mapping of str to float or None, optional
+        Objective weights to override. ``None`` applies the FHOPS automatic overrides for
+        Tiny7/Small21, matching the existing solvers.
 
     Returns
     -------
@@ -128,7 +133,12 @@ def solve_kernel_sa(
         ``objective`` (the fresh FHOPS score), ``assignments`` (the assignment table),
         ``meta`` (configuration and counters), and ``schedule`` (the schedule object).
     """
-    problem = FhopsProblem(pb, operators=operators, operator_weights=operator_weights)
+    problem = FhopsProblem(
+        pb,
+        operators=operators,
+        operator_weights=operator_weights,
+        objective_weight_overrides=objective_weight_overrides,
+    )
     initial = problem.greedy_schedule()
     greedy_score = evaluate_schedule(pb, initial, problem.operational)
     start_temperature = max(1.0, greedy_score / 10.0) if temperature is None else float(temperature)
@@ -164,6 +174,7 @@ def solve_kernel_tabu(
     samples: int = 8,
     operators: list[str] | None = None,
     operator_weights: dict[str, float] | None = None,
+    objective_weight_overrides: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Run the shared kernel's tabu search over a FHOPS scenario.
 
@@ -183,13 +194,21 @@ def solve_kernel_tabu(
         Operator names to enable. ``None`` enables the FHOPS defaults.
     operator_weights : mapping of str to float or None, optional
         Weight overrides. Values at or below zero disable an operator.
+    objective_weight_overrides : mapping of str to float or None, optional
+        Objective weights to override. ``None`` applies the FHOPS automatic overrides for
+        Tiny7/Small21, matching the existing solvers.
 
     Returns
     -------
     dict of str to Any
         The same payload as :func:`solve_kernel_sa`.
     """
-    problem = FhopsProblem(pb, operators=operators, operator_weights=operator_weights)
+    problem = FhopsProblem(
+        pb,
+        operators=operators,
+        operator_weights=operator_weights,
+        objective_weight_overrides=objective_weight_overrides,
+    )
     initial = problem.greedy_schedule()
     greedy_score = evaluate_schedule(pb, initial, problem.operational)
     resolved_tenure = max(5, 2 * len(pb.scenario.machines)) if tenure is None else tenure
@@ -224,6 +243,7 @@ def solve_kernel_ils(
     perturbation: int = 3,
     operators: list[str] | None = None,
     operator_weights: dict[str, float] | None = None,
+    objective_weight_overrides: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Run the shared kernel's iterated local search over a FHOPS scenario.
 
@@ -241,13 +261,21 @@ def solve_kernel_ils(
         Operator names to enable. ``None`` enables the FHOPS defaults.
     operator_weights : mapping of str to float or None, optional
         Weight overrides. Values at or below zero disable an operator.
+    objective_weight_overrides : mapping of str to float or None, optional
+        Objective weights to override. ``None`` applies the FHOPS automatic overrides for
+        Tiny7/Small21, matching the existing solvers.
 
     Returns
     -------
     dict of str to Any
         The same payload as :func:`solve_kernel_sa`.
     """
-    problem = FhopsProblem(pb, operators=operators, operator_weights=operator_weights)
+    problem = FhopsProblem(
+        pb,
+        operators=operators,
+        operator_weights=operator_weights,
+        objective_weight_overrides=objective_weight_overrides,
+    )
     initial = problem.greedy_schedule()
     greedy_score = evaluate_schedule(pb, initial, problem.operational)
     best, _negated = solve_ils(
@@ -281,6 +309,7 @@ def solve_kernel_sa_fast(
     patience: int = 0,
     operators: list[str] | None = None,
     operator_weights: dict[str, float] | None = None,
+    objective_weight_overrides: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Run kernel annealing with FHOPS's dirty-slot repair path.
 
@@ -307,13 +336,21 @@ def solve_kernel_sa_fast(
         Operator names to enable. ``None`` enables the FHOPS defaults.
     operator_weights : mapping of str to float or None, optional
         Weight overrides. Values at or below zero disable an operator.
+    objective_weight_overrides : mapping of str to float or None, optional
+        Objective weights to override. ``None`` applies the FHOPS automatic overrides for
+        Tiny7/Small21, matching the existing solvers.
 
     Returns
     -------
     dict of str to Any
         The same payload as :func:`solve_kernel_sa`, with ``meta["approximate_search"]`` set.
     """
-    problem = FhopsProblem(pb, operators=operators, operator_weights=operator_weights)
+    problem = FhopsProblem(
+        pb,
+        operators=operators,
+        operator_weights=operator_weights,
+        objective_weight_overrides=objective_weight_overrides,
+    )
     current = problem.greedy_schedule()
     greedy_score = evaluate_schedule(pb, current, problem.operational)
     current_obj = -evaluate_schedule(pb, current, problem.operational, limit_repairs_to_dirty=True)
@@ -372,6 +409,7 @@ def solve_kernel_sa_incremental(
     reversion: int = 0,
     operators: list[str] | None = None,
     operator_weights: dict[str, float] | None = None,
+    objective_weight_overrides: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Run kernel annealing with exact block-separable incremental scoring.
 
@@ -400,13 +438,21 @@ def solve_kernel_sa_incremental(
         Operator names to enable. ``None`` enables the FHOPS defaults.
     operator_weights : mapping of str to float or None, optional
         Weight overrides. Values at or below zero disable an operator.
+    objective_weight_overrides : mapping of str to float or None, optional
+        Objective weights to override. ``None`` applies the FHOPS automatic overrides for
+        Tiny7/Small21, matching the existing solvers.
 
     Returns
     -------
     dict of str to Any
         The same payload as :func:`solve_kernel_sa`, with incremental-search metadata.
     """
-    problem = FhopsProblem(pb, operators=operators, operator_weights=operator_weights)
+    problem = FhopsProblem(
+        pb,
+        operators=operators,
+        operator_weights=operator_weights,
+        objective_weight_overrides=objective_weight_overrides,
+    )
     current = problem.greedy_schedule()
     _repair_schedule_cover_blocks(pb, current, problem.operational, fill_voids=True)
     evaluator = SeparableEvaluator(pb, problem.operational)
