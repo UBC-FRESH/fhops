@@ -1,0 +1,482 @@
+[
+  {
+    "existing": {
+      "objective": 30913.355594999986,
+      "seconds": 2.098
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 30913.355594999986,
+      "seconds": 0.808
+    },
+    "objective_delta": 0.0,
+    "scenario": "ka_6",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.385
+  },
+  {
+    "existing": {
+      "objective": 30913.355594999986,
+      "seconds": 6.431
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 30913.355594999986,
+      "seconds": 6.575
+    },
+    "objective_delta": 0.0,
+    "scenario": "ka_6",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 1.022
+  },
+  {
+    "existing": {
+      "objective": 30913.355594999986,
+      "seconds": 8.432
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 30913.355594999986,
+      "seconds": 1.583
+    },
+    "objective_delta": 0.0,
+    "scenario": "ka_6",
+    "seed": 7,
+    "solver": "ils",
+    "speed_ratio": 0.188
+  },
+  {
+    "existing": {
+      "objective": 30913.355594999986,
+      "seconds": 8.778
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 30913.355594999983,
+      "seconds": 7.071
+    },
+    "objective_delta": -0.0,
+    "scenario": "ka_6",
+    "seed": 7,
+    "solver": "ils_like",
+    "speed_ratio": 0.806
+  },
+  {
+    "existing": {
+      "objective": 111189.356299,
+      "seconds": 4.619
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 109873.356299,
+      "seconds": 2.286
+    },
+    "objective_delta": -1316.0,
+    "scenario": "ni_6",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.495
+  },
+  {
+    "existing": {
+      "objective": 112505.356299,
+      "seconds": 15.289
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 109851.781545,
+      "seconds": 13.224
+    },
+    "objective_delta": -2653.574754,
+    "scenario": "ni_6",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 0.865
+  },
+  {
+    "existing": {
+      "objective": 112505.356299,
+      "seconds": 20.846
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 109851.78154499998,
+      "seconds": 4.52
+    },
+    "objective_delta": -2653.574754,
+    "scenario": "ni_6",
+    "seed": 7,
+    "solver": "ils",
+    "speed_ratio": 0.217
+  },
+  {
+    "existing": {
+      "objective": 112505.356299,
+      "seconds": 21.256
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 109873.356299,
+      "seconds": 18.756
+    },
+    "objective_delta": -2632.0,
+    "scenario": "ni_6",
+    "seed": 7,
+    "solver": "ils_like",
+    "speed_ratio": 0.882
+  },
+  {
+    "existing": {
+      "objective": 67923.96289999997,
+      "seconds": 2.375
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 67923.96289999997,
+      "seconds": 0.967
+    },
+    "objective_delta": 0.0,
+    "scenario": "pg_6",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.407
+  },
+  {
+    "existing": {
+      "objective": 67923.96289999998,
+      "seconds": 7.84
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 67923.96289999997,
+      "seconds": 7.72
+    },
+    "objective_delta": -0.0,
+    "scenario": "pg_6",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 0.985
+  },
+  {
+    "existing": {
+      "objective": 67923.96289999998,
+      "seconds": 10.875
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 67923.96289999997,
+      "seconds": 1.841
+    },
+    "objective_delta": -0.0,
+    "scenario": "pg_6",
+    "seed": 7,
+    "solver": "ils",
+    "speed_ratio": 0.169
+  },
+  {
+    "existing": {
+      "objective": 67923.96289999998,
+      "seconds": 10.238
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 67923.96289999997,
+      "seconds": 7.058
+    },
+    "objective_delta": -0.0,
+    "scenario": "pg_6",
+    "seed": 7,
+    "solver": "ils_like",
+    "speed_ratio": 0.689
+  },
+  {
+    "existing": {
+      "objective": 71386.13414699998,
+      "seconds": 2.474
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 71386.13414699998,
+      "seconds": 1.299
+    },
+    "objective_delta": 0.0,
+    "scenario": "ka_18",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.525
+  },
+  {
+    "existing": {
+      "objective": 71386.13414699998,
+      "seconds": 7.154
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 71386.13414699998,
+      "seconds": 7.104
+    },
+    "objective_delta": 0.0,
+    "scenario": "ka_18",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 0.993
+  },
+  {
+    "existing": {
+      "objective": 71386.13414699998,
+      "seconds": 9.72
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 71386.13414699998,
+      "seconds": 1.932
+    },
+    "objective_delta": 0.0,
+    "scenario": "ka_18",
+    "seed": 7,
+    "solver": "ils",
+    "speed_ratio": 0.199
+  },
+  {
+    "existing": {
+      "objective": 71386.13414699998,
+      "seconds": 11.075
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 71386.13414699998,
+      "seconds": 8.721
+    },
+    "objective_delta": 0.0,
+    "scenario": "ka_18",
+    "seed": 7,
+    "solver": "ils_like",
+    "speed_ratio": 0.787
+  },
+  {
+    "existing": {
+      "objective": 137703.7717119999,
+      "seconds": 7.972
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 139019.7717119999,
+      "seconds": 4.953
+    },
+    "objective_delta": 1316.0,
+    "scenario": "ni_18",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.621
+  },
+  {
+    "existing": {
+      "objective": 140335.77171199996,
+      "seconds": 17.751
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 139019.77171199996,
+      "seconds": 15.472
+    },
+    "objective_delta": -1316.0,
+    "scenario": "ni_18",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 0.872
+  },
+  {
+    "existing": {
+      "objective": 139019.77171199996,
+      "seconds": 29.89
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 132439.77171199984,
+      "seconds": 6.018
+    },
+    "objective_delta": -6580.0,
+    "scenario": "ni_18",
+    "seed": 7,
+    "solver": "ils",
+    "speed_ratio": 0.201
+  },
+  {
+    "existing": {
+      "objective": 139019.77171199996,
+      "seconds": 30.22
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 139115.63923799992,
+      "seconds": 24.053
+    },
+    "objective_delta": 95.867526,
+    "scenario": "ni_18",
+    "seed": 7,
+    "solver": "ils_like",
+    "speed_ratio": 0.796
+  },
+  {
+    "existing": {
+      "objective": 321391.62519199983,
+      "seconds": 5.871
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 321391.62519199983,
+      "seconds": 3.508
+    },
+    "objective_delta": 0.0,
+    "scenario": "pg_18",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.598
+  },
+  {
+    "existing": {
+      "objective": 322707.62519199983,
+      "seconds": 15.823
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 321391.62519199983,
+      "seconds": 12.813
+    },
+    "objective_delta": -1316.0,
+    "scenario": "pg_18",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 0.81
+  },
+  {
+    "existing": {
+      "objective": 322707.62519199983,
+      "seconds": 27.263
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 321391.62519199983,
+      "seconds": 5.406
+    },
+    "objective_delta": -1316.0,
+    "scenario": "pg_18",
+    "seed": 7,
+    "solver": "ils",
+    "speed_ratio": 0.198
+  },
+  {
+    "existing": {
+      "objective": 322707.62519199983,
+      "seconds": 27.58
+    },
+    "iterations": 20,
+    "kernel": {
+      "objective": 321391.62519199983,
+      "seconds": 13.926
+    },
+    "objective_delta": -1316.0,
+    "scenario": "pg_18",
+    "seed": 7,
+    "solver": "ils_like",
+    "speed_ratio": 0.505
+  },
+  {
+    "existing": {
+      "objective": 287591.70103899995,
+      "seconds": 19.441
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 286275.70103899995,
+      "seconds": 11.064
+    },
+    "objective_delta": -1316.0,
+    "scenario": "ka_40",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.569
+  },
+  {
+    "existing": {
+      "objective": 290223.70103899995,
+      "seconds": 69.418
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 288907.70103899995,
+      "seconds": 64.489
+    },
+    "objective_delta": -1316.0,
+    "scenario": "ka_40",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 0.929
+  },
+  {
+    "existing": {
+      "objective": 89121.033833,
+      "seconds": 35.45
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 41745.033832999994,
+      "seconds": 18.915
+    },
+    "objective_delta": -47376.0,
+    "scenario": "ni_40",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.534
+  },
+  {
+    "existing": {
+      "objective": 128601.033833,
+      "seconds": 106.424
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 132863.62345299998,
+      "seconds": 76.736
+    },
+    "objective_delta": 4262.58962,
+    "scenario": "ni_40",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 0.721
+  },
+  {
+    "existing": {
+      "objective": 177714.2051009999,
+      "seconds": 34.02
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 289195.21420499985,
+      "seconds": 18.911
+    },
+    "objective_delta": 111481.009104,
+    "scenario": "pg_40",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.556
+  },
+  {
+    "existing": {
+      "objective": 206666.2051009999,
+      "seconds": 111.139
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 360612.59864699986,
+      "seconds": 76.314
+    },
+    "objective_delta": 153946.393546,
+    "scenario": "pg_40",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 0.687
+  }
+]

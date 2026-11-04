@@ -42,9 +42,20 @@ def main() -> int:
     parser.add_argument(
         "--scenarios",
         default="tiny7,small21,med42",
-        help="Comma-separated example scenario names.",
+        help="Comma-separated scenario names or scenario.yaml paths.",
+    )
+    parser.add_argument(
+        "--scenario-root",
+        type=Path,
+        default=Path("examples"),
+        help="Directory holding <name>/scenario.yaml for the named scenarios.",
     )
     parser.add_argument("--iterations", type=int, default=100)
+    parser.add_argument(
+        "--solvers",
+        default="",
+        help="Optional comma-separated solver pairs (sa,tabu,ils,ils_like).",
+    )
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args()
@@ -67,9 +78,14 @@ def main() -> int:
         ),
     }
     records: list[dict[str, Any]] = []
+    allowed = {item.strip() for item in args.solvers.split(",") if item.strip()}
     for name in [item.strip() for item in args.scenarios.split(",") if item.strip()]:
-        pb = Problem.from_scenario(load_scenario(f"examples/{name}/scenario.yaml"))
+        candidate = Path(name)
+        path = candidate if candidate.is_file() else args.scenario_root / name / "scenario.yaml"
+        pb = Problem.from_scenario(load_scenario(str(path)))
         for solver, (existing, kernel) in pairs.items():
+            if allowed and solver not in allowed:
+                continue
             old = _timed(existing, pb, args.iterations, args.seed)
             new = _timed(kernel, pb, args.iterations, args.seed)
             records.append(
