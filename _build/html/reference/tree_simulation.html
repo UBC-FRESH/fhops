@@ -69,6 +69,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -783,11 +835,9 @@ physics model.</p>
 <ul class="simple">
 <li><p>starts at an explicit <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">z)</span></code> point, or at the first tree when no start
 is supplied;</p></li>
-<li><p>orders trees by an explicit harvest pattern: <code class="docutils literal notranslate"><span class="pre">nearest</span></code>, <code class="docutils literal notranslate"><span class="pre">strip</span></code>, or
-<code class="docutils literal notranslate"><span class="pre">tsp</span></code>; <code class="docutils literal notranslate"><span class="pre">auto</span></code> uses <code class="docutils literal notranslate"><span class="pre">strip</span></code> for a feller-buncher and <code class="docutils literal notranslate"><span class="pre">nearest</span></code> for
-other machine roles;</p></li>
+<li><p>processes the nearest feasible tree within <code class="docutils literal notranslate"><span class="pre">reach_radius_m</span></code>;</p></li>
 <li><p>when no tree is in reach, moves to an approach point within reach of the
-selected tree;</p></li>
+nearest feasible tree;</p></li>
 <li><p>rejects a tree when a circular obstacle contains it or when the absolute
 terrain slope between the current position and the tree exceeds
 <code class="docutils literal notranslate"><span class="pre">max_slope_percent</span></code>;</p></li>
@@ -797,26 +847,6 @@ merchantable volume, log count, one stem per cycle, and mean log length;</p></li
 </ul>
 <p>The default values are reach <code class="docutils literal notranslate"><span class="pre">10</span> <span class="pre">m</span></code>, travel speed <code class="docutils literal notranslate"><span class="pre">0.5</span> <span class="pre">m/s</span></code>, and maximum
 slope <code class="docutils literal notranslate"><span class="pre">35%</span></code>. They are reference parameters, not field-calibrated settings.</p>
-</section>
-<section id="harvest-patterns">
-<h2>Harvest patterns<a class="headerlink" href="#harvest-patterns" title="Link to this heading"></a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">pattern=auto</span></code> is the default.  A scenario machine whose role is
-<code class="docutils literal notranslate"><span class="pre">feller_buncher</span></code> uses <code class="docutils literal notranslate"><span class="pre">strip</span></code>; every other role uses <code class="docutils literal notranslate"><span class="pre">nearest</span></code>.</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">nearest</span></code> processes the nearest feasible tree, then the next nearest, which
-is deterministic but can jump around a block.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">strip</span></code> divides the tree cloud into contiguous rows, works rows in a
-serpentine order, and evaluates candidate strip widths and both axes against
-the full travel path.  It selects the shortest of those systematic orders.
-It is a planning heuristic, not a validated felling pattern.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tsp</span></code> builds a nearest-neighbour tour from the start point and applies a
-bounded deterministic 2-opt improvement.  It is available for comparison and
-small inventories; large inventories skip the 2-opt refinement.</p></li>
-</ul>
-<p>All patterns process every feasible tree and record obstacles/slope refusals.
-Processing time is unchanged; the pattern changes only tree order and travel.
-The simulation does not claim that a strip order is always shorter than a
-nearest-tree order on a small fixture.</p>
 <p>A start point can represent a landing. Automatic landing-geometry lookup is not
 part of P17.4; pass the landing coordinates explicitly when that matters.</p>
 </section>
@@ -828,7 +858,6 @@ part of P17.4; pass the landing coordinates explicitly when that matters.</p>
 <span class="w">  </span>--start-x<span class="w"> </span><span class="m">881700</span><span class="w"> </span>--start-y<span class="w"> </span><span class="m">627500</span><span class="w"> </span>--start-z<span class="w"> </span><span class="m">412</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--reach-radius<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--max-slope<span class="w"> </span><span class="m">35</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--pattern<span class="w"> </span>strip<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--out<span class="w"> </span>build/tree_machine
 </pre></div>
 </div>
@@ -850,8 +879,6 @@ and whole-landscape routing are out of scope.</p></li>
 <li><p>Obstacles are circular exclusions supplied explicitly; FHOPS does not infer
 them from geometry or point clouds.</p></li>
 <li><p>Travel is constant speed, not a machine dynamics model.</p></li>
-<li><p>Tree order is a heuristic, not a field-validated felling pattern or a global
-route optimization.</p></li>
 <li><p>Processing time uses an existing harvester regression and the reference stem
 model; it is not a field-validated productivity claim.</p></li>
 <li><p>No 3D scene or video is produced in this task.</p></li>

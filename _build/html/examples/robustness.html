@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Analytics Notebooks" href="analytics/index.html" />
-    <link rel="prev" title="Tree Scene Export" href="../reference/tree_scene.html" /> 
+    <link rel="prev" title="Ground-Based System Simulation" href="../reference/tree_system.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -67,6 +67,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#outputs">Outputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#fail-closed-behavior">Fail-closed behavior</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#boundary">Boundary</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/data_contract.html">Data Contract Guide</a><ul>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -801,8 +853,8 @@ so you can convert it into a Jupyter notebook or run it inline with <code class=
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.contract</span><span class="w"> </span><span class="kn">import</span> <span class="n">Problem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
 
-<span class="n">scenario_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"examples/med42/scenario.yaml"</span><span class="p">)</span>
-<span class="n">assignments_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"tests/fixtures/playback/med42_assignments.csv"</span><span class="p">)</span>
+<span class="n">scenario_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;examples/med42/scenario.yaml&quot;</span><span class="p">)</span>
+<span class="n">assignments_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;tests/fixtures/playback/med42_assignments.csv&quot;</span><span class="p">)</span>
 
 <span class="n">problem</span> <span class="o">=</span> <span class="n">Problem</span><span class="o">.</span><span class="n">from_scenario</span><span class="p">(</span><span class="n">load_scenario</span><span class="p">(</span><span class="n">scenario_path</span><span class="p">))</span>
 <span class="n">assignments</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">assignments_path</span><span class="p">)</span>
@@ -813,7 +865,7 @@ so you can convert it into a Jupyter notebook or run it inline with <code class=
 <span class="n">sampling</span><span class="o">.</span><span class="n">downtime</span><span class="o">.</span><span class="n">max_concurrent</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">sampling</span><span class="o">.</span><span class="n">weather</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">sampling</span><span class="o">.</span><span class="n">weather</span><span class="o">.</span><span class="n">day_probability</span> <span class="o">=</span> <span class="mf">0.4</span>
-<span class="n">sampling</span><span class="o">.</span><span class="n">weather</span><span class="o">.</span><span class="n">severity_levels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"default"</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">}</span>
+<span class="n">sampling</span><span class="o">.</span><span class="n">weather</span><span class="o">.</span><span class="n">severity_levels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">}</span>
 <span class="n">sampling</span><span class="o">.</span><span class="n">weather</span><span class="o">.</span><span class="n">impact_window_days</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">sampling</span><span class="o">.</span><span class="n">landing</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">sampling</span><span class="o">.</span><span class="n">landing</span><span class="o">.</span><span class="n">probability</span> <span class="o">=</span> <span class="mf">0.5</span>
@@ -828,27 +880,27 @@ so you can convert it into a Jupyter notebook or run it inline with <code class=
 <span class="n">makespan_metrics</span> <span class="o">=</span> <span class="n">compute_makespan_metrics</span><span class="p">(</span>
     <span class="n">problem</span><span class="p">,</span>
     <span class="n">shift_df</span><span class="p">,</span>
-    <span class="n">fallback_days</span><span class="o">=</span><span class="n">day_df</span><span class="p">[</span><span class="n">day_df</span><span class="p">[</span><span class="s2">"production_units"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">][</span><span class="s2">"day"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+    <span class="n">fallback_days</span><span class="o">=</span><span class="n">day_df</span><span class="p">[</span><span class="n">day_df</span><span class="p">[</span><span class="s2">&quot;production_units&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">][</span><span class="s2">&quot;day&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
     <span class="n">fallback_shift_keys</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"day"</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"shift_id"</span><span class="p">]))</span>
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">shift_df</span><span class="p">[</span><span class="n">shift_df</span><span class="p">[</span><span class="s2">"production_units"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()</span>
+        <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;day&quot;</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;shift_id&quot;</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">shift_df</span><span class="p">[</span><span class="n">shift_df</span><span class="p">[</span><span class="s2">&quot;production_units&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()</span>
     <span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">kpi_result</span> <span class="o">=</span> <span class="n">compute_kpis</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">assignments</span><span class="p">)</span>
 <span class="n">robustness_snapshot</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"shift_rows"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">shift_df</span><span class="p">),</span>
-    <span class="s2">"day_rows"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">day_df</span><span class="p">),</span>
-    <span class="s2">"production_units_sum"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">shift_df</span><span class="p">[</span><span class="s2">"production_units"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
-    <span class="s2">"total_hours_sum"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">shift_df</span><span class="p">[</span><span class="s2">"total_hours"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
-    <span class="s2">"kpis"</span><span class="p">:</span> <span class="n">kpi_result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-    <span class="s2">"utilisation"</span><span class="p">:</span> <span class="n">util_metrics</span><span class="p">,</span>
-    <span class="s2">"makespan"</span><span class="p">:</span> <span class="n">makespan_metrics</span><span class="p">,</span>
+    <span class="s2">&quot;shift_rows&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">shift_df</span><span class="p">),</span>
+    <span class="s2">&quot;day_rows&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">day_df</span><span class="p">),</span>
+    <span class="s2">&quot;production_units_sum&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">shift_df</span><span class="p">[</span><span class="s2">&quot;production_units&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+    <span class="s2">&quot;total_hours_sum&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">shift_df</span><span class="p">[</span><span class="s2">&quot;total_hours&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+    <span class="s2">&quot;kpis&quot;</span><span class="p">:</span> <span class="n">kpi_result</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+    <span class="s2">&quot;utilisation&quot;</span><span class="p">:</span> <span class="n">util_metrics</span><span class="p">,</span>
+    <span class="s2">&quot;makespan&quot;</span><span class="p">:</span> <span class="n">makespan_metrics</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="n">Path</span><span class="p">(</span><span class="s2">"tmp/med42_robustness.json"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+<span class="n">Path</span><span class="p">(</span><span class="s2">&quot;tmp/med42_robustness.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
     <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">robustness_snapshot</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-    <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -880,7 +932,7 @@ to drive downstream dashboards.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../reference/tree_scene.html" class="btn btn-neutral float-left" title="Tree Scene Export" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../reference/tree_system.html" class="btn btn-neutral float-left" title="Ground-Based System Simulation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="analytics/index.html" class="btn btn-neutral float-right" title="Analytics Notebooks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

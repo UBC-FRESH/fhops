@@ -13,6 +13,7 @@ navigate by package. Autodoc stubs will expand as modules are documented.
    fhops.optimization
    fhops.evaluation
    fhops.planning
+   fhops.salvage
    fhops.hauling
    fhops.web
    fhops.planning.tactical_operational

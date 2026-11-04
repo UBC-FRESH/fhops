@@ -72,6 +72,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../howto/tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../howto/data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -288,6 +293,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -331,6 +349,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../../howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -401,6 +430,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -617,7 +662,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -632,6 +676,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -784,11 +836,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
-<span class="k">while</span> <span class="n">PROJECT_ROOT</span> <span class="o">!=</span> <span class="n">PROJECT_ROOT</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">"pyproject.toml"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<span class="k">while</span> <span class="n">PROJECT_ROOT</span> <span class="o">!=</span> <span class="n">PROJECT_ROOT</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;pyproject.toml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
     <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span><span class="o">.</span><span class="n">parent</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">"pyproject.toml"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;pyproject.toml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-        <span class="s2">"Notebook must be executed within a FHOPS checkout (pyproject.toml not found)."</span>
+        <span class="s2">&quot;Notebook must be executed within a FHOPS checkout (pyproject.toml not found).&quot;</span>
     <span class="p">)</span>
 <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">PROJECT_ROOT</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">PROJECT_ROOT</span><span class="p">))</span>
@@ -800,8 +852,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.synthetic</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticDatasetConfig</span><span class="p">,</span> <span class="n">generate_random_dataset</span>
 
-<span class="n">SCENARIO</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">"examples/synthetic/medium/scenario.yaml"</span>
-<span class="n">ASSIGNMENTS</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">"docs/examples/analytics/data/synthetic_medium_sa_assignments.csv"</span>
+<span class="n">SCENARIO</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;examples/synthetic/medium/scenario.yaml&quot;</span>
+<span class="n">ASSIGNMENTS</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;docs/examples/analytics/data/synthetic_medium_sa_assignments.csv&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -811,9 +863,9 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metadata</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">((</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">"examples/synthetic/metadata.yaml"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
-<span class="n">medium_meta</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">"medium"</span><span class="p">]</span>
-<span class="n">medium_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"system_mix"</span><span class="p">,</span> <span class="p">{})</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metadata</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">((</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;examples/synthetic/metadata.yaml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+<span class="n">medium_meta</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;medium&quot;</span><span class="p">]</span>
+<span class="n">medium_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;system_mix&quot;</span><span class="p">,</span> <span class="p">{})</span>
 </pre></div>
 </div>
 </div>
@@ -834,7 +886,7 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="n">SCENARIO</span><span class="p">)</span>
-<span class="n">roles</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">machine</span><span class="o">.</span><span class="n">role</span> <span class="ow">or</span> <span class="s2">"unassigned"</span> <span class="k">for</span> <span class="n">machine</span> <span class="ow">in</span> <span class="n">scenario</span><span class="o">.</span><span class="n">machines</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">"role"</span><span class="p">)</span>
+<span class="n">roles</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">machine</span><span class="o">.</span><span class="n">role</span> <span class="ow">or</span> <span class="s2">&quot;unassigned&quot;</span> <span class="k">for</span> <span class="n">machine</span> <span class="ow">in</span> <span class="n">scenario</span><span class="o">.</span><span class="n">machines</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;role&quot;</span><span class="p">)</span>
 <span class="n">roles</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -859,15 +911,15 @@ Name: count, dtype: int64
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">custom_config</span> <span class="o">=</span> <span class="n">SyntheticDatasetConfig</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">"synthetic-mix-demo"</span><span class="p">,</span>
-    <span class="n">tier</span><span class="o">=</span><span class="s2">"large"</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;synthetic-mix-demo&quot;</span><span class="p">,</span>
+    <span class="n">tier</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">,</span>
     <span class="n">num_blocks</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
     <span class="n">num_days</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
     <span class="n">num_machines</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-    <span class="n">system_mix</span><span class="o">=</span><span class="p">{</span><span class="s2">"ground_fb_skid"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">"ctl"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">"steep_tethered"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+    <span class="n">system_mix</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ground_fb_skid&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;ctl&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;steep_tethered&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
 <span class="p">)</span>
 <span class="n">bundle</span> <span class="o">=</span> <span class="n">generate_random_dataset</span><span class="p">(</span><span class="n">custom_config</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
-<span class="n">custom_roles</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">machines</span><span class="p">[</span><span class="s2">"role"</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">"unassigned"</span><span class="p">)</span>
+<span class="n">custom_roles</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">machines</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;unassigned&quot;</span><span class="p">)</span>
 <span class="n">custom_roles</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -892,7 +944,7 @@ Name: count, dtype: int64
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comparison_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-    <span class="p">{</span><span class="s2">"scenario_roles"</span><span class="p">:</span> <span class="n">roles</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(),</span> <span class="s2">"custom_mix_roles"</span><span class="p">:</span> <span class="n">custom_roles</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()}</span>
+    <span class="p">{</span><span class="s2">&quot;scenario_roles&quot;</span><span class="p">:</span> <span class="n">roles</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(),</span> <span class="s2">&quot;custom_mix_roles&quot;</span><span class="p">:</span> <span class="n">custom_roles</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()}</span>
 <span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">comparison_df</span>
 </pre></div>

@@ -69,6 +69,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -776,7 +828,7 @@
 <dl class="py class">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.</span></span><span class="sig-name descname"><span class="pre">BlackoutWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_day</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_day</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/timeline/models.html#BlackoutWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Represents a continuous period where work is disallowed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -826,7 +878,7 @@
 <dl class="py class">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.</span></span><span class="sig-name descname"><span class="pre">BlockDistance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/mobilisation/models.html#BlockDistance"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Distance between two blocks in metres.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -863,7 +915,7 @@
 <dl class="py class">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.</span></span><span class="sig-name descname"><span class="pre">MachineMobilisation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walk_cost_per_meter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">move_cost_flat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walk_threshold_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_cost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/mobilisation/models.html#MachineMobilisation"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Mobilisation parameters for a machine/system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -912,7 +964,7 @@
 <dl class="py class">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.</span></span><span class="sig-name descname"><span class="pre">MobilisationConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_walk_threshold_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_csv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/mobilisation/models.html#MobilisationConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Complete mobilisation configuration for a scenario.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -955,7 +1007,7 @@
 <dl class="py class">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.</span></span><span class="sig-name descname"><span class="pre">ShiftDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hours</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts_per_day</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/timeline/models.html#ShiftDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Defines a shift length and count for a machine/job context.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1002,7 +1054,7 @@
 <dl class="py class">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.</span></span><span class="sig-name descname"><span class="pre">TimelineConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blackouts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days_per_week</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/timeline/models.html#TimelineConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Aggregates shift definitions and blackout rules for a scenario.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1050,7 +1102,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="fhops.scheduling.timeline.BlackoutWindow">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.timeline.</span></span><span class="sig-name descname"><span class="pre">BlackoutWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_day</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_day</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/timeline/models.html#BlackoutWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fhops.scheduling.timeline.BlackoutWindow" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Represents a continuous period where work is disallowed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1100,7 +1152,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="fhops.scheduling.timeline.ShiftDefinition">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.timeline.</span></span><span class="sig-name descname"><span class="pre">ShiftDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hours</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts_per_day</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/timeline/models.html#ShiftDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fhops.scheduling.timeline.ShiftDefinition" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Defines a shift length and count for a machine/job context.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1147,7 +1199,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="fhops.scheduling.timeline.TimelineConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.timeline.</span></span><span class="sig-name descname"><span class="pre">TimelineConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blackouts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days_per_week</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/timeline/models.html#TimelineConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fhops.scheduling.timeline.TimelineConfig" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Aggregates shift definitions and blackout rules for a scenario.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1195,7 +1247,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="fhops.scheduling.mobilisation.BlockDistance">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.mobilisation.</span></span><span class="sig-name descname"><span class="pre">BlockDistance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/mobilisation/models.html#BlockDistance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fhops.scheduling.mobilisation.BlockDistance" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Distance between two blocks in metres.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1232,7 +1284,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="fhops.scheduling.mobilisation.MachineMobilisation">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.mobilisation.</span></span><span class="sig-name descname"><span class="pre">MachineMobilisation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walk_cost_per_meter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">move_cost_flat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walk_threshold_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_cost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/mobilisation/models.html#MachineMobilisation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fhops.scheduling.mobilisation.MachineMobilisation" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Mobilisation parameters for a machine/system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1281,7 +1333,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="fhops.scheduling.mobilisation.MobilisationConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.scheduling.mobilisation.</span></span><span class="sig-name descname"><span class="pre">MobilisationConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_walk_threshold_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_csv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/scheduling/mobilisation/models.html#MobilisationConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fhops.scheduling.mobilisation.MobilisationConfig" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Complete mobilisation configuration for a scenario.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

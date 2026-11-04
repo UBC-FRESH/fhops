@@ -72,6 +72,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../howto/tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../howto/data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -288,6 +293,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -331,6 +349,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../../howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -401,6 +430,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -617,7 +662,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -632,6 +676,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -785,11 +837,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
-<span class="k">while</span> <span class="n">PROJECT_ROOT</span> <span class="o">!=</span> <span class="n">PROJECT_ROOT</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">"pyproject.toml"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<span class="k">while</span> <span class="n">PROJECT_ROOT</span> <span class="o">!=</span> <span class="n">PROJECT_ROOT</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;pyproject.toml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
     <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span><span class="o">.</span><span class="n">parent</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">"pyproject.toml"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;pyproject.toml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-        <span class="s2">"Notebook must be executed within a FHOPS checkout (pyproject.toml not found)."</span>
+        <span class="s2">&quot;Notebook must be executed within a FHOPS checkout (pyproject.toml not found).&quot;</span>
     <span class="p">)</span>
 <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">PROJECT_ROOT</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">PROJECT_ROOT</span><span class="p">))</span>
@@ -800,8 +852,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="n">TELEMETRY_PATH</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">"docs/examples/analytics/data/telemetry_tiny7.jsonl"</span>
-<span class="k">with</span> <span class="n">TELEMETRY_PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="n">TELEMETRY_PATH</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;docs/examples/analytics/data/telemetry_tiny7.jsonl&quot;</span>
+<span class="k">with</span> <span class="n">TELEMETRY_PATH</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">telemetry</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
 <span class="n">telemetry_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">telemetry</span><span class="p">)</span>
 <span class="n">telemetry_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -884,10 +936,10 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">telemetry_df</span><span class="p">[</span><span class="s2">"iteration"</span><span class="p">],</span> <span class="n">telemetry_df</span><span class="p">[</span><span class="s2">"objective"</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Iteration"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Objective"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Objective Convergence"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">telemetry_df</span><span class="p">[</span><span class="s2">&quot;iteration&quot;</span><span class="p">],</span> <span class="n">telemetry_df</span><span class="p">[</span><span class="s2">&quot;objective&quot;</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Iteration&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Objective&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Objective Convergence&quot;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -906,7 +958,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">telemetry_df</span><span class="p">[[</span><span class="s2">"iteration"</span><span class="p">,</span> <span class="s2">"accepted"</span><span class="p">,</span> <span class="s2">"temperature"</span><span class="p">]]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">telemetry_df</span><span class="p">[[</span><span class="s2">&quot;iteration&quot;</span><span class="p">,</span> <span class="s2">&quot;accepted&quot;</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">]]</span>
 </pre></div>
 </div>
 </div>

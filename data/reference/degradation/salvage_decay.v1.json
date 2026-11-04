@@ -1,0 +1,63 @@
+{
+  "schema_version": "salvage.decay.v1",
+  "curves": [
+    {
+      "curve_id": "pnw_fire_killed_mixed_conifer",
+      "name": "Pacific Northwest fire-killed mixed-conifer salvage volume retention",
+      "age_unit": "years_since_fire_or_tree_death",
+      "retention_definition": "Net recoverable volume relative to pre-disturbance green volume. Published as a net volume discount factor, not a lumber grade or price index.",
+      "points": [
+        {"age_years": 0.0, "retention_fraction": 1.0},
+        {"age_years": 1.0, "retention_fraction": 0.99},
+        {"age_years": 2.0, "retention_fraction": 0.89},
+        {"age_years": 3.0, "retention_fraction": 0.58},
+        {"age_years": 4.0, "retention_fraction": 0.22},
+        {"age_years": 5.0, "retention_fraction": 0.0}
+      ],
+      "source": {
+        "citation": "Prestemon, J.P. and Holmes, T.P. (2008). Timber Salvage Economics. In: Holmes, T.P., Prestemon, J.P., Abt, K.L. (eds) The Economics of Forest Disturbances. Springer, Dordrecht, pp. 167-190, section 4.2.6.",
+        "url": "https://research.fs.usda.gov/download/treesearch/32962.pdf",
+        "boundary": "Weighted-average net volume discount factors for mixed-conifer fire-killed timber in southwest Oregon (Biscuit fire), derived from Lowell and Cahill (1996) and Prestemon et al. (2006). This is a reference curve, not a BC-specific, species-specific, or roadside-storage-specific operational curve.",
+        "retrieved": "2026-11-03"
+      }
+    }
+  ],
+  "product_windows": [
+    {
+      "product": "lumber",
+      "min_years": 0.0,
+      "max_years": 2.0,
+      "note": "Most suitable time to salvage trees killed by spruce budworm or fire for lumber is generally limited to 1-2 years after death.",
+      "source": {
+        "citation": "Barrette, J., Thiffault, E., Saint-Pierre, F., Wetzel, S., Duchesne, I. and Krigstin, S. (2015). Dynamics of dead tree degradation and shelf-life following natural disturbances: can salvaged trees from boreal forests 'fuel' the forestry and bioenergy sectors? Forestry 88(3):275-290.",
+        "url": "https://doi.org/10.1093/forestry/cpv007",
+        "boundary": "Canadian boreal review; product windows are advisory generalizations, not a mill-acceptance rule or a species-specific guarantee.",
+        "retrieved": "2026-11-03"
+      }
+    },
+    {
+      "product": "pulp",
+      "min_years": 0.0,
+      "max_years": 4.0,
+      "note": "Trees can usually be salvaged for pulp while wood moisture remains above fibre saturation, but salvage is usually not recommended after 3-4 years following death.",
+      "source": {
+        "citation": "Barrette, J., Thiffault, E., Saint-Pierre, F., Wetzel, S., Duchesne, I. and Krigstin, S. (2015). Dynamics of dead tree degradation and shelf-life following natural disturbances: can salvaged trees from boreal forests 'fuel' the forestry and bioenergy sectors? Forestry 88(3):275-290.",
+        "url": "https://doi.org/10.1093/forestry/cpv007",
+        "boundary": "Canadian boreal review; product windows are advisory generalizations, not a mill-acceptance rule or a species-specific guarantee.",
+        "retrieved": "2026-11-03"
+      }
+    },
+    {
+      "product": "bioenergy",
+      "min_years": 3.0,
+      "max_years": null,
+      "note": "Past the pulp window, salvaged trees may yield better opportunities for the bioenergy sector.",
+      "source": {
+        "citation": "Barrette, J., Thiffault, E., Saint-Pierre, F., Wetzel, S., Duchesne, I. and Krigstin, S. (2015). Dynamics of dead tree degradation and shelf-life following natural disturbances: can salvaged trees from boreal forests 'fuel' the forestry and bioenergy sectors? Forestry 88(3):275-290.",
+        "url": "https://doi.org/10.1093/forestry/cpv007",
+        "boundary": "Canadian boreal review; product windows are advisory generalizations, not a mill-acceptance rule or a species-specific guarantee.",
+        "retrieved": "2026-11-03"
+      }
+    }
+  ]
+}

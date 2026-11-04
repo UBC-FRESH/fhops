@@ -66,6 +66,11 @@
 <li class="toctree-l2"><a class="reference internal" href="howto/tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="howto/data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -282,6 +287,19 @@
 <li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -325,6 +343,17 @@
 <li class="toctree-l2"><a class="reference internal" href="howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -395,6 +424,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -611,7 +656,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -626,6 +670,14 @@
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -803,6 +855,10 @@
 </li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.WeatherEventConfig.affected_shifts">affected_shifts (fhops.evaluation.WeatherEventConfig attribute)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve.age_unit">age_unit (fhops.salvage.degradation.DecayCurve attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint.age_years">age_years (fhops.salvage.degradation.DecayCurvePoint attribute)</a>
+</li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.DowntimeEvent.apply">apply() (fhops.evaluation.DowntimeEvent method)</a>
 
       <ul>
@@ -887,11 +943,17 @@
 </li>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetBundle.blocks">blocks (fhops.scenario.synthetic.SyntheticDatasetBundle attribute)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport.blocks_without_salvage_mode">blocks_without_salvage_mode (fhops.salvage.report.SalvageReport attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource.boundary">boundary (fhops.salvage.degradation.DecayCurveSource attribute)</a>
+</li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadProject.build_cost">build_cost (fhops.planning.tactical_operational.RoadProject attribute)</a>
 </li>
       <li><a href="api/fhops.scheduling.html#fhops.scheduling.mobilisation.build_distance_lookup">build_distance_lookup() (in module fhops.scheduling.mobilisation)</a>
 </li>
       <li><a href="api/fhops.optimization.html#fhops.optimization.build_model">build_model() (in module fhops.optimization)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.build_salvage_report">build_salvage_report() (in module fhops.salvage.report)</a>
 </li>
       <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_bundle">build_tactical_operational_bundle() (in module fhops.model.milp.tactical_operational)</a>
 </li>
@@ -925,14 +987,14 @@
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.children_by_parent">children_by_parent() (in module fhops.planning.tactical_operational)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource.citation">citation (fhops.salvage.degradation.DecayCurveSource attribute)</a>
+</li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.DaySummary.completed_blocks">completed_blocks (fhops.evaluation.DaySummary attribute)</a>
 </li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.compute_kpis">compute_kpis() (in module fhops.evaluation)</a>
 </li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.compute_makespan_metrics">compute_makespan_metrics() (in module fhops.evaluation)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.compute_utilisation_metrics">compute_utilisation_metrics() (in module fhops.evaluation)</a>
 </li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.PlaybackResult.config">config (fhops.evaluation.PlaybackResult attribute)</a>
@@ -943,8 +1005,14 @@
         <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpBundle.config">(fhops.model.milp.tactical_operational.TacticalOperationalMilpBundle attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/fhops.scheduling.html#fhops.scheduling.timeline.BlackoutWindow.contains">contains() (fhops.scheduling.timeline.BlackoutWindow method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow.contains">contains() (fhops.salvage.degradation.ProductWindow method)</a>
+
+      <ul>
+        <li><a href="api/fhops.scheduling.html#fhops.scheduling.timeline.BlackoutWindow.contains">(fhops.scheduling.timeline.BlackoutWindow method)</a>
 </li>
+      </ul></li>
       <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalHarvestMode.CONTINUOUS">CONTINUOUS (fhops.model.milp.tactical_operational.TacticalHarvestMode attribute)</a>
 </li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.WeatherEventConfig.correlated_days">correlated_days (fhops.evaluation.WeatherEventConfig attribute)</a>
@@ -958,6 +1026,14 @@
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.crew_pool">crew_pool (fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Economics.currency">currency (fhops.planning.tactical_operational.Economics attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport.curve">curve (fhops.salvage.report.SalvageReport attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary.curve">curve() (fhops.salvage.degradation.DecayCurveLibrary method)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve.curve_id">curve_id (fhops.salvage.degradation.DecayCurve attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary.curves">curves (fhops.salvage.degradation.DecayCurveLibrary attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1001,6 +1077,16 @@
 </li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.DaySummary">DaySummary (class in fhops.evaluation)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve">DecayCurve (class in fhops.salvage.degradation)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary">DecayCurveLibrary (class in fhops.salvage.degradation)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint">DecayCurvePoint (class in fhops.salvage.degradation)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource">DecayCurveSource (class in fhops.salvage.degradation)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID">DEFAULT_CURVE_ID (in module fhops.salvage.degradation)</a>
+</li>
       <li><a href="api/fhops.scheduling.html#fhops.scheduling.systems.default_system_registry">default_system_registry() (in module fhops.scheduling.systems)</a>
 </li>
       <li><a href="api/fhops.scheduling.html#fhops.scheduling.mobilisation.MobilisationConfig.default_walk_threshold_m">default_walk_threshold_m (fhops.scheduling.mobilisation.MobilisationConfig attribute)</a>
@@ -1009,12 +1095,12 @@
 </li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.PlaybackResult.delivered_total">delivered_total (fhops.evaluation.PlaybackResult attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig.demand_basis">demand_basis (fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig attribute)</a>
 </li>
       <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.DemandBasis">DemandBasis (class in fhops.model.milp.tactical_operational)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadDependency.depends_on_road_id">depends_on_road_id (fhops.planning.tactical_operational.RoadDependency attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.ExternalSupply.destination_id">destination_id (fhops.planning.tactical_operational.ExternalSupply attribute)</a>
@@ -1089,14 +1175,16 @@
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.HarvestSystemOption.eligible">eligible (fhops.planning.tactical_operational.HarvestSystemOption attribute)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary.eligible_products">eligible_products() (fhops.salvage.degradation.DecayCurveLibrary method)</a>
+</li>
       <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig.enable_fleet_investment">enable_fleet_investment (fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig attribute)</a>
 </li>
       <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig.enable_roads">enable_roads (fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig attribute)</a>
 </li>
-      <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig.enable_silviculture">enable_silviculture (fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig.enable_silviculture">enable_silviculture (fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig attribute)</a>
+</li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.SamplingEventConfig.enabled">enabled (fhops.evaluation.SamplingEventConfig attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningPeriod.end_date">end_date (fhops.planning.tactical_operational.PlanningPeriod attribute)</a>
@@ -1176,13 +1264,27 @@
         <li><a href="api/fhops.optimization.html#module-fhops.optimization">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     fhops.planning.tactical_operational
 
       <ul>
         <li><a href="api/fhops.planning.tactical_operational.html#module-fhops.planning.tactical_operational">module</a>
+</li>
+      </ul></li>
+      <li>
+    fhops.salvage.degradation
+
+      <ul>
+        <li><a href="api/fhops.salvage.html#module-fhops.salvage.degradation">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    fhops.salvage.report
+
+      <ul>
+        <li><a href="api/fhops.salvage.html#module-fhops.salvage.report">module</a>
 </li>
       </ul></li>
       <li>
@@ -1229,6 +1331,8 @@
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.four_week_periods">four_week_periods() (in module fhops.planning.tactical_operational)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport.frame">frame (fhops.salvage.report.SalvageReport attribute)</a>
+</li>
       <li><a href="api/fhops.scheduling.html#fhops.scheduling.mobilisation.BlockDistance.from_block">from_block (fhops.scheduling.mobilisation.BlockDistance attribute)</a>
 </li>
   </ul></td>
@@ -1243,9 +1347,11 @@
 </li>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.generate_with_systems">generate_with_systems() (in module fhops.scenario.synthetic)</a>
 </li>
+      <li><a href="api/fhops.evaluation.html#fhops.evaluation.KPIResult.get">get() (fhops.evaluation.KPIResult method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/fhops.evaluation.html#fhops.evaluation.KPIResult.get">get() (fhops.evaluation.KPIResult method)</a>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve">get_decay_curve() (in module fhops.salvage.degradation)</a>
 </li>
       <li><a href="api/fhops.scheduling.html#fhops.scheduling.systems.get_system_road_defaults">get_system_road_defaults() (in module fhops.scheduling.systems)</a>
 </li>
@@ -1335,13 +1441,17 @@
 </li>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetBundle.landings">landings (fhops.scenario.synthetic.SyntheticDatasetBundle attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.LandingShockConfig">LandingShockConfig (class in fhops.evaluation)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.LandingShockEvent">LandingShockEvent (class in fhops.evaluation)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningPeriod.level">level (fhops.planning.tactical_operational.PlanningPeriod attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport.library">library (fhops.salvage.report.SalvageReport attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library">load_decay_library() (in module fhops.salvage.degradation)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.load_tactical_operational_scenario">load_tactical_operational_scenario() (in module fhops.planning.tactical_operational)</a>
 </li>
@@ -1391,6 +1501,8 @@
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetOption.max_units">max_units (fhops.planning.tactical_operational.FleetOption attribute)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow.max_years">max_years (fhops.salvage.degradation.ProductWindow attribute)</a>
+</li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.ExternalSupply.maximum_m3">maximum_m3 (fhops.planning.tactical_operational.ExternalSupply attribute)</a>
 
       <ul>
@@ -1406,6 +1518,8 @@
 </li>
       </ul></li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.HarvestSystemOption.min_area_ha">min_area_ha (fhops.planning.tactical_operational.HarvestSystemOption attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow.min_years">min_years (fhops.salvage.degradation.ProductWindow attribute)</a>
 </li>
       <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.DemandBasis.MINIMUM">MINIMUM (fhops.model.milp.tactical_operational.DemandBasis attribute)</a>
 </li>
@@ -1472,6 +1586,16 @@
 </li>
         <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TransportArc.model_config">(fhops.planning.tactical_operational.TransportArc attribute)</a>
 </li>
+        <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve.model_config">(fhops.salvage.degradation.DecayCurve attribute)</a>
+</li>
+        <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary.model_config">(fhops.salvage.degradation.DecayCurveLibrary attribute)</a>
+</li>
+        <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint.model_config">(fhops.salvage.degradation.DecayCurvePoint attribute)</a>
+</li>
+        <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource.model_config">(fhops.salvage.degradation.DecayCurveSource attribute)</a>
+</li>
+        <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow.model_config">(fhops.salvage.degradation.ProductWindow attribute)</a>
+</li>
         <li><a href="api/fhops.scheduling.html#fhops.scheduling.mobilisation.BlockDistance.model_config">(fhops.scheduling.mobilisation.BlockDistance attribute)</a>
 </li>
         <li><a href="api/fhops.scheduling.html#fhops.scheduling.mobilisation.MachineMobilisation.model_config">(fhops.scheduling.mobilisation.MachineMobilisation attribute)</a>
@@ -1503,6 +1627,10 @@
 </li>
         <li><a href="api/fhops.planning.tactical_operational.html#module-fhops.planning.tactical_operational">fhops.planning.tactical_operational</a>
 </li>
+        <li><a href="api/fhops.salvage.html#module-fhops.salvage.degradation">fhops.salvage.degradation</a>
+</li>
+        <li><a href="api/fhops.salvage.html#module-fhops.salvage.report">fhops.salvage.report</a>
+</li>
         <li><a href="api/fhops.scenario.html#module-fhops.scenario.synthetic">fhops.scenario.synthetic</a>
 </li>
         <li><a href="api/fhops.scheduling.html#module-fhops.scheduling.mobilisation">fhops.scheduling.mobilisation</a>
@@ -1525,6 +1653,8 @@
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario.name">name (fhops.planning.tactical_operational.TacticalOperationalScenario attribute)</a>
 
       <ul>
+        <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve.name">(fhops.salvage.degradation.DecayCurve attribute)</a>
+</li>
         <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.name">(fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
 </li>
         <li><a href="api/fhops.scheduling.html#fhops.scheduling.systems.SystemJob.name">(fhops.scheduling.systems.SystemJob attribute)</a>
@@ -1534,10 +1664,12 @@
       </ul></li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.SilvicultureTransition.next_state">next_state (fhops.planning.tactical_operational.SilvicultureTransition attribute)</a>
 </li>
-      <li><a href="api/fhops.scheduling.html#fhops.scheduling.systems.HarvestSystem.notes">notes (fhops.scheduling.systems.HarvestSystem attribute)</a>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow.note">note (fhops.salvage.degradation.ProductWindow attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/fhops.scheduling.html#fhops.scheduling.systems.HarvestSystem.notes">notes (fhops.scheduling.systems.HarvestSystem attribute)</a>
+</li>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.num_blocks">num_blocks (fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
 
       <ul>
@@ -1630,14 +1762,16 @@
 </li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.PlaybackSample">PlaybackSample (class in fhops.evaluation)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve.points">points (fhops.salvage.degradation.DecayCurve attribute)</a>
+</li>
       <li><a href="api/fhops.scheduling.html#fhops.scheduling.systems.SystemJob.prerequisites">prerequisites (fhops.scheduling.systems.SystemJob attribute)</a>
 </li>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.prescription_pool">prescription_pool (fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.prescription_weights">prescription_weights (fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.DowntimeEventConfig.probability">probability (fhops.evaluation.DowntimeEventConfig attribute)</a>
 
       <ul>
@@ -1649,6 +1783,8 @@
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.SamplingContext.problem">problem (fhops.evaluation.SamplingContext attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Product">Product (class in fhops.planning.tactical_operational)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow.product">product (fhops.salvage.degradation.ProductWindow attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.ExternalSupply.product_id">product_id (fhops.planning.tactical_operational.ExternalSupply attribute)</a>
 
@@ -1662,6 +1798,8 @@
         <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TransportArc.product_id">(fhops.planning.tactical_operational.TransportArc attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary.product_windows">product_windows (fhops.salvage.degradation.DecayCurveLibrary attribute)</a>
+</li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningUnit.product_yields_m3_per_ha">product_yields_m3_per_ha (fhops.planning.tactical_operational.PlanningUnit attribute)</a>
 </li>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.production_rate">production_rate (fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
@@ -1681,6 +1819,8 @@
       <li><a href="api/fhops.scheduling.html#fhops.scheduling.systems.SystemJob.productivity_overrides">productivity_overrides (fhops.scheduling.systems.SystemJob attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario.products">products (fhops.planning.tactical_operational.TacticalOperationalScenario attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow">ProductWindow (class in fhops.salvage.degradation)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetOption.purchase_cost">purchase_cost (fhops.planning.tactical_operational.FleetOption attribute)</a>
 </li>
@@ -1702,10 +1842,22 @@
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.SilvicultureTransition.required">required (fhops.planning.tactical_operational.SilvicultureTransition attribute)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS">REQUIRED_STORAGE_COLUMNS (in module fhops.salvage.report)</a>
+</li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.PlaybackConfig.respect_blackouts">respect_blackouts (fhops.evaluation.PlaybackConfig attribute)</a>
 </li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.PlaybackSample.result">result (fhops.evaluation.PlaybackSample attribute)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve.retention_at">retention_at() (fhops.salvage.degradation.DecayCurve method)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve.retention_definition">retention_definition (fhops.salvage.degradation.DecayCurve attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint.retention_fraction">retention_fraction (fhops.salvage.degradation.DecayCurvePoint attribute)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource.retrieved">retrieved (fhops.salvage.degradation.DecayCurveSource attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.SamplingContext.rng">rng (fhops.evaluation.SamplingContext attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario.road_dependencies">road_dependencies (fhops.planning.tactical_operational.TacticalOperationalScenario attribute)</a>
@@ -1718,8 +1870,6 @@
         <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadProject.road_id">(fhops.planning.tactical_operational.RoadProject attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadDependency">RoadDependency (class in fhops.planning.tactical_operational)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadProject">RoadProject (class in fhops.planning.tactical_operational)</a>
@@ -1742,6 +1892,8 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport">SalvageReport (class in fhops.salvage.report)</a>
+</li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.DaySummary.sample_id">sample_id (fhops.evaluation.DaySummary attribute)</a>
 
       <ul>
@@ -1783,7 +1935,11 @@
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.schedule_to_records">schedule_to_records() (in module fhops.evaluation)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario.schema_version">schema_version (fhops.planning.tactical_operational.TacticalOperationalScenario attribute)</a>
+
+      <ul>
+        <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary.schema_version">(fhops.salvage.degradation.DecayCurveLibrary attribute)</a>
 </li>
+      </ul></li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PeriodLevel.SEASON">SEASON (fhops.planning.tactical_operational.PeriodLevel attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningPeriod.season_tags">season_tags (fhops.planning.tactical_operational.PlanningPeriod attribute)</a>
@@ -1862,6 +2018,12 @@
 </li>
       <li><a href="api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.solve_tactical_operational_milp">solve_tactical_operational_milp() (in module fhops.model.milp.tactical_operational)</a>
 </li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve.source">source (fhops.salvage.degradation.DecayCurve attribute)</a>
+
+      <ul>
+        <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow.source">(fhops.salvage.degradation.ProductWindow attribute)</a>
+</li>
+      </ul></li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario.source_hash">source_hash (fhops.planning.tactical_operational.TacticalOperationalScenario attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.ExternalSupply.source_id">source_id (fhops.planning.tactical_operational.ExternalSupply attribute)</a>
@@ -1938,10 +2100,10 @@
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Facility.terminal_inventory_value_per_m3">terminal_inventory_value_per_m3 (fhops.planning.tactical_operational.Facility attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.terrain_pool">terrain_pool (fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.terrain_weights">terrain_weights (fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
 </li>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.tier">tier (fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
@@ -1962,6 +2124,12 @@
         <li><a href="api/fhops.evaluation.html#fhops.evaluation.ShiftSummary.total_hours">(fhops.evaluation.ShiftSummary attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport.total_original_volume_m3">total_original_volume_m3 (fhops.salvage.report.SalvageReport property)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport.total_retained_value">total_retained_value (fhops.salvage.report.SalvageReport property)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport.total_retained_volume_m3">total_retained_volume_m3 (fhops.salvage.report.SalvageReport property)</a>
+</li>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.KPIResult.totals">totals (fhops.evaluation.KPIResult attribute)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.SilvicultureTransition.transition_id">transition_id (fhops.planning.tactical_operational.SilvicultureTransition attribute)</a>
@@ -1975,6 +2143,10 @@
 
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource.url">url (fhops.salvage.degradation.DecayCurveSource attribute)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.DaySummary.utilisation_ratio">utilisation_ratio (fhops.evaluation.DaySummary attribute)</a>
 
@@ -2016,10 +2188,10 @@
         <li><a href="api/fhops.evaluation.html#fhops.evaluation.ShiftSummary.weather_severity_total">(fhops.evaluation.ShiftSummary attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.WeatherEvent">WeatherEvent (class in fhops.evaluation)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fhops.evaluation.html#fhops.evaluation.WeatherEventConfig">WeatherEventConfig (class in fhops.evaluation)</a>
 </li>
       <li><a href="api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PeriodLevel.WEEK">WEEK (fhops.planning.tactical_operational.PeriodLevel attribute)</a>
@@ -2031,6 +2203,8 @@
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetConfig.work_required">work_required (fhops.scenario.synthetic.SyntheticDatasetConfig attribute)</a>
 </li>
       <li><a href="api/fhops.scenario.html#fhops.scenario.synthetic.SyntheticDatasetBundle.write">write() (fhops.scenario.synthetic.SyntheticDatasetBundle method)</a>
+</li>
+      <li><a href="api/fhops.salvage.html#fhops.salvage.report.write_salvage_report">write_salvage_report() (in module fhops.salvage.report)</a>
 </li>
   </ul></td>
 </tr></table>

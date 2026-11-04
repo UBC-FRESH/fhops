@@ -69,6 +69,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -806,14 +858,14 @@ card, pilot run, frequency fits, and surrogate artifacts.</p>
 <span class="p">)</span>
 
 <span class="n">bundle</span> <span class="o">=</span> <span class="n">load_femic_hydrology_bundle</span><span class="p">(</span>
-    <span class="n">Path</span><span class="p">(</span><span class="s2">"data/femic/hydrology-response-2026.10.0"</span><span class="p">),</span>
-    <span class="n">expected_bundle_id</span><span class="o">=</span><span class="s2">"hydro-response-example"</span><span class="p">,</span>
-    <span class="n">expected_bundle_version</span><span class="o">=</span><span class="s2">"2026.10.0"</span><span class="p">,</span>
+    <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/femic/hydrology-response-2026.10.0&quot;</span><span class="p">),</span>
+    <span class="n">expected_bundle_id</span><span class="o">=</span><span class="s2">&quot;hydro-response-example&quot;</span><span class="p">,</span>
+    <span class="n">expected_bundle_version</span><span class="o">=</span><span class="s2">&quot;2026.10.0&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">pin</span> <span class="o">=</span> <span class="n">bundle_pin</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
 <span class="n">readiness</span> <span class="o">=</span> <span class="n">assess_femic_hydrology_readiness</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">pin</span><span class="p">[</span><span class="s2">"manifest_sha256"</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pin</span><span class="p">[</span><span class="s2">&quot;manifest_sha256&quot;</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">readiness</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -881,14 +933,14 @@ B01,,,unit-1,watershed-1,receptor-1,block review
 </div>
 <p>Review metadata is a separate JSON document:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">"schema_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fhops.hydrology.crosswalk.v1"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"crosswalk_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"crosswalk-example"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"created_utc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-27T00:00:00+00:00"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"review_status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"reviewed_by"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewer-id"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Manual block/landing/road review"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Reviewed FEMIC domain bundle"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"caveats"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Screening crosswalk only."</span><span class="p">]</span>
+<span class="w">  </span><span class="nt">&quot;schema_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fhops.hydrology.crosswalk.v1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;crosswalk_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;crosswalk-example&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;created_utc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-10-27T00:00:00+00:00&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;review_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;reviewed_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewer-id&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Manual block/landing/road review&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Reviewed FEMIC domain bundle&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;caveats&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Screening crosswalk only.&quot;</span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -916,36 +968,36 @@ crosswalk checksum, review state, rows, coverage, warnings, and caveats.</p>
 the <cite>ws4.hydrology.exposure.v1</cite> contract independently and binds it to one
 assignments CSV.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">"schema_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ws4.hydrology.exposure.v1"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"exposure_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"exposure-2026-001"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"generated_utc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-27T00:00:00+00:00"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"source_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed-road-and-culvert-inventory"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"review_status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"reviewer_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewer-id"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"schedule_sha256"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"watershed_ids"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"watershed-1"</span><span class="p">],</span>
-<span class="w">  </span><span class="nt">"periods"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
-<span class="w">  </span><span class="nt">"rows"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">&quot;schema_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ws4.hydrology.exposure.v1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;exposure_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;exposure-2026-001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;generated_utc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-10-27T00:00:00+00:00&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed-road-and-culvert-inventory&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;review_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;reviewer_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewer-id&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;schedule_sha256&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;watershed_ids&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;watershed-1&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;periods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;rows&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">"watershed_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"watershed-1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"period"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"road_built_km"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"road_used_km"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.25</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"road_decommissioned_km"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"culvert_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"culvert_exposed_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">      </span><span class="nt">&quot;watershed_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;watershed-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;period&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;road_built_km&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;road_used_km&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.25</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;road_decommissioned_km&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;culvert_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;culvert_exposed_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">"watershed_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"watershed-1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"period"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"road_built_km"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"road_used_km"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.75</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"road_decommissioned_km"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"culvert_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"culvert_exposed_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">      </span><span class="nt">&quot;watershed_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;watershed-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;period&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;road_built_km&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;road_used_km&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.75</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;road_decommissioned_km&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;culvert_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;culvert_exposed_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">"caveats"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Screening input only."</span><span class="p">]</span>
+<span class="w">  </span><span class="nt">&quot;caveats&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Screening input only.&quot;</span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1035,42 +1087,42 @@ schedule-bound road/culvert exposure, and one-schedule screening.</p>
 <p>Phase 16 adds a separate operational hazard contract. It is not a FEMIC
 response bundle and does not run a hydrology model.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">"schema_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fhops.hydrology.hazard.v1"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"hazard_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hazard-2026-001"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"generated_utc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-27T00:00:00+00:00"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"source_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed-operational-forecast"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"review_status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"reviewer_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewer-id"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"windows"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">&quot;schema_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fhops.hydrology.hazard.v1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;hazard_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hazard-2026-001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;generated_utc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-10-27T00:00:00+00:00&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed-operational-forecast&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;review_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;reviewer_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewer-id&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;windows&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">"watershed_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"watershed-1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"start_day"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"end_day"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"watch"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"return_period_years"</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"source_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed-operational-forecast"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"notes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Watch window."</span>
+<span class="w">      </span><span class="nt">&quot;watershed_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;watershed-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;start_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;end_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;severity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;watch&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;return_period_years&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed-operational-forecast&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Watch window.&quot;</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">"watershed_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"watershed-1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"start_day"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"end_day"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"warning"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"return_period_years"</span><span class="p">:</span><span class="w"> </span><span class="mf">10.0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"source_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed-operational-forecast"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"notes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Warning window."</span>
+<span class="w">      </span><span class="nt">&quot;watershed_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;watershed-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;start_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;end_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;severity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;return_period_years&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed-operational-forecast&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Warning window.&quot;</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">"watershed_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"watershed-1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"start_day"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"end_day"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"closure"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"return_period_years"</span><span class="p">:</span><span class="w"> </span><span class="mf">50.0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"source_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed-operational-forecast"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"notes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Closure window."</span>
+<span class="w">      </span><span class="nt">&quot;watershed_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;watershed-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;start_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;end_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;severity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;closure&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;return_period_years&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">50.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed-operational-forecast&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Closure window.&quot;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">"caveats"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Operational screening only."</span><span class="p">]</span>
+<span class="w">  </span><span class="nt">&quot;caveats&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Operational screening only.&quot;</span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1090,31 +1142,31 @@ derive hazard windows from weather or hydrology at runtime.</p>
 <h2>Road and Culvert Assets<a class="headerlink" href="#road-and-culvert-assets" title="Link to this heading"></a></h2>
 <p>Phase 16 asset evidence is explicit; FHOPS does not infer assets from geometry.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">"schema_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fhops.hydrology.assets.v1"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"inventory_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"assets-2026-001"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"generated_utc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-10-27T00:00:00+00:00"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"source_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed-road-culvert-inventory"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"review_status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewed"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"reviewer_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reviewer-id"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"assets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="nt">&quot;schema_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fhops.hydrology.assets.v1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;inventory_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assets-2026-001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;generated_utc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-10-27T00:00:00+00:00&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed-road-culvert-inventory&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;review_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewed&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;reviewer_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reviewer-id&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;assets&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">"asset_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"R1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"asset_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"road"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"watershed_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"watershed-1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"road_job_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"R1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"vulnerability_class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"high"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"notes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Road asset."</span>
+<span class="w">      </span><span class="nt">&quot;asset_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;R1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;asset_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;road&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;watershed_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;watershed-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;road_job_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;R1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;vulnerability_class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;high&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Road asset.&quot;</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">"asset_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"asset_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"culvert"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"watershed_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"watershed-1"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"road_job_id"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"vulnerability_class"</span><span class="p">:</span><span class="w"> </span><span class="s2">"moderate"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"notes"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Culvert asset."</span>
+<span class="w">      </span><span class="nt">&quot;asset_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;asset_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;culvert&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;watershed_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;watershed-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;road_job_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;vulnerability_class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;moderate&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Culvert asset.&quot;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">"caveats"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Operational screening only."</span><span class="p">]</span>
+<span class="w">  </span><span class="nt">&quot;caveats&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Operational screening only.&quot;</span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 </div>

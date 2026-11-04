@@ -72,6 +72,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../howto/tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../howto/data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -288,6 +293,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -331,6 +349,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../../howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -401,6 +430,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -617,7 +662,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -632,6 +676,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -792,7 +844,7 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">alt</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="n">HISTORY_CSV</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"docs/examples/analytics/data/tuner_reports/history_summary.csv"</span><span class="p">)</span>
+<span class="n">HISTORY_CSV</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;docs/examples/analytics/data/tuner_reports/history_summary.csv&quot;</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">HISTORY_CSV</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
     <span class="n">history</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">HISTORY_CSV</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
@@ -800,36 +852,36 @@
     <span class="n">history</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">"snapshot"</span><span class="p">:</span> <span class="s2">"2024-11-10T000000Z"</span><span class="p">,</span>
-                <span class="s2">"algorithm"</span><span class="p">:</span> <span class="s2">"random"</span><span class="p">,</span>
-                <span class="s2">"scenario"</span><span class="p">:</span> <span class="s2">"SampleScenario"</span><span class="p">,</span>
-                <span class="s2">"best_objective"</span><span class="p">:</span> <span class="mf">6.2</span><span class="p">,</span>
-                <span class="s2">"mean_objective"</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span>
-                <span class="s2">"runs"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;snapshot&quot;</span><span class="p">:</span> <span class="s2">&quot;2024-11-10T000000Z&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;random&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;scenario&quot;</span><span class="p">:</span> <span class="s2">&quot;SampleScenario&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;best_objective&quot;</span><span class="p">:</span> <span class="mf">6.2</span><span class="p">,</span>
+                <span class="s2">&quot;mean_objective&quot;</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span>
+                <span class="s2">&quot;runs&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="p">{</span>
-                <span class="s2">"snapshot"</span><span class="p">:</span> <span class="s2">"2024-11-11T000000Z"</span><span class="p">,</span>
-                <span class="s2">"algorithm"</span><span class="p">:</span> <span class="s2">"random"</span><span class="p">,</span>
-                <span class="s2">"scenario"</span><span class="p">:</span> <span class="s2">"SampleScenario"</span><span class="p">,</span>
-                <span class="s2">"best_objective"</span><span class="p">:</span> <span class="mf">6.8</span><span class="p">,</span>
-                <span class="s2">"mean_objective"</span><span class="p">:</span> <span class="mf">6.4</span><span class="p">,</span>
-                <span class="s2">"runs"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;snapshot&quot;</span><span class="p">:</span> <span class="s2">&quot;2024-11-11T000000Z&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;random&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;scenario&quot;</span><span class="p">:</span> <span class="s2">&quot;SampleScenario&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;best_objective&quot;</span><span class="p">:</span> <span class="mf">6.8</span><span class="p">,</span>
+                <span class="s2">&quot;mean_objective&quot;</span><span class="p">:</span> <span class="mf">6.4</span><span class="p">,</span>
+                <span class="s2">&quot;runs&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="p">{</span>
-                <span class="s2">"snapshot"</span><span class="p">:</span> <span class="s2">"2024-11-12T000000Z"</span><span class="p">,</span>
-                <span class="s2">"algorithm"</span><span class="p">:</span> <span class="s2">"grid"</span><span class="p">,</span>
-                <span class="s2">"scenario"</span><span class="p">:</span> <span class="s2">"SampleScenario"</span><span class="p">,</span>
-                <span class="s2">"best_objective"</span><span class="p">:</span> <span class="mf">7.1</span><span class="p">,</span>
-                <span class="s2">"mean_objective"</span><span class="p">:</span> <span class="mf">6.8</span><span class="p">,</span>
-                <span class="s2">"runs"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;snapshot&quot;</span><span class="p">:</span> <span class="s2">&quot;2024-11-12T000000Z&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;grid&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;scenario&quot;</span><span class="p">:</span> <span class="s2">&quot;SampleScenario&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;best_objective&quot;</span><span class="p">:</span> <span class="mf">7.1</span><span class="p">,</span>
+                <span class="s2">&quot;mean_objective&quot;</span><span class="p">:</span> <span class="mf">6.8</span><span class="p">,</span>
+                <span class="s2">&quot;runs&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="p">{</span>
-                <span class="s2">"snapshot"</span><span class="p">:</span> <span class="s2">"2024-11-13T000000Z"</span><span class="p">,</span>
-                <span class="s2">"algorithm"</span><span class="p">:</span> <span class="s2">"grid"</span><span class="p">,</span>
-                <span class="s2">"scenario"</span><span class="p">:</span> <span class="s2">"SampleScenario"</span><span class="p">,</span>
-                <span class="s2">"best_objective"</span><span class="p">:</span> <span class="mf">7.5</span><span class="p">,</span>
-                <span class="s2">"mean_objective"</span><span class="p">:</span> <span class="mf">7.1</span><span class="p">,</span>
-                <span class="s2">"runs"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s2">&quot;snapshot&quot;</span><span class="p">:</span> <span class="s2">&quot;2024-11-13T000000Z&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="s2">&quot;grid&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;scenario&quot;</span><span class="p">:</span> <span class="s2">&quot;SampleScenario&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;best_objective&quot;</span><span class="p">:</span> <span class="mf">7.5</span><span class="p">,</span>
+                <span class="s2">&quot;mean_objective&quot;</span><span class="p">:</span> <span class="mf">7.1</span><span class="p">,</span>
+                <span class="s2">&quot;runs&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">]</span>
     <span class="p">)</span>
@@ -917,8 +969,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">"scenario"</span><span class="p">,</span> <span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"snapshot"</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">history</span><span class="p">[</span><span class="s2">"best_delta"</span><span class="p">]</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"scenario"</span><span class="p">,</span> <span class="s2">"algorithm"</span><span class="p">])[</span><span class="s2">"best_objective"</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">history</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;scenario&quot;</span><span class="p">,</span> <span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;snapshot&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">history</span><span class="p">[</span><span class="s2">&quot;best_delta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;scenario&quot;</span><span class="p">,</span> <span class="s2">&quot;algorithm&quot;</span><span class="p">])[</span><span class="s2">&quot;best_objective&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
 <span class="n">history</span>
 </pre></div>
 </div>
@@ -1010,47 +1062,47 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">alt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">history</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
     <span class="n">display</span><span class="p">(</span>
-        <span class="s2">"Altair not installed or no data available; install `altair` or supply reports to render the chart."</span>
+        <span class="s2">&quot;Altair not installed or no data available; install `altair` or supply reports to render the chart.&quot;</span>
     <span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">value_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"best_objective"</span><span class="p">]</span>
+    <span class="n">value_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;best_objective&quot;</span><span class="p">]</span>
     <span class="n">value_columns</span> <span class="o">+=</span> <span class="p">[</span>
         <span class="n">c</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">"best_total_production"</span><span class="p">,</span>
-            <span class="s2">"best_mobilisation_cost"</span><span class="p">,</span>
-            <span class="s2">"best_utilisation_ratio_shift"</span><span class="p">,</span>
-            <span class="s2">"best_utilisation_ratio_day"</span><span class="p">,</span>
-            <span class="s2">"best_downtime_hours"</span><span class="p">,</span>
-            <span class="s2">"best_weather_severity"</span><span class="p">,</span>
+            <span class="s2">&quot;best_total_production&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;best_mobilisation_cost&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;best_utilisation_ratio_shift&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;best_utilisation_ratio_day&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;best_downtime_hours&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;best_weather_severity&quot;</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">history</span><span class="o">.</span><span class="n">columns</span>
     <span class="p">]</span>
     <span class="n">chart_df</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span>
-        <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">"snapshot"</span><span class="p">,</span> <span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"scenario"</span><span class="p">],</span>
+        <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;snapshot&quot;</span><span class="p">,</span> <span class="s2">&quot;algorithm&quot;</span><span class="p">,</span> <span class="s2">&quot;scenario&quot;</span><span class="p">],</span>
         <span class="n">value_vars</span><span class="o">=</span><span class="n">value_columns</span><span class="p">,</span>
-        <span class="n">var_name</span><span class="o">=</span><span class="s2">"metric"</span><span class="p">,</span>
-        <span class="n">value_name</span><span class="o">=</span><span class="s2">"value"</span><span class="p">,</span>
+        <span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;metric&quot;</span><span class="p">,</span>
+        <span class="n">value_name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">metric_labels</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"best_objective"</span><span class="p">:</span> <span class="s2">"Best Objective"</span><span class="p">,</span>
-        <span class="s2">"best_total_production"</span><span class="p">:</span> <span class="s2">"Total Production"</span><span class="p">,</span>
-        <span class="s2">"best_mobilisation_cost"</span><span class="p">:</span> <span class="s2">"Mobilisation Cost"</span><span class="p">,</span>
-        <span class="s2">"best_utilisation_ratio_shift"</span><span class="p">:</span> <span class="s2">"Utilisation (Shift)"</span><span class="p">,</span>
-        <span class="s2">"best_utilisation_ratio_day"</span><span class="p">:</span> <span class="s2">"Utilisation (Day)"</span><span class="p">,</span>
-        <span class="s2">"best_downtime_hours"</span><span class="p">:</span> <span class="s2">"Downtime Hours"</span><span class="p">,</span>
-        <span class="s2">"best_weather_severity"</span><span class="p">:</span> <span class="s2">"Weather Severity"</span><span class="p">,</span>
+        <span class="s2">&quot;best_objective&quot;</span><span class="p">:</span> <span class="s2">&quot;Best Objective&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;best_total_production&quot;</span><span class="p">:</span> <span class="s2">&quot;Total Production&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;best_mobilisation_cost&quot;</span><span class="p">:</span> <span class="s2">&quot;Mobilisation Cost&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;best_utilisation_ratio_shift&quot;</span><span class="p">:</span> <span class="s2">&quot;Utilisation (Shift)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;best_utilisation_ratio_day&quot;</span><span class="p">:</span> <span class="s2">&quot;Utilisation (Day)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;best_downtime_hours&quot;</span><span class="p">:</span> <span class="s2">&quot;Downtime Hours&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;best_weather_severity&quot;</span><span class="p">:</span> <span class="s2">&quot;Weather Severity&quot;</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">chart_df</span><span class="p">[</span><span class="s2">"metric_label"</span><span class="p">]</span> <span class="o">=</span> <span class="n">chart_df</span><span class="p">[</span><span class="s2">"metric"</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">metric_labels</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">chart_df</span><span class="p">[</span><span class="s2">"metric"</span><span class="p">])</span>
+    <span class="n">chart_df</span><span class="p">[</span><span class="s2">&quot;metric_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chart_df</span><span class="p">[</span><span class="s2">&quot;metric&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">metric_labels</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">chart_df</span><span class="p">[</span><span class="s2">&quot;metric&quot;</span><span class="p">])</span>
     <span class="n">chart</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">chart_df</span><span class="p">)</span>
         <span class="o">.</span><span class="n">mark_line</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="o">.</span><span class="n">encode</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="s2">"snapshot:N"</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="s2">"value:Q"</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="s2">"algorithm:N"</span><span class="p">,</span>
-            <span class="n">column</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s2">"metric_label:N"</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Metric"</span><span class="p">),</span>
-            <span class="n">row</span><span class="o">=</span><span class="s2">"scenario:N"</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="s2">&quot;snapshot:N&quot;</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="s2">&quot;value:Q&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;algorithm:N&quot;</span><span class="p">,</span>
+            <span class="n">column</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s2">&quot;metric_label:N&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Metric&quot;</span><span class="p">),</span>
+            <span class="n">row</span><span class="o">=</span><span class="s2">&quot;scenario:N&quot;</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="p">)</span>
     <span class="n">chart</span>

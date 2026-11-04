@@ -69,6 +69,11 @@
 <li class="toctree-l2"><a class="reference internal" href="tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hauling.html#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -844,7 +896,7 @@ scoring loop is parallelised.</p>
 <li><p><strong>“Watch mode disabled: not running in an interactive terminal.”</strong>
 The dashboard renders only when stdout is a TTY. If you want both the live view and a log, wrap
 the command with <code class="docutils literal notranslate"><span class="pre">script</span></code> (or run inside tmux/screen) so the subprocess gets a pseudo-terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">script</span> <span class="o">-</span><span class="n">q</span> <span class="o">-</span><span class="n">c</span> <span class="s2">"fhops solve-heur ... --watch"</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">fhops_watch</span><span class="o">.</span><span class="n">log</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">script</span> <span class="o">-</span><span class="n">q</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;fhops solve-heur ... --watch&quot;</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">fhops_watch</span><span class="o">.</span><span class="n">log</span>
 </pre></div>
 </div>
 <p>The terminal shows the dashboard; the log captures the CLI text emitted after completion.</p>
@@ -897,7 +949,7 @@ tar<span class="w"> </span>xvfz<span class="w"> </span>licensetools13.0.0_linux6
 <span class="nb">export</span><span class="w"> </span><span class="nv">GRB_LICENSE_FILE</span><span class="o">=</span>/path/to/gurobi.lic
 
 <span class="c1"># quick sanity check</span>
-python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import gurobipy as gp; m = gp.Model(); m.setParam('OutputFlag', 0); m.optimize()"</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import gurobipy as gp; m = gp.Model(); m.setParam(&#39;OutputFlag&#39;, 0); m.optimize()&quot;</span>
 </pre></div>
 </div>
 <p>Once the licence is active, any FHOPS command can use Gurobi by passing <code class="docutils literal notranslate"><span class="pre">--driver</span> <span class="pre">gurobi</span></code> (or the
@@ -1010,14 +1062,14 @@ shakes affect runtime.</p></li>
 </ul>
 <p>Example JSON snippet:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">"scenario"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tiny7"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"solver"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sa"</span><span class="p">,</span>
-<span class="w"> </span><span class="nt">"objective"</span><span class="p">:</span><span class="w"> </span><span class="mf">9.5</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"runtime_s"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"kpi_total_production"</span><span class="p">:</span><span class="w"> </span><span class="mf">42.0</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"kpi_mobilisation_cost"</span><span class="p">:</span><span class="w"> </span><span class="mf">65.0</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"kpi_mobilisation_cost_by_machine"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{\"H2\": 65.0}"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"kpi_sequencing_violation_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="nt">&quot;scenario&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tiny7&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;solver&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sa&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;objective&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">9.5</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;runtime_s&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;kpi_total_production&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">42.0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;kpi_mobilisation_cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">65.0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;kpi_mobilisation_cost_by_machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{\&quot;H2\&quot;: 65.0}&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;kpi_sequencing_violation_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1035,8 +1087,8 @@ bounded.</p>
 telemetry). <code class="docutils literal notranslate"><span class="pre">operators_stats</span></code> is a JSON object recording proposals, accepted moves, skips, weights,
 and acceptance rates for each registered operator. Example snippet:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">"swap"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"proposals"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="nt">"accepted"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="nt">"skipped"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">"weight"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="nt">"acceptance_rate"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">},</span>
-<span class="w">  </span><span class="nt">"move"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"proposals"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="nt">"accepted"</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="nt">"skipped"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">"weight"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="nt">"acceptance_rate"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">}</span>
+<span class="w">  </span><span class="nt">&quot;swap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;proposals&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;accepted&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;skipped&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;weight&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;acceptance_rate&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;move&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;proposals&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;accepted&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;skipped&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;weight&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;acceptance_rate&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>

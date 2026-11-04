@@ -69,6 +69,11 @@
 <li class="toctree-l2"><a class="reference internal" href="tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hauling.html#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -1072,23 +1124,23 @@ and <code class="docutils literal notranslate"><span class="pre">remaining_work_
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.planning</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_rolling_kpis</span><span class="p">,</span> <span class="n">solve_rolling_plan</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
 
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/med42/scenario.yaml"</span><span class="p">)</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">&quot;examples/med42/scenario.yaml&quot;</span><span class="p">)</span>
 <span class="n">rolling</span> <span class="o">=</span> <span class="n">solve_rolling_plan</span><span class="p">(</span>
     <span class="n">scenario</span><span class="p">,</span>
     <span class="n">master_days</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
     <span class="n">subproblem_days</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span>
     <span class="n">lock_days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
-    <span class="n">solver</span><span class="o">=</span><span class="s2">"mip"</span><span class="p">,</span>
-    <span class="n">mip_solver</span><span class="o">=</span><span class="s2">"highs"</span><span class="p">,</span>
+    <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;mip&quot;</span><span class="p">,</span>
+    <span class="n">mip_solver</span><span class="o">=</span><span class="s2">&quot;highs&quot;</span><span class="p">,</span>
     <span class="n">mip_time_limit</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">baseline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_monolithic_assignments.csv"</span><span class="p">)</span>
+<span class="n">baseline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tmp/med42_monolithic_assignments.csv&quot;</span><span class="p">)</span>
 <span class="n">comparison</span> <span class="o">=</span> <span class="n">compute_rolling_kpis</span><span class="p">(</span>
     <span class="n">scenario</span><span class="p">,</span>
     <span class="n">rolling</span><span class="p">,</span>
     <span class="n">baseline_assignments</span><span class="o">=</span><span class="n">baseline_df</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">delta_totals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"total_production_delta"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">delta_totals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_production_delta&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">comparison</span></code> payload includes:</p>
@@ -1129,23 +1181,23 @@ keeps MASc experiments reproducible without wiring ad-hoc notebooks.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.planning</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluate_rolling_plan</span><span class="p">,</span> <span class="n">solve_rolling_plan</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
 
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/med42/scenario.yaml"</span><span class="p">)</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">&quot;examples/med42/scenario.yaml&quot;</span><span class="p">)</span>
 <span class="n">rolling</span> <span class="o">=</span> <span class="n">solve_rolling_plan</span><span class="p">(</span>
     <span class="n">scenario</span><span class="p">,</span>
     <span class="n">master_days</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
     <span class="n">subproblem_days</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span>
     <span class="n">lock_days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
-    <span class="n">solver</span><span class="o">=</span><span class="s2">"sa"</span><span class="p">,</span>
+    <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;sa&quot;</span><span class="p">,</span>
     <span class="n">sa_iters</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">baseline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_full_horizon.csv"</span><span class="p">)</span>
+<span class="n">baseline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tmp/med42_full_horizon.csv&quot;</span><span class="p">)</span>
 <span class="n">comparison</span> <span class="o">=</span> <span class="n">evaluate_rolling_plan</span><span class="p">(</span>
     <span class="n">rolling</span><span class="p">,</span>
     <span class="n">scenario</span><span class="p">,</span>
     <span class="n">baseline_assignments</span><span class="o">=</span><span class="n">baseline_df</span><span class="p">,</span>
-    <span class="n">baseline_label</span><span class="o">=</span><span class="s2">"full_sa"</span><span class="p">,</span>
+    <span class="n">baseline_label</span><span class="o">=</span><span class="s2">&quot;full_sa&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"total_production_delta"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_production_delta&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </section>
@@ -1161,21 +1213,21 @@ Example skeleton:</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.planning</span><span class="w"> </span><span class="kn">import</span> <span class="n">comparison_dataframe</span><span class="p">,</span> <span class="n">evaluate_rolling_plan</span><span class="p">,</span> <span class="n">solve_rolling_plan</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
 
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/med42/scenario.yaml"</span><span class="p">)</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">&quot;examples/med42/scenario.yaml&quot;</span><span class="p">)</span>
 <span class="n">configs</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"42/21/7_sa"</span><span class="p">,</span> <span class="s2">"master"</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">"sub"</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span> <span class="s2">"lock"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">"solver"</span><span class="p">:</span> <span class="s2">"sa"</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"42/14/7_sa"</span><span class="p">,</span> <span class="s2">"master"</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">"sub"</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">"lock"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">"solver"</span><span class="p">:</span> <span class="s2">"sa"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;42/21/7_sa&quot;</span><span class="p">,</span> <span class="s2">&quot;master&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span> <span class="s2">&quot;lock&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;solver&quot;</span><span class="p">:</span> <span class="s2">&quot;sa&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;42/14/7_sa&quot;</span><span class="p">,</span> <span class="s2">&quot;master&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">&quot;lock&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;solver&quot;</span><span class="p">:</span> <span class="s2">&quot;sa&quot;</span><span class="p">},</span>
 <span class="p">]</span>
-<span class="n">baseline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_full_horizon.csv"</span><span class="p">)</span>
+<span class="n">baseline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tmp/med42_full_horizon.csv&quot;</span><span class="p">)</span>
 
 <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">solve_rolling_plan</span><span class="p">(</span>
         <span class="n">scenario</span><span class="p">,</span>
-        <span class="n">master_days</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"master"</span><span class="p">],</span>
-        <span class="n">subproblem_days</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"sub"</span><span class="p">],</span>
-        <span class="n">lock_days</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"lock"</span><span class="p">],</span>
-        <span class="n">solver</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"solver"</span><span class="p">],</span>
+        <span class="n">master_days</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;master&quot;</span><span class="p">],</span>
+        <span class="n">subproblem_days</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;sub&quot;</span><span class="p">],</span>
+        <span class="n">lock_days</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;lock&quot;</span><span class="p">],</span>
+        <span class="n">solver</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;solver&quot;</span><span class="p">],</span>
         <span class="n">sa_iters</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">comparison</span> <span class="o">=</span> <span class="n">evaluate_rolling_plan</span><span class="p">(</span>
@@ -1185,17 +1237,17 @@ Example skeleton:</p>
     <span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">comparison_dataframe</span><span class="p">(</span>
         <span class="n">comparison</span><span class="p">,</span>
-        <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">"total_production"</span><span class="p">,</span> <span class="s2">"mobilisation_cost"</span><span class="p">],</span>
+        <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;total_production&quot;</span><span class="p">,</span> <span class="s2">&quot;mobilisation_cost&quot;</span><span class="p">],</span>
     <span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">"config"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"label"</span><span class="p">]</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
     <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
 <span class="n">plot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">prod</span> <span class="o">=</span> <span class="n">plot_df</span><span class="p">[</span><span class="n">plot_df</span><span class="p">[</span><span class="s2">"metric"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"total_production"</span><span class="p">]</span>
+<span class="n">prod</span> <span class="o">=</span> <span class="n">plot_df</span><span class="p">[</span><span class="n">plot_df</span><span class="p">[</span><span class="s2">&quot;metric&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;total_production&quot;</span><span class="p">]</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">prod</span><span class="p">[</span><span class="s2">"config"</span><span class="p">],</span> <span class="n">prod</span><span class="p">[</span><span class="s2">"pct_delta"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"</span><span class="si">% g</span><span class="s2">ap vs. baseline (total production)"</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Rolling vs. full-horizon (med42)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">prod</span><span class="p">[</span><span class="s2">&quot;config&quot;</span><span class="p">],</span> <span class="n">prod</span><span class="p">[</span><span class="s2">&quot;pct_delta&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">% g</span><span class="s2">ap vs. baseline (total production)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Rolling vs. full-horizon (med42)&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -1250,13 +1302,13 @@ fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w">
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.planning</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_rolling_kpis</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
 
-<span class="n">METRICS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"total_production"</span><span class="p">,</span> <span class="s2">"mobilisation_cost"</span><span class="p">]</span>
+<span class="n">METRICS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;total_production&quot;</span><span class="p">,</span> <span class="s2">&quot;mobilisation_cost&quot;</span><span class="p">]</span>
 
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/med42/scenario.yaml"</span><span class="p">)</span>
-<span class="n">baseline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_baseline.csv"</span><span class="p">)</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">&quot;examples/med42/scenario.yaml&quot;</span><span class="p">)</span>
+<span class="n">baseline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tmp/med42_baseline.csv&quot;</span><span class="p">)</span>
 <span class="n">configs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"21_7"</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_roll_21_7.csv"</span><span class="p">),</span>
-    <span class="s2">"14_7"</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/med42_roll_14_7.csv"</span><span class="p">),</span>
+    <span class="s2">&quot;21_7&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tmp/med42_roll_21_7.csv&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;14_7&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tmp/med42_roll_14_7.csv&quot;</span><span class="p">),</span>
 <span class="p">}</span>
 <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1264,18 +1316,18 @@ fhops<span class="w"> </span>plan<span class="w"> </span>rolling<span class="w">
     <span class="n">deltas</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">delta_totals</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="p">{</span>
-            <span class="s2">"metric"</span><span class="p">:</span> <span class="n">metric</span><span class="p">,</span>
-            <span class="s2">"rolling"</span><span class="p">:</span> <span class="n">comp</span><span class="o">.</span><span class="n">rolling_kpis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="p">),</span>
-            <span class="s2">"baseline"</span><span class="p">:</span> <span class="n">comp</span><span class="o">.</span><span class="n">baseline_kpis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="p">),</span>
-            <span class="s2">"delta"</span><span class="p">:</span> <span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">_delta"</span><span class="p">),</span>
-            <span class="s2">"pct_delta"</span><span class="p">:</span> <span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">_pct_delta"</span><span class="p">),</span>
+            <span class="s2">&quot;metric&quot;</span><span class="p">:</span> <span class="n">metric</span><span class="p">,</span>
+            <span class="s2">&quot;rolling&quot;</span><span class="p">:</span> <span class="n">comp</span><span class="o">.</span><span class="n">rolling_kpis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="p">),</span>
+            <span class="s2">&quot;baseline&quot;</span><span class="p">:</span> <span class="n">comp</span><span class="o">.</span><span class="n">baseline_kpis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="p">),</span>
+            <span class="s2">&quot;delta&quot;</span><span class="p">:</span> <span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">_delta&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;pct_delta&quot;</span><span class="p">:</span> <span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">_pct_delta&quot;</span><span class="p">),</span>
         <span class="p">}</span>
         <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">METRICS</span>
     <span class="p">)</span>
-    <span class="n">frame</span><span class="p">[</span><span class="s2">"config"</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
+    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span>
     <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 <span class="n">plot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">plot_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">"docs/assets/rolling/masc_comparison_med42.csv"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plot_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;docs/assets/rolling/masc_comparison_med42.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="c1"># render your preferred plot (matplotlib/seaborn/altair) and save alongside the CSV</span>
 </pre></div>
 </div>

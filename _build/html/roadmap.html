@@ -69,6 +69,11 @@
 <li class="toctree-l2"><a class="reference internal" href="howto/tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="howto/data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -776,7 +828,7 @@ phases are mirrored below; consult the markdown file for live checklists and det
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>This roadmap orchestrates FHOPS’ evolution into a production-ready planning platform. It
 mirrors the multi-level planning system pioneered in Nemora: top-level phases here, with
 module-specific execution plans living in <span class="sb">`notes/`</span>. Update the checklist status and the
-"Detailed Next Steps" section as deliverables land. When in doubt, consult the linked notes
+&quot;Detailed Next Steps&quot; section as deliverables land. When in doubt, consult the linked notes
 before proposing new work.
 
 <span class="gu">## Phase 0 — Repository Foundations ✅ (complete)</span>
@@ -973,7 +1025,7 @@ and a thesis-calibrated SA solver.
 <span class="gu">## Phase 12 — FHOPS Web Application (WS4-Style) — complete</span>
 Parent <span class="ni">#171</span>; branch <span class="sb">`feature/p12-web-ui`</span> (active from 2026-10-25); plan
 <span class="sb">`notes/web_ui_expansion_plan.md`</span>; issue tree <span class="sb">`notes/web_ui_issue_tree.md`</span>.
-Adds an optional FastAPI + vanilla-ES-module web surface over the CLI's artefacts, following the
+Adds an optional FastAPI + vanilla-ES-module web surface over the CLI&#39;s artefacts, following the
 WS4 web UI design. The same application covers three lenses: shift-level operational planning
 (machine/crew day-shift Gantt, assignments, playback, KPIs), Ghotb-derived log hauling (Phase I
 flows/truckloads, Phase II/III truck/loader schedule, yard inventory, contractor workload, haul
@@ -999,9 +1051,9 @@ without adding dummy barges or relaxing capacity checks.
 <span class="gu">## Detailed Next Steps</span>
 <span class="k">0.</span> <span class="gs">**Phase 8 — 1.0.1 maintenance (`notes/v101_maintenance_plan.md`)**</span>
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#91</span> (<span class="sb">`issue-91-initial-state-contract`</span>) adds optional <span class="sb">`Scenario.initial_state`</span> and <span class="sb">`ScheduleLock.shift_id`</span>, honoured by the operational MILP (first-slot inventory/head-start, role-remaining cap, boundary move, lock constraints), heuristics, and playback, with v1.0.0 regression parity tests. Next: <span class="ni">#92</span> rolling-horizon carry-forward builds on this contract.
-<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#99</span> (<span class="sb">`issue-99-highs-warm-start`</span>) fixes the <span class="sb">`--incumbent`</span> <span class="sb">`TypeError`</span> with HiGHS: seeded HiGHS solves go through Pyomo's <span class="sb">`appsi_highs`</span> MIP start, the result/CLI/telemetry report whether HiGHS accepted the start, unsupported solvers warn (<span class="sb">`MilpWarmStartWarning`</span>), and limit-stopped solves keep their incumbent.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#99</span> (<span class="sb">`issue-99-highs-warm-start`</span>) fixes the <span class="sb">`--incumbent`</span> <span class="sb">`TypeError`</span> with HiGHS: seeded HiGHS solves go through Pyomo&#39;s <span class="sb">`appsi_highs`</span> MIP start, the result/CLI/telemetry report whether HiGHS accepted the start, unsupported solvers warn (<span class="sb">`MilpWarmStartWarning`</span>), and limit-stopped solves keep their incumbent.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#95</span> (<span class="sb">`issue-95-playback-figure`</span>) redraws the SoftwareX playback figure for legibility (manuscript text width, 9 pt text, legend above the panels) and regenerates only the playback assets with the <span class="ni">#93</span> event fixes; deterministic benchmark/tuning/scaling assets unchanged and SA re-solves reproduce the committed tiny7/small21 summaries.
-<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#92</span> (<span class="sb">`issue-92-rolling-carry-forward`</span>) replays the stitched locked plan on the base scenario after every iteration (<span class="sb">`carry_forward_state`</span>) and slices the next window with remaining volume + <span class="sb">`initial_state`</span>; user locks are merged into every window, blackouts rebased, locks keep <span class="sb">`shift_id`</span>, hooks record runtime and resolve <span class="sb">`solver="auto"`</span> to HiGHS. Follow-ups noted in the plan: empty-plan KPI artefact, MILP blackouts, end-of-window valuation, MILP/playback same-day inventory mismatch.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#92</span> (<span class="sb">`issue-92-rolling-carry-forward`</span>) replays the stitched locked plan on the base scenario after every iteration (<span class="sb">`carry_forward_state`</span>) and slices the next window with remaining volume + <span class="sb">`initial_state`</span>; user locks are merged into every window, blackouts rebased, locks keep <span class="sb">`shift_id`</span>, hooks record runtime and resolve <span class="sb">`solver=&quot;auto&quot;`</span> to HiGHS. Follow-ups noted in the plan: empty-plan KPI artefact, MILP blackouts, end-of-window valuation, MILP/playback same-day inventory mismatch.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#108</span> (<span class="sb">`issue-108-empty-plan-kpis`</span>) fixes the empty-plan KPI artefact: playback always carries a sequencing tracker, <span class="sb">`compute_kpis`</span> reports the delivered volume (0 for an empty plan, remaining = Σ <span class="sb">`work_required`</span>), and <span class="sb">`compute_rolling_kpis`</span> scores an empty baseline as zero delivery (an empty rolling plan still raises).
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#109/#110</span> (<span class="sb">`issue-109-milp-playback-alignment`</span>) align the operational MILP, heuristics, and playback sequencing rules (slot-level release, volume head starts, per-role output caps, unsequenced blocks, shift order, planned production in MILP rolling locks) so MILP plans replay without violations, and enforce timeline blackouts in the MILP. Reference-ladder heuristic results unchanged.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#116</span> (<span class="sb">`issue-116-heuristics-playback-audit`</span>) fixes the multi-shift SA/ILS/Tabu regression from <span class="ni">#109</span> (the repair stacked every role of a block on its landing per shift; it now respects landing capacity on multi-shift days — Jaffray ka_6/pg_6/ka_18 SA reach full delivery with 0 penalties), times the head-start waiver like the MILP, requires <span class="sb">`shift_id`</span> on multi-shift playback, and corrects the playback/KPI/stochastic findings of the audit. Reference ladder and SoftwareX playback assets byte-identical.
@@ -1009,19 +1061,19 @@ without adding dummy barges or relaxing capacity checks.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#115</span> (<span class="sb">`issue-115-milp-robustness`</span>, pre-release audit) hardens the operational MILP: the driver never raises for infeasible/no-incumbent solves and reports HiGHS errors as errors; locked machines may sit idle (no lock-induced infeasibility); joins use per-upstream staged inventories; the loader threshold follows the remaining block volume; <span class="sb">`role_remaining`</span> is capped at <span class="sb">`work_required`</span>; blackouts block every grid slot. Linear loader-free models are byte-identical; tiny7 optimum unchanged (4388.082752).
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#117</span> (<span class="sb">`issue-117-rolling-robustness`</span>) hardens rolling horizon after the pre-release audit: MILP windows without a solution no longer crash (recorded, lock span idle, optional <span class="sb">`fail_on_empty_window`</span>; CLI always writes partial outputs), empty windows are flagged and counted, locks outside block windows are rejected up front, windows outside a partial shift calendar get no shifts, and the replay tests are strengthened (independent linear-chain state machine, slot-order aware).
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#119</span> (<span class="sb">`issue-119-softwarex-asset-consistency`</span>) audits every SoftwareX benchmark/table/playback/scaling/tuning asset: all committed benchmark rows reproduce exactly on 1.0.1; the stale med42 SA default/diversify assignment CSVs and the stale manuscript tables are regenerated (published values unchanged), playback <span class="sb">`metrics.json`</span> reports delivered volume. Open: manuscript scaling runtimes come from another run; heuristic objectives omit some cached mobilisation (pre-existing).
-<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#124</span> (<span class="sb">`issue-124-legacy-mip-hook-warnings`</span>) aligns the legacy <span class="sb">`solve_mip`</span> with the operational driver (no raise; <span class="sb">`has_solution`</span>/<span class="sb">`outcome`</span>/<span class="sb">`solver_error`</span>/<span class="sb">`warnings`</span>; <span class="sb">`solve-mip`</span> exits 1 only on solver error/unavailable), forwards driver errors/warnings through the rolling MILP hook, and fixes the in-repo manuscript's FHOPS version and dependency lists. Finding: the legacy MIP's loader-buffer constraint makes every bundled example infeasible (also in 1.0.0); documented, formulation fix deferred.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#124</span> (<span class="sb">`issue-124-legacy-mip-hook-warnings`</span>) aligns the legacy <span class="sb">`solve_mip`</span> with the operational driver (no raise; <span class="sb">`has_solution`</span>/<span class="sb">`outcome`</span>/<span class="sb">`solver_error`</span>/<span class="sb">`warnings`</span>; <span class="sb">`solve-mip`</span> exits 1 only on solver error/unavailable), forwards driver errors/warnings through the rolling MILP hook, and fixes the in-repo manuscript&#39;s FHOPS version and dependency lists. Finding: the legacy MIP&#39;s loader-buffer constraint makes every bundled example infeasible (also in 1.0.0); documented, formulation fix deferred.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#127</span> (<span class="sb">`issue-127-legacy-mip-retirement`</span>) retires the infeasible legacy MIP: <span class="sb">`solve-mip`</span>/<span class="sb">`solve_mip`</span> warn and delegate to the operational MILP (driver mapping documented), <span class="sb">`benchmark`</span> and <span class="sb">`bench suite --driver auto`</span> solve the operational MILP (HiGHS fallback restored), the ILS hybrid step passes the ILS schedule as a HiGHS MIP start (#104), and every <span class="sb">`solve-mip`</span> doc example now uses <span class="sb">`solve-mip-operational`</span>. Reference ladder byte-identical.
-<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#125</span> (<span class="sb">`issue-125-landing-locks-alignment`</span>) makes SA and MILP judge landing feasibility identically: the operational MILP counts machines per landing and shift slot (was machine-shifts per day with a slack that was free at weight 0) and treats the capacity as hard at <span class="sb">`landing_surplus = 0`</span>; locks exceeding a hard capacity raise that slot's limit with a warning. tiny7 MILP optimum 4388.082752 → 279.796036 (capacity-1 landings now bind). Rolling replay/carry-forward/exports expand day-level locks to every available shift; playback no longer flags idle locked slots; <span class="sb">`fhops evaluate`</span> exits 1 with a message on invalid input. Reference ladder and SoftwareX playback assets byte-identical.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-06: <span class="ni">#125</span> (<span class="sb">`issue-125-landing-locks-alignment`</span>) makes SA and MILP judge landing feasibility identically: the operational MILP counts machines per landing and shift slot (was machine-shifts per day with a slack that was free at weight 0) and treats the capacity as hard at <span class="sb">`landing_surplus = 0`</span>; locks exceeding a hard capacity raise that slot&#39;s limit with a warning. tiny7 MILP optimum 4388.082752 → 279.796036 (capacity-1 landings now bind). Rolling replay/carry-forward/exports expand day-level locks to every available shift; playback no longer flags idle locked slots; <span class="sb">`fhops evaluate`</span> exits 1 with a message on invalid input. Reference ladder and SoftwareX playback assets byte-identical.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#129</span> (<span class="sb">`issue-129-harvest-system-validation-docs`</span>) validates block <span class="sb">`harvest_system_id`</span> at scenario level (model validator; the 1.0.0 field validator never ran because <span class="sb">`harvest_systems`</span> is declared after <span class="sb">`blocks`</span>); only the repository regression fixture was affected (custom <span class="sb">`ground_sequence`</span> system now registered in its YAML; all other repo/SoftwareX scenarios and the nine Jaffray scenarios load unchanged). Docs sweep: every <span class="sb">`fhops …`</span> command in README/docs run or (long-running/Gurobi) parsed and run with small budgets/HiGHS; broken options, ids and snippets fixed.
-<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#131</span> (<span class="sb">`issue-131-heuristic-objective-cache`</span>, code part) makes the heuristic objective exact: candidates' mobilisation caches now cover every machine (unchanged machines were free before), the multi-shift landing guard no longer makes the repair non-idempotent, idle locked slots are kept, Tabu scores its seed with the full repair, and SA/ILS/Tabu report a fresh evaluation of the exported schedule. Heuristic results change on all scenarios with mobilisation (tiny7 plans unchanged, objective −10.748). Next: regenerate the SoftwareX assets once all Phase 8 code has merged.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#131</span> (<span class="sb">`issue-131-heuristic-objective-cache`</span>, code part) makes the heuristic objective exact: candidates&#39; mobilisation caches now cover every machine (unchanged machines were free before), the multi-shift landing guard no longer makes the repair non-idempotent, idle locked slots are kept, Tabu scores its seed with the full repair, and SA/ILS/Tabu report a fresh evaluation of the exported schedule. Heuristic results change on all scenarios with mobilisation (tiny7 plans unchanged, objective −10.748). Next: regenerate the SoftwareX assets once all Phase 8 code has merged.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#103</span> (<span class="sb">`issue-103-dataset-cli-tests`</span>) fixes the 53 gated dataset CLI test failures. All had one root cause: Typer 0.26 vendors Click, so <span class="sb">`_parameter_supplied`</span> (identity check against <span class="sb">`click.core.ParameterSource.DEFAULT`</span>) reported every option as user-supplied. Skyline calls were rejected and harvest-system defaults were never applied (a user-facing bug since Typer 0.26.0, before v1.0.0). The check now compares by name; <span class="sb">`--kpi-mode`</span> uses a <span class="sb">`StrEnum`</span>; the tests are unchanged and now run in CI (+145 tests, ≈ 4 s).
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#131</span> (<span class="sb">`issue-131-regenerate-assets`</span>) regenerates every SoftwareX asset on the final 1.0.1 candidate with the canonical pipeline (benchmarks now sequential, tuning budgets fixed to the published ones, text normalised to the pre-commit rules) and makes FHOPS assets the source of record for the manuscript, scaling runtimes included. All manuscript tables/figures and several prose values change (old → new table in plan §8.21); the asset audit now fails when a reported objective differs from a fresh evaluation of its CSV.
-<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#140</span> (<span class="sb">`issue-140-landing-guard-scoring`</span>, second pre-release audit) applies the heuristic landing guard on single-shift days too (every published med42 heuristic plan overloaded landings 49–61 times; med42 SA 20000 iterations −28662.40 → 24130.32, 0 overloads, 10 completed blocks), scales the hard-violation penalty so an infeasible plan cannot beat the MILP's hard optimum, scores MILP plans with their planned production in the ILS hybrid step, surfaces the Tiny7/Small21 automatic weight overrides (notice, meta/telemetry, scenario-weight objective in <span class="sb">`benchmark`</span>/<span class="sb">`bench suite`</span>), and (audit2-1 <span class="ni">#2</span>) lets downstream roles with staged input hold landing places so a hard capacity no longer starves the pipeline (feller → skidder → loader on a capacity-1 landing: SA 0 → 500 m³ = MILP). tiny7/small21 bench assets byte-identical; Jaffray ka_6/pg_6 SA objectives unchanged (full delivery). Next: regenerate the med42/synthetic SoftwareX assets.
-<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#139</span> (<span class="sb">`issue-139-milp-objective-semantics`</span>) fixes the second audit's MILP findings: transitions only for <span class="sb">`b' ≠ b`</span>; a per-machine position network charges moves across idle slots and from <span class="sb">`last_block_id`</span> into the first worked slot exactly like the heuristics and KPIs (fuzz 400/400 exact; tiny7 optimum unchanged 279.796036, brute-force verified; non-binding-landing tiny7 4388.082752 → 4361.462752; med42 at 600 s finds a 216-assignment incumbent instead of none); loader batching integers removed; solver exceptions never escape, <span class="sb">`solver="auto"`</span> falls back to HiGHS; <span class="sb">`build-mip`</span> deprecated; deprecation warnings attributed to the caller; formulation regenerated.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#140</span> (<span class="sb">`issue-140-landing-guard-scoring`</span>, second pre-release audit) applies the heuristic landing guard on single-shift days too (every published med42 heuristic plan overloaded landings 49–61 times; med42 SA 20000 iterations −28662.40 → 24130.32, 0 overloads, 10 completed blocks), scales the hard-violation penalty so an infeasible plan cannot beat the MILP&#39;s hard optimum, scores MILP plans with their planned production in the ILS hybrid step, surfaces the Tiny7/Small21 automatic weight overrides (notice, meta/telemetry, scenario-weight objective in <span class="sb">`benchmark`</span>/<span class="sb">`bench suite`</span>), and (audit2-1 <span class="ni">#2</span>) lets downstream roles with staged input hold landing places so a hard capacity no longer starves the pipeline (feller → skidder → loader on a capacity-1 landing: SA 0 → 500 m³ = MILP). tiny7/small21 bench assets byte-identical; Jaffray ka_6/pg_6 SA objectives unchanged (full delivery). Next: regenerate the med42/synthetic SoftwareX assets.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#139</span> (<span class="sb">`issue-139-milp-objective-semantics`</span>) fixes the second audit&#39;s MILP findings: transitions only for <span class="sb">`b&#39; ≠ b`</span>; a per-machine position network charges moves across idle slots and from <span class="sb">`last_block_id`</span> into the first worked slot exactly like the heuristics and KPIs (fuzz 400/400 exact; tiny7 optimum unchanged 279.796036, brute-force verified; non-binding-landing tiny7 4388.082752 → 4361.462752; med42 at 600 s finds a 216-assignment incumbent instead of none); loader batching integers removed; solver exceptions never escape, <span class="sb">`solver=&quot;auto&quot;`</span> falls back to HiGHS; <span class="sb">`build-mip`</span> deprecated; deprecation warnings attributed to the caller; formulation regenerated.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#144</span> (<span class="sb">`issue-144-asset-hygiene`</span>, audits 3/4) makes the SoftwareX provenance verifiable without re-running anything: <span class="sb">`benchmark_runs.log`</span> hashes only the files git would commit (LC_ALL=C, log excluded; recipe in the manuscript README, <span class="sb">`make verify-assets-hash`</span>), an <span class="sb">`audit_note`</span> entry records the corrected 0463fd5 hash (committed files: 16a4def7…), the pipeline records repo-relative paths (32 committed files normalised, byte-identical otherwise), Table 5 gains a Budget column and a Δ/SA-budget note, the in-repo draft points to UBC-FRESH/fhops-manuscript, and <span class="sb">`.continue/`</span> no longer ships. Next: regenerate the SoftwareX assets on the final code.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-07: <span class="ni">#141</span> (<span class="sb">`issue-141-rolling-deferral-cli`</span>) stops rolling MILP windows from deferring work past their lock span: a lexicographic earliness stage (max production-weighted earliness subject to the base objective ≥ stage-1 value − 10⁻⁶ relative) runs in every window whose lock span is shorter than the window (defer.py: days 8–10 → 1–3; ka_6 112/14/7: 59 idle days and work until day 112 → all work by day 27, 0 idle). Idle lock spans now count as empty windows; <span class="sb">`--fail-on-empty-window`</span> stops on them, <span class="sb">`--fail-on-no-solution`</span> keeps the old meaning; <span class="sb">`plan rolling`</span> exits 1 when no window has a solution and 2 for usage errors; formulation documents the tie-break.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-08: <span class="ni">#151</span> (<span class="sb">`issue-151-heuristic-perf`</span>) fixes the heuristic slowdown found by the <span class="ni">#147</span> regeneration (synthetic-small SA 3×, scaling tiers non-monotonic, med42 +41–82 %). Root cause: since <span class="ni">#140</span> the repaired plan is a sanitizer fixed point, so block insertion / cross exchange / mobilisation shake retried ~276 moves per call, each with a full schedule copy and sanitizer pass; on med42 the <span class="ni">#140</span> repair work (reservation scan, landing checks). Fix: <span class="sb">`SanitizerPreview`</span>, incremental landing counts, best-rate-first block choice, exact fast shuffle; identical plans to a0b2799 everywhere tested (plan §8.29).
-<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-08: <span class="ni">#152</span> (<span class="sb">`issue-152-labelled-formulation`</span>) makes the labelled formulation canonical in FHOPS so the SoftwareX R2 manuscript can replace its 17-page appendix with a compact one citing the versioned source. Content reconciled with the manuscript's labelled copy in favour of the 1.0.1 text (plan §8.30); TeX/RST regenerated; new <span class="sb">`tests/test_docs_formulation_assets.py`</span>.
+<span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-08: <span class="ni">#152</span> (<span class="sb">`issue-152-labelled-formulation`</span>) makes the labelled formulation canonical in FHOPS so the SoftwareX R2 manuscript can replace its 17-page appendix with a compact one citing the versioned source. Content reconciled with the manuscript&#39;s labelled copy in favour of the 1.0.1 text (plan §8.30); TeX/RST regenerated; new <span class="sb">`tests/test_docs_formulation_assets.py`</span>.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-08: <span class="ni">#147</span> (<span class="sb">`issue-147-final-asset-regeneration-v2`</span>) regenerates every SoftwareX asset on the final 1.0.1 code (50e6f9b) with the canonical pipeline on an idle host (the a0b2799 run, PR <span class="ni">#150</span>, was superseded by the <span class="ni">#151</span> fix; plans and objectives are byte-identical, only runtimes move). tiny7/small21 unchanged apart from runtimes; med42 objectives become positive with 0 hard violations (ILS 24329.17 best), synthetic-small −53039.79 → −39.79, Table 5 med42 Tabu Δ −990.50; every runtime is lower than in the manuscript and the scaling runtimes stay monotonic (20.69 / 45.86 / 69.22 s). Several manuscript statements change (plan §8.28). Next: manuscript update and <span class="ni">#96</span> release.
 <span class="w">   </span><span class="k">-</span><span class="w"> </span>2026-10-08: <span class="ni">#158</span> (<span class="sb">`issue-158-audit3-heuristics`</span>, third audit) makes locked slots idle instead of violating when their input is missing (fuzz: heuristic-only hard violations 78/200 → 0; lockpull −2200 → −200 = MILP), gives blocks without fleet roles an empty allowed set (phantom production 400 m³ → 0) with a <span class="sb">`fhops validate`</span> warning, and makes synthetic tiers deliverable (fleet roles from the system mix); partial asset regeneration of the synthetic tiers (log entry 17:47:01Z, hash 5be2f878…); tiny7/small21/med42 and Jaffray byte-identical (plan §8.32).
 <span class="k">1.</span> <span class="gs">**Release Candidate Prep (`notes/release_candidate_prep.md`, `AGENTS.md`, `notes/cli_docs_plan.md`)**</span>
@@ -1079,33 +1131,33 @@ without adding dummy barges or relaxing capacity checks.
 <span class="k">14.</span> <span class="gs">**Tactical Validation Scale-Up and Release Preparation (#75; `notes/tactical_validation_issue_tree.md`)**</span>
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>Phase branch <span class="sb">`feature/phase7-tactical-validation-release`</span> carried child issues <span class="ni">#76</span>–#79 for full-scale benchmarking, practitioner validation, guided planner documentation, and the FHOPS 1.1.0a1 alpha version bump.
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>All child PRs <span class="ni">#80</span>–#83 merged into the phase branch; Phase 7 integration PR <span class="ni">#84</span> merged into <span class="sb">`main`</span>, closing parent <span class="ni">#75</span>.
-<span class="w">    </span><span class="k">-</span><span class="w"> </span>The version bump was gated on benchmark and practitioner evidence because Phase 6 materially expands FHOPS's potential use cases.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>The version bump was gated on benchmark and practitioner evidence because Phase 6 materially expands FHOPS&#39;s potential use cases.
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>SoftwareX manuscript edits are out of scope here; the manuscript lives in the separate <span class="sb">`fhops-manuscript`</span> repository.
 
 <span class="k">15.</span> <span class="gs">**SA Performance and Incremental Repair (#165, #166; `notes/sa_performance_plan.md`, `notes/p10_repair_refactor.md`, ADR 0003)**</span>
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>P9 S4a lazy candidate evaluation (2.1x, identical objectives); S2 (dirty-only repair) dropped and S3 (nested hot path) reverted, both recorded.
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>P10 block-separable evaluator, bounded <span class="sb">`cross_exchange`</span> sampling (ADR 0003), lazy pre-repair, and the incremental repair, which is now the SA default and behaviour-identical (72/72 parity; pinned baselines regenerate with no diff).
-<span class="w">    </span><span class="k">-</span><span class="w"> </span>Session throughput ~3.6x (geometric mean) on the example ladder; today's P10.5/P10.6 increment ~1.48x.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Session throughput ~3.6x (geometric mean) on the example ladder; today&#39;s P10.5/P10.6 increment ~1.48x.
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>Close-out report <span class="sb">`notes/reports/p10-closeout.md`</span>; PR <span class="ni">#167</span> queued into <span class="sb">`main`</span>.
 
 <span class="k">16.</span> <span class="gs">**Log Hauling and Mill Delivery (#170; `notes/log_hauling_expansion_plan.md`, `notes/log_hauling_issue_tree.md`)**</span>
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>Queued as P11. The phase adds the operational hauling layer between harvest and mill demand:
-      Ghotb's Phase I monthly daily-flow MIP with contractor workload balance, Phase II
+      Ghotb&#39;s Phase I monthly daily-flow MIP with contractor workload balance, Phase II
       continuous-time truck/loader scheduling, and the SA solver with an SPT decoder.
-<span class="w">    </span><span class="k">-</span><span class="w"> </span>Child issues <span class="ni">#172-#177</span> are linked as sub-issues; the phase branch merged as <span class="sb">`52462d2`</span> and the parent is closed.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Child issues <span class="ni">#172</span>-#177 are linked as sub-issues; the phase branch merged as <span class="sb">`52462d2`</span> and the parent is closed.
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>The thesis case data is confidential, so acceptance uses structural fidelity, MIP-versus-SA
       parity on thesis-shaped synthetic instances, and the published qualitative findings. Exact
       company-dollar reproduction is explicitly not claimed.
-<span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="ni">#172-#177</span> are complete. The phase PR <span class="ni">#185</span> merged as <span class="sb">`52462d2`</span>; the close-out report is <span class="sb">`notes/reports/p11-closeout.md`</span>.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="ni">#172</span>-#177 are complete. The phase PR <span class="ni">#185</span> merged as <span class="sb">`52462d2`</span>; the close-out report is <span class="sb">`notes/reports/p11-closeout.md`</span>.
 
 <span class="k">17.</span> <span class="gs">**FHOPS Web Application (#171; `notes/web_ui_expansion_plan.md`, `notes/web_ui_issue_tree.md`)**</span>
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>Queued as P12. The phase adds an optional FastAPI + vanilla-ES-module SPA over CLI artefacts,
       following the WS4 web UI design: map/layer tree, schedule, KPIs, reports, comparison, live SSE
       runs, skins, and an opt-in assistant.
-<span class="w">    </span><span class="k">-</span><span class="w"> </span>Child issues <span class="ni">#178-#183</span> are linked as sub-issues; all six are complete on <span class="sb">`feature/p12-web-ui`</span>.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>Child issues <span class="ni">#178</span>-#183 are linked as sub-issues; all six are complete on <span class="sb">`feature/p12-web-ui`</span>.
 <span class="w">    </span><span class="k">-</span><span class="w"> </span>P12.1 freezes the artefact contract (including a new <span class="sb">`run.json`</span>) before the API and UI work.
       P11 hauling outputs are optional; missing layers are named, not invented.
-<span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="ni">#178-#183</span> (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison, live runs/SSE/control, editing/assistant/packaging/security/close-out) are complete.
+<span class="w">    </span><span class="k">-</span><span class="w"> </span><span class="ni">#178</span>-#183 (service, API/shell, map/layers/time, domain panels/KPIs/reports/comparison, live runs/SSE/control, editing/assistant/packaging/security/close-out) are complete.
 
 <span class="gu">## Phase 14 — Consume FEMIC-compiled LidarBC Products — complete</span>
 
@@ -1341,14 +1393,210 @@ Acceptance:
 <span class="k">-</span><span class="w"> </span>Docs checks pass in CI.
 <span class="k">-</span><span class="w"> </span>No new hydrology capability or real watershed result is claimed.
 
+<span class="gu">## Phase 19 — Nemora tree-inventory handoff</span>
+
+Parent issue: <span class="ni">#300</span>. Branch: <span class="sb">`feature/phase19-nemora-handoff`</span>. Status: complete. Plan:
+<span class="sb">`notes/phase19_nemora_handoff.md`</span>.
+
+Goal: prove that a Nemora-generated <span class="sb">`fhops.tree.inventory.v1`</span> fixture is
+consumable by the released FHOPS tree-scale workflow without making Nemora a
+runtime dependency.
+
+<span class="k">- [x]</span> P19.1 Generate and commit a Nemora tree-inventory fixture (#301)
+<span class="w">  </span><span class="k">- [x]</span> Generated a 40-tree deterministic synthetic table.
+<span class="w">  </span><span class="k">- [x]</span> Exported CSV/metadata with Nemora 0.1.0a1.
+<span class="w">  </span><span class="k">- [x]</span> FHOPS validates 40 trees/1 block/4 species; provenance recorded.
+<span class="k">- [x]</span> P19.2 Add the handoff scenario, docs, and end-to-end test (#302)
+<span class="w">  </span><span class="k">- [x]</span> Added B01/L1 scenario with a verified pin.
+<span class="w">  </span><span class="k">- [x]</span> Ran 40-tree system: 21.512 m³, 0 unreachable, no warnings.
+<span class="w">  </span><span class="k">- [x]</span> Added end-to-end test; no Nemora import.
+<span class="k">- [x]</span> P19.3 Close out and decide the release path (#303)
+<span class="w">  </span><span class="k">- [x]</span> Ran gates; two pre-existing HiGHS tests fail locally and are reported.
+<span class="w">  </span><span class="k">- [x]</span> Wrote <span class="sb">`notes/reports/p19-closeout.md`</span>.
+<span class="w">  </span><span class="k">- [x]</span> No 1.2.1 now; ship with next scheduled release.
+
+<span class="gu">## Phase 20 — Web serious game</span>
+
+Parent issue: <span class="ni">#311</span>. Branch: <span class="sb">`feature/phase20-serious-game`</span>. Status: complete (PR <span class="ni">#317</span>). Plan: <span class="sb">`notes/phase20_serious_game.md`</span>. Closeout:
+<span class="sb">`notes/reports/p20-closeout.md`</span>.
+
+Goal: turn the operational web UI into a deterministic instructor-run serious
+game. Each level is one real VRI-derived stand from MKRF, AFRF Gavin Lake, or
+AFRF Knife Creek. Teams choose a bounded machine/arrival/landing/bucking plan
+and receive a 0–100 score based on normalized net operations profit, including
+log-value recovery and operating costs.
+
+The former Tiny7/Small21/Medium42/Large84 shift-scenario levels are retired
+from P20. Their boundary/precompute code remains only while the stand-scale
+loader replaces it.
+
+<span class="k">- [ ]</span> P20.1 Define stand levels, inventory/control contract, and precompute (#312)
+<span class="w">  </span><span class="k">- [x]</span> Selected one MKRF, one Gavin Lake, and one Knife Creek stand boundary.
+<span class="w">  </span><span class="k">- [x]</span> Committed EPSG:3005 GeoJSON boundaries and provenance catalog.
+<span class="w">  </span><span class="k">- [ ]</span> Generate pinned Nemora/PSP tree inventories; resolve CWHdm/ICHmk3 PSP.
+<span class="w">    </span><span class="k">- [x]</span> Knife Creek harvested/residual inventories generated and validated.
+<span class="w">  </span><span class="k">- [ ]</span> Define landing/road-extension assets, product prices, and bucking policy.
+<span class="w">    </span><span class="k">- [x]</span> Selection-cut careful-logging trade-off with decreasing damage benefits.
+<span class="w">  </span><span class="k">- [x]</span> KC stand-scale precompute: 20 combinations, best $75,705.63,
+    worst $21,969.10.
+<span class="w">  </span><span class="k">- [x]</span> MKRF/Gavin PSP inventories and four-combination precomputes.
+<span class="w">  </span><span class="k">- [x]</span> Rebalance the synthetic Gavin deck to straddle break-even.
+<span class="w">  </span><span class="k">- [ ]</span> Add any remaining levels.
+<span class="k">- [ ]</span> P20.2 Implement the deterministic game engine, scoring, and session state (#313)
+<span class="w">  </span><span class="k">- [x]</span> Net-profit evaluator, price deck, and 0–100 normalization.
+<span class="w">  </span><span class="k">- [x]</span> One-play/order enforcement and local tournament persistence.
+<span class="w">  </span><span class="k">- [x]</span> Local game API: public level, session/team, ordered submission,
+    leaderboard.
+<span class="w">  </span><span class="k">- [ ]</span> Add the Game workspace UI and level-map viewport.
+<span class="k">- [x]</span> P20.3 Add the game API and web workspace (#314)
+<span class="w">  </span><span class="k">- [x]</span> Local API: level metadata, session/team, ordered submission, leaderboard.
+<span class="w">  </span><span class="k">- [x]</span> First <span class="sb">`/game`</span> shell: whole-stand SVG, controls, score, team join.
+<span class="w">  </span><span class="k">- [x]</span> Session progress and leaderboard panel.
+<span class="w">  </span><span class="k">- [x]</span> CLI flags for stand levels, precomputes, agent model, and cache.
+<span class="w">  </span><span class="k">- [x]</span> Level map with completed/current/locked states and submit progress.
+<span class="w">  </span><span class="k">- [ ]</span> Dual 3D replay: pre-saved optimal assets + JIT/cached player replay.
+<span class="k">- [x]</span> P20.4 Prove fairness, document the tournament, and close out (#315)
+<span class="w">  </span><span class="k">- [x]</span> Deterministic/fairness/leakage tests.
+<span class="w">  </span><span class="k">- [x]</span> Instructor docs and close-out note.
+<span class="w">  </span><span class="k">- [x]</span> Level-map/lobby polish and final phase close-out.
+<span class="k">- [x]</span> P20.5 Add the optimal-parameter learning debrief (#316)
+<span class="w">  </span><span class="k">- [x]</span> Facts and single-parameter counterfactual deltas.
+<span class="w">  </span><span class="k">- [x]</span> Deterministic template fallback with optional LLM hook.
+<span class="w">  </span><span class="k">- [x]</span> Post-level debrief API/UI and leakage tests.
+<span class="w">  </span><span class="k">- [x]</span> Connect the optional DeepSeek V4.1 Flash provider and level+choice cache.
+<span class="w">  </span><span class="k">- [x]</span> Final-only optional chat panel, gated by full tournament completion.
+<span class="w">  </span><span class="k">- [x]</span> Four contractor quotes and three overlapping paid consultant tips;
+    fees can drive the score below zero.
+
+<span class="gu">## Phase 21 — Scenario Studio</span>
+
+Parent issue: <span class="ni">#318</span>. Branch: <span class="sb">`feature/p21-demo-integration`</span>. Status: complete (PR <span class="ni">#323</span>). Plan:
+<span class="sb">`notes/phase21_scenario_studio.md`</span>. Issue tree: <span class="sb">`notes/phase21_issue_tree.md`</span>.
+
+Goal: add an interactive authoring layer over immutable Tree Lab cases for
+boundary, landing, road, retention, machine-system, operator-policy, and
+eventually terrain/obstacle editing, with a derived scenario run.
+
+<span class="k">- [x]</span> P21.1 Project schema, storage, API, and editor shell
+<span class="w">  </span><span class="k">- [x]</span> Separate Studio FastAPI service and static editor
+<span class="w">  </span><span class="k">- [x]</span> Create/list/load/save/delete/export project endpoints
+<span class="w">  </span><span class="k">- [x]</span> 2D canvas editor with pan, zoom, fit, undo, and redo
+<span class="k">- [x]</span> P21.2 Boundary, landing, road, retention, and machine editing
+<span class="w">  </span><span class="k">- [x]</span> Editable block boundary polygon and area/stat recomputation
+<span class="w">  </span><span class="k">- [x]</span> Road-snapped landing and road polyline editing
+<span class="w">  </span><span class="k">- [x]</span> Tree-level retention brush and retention target
+<span class="w">  </span><span class="k">- [x]</span> Machine add/remove and operator policy presets
+<span class="w">  </span><span class="k">- [x]</span> Visual terrain heightfield brush prototype
+<span class="k">- [x]</span> P21.3 Materialize derived cases and run edited scenarios
+<span class="w">  </span><span class="k">- [x]</span> Boundary and retention filtering into a disposable case
+<span class="w">  </span><span class="k">- [x]</span> Landing and machine-system overrides
+<span class="w">  </span><span class="k">- [x]</span> Feller operator-policy productivity hook
+<span class="w">  </span><span class="k">- [x]</span> Studio run endpoint and KPI result panel
+<span class="w">  </span><span class="k">- [x]</span> Studio 3D replay of derived runs
+<span class="k">- [x]</span> P21.4 Retained-tree rendering, obstacles, and visual terrain replay
+<span class="k">- [x]</span> P21.4a Terrain DEM/road handoff for route and grade checks
+<span class="k">- [x]</span> P21.5 3D edit page (orbit, landing, retention, terrain, boundary) and replay preview
+<span class="k">- [x]</span> P21.5a 3D road drawing, boundary add/remove, undo/redo, rename/duplicate
+<span class="k">- [x]</span> P21.6 Operator-policy simulation integration (cycle, breakdown, grade, and damage-risk product recovery)
+<span class="k">- [x]</span> P21.7 Quality gates, issue tree, branch naming, and closeout report
+<span class="k">- [x]</span> P21.7a Maintainer approval, clean main-based PR, and green CI
+
+Known limits: terrain and routing remain reference approximations; operator
+policies map cycle/output coefficients but do not model continuous policy-state
+physics; stream buffers are authoring geometry, not surveyed hydrology; no
+per-landing processor/loader fleets and inventory yet; multi-segment road
+authoring is tracked as <span class="ni">#337</span> and multi-landing assignment as <span class="ni">#340</span>.
+
+<span class="gu">## Phase 22 — Scenario Studio follow-ups</span>
+
+Parent issue: <span class="ni">#324</span>. Branch: <span class="sb">`feature/p22-scenario-followups`</span>. Status: complete
+(PR <span class="ni">#327</span>, merge <span class="sb">`56865cf0`</span>). Plan: <span class="sb">`notes/phase22_followups.md`</span>. Children: <span class="ni">#325</span>,
+<span class="gh">#326.</span>
+
+Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups.
+
+<span class="k">- [x]</span> P22.1 Processor-specific operator-policy coefficients (#325)
+<span class="w">  </span><span class="k">- [x]</span> Core and CLI processor productivity multiplier
+<span class="w">  </span><span class="k">- [x]</span> Studio processor policy translation and provenance
+<span class="k">- [x]</span> P22.2 Stream-aware retention and closeout corrections (#326)
+<span class="w">  </span><span class="k">- [x]</span> Stream-centreline authoring in 2D and 3D
+<span class="w">  </span><span class="k">- [x]</span> Riparian clump generation, rendering, and routing exclusion
+<span class="w">  </span><span class="k">- [x]</span> Correct the Phase 21 closeout record
+
+<span class="gu">## Phase 44 — Salvage shelf-life and wood degradation (CARB-03) — implemented, pending merge</span>
+
+Parent issue: <span class="ni">#380</span>. Child issue: <span class="ni">#381</span>. Implementation PR: <span class="ni">#383</span>. Branch:
+<span class="sb">`feature/p44-salvage-degradation`</span>. Authoritative note:
+<span class="sb">`notes/carb03_salvage_degradation.md`</span>.
+
+Goal: add the first bounded, source-backed salvage degradation surface. The
+phase provides a shared <span class="sb">`salvage.decay.v1`</span> curve contract, one published numeric
+retention curve, one Canadian boreal product shelf-life table, and one read-only
+report consumer. It does not change schedules, objectives, constraints,
+heuristics, or solvers.
+
+Sources:
+
+<span class="k">-</span><span class="w"> </span>Prestemon and Holmes (2008), section 4.2.6, for the mixed-conifer fire-killed
+  net-volume retention factors;
+<span class="k">-</span><span class="w"> </span>Barrette et al. (2015), <span class="ge">*Forestry*</span> 88:275-290, for the advisory lumber, pulp,
+  and bioenergy shelf-life windows.
+
+<span class="k">- [x]</span> P44.1 Add the shared decay module and salvage/storage report consumer (#381)
+<span class="w">  </span><span class="k">- [x]</span> Define the typed curve library and package data
+<span class="w">  </span><span class="k">- [x]</span> Add <span class="sb">`fhops report salvage-shelf-life`</span>
+<span class="w">  </span><span class="k">- [x]</span> Add unit, consumer, and CLI tests
+<span class="w">  </span><span class="k">- [x]</span> Add Sphinx docs, an example, and the note
+<span class="w">  </span><span class="k">- [x]</span> Run the FHOPS quality suite
+
+Acceptance:
+
+<span class="k">-</span><span class="w"> </span>The packaged curve reproduces the published whole-year factors and rejects
+  malformed points, duplicate ids, and unknown curves.
+<span class="k">-</span><span class="w"> </span>The report refuses unknown blocks, negative/non-numeric ages, duplicate block
+  rows, missing columns, and negative prices.
+<span class="k">-</span><span class="w"> </span>CSV/Markdown output names the curve, source, boundary, and read-only limits.
+<span class="k">-</span><span class="w"> </span>No solver/objective/constraint code changes.
+<span class="k">-</span><span class="w"> </span>Ruff, mypy, pytest, and Sphinx pass.
+
+Remaining follow-on: a BC or species-specific curve, a dedicated roadside-storage
+curve, a product-value/grade model, and a ws4 consumer. Those need their own
+public or project-approved sources and review.
+
 <span class="gu">## Backlog &amp; Ideas</span>
+<span class="k">- [x]</span> 3D replay retention visibility, retained/stream legend, and machine-event timeline (#330).
+<span class="k">- [x]</span> Studio terrain elevation alignment for derived trees, retained trees, landings, and replay terrain (#332).
+<span class="k">- [x]</span> Studio run freshness signatures, stale-run badges, and replay rerun action (#334; PR <span class="ni">#335</span>).
+<span class="k">- [x]</span> Studio multi-segment road-network authoring and GeoJSON MultiLineString handoff (#337; PR <span class="ni">#338</span>).
+<span class="k">- [x]</span> Studio multi-landing authoring and skidder landing assignment (#340; PR <span class="ni">#341</span>).
+<span class="k">- [x]</span> Per-landing inventory/capacity and grade-aware landing choice (#343; PR <span class="ni">#344</span>).
+<span class="k">- [x]</span> Per-landing processor/loader fleets with machine assignment (#346; PR <span class="ni">#346</span>).
+<span class="k">- [x]</span> Per-landing truck fleets and fleet-machine assignment editing (#349; PR <span class="ni">#349</span>).
+<span class="k">- [x]</span> Per-machine loader/processor/skidder numeric spec editing (#354; PR <span class="ni">#355</span>).
+<span class="k">- [x]</span> Per-landing truck capacity/cycle/load-time equipment specs (#357; PR <span class="ni">#358</span>).
+<span class="k">- [x]</span> Road-network connectivity validation and grade-aware routing (#360; PR <span class="ni">#360</span>).
+<span class="k">- [x]</span> Calibrated forwarder productivity in the event model (#371; PR <span class="ni">#371</span>).
+<span class="k">- [x]</span> Distance-varying forwarder productivity regression (#373; PR <span class="ni">#373</span>).
+<span class="k">- [x]</span> Forwarder load/unload timing calibration (#375; PR <span class="ni">#375</span>).
+<span class="k">- [x]</span> Studio scenario comparison page (#377; PR <span class="ni">#378</span>).
+<span class="k">- [x]</span> Scenario comparison economics and cost per m³ (#379; PR <span class="ni">#379</span>).
+<span class="k">- [x]</span> Comparison charts and downloadable JSON export (#384; PR <span class="ni">#385</span>).
+<span class="k">- [x]</span> Role-aware harvester model and refined comparison economics (#386; PR <span class="ni">#387</span>).
+<span class="k">- [x]</span> Comparison economics assumptions editor (#389; PR <span class="ni">#390</span>).
+<span class="k">- [x]</span> Operator-policy effects integration (#391; PR <span class="ni">#391</span>).
+<span class="k">- [x]</span> Studio full-tree/CTL system presets (#393; PR <span class="ni">#395</span>).
+<span class="k">- [x]</span> CTL product mix and value comparison (#397; PR <span class="ni">#396</span>).
+<span class="k">- [x]</span> Damage-risk product recovery integration (#399; PR <span class="ni">#400</span>; closeout <span class="ni">#401</span>).
+<span class="k">- [x]</span> Local quality-gate cleanup: HiGHS diagnostics and Pandoc/Sphinx (#403).
+<span class="k">- [x]</span> Studio custom-fleet presets and run-history comparison launcher (#407).
+<span class="k">- [x]</span> Add the ground-based multi-machine tree-scale simulation (<span class="sb">`fhops tree system`</span>). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 <span class="k">- [ ]</span> Agentic tuner R&amp;D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
-<span class="k">- [ ]</span> Integration with Nemora sampling outputs for downstream operations analytics.
+<span class="k">- [x]</span> Integration with Nemora sampling outputs for downstream operations analytics (P19 tree-inventory handoff).
 <span class="k">- [x]</span> Scenario authoring UI and schema validators for web clients (P12.6, <span class="ni">#183</span>).
 <span class="k">- [ ]</span> Cloud execution harness for large-scale heuristics.
 <span class="k">- [ ]</span> DSS integration hooks (ArcGIS, QGIS) for geo-enabled workflows.
 <span class="k">- [ ]</span> Jaffray MASc thesis alignment checkpoints (<span class="sb">`notes/thesis_alignment.md`</span> TBD).
-<span class="k">- [ ]</span> VSCode keeps firing web apps on various random-sounding ports while running <span class="sb">`injest_mip_baselines.py`</span> and other benchmarking scripts? What is up with that? It is annoyingly resulting in VSCode interface popping up "Your application is running on port XXXX" messages (becaue of the built-in port-forwarding proxy).
+<span class="k">- [ ]</span> VSCode keeps firing web apps on various random-sounding ports while running <span class="sb">`injest_mip_baselines.py`</span> and other benchmarking scripts? What is up with that? It is annoyingly resulting in VSCode interface popping up &quot;Your application is running on port XXXX&quot; messages (becaue of the built-in port-forwarding proxy).
 <span class="k">- [ ]</span> Schedule “full” analytics notebook runs (no light flag) on a less frequent cadence (nightly or weekly: leaning towards weekly) to guard against stochastic regression while keeping CI duration manageable.
 <span class="w">  </span><span class="k">- [ ]</span> Extend CI with a <span class="sb">`cron`</span> job that invokes <span class="sb">`scripts/run_analytics_notebooks.py --timeout 900`</span> (no <span class="sb">`--light`</span>) and publishes the resulting reports to the telemetry Pages bundle, keeping a 4-week artifact history for comparison.
 <span class="k">- [ ]</span> <span class="sb">`pre-commit`</span> autoupdate (especially <span class="sb">`pre-commit-hooks`</span>) plus workflow wiring so stage deprecation warnings are resolved before upstream removal.
@@ -1360,6 +1608,17 @@ Acceptance:
 <span class="k">- [ ]</span> Shared metaheuristic kernel adapter: finish FHOPS parity and performance gates for kernel
   SA/Tabu/ILS, then retire the duplicate solver loops. Design note:
   <span class="sb">`notes/metaheuristic_kernel_adapter.md`</span>.
+<span class="k">- [x]</span> Shared metaheuristic kernel adapter: add the block-separable incremental scoring path and
+  reversible move cache. Remaining: true in-place move/undo and like-for-like parity/performance
+  gates. Design note: <span class="sb">`notes/metaheuristic_kernel_adapter.md`</span>.
+<span class="k">- [x]</span> Shared metaheuristic kernel adapter: align objective-weight overrides and record them in
+  kernel results. Remaining: true in-place move/undo and the full parity/performance ladder.
+<span class="k">- [x]</span> Shared metaheuristic kernel adapter: record the Tiny7/Small21/med42 parity ladder. Remaining:
+  like-for-like ILS, Jaffray/scaling tiers, and the retirement decision.
+<span class="k">- [x]</span> Shared metaheuristic kernel adapter: add the like-for-like kernel ILS and record its ladder.
+  Remaining: multi-seed/longer-budget confirmation, true in-place move/undo, and retirement.
+<span class="k">- [x]</span> Shared metaheuristic kernel adapter: multi-seed ILS-like confirmation. Retirement decision:
+  keep the existing solvers; the kernel path is not yet uniformly better.
 </pre></div>
 </div>
 </section>

@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fhops.hauling Package" href="fhops.hauling.html" />
+    <link rel="next" title="fhops.salvage Package" href="fhops.salvage.html" />
     <link rel="prev" title="fhops.evaluation Package" href="fhops.evaluation.html" /> 
 </head>
 
@@ -67,6 +67,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#outputs">Outputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#fail-closed-behavior">Fail-closed behavior</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#boundary">Boundary</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/data_contract.html">Data Contract Guide</a><ul>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -785,13 +837,13 @@ with either the simulated annealing or MILP hooks.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/tiny7/scenario.yaml"</span><span class="p">)</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">&quot;examples/tiny7/scenario.yaml&quot;</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">solve_rolling_plan</span><span class="p">(</span>
     <span class="n">scenario</span><span class="p">,</span>
     <span class="n">master_days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>  <span class="c1"># tiny7 has a 7-day horizon</span>
     <span class="n">subproblem_days</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
     <span class="n">lock_days</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">solver</span><span class="o">=</span><span class="s2">"sa"</span><span class="p">,</span>
+    <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;sa&quot;</span><span class="p">,</span>
     <span class="n">sa_iters</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
     <span class="n">sa_seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
 <span class="p">)</span>
@@ -799,25 +851,25 @@ with either the simulated annealing or MILP hooks.</p>
 
 <span class="c1"># Full-horizon baseline, e.g. from</span>
 <span class="c1"># fhops solve-heur examples/tiny7/scenario.yaml --out tmp/tiny7_full_horizon.csv</span>
-<span class="n">baseline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"tmp/tiny7_full_horizon.csv"</span><span class="p">)</span>
+<span class="n">baseline_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tmp/tiny7_full_horizon.csv&quot;</span><span class="p">)</span>
 <span class="n">comparison</span> <span class="o">=</span> <span class="n">compute_rolling_kpis</span><span class="p">(</span>
     <span class="n">scenario</span><span class="p">,</span>
     <span class="n">result</span><span class="p">,</span>
     <span class="n">baseline_assignments</span><span class="o">=</span><span class="n">baseline_df</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">delta_totals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"total_production_delta"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">delta_totals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_production_delta&quot;</span><span class="p">))</span>
 
 <span class="c1"># Or use the reporting wrapper that preserves extra metadata and deltas.</span>
 <span class="n">comparison</span> <span class="o">=</span> <span class="n">evaluate_rolling_plan</span><span class="p">(</span>
     <span class="n">result</span><span class="p">,</span>
     <span class="n">scenario</span><span class="p">,</span>
     <span class="n">baseline_assignments</span><span class="o">=</span><span class="n">baseline_df</span><span class="p">,</span>
-    <span class="n">baseline_label</span><span class="o">=</span><span class="s2">"full_sa"</span><span class="p">,</span>
+    <span class="n">baseline_label</span><span class="o">=</span><span class="s2">&quot;full_sa&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"total_production_delta"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">comparison</span><span class="o">.</span><span class="n">deltas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_production_delta&quot;</span><span class="p">))</span>
 
 <span class="c1"># Build a plotting-friendly frame for MASc experiments.</span>
-<span class="n">plot_df</span> <span class="o">=</span> <span class="n">comparison_dataframe</span><span class="p">(</span><span class="n">comparison</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">"total_production"</span><span class="p">,</span> <span class="s2">"mobilisation_cost"</span><span class="p">])</span>
+<span class="n">plot_df</span> <span class="o">=</span> <span class="n">comparison_dataframe</span><span class="p">(</span><span class="n">comparison</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;total_production&quot;</span><span class="p">,</span> <span class="s2">&quot;mobilisation_cost&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 <section id="solver-options-milp">
@@ -829,10 +881,10 @@ library helper, or set environment variables for backends like Gurobi:</p>
     <span class="n">master_days</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
     <span class="n">subproblem_days</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span>
     <span class="n">lock_days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
-    <span class="n">solver</span><span class="o">=</span><span class="s2">"mip"</span><span class="p">,</span>
-    <span class="n">mip_solver</span><span class="o">=</span><span class="s2">"gurobi"</span><span class="p">,</span>
+    <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;mip&quot;</span><span class="p">,</span>
+    <span class="n">mip_solver</span><span class="o">=</span><span class="s2">&quot;gurobi&quot;</span><span class="p">,</span>
     <span class="n">mip_time_limit</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
-    <span class="n">mip_solver_options</span><span class="o">=</span><span class="p">{</span><span class="s2">"Threads"</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span> <span class="s2">"LogFile"</span><span class="p">:</span> <span class="s2">"med42.log"</span><span class="p">},</span>
+    <span class="n">mip_solver_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Threads&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span> <span class="s2">&quot;LogFile&quot;</span><span class="p">:</span> <span class="s2">&quot;med42.log&quot;</span><span class="p">},</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -1849,7 +1901,7 @@ no-solution policy (see <code class="xref py py-func docutils literal notranslat
 <dl class="py class">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">fhops.planning.</span></span><span class="sig-name descname"><span class="pre">TacticalOperationalScenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planning_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tactical_operational'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0.1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlay_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">economics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">planning_units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harvest_system_options</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fleet_capacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">facilities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">facility_demand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_inventory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport_arcs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_supply</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">road_dependencies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_road_access</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silviculture_transitions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fleet_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fhops/planning/tactical_operational/models.html#TacticalOperationalScenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
 <p>Validated aggregate planning contract for TOPM-inspired FHOPS scenarios.</p>
 <p>The schema uses long-form, dimension-flexible tables. Cross-validation checks all period,
 product, block, system-option, facility, transport, inventory, and external-supply references.</p>
@@ -2142,10 +2194,10 @@ DataFrame whose rows are all unassigned is scored as a zero-delivery plan.</p></
 </ul>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fhops.planning</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_rolling_plan</span><span class="p">,</span> <span class="n">compute_rolling_kpis</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/tiny7/scenario.yaml"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">&quot;examples/tiny7/scenario.yaml&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rolling</span> <span class="o">=</span> <span class="n">solve_rolling_plan</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">master_days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">subproblem_days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">lock_days</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">comparison</span> <span class="o">=</span> <span class="n">compute_rolling_kpis</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">rolling</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">comparison</span><span class="o">.</span><span class="n">rolling_kpis</span><span class="p">[</span><span class="s2">"total_production"</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">comparison</span><span class="o">.</span><span class="n">rolling_kpis</span><span class="p">[</span><span class="s2">&quot;total_production&quot;</span><span class="p">]</span>
 <span class="go">5000.0  # example value</span>
 </pre></div>
 </div>
@@ -2515,7 +2567,7 @@ metadata describing the run.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="fhops.evaluation.html" class="btn btn-neutral float-left" title="fhops.evaluation Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="fhops.hauling.html" class="btn btn-neutral float-right" title="fhops.hauling Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="fhops.salvage.html" class="btn btn-neutral float-right" title="fhops.salvage Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

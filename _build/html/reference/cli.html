@@ -69,6 +69,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tree_scale.html#limits">Limits</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/data_contract.html">Data Contract Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../howto/salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../howto/hauling.html">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/hauling.html#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../howto/web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../howto/serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../howto/serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -785,7 +837,8 @@ autogenerated with <code class="docutils literal notranslate"><span class="pre">
 <li><p><code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">bench</span> <span class="pre">suite</span></code> — run the full benchmarking harness across sample or user-supplied scenarios.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">geo</span> <span class="pre">distances</span></code> — derive block-to-block distance matrices from GeoJSON geometry.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">inventory</span> <span class="pre">validate</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">register</span></code> — validate and pin a producer-neutral tree inventory.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">map</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">stems</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">simulate</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">replay</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">scene</span></code> — run the tree-scale mapping, stem, simulation, replay, and glTF/GLB export path; see <a class="reference internal" href="../howto/tree_scale.html"><span class="doc">Tree-Scale Workflow</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">map</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">stems</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">simulate</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">replay</span></code> / <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">scene</span></code> — run the tree-scale mapping, stem, simulation, replay, and glTF/GLB export path; see <a class="reference internal" href="../howto/tree_scale.html"><span class="doc">Tree-Scale Workflow</span></a>.n- <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">tree</span> <span class="pre">system</span></code> — simulate a feller-buncher/skidder/loader ground-based system on one block; see <a class="reference internal" href="tree_system.html"><span class="doc">Ground-Based System Simulation</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">report</span> <span class="pre">salvage-shelf-life</span></code> — join a storage/age CSV to scenario blocks and report published volume retention, optional retained value, and advisory product windows; see <a class="reference internal" href="../howto/salvage_shelf_life.html"><span class="doc">Salvage Shelf-Life and Wood Degradation</span></a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">plan</span> <span class="pre">rolling</span></code> — execute rolling-horizon solves (stub/SA/MIP hooks) with metadata-rich exports for per-iteration telemetry and locked assignments; see <a class="reference internal" href="../howto/rolling_horizon.html"><span class="doc">Rolling-Horizon Planning</span></a>. Supports solver options such as <code class="docutils literal notranslate"><span class="pre">--mip-solver-option</span> <span class="pre">Threads=64</span></code> (repeatable) or <code class="docutils literal notranslate"><span class="pre">GRB_THREADS</span></code> for Gurobi, plus <code class="docutils literal notranslate"><span class="pre">--out-json</span></code>, <code class="docutils literal notranslate"><span class="pre">--out-assignments</span></code>, and per-iteration JSONL/CSV exports (always written, also when a run fails part-way). Windows whose solver finds no solution are recorded and left idle; <code class="docutils literal notranslate"><span class="pre">--fail-on-no-solution</span></code> stops at the first one and <code class="docutils literal notranslate"><span class="pre">--fail-on-empty-window</span></code> at the first window without a solution or solved to an empty plan (exit code 1). MILP windows break ties in favour of early production by default (lexicographic second solve, up to <code class="docutils literal notranslate"><span class="pre">--mip-earliness-time-limit</span></code> seconds, default <code class="docutils literal notranslate"><span class="pre">--mip-time-limit</span></code>; the window objective is unchanged; <code class="docutils literal notranslate"><span class="pre">--no-mip-earliness</span></code> disables it). Exit codes: <code class="docutils literal notranslate"><span class="pre">0</span></code> completed, <code class="docutils literal notranslate"><span class="pre">1</span></code> stopped by a <code class="docutils literal notranslate"><span class="pre">--fail-on-*</span></code> flag, failed, or no window returned a solution (e.g. every window hit a solver error), <code class="docutils literal notranslate"><span class="pre">2</span></code> usage error (invalid <code class="docutils literal notranslate"><span class="pre">--master-days</span></code>/<code class="docutils literal notranslate"><span class="pre">--sub-days</span></code>/<code class="docutils literal notranslate"><span class="pre">--lock-days</span></code>, <code class="docutils literal notranslate"><span class="pre">--max-iterations</span> <span class="pre">&lt;</span> <span class="pre">1</span></code>, unknown <code class="docutils literal notranslate"><span class="pre">--solver</span></code>, unavailable <code class="docutils literal notranslate"><span class="pre">--mip-solver</span></code>); see <a class="reference internal" href="../howto/rolling_horizon.html#rolling-no-plan"><span class="std std-ref">Windows without a plan</span></a>. Feed the locked assignments into <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">eval-playback</span></code> or <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.planning.compute_rolling_kpis()</span></code> for KPI deltas against a baseline.</p></li>
 </ul>
 <p>Run <code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">--help</span></code> to inspect the full command tree.</p>

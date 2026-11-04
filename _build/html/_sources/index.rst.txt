@@ -17,6 +17,7 @@ ensembles.
    overview
    howto/quickstart
    howto/tree_scale
+   howto/nemora_handoff
    howto/data_contract
    howto/benchmarks
    howto/heuristic_presets
@@ -34,9 +35,11 @@ ensembles.
    howto/tabu
    howto/rolling_horizon
    howto/tactical_operational
+   howto/salvage_shelf_life
    howto/hauling
    howto/hydrology_quickstart
    howto/web
+   howto/serious_game
 
 .. toctree::
    :maxdepth: 2
@@ -61,6 +64,7 @@ ensembles.
    reference/tree_simulation
    reference/tree_replay
    reference/tree_scene
+   reference/tree_system
 
 .. toctree::
    :maxdepth: 1

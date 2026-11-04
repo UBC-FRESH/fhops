@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Hydrology Quickstart — FEMIC to WS4 to FHOPS" href="hydrology_quickstart.html" />
-    <link rel="prev" title="Tactical–Operational Scenario Contract" href="tactical_operational.html" /> 
+    <link rel="prev" title="Salvage Shelf-Life and Wood Degradation" href="salvage_shelf_life.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -67,6 +67,11 @@
 <li class="toctree-l2"><a class="reference internal" href="tree_scale.html#outputs">Outputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_scale.html#fail-closed-behavior">Fail-closed behavior</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tree_scale.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nemora_handoff.html#boundary">Boundary</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data_contract.html">Data Contract Guide</a><ul>
@@ -285,6 +290,19 @@
 <li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Log Hauling</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#schema-version">Schema version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#minimal-example">Minimal example</a></li>
@@ -328,6 +346,17 @@
 <li class="toctree-l2"><a class="reference internal" href="web.html#skins">Skins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="web.html#assistant">Assistant</a></li>
 <li class="toctree-l2"><a class="reference internal" href="web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#caveats">Caveats</a></li>
 </ul>
 </li>
 </ul>
@@ -398,6 +427,22 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
@@ -614,7 +659,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#harvest-patterns">Harvest patterns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
 </ul>
@@ -629,6 +673,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#committed-example">Committed example</a></li>
 </ul>
 </li>
 </ul>
@@ -1008,10 +1060,10 @@ are per minute.</p></li>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_scenario</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fhops.hauling.flow</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_flow_problem</span><span class="p">,</span> <span class="n">solve_flow</span><span class="p">,</span> <span class="n">summarize_flow_result</span>
 
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">"examples/hauling/scenario.yaml"</span><span class="p">)</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">load_scenario</span><span class="p">(</span><span class="s2">&quot;examples/hauling/scenario.yaml&quot;</span><span class="p">)</span>
 <span class="n">problem</span> <span class="o">=</span> <span class="n">build_flow_problem</span><span class="p">(</span><span class="n">scenario</span><span class="p">)</span>
-<span class="n">cost</span> <span class="o">=</span> <span class="n">solve_flow</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>                      <span class="c1"># Ghotb's Z1</span>
-<span class="n">balanced</span> <span class="o">=</span> <span class="n">solve_flow</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">objective</span><span class="o">=</span><span class="s2">"goal"</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="n">cost</span> <span class="o">=</span> <span class="n">solve_flow</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>                      <span class="c1"># Ghotb&#39;s Z1</span>
+<span class="n">balanced</span> <span class="o">=</span> <span class="n">solve_flow</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">objective</span><span class="o">=</span><span class="s2">&quot;goal&quot;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">summarize_flow_result</span><span class="p">(</span><span class="n">balanced</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">balanced</span><span class="o">.</span><span class="n">flows</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">balanced</span><span class="o">.</span><span class="n">contractor_workload</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
@@ -1192,15 +1244,15 @@ contract. The bridge is explicit:</p>
 <span class="n">bridged</span> <span class="o">=</span> <span class="n">scenario_from_operational_plan</span><span class="p">(</span>
     <span class="n">scenario</span><span class="p">,</span>
     <span class="n">assignments</span><span class="p">,</span>
-    <span class="n">sort_shares</span><span class="o">=</span><span class="p">{</span><span class="s2">"fir_saw"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">"hemlock_pulp"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">"mixed_unsorted"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+    <span class="n">sort_shares</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fir_saw&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;hemlock_pulp&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;mixed_unsorted&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
 <span class="p">)</span>
 
 <span class="c1"># Tactical production + facility demand -&gt; hauling supply/demand.</span>
 <span class="n">bridged</span> <span class="o">=</span> <span class="n">scenario_from_tactical_plan</span><span class="p">(</span>
     <span class="n">scenario</span><span class="p">,</span>
     <span class="n">tactical</span><span class="p">,</span>
-    <span class="n">period_id</span><span class="o">=</span><span class="s2">"p1"</span><span class="p">,</span>
-    <span class="n">production</span><span class="o">=</span><span class="n">tactical_result</span><span class="p">[</span><span class="s2">"production"</span><span class="p">],</span>
+    <span class="n">period_id</span><span class="o">=</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span>
+    <span class="n">production</span><span class="o">=</span><span class="n">tactical_result</span><span class="p">[</span><span class="s2">&quot;production&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -1266,7 +1318,7 @@ demand.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tactical_operational.html" class="btn btn-neutral float-left" title="Tactical–Operational Scenario Contract" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="salvage_shelf_life.html" class="btn btn-neutral float-left" title="Salvage Shelf-Life and Wood Degradation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="hydrology_quickstart.html" class="btn btn-neutral float-right" title="Hydrology Quickstart — FEMIC to WS4 to FHOPS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
