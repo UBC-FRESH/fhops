@@ -5448,3 +5448,9 @@ PY
   rollback (`undo_last_move`) and `fhops.optimization.meta.solve_kernel_sa_incremental` scores only
   the blocks a move touches. Tiny7/Small21/med42 match the full objective exactly; med42 was
   0.355 s vs 0.515 s for full scoring at 100 iterations. The full suite still passes.
+
+- 2026-11-04: aligned the kernel adapter's objective weights with the existing FHOPS solvers.
+  `FhopsProblem` applies the automatic Tiny7/Small21 overrides and accepts explicit overrides;
+  all kernel paths record the applied mapping in `meta`. Tests cover the automatic and explicit
+  cases, and the Tiny7 scenario gate now rescoring through the overridden context. Full suite,
+  mypy, and Sphinx pass.
