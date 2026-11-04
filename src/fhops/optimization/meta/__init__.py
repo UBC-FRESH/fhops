@@ -4,6 +4,7 @@ from .adapter import FhopsContext, FhopsOperator, FhopsProblem, slot_diff
 from .solvers import (
     schedule_assignments,
     solve_kernel_ils,
+    solve_kernel_ils_like,
     solve_kernel_sa,
     solve_kernel_sa_fast,
     solve_kernel_sa_incremental,
@@ -17,6 +18,7 @@ __all__ = [
     "schedule_assignments",
     "slot_diff",
     "solve_kernel_ils",
+    "solve_kernel_ils_like",
     "solve_kernel_sa",
     "solve_kernel_sa_incremental",
     "solve_kernel_sa_fast",

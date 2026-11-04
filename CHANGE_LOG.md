@@ -5483,3 +5483,8 @@ PY
   50 iterations. Synthetic SA agrees exactly; large84 Tabu is ~5.6% worse on the kernel path, so
   the existing solvers stay. Raw records extended in
   `notes/reference/kernel-parity-2026-11-04.json`.
+
+- 2026-11-04: added `solve_kernel_ils_like`, mirroring the existing FHOPS local-search,
+  perturbation, and stall-restart semantics on the incremental evaluator. Tiny7 matches exactly;
+  small21/med42 improve at 50 iterations, seed 7. Raw records:
+  `notes/reference/kernel-parity-ils-2026-11-04.json`. Existing solvers still stay.

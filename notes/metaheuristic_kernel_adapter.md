@@ -140,3 +140,21 @@ until a like-for-like ILS and a full ladder (Jaffray and the synthetic scaling t
 The synthetic tiers agree exactly on SA and mostly on Tabu/ILS; the large84 Tabu kernel result is
 worse by ~5.6% and reinforces that the existing solvers stay until a like-for-like ILS and the
 retirement decision.
+
+
+## Like-for-like ILS ladder (2026-11-04)
+
+`solve_kernel_ils_like` mirrors the existing FHOPS ILS: one candidate per enabled operator per
+local-search pass, best improvement accepted, random perturbation between passes, restart from the
+incumbent at the stall limit. 50 iterations, seed 7; raw records:
+`notes/reference/kernel-parity-ils-2026-11-04.json`.
+
+| Scenario | Solver | Existing | Kernel | Delta | Kernel speed ratio |
+| --- | --- | ---: | ---: | ---: | ---: |
+| tiny7 | ILS (existing semantics) | 4338.517 | 4338.517 | 0.000 | 0.64 |
+| small21 | ILS (existing semantics) | 15573.545 | 15551.187 | -22.358 | 0.63 |
+| med42 | ILS (existing semantics) | 21662.981 | 20762.835 | -900.146 | 0.56 |
+
+The like-for-like kernel ILS is slower than the plain kernel ILS (which is a different algorithm)
+but closer to the existing ILS. It matches Tiny7 exactly and improves Small21/med42 at this budget;
+it is not trajectory-identical, so the existing solver stays until a longer multi-seed ladder passes.

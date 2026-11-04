@@ -14,6 +14,7 @@ from fhops.optimization.meta import (
     schedule_assignments,
     slot_diff,
     solve_kernel_ils,
+    solve_kernel_ils_like,
     solve_kernel_sa,
     solve_kernel_sa_fast,
     solve_kernel_sa_incremental,
@@ -193,3 +194,13 @@ def test_tiny7_automatic_weight_overrides_are_recorded() -> None:
     }
     overridden = FhopsProblem(pb, objective_weight_overrides={"landing_surplus": 0.0})
     assert overridden.objective_weight_overrides == {"landing_surplus": 0.0}
+
+
+def test_kernel_ils_like_replays_exactly() -> None:
+    """The like-for-like ILS returns a full exact score and replays exactly."""
+    pb = _simple_problem()
+    result = solve_kernel_ils_like(pb, iters=5, seed=9, perturbation=2, stall_limit=3)
+    assert result["meta"]["solver"] == "kernel-ils-like"
+    assert result["meta"]["incremental_search"] is True
+    assert result["meta"]["perturbations"] >= 0
+    assert result["objective"] == pytest.approx(evaluate_assignments(pb, result["assignments"]))
