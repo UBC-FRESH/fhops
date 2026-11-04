@@ -29,9 +29,30 @@ Issue: #391. Branch: `issue-391-policy-effects`.
 
 ## Verification
 
-- Operator-policy test asserts cycle, breakdown, grade, and failure settings.
+- Operator-policy test asserts cycle, breakdown, grade, damage, and failure settings.
 - Studio policy-effects panel renders from the project dataset.
-- 45 targeted tests pass.
+- Core test asserts the 10% downgrade moves volume from sawlog to pulp and records
+  provenance.
+- 46 targeted tests pass; full local pytest has only the two pre-existing HiGHS
+  option-error assertions (1360 passed, 214 skipped).
+
+## Demo evidence
+
+A duplicate of the CTL project with all machines on the throughput preset (5%
+downgrade), project `afrf-gavin-20261104t010235-3dfa`, run
+`20261104T010235Z`:
+
+| Metric | Steady CTL | Throughput policy |
+|---|---:|---:|
+| Sawlog / pulp m³ | 772.8 / 3.2 | 734.2 / 41.9 |
+| Downgraded sawlog m³ | 0.0 | 38.6 |
+| Product revenue | $65,804 | $63,872 |
+| Total cost | $13,489 | $18,064 |
+| Net margin | $52,314 | $45,807 |
+| Makespan | 20.3 h | 27.3 h |
+
+The demo link combines the downgrade with the throughput preset's other effects
+(cycle, grade, and breakdown risk); it is not an isolated damage-only trial.
 
 ## Limits
 
