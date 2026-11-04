@@ -14,6 +14,9 @@
 - Verification: full `pytest` (1388 passed, 219 skipped), gated salvage CLI
   tests (5 passed), `ruff format`/`ruff check`, `mypy src` (194 files), and
   `sphinx-build -b html docs _build/html -W`.
+- PR #383 merged as `22c07ff6`; main CI `41783906271` passed. Child #381 and
+  closeout #415 are complete. Remaining BC/species, storage, value, and ws4
+  work stays source-gated and separate.
 
 # 2026-11-04 — custom-fleet presets and comparison launcher (#407)
 
