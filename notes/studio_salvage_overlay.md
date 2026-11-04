@@ -1,6 +1,6 @@
 # Studio salvage-age overlay
 
-Issue: #418.
+Issues: #418 (overlay), #420 (comparison context).
 
 ## Change
 
@@ -27,10 +27,21 @@ economics, or replay.
 
 Existing projects load with an empty age map; saving normalizes the field.
 
+## Comparison view
+
+The comparison page fetches each side's saved salvage preview and adds a
+**Salvage shelf-life** panel:
+
+- age, retention, original volume, retained volume, and products;
+- "No age set" for an unconfigured project;
+- curve source and reference-only caveat;
+- no mixing with run KPIs, charts, or economics.
+
 ## Exports
 
 - Project export includes `salvage` because it is part of the project JSON.
-- Comparison JSON includes each side's `salvage` configuration.
+- Comparison JSON includes each side's `salvage` configuration and computed
+  `salvage_preview`.
 
 ## Validation
 
@@ -46,6 +57,9 @@ Existing projects load with an empty age map; saving normalizes the field.
 - API test: configured and empty previews, invalid age, unknown curve.
 - Browser smoke on the Gavin project: age 2 → 0.89 retention, 1,206.8 m³
   retained; save persisted the age; clear + save removed it; no page errors.
+- Comparison browser smoke: left side age 2 → 0.89 retention / 1,206.8 m³
+  retained; right side showed "No age set"; export included both config and
+  preview; no page errors.
 - Full `pytest`: 1391 passed, 219 skipped; Sphinx `-W`: clean.
 
 ## Limits

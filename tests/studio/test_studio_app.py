@@ -66,6 +66,7 @@ def test_compare_page_served(tmp_path: Path) -> None:
     response = TestClient(app).get("/compare")
     assert response.status_code == 200
     assert "Scenario comparison" in response.text
+    assert 'id="salvage"' in response.text
 
 
 def test_stream_buffer_endpoint(tmp_path: Path) -> None:

@@ -121,13 +121,28 @@ async function initSelectors() {
   if (params.get("right_run")) $("#right-run").value = params.get("right_run");
 }
 
+async function loadSalvagePreview(data) {
+  const salvage = data.dataset?.project?.salvage || {};
+  const ages = salvage.ages || {};
+  if (!Object.keys(ages).length) return { configured: false };
+  return api(`projects/${encodeURIComponent(data.projectId)}/salvage`, {
+    method: "POST",
+    body: JSON.stringify({ ages, curve_id: salvage.curve_id }),
+  });
+}
+
 async function runData(projectId, runId) {
   const [meta, events, dataset] = await Promise.all([
     api(`projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}`),
     api(`projects/${encodeURIComponent(projectId)}/runs/${encodeURIComponent(runId)}/events`).catch(() => null),
     api(`projects/${encodeURIComponent(projectId)}/dataset`).catch(() => null),
   ]);
-  return { projectId, runId, meta, events, dataset };
+  const data = { projectId, runId, meta, events, dataset };
+  data.salvage = await loadSalvagePreview(data).catch((error) => ({
+    configured: false,
+    error: error.message,
+  }));
+  return data;
 }
 
 function economics(data, side) {
@@ -261,6 +276,54 @@ function landingRows(left, right) {
   }).join("");
 }
 
+function salvageSummary(data) {
+  const preview = data.salvage || {};
+  const rows = preview.rows || [];
+  const original = rows.reduce((sum, row) => sum + Number(row.original_volume_m3 || 0), 0);
+  const retained = rows.reduce((sum, row) => sum + Number(row.retained_volume_m3 || 0), 0);
+  const ages = rows.map((row) => Number(row.years_since_disturbance));
+  const products = [...new Set(
+    rows.flatMap((row) => String(row.eligible_products || "").split(";").filter(Boolean)),
+  )];
+  return {
+    configured: Boolean(preview.configured),
+    error: preview.error || null,
+    age: ages.length ? ages.map((value) => fmt(value, 2)).join(", ") : null,
+    original,
+    retained,
+    retention: original > 0 ? retained / original : null,
+    products,
+    curve: preview.curve || null,
+    blocksWithoutMode: preview.blocks_without_salvage_mode || [],
+  };
+}
+
+function salvageRows(left, right) {
+  const a = salvageSummary(left);
+  const b = salvageSummary(right);
+  const rows = [
+    ["Age (years)", a.configured ? a.age : "No age set", b.configured ? b.age : "No age set"],
+    ["Retention", a.configured ? fmt(a.retention, 4) : "—", b.configured ? fmt(b.retention, 4) : "—"],
+    ["Original m³", a.configured ? fmt(a.original) : "—", b.configured ? fmt(b.original) : "—"],
+    ["Retained m³", a.configured ? fmt(a.retained) : "—", b.configured ? fmt(b.retained) : "—"],
+    ["Products", a.configured ? (a.products.join(", ") || "—") : "—", b.configured ? (b.products.join(", ") || "—") : "—"],
+  ];
+  return rows.map(([label, av, bv]) => `<tr><th>${escapeHtml(label)}</th><td class="num">${escapeHtml(av)}</td><td class="num">${escapeHtml(bv)}</td></tr>`).join("");
+}
+
+function salvageSources(left, right) {
+  return [["Left", left], ["Right", right]].map(([label, data]) => {
+    const preview = salvageSummary(data);
+    if (!preview.configured) return `<div class="salvage-source"><b>${label}:</b> no storage age configured.</div>`;
+    const curve = preview.curve || {};
+    const source = curve.source || {};
+    const reason = preview.blocksWithoutMode.length
+      ? " Reference-only: block has no salvage_processing_mode."
+      : "";
+    return `<div class="salvage-source"><b>${label}:</b> ${escapeHtml(curve.name || curve.curve_id || "salvage curve")} · ${escapeHtml(source.citation || "")}${source.url ? ` · ${escapeHtml(source.url)}` : ""}${reason}</div>`;
+  }).join("");
+}
+
 function renderCharts(left, right) {
   const a = economics(left, "left");
   const b = economics(right, "right");
@@ -286,6 +349,7 @@ function render(left, right) {
   renderCharts(left, right);
   $("#summary").innerHTML = `<h2>Summary</h2><table><thead><tr><th>Metric</th><th>${escapeHtml(left.projectId)}<br><span class="muted">${escapeHtml(left.runId)}</span></th><th>${escapeHtml(right.projectId)}<br><span class="muted">${escapeHtml(right.runId)}</span></th></tr></thead><tbody>${comparisonRows(left, right)}</tbody></table>`;
   $("#economics").innerHTML = `<h2>Economics <span class="muted">(scheduled machine + truck + labor)</span></h2><table><thead><tr><th>Metric</th><th>Left</th><th>Right</th></tr></thead><tbody>${economicsRows(left, right)}</tbody></table>`;
+  $("#salvage").innerHTML = `<h2>Salvage shelf-life <span class="muted">(reference only; not in run KPIs or economics)</span></h2><table><thead><tr><th>Metric</th><th>Left</th><th>Right</th></tr></thead><tbody>${salvageRows(left, right)}</tbody></table>${salvageSources(left, right)}`;
   $("#machines").innerHTML = `<h2>Machine utilization</h2><table><thead><tr><th>Machine</th><th>Left</th><th>Right</th></tr></thead><tbody>${machineRows(left, right)}</tbody></table>`;
   $("#trucks").innerHTML = `<h2>Trucking</h2><table><thead><tr><th>Metric</th><th>Left</th><th>Right</th></tr></thead><tbody>${truckRows(left, right)}</tbody></table>`;
   $("#landings").innerHTML = `<h2>Landing stockpiles (final / peak)</h2><table><thead><tr><th>Landing</th><th>Left</th><th>Right</th></tr></thead><tbody>${landingRows(left, right)}</tbody></table>`;
@@ -332,6 +396,7 @@ function exportComparison() {
     economics: economics(data, name),
     landing_inventory: data.events?.landing_inventory || {},
     salvage: data.dataset?.project?.salvage || {},
+    salvage_preview: data.salvage || {},
   });
   const payload = {
     generated_utc: new Date().toISOString(),

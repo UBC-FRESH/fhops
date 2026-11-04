@@ -1,3 +1,16 @@
+# 2026-11-04 — comparison-page salvage context (#420)
+
+- Added a reference-only salvage table to the comparison page using the P44.2
+  preview endpoint for each side.
+- Shows age, retention, original/retained volume, products, curve source, and
+  the no-age state; explicitly excludes salvage from run KPIs and economics.
+- Comparison JSON now includes each side's salvage configuration and computed
+  `salvage_preview`.
+- Added comparison markup coverage and browser smoke with one configured and
+  one unconfigured side.
+- Verification: full `pytest` (1391 passed, 219 skipped), `ruff`,
+  `mypy`, Sphinx, and a browser export check.
+
 # 2026-11-04 — Studio salvage-age overlay (#418)
 
 - Added optional per-block `salvage.ages` data to Studio projects, with

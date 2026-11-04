@@ -144,6 +144,11 @@ assignment, economics, or replay. Existing Studio projects start with an empty
 age map. A block without `salvage_processing_mode` is still previewed but is
 marked as a reference-only block.
 
+The comparison page adds a reference-only salvage table beside the run
+comparison. It shows each side's age, retention, original/retained volume, and
+products, or "No age set" when the project has no saved age. Comparison JSON
+includes both the salvage configuration and the computed preview.
+
 Adding another curve
 --------------------
 
