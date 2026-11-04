@@ -9,7 +9,7 @@ Issue: #391. Branch: `issue-391-policy-effects`.
   - breakdown risk,
   - break policy,
   - grade caution,
-  - damage risk (advisory).
+  - damage risk and its product-recovery downgrade.
 - `apply_operator_policies` stores `system_args.policy_effects` and an aggregate
   run summary.
 - Non-steady policies now derive stochastic breakdown assumptions when
@@ -21,6 +21,11 @@ Issue: #391. Branch: `issue-391-policy-effects`.
   `--repair-cv`, and `--breakdown-seed` when present.
 - Grade caution derives a run grade limit: high caution caps at 80%, relaxed
   raises to at least 150%. Existing terrain limits remain the baseline.
+- Damage risk derives a sawlog-to-pulp downgrade fraction averaged across
+  machines: low/normal 0%, elevated 5%, high 10%. The fraction is passed as
+  `--damage-downgrade-fraction`, recorded in run provenance, and applied to
+  product mix, revenue, and net margin. Steady policies therefore leave the
+  CTL product mix unchanged.
 
 ## Verification
 
@@ -30,6 +35,8 @@ Issue: #391. Branch: `issue-391-policy-effects`.
 
 ## Limits
 
-- Damage risk remains advisory; it is not a physical tree-damage model.
+- The damage adjustment is a product-recovery assumption, not a physical
+  tree-damage or mill-grade model; it reclassifies sawlog volume rather than
+  creating or destroying fibre.
 - Break policy affects stochastic failure rate rather than explicit scheduled
   breaks.

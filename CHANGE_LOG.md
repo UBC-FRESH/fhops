@@ -1,3 +1,17 @@
+# 2026-11-04 — damage-risk product recovery (#399)
+
+- Mapped operator-policy damage risk to a sawlog-to-pulp downgrade fraction
+  (low/normal 0%, elevated 5%, high 10%) in Studio.
+- Added `--damage-downgrade-fraction` to `fhops tree system`, passed it through
+  Tree Lab runs, and applied it to product mix.
+- Added `downgraded_m3`, damage provenance, and comparison revenue/net-margin
+  handling; the policy panel now reports the aggregate downgrade.
+- Added core and Studio regression coverage. Steady policies leave product mix
+  unchanged; the adjustment is a planning assumption, not a physical damage
+  model.
+- Verification: `ruff format`, `ruff check`, `mypy`, targeted `pytest`, JS
+  syntax checks, and `pre-commit run --all-files`.
+
 # 2026-11-03 — product mix closeout
 
 - CTL/full-tree demo product mix: 772.8 m³ sawlog + 3.2 m³ pulp.
