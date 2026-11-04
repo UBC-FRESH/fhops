@@ -12,6 +12,9 @@
 - Verification: full `pytest` (1366 passed, 214 skipped), targeted Studio tests,
   JS syntax checks, pre-commit, and a browser smoke test with custom IDs and 22
   CTL runs.
+- PR #408 merged as `eac70a57`; main CI `41762094761` passed. Public demo
+  deployment `c944369f`; live Studio served 22 run options and the comparison
+  link loaded with no page errors.
 
 # 2026-11-04 — local quality-gate cleanup (#403)
 
