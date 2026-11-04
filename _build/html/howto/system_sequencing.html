@@ -1,0 +1,1050 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harvest System Sequencing How-to &mdash; FHOPS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Iterated Local Search How-to" href="ils.html" />
+    <link rel="prev" title="Synthetic Datasets" href="synthetic_datasets.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            FHOPS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#automation-pipeline">Automation pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#quick-demo">Quick demo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#baseline-workflows">Baseline Workflows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#bootstrap-environment">Bootstrap Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#workbench-examples-tiny7">Workbench: <code class="docutils literal notranslate"><span class="pre">examples/tiny7</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#regression-fixture-phase-1-baseline">Regression Fixture (Phase 1 Baseline)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#rolling-horizon-loop-playback-kpis">Rolling horizon loop (playback + KPIs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#shift-enabled-scenarios">Shift-enabled scenarios</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tree_scale.html">Tree-Scale Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#synthetic-fixture">Synthetic fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#run-the-complete-path">Run the complete path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#fail-closed-behavior">Fail-closed behavior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tree_scale.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nemora_handoff.html">Nemora Tree-Inventory Handoff</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nemora_handoff.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nemora_handoff.html#boundary">Boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_contract.html">Data Contract Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#reference-dataset-generator">Reference dataset generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#core-tables-csv">Core Tables (CSV)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#cross-references-validators">Cross References &amp; Validators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#optional-extras">Optional Extras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#timeline-example">Timeline Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#shift-calendars-defaults">Shift Calendars &amp; Defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#schedule-locking">Schedule Locking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#initial-state-resuming-mid-operation">Initial State (Resuming Mid-Operation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#compatibility-with-fhops-1-0-0">Compatibility with FHOPS 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#geojson-ingestion-distances">GeoJSON Ingestion &amp; Distances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#machine-rate-defaults-costing-helper">Machine-Rate Defaults &amp; Costing Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#road-construction-tables-validation">Road Construction Tables &amp; Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#skyline-stand-profiles">Skyline Stand Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#log-hauling-extension">Log Hauling Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#lidarbc-products">LidarBC Products</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#tree-inventories">Tree Inventories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#authoring-checklist">Authoring Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_contract.html#fixture-gallery">Fixture Gallery</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">Benchmarking Harness</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#cli-options">CLI Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#watching-heuristic-progress">Watching heuristic progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#faq-watch-mode">FAQ – Watch Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#standard-manuscript-pipeline">Standard Manuscript Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#optional-gurobi-backend-linux">Optional Gurobi backend (Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#interpreting-outputs">Interpreting Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#comparing-mip-and-heuristic-objectives">Comparing MIP and heuristic objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#shared-kpi-roll-up">Shared KPI roll-up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#operator-telemetry">Operator Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#visual-comparisons">Visual Comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#regression-fixture">Regression Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#future-work">Future Work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="heuristic_presets.html">Heuristic Presets &amp; Registry Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#shared-solver-cheat-sheet">Shared Solver Cheat Sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#preset-overview">Preset Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#applying-presets">Applying Presets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#explicit-overrides">Explicit Overrides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#solver-specific-parameters">Solver-Specific Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#parallel-advanced-features">Parallel &amp; Advanced Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#operator-catalogue">Operator Catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#telemetry-benchmarking">Telemetry &amp; Benchmarking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#objective-weights-automatic-overrides-and-hard-violations">Objective Weights, Automatic Overrides, and Hard Violations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="heuristic_presets.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mip_warm_starts.html">Operational MILP Warm Starts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#workflow">Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#solver-support">Solver support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#solve-outcomes">Solve outcomes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#current-limitations">Current limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#practical-guidance">Practical guidance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mip_warm_starts.html#future-work">Future work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="optimization_formulation.html">Operational MILP Formulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parallel_heuristics.html">Parallel Heuristic Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#multi-start-runs">Multi-start Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#batched-neighbour-evaluation">Batched Neighbour Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#api-reference">API Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel_heuristics.html#profiling-notes">Profiling Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#running-deterministic-playback">Running deterministic playback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#optional-flags">Optional flags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#reporting-templates">Reporting templates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#parquet-and-markdown-exports">Parquet and Markdown exports</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#quickstart-example">Quickstart example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#aggregation-helper-reference">Aggregation helper reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#kpi-formulas-required-signals">KPI formulas &amp; required signals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#empty-and-partial-plans">Empty and partial plans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#weather-downtime-cost-assumptions">Weather &amp; downtime cost assumptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#stochastic-playback-toggles">Stochastic playback toggles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluation.html#stochastic-event-semantics">Stochastic event semantics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html#relationship-to-kpi-evaluation">Relationship to KPI evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="thesis_eval.html">Thesis Evaluation Workflow (Chapter 2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#context-goals">Context &amp; Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#pipeline-overview">Pipeline Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#worked-example-med42-template">Worked Example (med42 Template)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thesis_eval.html#tips-references">Tips &amp; References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telemetry_tuning.html">Telemetry-Driven Tuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#step-1-collect-telemetry">Step 1 – Collect Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#step-2-generate-a-comparison-report">Step 2 – Generate a Comparison Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#sample-output">Sample Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#step-3-iterate">Step 3 – Iterate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#step-4-compare-multiple-reports">Step 4 – Compare Multiple Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#historical-trends">Historical Trends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#delta-snapshot-summary">Delta Snapshot Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#interpreting-dashboards">Interpreting Dashboards</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#history-summary-html-trend-radar">history_summary.html ― trend radar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#latest-history-summary-html-md-csv-current-leaderboard">latest_history_summary.{html,md,csv} ― current leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#latest-tuner-report-html-md-csv-raw-per-algorithm-stats">latest_tuner_report.{html,md,csv} ― raw per-algorithm stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#latest-tuner-comparison-latest-tuner-leaderboard">latest_tuner_comparison &amp; latest_tuner_leaderboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#tuner-difficulty-html-md-csv">tuner_difficulty*.{html,md,csv}</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#adding-new-dashboard-assets">Adding new dashboard assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#release-candidate-presets">Release candidate presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#automated-sweeps">Automated Sweeps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#parallel-execution">Parallel execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#benchmark-plans">Benchmark plans</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#notebook-execution-cadence">Notebook execution cadence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#heuristic-parameter-catalogue">Heuristic parameter catalogue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#convergence-metrics">Convergence metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="telemetry_tuning.html#tuner-metadata-summary">Tuner metadata summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#bundle-aliases">Bundle Aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#ci-automation">CI Automation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_tuning.html#downloading-ci-reports">Downloading CI Reports</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="telemetry_ops.html">Telemetry Ops Runbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#weekly-notebook-pipeline">Weekly Notebook Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#telemetry-store-maintenance">Telemetry Store Maintenance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#automation-checklist">Automation Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#runbook-template-per-week">Runbook Template (per week)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telemetry_ops.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release_playbook.html">Release &amp; Contribution Playbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release_playbook.html#release-preparation">Release Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_playbook.html#contribution-checklist">Contribution Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_playbook.html#where-to-update-next">Where to Update Next</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="synthetic_datasets.html">Synthetic Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#reference-bundles">Reference bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#fleet-roles-and-harvest-systems">Fleet roles and harvest systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#block-enrichment-crews-and-blackouts">Block enrichment, crews, and blackouts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#cli-walkthrough">CLI walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#regenerating-bundles">Regenerating bundles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_datasets.html#where-to-go-next">Where to go next</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Harvest System Sequencing How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-scenarios">Configuring Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sequencing-semantics">Sequencing Semantics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#locks-and-the-operational-milp">Locks and the operational MILP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-solvers">Running the Solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mip">MIP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simulated-annealing">Simulated Annealing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#inspection-kpis">Inspection &amp; KPIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmarking-with-sequencing">Benchmarking with Sequencing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ils.html">Iterated Local Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ils.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ils.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ils.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tabu.html">Tabu Search How-to</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tabu.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tabu.html#telemetry">Telemetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tabu.html#benchmarks">Benchmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rolling_horizon.html">Rolling-Horizon Planning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#when-to-use">When to use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#key-parameters">Key parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#how-state-carries-between-windows">How state carries between windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#milp-windows-earliness-tie-break">MILP windows: earliness tie-break</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#windows-without-a-plan">Windows without a plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#cli-usage">CLI usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#worked-example-tiny7">Worked example (tiny7)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#milp-example-with-solver-options">MILP example with solver options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#evaluating-rolling-plans">Evaluating rolling plans</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rolling_horizon.html#empty-rolling-plans-and-baselines">Empty rolling plans and baselines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#rolling-comparison-helper">Rolling comparison helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#masc-experiments-plots">MASc experiments &amp; plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#sample-artefacts">Sample artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#artefact-provenance-regeneration">Artefact provenance &amp; regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#gotchas">Gotchas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#notes">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rolling_horizon.html#limitations">Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tactical_operational.html">Tactical–Operational Scenario Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#canonical-formulation">Canonical formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#loading-and-validation">Loading and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#period-templates">Period templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#core-milp-formulation">Core MILP formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#optional-infrastructure-modules">Optional infrastructure modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#scenario-overlays-diffs-and-batch-reports">Scenario overlays, diffs, and batch reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#tactical-to-operational-handoff">Tactical-to-operational handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#scale-benchmarks-and-uncertainty-envelopes">Scale benchmarks and uncertainty envelopes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#practitioner-scale-validation-case">Practitioner-scale validation case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#guided-tactical-planner-notebook">Guided tactical planner notebook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tactical_operational.html#topm-mini-acceptance-fixture"><cite>topm-mini</cite> acceptance fixture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="salvage_shelf_life.html">Salvage Shelf-Life and Wood Degradation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#sources-and-boundaries">Sources and boundaries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="salvage_shelf_life.html#retention-curve">Retention curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salvage_shelf_life.html#product-windows">Product windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#output-columns">Output columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#adding-another-curve">Adding another curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salvage_shelf_life.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hauling.html">Log Hauling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#schema-version">Schema version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#minimal-example">Minimal example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#marine-and-barge-legs">Marine and barge legs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#entity-rules">Entity rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#contractor-eligibility">Contractor eligibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#units-and-defaults">Units and defaults</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#phase-i-solve">Phase I solve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#phase-ii-schedule">Phase II schedule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#phase-iii-simulated-annealing">Phase III simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#stable-artefacts">Stable artefacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#operational-and-tactical-handoff">Operational and tactical handoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#scale-case">Scale case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#limitations">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hauling.html#see-also">See also</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hydrology_quickstart.html">Hydrology Quickstart — FEMIC to WS4 to FHOPS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#version-matrix">Version Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#build-the-synthetic-workspace">Build the Synthetic Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#ws4-landscape-screening">WS4 Landscape Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#fhops-consumer-and-operational-check">FHOPS Consumer and Operational Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#what-this-demonstrates">What This Demonstrates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#what-this-does-not-prove">What This Does Not Prove</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#docs-check">Docs Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydrology_quickstart.html#further-reference">Further Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="web.html">FHOPS Web UI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="web.html#shell-and-navigation">Shell and navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#install-and-run">Install and run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#run-discovery">Run discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#run-manifest">Run manifest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#service-surface">Service surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#map-and-layers">Map and layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#domain-panels">Domain panels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#live-runs">Live runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#scenario-editing">Scenario editing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#skins">Skins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#assistant">Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html#security-and-limits">Security and limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="serious_game.html">FHOPS serious game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#levels">Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#start-the-service">Start the service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#how-a-round-works">How a round works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#scoring">Scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#optional-agent">Optional agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#regenerate-assets">Regenerate assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serious_game.html#caveats">Caveats</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.html"><code class="docutils literal notranslate"><span class="pre">fhops</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.scenario.html"><code class="docutils literal notranslate"><span class="pre">fhops.scenario</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scenario.html#quickstart">Quickstart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.scheduling.html"><code class="docutils literal notranslate"><span class="pre">fhops.scheduling</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.timeline.BlackoutWindow"><code class="docutils literal notranslate"><span class="pre">BlackoutWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.timeline.ShiftDefinition"><code class="docutils literal notranslate"><span class="pre">ShiftDefinition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.timeline.TimelineConfig"><code class="docutils literal notranslate"><span class="pre">TimelineConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.BlockDistance"><code class="docutils literal notranslate"><span class="pre">BlockDistance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.MachineMobilisation"><code class="docutils literal notranslate"><span class="pre">MachineMobilisation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.MobilisationConfig"><code class="docutils literal notranslate"><span class="pre">MobilisationConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.mobilisation.build_distance_lookup"><code class="docutils literal notranslate"><span class="pre">build_distance_lookup()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.HarvestSystem"><code class="docutils literal notranslate"><span class="pre">HarvestSystem</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.SystemJob"><code class="docutils literal notranslate"><span class="pre">SystemJob</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.default_system_registry"><code class="docutils literal notranslate"><span class="pre">default_system_registry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.get_system_road_defaults"><code class="docutils literal notranslate"><span class="pre">get_system_road_defaults()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.scheduling.html#fhops.scheduling.systems.system_productivity_overrides"><code class="docutils literal notranslate"><span class="pre">system_productivity_overrides()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.optimization.html"><code class="docutils literal notranslate"><span class="pre">fhops.optimization</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.optimization.html#deprecated-legacy-mip-1-0-1-127">Deprecated legacy MIP (1.0.1, #127)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.evaluation.html"><code class="docutils literal notranslate"><span class="pre">fhops.evaluation</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.DaySummary"><code class="docutils literal notranslate"><span class="pre">DaySummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.DowntimeEvent"><code class="docutils literal notranslate"><span class="pre">DowntimeEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.DowntimeEventConfig"><code class="docutils literal notranslate"><span class="pre">DowntimeEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.EnsembleResult"><code class="docutils literal notranslate"><span class="pre">EnsembleResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.KPIResult"><code class="docutils literal notranslate"><span class="pre">KPIResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.LandingShockConfig"><code class="docutils literal notranslate"><span class="pre">LandingShockConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.LandingShockEvent"><code class="docutils literal notranslate"><span class="pre">LandingShockEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackConfig"><code class="docutils literal notranslate"><span class="pre">PlaybackConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackEvent"><code class="docutils literal notranslate"><span class="pre">PlaybackEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackRecord"><code class="docutils literal notranslate"><span class="pre">PlaybackRecord</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackResult"><code class="docutils literal notranslate"><span class="pre">PlaybackResult</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.PlaybackSample"><code class="docutils literal notranslate"><span class="pre">PlaybackSample</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.SamplingConfig"><code class="docutils literal notranslate"><span class="pre">SamplingConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.SamplingContext"><code class="docutils literal notranslate"><span class="pre">SamplingContext</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.SamplingEventConfig"><code class="docutils literal notranslate"><span class="pre">SamplingEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.ShiftSummary"><code class="docutils literal notranslate"><span class="pre">ShiftSummary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.WeatherEvent"><code class="docutils literal notranslate"><span class="pre">WeatherEvent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.WeatherEventConfig"><code class="docutils literal notranslate"><span class="pre">WeatherEventConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.assignments_to_records"><code class="docutils literal notranslate"><span class="pre">assignments_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_kpis"><code class="docutils literal notranslate"><span class="pre">compute_kpis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_makespan_metrics"><code class="docutils literal notranslate"><span class="pre">compute_makespan_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.compute_utilisation_metrics"><code class="docutils literal notranslate"><span class="pre">compute_utilisation_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.export_playback"><code class="docutils literal notranslate"><span class="pre">export_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.playback_summary_metrics"><code class="docutils literal notranslate"><span class="pre">playback_summary_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.render_markdown_summary"><code class="docutils literal notranslate"><span class="pre">render_markdown_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.run_playback"><code class="docutils literal notranslate"><span class="pre">run_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.run_stochastic_playback"><code class="docutils literal notranslate"><span class="pre">run_stochastic_playback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.schedule_to_records"><code class="docutils literal notranslate"><span class="pre">schedule_to_records()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.summarise_days"><code class="docutils literal notranslate"><span class="pre">summarise_days()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.evaluation.html#fhops.evaluation.summarise_shifts"><code class="docutils literal notranslate"><span class="pre">summarise_shifts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.html#solver-options-milp">Solver options (MILP)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.salvage.html"><code class="docutils literal notranslate"><span class="pre">fhops.salvage</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#why-this-module-exists">Why this module exists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DEFAULT_CURVE_ID"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CURVE_ID</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurve"><code class="docutils literal notranslate"><span class="pre">DecayCurve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveLibrary"><code class="docutils literal notranslate"><span class="pre">DecayCurveLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurvePoint"><code class="docutils literal notranslate"><span class="pre">DecayCurvePoint</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.DecayCurveSource"><code class="docutils literal notranslate"><span class="pre">DecayCurveSource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.ProductWindow"><code class="docutils literal notranslate"><span class="pre">ProductWindow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.get_decay_curve"><code class="docutils literal notranslate"><span class="pre">get_decay_curve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.degradation.load_decay_library"><code class="docutils literal notranslate"><span class="pre">load_decay_library()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.REQUIRED_STORAGE_COLUMNS"><code class="docutils literal notranslate"><span class="pre">REQUIRED_STORAGE_COLUMNS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.SalvageReport"><code class="docutils literal notranslate"><span class="pre">SalvageReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.build_salvage_report"><code class="docutils literal notranslate"><span class="pre">build_salvage_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.salvage.html#fhops.salvage.report.write_salvage_report"><code class="docutils literal notranslate"><span class="pre">write_salvage_report()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.planning.tactical_operational</span></code> Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.BlockRoadAccess"><code class="docutils literal notranslate"><span class="pre">BlockRoadAccess</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Economics"><code class="docutils literal notranslate"><span class="pre">Economics</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.ExternalSupply"><code class="docutils literal notranslate"><span class="pre">ExternalSupply</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Facility"><code class="docutils literal notranslate"><span class="pre">Facility</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FacilityDemand"><code class="docutils literal notranslate"><span class="pre">FacilityDemand</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetCapacity"><code class="docutils literal notranslate"><span class="pre">FleetCapacity</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.FleetOption"><code class="docutils literal notranslate"><span class="pre">FleetOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.HarvestSystemOption"><code class="docutils literal notranslate"><span class="pre">HarvestSystemOption</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.InitialInventory"><code class="docutils literal notranslate"><span class="pre">InitialInventory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PeriodLevel"><code class="docutils literal notranslate"><span class="pre">PeriodLevel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningPeriod"><code class="docutils literal notranslate"><span class="pre">PlanningPeriod</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.PlanningUnit"><code class="docutils literal notranslate"><span class="pre">PlanningUnit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.Product"><code class="docutils literal notranslate"><span class="pre">Product</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadDependency"><code class="docutils literal notranslate"><span class="pre">RoadDependency</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.RoadProject"><code class="docutils literal notranslate"><span class="pre">RoadProject</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.SilvicultureTransition"><code class="docutils literal notranslate"><span class="pre">SilvicultureTransition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TacticalOperationalScenario"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalScenario</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.TransportArc"><code class="docutils literal notranslate"><span class="pre">TransportArc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.children_by_parent"><code class="docutils literal notranslate"><span class="pre">children_by_parent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.four_week_periods"><code class="docutils literal notranslate"><span class="pre">four_week_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.load_tactical_operational_scenario"><code class="docutils literal notranslate"><span class="pre">load_tactical_operational_scenario()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.seasonal_periods"><code class="docutils literal notranslate"><span class="pre">seasonal_periods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_dimensions"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_dimensions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.tactical_scenario_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_scenario_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.planning.tactical_operational.html#fhops.planning.tactical_operational.validate_period_hierarchy"><code class="docutils literal notranslate"><span class="pre">validate_period_hierarchy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html"><code class="docutils literal notranslate"><span class="pre">fhops.model.milp.tactical_operational</span></code> Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.DemandBasis"><code class="docutils literal notranslate"><span class="pre">DemandBasis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalHarvestMode"><code class="docutils literal notranslate"><span class="pre">TacticalHarvestMode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpBundle"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpBundle</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.TacticalOperationalMilpConfig"><code class="docutils literal notranslate"><span class="pre">TacticalOperationalMilpConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_bundle"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_bundle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.build_tactical_operational_model"><code class="docutils literal notranslate"><span class="pre">build_tactical_operational_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.solve_tactical_operational_milp"><code class="docutils literal notranslate"><span class="pre">solve_tactical_operational_milp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_from_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/fhops.model.milp.tactical_operational.html#fhops.model.milp.tactical_operational.tactical_bundle_to_dict"><code class="docutils literal notranslate"><span class="pre">tactical_bundle_to_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#solve-mip-deprecated-alias-outcomes-and-exit-codes"><code class="docutils literal notranslate"><span class="pre">solve-mip</span></code> (deprecated alias) outcomes and exit codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#heuristic-configuration-reference">Heuristic configuration reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#dataset-command-cheat-sheet">Dataset command cheat sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#log-hauling-commands">Log-hauling commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/cli.html#web-commands">Web commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/playback_aggregates.html">Aggregation Helpers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/playback_aggregates.html#module-fhops.evaluation.playback.aggregates">API summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe"><code class="docutils literal notranslate"><span class="pre">day_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.day_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">day_dataframe_from_ensemble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.machine_utilisation_summary"><code class="docutils literal notranslate"><span class="pre">machine_utilisation_summary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe"><code class="docutils literal notranslate"><span class="pre">shift_dataframe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/playback_aggregates.html#fhops.evaluation.playback.aggregates.shift_dataframe_from_ensemble"><code class="docutils literal notranslate"><span class="pre">shift_dataframe_from_ensemble()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/harvest_systems.html">Harvest System Registry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#data-model">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#default-systems">Default Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#using-the-registry">Using the Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#scenario-cross-links">Scenario Cross-Links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#extending-systems">Extending Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#preset-usage-cheat-sheet">Preset Usage Cheat Sheet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#forwarder-productivity">Forwarder Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#grapple-skidder-shovel-logger-productivity">Grapple Skidder &amp; Shovel Logger Productivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#skyline-helicopter-productivity">Skyline &amp; Helicopter Productivity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#forwarder-productivity-models">Forwarder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#roadside-processor-productivity-models">Roadside Processor Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#landing-processor-and-loader-coverage-cheat-sheet">Landing processor and loader coverage cheat sheet</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#optional-dataset-cookbook">Optional Dataset Cookbook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#med42-large84-cost-overlays">Med42 / Large84 cost overlays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#partial-cut-mixed-system-assignments">Partial-cut / mixed system assignments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#road-construction-add-ons">Road construction add-ons</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#burned-timber-salvage-guidance-adv1n5">Burned-Timber Salvage Guidance (ADV1N5)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#loader-forwarder-productivity-models">Loader-Forwarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#loader-harvest-system-overrides">Loader harvest-system overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#coordinating-with-forwarder-skidder-models">Coordinating with forwarder / skidder models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#grapple-skidder-productivity-models">Grapple Skidder Productivity Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#grapple-yarder-productivity-models">Grapple Yarder Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#grapple-harvest-system-presets">Grapple harvest-system presets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#shovel-logger-hoe-chucker-productivity">Shovel Logger (Hoe-Chucker) Productivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#skyline-productivity-models">Skyline Productivity Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#tr-127-predictor-ranges">TR-127 predictor ranges</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#skyline-cost-matrix">Skyline cost matrix</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#tn-258-fncy12-support-utilisation">TN-258 / FNCY12 support utilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/harvest_systems.html#partial-cut-profile-registry">Partial-cut profile registry</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#road-subgrade-construction-references">Road &amp; Subgrade Construction References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#handfalling-cost-reference">Handfalling Cost Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/harvest_systems.html#ctl-harvester-productivity-models">CTL Harvester Productivity Models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hauling.html"><code class="docutils literal notranslate"><span class="pre">fhops.hauling</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling.html#key-models">Key models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hauling_formulation.html">Log-Hauling Formulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-i-monthly-daily-flows">Phase I: monthly daily flows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-ii-daily-truck-and-loader-scheduling">Phase II: daily truck and loader scheduling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#phase-iii-simulated-annealing">Phase III: simulated annealing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hauling_formulation.html#implementation-notes-and-corrections">Implementation notes and corrections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/web.html"><code class="docutils literal notranslate"><span class="pre">fhops.web</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/web.html#key-objects">Key objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/web.html#cli">CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/telemetry.html">Telemetry Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#schema">Schema</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/telemetry.html#example">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/telemetry.html#solver-specific-fields">Solver-specific fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#usage-notes">Usage Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#cli-reporting">CLI Reporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/telemetry.html#historical-trends">Historical Trends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/dashboards.html">Live Dashboards</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/dashboards.html#embedded-previews">Embedded previews</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/source_bibliography.html">Source Bibliography and Document Access</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/source_bibliography.html#public-bibliography">Public bibliography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/source_bibliography.html#private-full-text-vault">Private full-text vault</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_lidar.html">FEMIC LidarBC Products</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#scenario-pin-and-support">Scenario Pin and Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#operability-report">Operability Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#operator-workflow">Operator Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#shared-parity">Shared Parity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar.html#phase-close-out">Phase Close-Out</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_lidar_fixture.html">TFL 6 LidarBC Fixture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#what-it-exercises">What It Exercises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#terrain-and-canopy-evidence">Terrain And Canopy Evidence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#commands">Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#regeneration">Regeneration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_lidar_fixture.html#parity-and-limits">Parity And Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/femic_hydrology.html">FEMIC Hydrology Response Bundles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#bundle-contract">Bundle Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#python-usage">Python Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#readiness">Readiness</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#scenario-pin">Scenario Pin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#support-mapping">Support Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#schedule-bound-exposure">Schedule-Bound Exposure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#screening">Screening</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-hazard-windows">Operational Hazard Windows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#road-and-culvert-assets">Road and Culvert Assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-constraint-check">Operational Constraint Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#end-to-end-path">End-to-End Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#solver-boundary">Solver Boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/femic_hydrology.html#operational-end-to-end-path">Operational End-to-End Path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/hydrology_contract_index.html">Hydrology Contract and Schema Index</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#contract-layers">Contract Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#femic-producer-contracts">FEMIC Producer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#ws4-landscape-consumer-contracts">WS4 Landscape Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#fhops-operational-consumer-contracts">FHOPS Operational Consumer Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#shared-exposure-contract">Shared Exposure Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#failure-matrix">Failure Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#what-is-not-a-contract">What Is Not a Contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/hydrology_contract_index.html#version-compatibility">Version Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_inventory.html">Tree Inventory Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#inventory-format">Inventory Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#scenario-pin-and-block-map">Scenario Pin and Block Map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#fixture">Fixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_inventory.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/stem_models.html">Stem Volume and Bucking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#reference-model">Reference Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/stem_models.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_simulation.html">Single-Machine Tree Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_simulation.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_replay.html">Tree-Scale Schedule Replay</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#input">Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_replay.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_scene.html">Tree Scene Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#what-is-exported">What is exported</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_scene.html#limits">Limits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/tree_system.html">Ground-Based System Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#command">Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#determinism-and-invariants">Determinism and invariants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#limits">Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/tree_system.html#committed-example">Committed example</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/robustness.html">Stochastic Robustness Walkthrough</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#code-walkthrough">Code Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#interpretation">Interpretation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/robustness.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/analytics/index.html">Analytics Notebooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/playback_walkthrough.html">Playback Walkthrough</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/playback_walkthrough.html#Production-by-Day">Production by Day</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/stochastic_robustness.html">Stochastic Robustness Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/stochastic_robustness.html#Production-Distribution">Production Distribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/what_if_analysis.html">What-If Scenario Tweaks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/what_if_analysis.html#Adjusted-Sampling">Adjusted Sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/landing_congestion.html">Landing Congestion Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Baseline-Ensemble-Snapshot">Baseline Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Landing-Shock-Ensemble-Snapshot">Landing Shock Ensemble Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#KPI-Comparison">KPI Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/landing_congestion.html#Production-Distributions">Production Distributions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/system_mix.html">Harvest System Mix Explorer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#System-Mix-Metadata">System Mix Metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Machine-Roles-in-Scenario">Machine Roles in Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Generate-Custom-Mix">Generate Custom Mix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/system_mix.html#Role-Comparison">Role Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html">KPI Decomposition Deep Dive</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Scenario-Overview">Scenario Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Production-vs-Mobilisation">Production vs Mobilisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Sequencing-&amp;-Downtime">Sequencing &amp; Downtime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/kpi_decomposition.html#Visualise-Utilisation">Visualise Utilisation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html">Ensemble Resilience Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html#Production-Distributions">Production Distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/ensemble_resilience.html#Downtime-Summary">Downtime Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/operator_sweep.html">Operator/Benchmark Sweep</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/operator_sweep.html#Objective-Comparison">Objective Comparison</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/operator_sweep.html#Runtime-Comparison">Runtime Comparison</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html">Telemetry &amp; Solver Diagnostics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html#Objective-Trace">Objective Trace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/telemetry_diagnostics.html#Acceptance-Summary">Acceptance Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html">Telemetry Report Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Load-Reports">Load Reports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Visualize-Best-Objectives">Visualize Best Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Delta-Table">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Machine-Cost-Summary-Pivot">Machine-Cost Summary Pivot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Machine-Cost-Trend-Chart">Machine-Cost Trend Chart</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Compare-Against-Historical-Summary">Compare Against Historical Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_report_analysis.html#Repair-Usage-Alerts">Repair-Usage Alerts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html">Telemetry History Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Load-History-Snapshot">Load History Snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Compute-Deltas">Compute Deltas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Visualize-Trends">Visualize Trends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/tuner_history_analysis.html#Next-Steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/analytics/benchmark_summary.html">Benchmark Summary Notebook</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/benchmark_summary.html#Objective-vs-Scenario">Objective vs Scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples/analytics/benchmark_summary.html#Runtime-Overview">Runtime Overview</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Processes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#developer-onboarding">Developer onboarding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#command-cadence-local-loop">Command cadence (local loop)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#debugging-and-profiling">Debugging and profiling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#re-running-published-artefacts">Re-running published artefacts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../roadmap.html">Roadmap Summary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mobilisation_geo.html">Mobilisation Geospatial Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mobilisation_geo.html#command-examples">Command Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mobilisation_geo.html#tooling-notes">Tooling Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mobilisation_geo.html#troubleshooting-diagnostics">Troubleshooting &amp; Diagnostics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../planning/productivity_gaps.html">Productivity Catalog Gaps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#arnvik-appendix-8-scope">Arnvik Appendix 8 scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#implications">Implications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../planning/productivity_gaps.html#forwarder-equation-stack-bc-roll-out">Forwarder equation stack (BC roll-out)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../planning/productivity_gaps.html#sources-in-hand">Sources in hand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../planning/productivity_gaps.html#caveats-and-pending-confirmations">Caveats and pending confirmations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FHOPS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Harvest System Sequencing How-to</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/howto/system_sequencing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="harvest-system-sequencing-how-to">
+<h1>Harvest System Sequencing How-to<a class="headerlink" href="#harvest-system-sequencing-how-to" title="Link to this heading"></a></h1>
+<p>This guide demonstrates how to configure harvest system sequences, run the solvers, and interpret
+the resulting KPI outputs. It assumes familiarity with the data contract (<a class="reference internal" href="data_contract.html"><span class="doc">Data Contract Guide</span></a>) and
+the harvest system registry (<a class="reference internal" href="../reference/harvest_systems.html"><span class="doc">Harvest System Registry</span></a>).</p>
+<section id="configuring-scenarios">
+<h2>Configuring Scenarios<a class="headerlink" href="#configuring-scenarios" title="Link to this heading"></a></h2>
+<p>Each block can optionally specify <code class="docutils literal notranslate"><span class="pre">harvest_system_id</span></code>. If omitted, the solver assumes no
+sequencing obligations. You can rely on the default registry or embed custom systems inside the
+scenario YAML under <code class="docutils literal notranslate"><span class="pre">harvest_systems</span></code>.</p>
+<p>Minimal snippet:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">harvest_systems</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ground_fb_skid</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ground-based</span>
+<span class="w">    </span><span class="nt">jobs</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">felling</span><span class="p p-Indicator">,</span><span class="nt"> machine_role</span><span class="p">:</span><span class="w"> </span><span class="nv">feller-buncher</span><span class="p p-Indicator">,</span><span class="nt"> prerequisites</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">primary_transport</span><span class="p p-Indicator">,</span><span class="nt"> machine_role</span><span class="p">:</span><span class="w"> </span><span class="nv">grapple_skidder</span><span class="p p-Indicator">,</span><span class="nt"> prerequisites</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">felling</span><span class="p p-Indicator">]}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">processing</span><span class="p p-Indicator">,</span><span class="nt"> machine_role</span><span class="p">:</span><span class="w"> </span><span class="nv">roadside_processor</span><span class="p p-Indicator">,</span><span class="nt"> prerequisites</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">primary_transport</span><span class="p p-Indicator">]}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">loading</span><span class="p p-Indicator">,</span><span class="nt"> machine_role</span><span class="p">:</span><span class="w"> </span><span class="nv">loader</span><span class="p p-Indicator">,</span><span class="nt"> prerequisites</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">processing</span><span class="p p-Indicator">]}</span>
+<span class="nt">blocks</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">B1</span>
+<span class="w">    </span><span class="nt">work_required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span><span class="w">   </span><span class="c1"># m³ delivered by the terminal (loader) role</span>
+<span class="w">    </span><span class="nt">harvest_system_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ground_fb_skid</span>
+</pre></div>
+</div>
+<p>Machines should specify roles that satisfy the system jobs. The synthetic generator helper
+<a class="reference internal" href="../api/fhops.scenario.html#fhops.scenario.synthetic.generate_with_systems" title="fhops.scenario.synthetic.generate_with_systems"><code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.scenario.synthetic.generate_with_systems()</span></code></a> can produce sample scenarios with the correct
+role mix:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fhops.scenario.synthetic</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyntheticScenarioSpec</span><span class="p">,</span> <span class="n">generate_with_systems</span>
+
+<span class="n">spec</span> <span class="o">=</span> <span class="n">SyntheticScenarioSpec</span><span class="p">(</span><span class="n">num_days</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_blocks</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">num_machines</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">generate_with_systems</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>  <span class="c1"># assigns systems round-robin</span>
+</pre></div>
+</div>
+</section>
+<section id="sequencing-semantics">
+<h2>Sequencing Semantics<a class="headerlink" href="#sequencing-semantics" title="Link to this heading"></a></h2>
+<p>The operational MILP (<a class="reference internal" href="optimization_formulation.html"><span class="doc">Operational MILP Formulation</span></a>), the heuristics (SA/ILS/Tabu evaluation and
+repair), and deterministic playback (<code class="xref py py-class docutils literal notranslate"><span class="pre">fhops.evaluation.sequencing.SequencingTracker</span></code>) apply
+the same rules, so a MILP plan replays with zero sequencing violations and playback delivers the
+MILP’s terminal production:</p>
+<ul class="simple">
+<li><p><strong>Staged output moves on at the next shift slot.</strong> Volume a role outputs in slot <code class="docutils literal notranslate"><span class="pre">(day,</span>
+<span class="pre">shift)</span></code> is available to its downstream role from the next slot, i.e. the next shift of the same
+day in multi-shift scenarios (formulation E7: <code class="docutils literal notranslate"><span class="pre">I_start(s)</span> <span class="pre">=</span> <span class="pre">I(prev(s))</span></code>). Slots follow the
+scenario’s shift order (<code class="docutils literal notranslate"><span class="pre">timeline.shifts</span></code> definition order), not the alphabetical order of
+shift labels.</p></li>
+<li><p><strong>Production is capped by staged input, per upstream role.</strong> Each role’s output that is not yet
+consumed is staged separately (<code class="docutils literal notranslate"><span class="pre">initial_state</span></code> <code class="docutils literal notranslate"><span class="pre">staged_inventory</span></code> per role). A downstream
+role consumes its output from the staged volume of <strong>every</strong> upstream role, so a role with
+several upstream roles (a join) cannot output more than the smallest of them has staged;
+machines of the same role in one slot draw from it in turn. The MILP keeps one staged inventory
+per upstream role (formulation E7, 1.0.1 audit #115); before, it pooled the upstream outputs of
+a join.</p></li>
+<li><p><strong>Forks split, joins require every upstream role.</strong> All roles fed by the same upstream role (a
+<em>fork</em>) draw from that role’s single staged pool: a cubic metre the feller has staged is
+consumed by <em>either</em> downstream role, never by both, so the downstream roles of a fork process
+disjoint shares of the wood. A role with several upstream roles (a <em>join</em>) consumes each unit
+of its output from the pool of <strong>every</strong> upstream role, so it needs the wood to have passed
+through all of them. Consequently a fork that joins again (a <em>diamond</em>, e.g. <code class="docutils literal notranslate"><span class="pre">felling</span> <span class="pre">→</span>
+<span class="pre">{skidding,</span> <span class="pre">processing}</span> <span class="pre">→</span> <span class="pre">loading</span></code>) can deliver at most half of the volume its head role
+outputs: skidding and processing split the felled wood, and loading needs the same volume from
+both. With <code class="docutils literal notranslate"><span class="pre">role_remaining</span></code> capped at <code class="docutils literal notranslate"><span class="pre">work_required</span></code> and no carried-in staged volume, a
+diamond block can never be completed (at most <code class="docutils literal notranslate"><span class="pre">work_required</span> <span class="pre">/</span> <span class="pre">2</span></code> is delivered; the rest is
+leftover). Model parallel
+operations on the same wood as a linear chain, or split the block into one block per branch.</p></li>
+<li><p><strong>No role handles more wood than the block holds.</strong> Each role’s cumulative output on a block is
+capped by <code class="docutils literal notranslate"><span class="pre">min(role_remaining,</span> <span class="pre">work_required)</span></code> (<code class="docutils literal notranslate"><span class="pre">role_remaining</span></code> from <code class="docutils literal notranslate"><span class="pre">initial_state</span></code>,
+<code class="docutils literal notranslate"><span class="pre">work_required</span></code> by default), and no assignment outputs more than the block still has to
+deliver.</p></li>
+<li><p><strong>Head starts are staged volume.</strong> <code class="docutils literal notranslate"><span class="pre">role_headstart_shifts</span></code> = <code class="docutils literal notranslate"><span class="pre">β</span></code> means the downstream role may
+work only when at least <code class="docutils literal notranslate"><span class="pre">B</span> <span class="pre">=</span> <span class="pre">β</span> <span class="pre">×</span> <span class="pre">Σ</span></code> (upstream machines’ rates on the block, m³/shift) is staged
+at the start of the slot by every upstream role. When no upstream machine has a positive rate on
+the block, the role’s own fleet rate is used. For a join, <code class="docutils literal notranslate"><span class="pre">Σ</span></code> sums the rates of the machines of
+<strong>all</strong> upstream roles, while <strong>each</strong> upstream role must have the whole <code class="docutils literal notranslate"><span class="pre">B</span></code> staged: with
+upstream rates of 10 and 30 m³/shift and <code class="docutils literal notranslate"><span class="pre">β</span> <span class="pre">=</span> <span class="pre">1</span></code>, each upstream role must stage 40 m³, which
+takes the slower role four shifts. The MILP, the heuristics and playback apply this same rule
+(one <code class="docutils literal notranslate"><span class="pre">B</span></code> per role and block, <code class="xref py py-func docutils literal notranslate"><span class="pre">fhops.model.milp.data.headstart_buffer_volumes()</span></code>). The buffer is waived once every upstream role has
+output its whole carried-in remaining volume before the slot (the pipeline is draining); an
+upstream role finishing the block in the same slot does not waive it (MILP <code class="docutils literal notranslate"><span class="pre">upstream_done</span></code> uses
+output up to the previous slot; heuristics and playback since 1.0.1, #116). Shift counts
+(<code class="docutils literal notranslate"><span class="pre">initial_state.role_shift_counts</span></code>) are informational.</p></li>
+<li><p><strong>Loaders need a truckload staged.</strong> A loader may work only when the volume staged at the start of
+the slot covers <code class="docutils literal notranslate"><span class="pre">loader_batch_volume_m3</span></code>, or the volume the block still has to deliver when
+that is smaller (<code class="docutils literal notranslate"><span class="pre">work_required</span></code> minus the terminal output delivered before the slot), so the
+last partial truckload of a block can be loaded. The MILP linearises this rule exactly with a
+binary per block and slot, created only for slots in which the remaining volume can have fallen
+to one truckload.</p></li>
+<li><p><strong>Blocks without</strong> <code class="docutils literal notranslate"><span class="pre">harvest_system_id</span></code> have no role obligations: any machine may work them and
+every machine’s output counts towards <code class="docutils literal notranslate"><span class="pre">work_required</span></code>.</p></li>
+</ul>
+<p>Landing capacity is not a sequencing rule, but both solvers apply it identically (since 1.0.1,
+#125): <code class="docutils literal notranslate"><span class="pre">Landing.daily_capacity</span></code> is the number of machines that may work a landing’s blocks
+concurrently in one shift slot. With <code class="docutils literal notranslate"><span class="pre">landing_surplus</span></code> weighted 0 (the default) it is a hard limit
+(the heuristics’ repair keeps every slot within capacity and charge the hard-violation penalty,
+at least 1000, for any extra machine that remains, e.g. through locks; the MILP enforces it as a
+constraint); with a positive
+weight an overload is allowed and the <code class="docutils literal notranslate"><span class="pre">k</span></code>-th machine beyond capacity in a slot costs
+<code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">×</span> <span class="pre">landing_surplus</span></code>. In a slot where locks alone exceed a hard capacity, the MILP keeps the locked
+machines, admits no other machine there and reports a warning. (Before 1.0.1 the MILP counted
+machine-shifts per day with a slack that was free at weight 0, so the capacity did not bind.)
+Because
+staged output moves on at the next shift, a multi-shift heuristic repair could put every role of a
+block on its landing in the same shift; on days with more than one shift the heuristic repair
+therefore only keeps or fills an assignment when the block’s landing has room in that shift
+(scenarios that weight <code class="docutils literal notranslate"><span class="pre">landing_surplus</span></code> at 0, the default). Machines the repair has not reached
+yet in that shift count only through their locks, so repairing an already repaired plan leaves it
+unchanged and the heuristic score equals a fresh evaluation of the exported plan (1.0.1, #131).
+Single-shift days are unchanged.</p>
+<p>Playback flags an assignment with <code class="docutils literal notranslate"><span class="pre">sequencing_violation</span> <span class="pre">=</span> <span class="pre">&quot;missing_prereq&quot;</span></code> when its planned
+production exceeds the staged input or a head-start/truckload threshold is not met (volume
+tolerance 1e-6 m³, which absorbs MILP solver feasibility noise). An assignment with a planned
+production of 0 (<code class="docutils literal notranslate"><span class="pre">production</span></code> column) is an idle slot and is never a <code class="docutils literal notranslate"><span class="pre">missing_prereq</span></code>
+violation: the thresholds apply to a role that produces (since 1.0.1, #125). Rolling-horizon MILP runs store
+the planned production in their locks, so stitched plans replay the MILP plan rather than the full
+production rate (<a class="reference internal" href="rolling_horizon.html"><span class="doc">Rolling-Horizon Planning</span></a>).</p>
+<section id="locks-and-the-operational-milp">
+<h3>Locks and the operational MILP<a class="headerlink" href="#locks-and-the-operational-milp" title="Link to this heading"></a></h3>
+<p>A locked machine is always assigned to its block, but it does not have to produce: when its role
+has nothing to process (a loader before a truckload is staged, a head-start role before its buffer)
+the MILP keeps it idle (<code class="docutils literal notranslate"><span class="pre">assigned</span> <span class="pre">=</span> <span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">production</span> <span class="pre">=</span> <span class="pre">0</span></code>) instead of becoming infeasible. Only
+unlocked assigned machines force the role’s head-start/truckload checks. Playback replays such a
+locked idle slot without a violation. A lock without <code class="docutils literal notranslate"><span class="pre">shift_id</span></code> covers every shift of its day in
+which the machine is available; the heuristics, rolling-horizon replay and exports
+(<a class="reference internal" href="rolling_horizon.html"><span class="doc">Rolling-Horizon Planning</span></a>) expand it the same way. Locks that contradict the model (a day outside the block window, a machine whose
+role is not part of the block’s harvest system) are rejected by scenario validation; if such a lock
+reaches the MILP anyway (e.g. a hand-edited bundle) it is pinned to idle and listed in the solve
+result’s <code class="docutils literal notranslate"><span class="pre">warnings</span></code>.</p>
+</section>
+</section>
+<section id="running-the-solvers">
+<h2>Running the Solvers<a class="headerlink" href="#running-the-solvers" title="Link to this heading"></a></h2>
+<section id="mip">
+<h3>MIP<a class="headerlink" href="#mip" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>solve-mip-operational<span class="w"> </span>examples/tiny7/scenario.yaml<span class="w"> </span>--out<span class="w"> </span>tmp/tiny7_mip.csv<span class="w"> </span>--time-limit<span class="w"> </span><span class="m">60</span>
+</pre></div>
+</div>
+<p>(<code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip</span></code> is a deprecated alias of this command since FHOPS 1.0.1. On med42 the MILP
+needs long time limits or Gurobi to prove optimality; with HiGHS and a 600 s limit it stops at a
+feasible incumbent — on a 72-core host 216 assignments, objective 26936.19, since the smaller move
+model of 1.0.1 (#139); before, it typically stopped at an incumbent that assigned no machines.) If sequencing conflicts exist (e.g., machine roles missing), blocks stay unassigned. The
+operational MILP (<code class="docutils literal notranslate"><span class="pre">fhops</span> <span class="pre">solve-mip-operational</span></code>) reports an <code class="docutils literal notranslate"><span class="pre">outcome</span></code> (<code class="docutils literal notranslate"><span class="pre">optimal</span></code>,
+<code class="docutils literal notranslate"><span class="pre">feasible</span></code>, <code class="docutils literal notranslate"><span class="pre">infeasible</span></code>, <code class="docutils literal notranslate"><span class="pre">no_solution</span></code>, <code class="docutils literal notranslate"><span class="pre">error</span></code>) and never raises for infeasible models or
+time limits without an incumbent; see <a class="reference internal" href="mip_warm_starts.html"><span class="doc">Operational MILP Warm Starts</span></a> for the result fields.</p>
+</section>
+<section id="simulated-annealing">
+<h3>Simulated Annealing<a class="headerlink" href="#simulated-annealing" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>solve-heur<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span>--out<span class="w"> </span>tmp/med42_sa.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--profile<span class="w"> </span>explore<span class="w"> </span>--show-operator-stats
+</pre></div>
+</div>
+<p>Iterated Local Search and Tabu Search reuse the same registry metadata:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>solve-ils<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span>--out<span class="w"> </span>tmp/med42_ils.csv<span class="w"> </span>--profile<span class="w"> </span>explore
+fhops<span class="w"> </span>solve-tabu<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span>--out<span class="w"> </span>tmp/med42_tabu.csv<span class="w"> </span>--profile<span class="w"> </span>explore<span class="w"> </span>--tabu-tenure<span class="w"> </span><span class="m">30</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="inspection-kpis">
+<h2>Inspection &amp; KPIs<a class="headerlink" href="#inspection-kpis" title="Link to this heading"></a></h2>
+<p>Sequencing violations surface in CLI output and KPI dumps. After running a solver, use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>evaluate<span class="w"> </span>examples/med42/scenario.yaml<span class="w"> </span>--assignments<span class="w"> </span>tmp/med42_sa.csv
+</pre></div>
+</div>
+<p>Key metrics:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sequencing_violation_count</span></code> – total violations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sequencing_violation_breakdown</span></code> – machine/job specific counts.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mobilisation_cost</span></code> – useful for understanding trade-offs when switching systems.</p></li>
+</ul>
+</section>
+<section id="benchmarking-with-sequencing">
+<h2>Benchmarking with Sequencing<a class="headerlink" href="#benchmarking-with-sequencing" title="Link to this heading"></a></h2>
+<p>The benchmarking harness respects system sequences automatically. Generate comparison reports with
+(long-running: all default scenarios, including the MILP with <code class="docutils literal notranslate"><span class="pre">--time-limit</span> <span class="pre">1800</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>fhops<span class="w"> </span>bench<span class="w"> </span>suite<span class="w"> </span>--out-dir<span class="w"> </span>tmp/bench_systems<span class="w"> </span>--include-ils<span class="w"> </span>--include-tabu
+python<span class="w"> </span>scripts/render_benchmark_plots.py<span class="w"> </span>tmp/bench_systems/summary.csv<span class="w"> </span>--out-dir<span class="w"> </span>docs/_static/benchmarks
+</pre></div>
+</div>
+<p>Combine the summary’s <code class="docutils literal notranslate"><span class="pre">objective_gap_vs_best_heuristic</span></code> column with the sequencing KPIs to see
+which heuristic handles system constraints best.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Ensure machine roles cover every job in the selected system; missing roles will cause infeasible
+schedules.</p></li>
+<li><p>Optional or parallel tasks headroom is currently limited—model them as separate jobs with explicit
+prerequisites. Future registry extensions may introduce richer structures (see roadmap notes).</p></li>
+<li><p>When extending the registry, update <a class="reference internal" href="../reference/harvest_systems.html"><span class="doc">Harvest System Registry</span></a> and regenerate any
+synthetic scenarios or documentation examples.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="synthetic_datasets.html" class="btn btn-neutral float-left" title="Synthetic Datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ils.html" class="btn btn-neutral float-right" title="Iterated Local Search How-to" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, UBC FRESH Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

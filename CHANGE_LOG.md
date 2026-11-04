@@ -1,3 +1,147 @@
+# 2026-11-04 — refresh P44 salvage branch and fix review finding (#381)
+
+- Merged current `main` into the existing P44 PR branch; no salvage code
+  conflicts.
+- Fixed the Codex review finding: storage-age CSVs now read `block_id` as a
+  string, preserving leading zeros and mixed identifiers instead of coercing
+  them numerically.
+- Reject non-finite storage ages and non-finite `value_per_m3` inputs.
+- Added leading-zero block-ID and non-finite-input regression coverage.
+- Refreshed the roadmap phase numbering and checkboxes.
+- Verification: full `pytest` (1388 passed, 219 skipped), gated salvage CLI
+  tests (5 passed), `ruff format`/`ruff check`, `mypy src` (194 files), and
+  `sphinx-build -b html docs _build/html -W`.
+
+# 2026-11-04 — custom-fleet presets and comparison launcher (#407)
+
+- System presets now preserve custom machine IDs, avoid duplicate IDs by
+  generating suffixes, keep custom extraction counts, and assign one loader
+  and one processor per landing (round-robin for extra machines).
+- Fixed the processor-removal path so later loader additions persist.
+- Added Base/Compare run selectors to the Studio run-history panel, defaulting
+  to the previous and latest runs; the launcher and top-bar Compare link carry
+  shareable project/run query parameters.
+- Updated the policy note to describe damage-risk product downgrade rather than
+  the old advisory wording.
+- Verification: full `pytest` (1366 passed, 214 skipped), targeted Studio tests,
+  JS syntax checks, pre-commit, and a browser smoke test with custom IDs and 22
+  CTL runs.
+- PR #408 merged as `eac70a57`; main CI `41762094761` passed. Public demo
+  deployment `c944369f`; live Studio served 22 run options and the comparison
+  link loaded with no page errors.
+
+# 2026-11-04 — local quality-gate cleanup (#403)
+
+- Updated the two HiGHS option-error robustness tests for highspy 1.12, which
+  reports a configuration `ValueError` naming `iteration_count` instead of the
+  older `ERROR` log line naming `threads`; both diagnostics are accepted.
+- Full local `pytest` is green: 1362 passed, 214 skipped.
+- Documented the local Pandoc setup (`pypandoc_binary` plus venv `PATH`) and
+  verified `sphinx-build -b html docs _build/html -W`.
+- Updated `notes/gates_status.md`; the remaining gate limitations are cleared.
+- Verification: `ruff format`, `ruff check`, `mypy src`, `pytest`, targeted JS
+  syntax checks, `pre-commit run --all-files`, and the Sphinx build.
+
+# 2026-11-04 — damage-risk product recovery (#399)
+
+- Mapped operator-policy damage risk to a sawlog-to-pulp downgrade fraction
+  (low/normal 0%, elevated 5%, high 10%) in Studio.
+- Added `--damage-downgrade-fraction` to `fhops tree system`, passed it through
+  Tree Lab runs, and applied it to product mix.
+- Added `downgraded_m3`, damage provenance, and comparison revenue/net-margin
+  handling; the policy panel now reports the aggregate downgrade.
+- Added core and Studio regression coverage. Steady policies leave product mix
+  unchanged; the adjustment is a planning assumption, not a physical damage
+  model.
+- Verification: `ruff format`, `ruff check`, `mypy`, targeted `pytest`, JS
+  syntax checks, and `pre-commit run --all-files`.
+- Full local pytest: 1360 passed, 214 skipped, with only the two pre-existing
+  HiGHS option-error assertions failing.
+- Demo: CTL throughput-policy duplicate `afrf-gavin-20261104t010235-3dfa`, run
+  `20261104T010235Z`, reports 734.2 m³ sawlog + 41.9 m³ pulp with 38.6 m³
+  downgraded, $63,872 revenue, and $45,807 net margin.
+- PR #400 merged as `fb2003aa`; main CI `41751198529` passed. Public demo
+  deployment `d0166e5e`; health endpoint returns `ok`.
+
+# 2026-11-03 — product mix closeout
+
+- CTL/full-tree demo product mix: 772.8 m³ sawlog + 3.2 m³ pulp.
+- At $85/$35 per m³, revenue is $65,804; net margins are $52,314 (CTL) and
+  $50,125 (full-tree).
+- PR #396 and product-summary fix PR #397 merged; public deployment `f4e60e59`.
+- Main CI `41742670087` passed.
+
+# 2026-11-03 — product mix in system summary (#398)
+
+- Persisted `GroundSystemResult.product_mix` in `system_summary.json`; previously
+  it existed only in the events manifest, so run KPIs lost it.
+- Added a regression assertion.
+
+# 2026-11-03 — CTL product mix and comparison value (#397)
+
+- Added sawlog/pulp volumes to run product mix and KPIs.
+- Comparison page adds sawlog/pulp prices, product revenue, net margin, and
+  value/m³; assumptions are editable and saved per project.
+- Added product-mix regression coverage.
+- Product prices are planning assumptions; classification comes from the
+  reference stem model.
+
+# 2026-11-03 — Studio system presets (#393)
+
+- Added full-tree ↔ CTL system preset selector in Studio.
+- Presets rebuild machine roles/fleets and landing assignments, preserve
+  terrain/retention/roads/landings/trucks/economics, and apply/clear the CTL
+  forwarder profile.
+- Added second-loader creation for two-landing projects.
+- Browser smoke test applied both presets with no page errors.
+
+# 2026-11-03 — operator-policy effects integration (#391)
+
+- Added Studio policy-effects panel with per-machine cycle, breakdown, break,
+  grade, and damage-risk effects plus aggregate run assumptions.
+- Non-steady policies now derive failure rate, repair hours/CV/seed, and grade
+  caution into system args; runner passes the stochastic controls.
+- Damage risk remains advisory; break policy affects failure rate.
+- Added operator-policy assertions.
+
+# 2026-11-03 — comparison economics assumptions editor (#389)
+
+- Comparison page exposes per-side truck $/h and labor $/machine-h inputs.
+- Assumptions load from project `system_args` and can be saved back.
+- Cost tables/charts/export recompute immediately from overrides.
+
+# 2026-11-03 — P45 closeout
+
+- PR #387 squash-merged to `main` as
+  `68dafd2cfa2742957c95d45c6a430e526b4916cf`; main CI `41700248178` passed.
+- Comparison economics now includes scheduled/productive machine cost, truck
+  cost, labor, total, and cost/m³; demo rates: truck $120/h, labor $45/machine-h.
+- CTL comparison: $13,489 total / $17.38 m³ vs full-tree $15,679 / $20.20 m³.
+- Role-aware harvester provenance is live; CTL run `20261103T190819Z` reports
+  ADV6N10 CTL processing and the correct caveat.
+- Public demo deployment `960ec45f`.
+- Known full-test/Sphinx environment issues recorded in `notes/gates_status.md`.
+
+# 2026-11-03 — P45 harvester model, economics refinement, cleanup (#386)
+
+- Added role-aware harvester processing model:
+  - feller-buncher uses whole-tree reference assumption;
+  - harvester uses bucked-log count/mean log length in ADV6N10 CTL regression.
+  - Ground-system provenance/caveats record the selected model.
+- Comparison economics now shows scheduled vs productive machine cost, truck
+  cost, labor cost, total cost, and cost/m³. Rates come from project
+  `system_args`.
+- Added harvester/spatial-machine tests.
+- Reconciled completed roadmap items and documented remaining full-test/Sphinx
+  environment limitations.
+
+# 2026-11-03 — comparison charts and JSON export (#384)
+
+- Comparison page adds visual bars for makespan, machine cost, cost/m³, and
+  warnings.
+- Added a downloadable JSON comparison payload including run summaries,
+  economics, freshness, and landing inventory.
+
 # 2026-11-03 — scenario comparison economics (#379)
 
 - Studio catalog retains scenario machine operating cost and daily hours; `-B`
@@ -5346,3 +5490,47 @@ PY
 - 2026-10-31: P20 replay cache invalidation: replay assets are now versioned by
   `path_mode=swath`; the game rejects old nearest-neighbor player caches even if
   their duration metadata matches.
+
+- 2026-11-03: added the shared-kernel adapter proof of concept. `fhops.optimization.meta`
+  provides `FhopsProblem`, `FhopsContext`, `FhopsOperator`, `slot_diff`, `schedule_assignments`,
+  and `solve_kernel_sa` over `fresh-solutions` 0.9. The adapter keeps the FHOPS schedule,
+  repair/sanitizer, objective weights, and exact planned-score replay; the kernel supplies
+  simulated annealing. Tests: `tests/meta/test_kernel_adapter.py` and the existing
+  `tests/heuristics` suite pass. Added kernel Tabu and ILS plus a dirty-repair fast SA path;
+  all three replay exactly on the simple and Tiny7 scenario gates. This is an integration proof,
+  not yet a behaviour-parity replacement; the delta path remains next.
+- 2026-11-03: added `scripts/benchmark_kernel_paths.py` to reproduce the kernel full-repair vs
+  dirty-repair timing on a scenario. Tiny7, 200 iterations, seed 7: full 0.118 s / -2673.433,
+  fast 0.103 s / -2646.813. The fast search score is approximate; the returned objective is
+  freshly and fully rescored.
+
+- 2026-11-04: added the block-separable incremental path. `SeparableEvaluator` now supports exact
+  rollback (`undo_last_move`) and `fhops.optimization.meta.solve_kernel_sa_incremental` scores only
+  the blocks a move touches. Tiny7/Small21/med42 match the full objective exactly; med42 was
+  0.355 s vs 0.515 s for full scoring at 100 iterations. The full suite still passes.
+
+- 2026-11-04: aligned the kernel adapter's objective weights with the existing FHOPS solvers.
+  `FhopsProblem` applies the automatic Tiny7/Small21 overrides and accepts explicit overrides;
+  all kernel paths record the applied mapping in `meta`. Tests cover the automatic and explicit
+  cases, and the Tiny7 scenario gate now rescoring through the overridden context. Full suite,
+  mypy, and Sphinx pass.
+
+- 2026-11-04: added `scripts/compare_kernel_solvers.py` and the 100-iteration Tiny7/Small21/med42
+  parity ladder. Kernel SA/Tabu/ILS are competitive and usually faster, but not trajectory-identical;
+  Tiny7 SA is ~1% worse and Small21 Tabu ~0.1% worse. The existing solvers stay until a like-for-like
+  ILS and the full Jaffray/scaling ladder pass. Raw records:
+  `notes/reference/kernel-parity-2026-11-04.json`.
+
+- 2026-11-04: extended the parity ladder to large84 and the synthetic small/medium/large tiers at
+  50 iterations. Synthetic SA agrees exactly; large84 Tabu is ~5.6% worse on the kernel path, so
+  the existing solvers stay. Raw records extended in
+  `notes/reference/kernel-parity-2026-11-04.json`.
+
+- 2026-11-04: added `solve_kernel_ils_like`, mirroring the existing FHOPS local-search,
+  perturbation, and stall-restart semantics on the incremental evaluator. Tiny7 matches exactly;
+  small21/med42 improve at 50 iterations, seed 7. Raw records:
+  `notes/reference/kernel-parity-ils-2026-11-04.json`. Existing solvers still stay.
+
+- 2026-11-04: multi-seed ILS-like ladder (5 seeds, 50 iterations). The kernel path is +42.742 on
+  Tiny7 for every seed, mean +8.924 on Small21, and mean -2738.917 on med42. Existing solvers stay.
+  Raw records: `notes/reference/kernel-parity-ils-multiseed-2026-11-04.json`.

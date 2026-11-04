@@ -287,3 +287,34 @@ def test_packaged_library_json_is_valid_json_and_source_urls_are_public():
         assert curve["source"]["url"].startswith("https://")
     for window in payload["product_windows"]:
         assert window["source"]["url"].startswith("https://")
+
+
+def test_build_salvage_report_preserves_leading_zero_block_ids(tmp_path: Path):
+    scenario_dir = tmp_path / "tiny7_zero"
+    shutil.copytree(Path("examples/tiny7"), scenario_dir)
+    for path in scenario_dir.rglob("*"):
+        if path.is_file() and path.suffix in {".csv", ".yaml", ".yml"}:
+            path.write_text(
+                path.read_text(encoding="utf-8").replace("B01", "001"), encoding="utf-8"
+            )
+
+    storage = tmp_path / "storage.csv"
+    storage.write_text("block_id,years_since_disturbance\n001,1\n", encoding="utf-8")
+    report = build_salvage_report(scenario_dir / "scenario.yaml", storage)
+
+    assert report.frame.loc[0, "block_id"] == "001"
+    assert report.frame.loc[0, "retention_fraction"] == pytest.approx(0.99)
+
+
+def test_build_salvage_report_rejects_non_finite_age_and_value():
+    with pytest.raises(ValueError, match="finite"):
+        build_salvage_report(
+            TINY7,
+            pd.DataFrame({"block_id": ["B01"], "years_since_disturbance": [float("inf")]}),
+        )
+    with pytest.raises(ValueError, match="finite and non-negative"):
+        build_salvage_report(
+            TINY7,
+            pd.DataFrame({"block_id": ["B01"], "years_since_disturbance": [1.0]}),
+            value_per_m3=float("nan"),
+        )

@@ -366,6 +366,7 @@ function render() {
   renderStats();
   renderMachines();
   renderMachineSpecs();
+  renderPolicyEffects();
   renderTruckSpecs();
   renderRoadWarning();
   renderProjectMeta();
@@ -702,6 +703,26 @@ const SPEC_FIELDS = {
   ],
 };
 
+function renderPolicyEffects() {
+  const node = $("#policy-effects");
+  if (!node || !state.project) return;
+  const effects = state.project.system_args?.policy_effects || {};
+  const aggregate = effects._aggregate || {};
+  const machines = Object.entries(effects).filter(([id]) => id !== "_aggregate");
+  if (!machines.length) {
+    node.textContent = "No active machine policies.";
+    return;
+  }
+  const damage = Number(aggregate.damage_downgrade_fraction || 0);
+  const damageText = damage > 0 ? ` · damage downgrade ${(damage * 100).toFixed(1)}%` : "";
+  const aggregateText = aggregate.failure_rate_per_machine_hour == null
+    ? `No stochastic breakdowns: steady policies do not set a failure rate.${damageText}`
+    : `Run: ${Number(aggregate.failure_rate_per_machine_hour).toFixed(3)} failures/machine-h · repair ${Number(aggregate.repair_hours).toFixed(1)} h · max grade ${Number(aggregate.max_skidder_grade).toFixed(0)}%${damageText}`;
+  node.innerHTML = `<div class="policy-row">${escapeHtml(aggregateText)}</div>` + machines.map(([id, effect]) => (
+    `<div class="policy-row"><b>${escapeHtml(id)}</b> · ${escapeHtml(effect.role)} · ${escapeHtml(effect.label)}<br><span>cycle ${Number(effect.cycle_multiplier).toFixed(2)}× · breakdown ${escapeHtml(effect.breakdown_risk)} · break ${escapeHtml(effect.break_policy)} · grade ${escapeHtml(effect.grade_caution)} · damage ${escapeHtml(effect.damage_risk)}</span></div>`
+  )).join("");
+}
+
 function renderMachineSpecs() {
   const node = $("#spec-list");
   if (!node || !state.project) return;
@@ -738,6 +759,153 @@ function renderMachineSpecs() {
     node.append(group);
   }
   if (!node.children.length) node.textContent = "No editable fleet machines.";
+}
+
+const FORWARDER_PRESET = {
+  capacity_m3: 16.0,
+  empty_speed_mps: 1.2,
+  loaded_speed_mps: 1.0,
+  load_fixed_s: 30.0,
+  load_per_log_s: 2.0,
+  unload_fixed_s: 30.0,
+  unload_per_log_s: 2.0,
+  productivity_m3_per_smh: 22.865797265637397,
+  forwarder_model: "eriksson-final-felling",
+  forwarder_stem_size_m3: 0.3,
+  forwarder_load_fixed_s: 300.0,
+  forwarder_unload_fixed_s: 180.0,
+};
+
+const SYSTEM_PRESETS = {
+  full_tree: {
+    fellerRole: "feller_buncher",
+    extractionRole: "grapple_skidder",
+    processors: true,
+    forwarderSpec: null,
+  },
+  ctl: {
+    fellerRole: "harvester",
+    extractionRole: "forwarder",
+    processors: false,
+    forwarderSpec: FORWARDER_PRESET,
+  },
+};
+
+function applySystemPreset(name) {
+  if (!state.project || !SYSTEM_PRESETS[name]) return;
+  const preset = SYSTEM_PRESETS[name];
+  pushHistory();
+  const landings = projectLandings();
+  const primaryLanding = landings[0]?.id || null;
+  const fellerRoles = new Set(["feller_buncher", "harvester", "hand_faller"]);
+  const extractionRoles = new Set([
+    "grapple_skidder", "skidder", "forwarder", "cable_yarder", "skyline_yarder",
+  ]);
+  const processorRoles = new Set(["roadside_processor", "processor"]);
+  let machines = state.project.machines || [];
+  const catalog = state.project.catalog || [];
+  const landingIds = landings.length ? landings.map((landing) => landing.id) : [primaryLanding];
+
+  const uniqueId = (base) => {
+    const used = new Set(machines.map((machine) => String(machine.id)));
+    let candidate = base;
+    let suffix = 2;
+    while (used.has(candidate)) {
+      candidate = `${base}-${suffix}`;
+      suffix += 1;
+    }
+    return candidate;
+  };
+
+  const copySource = (machine, source) => {
+    if (source?.operating_cost != null) machine.operating_cost = source.operating_cost;
+    if (source?.daily_hours != null) machine.daily_hours = source.daily_hours;
+    if (source?.spec && !machine.spec) machine.spec = { ...source.spec };
+  };
+
+  const findOrAdd = (predicate, baseId, role, landing = null) => {
+    let machine = machines.find(predicate);
+    if (!machine) {
+      const source = catalog.find((item) => item.id === baseId)
+        || catalog.find((item) => item.role === role);
+      machine = {
+        id: uniqueId(baseId), role, type: role, policy: "steady", source: "preset",
+        landing_id: landing,
+      };
+      copySource(machine, source);
+      machines.push(machine);
+    }
+    return machine;
+  };
+
+  const feller = findOrAdd((machine) => fellerRoles.has(machine.role), "H1", preset.fellerRole);
+  feller.role = preset.fellerRole;
+  feller.type = preset.fellerRole;
+  feller.landing_id = null;
+
+  let extraction = machines.filter((machine) => extractionRoles.has(machine.role));
+  if (!extraction.length) {
+    extraction = [
+      findOrAdd(() => false, "H2", preset.extractionRole),
+      findOrAdd(() => false, "H3", preset.extractionRole),
+    ];
+  }
+  for (const machine of extraction) {
+    machine.role = preset.extractionRole;
+    machine.type = preset.extractionRole;
+    machine.landing_id = null;
+    if (preset.forwarderSpec) machine.spec = { ...preset.forwarderSpec };
+    else delete machine.spec;
+  }
+
+  let processors = machines.filter((machine) => processorRoles.has(machine.role));
+  if (preset.processors) {
+    const processorBases = ["H5", "H5-B", "H5-C", "H5-D"];
+    while (processors.length < landingIds.length) {
+      const index = processors.length;
+      processors.push(findOrAdd(
+        () => false,
+        processorBases[index] || `H5-${index + 1}`,
+        "roadside_processor",
+        landingIds[index % landingIds.length],
+      ));
+    }
+    processors.forEach((machine, index) => {
+      machine.role = "roadside_processor";
+      machine.type = "roadside_processor";
+      machine.landing_id = landingIds[index % landingIds.length];
+    });
+  } else {
+    machines = state.project.machines = machines.filter(
+      (machine) => !processorRoles.has(machine.role),
+    );
+  }
+
+  let loaders = machines.filter((machine) => machine.role === "loader");
+  const loaderBases = ["H4", "H4-B", "H4-C", "H4-D"];
+  while (loaders.length < landingIds.length) {
+    const index = loaders.length;
+    loaders.push(findOrAdd(
+      () => false,
+      loaderBases[index] || `H4-${index + 1}`,
+      "loader",
+      landingIds[index % landingIds.length],
+    ));
+  }
+  loaders.forEach((machine, index) => {
+    machine.role = "loader";
+    machine.type = "loader";
+    machine.landing_id = landingIds[index % landingIds.length];
+  });
+
+  const active = machines;
+
+  state.project.operator_policies = Object.fromEntries(
+    active.map((machine) => [machine.id, state.project.operator_policies?.[machine.id] || "steady"]),
+  );
+  markDirty();
+  render();
+  setStatus(`Applied ${name === "ctl" ? "CTL" : "full-tree"} preset — save to run it`);
 }
 
 function addMachine() {
@@ -1174,14 +1342,55 @@ function formatValue(value, digits = 1) {
   return value == null || !Number.isFinite(Number(value)) ? "—" : Number(value).toFixed(digits);
 }
 
+function comparisonUrl(leftRun = "", rightRun = "") {
+  const projectId = state.project?.project_id;
+  if (!projectId) return "compare";
+  const params = new URLSearchParams({ left_project: projectId, right_project: projectId });
+  if (leftRun) params.set("left_run", leftRun);
+  if (rightRun) params.set("right_run", rightRun);
+  return `compare?${params.toString()}`;
+}
+
+function updateComparisonLinks(leftRun, rightRun) {
+  const ready = Boolean(leftRun && rightRun && leftRun !== rightRun);
+  const href = comparisonUrl(ready ? leftRun : "", ready ? rightRun : "");
+  const open = $("#open-compare");
+  if (open) {
+    open.href = href;
+    open.classList.toggle("disabled", !ready);
+    open.setAttribute("aria-disabled", ready ? "false" : "true");
+  }
+  const top = $("#compare");
+  if (top) top.href = href;
+}
+
+function fillRunSelect(select, runs, selected, fallback = "") {
+  if (!select) return;
+  const exists = runs.some((run) => run.run_id === selected);
+  select.innerHTML = runs.length
+    ? runs.map((run) => (
+      `<option value="${escapeHtml(run.run_id)}">${escapeHtml(run.run_id)}${run.freshness?.stale ? " · stale" : ""}</option>`
+    )).join("")
+    : '<option value="">No runs</option>';
+  select.value = exists ? selected : (fallback || runs[0]?.run_id || "");
+}
+
 function renderRunComparison(runs) {
   const node = $("#run-compare");
+  const leftSelect = $("#compare-left-run");
+  const rightSelect = $("#compare-right-run");
   if (!runs || runs.length < 2) {
+    fillRunSelect(leftSelect, runs || [], "");
+    fillRunSelect(rightSelect, runs || [], "");
+    updateComparisonLinks("", "");
     node.textContent = "Need two runs to compare.";
     return;
   }
   const latest = runs[0];
   const previous = runs[1];
+  fillRunSelect(leftSelect, runs, leftSelect?.value, previous.run_id);
+  fillRunSelect(rightSelect, runs, rightSelect?.value, latest.run_id);
+  updateComparisonLinks(leftSelect?.value, rightSelect?.value);
   const lk = latest.kpis || {};
   const pk = previous.kpis || {};
   const rows = [
@@ -1397,6 +1606,15 @@ function bindEvents() {
   $("#rename").addEventListener("click", renameProject);
   $("#duplicate").addEventListener("click", duplicateProject);
   $("#add-machine").addEventListener("click", addMachine);
+  $("#apply-preset").addEventListener("click", () => applySystemPreset($("#system-preset").value));
+  for (const id of ["compare-left-run", "compare-right-run"]) {
+    $(`#${id}`).addEventListener("change", () => {
+      updateComparisonLinks($("#compare-left-run").value, $("#compare-right-run").value);
+    });
+  }
+  $("#open-compare").addEventListener("click", (event) => {
+    if (event.currentTarget.getAttribute("aria-disabled") === "true") event.preventDefault();
+  });
   $("#add-landing").addEventListener("click", addLanding);
   $("#new-project").addEventListener("click", openNewDialog);
   $("#import").addEventListener("click", () => $("#import-file").click());

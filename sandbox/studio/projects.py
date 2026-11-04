@@ -95,6 +95,18 @@ POLICY_PRESETS: dict[str, dict[str, Any]] = {
 }
 
 
+_BREAKDOWN_FAILURE_RATE = {"low": 0.01, "normal": 0.03, "elevated": 0.06, "high": 0.06}
+_BREAKDOWN_REPAIR_HOURS = {"low": 1.5, "normal": 2.5, "elevated": 4.0, "high": 4.0}
+_BREAK_POLICY_MULTIPLIER = {"minimal": 1.25, "standard": 1.0, "planned": 0.75}
+_GRADE_LIMITS = {"high": 80.0, "normal": None, "relaxed": 150.0}
+_DAMAGE_DOWNGRADE_FRACTION = {
+    "low": 0.0,
+    "normal": 0.0,
+    "elevated": 0.05,
+    "high": 0.10,
+}
+
+
 class StudioError(RuntimeError):
     """Raised when a Studio project cannot be loaded, validated, or saved."""
 
@@ -677,7 +689,7 @@ def save_project(root: Path, project: dict[str, Any]) -> dict[str, Any]:
     landings = project_landings(project)
     project["landings"] = landings
     project["landing"] = {"x": landings[0]["x"], "y": landings[0]["y"]}
-    sync_system_args(project)
+    apply_operator_policies(project)
     project["updated_utc"] = _now()
     project["revision"] = int(project.get("revision") or 0) + 1
     encoded = json.dumps(project, indent=2) + "\n"
@@ -1138,6 +1150,66 @@ def apply_operator_policies(project: dict[str, Any]) -> dict[str, Any]:
         presets = [preset_for(machine_id) for machine_id in processor_ids]
         cycle = sum(float(preset["cycle_multiplier"]) for preset in presets) / len(presets)
         args["processor_productivity_multiplier"] = round(1.0 / max(0.5, cycle), 4)
+
+    effects: dict[str, dict[str, Any]] = {}
+    breakdown_risks: list[str] = []
+    break_policies: list[str] = []
+    grade_cautions: list[str] = []
+    damage_fractions: list[float] = []
+    repair_hours: list[float] = []
+    for machine in machines:
+        machine_id = str(machine.get("id") or "")
+        policy = str(policies.get(machine_id, "steady"))
+        preset = POLICY_PRESETS.get(policy, POLICY_PRESETS["steady"])
+        effects[machine_id] = {
+            "role": str(machine.get("role") or ""),
+            "policy": policy,
+            "label": preset["label"],
+            "cycle_multiplier": preset["cycle_multiplier"],
+            "breakdown_risk": preset["breakdown_risk"],
+            "break_policy": preset["break_policy"],
+            "grade_caution": preset["grade_caution"],
+            "damage_risk": preset["damage_risk"],
+        }
+        breakdown_risks.append(str(preset["breakdown_risk"]))
+        break_policies.append(str(preset["break_policy"]))
+        grade_cautions.append(str(preset["grade_caution"]))
+        damage_fractions.append(_DAMAGE_DOWNGRADE_FRACTION.get(str(preset["damage_risk"]), 0.0))
+        repair_hours.append(_BREAKDOWN_REPAIR_HOURS.get(str(preset["breakdown_risk"]), 2.5))
+    args["policy_effects"] = effects
+    nonsteady = any(effect["policy"] != "steady" for effect in effects.values())
+    if nonsteady and args.get("shift_days") is not None:
+        failure_rate = sum(
+            _BREAKDOWN_FAILURE_RATE.get(risk, 0.03) * _BREAK_POLICY_MULTIPLIER.get(policy, 1.0)
+            for risk, policy in zip(breakdown_risks, break_policies, strict=True)
+        ) / max(1, len(breakdown_risks))
+        args["failure_rate"] = round(failure_rate, 5)
+        args["repair_hours"] = round(sum(repair_hours) / len(repair_hours), 3)
+        args["repair_cv"] = 0.5
+        args["breakdown_seed"] = 20261029
+    else:
+        for key in ("failure_rate", "repair_hours", "repair_cv", "breakdown_seed"):
+            args.pop(key, None)
+    if nonsteady:
+        if any(caution == "high" for caution in grade_cautions):
+            args["max_skidder_grade"] = min(
+                float(args.get("max_skidder_grade", 100.0)), _GRADE_LIMITS["high"]
+            )
+        elif any(caution == "relaxed" for caution in grade_cautions):
+            args["max_skidder_grade"] = max(
+                float(args.get("max_skidder_grade", 100.0)), _GRADE_LIMITS["relaxed"]
+            )
+    damage_fraction = sum(damage_fractions) / len(damage_fractions) if damage_fractions else 0.0
+    if damage_fraction > 0:
+        args["damage_downgrade_fraction"] = round(damage_fraction, 4)
+    else:
+        args.pop("damage_downgrade_fraction", None)
+    args["policy_effects"]["_aggregate"] = {
+        "failure_rate_per_machine_hour": args.get("failure_rate"),
+        "repair_hours": args.get("repair_hours"),
+        "max_skidder_grade": args.get("max_skidder_grade"),
+        "damage_downgrade_fraction": args.get("damage_downgrade_fraction", 0.0),
+    }
     return args
 
 
@@ -1454,6 +1526,7 @@ def project_dataset(case: Case, project: dict[str, Any]) -> dict[str, Any]:
                 }
             )
             existing.add(clone_id)
+    apply_operator_policies(project)
     inventory = load_tree_inventory(case.path("inventory"), metadata_path=case.path("metadata"))
     terrain = project.get("terrain") or {}
     if terrain.get("heights") and terrain.get("base_m") is None:

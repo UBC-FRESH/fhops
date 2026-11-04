@@ -737,6 +737,11 @@ def tree_system(
         "--feller-productivity-multiplier",
         help="Multiplier on feller processing productivity (<1 slows selection-cut work).",
     ),
+    damage_downgrade_fraction: float = typer.Option(
+        0.0,
+        "--damage-downgrade-fraction",
+        help="Fraction of sawlog volume downgraded to pulp by operator damage risk.",
+    ),
     path_mode: str = typer.Option(
         "nearest",
         "--path-mode",
@@ -843,6 +848,8 @@ def tree_system(
             raise GroundSystemError("feller-productivity-multiplier must be positive.")
         if processor_productivity_multiplier <= 0:
             raise GroundSystemError("processor-productivity-multiplier must be positive.")
+        if not 0 <= damage_downgrade_fraction <= 1:
+            raise GroundSystemError("damage-downgrade-fraction must be between 0 and 1.")
         landing_choices = tuple(
             _parse_landing(value, index) for index, value in enumerate(landing or [])
         )
@@ -906,6 +913,7 @@ def tree_system(
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
             feller_processing_time_multiplier=1.0 / feller_productivity_multiplier,
+            damage_downgrade_fraction=damage_downgrade_fraction,
             processor_productivity_multiplier=processor_productivity_multiplier,
             path_mode=path_mode,  # type: ignore[arg-type]
             obstacles=tuple(_parse_obstacle(value) for value in (obstacle or [])),

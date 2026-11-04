@@ -103,3 +103,15 @@ def test_stream_buffer_endpoint_rejects_short_centreline(tmp_path: Path) -> None
         json={"points": [[0.0, 0.0]], "width_m": 20.0},
     )
     assert response.status_code == 400
+
+
+def test_studio_page_exposes_run_comparison_launcher(tmp_path: Path) -> None:
+    """The editor exposes a run pair selector that links to the compare page."""
+    app = create_app(
+        StudioConfig(cases_root=ROOT / "sandbox" / "cases", projects_root=tmp_path / "projects")
+    )
+    response = TestClient(app).get("/")
+    assert response.status_code == 200
+    assert 'id="compare-left-run"' in response.text
+    assert 'id="compare-right-run"' in response.text
+    assert 'id="open-compare"' in response.text

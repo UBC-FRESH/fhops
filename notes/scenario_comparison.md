@@ -1,6 +1,6 @@
 # Studio scenario comparison page
 
-Issue: #377. Branch: `issue-377-scenario-compare`.
+Issue: #377; run-history launcher follow-up #407. Branch: `issue-407-preset-compare`.
 
 ## Purpose
 
@@ -14,8 +14,11 @@ Compare any two Studio projects/runs without mixing their histories:
 
 ## Usage
 
-Open `/studio/compare` and choose left/right projects and runs. Selections are
-stored in query parameters, so a comparison can be shared:
+Open `/studio/compare` and choose left/right projects and runs. The Studio run
+history panel also has Base/Compare selectors with defaults of the previous and
+latest runs; its **Open comparison** button and the top-bar Compare link carry
+the same project/run query parameters. Selections are stored in query
+parameters, so a comparison can be shared:
 
 ```text
 /studio/compare?left_project=<id>&left_run=<run>&right_project=<id>&right_run=<run>
@@ -36,25 +39,41 @@ Results:
 | Makespan | 20.3 h | 18.8 h |
 | Warnings | 0 | 0 |
 | Truck loads | 25 | 25 |
+| Scheduled machine cost | $4,027 | $5,221 |
+| Productive machine cost | $2,142 | $2,180 |
+| Truck + labor cost | $9,462 | $10,458 |
+| Total cost | **$13,489** | **$15,679** |
+| Cost per m³ | **$17.38** | **$20.20** |
+
+Rates for the demo: truck $120/h, labor $45/machine-h.
+
 
 The CTL forwarders are the critical path (about 15.6 h busy each); full-tree
 processors are the critical path (about 14.0 h / 10.1 h).
 
 ## Economics
 
-The page reports machine operating cost as:
+The page reports:
 
-```text
-sum(daily operating cost × makespan_hours / daily_hours)
-```
+- scheduled machine cost: daily operating cost × makespan / daily hours;
+- productive machine cost: daily operating cost × busy hours / daily hours;
+- truck cost: truck count × truck $/h × makespan;
+- labor cost: active machines × labor $/machine-h × makespan;
+- total cost and cost per m³.
 
-for every active machine, plus cost per m³. Scenario machine costs are copied
-into the Studio catalog (base machines and `-B` fleet clones), so existing
-projects are enriched on dataset load. This is a proportional machine-cost
-view, not a full ownership/repair/fuel accounting model.
+`truck_hourly_cost` and `labor_hourly_cost` are read from project
+`system_args`; the comparison page exposes them as editable per-side controls
+and saves them back to the project. Scenario machine costs are copied into the
+Studio catalog (base machines and `-B` fleet clones), so existing projects are
+enriched on dataset load. This remains a proportional planning view, not full
+ownership, repair, fuel, or finance accounting.
 
 ## Tests
 
 - Studio app route smoke test.
+- Studio page markup test for the Base/Compare selectors and launcher.
 - Existing run/project API tests.
+- Browser smoke: 22 CTL runs populated both selectors; changing the base run
+  updated both comparison links; the linked page loaded with `comparison ready`
+  and no page errors.
 - JS syntax check.

@@ -672,7 +672,7 @@ eventually terrain/obstacle editing, with a derived scenario run.
 - [x] P21.4a Terrain DEM/road handoff for route and grade checks
 - [x] P21.5 3D edit page (orbit, landing, retention, terrain, boundary) and replay preview
 - [x] P21.5a 3D road drawing, boundary add/remove, undo/redo, rename/duplicate
-- [ ] P21.6 Full operator-policy simulation integration
+- [x] P21.6 Operator-policy simulation integration (cycle, breakdown, grade, and damage-risk product recovery)
 - [x] P21.7 Quality gates, issue tree, branch naming, and closeout report
 - [x] P21.7a Maintainer approval, clean main-based PR, and green CI
 
@@ -698,7 +698,7 @@ Goal: finish the Phase 21 policy, stream-retention, and documentation follow-ups
   - [x] Riparian clump generation, rendering, and routing exclusion
   - [x] Correct the Phase 21 closeout record
 
-## Phase 43 — Salvage shelf-life and wood degradation (CARB-03) — active
+## Phase 44 — Salvage shelf-life and wood degradation (CARB-03) — implemented, pending merge
 
 Parent issue: #380. Child issue: #381. Implementation PR: #383. Branch:
 `feature/p44-salvage-degradation`. Authoritative note:
@@ -717,12 +717,12 @@ Sources:
 - Barrette et al. (2015), *Forestry* 88:275-290, for the advisory lumber, pulp,
   and bioenergy shelf-life windows.
 
-- [ ] P44.1 Add the shared decay module and salvage/storage report consumer (#381)
-  - [ ] Define the typed curve library and package data
-  - [ ] Add `fhops report salvage-shelf-life`
-  - [ ] Add unit, consumer, and CLI tests
-  - [ ] Add Sphinx docs, an example, and the note
-  - [ ] Run the FHOPS quality suite
+- [x] P44.1 Add the shared decay module and salvage/storage report consumer (#381)
+  - [x] Define the typed curve library and package data
+  - [x] Add `fhops report salvage-shelf-life`
+  - [x] Add unit, consumer, and CLI tests
+  - [x] Add Sphinx docs, an example, and the note
+  - [x] Run the FHOPS quality suite
 
 Acceptance:
 
@@ -754,7 +754,16 @@ public or project-approved sources and review.
 - [x] Distance-varying forwarder productivity regression (#373; PR #373).
 - [x] Forwarder load/unload timing calibration (#375; PR #375).
 - [x] Studio scenario comparison page (#377; PR #378).
-- [ ] Scenario comparison economics and cost per m³ (#379).
+- [x] Scenario comparison economics and cost per m³ (#379; PR #379).
+- [x] Comparison charts and downloadable JSON export (#384; PR #385).
+- [x] Role-aware harvester model and refined comparison economics (#386; PR #387).
+- [x] Comparison economics assumptions editor (#389; PR #390).
+- [x] Operator-policy effects integration (#391; PR #391).
+- [x] Studio full-tree/CTL system presets (#393; PR #395).
+- [x] CTL product mix and value comparison (#397; PR #396).
+- [x] Damage-risk product recovery integration (#399; PR #400; closeout #401).
+- [x] Local quality-gate cleanup: HiGHS diagnostics and Pandoc/Sphinx (#403).
+- [x] Studio custom-fleet presets and run-history comparison launcher (#407).
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.
 - [x] Integration with Nemora sampling outputs for downstream operations analytics (P19 tree-inventory handoff).
@@ -771,3 +780,17 @@ public or project-approved sources and review.
 - [ ] Hydrology optimizer integration: derive exposure per candidate schedule and gate it on reviewed evidence. Deferred until a route-state contract and a reviewed response surface exist.
 - [ ] Dataset inspection + data-quality polish (see `notes/dataset_inspection_plan.md`)
   - [ ] Enforce/document 24 h/day machine availability in docs + sample datasets, and flag deviations via the inspector CLI.
+- [ ] Shared metaheuristic kernel adapter: finish FHOPS parity and performance gates for kernel
+  SA/Tabu/ILS, then retire the duplicate solver loops. Design note:
+  `notes/metaheuristic_kernel_adapter.md`.
+- [x] Shared metaheuristic kernel adapter: add the block-separable incremental scoring path and
+  reversible move cache. Remaining: true in-place move/undo and like-for-like parity/performance
+  gates. Design note: `notes/metaheuristic_kernel_adapter.md`.
+- [x] Shared metaheuristic kernel adapter: align objective-weight overrides and record them in
+  kernel results. Remaining: true in-place move/undo and the full parity/performance ladder.
+- [x] Shared metaheuristic kernel adapter: record the Tiny7/Small21/med42 parity ladder. Remaining:
+  like-for-like ILS, Jaffray/scaling tiers, and the retirement decision.
+- [x] Shared metaheuristic kernel adapter: add the like-for-like kernel ILS and record its ladder.
+  Remaining: multi-seed/longer-budget confirmation, true in-place move/undo, and retirement.
+- [x] Shared metaheuristic kernel adapter: multi-seed ILS-like confirmation. Retirement decision:
+  keep the existing solvers; the kernel path is not yet uniformly better.

@@ -234,6 +234,7 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         "feller_reach_m": "--feller-reach",
         "feller_speed_mps": "--feller-speed",
         "feller_productivity_multiplier": "--feller-productivity-multiplier",
+        "damage_downgrade_fraction": "--damage-downgrade-fraction",
         "processor_productivity_multiplier": "--processor-productivity-multiplier",
         "skidder_empty_speed": "--skidder-empty-speed",
         "skidder_loaded_speed": "--skidder-loaded-speed",
@@ -244,6 +245,10 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         "loader_process_fixed": "--loader-process-fixed",
         "loader_process_per_log": "--loader-process-per-log",
         "max_skidder_grade": "--max-skidder-grade",
+        "failure_rate": "--failure-rate",
+        "repair_hours": "--repair-hours",
+        "repair_cv": "--repair-cv",
+        "breakdown_seed": "--breakdown-seed",
     }
     for key, flag in option_map.items():
         value = args.get(key)
@@ -445,6 +450,7 @@ def run_case(
             "landing_inventory_max_m3": summary.get("landing_inventory_max_m3"),
             "landing_inventory_final_m3": summary.get("landing_inventory_final_m3"),
             "unreachable_count": summary.get("unreachable_count"),
+            "product_mix": summary.get("product_mix", {}),
             "machine_summaries": summary.get("machine_summaries", {}),
             "truck_summary": summary.get("truck_summary"),
         },

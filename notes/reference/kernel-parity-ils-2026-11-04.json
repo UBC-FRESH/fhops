@@ -1,0 +1,194 @@
+[
+  {
+    "existing": {
+      "objective": 4295.774752,
+      "seconds": 0.088
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 4295.774752,
+      "seconds": 0.027
+    },
+    "objective_delta": 0.0,
+    "scenario": "tiny7",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.307
+  },
+  {
+    "existing": {
+      "objective": 4338.516752,
+      "seconds": 0.234
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 4338.516752,
+      "seconds": 0.254
+    },
+    "objective_delta": 0.0,
+    "scenario": "tiny7",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 1.085
+  },
+  {
+    "existing": {
+      "objective": 4338.516752,
+      "seconds": 0.401
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 4338.516752,
+      "seconds": 0.074
+    },
+    "objective_delta": 0.0,
+    "scenario": "tiny7",
+    "seed": 7,
+    "solver": "ils",
+    "speed_ratio": 0.185
+  },
+  {
+    "existing": {
+      "objective": 4338.516752,
+      "seconds": 0.4
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 4338.516752,
+      "seconds": 0.255
+    },
+    "objective_delta": 0.0,
+    "scenario": "tiny7",
+    "seed": 7,
+    "solver": "ils_like",
+    "speed_ratio": 0.637
+  },
+  {
+    "existing": {
+      "objective": 15551.328819999997,
+      "seconds": 0.222
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 15508.870819999993,
+      "seconds": 0.084
+    },
+    "objective_delta": -42.458,
+    "scenario": "small21",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.378
+  },
+  {
+    "existing": {
+      "objective": 15563.090819999996,
+      "seconds": 0.781
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 15562.134819999994,
+      "seconds": 0.814
+    },
+    "objective_delta": -0.956,
+    "scenario": "small21",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 1.042
+  },
+  {
+    "existing": {
+      "objective": 15573.544819999996,
+      "seconds": 1.268
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 15551.482819999997,
+      "seconds": 0.192
+    },
+    "objective_delta": -22.062,
+    "scenario": "small21",
+    "seed": 7,
+    "solver": "ils",
+    "speed_ratio": 0.151
+  },
+  {
+    "existing": {
+      "objective": 15573.544819999996,
+      "seconds": 1.274
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 15551.186819999997,
+      "seconds": 0.808
+    },
+    "objective_delta": -22.358,
+    "scenario": "small21",
+    "seed": 7,
+    "solver": "ils_like",
+    "speed_ratio": 0.634
+  },
+  {
+    "existing": {
+      "objective": 20346.924311999992,
+      "seconds": 0.542
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 20543.160395999992,
+      "seconds": 0.199
+    },
+    "objective_delta": 196.236084,
+    "scenario": "med42",
+    "seed": 7,
+    "solver": "sa",
+    "speed_ratio": 0.367
+  },
+  {
+    "existing": {
+      "objective": 22444.21748799999,
+      "seconds": 2.151
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 21992.086409999996,
+      "seconds": 1.83
+    },
+    "objective_delta": -452.131078,
+    "scenario": "med42",
+    "seed": 7,
+    "solver": "tabu",
+    "speed_ratio": 0.851
+  },
+  {
+    "existing": {
+      "objective": 21662.980809999997,
+      "seconds": 5.523
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 19322.925175999997,
+      "seconds": 0.444
+    },
+    "objective_delta": -2340.055634,
+    "scenario": "med42",
+    "seed": 7,
+    "solver": "ils",
+    "speed_ratio": 0.08
+  },
+  {
+    "existing": {
+      "objective": 21662.980809999997,
+      "seconds": 5.701
+    },
+    "iterations": 50,
+    "kernel": {
+      "objective": 20762.834631999995,
+      "seconds": 3.212
+    },
+    "objective_delta": -900.146178,
+    "scenario": "med42",
+    "seed": 7,
+    "solver": "ils_like",
+    "speed_ratio": 0.563
+  }
+]

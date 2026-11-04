@@ -547,6 +547,9 @@ class GroundSystemTree:
     merchantable_volume_m3: float
     log_count: int
     processed_s: float
+    sawlog_volume_m3: float = 0.0
+    pulp_volume_m3: float = 0.0
+    downgraded_volume_m3: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -625,6 +628,11 @@ class GroundSystemResult:
         Busy time and utilisation per machine.
     processed_volume_m3:
         Merchantable volume processed by the feller-buncher.
+    product_mix:
+        Reference product recovery in cubic metres. Keys are ``sawlog_m3``,
+        ``pulp_m3``, and ``downgraded_m3`` (the sawlog volume reclassified to
+        pulp by the operator damage assumption). Sawlog plus pulp conserves
+        the summed reference log volume; other products are not included.
     tree_count:
         Processed tree count.
     unreachable_count:
@@ -660,6 +668,7 @@ class GroundSystemResult:
     landing_inventory_final_m3: float
     landing_inventory_max_m3: float
     landing_inventory: dict[str, dict[str, float]]
+    product_mix: dict[str, float]
     machine_types: dict[str, str]
     trees: tuple[GroundSystemTree, ...]
     events: tuple[GroundSystemEvent, ...]
@@ -707,6 +716,7 @@ class GroundSystemResult:
             "landing_inventory_final_m3": self.landing_inventory_final_m3,
             "landing_inventory_max_m3": self.landing_inventory_max_m3,
             "landing_inventory": self.landing_inventory,
+            "product_mix": self.product_mix,
             "tree_count": self.tree_count,
             "processed_volume_m3": self.processed_volume_m3,
             "unreachable_count": self.unreachable_count,
@@ -778,6 +788,7 @@ def simulate_ground_system(
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     feller_processing_time_multiplier: float = 1.0,
+    damage_downgrade_fraction: float = 0.0,
     processor_productivity_multiplier: float = 1.0,
     path_mode: Literal["nearest", "swath"] = "nearest",
     obstacles: tuple[Obstacle, ...] = (),
@@ -904,6 +915,10 @@ def simulate_ground_system(
     feller_processing_time_multiplier:
         Multiplier on feller-buncher per-tree processing time. Selection-cut
         care and other slow-work adjustments use values above one.
+    damage_downgrade_fraction:
+        Fraction of sawlog volume downgraded to pulp by operator damage risk.
+        Must be in ``[0, 1]``; defaults to ``0``. This is a product-recovery
+        assumption, not a physical stem-damage model.
     processor_productivity_multiplier:
         Positive multiplier on roadside-processor productive output. Values
         above one shorten fixed, per-cubic-metre, and per-log processor time;
@@ -958,6 +973,12 @@ def simulate_ground_system(
         or processor_productivity_multiplier <= 0
     ):
         raise GroundSystemError("processor_productivity_multiplier must be positive and finite.")
+    if (
+        not math.isfinite(damage_downgrade_fraction)
+        or damage_downgrade_fraction < 0
+        or damage_downgrade_fraction > 1
+    ):
+        raise GroundSystemError("damage_downgrade_fraction must be between 0 and 1.")
     if feller_machine_id in skidders or loader_machine_id in skidders:
         raise GroundSystemError("Feller and loader machines must not also be skidders.")
     if feller_machine_id == loader_machine_id:
@@ -1050,6 +1071,9 @@ def simulate_ground_system(
             stems = build_stem_inventory(scenario_file)
         except Exception as exc:  # noqa: BLE001 - preserve dependency error text
             raise GroundSystemError(str(exc)) from exc
+    processing_model: Literal["feller_buncher", "harvester"] = (
+        "harvester" if machines[feller_machine_id].role == "harvester" else "feller_buncher"
+    )
     try:
         fb_sim = simulate_block(
             scenario_file,
@@ -1061,6 +1085,7 @@ def simulate_ground_system(
             reach_radius_m=feller_reach_radius_m,
             travel_speed_m_per_s=feller_travel_speed_m_per_s,
             processing_time_multiplier=feller_processing_time_multiplier,
+            processing_model=processing_model,
             path_mode=path_mode,
             obstacles=obstacles,
         )
@@ -1165,6 +1190,20 @@ def simulate_ground_system(
     except TerrainError as exc:
         raise GroundSystemError(str(exc)) from exc
     rate_provenance["terrain"] = router.provenance()
+    rate_provenance["harvester"] = {
+        "machine_id": feller_machine_id,
+        "scenario_role": machines[feller_machine_id].role,
+        "processing_model": processing_model,
+        "model": "ADV6N10 CTL harvester regression"
+        if processing_model == "harvester"
+        else "ADV6N10 whole-tree reference",
+    }
+    rate_provenance["damage"] = {
+        "sawlog_to_pulp_fraction": damage_downgrade_fraction,
+        "assumption": "Operator-policy product-recovery downgrade; not a physical stem-damage model."
+        if damage_downgrade_fraction
+        else "No product downgrade applied.",
+    }
     rate_provenance["landings"] = [
         {"id": item.landing_id, "x": item.x_m, "y": item.y_m} for item in landing_choices
     ]
@@ -1367,15 +1406,24 @@ def simulate_ground_system(
         )
         previous_x, previous_y = event.machine_x_m, event.machine_y_m
         fb_cursor = process_end
+        stem = trees_by_id[event.tree_id]
+        sawlog_volume = sum(log.volume_m3 for log in stem.logs if log.product.lower() == "sawlog")
+        pulp_volume = sum(log.volume_m3 for log in stem.logs if log.product.lower() == "pulp")
+        downgraded_volume = sawlog_volume * damage_downgrade_fraction
+        sawlog_volume -= downgraded_volume
+        pulp_volume += downgraded_volume
         trees.append(
             GroundSystemTree(
                 tree_id=event.tree_id,
                 x_m=event.x_m,
                 y_m=event.y_m,
-                dbh_cm=trees_by_id[event.tree_id].dbh_cm,
+                dbh_cm=stem.dbh_cm,
                 merchantable_volume_m3=event.merchantable_volume_m3,
                 log_count=event.log_count,
                 processed_s=process_end,
+                sawlog_volume_m3=sawlog_volume,
+                pulp_volume_m3=pulp_volume,
+                downgraded_volume_m3=downgraded_volume,
             )
         )
     max_bunch_volume_m3 = min(spec.capacity_m3 for spec in skidder_specs.values())
@@ -1460,6 +1508,17 @@ def simulate_ground_system(
         )
     )
     machine_types = {machine: str(machines[machine].role or "machine") for machine in machine_ids}
+    product_mix = {
+        "sawlog_m3": round(sum(tree.sawlog_volume_m3 for tree in trees), 6),
+        "pulp_m3": round(sum(tree.pulp_volume_m3 for tree in trees), 6),
+        "downgraded_m3": round(sum(tree.downgraded_volume_m3 for tree in trees), 6),
+    }
+    harvester_caveat = (
+        "Harvester processing uses the reference ADV6N10 CTL regression with "
+        "stump-side multi-product bucking assumptions."
+        if processing_model == "harvester"
+        else "Feller-buncher processing uses the existing reference spatial/ADV6N10 model."
+    )
     for machine in machine_ids:
         machine_events = [event for event in events if event.machine == machine]
         busy = sum(event.end_s - event.start_s for event in machine_events)
@@ -1521,6 +1580,7 @@ def simulate_ground_system(
         landing_inventory_final_m3=landing_final,
         landing_inventory_max_m3=landing_max,
         landing_inventory=landing_inventory,
+        product_mix=product_mix,
         machine_types=machine_types,
         trees=tuple(trees),
         events=tuple(events),
@@ -1532,7 +1592,7 @@ def simulate_ground_system(
         warnings=tuple(warnings),
         caveats=(
             "Reference multi-machine event model, not a field-calibrated system simulation.",
-            "Feller-buncher processing uses the existing reference spatial/ADV6N10 model.",
+            harvester_caveat,
             "Skidder, processor, and loader cycle times are configurable defaults; queue dispatch is greedy and deterministic.",
             "DEM/road routing is optional; the model uses a direct line or a single connected road corridor and does not solve a full road network.",
             "Shift windows delay tasks that do not fit; tasks are not split across shifts.",
@@ -2346,6 +2406,7 @@ def write_ground_system(result: GroundSystemResult, out_dir: Path) -> dict[str, 
                 "truck_summary": result.truck_summary,
                 "landing_inventory_final_m3": result.landing_inventory_final_m3,
                 "landing_inventory_max_m3": result.landing_inventory_max_m3,
+                "product_mix": result.product_mix,
                 "rate_model": result.rate_model,
                 "rate_provenance": result.rate_provenance,
                 "machine_summaries": result.machine_summaries,

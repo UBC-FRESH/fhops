@@ -16,6 +16,7 @@ The report is intentionally conservative:
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -105,7 +106,14 @@ def _read_storage_table(storage_table: str | Path | pd.DataFrame) -> pd.DataFram
     if isinstance(storage_table, pd.DataFrame):
         frame = storage_table.copy()
     else:
-        frame = pd.read_csv(storage_table)
+        # Keep identifiers as strings so leading zeros and mixed IDs survive the
+        # join exactly as the scenario loader preserved them.
+        frame = pd.read_csv(
+            storage_table,
+            dtype=str,
+            keep_default_na=False,
+            encoding="utf-8-sig",
+        )
 
     missing = [column for column in REQUIRED_STORAGE_COLUMNS if column not in frame.columns]
     if missing:
@@ -126,6 +134,8 @@ def _read_storage_table(storage_table: str | Path | pd.DataFrame) -> pd.DataFram
         raise ValueError("years_since_disturbance must be numeric for every row")
     if (ages < 0.0).any():
         raise ValueError("years_since_disturbance must be non-negative")
+    if not all(math.isfinite(float(age)) for age in ages):
+        raise ValueError("years_since_disturbance must be finite for every row")
     frame["years_since_disturbance"] = ages.astype(float)
     return frame.reset_index(drop=True)
 
@@ -177,8 +187,8 @@ def build_salvage_report(
         If the scenario or storage table does not exist.
     """
 
-    if value_per_m3 is not None and value_per_m3 < 0.0:
-        raise ValueError("value_per_m3 must be non-negative")
+    if value_per_m3 is not None and (not math.isfinite(value_per_m3) or value_per_m3 < 0.0):
+        raise ValueError("value_per_m3 must be finite and non-negative")
 
     resolved_library = library or load_decay_library()
     curve = resolved_library.curve(curve_id)

@@ -130,8 +130,11 @@ def test_highs_option_error_is_reported_as_solver_error(regression, driver, monk
     result = solve_legacy_mip(regression, driver=driver)
     _assert_empty(result)
     assert result["outcome"] == "error"
-    assert "ERROR" in result["solver_error"]
-    assert "threads" in result["solver_error"]
+    # highspy 1.12 raises a configuration ValueError ("Error: Expected ..."),
+    # naming iteration_count instead of returning the older HiGHS "ERROR" log
+    # line that named threads. Both are configuration failures and must surface.
+    assert "ERROR" in result["solver_error"].upper()
+    assert any(token in result["solver_error"] for token in ("threads", "iteration_count"))
 
 
 def test_solver_exception_is_reported_as_solver_error(regression, monkeypatch) -> None:
