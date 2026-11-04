@@ -100,6 +100,26 @@ source (``block.ground_slope_percent`` or class-average roughness). Move-in, lan
 multipliers are advisory and are not applied by the solver in P14.4. Thresholds are planning
 assumptions, not field-validated rules; see ``notes/p14_operability_validation.md``.
 
+Ground-Summary Support Report
+-----------------------------
+
+FEMIC can write a ``femic.ground-summary.v1`` CSV from a validated ground bundle. FHOPS can
+inspect that CSV against a scenario without changing the scenario or the solver::
+
+   fhops scenario lidar ground-summary \
+     examples/lidar_tfl6/scenario.yaml \
+     runtime/p135/tfl6_blocks_summary.csv \
+     --json
+
+The report lists matched block rows with point count, ground fraction, low-point fraction,
+HAG mean, and HAG p95. It also reports scenario blocks with no summary and summary blocks
+that are not in the scenario. The CSV identifier column defaults to ``block_id`` and falls
+back to ``polygon_id``; use ``--id-field`` to override.
+
+This report is read-only. It does not write ``lidar_support``, change the scenario, or apply
+ground evidence to an objective. A scenario schema field for ground support is a separate
+decision.
+
 Operator Workflow
 -----------------
 

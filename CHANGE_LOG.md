@@ -5577,3 +5577,9 @@ PY
   `examples/`. Added `--scenario-root` and `--solvers` to the comparison script. 6-block results
   agree closely; 18-block mostly agree; 40-block is high-variance at these budgets. Raw records:
   `notes/reference/kernel-parity-jaffray-2026-11-04.json`.
+
+- 2026-11-04: added the FHOPS ground-summary support report. `fhops scenario lidar
+  ground-summary SCENARIO SUMMARY.csv` matches a FEMIC `femic.ground-summary.v1` CSV to
+  scenario blocks, reports matched/missing/unknown IDs, and prints ground/low fractions and
+  HAG statistics. It is read-only and does not change the scenario or solver. The real TFL6
+  seven-block summary matches all seven blocks with no warnings.

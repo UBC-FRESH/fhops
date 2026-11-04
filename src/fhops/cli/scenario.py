@@ -58,6 +58,7 @@ from fhops.scenario.lidar import (
     FemicLidarError,
     validate_femic_lidar_bundle,
 )
+from fhops.scenario.lidar_ground_summary import GroundSummaryError, inspect_ground_summary
 from fhops.scenario.lidar_mapping import (
     FemicLidarMappingError,
     map_femic_lidar_to_scenario,
@@ -416,6 +417,49 @@ def lidar_operability(
         )
     console.print(table)
     console.print("Cost multipliers are advisory and are not applied by the solver in P14.4.")
+
+
+@lidar_app.command("ground-summary")
+def lidar_ground_summary(
+    scenario: Path = typer.Argument(..., help="FHOPS scenario YAML."),
+    summary: Path = typer.Argument(..., help="FEMIC ground-summary CSV."),
+    id_field: str = typer.Option(
+        "block_id", "--id-field", help="Preferred block identifier column."
+    ),
+    json_output: bool = typer.Option(False, "--json", help="Print JSON instead of a table."),
+) -> None:
+    """Match a FEMIC ground summary to scenario blocks without writing the scenario."""
+    try:
+        report = inspect_ground_summary(scenario, summary, id_field=id_field)
+    except GroundSummaryError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    if json_output:
+        typer.echo(json.dumps(report.to_dict(), indent=2))
+        return
+    table = Table(title="Ground-summary block support")
+    table.add_column("Block")
+    table.add_column("Points", justify="right")
+    table.add_column("Ground %", justify="right")
+    table.add_column("Low %", justify="right")
+    table.add_column("HAG mean m", justify="right")
+    table.add_column("HAG p95 m", justify="right")
+    for row in report.rows:
+        table.add_row(
+            row.block_id,
+            f"{row.point_count:,}",
+            f"{row.ground_fraction * 100:.1f}",
+            f"{row.low_fraction * 100:.1f}",
+            "—" if row.hag_mean_m is None else f"{row.hag_mean_m:.2f}",
+            "—" if row.hag_p95_m is None else f"{row.hag_p95_m:.2f}",
+        )
+    console.print(table)
+    if report.missing_block_ids:
+        console.print("Missing blocks: " + ", ".join(report.missing_block_ids))
+    if report.unknown_block_ids:
+        console.print("Unknown blocks: " + ", ".join(report.unknown_block_ids))
+    for warning in report.warnings:
+        console.print(f"Warning: {warning}")
 
 
 @lidar_app.command("map")
