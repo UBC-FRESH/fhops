@@ -34,3 +34,4 @@ td.num { font-variant-numeric: tabular-nums; }
 .bad { color: #ffb35a; }
 .muted { color: #93a6ae; }
 a { color: #68b6ff; }
+.salvage-source { margin-top: 6px; font-size: 9px; color: #93a6ae; }
