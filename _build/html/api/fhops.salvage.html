@@ -922,7 +922,7 @@ it as an assumption.</p>
 <dd><p>Published age/retention pairs in strictly increasing age order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a>[<a class="reference internal" href="#fhops.salvage.degradation.DecayCurvePoint" title="fhops.salvage.degradation.DecayCurvePoint">DecayCurvePoint</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a>[<a class="reference internal" href="#fhops.salvage.degradation.DecayCurvePoint" title="fhops.salvage.degradation.DecayCurvePoint">fhops.salvage.degradation.DecayCurvePoint</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -933,7 +933,7 @@ it as an assumption.</p>
 <dd><p>Citation, URL, and applicability boundary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#fhops.salvage.degradation.DecayCurveSource" title="fhops.salvage.degradation.DecayCurveSource">DecayCurveSource</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#fhops.salvage.degradation.DecayCurveSource" title="fhops.salvage.degradation.DecayCurveSource">fhops.salvage.degradation.DecayCurveSource</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1004,7 +1004,7 @@ returned exactly.</p>
 <dd><p>Published retention curves, keyed by <a class="reference internal" href="#fhops.salvage.degradation.DecayCurve.curve_id" title="fhops.salvage.degradation.DecayCurve.curve_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DecayCurve.curve_id</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a>[<a class="reference internal" href="#fhops.salvage.degradation.DecayCurve" title="fhops.salvage.degradation.DecayCurve">DecayCurve</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a>[<a class="reference internal" href="#fhops.salvage.degradation.DecayCurve" title="fhops.salvage.degradation.DecayCurve">fhops.salvage.degradation.DecayCurve</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1015,7 +1015,7 @@ returned exactly.</p>
 <dd><p>Advisory product windows from the shelf-life source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a>[<a class="reference internal" href="#fhops.salvage.degradation.ProductWindow" title="fhops.salvage.degradation.ProductWindow">ProductWindow</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a>[<a class="reference internal" href="#fhops.salvage.degradation.ProductWindow" title="fhops.salvage.degradation.ProductWindow">fhops.salvage.degradation.ProductWindow</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1078,8 +1078,8 @@ product because the source windows overlap.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>age_years</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.15)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>Ge</em><em>(</em><em>ge=0.0</em><em>)</em><em>]</em>)</p></li>
-<li><p><strong>retention_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.15)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>Ge</em><em>(</em><em>ge=0.0</em><em>)</em><em>, </em><em>Le</em><em>(</em><em>le=1.0</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>age_years</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>)</p></li>
+<li><p><strong>retention_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1191,8 +1191,8 @@ must surface this text rather than treating the curve as universal.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>product</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
-<li><p><strong>min_years</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.15)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>Ge</em><em>(</em><em>ge=0.0</em><em>)</em><em>]</em>)</p></li>
-<li><p><strong>max_years</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Annotated" title="(in Python v3.15)"><em>Annotated</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> | </em><em>None</em><em>, </em><em>Ge</em><em>(</em><em>ge=0</em><em>)</em><em>]</em>)</p></li>
+<li><p><strong>min_years</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>)</p></li>
+<li><p><strong>max_years</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>note</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
 <li><p><strong>source</strong> (<a class="reference internal" href="#fhops.salvage.degradation.DecayCurveSource" title="fhops.salvage.degradation.DecayCurveSource"><em>DecayCurveSource</em></a>)</p></li>
 </ul>
@@ -1250,7 +1250,7 @@ the source gives no upper bound (open-ended).</p>
 <dd><p>Citation, URL, and applicability boundary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#fhops.salvage.degradation.DecayCurveSource" title="fhops.salvage.degradation.DecayCurveSource">DecayCurveSource</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#fhops.salvage.degradation.DecayCurveSource" title="fhops.salvage.degradation.DecayCurveSource">fhops.salvage.degradation.DecayCurveSource</a></p>
 </dd>
 </dl>
 </dd></dl>

@@ -874,6 +874,17 @@
     <span class="s2">&quot;retained_value&quot;</span><span class="p">,</span>
     <span class="s2">&quot;eligible_products&quot;</span><span class="p">,</span>
     <span class="s2">&quot;curve_id&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;curve_source&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;curve_url&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;curve_boundary&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;product_window_source&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;report_limits&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">_REPORT_LIMITS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;Read-only volume-retention proxy; not a BC-specific, species-specific, or &quot;</span>
+    <span class="s2">&quot;roadside-storage operational curve; optional value is caller-supplied, not a &quot;</span>
+    <span class="s2">&quot;price forecast or grade-recovery model.&quot;</span>
 <span class="p">)</span>
 
 
@@ -1050,6 +1061,15 @@
                 <span class="s2">&quot;retained_value&quot;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">value_per_m3</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">retained_volume</span> <span class="o">*</span> <span class="n">value_per_m3</span><span class="p">,</span>
                 <span class="s2">&quot;eligible_products&quot;</span><span class="p">:</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">resolved_library</span><span class="o">.</span><span class="n">eligible_products</span><span class="p">(</span><span class="n">age</span><span class="p">)),</span>
                 <span class="s2">&quot;curve_id&quot;</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">curve_id</span><span class="p">,</span>
+                <span class="s2">&quot;curve_source&quot;</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">citation</span><span class="p">,</span>
+                <span class="s2">&quot;curve_url&quot;</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+                <span class="s2">&quot;curve_boundary&quot;</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">boundary</span><span class="p">,</span>
+                <span class="s2">&quot;product_window_source&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="n">resolved_library</span><span class="o">.</span><span class="n">product_windows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">citation</span>
+                    <span class="k">if</span> <span class="n">resolved_library</span><span class="o">.</span><span class="n">product_windows</span>
+                    <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;report_limits&quot;</span><span class="p">:</span> <span class="n">_REPORT_LIMITS</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
 

@@ -53,6 +53,17 @@ _REPORT_COLUMNS = (
     "retained_value",
     "eligible_products",
     "curve_id",
+    "curve_source",
+    "curve_url",
+    "curve_boundary",
+    "product_window_source",
+    "report_limits",
+)
+
+_REPORT_LIMITS = (
+    "Read-only volume-retention proxy; not a BC-specific, species-specific, or "
+    "roadside-storage operational curve; optional value is caller-supplied, not a "
+    "price forecast or grade-recovery model."
 )
 
 
@@ -224,6 +235,15 @@ def build_salvage_report(
                 "retained_value": None if value_per_m3 is None else retained_volume * value_per_m3,
                 "eligible_products": ";".join(resolved_library.eligible_products(age)),
                 "curve_id": curve.curve_id,
+                "curve_source": curve.source.citation,
+                "curve_url": curve.source.url,
+                "curve_boundary": curve.source.boundary,
+                "product_window_source": (
+                    resolved_library.product_windows[0].source.citation
+                    if resolved_library.product_windows
+                    else ""
+                ),
+                "report_limits": _REPORT_LIMITS,
             }
         )
 

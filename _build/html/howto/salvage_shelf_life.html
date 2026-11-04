@@ -922,6 +922,15 @@ price forecast.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">curve_id</span></code></dt><dd><p>The applied curve.</p>
 </dd>
+<dt><code class="docutils literal notranslate"><span class="pre">curve_source</span></code> / <code class="docutils literal notranslate"><span class="pre">curve_url</span></code> / <code class="docutils literal notranslate"><span class="pre">curve_boundary</span></code></dt><dd><p>Citation, public URL, and applicability boundary for the applied curve. The
+boundary is repeated in the CSV so the file is self-describing.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">product_window_source</span></code></dt><dd><p>Citation for the advisory product windows.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">report_limits</span></code></dt><dd><p>The read-only and non-operational boundary statement. <code class="docutils literal notranslate"><span class="pre">retained_value</span></code> is a
+volume-retention proxy at a constant caller price, not a price forecast or
+grade-recovery model.</p>
+</dd>
 </dl>
 </section>
 <section id="adding-another-curve">

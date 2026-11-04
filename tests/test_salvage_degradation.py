@@ -163,6 +163,11 @@ def test_build_salvage_report_joins_blocks_and_ages():
         "retained_value",
         "eligible_products",
         "curve_id",
+        "curve_source",
+        "curve_url",
+        "curve_boundary",
+        "product_window_source",
+        "report_limits",
     ]
     assert len(report.frame) == 2
     assert report.frame.loc[0, "retention_fraction"] == pytest.approx(0.99)
@@ -276,6 +281,11 @@ def test_write_salvage_report_outputs_csv_and_markdown(tmp_path: Path):
     assert "Prestemon" in markdown
     assert "not a BC-specific" in markdown
     assert "read-only" in markdown.lower()
+    csv_text = written["csv"].read_text(encoding="utf-8")
+    assert "Prestemon" in csv_text
+    assert "not a BC-specific" in csv_text
+    assert "Barrette" in csv_text
+    assert "Read-only volume-retention proxy" in csv_text
 
 
 def test_packaged_library_json_is_valid_json_and_source_urls_are_public():

@@ -143,5 +143,16 @@ pytest
 sphinx-build -b html docs _build/html -W
 ```
 
+Refresh on current `main` (2026-11-04):
+
+- storage-age CSVs read `block_id` as a string so leading zeros and mixed
+  identifiers survive the join (review finding);
+- non-finite ages and `value_per_m3` values are rejected;
+- CSV output now repeats curve provenance/boundary, product-window source, and
+  report limits;
+- `pytest`: 1388 passed, 219 skipped;
+- gated salvage CLI tests: 5 passed;
+- `mypy src`: 194 files, no issues; Sphinx with `-W`: clean.
+
 Targeted results are recorded in `CHANGE_LOG.md`. The registry reconciliation is
 recorded in `irss-expansion/CHANGE_LOG.md`.

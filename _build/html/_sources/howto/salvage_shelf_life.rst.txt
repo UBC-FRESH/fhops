@@ -118,6 +118,18 @@ Output columns
 ``curve_id``
     The applied curve.
 
+``curve_source`` / ``curve_url`` / ``curve_boundary``
+    Citation, public URL, and applicability boundary for the applied curve. The
+    boundary is repeated in the CSV so the file is self-describing.
+
+``product_window_source``
+    Citation for the advisory product windows.
+
+``report_limits``
+    The read-only and non-operational boundary statement. ``retained_value`` is a
+    volume-retention proxy at a constant caller price, not a price forecast or
+    grade-recovery model.
+
 Adding another curve
 --------------------
 
