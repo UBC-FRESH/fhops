@@ -55,6 +55,8 @@ def test_web_game_flags_build_service_config(monkeypatch, tmp_path: Path) -> Non
             "examples/game/precomputed/mkrf_684.json",
             "--game-agent-model",
             "opencode-go/deepseek-v4.1-flash",
+            "--game-replay-root",
+            str(tmp_path / "replays"),
         ],
     )
     assert result.exit_code == 0, cli_text(result)
@@ -62,3 +64,4 @@ def test_web_game_flags_build_service_config(monkeypatch, tmp_path: Path) -> Non
     assert config.game_levels == [Path("examples/game/levels/mkrf_684/level.yaml")]
     assert config.game_precomputes == [Path("examples/game/precomputed/mkrf_684.json")]
     assert config.game_agent_model == "opencode-go/deepseek-v4.1-flash"
+    assert config.game_replay_root == tmp_path / "replays"

@@ -111,6 +111,9 @@ class ServiceConfig:
         Optional JSON cache for level+choice explanations.
     game_session_store:
         Optional JSON file used to persist tournament sessions across restarts.
+    game_replay_root:
+        Optional root for JIT player replay captures. Defaults to
+        ``build/game_replays`` under the service working directory.
     """
 
     roots: list[Path] = field(default_factory=lambda: [Path.cwd()])
@@ -137,6 +140,7 @@ class ServiceConfig:
     game_agent_model: str = DEEPSEEK_GAME_MODEL
     game_explanation_cache: Path | None = None
     game_session_store: Path | None = None
+    game_replay_root: Path | None = None
 
 
 class ObjectiveUpdate(BaseModel):
@@ -255,6 +259,7 @@ def create_app(config: ServiceConfig) -> FastAPI:
                 else None
             ),
             session_store=config.game_session_store,
+            replay_root=config.game_replay_root,
         )
         app.include_router(create_game_router(game_service))
 

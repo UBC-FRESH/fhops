@@ -95,6 +95,11 @@ def web(
         "--game-session-store",
         help="JSON file for persistent tournament sessions.",
     ),
+    game_replay_root: Path | None = typer.Option(
+        None,
+        "--game-replay-root",
+        help="Root for JIT player replay captures (default: build/game_replays).",
+    ),
 ) -> None:
     """Start the web service when no subcommand is given."""
     if ctx.invoked_subcommand is not None:
@@ -125,6 +130,7 @@ def web(
         game_agent_model=game_agent_model,
         game_explanation_cache=game_explanation_cache,
         game_session_store=game_session_store,
+        game_replay_root=game_replay_root,
     )
     try:
         run_server(config)

@@ -1,3 +1,16 @@
+# 2026-11-05 — P20 dual 3D replay verification (#425)
+
+- Added `game_replay_root` / `--game-replay-root` so JIT player replay captures
+  can use an explicit cache root instead of hard-coded `build/game_replays`.
+- Added API coverage for replay gating, asynchronous job state, token-scoped
+  optimal/player assets, and committed optimal capture consistency.
+- Added `/game/replay` shell coverage and a browser smoke that loaded both
+  viewer panes, advanced the linked clock, rendered 24,994 timeline bars, and
+  reported no page errors.
+- Documented the dual replay workflow and marked the P20.3 item complete.
+- Verification: full `pytest` (1399 passed, 219 skipped), targeted web/game
+  tests, `ruff`, `mypy`, and Sphinx.
+
 # 2026-11-04 — comparison-page salvage context (#420)
 
 - Added a reference-only salvage table to the comparison page using the P44.2
