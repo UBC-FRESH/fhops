@@ -112,21 +112,45 @@
       if (type && (type.includes('truck'))) return '#8e44ad';
       return '#f08a24';
     }
+    function compactTimelineEvents(events, duration, maxBuckets = 240) {
+      const bucketSeconds = Math.max(1, Math.ceil(duration / maxBuckets));
+      const groups = new Map();
+      for (const event of events) {
+        const type = event.type || 'event';
+        const start = Number(event.start_s) || 0;
+        const end = Math.max(start, Number(event.end_s) || start);
+        const firstBucket = Math.floor(start / bucketSeconds);
+        const lastBucket = Math.floor(Math.max(start, end - 1e-9) / bucketSeconds);
+        for (let bucket = firstBucket; bucket <= lastBucket; bucket += 1) {
+          const key = `${type}|${bucket}`;
+          const clippedStart = Math.max(start, bucket * bucketSeconds);
+          const clippedEnd = Math.min(end, (bucket + 1) * bucketSeconds);
+          const existing = groups.get(key);
+          if (existing) {
+            existing.start_s = Math.min(existing.start_s, clippedStart);
+            existing.end_s = Math.max(existing.end_s, clippedEnd);
+            existing.count += 1;
+          } else {
+            groups.set(key, {
+              type,
+              start_s: clippedStart,
+              end_s: clippedEnd,
+              count: 1,
+            });
+          }
+        }
+      }
+      return [...groups.values()].sort((a, b) => a.start_s - b.start_s || a.end_s - b.end_s);
+    }
     function renderTimelineSide(root, data) {
       const duration = Number(data.duration_s) || 1;
       const machines = Object.keys(data.machines || {});
+      const timeline = data.timeline || [];
       root.innerHTML = '';
+      let barCount = 0;
       for (const machine of machines) {
-        const events = (data.timeline || []).filter((event) => event.machine === machine && event.end_s > event.start_s).sort((a, b) => a.start_s - b.start_s);
-        const merged = [];
-        for (const event of events) {
-          const last = merged[merged.length - 1];
-          if (last && last.type === event.type && event.start_s <= last.end_s + 60) {
-            last.end_s = Math.max(last.end_s, event.end_s);
-          } else {
-            merged.push({ ...event });
-          }
-        }
+        const events = timeline.filter((event) => event.machine === machine && event.end_s > event.start_s).sort((a, b) => a.start_s - b.start_s);
+        const compacted = compactTimelineEvents(events, duration);
         const row = document.createElement('div');
         row.className = 'timeline-machine';
         const label = document.createElement('div');
@@ -135,14 +159,16 @@
         const track = document.createElement('div');
         track.className = 'timeline-track';
         track.dataset.duration = String(duration);
-        for (const event of merged) {
+        for (const event of compacted) {
           const bar = document.createElement('span');
           bar.className = 'timeline-bar';
           bar.style.left = `${100 * event.start_s / duration}%`;
           bar.style.width = `${Math.max(0.15, 100 * (event.end_s - event.start_s) / duration)}%`;
           bar.style.background = timelineBarColor(event.type);
-          bar.title = `${machine} · ${event.type} · ${Math.round(event.start_s)}–${Math.round(event.end_s)} s`;
+          const count = event.count > 1 ? ` · ${event.count} events` : '';
+          bar.title = `${machine} · ${event.type} · ${Math.round(event.start_s)}–${Math.round(event.end_s)} s${count}`;
           track.appendChild(bar);
+          barCount += 1;
         }
         const playhead = document.createElement('span');
         playhead.className = 'timeline-playhead';
@@ -150,6 +176,7 @@
         row.append(label, track);
         root.appendChild(row);
       }
+      return { bars: barCount, events: timeline.length };
     }
     async function loadTimeline() {
       if (timelineLoaded) return;
@@ -161,8 +188,12 @@
           fetch(assetUrl(leftEventsUrl)).then((response) => response.json()),
           fetch(assetUrl(rightEventsUrl)).then((response) => response.json()),
         ]);
-        renderTimelineSide(document.getElementById('timeline-left'), leftData);
-        renderTimelineSide(document.getElementById('timeline-right'), rightData);
+        const leftStats = renderTimelineSide(document.getElementById('timeline-left'), leftData);
+        const rightStats = renderTimelineSide(document.getElementById('timeline-right'), rightData);
+        const heading = document.querySelector('#timeline-panel h3');
+        if (heading) {
+          heading.textContent = `Machine timelines · ${leftStats.bars + rightStats.bars} bars from ${leftStats.events + rightStats.events} events`;
+        }
         apply();
       } catch (error) {
         document.getElementById('timeline-left').textContent = `Timeline unavailable: ${String(error)}`;

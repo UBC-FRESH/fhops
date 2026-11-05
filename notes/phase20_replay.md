@@ -65,7 +65,9 @@ proxy timeouts during the expensive KC scene/timeline generation.
 - Browser smoke against a real local game service:
   - both panes loaded the tree-system viewer (`__ready = true`);
   - Play advanced the shared clock;
-  - Timeline rendered both machine timelines (24,994 bars for KC);
+  - Timeline renders both timelines compacted into time/type buckets; KC
+    reduced 35,942 events to 2,226 bars while keeping hover ranges and counts;
   - independent panes, no page errors.
 - The dual replay wrapper is served at `/game/replay` with `Cache-Control:
   no-store`.
+- P20 closeout adds a full three-level ordered tournament/fairness test.

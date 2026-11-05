@@ -461,3 +461,71 @@ def test_precomputed_optimal_replay_assets_are_consistent(tmp_path: Path) -> Non
     """Committed optimal captures match the replay contract."""
     assert GameService._replay_consistent(OPTIMAL_REPLAY) is True
     assert GameService._replay_consistent(tmp_path / "missing") is False
+
+
+def test_full_tournament_is_ordered_and_fair(tmp_path: Path) -> None:
+    """Two teams with identical choices see the same three-level tournament."""
+    level_specs = [
+        ("mkrf_684", Path("examples/game/levels/mkrf_684/level.yaml").resolve()),
+        ("gavin_1032", Path("examples/game/levels/gavin_1032/level.yaml").resolve()),
+        ("kc_57254551", LEVEL),
+    ]
+    app = create_app(
+        ServiceConfig(
+            roots=[tmp_path],
+            workspace=Path.cwd(),
+            game_levels=[spec[1] for spec in level_specs],
+            game_precomputes=[
+                Path(f"examples/game/precomputed/{level_id}.json").resolve()
+                for level_id, _ in level_specs
+            ],
+            game_replay_root=tmp_path / "game_replays",
+        )
+    )
+    client = TestClient(app)
+    client.post("/api/game/sessions", json={"session_id": "tour"})
+    for team in ("T1", "T2"):
+        client.post("/api/game/sessions/tour/teams", json={"team_code": team})
+
+    scores: dict[str, list[float]] = {"T1": [], "T2": []}
+    for level_id, _ in level_specs:
+        precompute = json.loads(
+            Path(f"examples/game/precomputed/{level_id}.json").read_text(encoding="utf-8")
+        )
+        choices = precompute["variants"][0]
+        valid = {
+            key: choices[key]
+            for key in (
+                "care_level",
+                "skidder_count",
+                "log_length_m",
+                "sawlog_min_dbh_cm",
+                "road_extension_m",
+            )
+        }
+        for team in ("T1", "T2"):
+            response = client.post(
+                f"/api/game/sessions/tour/teams/{team}/submit?level_id={level_id}",
+                json=valid,
+            )
+            assert response.status_code == 200, response.text
+            scores[team].append(float(response.json()["score"]))
+
+    assert scores["T1"] == scores["T2"]
+    for team in ("T1", "T2"):
+        state = client.get(f"/api/game/sessions/tour/teams/{team}").json()
+        assert state["current_level"] is None
+        assert [item["level_id"] for item in state["attempts"]] == [
+            "mkrf_684",
+            "gavin_1032",
+            "kc_57254551",
+        ]
+    debrief = client.get("/api/game/sessions/tour/teams/T1/debrief/kc_57254551")
+    assert debrief.status_code == 200
+    assert debrief.json()["optimal_choices"] == {
+        "care_level": 0.5,
+        "log_length_m": 6.1,
+        "road_extension_m": 0.0,
+        "sawlog_min_dbh_cm": 20.0,
+        "skidder_count": 1,
+    }
