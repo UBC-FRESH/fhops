@@ -1,3 +1,15 @@
+# 2026-11-05 — P20 closeout and replay timeline compaction (#428)
+
+- Compacted dual-replay machine timelines into machine/type/time buckets; Knife
+  Creek now renders 2,226 bars from 35,942 events, with hover ranges and event
+  counts preserved.
+- Added a full three-level tournament test: identical choices across two teams
+  produce identical scores, ordered attempts, and post-level debrief access.
+- Reconciled P20.1/P20.2 roadmap checkboxes with the delivered stand-scale
+  implementation and refreshed the P20 closeout record.
+- Verification: full `pytest` (1400 passed, 219 skipped), targeted game/web
+  tests, `ruff`, `mypy`, Sphinx, and browser replay smoke.
+
 # 2026-11-05 — P20 dual 3D replay verification (#425)
 
 - Added `game_replay_root` / `--game-replay-root` so JIT player replay captures

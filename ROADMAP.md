@@ -605,24 +605,24 @@ The former Tiny7/Small21/Medium42/Large84 shift-scenario levels are retired
 from P20. Their boundary/precompute code remains only while the stand-scale
 loader replaces it.
 
-- [ ] P20.1 Define stand levels, inventory/control contract, and precompute (#312)
+- [x] P20.1 Define stand levels, inventory/control contract, and precompute (#312)
   - [x] Selected one MKRF, one Gavin Lake, and one Knife Creek stand boundary.
   - [x] Committed EPSG:3005 GeoJSON boundaries and provenance catalog.
-  - [ ] Generate pinned Nemora/PSP tree inventories; resolve CWHdm/ICHmk3 PSP.
+  - [x] Generate pinned Nemora/PSP tree inventories; resolve CWHdm/ICHmk3 PSP.
     - [x] Knife Creek harvested/residual inventories generated and validated.
-  - [ ] Define landing/road-extension assets, product prices, and bucking policy.
+  - [x] Define landing/road-extension assets, product prices, and bucking policy.
     - [x] Selection-cut careful-logging trade-off with decreasing damage benefits.
   - [x] KC stand-scale precompute: 20 combinations, best $75,705.63,
     worst $21,969.10.
   - [x] MKRF/Gavin PSP inventories and four-combination precomputes.
   - [x] Rebalance the synthetic Gavin deck to straddle break-even.
-  - [ ] Add any remaining levels.
-- [ ] P20.2 Implement the deterministic game engine, scoring, and session state (#313)
+  - [x] Complete the three MVP levels; the optional boss level is deferred.
+- [x] P20.2 Implement the deterministic game engine, scoring, and session state (#313)
   - [x] Net-profit evaluator, price deck, and 0–100 normalization.
   - [x] One-play/order enforcement and local tournament persistence.
   - [x] Local game API: public level, session/team, ordered submission,
     leaderboard.
-  - [ ] Add the Game workspace UI and level-map viewport.
+  - [x] Add the Game workspace UI and level-map viewport.
 - [x] P20.3 Add the game API and web workspace (#314)
   - [x] Local API: level metadata, session/team, ordered submission, leaderboard.
   - [x] First `/game` shell: whole-stand SVG, controls, score, team join.
