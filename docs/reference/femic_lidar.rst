@@ -117,8 +117,34 @@ that are not in the scenario. The CSV identifier column defaults to ``block_id``
 back to ``polygon_id``; use ``--id-field`` to override.
 
 This report is read-only. It does not write ``lidar_support``, change the scenario, or apply
-ground evidence to an objective. A scenario schema field for ground support is a separate
-decision.
+ground evidence to an objective.
+
+Scenario Ground-Support Reference
+---------------------------------
+
+A scenario may pin the ground summary it was planned with in an optional top-level
+``ground_support`` section::
+
+   ground_support:
+     schema_version: femic.ground-summary.v1
+     summary_path: ground_summary.csv
+     summary_sha256: c1755a444a11f0ee8aba1db49dcba2b9900d6ed4c157acd0ee4cc205d6541b6b
+     id_field: polygon_id
+     producer: FEMIC
+     caveats:
+     - Predicted ground labels, not manual field labels.
+     - Ground fractions are point composition, not ground-area fractions.
+
+``summary_path`` is resolved relative to the scenario YAML. ``summary_sha256`` pins the CSV
+bytes, and ``id_field`` selects ``block_id`` or ``polygon_id``. The loader validates the
+section shape and checksum format; the consumer resolves the path and verifies the checksum
+before matching rows::
+
+   fhops scenario lidar ground-support examples/lidar_tfl6/scenario.yaml --json
+
+Scenarios without ``ground_support`` remain valid. The public TFL6 fixture pins its
+seven-block summary in ``examples/lidar_tfl6/ground_summary.csv``. Both commands are
+read-only and do not change the scenario, ``lidar_support``, or the solver.
 
 Operator Workflow
 -----------------

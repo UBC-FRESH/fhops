@@ -89,6 +89,7 @@ Files
 - ``blocks.geojson``, ``landings.geojson``, ``roads.geojson``: EPSG:3005 support geometry;
 - ``data/``: block, machine, landing, calendar, and productivity tables;
 - ``provenance.json``: bundle/product checksums, licence, selection, and synthetic-table labels;
+- ``ground_summary.csv``: the seven-block FEMIC ground summary pinned by ``ground_support``;
 - ``README.md``: operator summary.
 
 Commands
@@ -98,6 +99,7 @@ Commands
 
    fhops scenario lidar validate /path/to/lidarbc-995fb1f771f4d7fe
    fhops scenario lidar operability examples/lidar_tfl6/scenario.yaml --json
+   fhops scenario lidar ground-support examples/lidar_tfl6/scenario.yaml --json
    fhops solve-heur examples/lidar_tfl6/scenario.yaml \
      --out /tmp/tfl6-assignments.csv --iters 200 --seed 7
 

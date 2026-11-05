@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_va
 
 from fhops.costing.machine_rates import compose_default_rental_rate_for_role, normalize_machine_role
 from fhops.hauling.contract import HaulingConfig
+from fhops.scenario.contract.ground import GroundSupportRef
 from fhops.scenario.contract.hydrology import HydrologyBundleRef
 from fhops.scenario.contract.lidar import LidarProductRef, LidarSupport
 from fhops.scenario.contract.tree import TreeInventoryRef
@@ -682,6 +683,10 @@ class Scenario(BaseModel):
         Optional aggregated LidarBC evidence for blocks, landings, and roads. Each row states the
         FEMIC product, native resolution, aggregation, support footprint, and provenance; existing
         scenarios without LiDAR fields remain valid.
+    ground_support:
+        Optional reference to a ``femic.ground-summary.v1`` CSV. The reference records the
+        scenario-relative path, SHA-256, identifier column, producer, and caveats. Existing
+        scenarios without ground evidence remain valid.
     hauling:
         Optional :class:`~fhops.hauling.contract.HaulingConfig` with log sorts, contractors,
         truck types and trucks, depots, sort yards, haul arcs, loader bindings, and the driver
@@ -725,6 +730,7 @@ class Scenario(BaseModel):
     hauling: HaulingConfig | None = None
     lidar_products: list[LidarProductRef] | None = None
     lidar_support: list[LidarSupport] | None = None
+    ground_support: GroundSupportRef | None = None
     hydrology_products: list[HydrologyBundleRef] | None = None
     tree_inventory: TreeInventoryRef | None = None
 

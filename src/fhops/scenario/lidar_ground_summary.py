@@ -9,10 +9,12 @@ evidence and which are missing or unknown.
 from __future__ import annotations
 
 import csv
+import hashlib
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
+from fhops.scenario.contract.ground import GroundSupportRef
 from fhops.scenario.io import load_scenario
 
 GROUND_SUMMARY_SCHEMA_VERSION = "femic.ground-summary.v1"
@@ -157,6 +159,8 @@ class GroundSupportReport:
         Summary rows whose block is not in the scenario.
     warnings : tuple of str
         Non-fatal warnings.
+    reference : GroundSupportRef or None
+        Scenario reference when the report came from ``ground_support``.
     """
 
     scenario_path: Path
@@ -165,6 +169,7 @@ class GroundSupportReport:
     missing_block_ids: tuple[str, ...]
     unknown_block_ids: tuple[str, ...]
     warnings: tuple[str, ...]
+    reference: GroundSupportRef | None = None
 
     def to_dict(self) -> dict[str, object]:
         """Return a JSON-friendly report.
@@ -174,7 +179,7 @@ class GroundSupportReport:
         dict
             Paths, rows, missing/unknown IDs, and warnings.
         """
-        return {
+        payload: dict[str, object] = {
             "schema_version": GROUND_SUMMARY_SCHEMA_VERSION,
             "scenario_path": str(self.scenario_path),
             "summary_path": str(self.summary_path),
@@ -184,6 +189,9 @@ class GroundSupportReport:
             "unknown_block_ids": list(self.unknown_block_ids),
             "warnings": list(self.warnings),
         }
+        if self.reference is not None:
+            payload["ground_support"] = self.reference.model_dump(mode="json")
+        return payload
 
 
 def _number(value: str | None, label: str) -> float | None:
@@ -383,3 +391,72 @@ def inspect_ground_summary(
         unknown_block_ids=tuple(unknown),
         warnings=tuple(warnings),
     )
+
+
+def _sha256_file(path: Path) -> str:
+    """Compute a file SHA-256.
+
+    Parameters
+    ----------
+    path : Path
+        File to hash.
+
+    Returns
+    -------
+    str
+        Lower-case hexadecimal digest.
+    """
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def inspect_ground_support(scenario_path: str | Path) -> GroundSupportReport:
+    """Inspect the ground summary pinned by a scenario's ``ground_support`` section.
+
+    The summary path is resolved relative to the scenario YAML. The CSV bytes are checked
+    against ``summary_sha256`` before the P45 reader matches block rows.
+
+    Parameters
+    ----------
+    scenario_path : str or Path
+        FHOPS scenario YAML with an optional ``ground_support`` section.
+
+    Returns
+    -------
+    GroundSupportReport
+        Matched rows and the scenario's ground-support reference.
+
+    Raises
+    ------
+    GroundSummaryError
+        When the scenario has no ground-support section, the summary is missing, the
+        checksum does not match, or the CSV is invalid.
+    """
+    scenario_file = Path(scenario_path).expanduser().resolve()
+    try:
+        scenario = load_scenario(scenario_file)
+    except (ValueError, FileNotFoundError) as exc:
+        raise GroundSummaryError(f"cannot load scenario: {exc}") from exc
+    reference = scenario.ground_support
+    if reference is None:
+        raise GroundSummaryError("scenario has no ground_support section")
+    summary_file = Path(reference.summary_path).expanduser()
+    if not summary_file.is_absolute():
+        summary_file = scenario_file.parent / summary_file
+    summary_file = summary_file.resolve()
+    if not summary_file.is_file():
+        raise GroundSummaryError(f"ground summary does not exist: {summary_file}")
+    actual = _sha256_file(summary_file)
+    if actual != reference.summary_sha256:
+        raise GroundSummaryError(
+            f"ground summary sha256 mismatch: expected {reference.summary_sha256}, got {actual}"
+        )
+    report = inspect_ground_summary(
+        scenario_file,
+        summary_file,
+        id_field=reference.id_field,
+    )
+    return replace(report, reference=reference)

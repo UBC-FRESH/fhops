@@ -539,11 +539,12 @@ See :doc:`hauling` for the entity rules, units, and a complete example.
 LidarBC Products
 ----------------
 
-Scenarios may optionally pin FEMIC-compiled LidarBC bundles and record aggregated block/landing/
-road support evidence. Both sections are optional; existing scenarios without them remain valid.
-FHOPS consumes the FEMIC bundle and never discovers or materializes source tiles. See
-:doc:`../reference/femic_lidar` for the bundle, pin, support, aggregation, and OGL-BC attribution
-contract.
+Scenarios may optionally pin FEMIC-compiled LidarBC bundles, record aggregated block/landing/
+road support evidence, and reference a FEMIC ground-summary CSV. All sections are optional;
+existing scenarios without them remain valid. FHOPS consumes the FEMIC bundle and never
+discovers or materializes source tiles. The ground summary is referenced by path and SHA-256,
+not copied into YAML. See :doc:`../reference/femic_lidar` for the bundle, pin, support,
+ground-summary, aggregation, and OGL-BC attribution contract.
 
 Tree Inventories
 ----------------
@@ -566,7 +567,9 @@ Authoring Checklist
 5. Add a ``hauling:`` section only when the scenario needs log transport; see :doc:`hauling`.
 6. Add ``lidar_products``/``lidar_support`` only when consuming a FEMIC bundle; see
    :doc:`../reference/femic_lidar`.
-7. Add ``tree_inventory`` only for a validated individual-tree inventory; see
+7. Add ``ground_support`` only when a scenario should pin a FEMIC ground summary; see
+   :doc:`../reference/femic_lidar`.
+8. Add ``tree_inventory`` only for a validated individual-tree inventory; see
    :doc:`../reference/tree_inventory`.
 
 Fixture Gallery
