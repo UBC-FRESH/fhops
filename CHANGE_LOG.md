@@ -1,3 +1,15 @@
+# 2026-11-05 — FHOPS 1.2.1 release candidate (#432)
+
+- Bumped the package and install examples to `1.2.1`; updated the import test.
+- Added `docs/releases/v1.2.1.md` summarizing Studio, CTL, salvage, game,
+  FEMIC ground-support, and quality-gate changes since 1.2.0.
+- Built and checked the wheel/sdist and smoke-installed the wheel in a fresh
+  venv. Tagging, PyPI/TestPyPI upload, and GitHub release remain blocked on
+  explicit approval.
+- Verification: full `pytest` (1410 passed, 219 skipped), `ruff`, `mypy`,
+  pre-commit, Sphinx, Hatch build, Twine check, and fresh-wheel CLI/salvage
+  smoke.
+
 # 2026-11-05 — P20 closeout and replay timeline compaction (#428)
 
 - Compacted dual-replay machine timelines into machine/type/time buckets; Knife
@@ -7,7 +19,7 @@
   produce identical scores, ordered attempts, and post-level debrief access.
 - Reconciled P20.1/P20.2 roadmap checkboxes with the delivered stand-scale
   implementation and refreshed the P20 closeout record.
-- Verification: full `pytest` (1400 passed, 219 skipped), targeted game/web
+- Verification: full `pytest` (1410 passed, 219 skipped), targeted game/web
   tests, `ruff`, `mypy`, Sphinx, and browser replay smoke.
 
 # 2026-11-05 — P20 dual 3D replay verification (#425)
