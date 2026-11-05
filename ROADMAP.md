@@ -763,6 +763,31 @@ Acceptance:
 - The command is read-only and does not mutate the scenario.
 - Ruff, mypy, pytest, and Sphinx pass.
 
+## Phase 46 — Scenario ground-support reference — complete
+
+Parent issue: #427. Child issue: #429. Branch: `feature/p46-ground-support-schema`.
+Authoritative docs: `docs/reference/femic_lidar.rst`.
+
+Goal: let a scenario pin the FEMIC `femic.ground-summary.v1` CSV it was planned with and
+consume that reference read-only. The summary is referenced by path and SHA-256, not copied
+into YAML. No solver, `lidar_support`, or default scenario behaviour changes.
+
+- [x] P46.1 Scenario ground-support schema, consumer, tests, docs, and TFL6 fixture (#429)
+  - [x] Add `GroundSupportRef` and optional `Scenario.ground_support`
+  - [x] Add loader wiring and structural validation
+  - [x] Add `inspect_ground_support` with relative-path resolution and checksum verification
+  - [x] Add `fhops scenario lidar ground-support`
+  - [x] Add the seven-block TFL6 `ground_summary.csv` fixture
+  - [x] Add contract, loader, report, CLI, and docs tests
+
+Acceptance:
+
+- Scenarios without `ground_support` remain valid.
+- The TFL6 fixture resolves the relative CSV and matches all seven blocks.
+- Missing section/file, bad checksum, bad schema, and malformed CSV fail clearly.
+- The command is read-only and does not mutate the scenario.
+- Ruff, mypy, pytest, and Sphinx pass.
+
 ## Backlog & Ideas
 - [x] 3D replay retention visibility, retained/stream legend, and machine-event timeline (#330).
 - [x] Studio terrain elevation alignment for derived trees, retained trees, landings, and replay terrain (#332).

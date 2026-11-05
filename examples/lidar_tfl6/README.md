@@ -18,6 +18,7 @@ The fixture exercises:
 - `blocks.geojson`, `landings.geojson`, `roads.geojson` — EPSG:3005 support geometry.
 - `data/` — block, machine, landing, calendar, and productivity tables.
 - `provenance.json` — bundle/product checksums, licence, selection, and synthetic-table labels.
+- `ground_summary.csv` — the seven-block FEMIC ground summary pinned by `ground_support`.
 
 Only the LiDAR values and clipped VRI geometry are source data. Machine rates, work volumes
 (20 m3/ha), productivity (500 m3 per machine-day), landing capacity, and the road job are synthetic
@@ -39,6 +40,7 @@ not include the bundle or source rasters.
 ```bash
 fhops scenario lidar validate /path/to/bundle
 fhops scenario operability assess examples/lidar_tfl6/scenario.yaml
+fhops scenario lidar ground-support examples/lidar_tfl6/scenario.yaml --json
 fhops solve-heur examples/lidar_tfl6/scenario.yaml --iters 50 --seed 7
 ```
 

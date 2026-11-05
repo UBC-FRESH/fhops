@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -13,10 +14,12 @@ from fhops.cli.main import app
 from fhops.scenario.lidar_ground_summary import (
     GroundSummaryError,
     inspect_ground_summary,
+    inspect_ground_support,
 )
 
 REPO = Path(__file__).resolve().parents[2]
 SCENARIO = REPO / "examples" / "tiny7" / "scenario.yaml"
+FIXTURE = REPO / "examples" / "lidar_tfl6" / "scenario.yaml"
 RUNNER = CliRunner()
 COLUMNS = (
     "block_id",
@@ -107,3 +110,55 @@ def test_ground_summary_cli(tmp_path: Path) -> None:
     assert payload["row_count"] == 2
     assert payload["rows"][0]["block_id"] == "B01"
     assert SCENARIO.read_text(encoding="utf-8").count("ground_support") == 0
+
+
+def test_inspect_ground_support_reads_the_scenario_reference() -> None:
+    """The scenario-backed report resolves the relative CSV and verifies its checksum."""
+    report = inspect_ground_support(FIXTURE)
+    assert len(report.rows) == 7
+    assert report.missing_block_ids == ()
+    assert report.unknown_block_ids == ()
+    assert report.warnings == ()
+    assert report.reference is not None
+    assert report.reference.summary_path == "ground_summary.csv"
+    assert report.reference.id_field == "polygon_id"
+    assert report.rows[0].block_id == "T6_16624698"
+
+
+def test_inspect_ground_support_requires_the_scenario_section() -> None:
+    """A scenario without ground_support cannot use the scenario-backed report."""
+    with pytest.raises(GroundSummaryError, match="no ground_support"):
+        inspect_ground_support(SCENARIO)
+
+
+def test_inspect_ground_support_rejects_a_checksum_mismatch(tmp_path: Path) -> None:
+    """Changing the summary bytes is rejected before block matching."""
+    target = tmp_path / "lidar_tfl6"
+    shutil.copytree(FIXTURE.parent, target)
+    summary = target / "ground_summary.csv"
+    summary.write_text(summary.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+    with pytest.raises(GroundSummaryError, match="sha256 mismatch"):
+        inspect_ground_support(target / "scenario.yaml")
+
+
+def test_inspect_ground_support_rejects_a_missing_file(tmp_path: Path) -> None:
+    """A missing referenced CSV fails clearly."""
+    target = tmp_path / "lidar_tfl6"
+    shutil.copytree(FIXTURE.parent, target)
+    (target / "ground_summary.csv").unlink()
+    with pytest.raises(GroundSummaryError, match="does not exist"):
+        inspect_ground_support(target / "scenario.yaml")
+
+
+def test_ground_support_cli() -> None:
+    """The scenario-backed CLI prints the matched report and reference."""
+    result = RUNNER.invoke(
+        app,
+        ["scenario", "lidar", "ground-support", str(FIXTURE), "--json"],
+    )
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.stdout)
+    assert payload["row_count"] == 7
+    assert payload["missing_block_ids"] == []
+    assert payload["ground_support"]["summary_path"] == "ground_summary.csv"
+    assert payload["ground_support"]["id_field"] == "polygon_id"

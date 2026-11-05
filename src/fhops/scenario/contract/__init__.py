@@ -1,5 +1,6 @@
 """Scenario contract models (Pydantic schemas, validators)."""
 
+from .ground import GroundSummaryIdField, GroundSupportRef
 from .hydrology import HydrologyArtifactPin, HydrologyBundleRef, HydrologyReadinessStatus
 from .lidar import LidarProductPin, LidarProductRef, LidarSupport
 from .models import (
@@ -39,6 +40,8 @@ __all__ = [
     "LidarProductPin",
     "LidarProductRef",
     "LidarSupport",
+    "GroundSupportRef",
+    "GroundSummaryIdField",
     "TreeInventoryRef",
     "HydrologyArtifactPin",
     "HydrologyBundleRef",

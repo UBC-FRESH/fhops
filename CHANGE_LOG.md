@@ -5596,3 +5596,10 @@ PY
   scenario blocks, reports matched/missing/unknown IDs, and prints ground/low fractions and
   HAG statistics. It is read-only and does not change the scenario or solver. The real TFL6
   seven-block summary matches all seven blocks with no warnings.
+
+- 2026-11-05: added the optional scenario `ground_support` reference. A scenario can pin a
+  `femic.ground-summary.v1` CSV by relative path and SHA-256; `fhops scenario lidar
+  ground-support SCENARIO` resolves the path, verifies the checksum, and reuses the P45
+  block-matching report. The public TFL6 fixture now pins the real seven-block summary with
+  no missing or unknown block IDs. The report remains read-only and does not change
+  `lidar_support`, the solver, or default scenario behaviour.

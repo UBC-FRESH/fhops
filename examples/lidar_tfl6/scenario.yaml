@@ -316,3 +316,12 @@ lidar_support:
   canopy_height_m: 5.931823
   provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
     mean; no reprojection or resampling
+ground_support:
+  schema_version: femic.ground-summary.v1
+  summary_path: ground_summary.csv
+  summary_sha256: c1755a444a11f0ee8aba1db49dcba2b9900d6ed4c157acd0ee4cc205d6541b6b
+  id_field: polygon_id
+  producer: FEMIC
+  caveats:
+  - Predicted ground labels, not manual field labels.
+  - Ground fractions are point composition, not ground-area fractions.

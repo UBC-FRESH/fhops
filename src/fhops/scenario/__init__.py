@@ -4,6 +4,8 @@ from .contract import (
     Block,
     CalendarEntry,
     Day,
+    GroundSummaryIdField,
+    GroundSupportRef,
     Landing,
     LidarProductPin,
     LidarProductRef,
@@ -101,6 +103,14 @@ from .lidar import (
     summarize_femic_lidar_for_polygons,
     validate_femic_lidar_bundle,
 )
+from .lidar_ground_summary import (
+    GroundSummaryError,
+    GroundSummaryRecord,
+    GroundSupportReport,
+    GroundSupportRow,
+    inspect_ground_summary,
+    inspect_ground_support,
+)
 from .lidar_mapping import MappingResult, map_femic_lidar_to_scenario
 from .lidar_operability import (
     BlockOperability,
@@ -122,6 +132,8 @@ __all__ = [
     "LidarProductPin",
     "LidarProductRef",
     "LidarSupport",
+    "GroundSupportRef",
+    "GroundSummaryIdField",
     "load_scenario",
     "read_csv",
     "FemicLidarBundle",
@@ -141,6 +153,12 @@ __all__ = [
     "map_femic_lidar_to_scenario",
     "RegistrationResult",
     "register_femic_lidar_bundle",
+    "GroundSummaryError",
+    "GroundSummaryRecord",
+    "GroundSupportReport",
+    "GroundSupportRow",
+    "inspect_ground_summary",
+    "inspect_ground_support",
     "FemicHydrologyArtifact",
     "FemicHydrologyBundle",
     "FemicHydrologyError",
