@@ -78,6 +78,23 @@ How a round works
 6. Open the debrief to reveal the optimal choice and per-parameter costs.
 7. After the final level, the optional final chat panel unlocks.
 
+Dual 3D replay
+--------------
+
+After a level is complete, **Open 3D replay** starts an asynchronous replay job:
+
+- the optimal plan is loaded from the pre-saved capture under
+  ``examples/game/replays/<level>/optimal/``;
+- the player plan is generated JIT from the submitted choices and cached under
+  ``build/game_replays/<level>/<choice-hash>/``;
+- both panes use the same tree-system viewer and are linked by play, pause,
+  reset, scrub, and speed controls;
+- the Timeline panel renders both machine timelines independently.
+
+The replay page is available only after completion. Optimal captures are
+server-side and are not exposed before the debrief gate. Use
+``--game-replay-root`` to move the JIT cache (default: ``build/game_replays``).
+
 Scoring
 -------
 

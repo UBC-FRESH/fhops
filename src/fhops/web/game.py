@@ -97,6 +97,7 @@ class GameService:
         chat_fn: Callable[[dict[str, Any], str], str] | None = None,
         explanation_cache: ExplanationCache | None = None,
         session_store: Path | None = None,
+        replay_root: Path | None = None,
     ) -> None:
         specs = list(levels or [])
         if level_path is not None or precompute_path is not None:
@@ -149,6 +150,11 @@ class GameService:
             for item in stored.get("sessions", []):
                 session = TournamentSession.from_dict(item)
                 self.sessions[session.session_id] = session
+        self.replay_root = (
+            replay_root.expanduser().resolve()
+            if replay_root is not None
+            else (Path.cwd() / "build" / "game_replays").resolve()
+        )
         self.replay_tokens: dict[str, Path] = {}
         self.replay_jobs: dict[str, dict[str, Any]] = {}
         self.replay_locks: dict[Path, threading.Lock] = {}
@@ -494,15 +500,15 @@ class GameService:
                 "road_extension_m",
             )
         }
-        replay_root = entry.level_path.parents[2] / "replays" / entry.level_id
-        optimal_dir = replay_root / "optimal"
+        optimal_root = entry.level_path.parents[2] / "replays" / entry.level_id
+        optimal_dir = optimal_root / "optimal"
         with self._replay_lock(optimal_dir):
             if not self._replay_consistent(optimal_dir):
                 generate_replay(entry.level_path, optimal_choices, optimal_dir)
         key = hashlib.sha256(
             json.dumps(player_choices, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()[:16]
-        player_dir = Path.cwd() / "build" / "game_replays" / entry.level_id / key
+        player_dir = self.replay_root / entry.level_id / key
         with self._replay_lock(player_dir):
             if not self._replay_consistent(player_dir):
                 generate_replay(entry.level_path, player_choices, player_dir)

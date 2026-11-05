@@ -2,23 +2,30 @@
 
 from __future__ import annotations
 
+import json
+import shutil
+import time
 from pathlib import Path
 
 from fastapi.testclient import TestClient
 
+import fhops.web.game as game_module
 from fhops.web.app import ServiceConfig, create_app
+from fhops.web.game import GameService
 
 LEVEL = Path("examples/game/levels/kc_57254551/level.yaml").resolve()
 PRECOMPUTE = Path("examples/game/precomputed/kc_57254551.json").resolve()
+OPTIMAL_REPLAY = Path("examples/game/replays/kc_57254551/optimal").resolve()
 
 
-def _client(tmp_path: Path) -> TestClient:
+def _client(tmp_path: Path, *, replay_root: Path | None = None) -> TestClient:
     app = create_app(
         ServiceConfig(
             roots=[tmp_path],
             workspace=Path.cwd(),
             game_level=LEVEL,
             game_precompute=PRECOMPUTE,
+            game_replay_root=replay_root or tmp_path / "game_replays",
         )
     )
     return TestClient(app)
@@ -369,3 +376,88 @@ def test_sessions_persist_across_service_restarts(tmp_path: Path) -> None:
     assert state.status_code == 200
     assert len(state.json()["attempts"]) == 1
     assert state.json()["current_level"] is None
+
+
+def test_dual_replay_requires_completion_and_serves_tokenized_assets(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Completed attempts expose optimal/player replays without pre-completion leakage."""
+    client = _client(tmp_path)
+    client.post("/api/game/sessions", json={"session_id": "demo"})
+    client.post("/api/game/sessions/demo/teams", json={"team_code": "T1"})
+
+    before = client.post("/api/game/sessions/demo/teams/T1/replay/kc_57254551")
+    assert before.status_code == 400
+    assert "not been completed" in before.json()["detail"]
+
+    submitted = client.post(
+        "/api/game/sessions/demo/teams/T1/submit",
+        json={
+            "care_level": 0.0,
+            "skidder_count": 2,
+            "log_length_m": 4.9,
+            "sawlog_min_dbh_cm": 20.0,
+            "road_extension_m": 0.0,
+        },
+    )
+    assert submitted.status_code == 200, submitted.text
+
+    calls: list[tuple[dict, Path]] = []
+
+    def fake_generate(level_path, choices, out_dir):
+        target = Path(out_dir)
+        calls.append((dict(choices), target))
+        shutil.copytree(OPTIMAL_REPLAY, target, dirs_exist_ok=True)
+        meta_path = target / "replay.json"
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        meta["choices"] = dict(choices)
+        meta_path.write_text(json.dumps(meta), encoding="utf-8")
+        return meta
+
+    monkeypatch.setattr(game_module, "generate_replay", fake_generate)
+    started = client.post("/api/game/sessions/demo/teams/T1/replay/kc_57254551")
+    assert started.status_code == 200, started.text
+    job_id = started.json()["job_id"]
+
+    status = None
+    for _ in range(50):
+        response = client.get(f"/api/game/replay-jobs/{job_id}")
+        assert response.status_code == 200
+        status = response.json()
+        if status["status"] != "running":
+            break
+        time.sleep(0.05)
+    assert status is not None
+    assert status["status"] == "ready", status
+    result = status["result"]
+    assert result["optimal_url"].endswith("/viewer.html")
+    assert result["player_url"].endswith("/viewer.html")
+    assert result["optimal_events_url"].endswith("/system_events.json")
+    assert result["player_events_url"].endswith("/system_events.json")
+    assert result["optimal_choices"] != result["player_choices"]
+    assert result["optimal_duration_s"] > 0
+    assert result["player_duration_s"] == result["optimal_duration_s"]
+    assert calls, "the player replay should be generated"
+
+    optimal = client.get(result["optimal_url"])
+    player = client.get(result["player_url"])
+    assert optimal.status_code == 200
+    assert player.status_code == 200
+    assert "FHOPS tree-system" in optimal.text or "<!doctype html>" in optimal.text.lower()
+    assert (tmp_path / "game_replays" / "kc_57254551").is_dir()
+    assert client.get("/api/game/replay-assets/missing/viewer.html").status_code == 404
+
+
+def test_replay_shell_is_served(tmp_path: Path) -> None:
+    """The dual replay wrapper is a no-store static page."""
+    client = _client(tmp_path)
+    response = client.get("/game/replay")
+    assert response.status_code == 200
+    assert "FHOPS dual 3D replay" in response.text
+    assert response.headers.get("cache-control") == "no-store"
+
+
+def test_precomputed_optimal_replay_assets_are_consistent(tmp_path: Path) -> None:
+    """Committed optimal captures match the replay contract."""
+    assert GameService._replay_consistent(OPTIMAL_REPLAY) is True
+    assert GameService._replay_consistent(tmp_path / "missing") is False
