@@ -355,11 +355,11 @@ def _plan_args(*extra: str) -> list[str]:
         (["--master-days", "0", "--sub-days", "2", "--lock-days", "1"], "master_days must be"),
         (
             ["--master-days", "7", "--sub-days", "4", "--lock-days", "2", "--max-iterations", "0"],
-            "0 is not in the range x>=1",
+            "0 is not in the range x>=1|greater than or equal to 1",
         ),
         (
             ["--master-days", "7", "--sub-days", "4", "--lock-days", "2", "--max-iterations", "-1"],
-            "-1 is not in the range x>=1",
+            "-1 is not in the range x>=1|greater than or equal to 1",
         ),
         (
             ["--master-days", "7", "--sub-days", "4", "--lock-days", "2", "--solver", "nope"],
@@ -377,7 +377,8 @@ def test_rolling_plan_usage_errors_exit_2(args: list[str], message: str) -> None
     text = cli_text(result)
     assert result.exit_code == 2, text
     assert "Traceback" not in text
-    assert message in " ".join(re.sub(r"[│╭╮╰╯─]", " ", text).split())
+    normalized = " ".join(re.sub(r"[│╭╮╰╯─]", " ", text).split())
+    assert any(candidate in normalized for candidate in message.split("|"))
 
 
 @pytest.mark.filterwarnings("ignore::UserWarning")

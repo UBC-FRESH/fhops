@@ -7,6 +7,8 @@
 - Recommended a bounded 1.3.0 scope around operational data quality, salvage
   evidence intake, and release/export provenance.
 - Updated the salvage follow-on note and roadmap.
+- Made CLI usage-error tests tolerant of the current Typer/Click message
+  wording while retaining exit-code and traceback checks.
 
 # 2026-11-09 — FHOPS 1.2.1 release (#432, #434)
 
