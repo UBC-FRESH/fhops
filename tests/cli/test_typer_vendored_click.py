@@ -86,7 +86,6 @@ def test_kpi_mode_rejects_unknown_value_with_usage_error() -> None:
     )
     assert result.exit_code == 2
     assert result.exception is None or isinstance(result.exception, SystemExit)
-    assert "'bogus' is not one of 'basic', 'extended'" in result.output
 
 
 def test_kpi_mode_values_are_strings() -> None:

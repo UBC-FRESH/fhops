@@ -131,6 +131,16 @@ mill-acceptance rule.
 - IRSS registry before this slice: `CARB-03` and `DIS-09` were `shortlisted`,
   wave 2, with `CARB-03` depending on `DIS-09`.
 
+## BC source audit
+
+Lewis and Hartley (2006), *Rate of deterioration, degrade, and fall of trees
+killed by mountain pine beetle* (BC Journal of Ecosystems and Management
+7(2):11-19, <https://doi.org/10.22230/jem.2006v7n2a538>), provides BC MPB
+deterioration, product-recovery, and fall evidence. It does not publish a
+year-indexed net-volume retention series or a product-specific retention curve,
+so it was **not** encoded as new `salvage.decay.v1` points. See
+`notes/roadmap_1_3.md` for the audit and follow-on requirements.
+
 ## Verification
 
 Commands run in the P44 worktree:
