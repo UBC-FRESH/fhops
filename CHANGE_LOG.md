@@ -1,14 +1,16 @@
-# 2026-11-05 — FHOPS 1.2.1 release candidate (#432)
+# 2026-11-09 — FHOPS 1.2.1 release (#432, #434)
 
 - Bumped the package and install examples to `1.2.1`; updated the import test.
 - Added `docs/releases/v1.2.1.md` summarizing Studio, CTL, salvage, game,
   FEMIC ground-support, and quality-gate changes since 1.2.0.
 - Built and checked the wheel/sdist and smoke-installed the wheel in a fresh
-  venv. Tagging, PyPI/TestPyPI upload, and GitHub release remain blocked on
-  explicit approval.
+  venv; tagging and publication completed on 2026-11-09.
 - Verification: full `pytest` (1410 passed, 219 skipped), `ruff`, `mypy`,
   pre-commit, Sphinx, Hatch build, Twine check, and fresh-wheel CLI/salvage
   smoke.
+- Published 2026-11-09: tag `v1.2.1`; release workflow `42650062331` passed
+  build, TestPyPI, and PyPI; GitHub release assets attached. Fresh install from
+  public PyPI passed validation and salvage-report smoke checks.
 
 # 2026-11-05 — P20 closeout and replay timeline compaction (#428)
 
