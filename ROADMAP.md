@@ -816,6 +816,7 @@ Acceptance:
 - [x] Studio custom-fleet presets and run-history comparison launcher (#407).
 - [x] Studio salvage-age overlay preview and exports (#418).
 - [x] FHOPS 1.3 planning and BC salvage source audit (#436; `notes/roadmap_1_3.md`).
+- [x] Dataset data-quality inspector closure (#438; `notes/dataset_inspection_plan.md`).
 - [x] Comparison-page salvage context and export preview (#420).
 - [x] Add the ground-based multi-machine tree-scale simulation (`fhops tree system`). Optional DEM/single-corridor road routing, calibrated skidder/loader rates, shift windows, roadside processing, and downstream truck/landing inventory are now wired in; full road-network routing, landing search, full road scale/landing search and adaptive truck dispatch remain follow-ups; a committed tree-system example is now packaged; small connected road-network routing is supported; per-machine processor specs are now supported; deterministic downtime, seeded breakdowns, loader-blocking truck dispatch, and shift-aware staggered truck arrivals are now implemented; multiple processors are now supported and the 2026-10-29 sensitivity check found the processor rate dominates the demo.
 - [ ] Agentic tuner R&D (prompt loop, guardrails, benchmarking) — revisit once the conventional tuning suite and reporting pipeline are stable.

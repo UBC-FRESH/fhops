@@ -15,6 +15,13 @@ from .contract import (
     ProductionRate,
     Scenario,
 )
+from .data_quality import (
+    DAILY_HOURS_BASELINE,
+    DATA_QUALITY_SCHEMA,
+    DataQualityIssue,
+    DataQualityReport,
+    inspect_data_quality,
+)
 from .hydrology import (
     FemicHydrologyArtifact,
     FemicHydrologyBundle,
@@ -129,6 +136,11 @@ __all__ = [
     "ProductionRate",
     "Scenario",
     "Problem",
+    "DATA_QUALITY_SCHEMA",
+    "DAILY_HOURS_BASELINE",
+    "DataQualityIssue",
+    "DataQualityReport",
+    "inspect_data_quality",
     "LidarProductPin",
     "LidarProductRef",
     "LidarSupport",

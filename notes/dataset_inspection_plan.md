@@ -37,3 +37,13 @@
 
 ## Latest Progress
 Machine productivity & costing work now lives in `notes/machine_productivity_costing_plan.md`.
+
+### 2026-11-09 — quality inspector closure
+
+- Added `fhops.scenario.data_quality` with deterministic machine/ground-support findings.
+- Added `fhops dataset inspect-quality` with table/JSON output and
+  `--fail-on-warning`.
+- `fhops validate` now surfaces machine availability and ground-support findings.
+- Documented the 24 h/day baseline and warning-vs-error policy.
+- Added unit/CLI regression coverage for non-standard daily hours and invalid
+  ground-support checksums.

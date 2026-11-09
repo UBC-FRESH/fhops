@@ -86,6 +86,7 @@ from fhops.optimization.operational_problem import (
 )
 from fhops.planning.tactical_operational import load_tactical_operational_scenario
 from fhops.scenario.contract import Problem
+from fhops.scenario.data_quality import inspect_data_quality
 from fhops.scenario.io import load_scenario
 from fhops.telemetry import RunTelemetryLogger, append_jsonl
 from fhops.telemetry.machine_costs import build_machine_cost_snapshots
@@ -539,6 +540,13 @@ def validate(
     if sc.harvest_systems:
         for block_id, reason in blocks_without_fleet_roles(build_operational_problem(pb)).items():
             console.print(f"[yellow]Warning:[/] block {block_id}: {reason}.", soft_wrap=True)
+    quality = inspect_data_quality(sc, scenario)
+    for issue in quality.issues:
+        style = "red" if issue.severity == "error" else "yellow"
+        label = "Error" if issue.severity == "error" else "Warning"
+        console.print(f"[{style}]{label}:[/] {issue.message}", soft_wrap=True)
+    if quality.errors:
+        raise typer.Exit(code=1)
 
 
 @app.command()

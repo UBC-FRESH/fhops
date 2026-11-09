@@ -106,6 +106,27 @@ See :ref:`contract-compatibility` for the inputs FHOPS 1.0.1 rejects that 1.0.0 
    ``Warning: block …`` line for each such block and exits 0, and the block's volume counts as
    leftover. Add machines with the missing roles or assign another harvest system.
 
+Data-quality inspector
+-----------------------
+
+Use the inspector before ingestion or solver runs:
+
+.. code-block:: bash
+
+   fhops dataset inspect-quality --dataset examples/tiny7/scenario.yaml --no-interactive
+   fhops validate examples/tiny7/scenario.yaml
+
+The inspector reports:
+
+- machines whose ``daily_hours`` differ from the 24 h/day baseline used by shipped examples;
+- machines with zero daily availability;
+- missing or unknown block rows in a pinned FEMIC ground-summary;
+- ground-summary warnings from the read-only support consumer.
+
+Ordinary deviations are warnings and exit 0. Invalid pinned ground-support evidence is an error
+and exits 1. ``--fail-on-warning`` makes warnings block CI. ``fhops validate`` prints the same
+warnings in its scenario summary and exits 1 only for inspector errors.
+
 Optional Extras
 ---------------
 
