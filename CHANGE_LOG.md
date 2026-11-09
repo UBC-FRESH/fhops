@@ -1,3 +1,13 @@
+# 2026-11-09 — FHOPS 1.3 planning and BC salvage audit (#436)
+
+- Recorded the post-1.2.1 state and candidate 1.3 scopes.
+- Audited Lewis & Hartley (2006) BC mountain-pine-beetle deterioration evidence;
+  it supports qualitative boundaries but does not provide year-indexed product
+  retention factors, so no new BC curve was added.
+- Recommended a bounded 1.3.0 scope around operational data quality, salvage
+  evidence intake, and release/export provenance.
+- Updated the salvage follow-on note and roadmap.
+
 # 2026-11-09 — FHOPS 1.2.1 release (#432, #434)
 
 - Bumped the package and install examples to `1.2.1`; updated the import test.
