@@ -1,3 +1,16 @@
+# 2026-11-09 — dataset data-quality inspector closure (#438)
+
+- Added `fhops.scenario.data_quality` with deterministic machine availability
+  and pinned ground-support findings.
+- Added `fhops dataset inspect-quality` (table/JSON, `--fail-on-warning`).
+- `fhops validate` now surfaces the same warnings and exits non-zero for
+  invalid pinned ground-support evidence.
+- Documented the 24 h/day baseline and warning-vs-error policy.
+- Added unit/CLI coverage for non-standard daily hours and invalid
+  ground-support checksums.
+- Verification: full `pytest` (1417 passed, 219 skipped), `ruff`, `mypy`, and
+  Sphinx.
+
 # 2026-11-09 — FHOPS 1.3 planning and BC salvage audit (#436)
 
 - Recorded the post-1.2.1 state and candidate 1.3 scopes.

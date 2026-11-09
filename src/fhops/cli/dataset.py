@@ -212,6 +212,7 @@ from fhops.reference import (
 )
 from fhops.resources import data_path
 from fhops.scenario.contract import Machine, RoadConstruction, SalvageProcessingMode, Scenario
+from fhops.scenario.data_quality import inspect_data_quality
 from fhops.scenario.io import load_scenario
 from fhops.scheduling.systems import (
     HarvestSystem,
@@ -4803,6 +4804,59 @@ def inspect_block(
     console.print(
         "[yellow]* TODO: add derived statistics (windows, production rates) once defined.[/yellow]"
     )
+
+
+@dataset_app.command("inspect-quality")
+def inspect_quality(
+    dataset: str | None = typer.Option(
+        None,
+        "--dataset",
+        "-d",
+        help="Dataset name (e.g., tiny7) or path to scenario/dataset folder.",
+    ),
+    interactive: bool = typer.Option(
+        True,
+        "--interactive/--no-interactive",
+        help="Enable prompts when the dataset is missing.",
+    ),
+    json_out: Path | None = typer.Option(
+        None,
+        "--json-out",
+        help="Optional path for the JSON data-quality report.",
+        writable=True,
+        dir_okay=False,
+    ),
+    fail_on_warning: bool = typer.Option(
+        False,
+        "--fail-on-warning",
+        help="Exit non-zero when warnings (not only errors) are present.",
+    ),
+):
+    """Inspect machine availability and pinned ground-support quality."""
+    name, scenario, path = _ensure_dataset(dataset, interactive)
+    report = inspect_data_quality(scenario, path)
+    table = Table(title=f"Data Quality — {name}", header_style="bold cyan")
+    table.add_column("Severity")
+    table.add_column("Code")
+    table.add_column("Entity")
+    table.add_column("Message")
+    for issue in report.issues:
+        style = "red" if issue.severity == "error" else "yellow"
+        table.add_row(
+            f"[{style}]{issue.severity}[/{style}]",
+            issue.code,
+            issue.entity_id or "—",
+            issue.message,
+        )
+    if report.issues:
+        console.print(table)
+    else:
+        console.print("[green]No data-quality issues detected.[/green]")
+    if json_out is not None:
+        json_out.parent.mkdir(parents=True, exist_ok=True)
+        json_out.write_text(json.dumps(report.to_dict(), indent=2), encoding="utf-8")
+    if report.errors or (fail_on_warning and report.warnings):
+        raise typer.Exit(code=1)
 
 
 @dataset_app.command("berry-log-grades")
