@@ -2,7 +2,7 @@
 
 Date: 2026-11-05
 Issue: #432
-Status: candidate prepared; tag/PyPI/GitHub release blocked on explicit approval.
+Status: published 2026-11-09.
 
 ## Scope
 
@@ -59,13 +59,19 @@ Fresh venv `/tmp/opencode/v121-smoke` installed the built wheel.
 - Sphinx `-W`.
 - Re-run these after the release-notes/version commit.
 
-## Approval gate
+## Publication
 
-Do **not** run any of the following without explicit maintainer approval:
+- Tag: `v1.2.1` (annotated; no GPG signing key was available)
+- Release workflow: `42650062331` — build, TestPyPI, and PyPI jobs all succeeded
+- TestPyPI: https://test.pypi.org/project/fhops/1.2.1/
+- PyPI: https://pypi.org/project/fhops/1.2.1/
+- GitHub release: https://github.com/UBC-FRESH/fhops/releases/tag/v1.2.1
+- Release assets: workflow-built wheel and sdist
 
-```bash
-git tag -s v1.2.1
-git push --tags
-python -m twine upload ... dist/*
-gh release create v1.2.1 ...
-```
+## Public-index smoke
+
+A fresh venv installed `fhops==1.2.1` from PyPI:
+
+- version `1.2.1`
+- `fhops validate examples/tiny7/scenario.yaml`
+- `fhops report salvage-shelf-life ...` wrote CSV and Markdown
