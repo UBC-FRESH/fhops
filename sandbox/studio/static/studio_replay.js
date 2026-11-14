@@ -22,6 +22,16 @@ const povSelect = document.getElementById("pov-machine");
 const povHint = document.getElementById("pov-hint");
 const povTitle = document.getElementById("pov-title");
 const povState = document.getElementById("pov-state");
+const povPresetSelect = document.getElementById("pov-preset");
+const operatorToggle = document.getElementById("operator-toggle");
+const operatorPanel = document.getElementById("operator-panel");
+const operatorTitle = document.getElementById("operator-title");
+const operatorTask = document.getElementById("operator-task");
+const operatorProgress = document.getElementById("operator-progress");
+const operatorElapsed = document.getElementById("operator-elapsed");
+const operatorRemaining = document.getElementById("operator-remaining");
+const operatorVolume = document.getElementById("operator-volume");
+const operatorNext = document.getElementById("operator-next");
 let events = null;
 let duration = 1;
 let currentTime = 0;
@@ -29,6 +39,8 @@ let hoverTime = null;
 let seekingTimeline = false;
 let timelineLanes = [];
 let povMachineId = null;
+let povPresetName = "seat";
+povPresetSelect.disabled = true;
 
 const TIMELINE_COLORS = {
   process: "#f08a24",
@@ -41,21 +53,57 @@ const TIMELINE_COLORS = {
   wait: "#52656b",
 };
 
-function syncPovUi(id) {
+function syncPovUi(id, preset) {
   povMachineId = id || null;
+  povPresetName = preset || povPresetName || "seat";
   povSelect.value = id || "";
+  povPresetSelect.value = povPresetName;
+  povPresetSelect.disabled = !id;
+  operatorToggle.textContent = id ? "exit operator view" : "operator view";
+  operatorToggle.classList.toggle("active", Boolean(id));
   document.querySelectorAll(".mcard").forEach((card) => {
     card.classList.toggle("pov", card.dataset.machine === id);
   });
   if (!id) {
     povHint.hidden = true;
     povState.textContent = "";
+    operatorPanel.hidden = true;
+    if (!timelinePanel.hidden) drawTimeline();
     return;
   }
   const spec = events?.machines?.[id] || {};
-  povTitle.textContent = `Operator POV · ${id} · ${spec.type || "machine"}`;
+  povTitle.textContent = `Operator view · ${id} · ${spec.type || "machine"}`;
   povState.textContent = "idle";
   povHint.hidden = false;
+  updateOperatorHud();
+  if (!timelinePanel.hidden) drawTimeline();
+}
+
+function updateOperatorHud() {
+  if (!povMachineId) {
+    operatorPanel.hidden = true;
+    return;
+  }
+  const state = viewer.operatorState();
+  if (!state) {
+    operatorPanel.hidden = true;
+    return;
+  }
+  operatorPanel.hidden = false;
+  povPresetName = state.preset;
+  povPresetSelect.value = state.preset;
+  povState.textContent = state.state || "idle";
+  operatorTitle.textContent = `${state.machineId} · ${state.type}`;
+  operatorTask.textContent = String(state.state || "idle").replaceAll("_", " ");
+  operatorProgress.style.width = `${Math.round(state.progress * 100)}%`;
+  operatorElapsed.textContent = state.duration_s
+    ? `T+${fmt(state.elapsed_s)} / ${fmt(state.duration_s)}`
+    : "—";
+  operatorRemaining.textContent = state.duration_s ? fmt(state.remaining_s) : "—";
+  operatorVolume.textContent = `${Number(state.volume_m3 || 0).toFixed(1)} m³${state.tree_count ? ` · ${state.tree_count} trees` : ""}`;
+  operatorNext.textContent = state.next
+    ? `${String(state.next.type).replaceAll("_", " ")} @ T+${fmt(state.next.start_s)}`
+    : "end of schedule";
 }
 
 const viewer = createViewer(scene, {
@@ -71,10 +119,13 @@ const viewer = createViewer(scene, {
       const node = document.querySelector(`[data-machine="${id}"] span`);
       if (node) node.textContent = state;
     }
-    if (povMachineId) povState.textContent = states[povMachineId] || "idle";
+    if (povMachineId) {
+      povState.textContent = states[povMachineId] || "idle";
+      updateOperatorHud();
+    }
     if (!timelinePanel.hidden) drawTimeline();
   },
-  onPov: (id) => syncPovUi(id),
+  onPov: (id, preset) => syncPovUi(id, preset),
 });
 
 function fmt(t) {
@@ -114,6 +165,15 @@ function timelineTimeAt(clientX) {
 
 function seekTimeline(clientX) {
   viewer.seek(Math.max(0, Math.min(duration, timelineTimeAt(clientX))));
+}
+
+function timelineLaneAt(clientY) {
+  const { rect, top, bottom, height } = timelineGeometry();
+  const plotHeight = Math.max(1, height - top - bottom);
+  const laneHeight = Math.max(13, plotHeight / Math.max(1, timelineLanes.length));
+  const index = Math.floor((clientY - rect.top - top) / laneHeight);
+  if (index < 0 || index >= timelineLanes.length) return null;
+  return timelineLanes[index];
 }
 
 function drawTimeline() {
@@ -156,8 +216,15 @@ function drawTimeline() {
       ctx.fillStyle = "#11181b";
       ctx.fillRect(left, y, plotWidth, laneHeight);
     }
+    if (lane.id === povMachineId) {
+      ctx.fillStyle = "#1d2f27";
+      ctx.fillRect(left, y, plotWidth, laneHeight);
+      ctx.strokeStyle = "#f08a24";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(left + 0.5, y + 0.5, plotWidth - 1, laneHeight - 1);
+    }
     const short = lane.id.length > 15 ? `${lane.id.slice(0, 14)}…` : lane.id;
-    ctx.fillStyle = "#d7e3e7";
+    ctx.fillStyle = lane.id === povMachineId ? "#f7d08a" : "#d7e3e7";
     ctx.textAlign = "right";
     ctx.fillText(short, left - 7, y + laneHeight / 2);
     ctx.fillStyle = "#7f9299";
@@ -359,7 +426,7 @@ async function load() {
   for (const [id, spec] of Object.entries(events.machines || {})) {
     povSelect.append(new Option(`${id} · ${spec.type}`, id));
   }
-  syncPovUi(viewer.povMachine());
+  syncPovUi(viewer.povMachine(), viewer.povPreset());
   clock.textContent = `${events.block_id || "Edited scenario"} · ${events.tree_count || 0} trees · ${(Number(events.processed_volume_m3) || 0).toFixed(0)} m³`;
   status.textContent = "ready";
 }
@@ -372,6 +439,15 @@ document.getElementById("reset").addEventListener("click", () => viewer.reset())
 document.getElementById("fit").addEventListener("click", () => viewer.fit());
 scrub.addEventListener("input", () => viewer.seek((Number(scrub.value) / 1000) * duration));
 povSelect.addEventListener("change", () => viewer.setPov(povSelect.value || null));
+povPresetSelect.addEventListener("change", () => viewer.setPovPreset(povPresetSelect.value));
+operatorToggle.addEventListener("click", () => {
+  if (viewer.povMachine()) {
+    viewer.setPov(null);
+    return;
+  }
+  const id = povSelect.value || Object.keys(events?.machines || {})[0];
+  if (id) viewer.setPov(id);
+});
 document.getElementById("speed").addEventListener("change", (event) => viewer.setSpeed(Number(event.target.value)));
 timelineToggle.addEventListener("click", () => {
   timelinePanel.hidden = !timelinePanel.hidden;
@@ -391,6 +467,36 @@ timelineCanvas.addEventListener("mousedown", (event) => {
   seekingTimeline = true;
   seekTimeline(event.clientX);
   event.preventDefault();
+});
+timelineCanvas.addEventListener("dblclick", (event) => {
+  const lane = timelineLaneAt(event.clientY);
+  if (!lane) return;
+  const t = timelineTimeAt(event.clientX);
+  const item = (events?.timeline || []).find(
+    (entry) => entry.machine === lane.id && t >= Number(entry.start_s) && t <= Number(entry.end_s),
+  );
+  viewer.setPov(lane.id);
+  viewer.seek(item ? Number(item.start_s) : t);
+  viewer.pause();
+  play.textContent = "play";
+  updateOperatorHud();
+  event.preventDefault();
+});
+window.addEventListener("keydown", (event) => {
+  const tag = event.target?.tagName;
+  if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+  if (event.key === "v" || event.key === "V") {
+    if (viewer.povMachine()) {
+      viewer.setPov(null);
+    } else {
+      const id = povSelect.value || Object.keys(events?.machines || {})[0];
+      if (id) viewer.setPov(id);
+    }
+    event.preventDefault();
+  } else if ((event.key === "c" || event.key === "C") && viewer.povMachine()) {
+    viewer.cyclePovPreset(1);
+    event.preventDefault();
+  }
 });
 window.addEventListener("mouseup", () => { seekingTimeline = false; });
 window.addEventListener("resize", () => {

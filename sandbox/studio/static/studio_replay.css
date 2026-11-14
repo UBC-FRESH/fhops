@@ -26,6 +26,16 @@ main { position: relative; flex: 1 1 auto; min-height: 0; }
 #pov-hint b { color: #ffe1b0; }
 #pov-state { color: #93a6ae; }
 #pov-hint .pov-help { display: block; color: #93a6ae; }
+#operator-panel { margin-top: 9px; border-top: 1px solid #2b3a40; padding-top: 8px; }
+#operator-panel[hidden] { display: none; }
+.operator-head { display: flex; align-items: baseline; gap: 8px; justify-content: space-between; }
+.operator-head b { font-size: 11px; color: #e6eef2; }
+.operator-task { border: 1px solid #52656b; border-radius: 999px; padding: 1px 7px; color: #f7d08a; font-size: 9px; text-transform: capitalize; }
+.operator-bar { height: 5px; background: #263237; border-radius: 4px; overflow: hidden; margin-top: 6px; }
+#operator-progress { height: 100%; width: 0%; background: #f08a24; transition: width .16s linear; }
+.operator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 12px; margin-top: 7px; color: #93a6ae; font-size: 9px; }
+.operator-grid strong { color: #e6eef2; font-weight: 600; font-variant-numeric: tabular-nums; }
+#operator-next { display: inline-block; max-width: 135px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; white-space: nowrap; }
 #replay-legend { display: flex; gap: 13px; flex-wrap: wrap; margin-top: 9px; color: #b7c6cc; font-size: 10px; }
 #replay-legend .swatch { display: inline-block; width: 9px; height: 9px; margin-right: 4px; border-radius: 2px; vertical-align: -1px; }
 #replay-legend .swatch.retained { background: #2fe0c8; box-shadow: 0 0 6px #2fe0c8a8; }
@@ -37,9 +47,10 @@ main { position: relative; flex: 1 1 auto; min-height: 0; }
 #timeline-cursor { color: #f08a24; font-variant-numeric: tabular-nums; }
 .timeline-hint { margin-left: auto; color: #93a6ae; font-size: 10px; }
 #timeline-canvas { width: 100%; flex: 1 1 auto; min-height: 0; cursor: crosshair; }
-#controls { position: absolute; left: 14px; bottom: 14px; right: 14px; background: #101416e8; border: 1px solid #2b3a40; border-radius: 9px; padding: 8px 10px; display: flex; align-items: center; gap: 9px; z-index: 4; }
+#controls { position: absolute; left: 14px; bottom: 14px; right: 14px; background: #101416e8; border: 1px solid #2b3a40; border-radius: 9px; padding: 8px 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 9px; z-index: 4; }
 #controls button, #controls select { background: #263237; color: #e6eef2; border: 1px solid #52656b; border-radius: 5px; padding: 5px 9px; cursor: pointer; }
 #controls button.active { border-color: #f08a24; color: #f7d08a; }
 #controls label { display: flex; align-items: center; gap: 5px; color: #93a6ae; font-size: 11px; white-space: nowrap; }
 #controls #pov-machine { max-width: 170px; background: #0c1214; }
-#controls input { flex: 1; accent-color: #f08a24; }
+#controls #pov-preset { width: 82px; background: #0c1214; }
+#controls input { flex: 1; accent-color: #f08a24; min-width: 160px; }

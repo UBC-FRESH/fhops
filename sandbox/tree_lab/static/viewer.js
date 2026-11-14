@@ -184,7 +184,11 @@ export function createViewer(container, { onTime, onPov } = {}) {
   let povOrbitSnapshot = null;
   let povHeading = 0;
   let povYawOffset = 0;
-  let povPitch = -0.08;
+  let povPitchOffset = 0;
+  let povBasePitch = -0.08;
+  let povPreset = 'seat';
+  let povPosition = new THREE.Vector3();
+  let povPositionInitialized = false;
   let povLastHeading = {};
   let povLocked = false;
   let povDragging = false;
@@ -313,7 +317,21 @@ export function createViewer(container, { onTime, onPov } = {}) {
     return Math.atan2(y1 - y0, x1 - x0);
   }
 
-  function workLookHeading(segment) {
+  function segmentPath(id, segment) {
+    return Array.isArray(segment.path) && segment.path.length > 1
+      ? segment.path.map((point) => [Number(point[0]), Number(point[1])])
+      : routeSegment(id, segment);
+  }
+
+  function pathLength(path) {
+    let length = 0;
+    for (let index = 1; index < path.length; index += 1) {
+      length += Math.hypot(path[index][0] - path[index - 1][0], path[index][1] - path[index - 1][1]);
+    }
+    return length;
+  }
+
+  function activeTreePoint(segment) {
     if (!['process', 'fell', 'fall'].includes(String(segment.type))) return null;
     const ids = Array.isArray(segment.tree_ids) ? segment.tree_ids : [];
     if (!ids.length) return null;
@@ -328,33 +346,76 @@ export function createViewer(container, { onTime, onPov } = {}) {
       count += 1;
     }
     if (!count) return null;
-    const x0 = Number(segment.x0), y0 = Number(segment.y0);
-    if (!Number.isFinite(x0) || !Number.isFinite(y0)) return null;
-    const dx = sumX / count - x0;
-    const dy = sumY / count - y0;
-    const distance = Math.hypot(dx, dy);
-    if (distance < 4 || distance > 160) return null;
-    return Math.atan2(dy, dx);
+    const x = sumX / count;
+    const z = sumY / count;
+    return { x, z, y: sampleHeight(x, z) + 2.0 };
+  }
+
+  function workLookPoint(id, state) {
+    const group = machines[id];
+    if (!group) return null;
+    const mx = group.position.x;
+    const mz = group.position.z;
+    const segment = state?.segment;
+    if (!segment) return null;
+    const candidates = [];
+    const tree = activeTreePoint(segment);
+    if (tree) candidates.push(tree);
+    const x1 = Number(segment.x1);
+    const z1 = Number(segment.y1);
+    if (Number.isFinite(x1) && Number.isFinite(z1)) {
+      candidates.push({ x: x1, z: z1, y: sampleHeight(x1, z1) + 2.0 });
+    }
+    if (payload?.landing) {
+      const lx = Number(payload.landing.x);
+      const lz = Number(payload.landing.y);
+      if (Number.isFinite(lx) && Number.isFinite(lz)) {
+        candidates.push({ x: lx, z: lz, y: sampleHeight(lx, lz) + 2.0 });
+      }
+    }
+    for (const candidate of candidates) {
+      if (Math.hypot(candidate.x - mx, candidate.z - mz) > 3) return candidate;
+    }
+    return null;
+  }
+
+  function routeAheadPoint(id, state, distanceM = 20) {
+    const group = machines[id];
+    if (!group || !state) return null;
+    const path = segmentPath(id, state.segment);
+    const length = pathLength(path);
+    if (length < 0.5) return null;
+    const ahead = pathPoint(path, Math.min(1, state.f + distanceM / length));
+    if (!Number.isFinite(ahead.x) || !Number.isFinite(ahead.y)) return null;
+    if (Math.hypot(ahead.x - group.position.x, ahead.y - group.position.z) < 1) return null;
+    return {
+      x: ahead.x,
+      z: ahead.y,
+      heading: ahead.heading,
+      y: sampleHeight(ahead.x, ahead.y) + 2.4,
+    };
   }
 
   function machineViewHeading(id, state) {
     const segment = state.segment;
-    const path = Array.isArray(segment.path) && segment.path.length > 1
-      ? segment.path.map((point) => [Number(point[0]), Number(point[1])])
-      : routeSegment(id, segment);
-    let pathLength = 0;
-    for (let index = 1; index < path.length; index += 1) {
-      pathLength += Math.hypot(path[index][0] - path[index - 1][0], path[index][1] - path[index - 1][1]);
-    }
-    if (pathLength > 0.5) {
+    const path = segmentPath(id, segment);
+    if (pathLength(path) > 0.5) {
       const point = pathPoint(path, state.f);
       povLastHeading[id] = point.heading;
       return point.heading;
     }
-    const workHeading = workLookHeading(segment);
-    if (workHeading != null) {
-      povLastHeading[id] = workHeading;
-      return workHeading;
+    const tree = activeTreePoint(segment);
+    if (tree) {
+      const x0 = Number(segment.x0), y0 = Number(segment.y0);
+      if (Number.isFinite(x0) && Number.isFinite(y0)) {
+        const dx = tree.x - x0;
+        const dy = tree.z - y0;
+        if (Math.hypot(dx, dy) > 4) {
+          const heading = Math.atan2(dy, dx);
+          povLastHeading[id] = heading;
+          return heading;
+        }
+      }
     }
     const direct = directHeading(segment);
     if (direct != null) {
@@ -382,20 +443,146 @@ export function createViewer(container, { onTime, onPov } = {}) {
     return 0;
   }
 
+  function operatorState() {
+    if (!povId) return null;
+    const segments = timelineByMachine[povId] || [];
+    const state = segmentAt(povId, currentTime);
+    const type = machineSpecs[povId]?.type || 'machine';
+    if (!state?.segment) {
+      return {
+        machineId: povId,
+        type,
+        state: 'idle',
+        preset: povPreset,
+        active: false,
+        progress: 0,
+        elapsed_s: 0,
+        remaining_s: 0,
+        volume_m3: 0,
+        tree_count: 0,
+        next: null,
+      };
+    }
+    const segment = state.segment;
+    const start = Number(segment.start_s) || 0;
+    const end = Number(segment.end_s) || start;
+    const span = Math.max(0.001, end - start);
+    const active = currentTime >= start && currentTime <= end;
+    const treeIds = Array.isArray(segment.tree_ids) ? segment.tree_ids : [];
+    let volume = Number(segment.volume_m3) || 0;
+    if (!volume && treeIds.length) {
+      for (const treeId of treeIds) {
+        const tree = eventTreesById.get(treeId);
+        if (tree) volume += Number(tree.volume_m3) || 0;
+      }
+    }
+    let label = String(segment.type || 'idle').replaceAll('_', ' ');
+    if (!active) label = currentTime < start ? 'waiting' : 'idle';
+    const next = segments.find((item) => Number(item.start_s) > currentTime) || null;
+    return {
+      machineId: povId,
+      type,
+      state: label,
+      preset: povPreset,
+      active,
+      segment_type: segment.type,
+      start_s: start,
+      end_s: end,
+      progress: Math.max(0, Math.min(1, (currentTime - start) / span)),
+      elapsed_s: Math.max(0, Math.min(span, currentTime - start)),
+      remaining_s: Math.max(0, Math.min(span, end - currentTime)),
+      duration_s: span,
+      volume_m3: volume,
+      tree_count: treeIds.length,
+      next: next
+        ? { type: next.type, start_s: Number(next.start_s) || 0, end_s: Number(next.end_s) || 0 }
+        : null,
+    };
+  }
+
   function updatePovCamera(dt) {
     if (!povId) return;
     const group = machines[povId];
     if (!group) return;
     const state = segmentAt(povId, currentTime);
-    let target = state ? machineViewHeading(povId, state) : null;
-    if (target == null) target = povLastHeading[povId] ?? povHeading;
-    if (dt <= 0) povHeading = target;
-    else povHeading += shortestAngleDelta(povHeading, target) * (1 - Math.exp(-4.5 * dt));
-    const x = group.position.x;
-    const y = group.position.z;
+    const eyeHeight = povEyeHeight(povId);
+    const forwardX = Math.cos(povHeading);
+    const forwardZ = Math.sin(povHeading);
+    let offset = 0;
+    let lift = 0;
+    if (povPreset === 'work') {
+      offset = 0.9;
+      lift = 0.35;
+    } else if (povPreset === 'route') {
+      offset = -1.5;
+      lift = 0.75;
+    }
+    const desiredX = group.position.x + forwardX * offset;
+    const desiredZ = group.position.z + forwardZ * offset;
+    const desiredY = sampleHeight(desiredX, desiredZ) + eyeHeight + lift;
+    const desired = new THREE.Vector3(desiredX, desiredY, desiredZ);
+    if (!povPositionInitialized || dt <= 0) {
+      povPosition.copy(desired);
+      povPositionInitialized = true;
+    } else {
+      povPosition.lerp(desired, 1 - Math.exp(-10 * dt));
+    }
+
+    let targetHeading = state ? machineViewHeading(povId, state) : null;
+    let basePitch = -0.08;
+    if (povPreset === 'route') {
+      const route = routeAheadPoint(povId, state, 24);
+      if (route) {
+        targetHeading = route.heading;
+        const dx = route.x - povPosition.x;
+        const dz = route.z - povPosition.z;
+        const horizontal = Math.hypot(dx, dz);
+        if (horizontal > 0.2) basePitch = Math.atan2(route.y - povPosition.y, horizontal);
+      }
+    } else if (povPreset === 'work') {
+      const segmentType = String(state?.segment?.type || '');
+      const traveling = segmentType.startsWith('travel') || segmentType.includes('truck');
+      const target = traveling
+        ? routeAheadPoint(povId, state, 14)
+        : workLookPoint(povId, state);
+      if (target) {
+        const dx = target.x - povPosition.x;
+        const dz = target.z - povPosition.z;
+        const horizontal = Math.hypot(dx, dz);
+        if (horizontal > 0.4) {
+          targetHeading = target.heading ?? Math.atan2(dz, dx);
+          basePitch = Math.atan2(target.y - povPosition.y, horizontal);
+        }
+      }
+    }
+    if (targetHeading == null) targetHeading = povLastHeading[povId] ?? povHeading;
+    if (dt <= 0) {
+      povHeading = targetHeading;
+      povBasePitch = basePitch;
+    } else {
+      povHeading += shortestAngleDelta(povHeading, targetHeading) * (1 - Math.exp(-5 * dt));
+      povBasePitch += (basePitch - povBasePitch) * (1 - Math.exp(-6 * dt));
+    }
     const yaw = -povHeading - Math.PI / 2 + povYawOffset;
-    camera.position.set(x, sampleHeight(x, y) + povEyeHeight(povId), y);
-    camera.rotation.set(povPitch, yaw, 0, 'YXZ');
+    const pitch = Math.max(-1.2, Math.min(0.75, povBasePitch + povPitchOffset));
+    camera.position.copy(povPosition);
+    camera.rotation.set(pitch, yaw, 0, 'YXZ');
+  }
+
+  function setPovPreset(name) {
+    const presets = ['seat', 'work', 'route'];
+    if (!presets.includes(name) || name === povPreset) return;
+    povPreset = name;
+    if (!povId) return;
+    povPositionInitialized = false;
+    updatePovCamera(0);
+    if (onPov) onPov(povId, povPreset);
+  }
+
+  function cyclePovPreset(direction = 1) {
+    const presets = ['seat', 'work', 'route'];
+    const index = presets.indexOf(povPreset);
+    setPovPreset(presets[(index + direction + presets.length) % presets.length]);
   }
 
   function setPov(id) {
@@ -420,19 +607,22 @@ export function createViewer(container, { onTime, onPov } = {}) {
       camera.updateProjectionMatrix();
       controls.enabled = false;
       userInteracted = true;
+      povPreset = 'seat';
     }
     if (povId && machines[povId]) machines[povId].visible = true;
     povId = id;
     machines[id].visible = false;
     povYawOffset = 0;
-    povPitch = -0.10;
+    povPitchOffset = 0;
+    povBasePitch = -0.08;
+    povPositionInitialized = false;
     povDragging = false;
     povLastPointer = null;
     const heading = initialPovHeading(id, currentTime);
     povHeading = heading;
     povLastHeading[id] = heading;
     updatePovCamera(0);
-    if (onPov) onPov(id);
+    if (onPov) onPov(id, povPreset);
   }
 
   function exitPov() {
@@ -456,7 +646,7 @@ export function createViewer(container, { onTime, onPov } = {}) {
       controls.enabled = true;
       controls.update();
     }
-    if (onPov) onPov(null);
+    if (onPov) onPov(null, null);
   }
 
   function cyclePov(direction) {
@@ -1671,7 +1861,7 @@ export function createViewer(container, { onTime, onPov } = {}) {
       return;
     }
     povYawOffset -= dx * 0.0022;
-    povPitch = Math.max(-1.25, Math.min(0.85, povPitch - dy * 0.002));
+    povPitchOffset = Math.max(-1.25, Math.min(0.85, povPitchOffset - dy * 0.002));
   });
   document.addEventListener('pointerlockchange', () => {
     povLocked = document.pointerLockElement === renderer.domElement;
@@ -1704,6 +1894,10 @@ export function createViewer(container, { onTime, onPov } = {}) {
     setPov,
     cyclePov,
     povMachine: () => povId,
+    setPovPreset,
+    cyclePovPreset,
+    povPreset: () => povPreset,
+    operatorState,
     seek: (t) => setTime(t),
     reset: () => setTime(0),
     setSpeed: (value) => { speed = value; },

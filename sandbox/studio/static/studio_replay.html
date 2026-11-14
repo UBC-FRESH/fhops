@@ -30,16 +30,29 @@
         <span><i class="swatch stream"></i>stream buffer</span>
       </div>
       <div id="pov-hint" hidden>
-        <b id="pov-title">Operator POV</b>
+        <b id="pov-title">Operator view</b>
         <span id="pov-state"></span>
-        <span class="pov-help">click the scene to look · [ / ] switch machine · Esc overview</span>
+        <span class="pov-help">click the scene to look · C view · [ / ] machine · V or Esc overview</span>
+      </div>
+      <div id="operator-panel" hidden>
+        <div class="operator-head">
+          <b id="operator-title">machine</b>
+          <span id="operator-task" class="operator-task">idle</span>
+        </div>
+        <div class="operator-bar"><div id="operator-progress"></div></div>
+        <div class="operator-grid">
+          <span>Elapsed <strong id="operator-elapsed">—</strong></span>
+          <span>Remaining <strong id="operator-remaining">—</strong></span>
+          <span>Volume <strong id="operator-volume">—</strong></span>
+          <span>Next <strong id="operator-next">—</strong></span>
+        </div>
       </div>
     </div>
     <div id="timeline-panel" hidden>
       <div id="timeline-head">
         <strong>Machine timeline</strong>
         <span id="timeline-cursor">T+00:00</span>
-        <span class="timeline-hint">move the cursor head · click or drag to seek</span>
+        <span class="timeline-hint">move the cursor head · click or drag to seek · double-click a bar to ride its machine</span>
       </div>
       <canvas id="timeline-canvas"></canvas>
     </div>
@@ -48,8 +61,16 @@
       <button id="reset">reset</button>
       <button id="fit">fit view</button>
       <button id="timeline-toggle">timeline</button>
-      <label id="pov-control" title="View the replay from a machine cab">Operator POV
+      <button id="operator-toggle">operator view</button>
+      <label id="pov-control" title="Choose the operator machine">Machine
         <select id="pov-machine"><option value="">overview (orbit)</option></select>
+      </label>
+      <label id="pov-preset-control" title="Operator camera preset">View
+        <select id="pov-preset">
+          <option value="seat" selected>seat</option>
+          <option value="work">work</option>
+          <option value="route">route</option>
+        </select>
       </label>
       <input id="scrub" type="range" min="0" max="1000" value="0" />
       <select id="speed">
