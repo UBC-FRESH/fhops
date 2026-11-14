@@ -1802,11 +1802,21 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     const active = currentTime >= segment.start_s && currentTime <= segment.end_s;
     const progress = Math.max(0, Math.min(1, state.f));
     const working = active && ['process', 'fell', 'fall', 'load', 'unload', 'yard'].includes(segmentType);
+    const truckLoad = (payload?.truck_events || []).find(
+      (event) => event.type === 'truck_load'
+        && currentTime >= Number(event.start_s)
+        && currentTime <= Number(event.end_s),
+    );
+    const truckProgress = truckLoad
+      ? Math.max(0, Math.min(1, (currentTime - Number(truckLoad.start_s)) / Math.max(1, Number(truckLoad.end_s) - Number(truckLoad.start_s))))
+      : 0;
 
     if (rig.boom) {
       let angle = 0.08;
       if (active && (type.includes('feller') || type.includes('harvester'))) {
         angle = 0.1 - Math.sin(progress * Math.PI) * 0.5;
+      } else if (type.includes('loader') && truckLoad) {
+        angle = -0.25 - Math.sin(truckProgress * Math.PI) * 0.45;
       } else if (active && type.includes('loader')) {
         angle = 0.1 - Math.sin(progress * Math.PI) * 0.35;
       } else if (active && (type.includes('skidder') || type.includes('forwarder'))) {
