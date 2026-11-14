@@ -213,6 +213,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let treeNodes = new Map();
   let treeFellEvents = new Map();
   let treeHideTimes = new Map();
+  let logBatches = [];
   let machines = {};
   let cards = new Map();
   let timelineByMachine = {};
@@ -276,6 +277,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     treeNodes = new Map();
     treeFellEvents = new Map();
     treeHideTimes = new Map();
+    logBatches = [];
     machines = {};
     cards = new Map();
     trucks = {};
@@ -1140,6 +1142,86 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     }
   }
 
+  function makeLogPile(count) {
+    const group = new THREE.Group();
+    const material = new THREE.MeshStandardMaterial({ color: 0x7d5a36, roughness: 0.95 });
+    for (let index = 0; index < count; index += 1) {
+      const log = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 5.5, 7), material);
+      log.rotation.z = Math.PI / 2;
+      log.position.set(0, 0.3 + (index % 2) * 0.5, (index - (count - 1) / 2) * 0.6);
+      group.add(log);
+    }
+    return group;
+  }
+
+  function buildLogBatches(events) {
+    logBatches = [];
+    for (const item of events.timeline || []) {
+      const ids = Array.isArray(item.tree_ids) ? item.tree_ids : [];
+      if (!ids.length) continue;
+      const type = events.machines?.[item.machine]?.type || '';
+      const start = Number(item.start_s);
+      const end = Number(item.end_s);
+      if (!Number.isFinite(start) || !Number.isFinite(end)) continue;
+      if (
+        (['grapple_skidder', 'skidder', 'forwarder'].includes(type) && item.type === 'load')
+        || (type === 'cable_yarder' && item.type === 'yard')
+      ) {
+        const points = ids.map((treeId) => eventTreesById.get(treeId)).filter(Boolean);
+        if (!points.length) continue;
+        const x = points.reduce((sum, tree) => sum + Number(tree.x), 0) / points.length;
+        const z = points.reduce((sum, tree) => sum + Number(tree.y), 0) / points.length;
+        if (!Number.isFinite(x) || !Number.isFinite(z)) continue;
+        const group = makeLogPile(Math.max(3, Math.min(8, Math.round((Number(item.logs) || 8) / 6))));
+        group.position.set(x, sampleHeight(x, z) + 0.6, z);
+        group.visible = false;
+        scene.add(group);
+        logBatches.push({ group, machine: item.machine, start, end, origin: { x, z }, kind: 'pickup' });
+      } else if (
+        ['roadside_processor', 'processor'].includes(type)
+        && item.type === 'process'
+      ) {
+        const deck = decks.unprocessed;
+        const origin = deck
+          ? { x: deck.position.x, z: deck.position.z }
+          : (payload?.landing ? { x: Number(payload.landing.x), z: Number(payload.landing.y) } : null);
+        if (!origin) continue;
+        const group = makeLogPile(4);
+        group.position.set(origin.x, sampleHeight(origin.x, origin.z) + 0.6, origin.z);
+        group.visible = false;
+        scene.add(group);
+        logBatches.push({
+          group,
+          machine: item.machine,
+          start,
+          end: start + Math.max(1, (end - start) * 0.35),
+          origin,
+          kind: 'process',
+        });
+      }
+    }
+  }
+
+  function updateLogBatches(t) {
+    for (const batch of logBatches) {
+      if (t < batch.start || t > batch.end) {
+        batch.group.visible = false;
+        continue;
+      }
+      const machine = machines[batch.machine];
+      if (!machine) {
+        batch.group.visible = false;
+        continue;
+      }
+      const span = Math.max(0.001, batch.end - batch.start);
+      const progress = Math.max(0, Math.min(1, (t - batch.start) / span));
+      const x = batch.origin.x + (machine.position.x - batch.origin.x) * progress;
+      const z = batch.origin.z + (machine.position.z - batch.origin.z) * progress;
+      batch.group.visible = true;
+      batch.group.position.set(x, sampleHeight(x, z) + 0.6, z);
+    }
+  }
+
   function buildDeckCurves(events) {
     const machineType = (id) => events.machines?.[id]?.type || '';
     const hasProcessor = Object.values(events.machines || {}).some((machine) =>
@@ -1409,6 +1491,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     updateDecks(currentTime);
     updateCarriage(currentTime);
     updateTrees(currentTime);
+    updateLogBatches(currentTime);
     if (onTime) onTime(currentTime);
   }
 
@@ -2315,6 +2398,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
 
         addCable(events.cable);
         addBlockOutline(events.block_outline);
+        buildLogBatches(events);
 
         setTime(0);
         loaded = true;
