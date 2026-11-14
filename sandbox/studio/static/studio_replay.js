@@ -18,12 +18,17 @@ const timelineCursor = document.getElementById("timeline-cursor");
 const staleBanner = document.getElementById("stale-banner");
 const staleText = document.getElementById("stale-text");
 const rerunButton = document.getElementById("rerun");
+const povSelect = document.getElementById("pov-machine");
+const povHint = document.getElementById("pov-hint");
+const povTitle = document.getElementById("pov-title");
+const povState = document.getElementById("pov-state");
 let events = null;
 let duration = 1;
 let currentTime = 0;
 let hoverTime = null;
 let seekingTimeline = false;
 let timelineLanes = [];
+let povMachineId = null;
 
 const TIMELINE_COLORS = {
   process: "#f08a24",
@@ -35,6 +40,23 @@ const TIMELINE_COLORS = {
   repair: "#ff6b6b",
   wait: "#52656b",
 };
+
+function syncPovUi(id) {
+  povMachineId = id || null;
+  povSelect.value = id || "";
+  document.querySelectorAll(".mcard").forEach((card) => {
+    card.classList.toggle("pov", card.dataset.machine === id);
+  });
+  if (!id) {
+    povHint.hidden = true;
+    povState.textContent = "";
+    return;
+  }
+  const spec = events?.machines?.[id] || {};
+  povTitle.textContent = `Operator POV · ${id} · ${spec.type || "machine"}`;
+  povState.textContent = "idle";
+  povHint.hidden = false;
+}
 
 const viewer = createViewer(scene, {
   onTime: (t) => {
@@ -49,8 +71,10 @@ const viewer = createViewer(scene, {
       const node = document.querySelector(`[data-machine="${id}"] span`);
       if (node) node.textContent = state;
     }
+    if (povMachineId) povState.textContent = states[povMachineId] || "idle";
     if (!timelinePanel.hidden) drawTimeline();
   },
+  onPov: (id) => syncPovUi(id),
 });
 
 function fmt(t) {
@@ -312,7 +336,17 @@ async function load() {
     const card = document.createElement("div");
     card.className = "mcard";
     card.dataset.machine = id;
+    card.tabIndex = 0;
+    card.title = "Show this machine's operator POV";
     card.innerHTML = `<b>${id} · ${spec.type}</b><span>idle</span>`;
+    card.addEventListener("click", () => {
+      viewer.setPov(viewer.povMachine() === id ? null : id);
+    });
+    card.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      viewer.setPov(viewer.povMachine() === id ? null : id);
+    });
     machines.append(card);
   }
   await viewer.load({
@@ -320,6 +354,12 @@ async function load() {
     events,
     residual,
   });
+  povSelect.innerHTML = "";
+  povSelect.append(new Option("overview (orbit)", ""));
+  for (const [id, spec] of Object.entries(events.machines || {})) {
+    povSelect.append(new Option(`${id} · ${spec.type}`, id));
+  }
+  syncPovUi(viewer.povMachine());
   clock.textContent = `${events.block_id || "Edited scenario"} · ${events.tree_count || 0} trees · ${(Number(events.processed_volume_m3) || 0).toFixed(0)} m³`;
   status.textContent = "ready";
 }
@@ -331,6 +371,7 @@ play.addEventListener("click", () => {
 document.getElementById("reset").addEventListener("click", () => viewer.reset());
 document.getElementById("fit").addEventListener("click", () => viewer.fit());
 scrub.addEventListener("input", () => viewer.seek((Number(scrub.value) / 1000) * duration));
+povSelect.addEventListener("change", () => viewer.setPov(povSelect.value || null));
 document.getElementById("speed").addEventListener("change", (event) => viewer.setSpeed(Number(event.target.value)));
 timelineToggle.addEventListener("click", () => {
   timelinePanel.hidden = !timelinePanel.hidden;

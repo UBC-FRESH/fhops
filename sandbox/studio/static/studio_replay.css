@@ -15,9 +15,17 @@ main { position: relative; flex: 1 1 auto; min-height: 0; }
 #status { color: #b7c6cc; margin: 7px 0; font-size: 12px; }
 #machines { display: flex; gap: 8px; flex-wrap: wrap; }
 #landing-inventory { color: #9fc9d3; margin-top: 7px; font-size: 10px; }
-.mcard { border: 1px solid #2b3a40; border-radius: 6px; padding: 4px 7px; min-width: 104px; }
+.mcard { border: 1px solid #2b3a40; border-radius: 6px; padding: 4px 7px; min-width: 104px; cursor: pointer; }
+.mcard:hover { border-color: #52656b; background: #162024; }
+.mcard.pov { border-color: #f08a24; background: #2b2318; }
+.mcard.pov b { color: #f7d08a; }
 .mcard b { display: block; font-size: 11px; }
 .mcard span { color: #93a6ae; font-size: 10px; }
+#pov-hint { margin-top: 8px; color: #f7d08a; font-size: 10px; line-height: 1.5; }
+#pov-hint[hidden] { display: none; }
+#pov-hint b { color: #ffe1b0; }
+#pov-state { color: #93a6ae; }
+#pov-hint .pov-help { display: block; color: #93a6ae; }
 #replay-legend { display: flex; gap: 13px; flex-wrap: wrap; margin-top: 9px; color: #b7c6cc; font-size: 10px; }
 #replay-legend .swatch { display: inline-block; width: 9px; height: 9px; margin-right: 4px; border-radius: 2px; vertical-align: -1px; }
 #replay-legend .swatch.retained { background: #2fe0c8; box-shadow: 0 0 6px #2fe0c8a8; }
@@ -32,4 +40,6 @@ main { position: relative; flex: 1 1 auto; min-height: 0; }
 #controls { position: absolute; left: 14px; bottom: 14px; right: 14px; background: #101416e8; border: 1px solid #2b3a40; border-radius: 9px; padding: 8px 10px; display: flex; align-items: center; gap: 9px; z-index: 4; }
 #controls button, #controls select { background: #263237; color: #e6eef2; border: 1px solid #52656b; border-radius: 5px; padding: 5px 9px; cursor: pointer; }
 #controls button.active { border-color: #f08a24; color: #f7d08a; }
+#controls label { display: flex; align-items: center; gap: 5px; color: #93a6ae; font-size: 11px; white-space: nowrap; }
+#controls #pov-machine { max-width: 170px; background: #0c1214; }
 #controls input { flex: 1; accent-color: #f08a24; }

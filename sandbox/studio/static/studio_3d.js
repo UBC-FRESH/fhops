@@ -26,6 +26,24 @@ let streamDraft = [];
 let history = [];
 let future = [];
 
+const WALK_EYE_HEIGHT = 1.7;
+const WALK_FOV = 68;
+const WALK_RADIUS = 2;
+let walking = false;
+let walkPointerLocked = false;
+let walkSaved = null;
+let walkStartTool = "orbit";
+let walkPosition = { x: 0, z: 0 };
+let walkYaw = 0;
+let walkPitch = -0.08;
+let walkVelocity = { x: 0, z: 0 };
+let walkKeys = new Set();
+let walkHeight = 0;
+let walkBobPhase = 0;
+let walkHudTimer = 0;
+let walkDragging = false;
+let walkLastPointer = null;
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0e1214);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -403,6 +421,7 @@ function stateArea(polygon) {
 }
 
 function fitView() {
+  if (walking) exitWalkthrough();
   const [minX, minY, maxX, maxY] = getBounds();
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
   const span = Math.max(30, maxX - minX, maxY - minY);
@@ -411,6 +430,188 @@ function fitView() {
   controls.update();
   camera.lookAt(cx, 0, cy);
 }
+
+function blockCentroid() {
+  const polygon = (project?.block?.polygon || [])
+    .map((point) => [Number(point[0]), Number(point[1])])
+    .filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y));
+  if (!polygon.length) return { x: 0, z: 0 };
+  let twiceArea = 0;
+  let sx = 0;
+  let sy = 0;
+  for (let index = 0; index < polygon.length; index += 1) {
+    const [x1, y1] = polygon[index];
+    const [x2, y2] = polygon[(index + 1) % polygon.length];
+    const cross = x1 * y2 - x2 * y1;
+    twiceArea += cross;
+    sx += (x1 + x2) * cross;
+    sy += (y1 + y2) * cross;
+  }
+  if (Math.abs(twiceArea) > 1e-9) {
+    return { x: sx / (3 * twiceArea), z: sy / (3 * twiceArea) };
+  }
+  return {
+    x: polygon.reduce((sum, [x]) => sum + x, 0) / polygon.length,
+    z: polygon.reduce((sum, [, y]) => sum + y, 0) / polygon.length,
+  };
+}
+
+function walkSpawn() {
+  const landings = projectLandings();
+  if (landings.length) {
+    return { x: Number(landings[0].x), z: Number(landings[0].y) };
+  }
+  for (const segment of roadSegments()) {
+    const point = segment.points?.[0];
+    if (point) return { x: Number(point[0]), z: Number(point[1]) };
+  }
+  const polygon = project?.block?.polygon || [];
+  if (polygon.length) {
+    return { x: Number(polygon[0][0]), z: Number(polygon[0][1]) };
+  }
+  return { x: 0, z: 0 };
+}
+
+function yawToward(x, z, targetX, targetZ) {
+  const dx = targetX - x;
+  const dz = targetZ - z;
+  if (Math.hypot(dx, dz) < 0.05) return 0;
+  return Math.atan2(-dx, -dz);
+}
+
+function clampWalk(value, min, max) {
+  const pad = Math.min(WALK_RADIUS, Math.max(0, (max - min) / 2 - 0.01));
+  return Math.max(min + pad, Math.min(max - pad, value));
+}
+
+function updateWalkHud() {
+  if (!walking) return;
+  const bearing = ((-walkYaw * 180) / Math.PI + 360) % 360;
+  const compass = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  const direction = compass[Math.round(bearing / 45) % compass.length];
+  const inside = pointInPolygon(walkPosition.x, walkPosition.z, project?.block?.polygon || []);
+  const elevation = terrainHeight(walkPosition.x, walkPosition.z);
+  $("#walk-coords").textContent = `${direction} ${Math.round(bearing) % 360}° · ${walkPosition.x.toFixed(1)}, ${walkPosition.z.toFixed(1)} · ground ${elevation.toFixed(1)} m · ${inside ? "inside block" : "outside block"}`;
+  $("#walk-lock").textContent = walkPointerLocked
+    ? "Mouse look active · Esc releases the cursor and exits"
+    : "Click the scene to look around";
+}
+
+function updateWalkthrough(dt) {
+  const pressed = (...codes) => codes.some((code) => walkKeys.has(code));
+  const forwardInput = (pressed("KeyW", "ArrowUp") ? 1 : 0) - (pressed("KeyS", "ArrowDown") ? 1 : 0);
+  const strafeInput = (pressed("KeyD", "ArrowRight") ? 1 : 0) - (pressed("KeyA", "ArrowLeft") ? 1 : 0);
+  const sprint = pressed("ShiftLeft", "ShiftRight");
+  const speed = sprint ? 5.6 : 2.2;
+  const forward = { x: -Math.sin(walkYaw), z: -Math.cos(walkYaw) };
+  const right = { x: Math.cos(walkYaw), z: -Math.sin(walkYaw) };
+  let wishX = forward.x * forwardInput + right.x * strafeInput;
+  let wishZ = forward.z * forwardInput + right.z * strafeInput;
+  const wishLength = Math.hypot(wishX, wishZ);
+  if (wishLength > 1) {
+    wishX /= wishLength;
+    wishZ /= wishLength;
+  }
+  const blend = 1 - Math.exp(-10 * dt);
+  walkVelocity.x += (wishX * speed - walkVelocity.x) * blend;
+  walkVelocity.z += (wishZ * speed - walkVelocity.z) * blend;
+  if (Math.hypot(walkVelocity.x, walkVelocity.z) < 0.02) {
+    walkVelocity.x = 0;
+    walkVelocity.z = 0;
+  }
+
+  const [minX, minY, maxX, maxY] = getBounds();
+  walkPosition.x = clampWalk(walkPosition.x + walkVelocity.x * dt, minX, maxX);
+  walkPosition.z = clampWalk(walkPosition.z + walkVelocity.z * dt, minY, maxY);
+
+  const moving = Math.hypot(walkVelocity.x, walkVelocity.z) > 0.2;
+  if (moving) walkBobPhase += Math.hypot(walkVelocity.x, walkVelocity.z) * dt * 2.7;
+  const bob = moving ? Math.sin(walkBobPhase) * (sprint ? 0.055 : 0.032) : 0;
+  const targetHeight = terrainHeight(walkPosition.x, walkPosition.z) + WALK_EYE_HEIGHT;
+  walkHeight += (targetHeight - walkHeight) * (1 - Math.exp(-14 * dt));
+  camera.position.set(walkPosition.x, walkHeight + bob, walkPosition.z);
+  camera.rotation.set(walkPitch, walkYaw, 0, "YXZ");
+
+  walkHudTimer -= dt;
+  if (walkHudTimer <= 0) {
+    walkHudTimer = 0.15;
+    updateWalkHud();
+  }
+}
+
+function enterWalkthrough() {
+  if (!project || !terrainMesh || walking) return;
+  const spawn = walkSpawn();
+  const centroid = blockCentroid();
+  walkSaved = {
+    position: camera.position.clone(),
+    quaternion: camera.quaternion.clone(),
+    fov: camera.fov,
+    rotationOrder: camera.rotation.order,
+    target: controls.target.clone(),
+  };
+  walkStartTool = tool;
+  const [minX, minY, maxX, maxY] = getBounds();
+  walkPosition = {
+    x: clampWalk(spawn.x, minX, maxX),
+    z: clampWalk(spawn.z, minY, maxY),
+  };
+  walkYaw = yawToward(walkPosition.x, walkPosition.z, centroid.x, centroid.z);
+  walkPitch = -0.08;
+  walkVelocity = { x: 0, z: 0 };
+  walkKeys.clear();
+  walkBobPhase = 0;
+  walkHeight = terrainHeight(walkPosition.x, walkPosition.z) + WALK_EYE_HEIGHT;
+  walking = true;
+  controls.enabled = false;
+  camera.fov = WALK_FOV;
+  camera.rotation.order = "YXZ";
+  camera.updateProjectionMatrix();
+  camera.position.set(walkPosition.x, walkHeight, walkPosition.z);
+  camera.rotation.set(walkPitch, walkYaw, 0, "YXZ");
+  document.body.classList.add("walking");
+  $("#walkthrough-hud").hidden = false;
+  $("#walk-crosshair").hidden = false;
+  $("#walk").classList.add("active");
+  setStatus("Forester walkthrough — click the scene to look, WASD to walk, Esc to exit");
+  walkHudTimer = 0;
+  updateWalkHud();
+}
+
+function exitWalkthrough() {
+  if (!walking) return;
+  walking = false;
+  walkPointerLocked = false;
+  walkKeys.clear();
+  walkDragging = false;
+  walkLastPointer = null;
+  if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
+  const saved = walkSaved;
+  walkSaved = null;
+  if (saved) {
+    camera.position.copy(saved.position);
+    camera.rotation.order = saved.rotationOrder;
+    camera.quaternion.copy(saved.quaternion);
+    camera.fov = saved.fov;
+    camera.updateProjectionMatrix();
+    controls.target.copy(saved.target);
+  }
+  document.body.classList.remove("walking");
+  $("#walkthrough-hud").hidden = true;
+  $("#walk-crosshair").hidden = true;
+  $("#walk").classList.remove("active");
+  controls.enabled = true;
+  setTool(walkStartTool || "orbit");
+  controls.update();
+  setStatus("Walkthrough ended");
+}
+
+function applyWalkLook(dx, dy) {
+  const sensitivity = walkPointerLocked ? 0.0022 : 0.0038;
+  walkYaw -= dx * sensitivity;
+  walkPitch = Math.max(-1.35, Math.min(1.35, walkPitch - dy * sensitivity));
+}
+
 
 function setTool(next) {
   tool = next;
@@ -488,6 +689,12 @@ function paintTerrain(event) {
 }
 
 function onPointerDown(event) {
+  if (walking) {
+    if (event.button !== 0) return;
+    walkDragging = true;
+    walkLastPointer = { x: event.clientX, y: event.clientY };
+    return;
+  }
   if (!project || !terrainMesh) return;
   if (event.button !== 0 || tool === "orbit") return;
   if (tool === "retain") { toggleRetention(event); return; }
@@ -562,6 +769,15 @@ function onPointerDown(event) {
 }
 
 function onPointerMove(event) {
+  if (walking) {
+    if (walkPointerLocked) {
+      applyWalkLook(event.movementX || 0, event.movementY || 0);
+    } else if (walkDragging && walkLastPointer) {
+      applyWalkLook(event.clientX - walkLastPointer.x, event.clientY - walkLastPointer.y);
+      walkLastPointer = { x: event.clientX, y: event.clientY };
+    }
+    return;
+  }
   if (!dragging) return;
   if (dragging.type === "terrain") { paintTerrain(event); return; }
   if (dragging.type === "vertex" && selectedHandle != null) {
@@ -575,6 +791,11 @@ function onPointerMove(event) {
 }
 
 function onPointerUp() {
+  if (walking) {
+    walkDragging = false;
+    walkLastPointer = null;
+    return;
+  }
   dragging = null;
   controls.enabled = true;
 }
@@ -676,13 +897,22 @@ function resize() {
   camera.updateProjectionMatrix();
 }
 
-function animate() {
+let lastFrame = performance.now();
+function animate(now) {
   requestAnimationFrame(animate);
-  controls.update();
+  const dt = Math.min(0.1, Math.max(0, (now - lastFrame) / 1000));
+  lastFrame = now;
+  if (walking) updateWalkthrough(dt);
+  else controls.update();
   renderer.render(scene, camera);
 }
 
 document.querySelectorAll("#tools [data-tool]").forEach((button) => button.addEventListener("click", () => setTool(button.dataset.tool)));
+$("#walk").addEventListener("click", () => {
+  if (walking) exitWalkthrough();
+  else enterWalkthrough();
+});
+$("#walk-exit").addEventListener("click", exitWalkthrough);
 $("#save").addEventListener("click", save);
 $("#run").addEventListener("click", runScenario);
 $("#undo").addEventListener("click", undo);
@@ -769,13 +999,37 @@ function finalizeClump() {
 
 renderer.domElement.addEventListener("pointerdown", onPointerDown);
 renderer.domElement.addEventListener("dblclick", () => {
+  if (walking) return;
   if (tool === "stream") finishStream();
   else finalizeClump();
 });
 renderer.domElement.addEventListener("pointermove", onPointerMove);
 renderer.domElement.addEventListener("pointerup", onPointerUp);
 renderer.domElement.addEventListener("pointercancel", onPointerUp);
+renderer.domElement.addEventListener("click", () => {
+  if (!walking) return;
+  if (document.pointerLockElement !== renderer.domElement) {
+    renderer.domElement.requestPointerLock?.();
+  }
+});
+document.addEventListener("pointerlockchange", () => {
+  walkPointerLocked = document.pointerLockElement === renderer.domElement;
+  if (walking) updateWalkHud();
+});
+document.addEventListener("pointerlockerror", () => {
+  if (walking) setStatus("Pointer lock unavailable — drag in the scene to look around");
+});
 window.addEventListener("keydown", (event) => {
+  if (walking) {
+    if (["KeyW", "KeyA", "KeyS", "KeyD", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "ShiftLeft", "ShiftRight"].includes(event.code)) {
+      walkKeys.add(event.code);
+      event.preventDefault();
+    } else if (event.key === "Escape") {
+      exitWalkthrough();
+      event.preventDefault();
+    }
+    return;
+  }
   if (event.key === "Delete" && tool === "boundary" && selectedHandle != null && project.block.polygon.length > 3) {
     pushHistory();
     project.block.polygon.splice(selectedHandle, 1);
@@ -783,6 +1037,12 @@ window.addEventListener("keydown", (event) => {
     buildOverlays();
     markDirty();
   }
+});
+window.addEventListener("keyup", (event) => walkKeys.delete(event.code));
+window.addEventListener("blur", () => {
+  walkKeys.clear();
+  walkDragging = false;
+  walkLastPointer = null;
 });
 window.addEventListener("resize", resize);
 resize();

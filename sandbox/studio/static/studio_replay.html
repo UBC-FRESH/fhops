@@ -29,6 +29,11 @@
         <span><i class="swatch retained"></i>retained / riparian tree</span>
         <span><i class="swatch stream"></i>stream buffer</span>
       </div>
+      <div id="pov-hint" hidden>
+        <b id="pov-title">Operator POV</b>
+        <span id="pov-state"></span>
+        <span class="pov-help">click the scene to look · [ / ] switch machine · Esc overview</span>
+      </div>
     </div>
     <div id="timeline-panel" hidden>
       <div id="timeline-head">
@@ -43,6 +48,9 @@
       <button id="reset">reset</button>
       <button id="fit">fit view</button>
       <button id="timeline-toggle">timeline</button>
+      <label id="pov-control" title="View the replay from a machine cab">Operator POV
+        <select id="pov-machine"><option value="">overview (orbit)</option></select>
+      </label>
       <input id="scrub" type="range" min="0" max="1000" value="0" />
       <select id="speed">
         <option value="0.5">0.5×</option>

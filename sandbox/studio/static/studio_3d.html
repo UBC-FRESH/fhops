@@ -20,9 +20,19 @@
     <a id="replay-link" href="#" target="_blank" hidden>Open 3D replay →</a>
   </header>
   <main>
-    <div id="scene"></div>
+    <div id="scene">
+      <div id="walkthrough-hud" hidden>
+        <div class="walk-title">Forester block walkthrough</div>
+        <div id="walk-coords" class="walk-coords">locating…</div>
+        <div id="walk-lock" class="walk-lock">Click the scene to look around</div>
+        <div class="walk-help"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> walk · <kbd>Shift</kbd> run · <kbd>Esc</kbd> exit</div>
+        <button id="walk-exit" class="secondary">Exit walkthrough</button>
+      </div>
+      <div id="walk-crosshair" hidden></div>
+    </div>
     <aside id="tools">
       <h2>Tools</h2>
+      <button id="walk" class="walkthrough">Forester walkthrough</button>
       <button data-tool="orbit" class="active">Orbit</button>
       <button data-tool="landing">Move landing</button>
       <button id="add-landing">Add landing</button>
@@ -46,7 +56,7 @@
       <label class="check"><input id="lower" type="checkbox" /> Lower terrain (Shift)</label>
       <label class="check"><input id="access-map" type="checkbox" /> Access map (skidder grade)</label>
       <button id="fit" class="secondary">Fit view</button>
-      <div class="hint">Click trees to toggle retention. Drag boundary handles. Click terrain to raise; Shift-click lowers.</div>
+      <div class="hint">Click trees to toggle retention. Drag boundary handles. Click terrain to raise; Shift-click lowers.<br><br>Walkthrough inspects the current unsaved scene from 1.7 m above ground; editing tools are disabled until you exit.</div>
     </aside>
     <aside id="stats">
       <h2>Scene</h2>

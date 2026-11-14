@@ -36,3 +36,16 @@ header a#replay-link { color: #f08a24; text-decoration: none; font-weight: 650; 
 #stats .add-row button { width: auto; }
 
 #tools select { width: 100%; background: #0c1214; color: #e6eef2; border: 1px solid #2b3a40; border-radius: 5px; padding: 4px; }
+#tools button.walkthrough { border-color: #2fbfb0; color: #8ff0e5; font-weight: 650; margin-bottom: 7px; }
+#tools button.walkthrough.active { background: #12302d; border-color: #2fbfb0; }
+body.walking #tools button, body.walking #tools label, body.walking #tools input, body.walking #tools select { opacity: .4; pointer-events: none; }
+
+#walkthrough-hud { position: absolute; left: 14px; bottom: 14px; width: min(370px, calc(100% - 28px)); z-index: 8; background: #101416ee; border: 1px solid #2fbfb0; border-radius: 10px; padding: 11px 13px; box-shadow: 0 8px 26px #0009; }
+#walkthrough-hud[hidden], #walk-crosshair[hidden] { display: none; }
+.walk-title { color: #8ff0e5; font-size: 13px; font-weight: 700; letter-spacing: .02em; }
+.walk-coords { color: #e6eef2; font-size: 11px; line-height: 1.5; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.walk-lock { color: #f7d08a; font-size: 10px; margin-top: 5px; }
+.walk-help { color: #93a6ae; font-size: 10px; margin-top: 6px; }
+.walk-help kbd { display: inline-block; min-width: 11px; padding: 1px 3px; margin-right: 1px; border: 1px solid #52656b; border-radius: 3px; background: #1b2428; color: #e6eef2; font: 10px/1.2 system-ui, sans-serif; text-align: center; }
+#walk-exit { margin-top: 9px; background: #2fbfb0; color: #071312; border: 0; border-radius: 5px; padding: 5px 9px; font-weight: 700; cursor: pointer; }
+#walk-crosshair { position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; margin: -5px 0 0 -5px; border: 1px solid #ffffffd9; border-radius: 50%; box-shadow: 0 0 0 1px #0006; pointer-events: none; z-index: 7; }
