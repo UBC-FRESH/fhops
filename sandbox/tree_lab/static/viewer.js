@@ -183,7 +183,7 @@ function normalizeFellerSwath(events) {
   }
 }
 
-export function createViewer(container, { onTime, onPov } = {}) {
+export function createViewer(container, { onTime, onPov, realTime = false } = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   container.appendChild(renderer.domElement);
@@ -209,6 +209,8 @@ export function createViewer(container, { onTime, onPov } = {}) {
   let speed = 1;
   let last = performance.now();
   let treeNodes = new Map();
+  let treeFellEvents = new Map();
+  let treeHideTimes = new Map();
   let machines = {};
   let cards = new Map();
   let timelineByMachine = {};
@@ -269,6 +271,8 @@ export function createViewer(container, { onTime, onPov } = {}) {
       scene.remove(child);
     }
     treeNodes = new Map();
+    treeFellEvents = new Map();
+    treeHideTimes = new Map();
     machines = {};
     cards = new Map();
     trucks = {};
@@ -351,6 +355,11 @@ export function createViewer(container, { onTime, onPov } = {}) {
 
   function shortestAngleDelta(from, to) {
     return Math.atan2(Math.sin(to - from), Math.cos(to - from));
+  }
+
+  function smoothstep(edge0, edge1, value) {
+    const t = Math.max(0, Math.min(1, (value - edge0) / Math.max(1e-9, edge1 - edge0)));
+    return t * t * (3 - 2 * t);
   }
 
   function povEyeHeight(id) {
@@ -925,29 +934,103 @@ export function createViewer(container, { onTime, onPov } = {}) {
     return simplified;
   }
 
-  function updateMachines(t) {
-    for (const [id, group] of Object.entries(machines)) {
-      const state = segmentAt(id, t);
-      if (!state) continue;
-      const segment = state.segment;
-      const path = Array.isArray(segment.path) && segment.path.length > 1
-        ? segment.path.map((point) => [Number(point[0]), Number(point[1])])
-        : routeSegment(id, segment);
-      const point = pathPoint(path, state.f);
-      let x = point.x;
-      let y = point.y;
-      const offset = MACHINE_OFFSETS[id] || [0, 0];
-      x += offset[0]; y += offset[1];
-      group.position.set(x, sampleHeight(x, y) + 2.8, y);
-      const active = t >= segment.start_s && t <= segment.end_s;
-      const card = cards.get(id);
-      if (card) card.textContent = `${active ? segment.type.replaceAll('_', ' ') : 'idle'}`;
+  function buildTreeLifecycle(events) {
+    treeFellEvents = new Map();
+    treeHideTimes = new Map();
+    const pickup = new Map();
+    const processing = new Map();
+    for (const item of events.timeline || []) {
+      const ids = Array.isArray(item.tree_ids) ? item.tree_ids : [];
+      if (!ids.length) continue;
+      const type = events.machines?.[item.machine]?.type || '';
+      if (
+        ['feller_buncher', 'harvester', 'hand_faller'].includes(type)
+        && ['process', 'fell', 'fall'].includes(item.type)
+      ) {
+        for (const treeId of ids) treeFellEvents.set(treeId, item);
+      } else if (
+        ['grapple_skidder', 'skidder', 'forwarder'].includes(type)
+        && item.type === 'load'
+      ) {
+        for (const treeId of ids) {
+          if (!pickup.has(treeId) || Number(item.start_s) < Number(pickup.get(treeId).start_s)) {
+            pickup.set(treeId, item);
+          }
+        }
+      } else if (type === 'cable_yarder' && ['yard', 'load'].includes(item.type)) {
+        for (const treeId of ids) {
+          if (!pickup.has(treeId) || Number(item.start_s) < Number(pickup.get(treeId).start_s)) {
+            pickup.set(treeId, item);
+          }
+        }
+      } else if (
+        ['roadside_processor', 'processor'].includes(type)
+        && item.type === 'process'
+      ) {
+        for (const treeId of ids) {
+          if (!processing.has(treeId) || Number(item.start_s) < Number(processing.get(treeId).start_s)) {
+            processing.set(treeId, item);
+          }
+        }
+      }
+    }
+    for (const [treeId, fell] of treeFellEvents) {
+      let hide = Number.POSITIVE_INFINITY;
+      const pickupEvent = pickup.get(treeId);
+      const processEvent = processing.get(treeId);
+      if (pickupEvent) hide = Math.min(hide, Number(pickupEvent.start_s));
+      if (processEvent) hide = Math.min(hide, Number(processEvent.start_s));
+      if (Number.isFinite(hide)) treeHideTimes.set(treeId, hide);
     }
   }
 
   function updateTrees(t) {
+    const fallAxis = new THREE.Vector3();
+    const fallQuat = new THREE.Quaternion();
     for (const node of treeNodes.values()) {
-      node.visible = (node.userData.processed_s ?? Infinity) > t;
+      const treeId = node.userData.tree_id;
+      const fell = treeFellEvents.get(treeId);
+      if (!fell) {
+        node.visible = (node.userData.processed_s ?? Infinity) > t;
+        continue;
+      }
+      const start = Number(fell.start_s) || 0;
+      const end = Number(fell.end_s) || start;
+      const hide = treeHideTimes.get(treeId) ?? Number.POSITIVE_INFINITY;
+      if (t >= hide) {
+        node.visible = false;
+        continue;
+      }
+      node.visible = true;
+      const base = node.userData.baseQuaternion
+        || (node.userData.baseQuaternion = node.quaternion.clone());
+      const progress = Math.max(0, Math.min(1, (t - start) / Math.max(0.001, end - start)));
+      const angle = smoothstep(0.05, 0.6, progress) * (Math.PI / 2);
+      if (angle <= 1e-4) {
+        node.quaternion.copy(base);
+        continue;
+      }
+      let dx = node.position.x - Number(fell.x0);
+      let dz = node.position.z - Number(fell.y0);
+      if (!Number.isFinite(dx) || !Number.isFinite(dz) || Math.hypot(dx, dz) < 0.5) {
+        const baseHeading = Number(povLastHeading[fell.machine]);
+        if (Number.isFinite(baseHeading)) {
+          dx = Math.sin(baseHeading);
+          dz = -Math.cos(baseHeading);
+        } else {
+          let hash = 0;
+          for (let index = 0; index < String(treeId).length; index += 1) {
+            hash = (hash * 31 + String(treeId).charCodeAt(index)) >>> 0;
+          }
+          const direction = (hash % 360) * Math.PI / 180;
+          dx = Math.cos(direction);
+          dz = Math.sin(direction);
+        }
+      }
+      const length = Math.max(1e-6, Math.hypot(dx, dz));
+      fallAxis.set(dz / length, 0, -dx / length);
+      fallQuat.setFromAxisAngle(fallAxis, angle);
+      node.quaternion.copy(base).premultiply(fallQuat);
     }
   }
 
@@ -1223,39 +1306,219 @@ export function createViewer(container, { onTime, onPov } = {}) {
     if (onTime) onTime(currentTime);
   }
 
-  function makeMachine(id, color, label) {
+  function makeMachine(id, color, label, type = '') {
     const group = new THREE.Group();
-    const body = new THREE.Mesh(
-      new THREE.BoxGeometry(4.2, 3.0, 5.4),
-      new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.1 }),
-    );
-    body.position.y = 1.5;
+    const lowerType = String(type);
+    const isFeller = lowerType.includes('feller') || lowerType.includes('harvester');
+    const isSkidder = lowerType.includes('skidder') || lowerType.includes('forwarder');
+    const isProcessor = lowerType.includes('processor');
+    const isLoader = lowerType.includes('loader');
+    const isYarder = lowerType.includes('yarder');
+    const baseMat = new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.1 });
+    const darkMat = new THREE.MeshStandardMaterial({ color: 0x263238, roughness: 0.8, metalness: 0.15 });
+    const steelMat = new THREE.MeshStandardMaterial({ color: 0x8899a0, roughness: 0.45, metalness: 0.35 });
+    const cabMat = new THREE.MeshStandardMaterial({ color: 0xe8eef2, roughness: 0.35, metalness: 0.05 });
+    const logMat = new THREE.MeshStandardMaterial({ color: 0x7d5a36, roughness: 0.95 });
+
+    const trackLeft = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.7, 0.8), darkMat);
+    trackLeft.position.set(0, 0.35, -1.15);
+    const trackRight = trackLeft.clone();
+    trackRight.position.z = 1.15;
+    group.add(trackLeft, trackRight);
+
+    const body = new THREE.Mesh(new THREE.BoxGeometry(4.4, 1.4, 2.4), baseMat);
+    body.position.y = 1.35;
     group.add(body);
-    const cab = new THREE.Mesh(
-      new THREE.BoxGeometry(2.0, 1.8, 2.0),
-      new THREE.MeshStandardMaterial({ color: 0xe8eef2, roughness: 0.4 }),
-    );
-    cab.position.set(0, 3.1, -0.8);
+
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.4, 1.6), cabMat);
+    cab.position.set(-0.8, 2.55, 0);
     group.add(cab);
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.8, 1.25), new THREE.MeshStandardMaterial({
+      color: 0x10202b,
+      roughness: 0.15,
+      metalness: 0.4,
+    }));
+    glass.position.set(0.02, 2.65, 0);
+    group.add(glass);
+
+    const rig = {};
+    if (isFeller) {
+      const boom = new THREE.Group();
+      boom.position.set(1.3, 2.2, 0);
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.32, 0.32), baseMat);
+      arm.position.x = 1.45;
+      boom.add(arm);
+      const head = new THREE.Group();
+      head.position.set(2.95, -0.2, 0);
+      const headBox = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.9, 1.3), darkMat);
+      head.add(headBox);
+      const saw = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.14, 18), steelMat);
+      saw.rotation.x = Math.PI / 2;
+      saw.position.z = 0.72;
+      head.add(saw);
+      boom.add(head);
+      group.add(boom);
+      rig.boom = boom;
+      rig.head = head;
+      rig.saw = saw;
+    } else if (isSkidder) {
+      const bunk = new THREE.Group();
+      bunk.position.set(-1.6, 2.05, 0);
+      for (let row = 0; row < 3; row += 1) {
+        for (let index = 0; index < 4; index += 1) {
+          const log = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 4.2, 7), logMat);
+          log.rotation.z = Math.PI / 2;
+          log.position.set(0, row * 0.52, (index - 1.5) * 0.58);
+          bunk.add(log);
+        }
+      }
+      bunk.visible = false;
+      group.add(bunk);
+      const boom = new THREE.Group();
+      boom.position.set(1.2, 2.35, 0);
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.28, 0.28), baseMat);
+      arm.position.x = 1.3;
+      boom.add(arm);
+      const grapple = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.65, 0.9), darkMat);
+      grapple.position.set(2.65, -0.1, 0);
+      boom.add(grapple);
+      group.add(boom);
+      rig.boom = boom;
+      rig.bunk = bunk;
+    } else if (isProcessor) {
+      const infeed = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.32, 2.0), steelMat);
+      infeed.position.set(1.7, 1.65, 0);
+      group.add(infeed);
+      const outfeed = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.32, 1.8), steelMat);
+      outfeed.position.set(-1.7, 1.65, 0);
+      group.add(outfeed);
+      const saw = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.18, 18), steelMat);
+      saw.rotation.x = Math.PI / 2;
+      saw.position.set(0.2, 2.1, 0);
+      group.add(saw);
+      const feedLog = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 3.2, 7), logMat);
+      feedLog.rotation.z = Math.PI / 2;
+      feedLog.position.set(3.3, 2.0, 0);
+      feedLog.visible = false;
+      group.add(feedLog);
+      rig.saw = saw;
+      rig.feedLog = feedLog;
+    } else if (isLoader) {
+      const boom = new THREE.Group();
+      boom.position.set(1.2, 2.45, 0);
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.3, 0.3), baseMat);
+      arm.position.x = 1.5;
+      boom.add(arm);
+      const grapple = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.7, 1.0), darkMat);
+      grapple.position.set(3.0, -0.2, 0);
+      boom.add(grapple);
+      group.add(boom);
+      rig.boom = boom;
+    } else if (isYarder) {
+      const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.8, 6.2, 8), baseMat);
+      tower.position.set(-1.6, 3.2, 0);
+      group.add(tower);
+      const boom = new THREE.Group();
+      boom.position.set(0.9, 3.7, 0);
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.26, 0.26), baseMat);
+      arm.position.x = 1.2;
+      boom.add(arm);
+      group.add(boom);
+      rig.boom = boom;
+    }
+
     const canvas = document.createElement('canvas');
     canvas.width = 256; canvas.height = 64;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#101416cc'; ctx.fillRect(0, 0, 256, 64);
     ctx.fillStyle = '#e8eef2'; ctx.font = 'bold 30px system-ui'; ctx.fillText(label, 8, 42);
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
-    sprite.position.set(0, 7.0, 0); sprite.scale.set(10, 2.5, 1);
+    sprite.position.set(0, 6.6, 0); sprite.scale.set(10, 2.5, 1);
     group.add(sprite);
     const beaconMat = new THREE.MeshBasicMaterial({ color });
-    const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 16, 6), beaconMat);
-    beam.position.y = 13;
+    const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 11, 6), beaconMat);
+    beam.position.y = 9.5;
     group.add(beam);
     const beacon = new THREE.Mesh(new THREE.SphereGeometry(1.2, 14, 10), beaconMat);
-    beacon.position.y = 21;
+    beacon.position.y = 15.5;
     group.add(beacon);
     group.scale.setScalar(1.1);
-    group.userData.id = id;
+    group.userData = { id, type: lowerType, rig };
     scene.add(group);
     machines[id] = group;
+  }
+
+  function updateMachineRig(group, state) {
+    const rig = group.userData.rig || {};
+    const type = group.userData.type || '';
+    const segment = state.segment;
+    const segmentType = String(segment.type || '');
+    const active = currentTime >= segment.start_s && currentTime <= segment.end_s;
+    const progress = Math.max(0, Math.min(1, state.f));
+    const working = active && ['process', 'fell', 'fall', 'load', 'unload', 'yard'].includes(segmentType);
+
+    if (rig.boom) {
+      let angle = 0.08;
+      if (active && (type.includes('feller') || type.includes('harvester'))) {
+        angle = 0.1 - Math.sin(progress * Math.PI) * 0.5;
+      } else if (active && type.includes('loader')) {
+        angle = 0.1 - Math.sin(progress * Math.PI) * 0.35;
+      } else if (active && (type.includes('skidder') || type.includes('forwarder'))) {
+        angle = working ? -0.3 : 0.08;
+      } else if (active && type.includes('yarder')) {
+        angle = 0.2;
+      }
+      rig.boom.rotation.z = angle;
+    }
+    if (rig.saw) {
+      rig.saw.rotation.z += active ? 0.18 : 0.02;
+    }
+    if (rig.bunk) {
+      const loaded = ['load', 'travel_loaded', 'unload'].includes(segmentType);
+      const volume = Number(segment.volume_m3) || 0;
+      rig.bunk.visible = Boolean(loaded && volume > 0);
+      if (rig.bunk.visible) {
+        const total = rig.bunk.children.length;
+        let count = total;
+        if (segmentType === 'load') count = Math.ceil(total * progress);
+        if (segmentType === 'unload') count = Math.ceil(total * (1 - progress));
+        rig.bunk.children.forEach((log, index) => { log.visible = index < count; });
+      }
+    }
+    if (rig.feedLog) {
+      const processing = active && segmentType === 'process';
+      rig.feedLog.visible = processing;
+      if (processing) {
+        rig.feedLog.position.x = 3.3 - progress * 5.4;
+        rig.feedLog.position.y = 2.0 - Math.sin(progress * Math.PI) * 0.12;
+      }
+    }
+  }
+
+  function updateMachines(t) {
+    for (const [id, group] of Object.entries(machines)) {
+      const state = segmentAt(id, t);
+      if (!state) continue;
+      const segment = state.segment;
+      const path = Array.isArray(segment.path) && segment.path.length > 1
+        ? segment.path.map((point) => [Number(point[0]), Number(point[1])])
+        : routeSegment(id, segment);
+      const point = pathPoint(path, state.f);
+      let x = point.x;
+      let y = point.y;
+      const offset = MACHINE_OFFSETS[id] || [0, 0];
+      x += offset[0]; y += offset[1];
+      group.position.set(x, sampleHeight(x, y) + 0.15, y);
+      const segmentType = String(segment.type || '');
+      const heading = segmentType.startsWith('travel')
+        ? point.heading
+        : (machineViewHeading(id, state) ?? point.heading ?? 0);
+      group.rotation.y = -heading;
+      updateMachineRig(group, state);
+      const active = t >= segment.start_s && t <= segment.end_s;
+      const card = cards.get(id);
+      if (card) card.textContent = `${active ? segment.type.replaceAll('_', ' ') : 'idle'}`;
+    }
   }
 
   function makeTruck(id, index, landing) {
@@ -1708,7 +1971,10 @@ export function createViewer(container, { onTime, onPov } = {}) {
             const hex = SPECIES_PALETTE[code.toUpperCase()];
             if (hex !== undefined) object.material.color.setHex(hex);
           }
-          if (object.userData?.tree_id) treeNodes.set(object.userData.tree_id, object);
+          if (object.userData?.tree_id) {
+            object.userData.baseQuaternion = object.quaternion.clone();
+            treeNodes.set(object.userData.tree_id, object);
+          }
         });
         removeObjects.forEach((object) => object.parent?.remove(object));
 
@@ -1736,7 +2002,7 @@ export function createViewer(container, { onTime, onPov } = {}) {
             ? SKIDDER_COLORS[skidderIndex++ % SKIDDER_COLORS.length]
             : (ROLE_COLORS[type] ?? 0xd9d9d9);
           typeCounts[type] = (typeCounts[type] || 0) + 1;
-          makeMachine(id, color, `${ROLE_LABELS[type] || type}${typeCounts[type]}`);
+          makeMachine(id, color, `${ROLE_LABELS[type] || type}${typeCounts[type]}`, type);
           const slot = document.getElementById(`mcard-${id}`);
           if (slot) cards.set(id, slot);
         }
@@ -1783,6 +2049,7 @@ export function createViewer(container, { onTime, onPov } = {}) {
         timelineByMachine = {};
         for (const item of events.timeline || []) (timelineByMachine[item.machine] ||= []).push(item);
         for (const list of Object.values(timelineByMachine)) list.sort((a, b) => a.start_s - b.start_s);
+        buildTreeLifecycle(events);
 
         for (const [id, node] of treeNodes) {
           const record = (events.trees || []).find((tree) => tree.tree_id === id);
@@ -1949,7 +2216,7 @@ export function createViewer(container, { onTime, onPov } = {}) {
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
     if (playing && payload) {
-      currentTime += dt * speed * duration / 90;
+      currentTime += realTime ? dt * speed : dt * speed * duration / 90;
       if (currentTime > duration) currentTime = 0;
       setTime(currentTime);
     }
@@ -2024,6 +2291,7 @@ export function createViewer(container, { onTime, onPov } = {}) {
     operatorState,
     seek: (t) => setTime(t),
     reset: () => setTime(0),
+    time: () => currentTime,
     setSpeed: (value) => { speed = value; },
     pause: () => { playing = false; },
     play: () => { playing = true; last = performance.now(); },

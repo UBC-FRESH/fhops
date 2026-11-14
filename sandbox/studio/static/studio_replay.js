@@ -115,13 +115,14 @@ function updateOperatorHud() {
 }
 
 const viewer = createViewer(scene, {
+  realTime: true,
   onTime: (t) => {
     if (!events) return;
     currentTime = t;
     const processed = (events.trees || []).filter((tree) => (tree.processed_s ?? Infinity) <= t).length;
     const volume = (events.trees || []).filter((tree) => (tree.processed_s ?? Infinity) <= t).reduce((sum, tree) => sum + (Number(tree.volume_m3) || 0), 0);
     status.textContent = `T+${fmt(t)} · ${processed.toLocaleString()} / ${(events.trees || []).length.toLocaleString()} trees · ${volume.toFixed(0)} m³`;
-    scrub.value = Math.round((t / duration) * 1000);
+    scrub.value = Math.round(t);
     const states = viewer.machineStates();
     for (const [id, state] of Object.entries(states)) {
       const node = document.querySelector(`[data-machine="${id}"] span`);
@@ -138,7 +139,7 @@ const viewer = createViewer(scene, {
 
 function fmt(t) {
   const s = Math.max(0, Math.floor(t));
-  return `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor((s % 3600) / 60)).padStart(2, "0")}`;
+  return `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor((s % 3600) / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 }
 
 function buildTimeline() {
@@ -405,6 +406,8 @@ async function load() {
       })),
   };
   duration = Math.max(1, Number(events.duration_s) || 1);
+  scrub.max = String(Math.max(1, Math.round(duration)));
+  scrub.value = "0";
   buildTimeline();
   machines.innerHTML = "";
   for (const [id, spec] of Object.entries(events.machines || {})) {
@@ -445,7 +448,7 @@ play.addEventListener("click", () => {
 });
 document.getElementById("reset").addEventListener("click", () => viewer.reset());
 document.getElementById("fit").addEventListener("click", () => viewer.fit());
-scrub.addEventListener("input", () => viewer.seek((Number(scrub.value) / 1000) * duration));
+scrub.addEventListener("input", () => viewer.seek(Number(scrub.value)));
 povSelect.addEventListener("change", () => viewer.setPov(povSelect.value || null));
 povPresetSelect.addEventListener("change", () => viewer.setPovPreset(povPresetSelect.value));
 operatorToggle.addEventListener("click", () => {

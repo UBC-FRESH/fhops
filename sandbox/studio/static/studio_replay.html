@@ -73,11 +73,13 @@
         </select>
       </label>
       <input id="scrub" type="range" min="0" max="1000" value="0" />
-      <select id="speed">
-        <option value="0.5">0.5×</option>
-        <option value="1" selected>1×</option>
-        <option value="2">2×</option>
-        <option value="4">4×</option>
+      <select id="speed" title="Playback speed (real time)" aria-label="Playback speed">
+        <option value="1" selected>1× real time</option>
+        <option value="10">10×</option>
+        <option value="60">60×</option>
+        <option value="300">300×</option>
+        <option value="1800">1800×</option>
+        <option value="3600">3600×</option>
       </select>
     </div>
   </main>
