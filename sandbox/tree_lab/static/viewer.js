@@ -229,6 +229,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let loadedRunKey = null;
   let baseElevation = 0;
   let residualGroup = null;
+  let retentionGroup = null;
   let terrain = null;
   let loaded = false;
   let userInteracted = false;
@@ -285,6 +286,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     landingPosition = null;
     roadEndpoints = null;
     residualGroup = null;
+    retentionGroup = null;
     timelineByMachine = {};
     processedTimes = [];
     cumulativeVolume = [];
@@ -738,6 +740,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       controls.enabled = false;
       userInteracted = true;
       povPreset = 'seat';
+      setRetentionOverlayMode('pov');
     }
     if (povId && machines[povId]) machines[povId].visible = true;
     povId = id;
@@ -778,6 +781,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       controls.enabled = true;
       controls.update();
     }
+    setRetentionOverlayMode('orbit');
     if (onPov) onPov(null, null);
   }
 
@@ -1567,14 +1571,18 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     if (!Array.isArray(clumps) || !clumps.length) return;
     const group = new THREE.Group();
     group.name = "retention_clumps";
+    const fills = [];
+    const outlines = [];
+    const labels = [];
     for (const clump of clumps) {
       const polygon = clump.polygon || [];
       if (polygon.length < 3) continue;
       const color = clump.kind === "riparian" ? 0x4a9fd8 : 0x2fbfb0;
+      const baseOpacity = clump.kind === "riparian" ? 0.22 : 0.16;
       const material = new THREE.MeshBasicMaterial({
         color,
         transparent: true,
-        opacity: clump.kind === "riparian" ? 0.22 : 0.16,
+        opacity: baseOpacity,
         side: THREE.DoubleSide,
         depthTest: false,
         depthWrite: false,
@@ -1588,6 +1596,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.y = sampleHeight(polygon[0][0], polygon[0][1]) + 0.8;
       mesh.renderOrder = 3;
+      mesh.userData.orbitOpacity = baseOpacity;
+      fills.push(mesh);
       group.add(mesh);
       const points = polygon.map(([x, y]) => new THREE.Vector3(Number(x), sampleHeight(Number(x), Number(y)) + 1.0, Number(y)));
       const outline = new THREE.LineLoop(
@@ -1598,6 +1608,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         }),
       );
       outline.renderOrder = 4;
+      outline.userData.orbitDepthTest = false;
+      outlines.push(outline);
       group.add(outline);
 
       const cx = polygon.reduce((sum, point) => sum + Number(point[0]), 0) / polygon.length;
@@ -1619,8 +1631,11 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       label.position.set(cx, sampleHeight(cx, cy) + 14, cy);
       label.scale.set(42, 7.9, 1);
       label.renderOrder = 10;
+      labels.push(label);
       group.add(label);
     }
+    group.userData = { fills, outlines, labels };
+    retentionGroup = group;
     scene.add(group);
   }
 
@@ -1660,6 +1675,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       depthTest: false,
       depthWrite: false,
     });
+    const markers = [];
+    const rings = [];
     for (const tree of payload.trees) {
       const height = Math.max(6, Number(tree.height_m) || 20);
       const dbh = Math.max(0.1, (Number(tree.dbh_cm) || 30) / 100);
@@ -1680,15 +1697,54 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       );
       marker.position.set(x, base + 4.0, y);
       marker.renderOrder = 9;
+      markers.push(marker);
       const ring = new THREE.Mesh(ringGeo, ringMat);
       ring.rotation.x = -Math.PI / 2;
       ring.scale.setScalar(Math.max(2.5, crownRadius * 1.8));
       ring.position.set(x, base + 0.25, y);
       ring.renderOrder = 9;
+      rings.push(ring);
       group.add(trunk, crown, marker, ring);
     }
+    group.userData = { crownMat, markerMat, ringMat, markers, rings };
     residualGroup = group;
     scene.add(group);
+  }
+
+  function setRetentionOverlayMode(mode) {
+    const pov = mode === 'pov';
+    if (residualGroup?.userData?.crownMat) {
+      const { crownMat, markers, rings } = residualGroup.userData;
+      crownMat.depthTest = !pov;
+      crownMat.depthWrite = !pov;
+      crownMat.transparent = !pov;
+      crownMat.opacity = pov ? 1 : 0.82;
+      crownMat.color.setHex(pov ? 0x3f8f5a : 0x2fe0c8);
+      crownMat.emissive.setHex(pov ? 0x000000 : 0x0d5f58);
+      crownMat.emissiveIntensity = pov ? 0 : 0.75;
+      crownMat.roughness = pov ? 0.9 : 0.6;
+      crownMat.needsUpdate = true;
+      for (const marker of markers) marker.visible = !pov;
+      for (const ring of rings) ring.visible = !pov;
+    }
+    if (retentionGroup) {
+      // Clump fills/outlines are authoring overlays. At eye level they read as
+      // floating planes, so show retained crowns instead and hide the zones.
+      retentionGroup.visible = !pov;
+    }
+    if (retentionGroup?.userData) {
+      const { fills, outlines, labels } = retentionGroup.userData;
+      for (const fill of fills) {
+        fill.material.depthTest = pov;
+        fill.material.opacity = pov ? (fill.userData.orbitOpacity || 0.16) * 0.7 : (fill.userData.orbitOpacity || 0.16);
+        fill.material.needsUpdate = true;
+      }
+      for (const outline of outlines) {
+        outline.material.depthTest = pov;
+        outline.material.needsUpdate = true;
+      }
+      for (const label of labels) label.visible = !pov;
+    }
   }
 
   function applyTerrain(root) {
