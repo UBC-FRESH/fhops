@@ -38,47 +38,47 @@ const SWATH_BAND_HEIGHT_M = 24;
 
 const OPERATOR_RIGS = {
   feller_buncher: [
-    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
-    { id: 'head', label: 'head', look: 'tree', forward: 2.1, right: 0.8, up: 0.5, pitch: -0.25 },
-    { id: 'tree', label: 'tree', look: 'tree', forward: 0.4, right: 0, up: 0.3, pitch: -0.25 },
+    { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
+    { id: 'head', label: 'head', look: 'equipment', equipment: 'head', forward: 0, right: 7.0, up: 3.5, pitch: -0.25 },
+    { id: 'tree', label: 'tree', look: 'tree', forward: -2.0, right: 3.8, up: 2.4, pitch: -0.25 },
     { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
   ],
   harvester: [],
   hand_faller: [
-    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
-    { id: 'tree', label: 'tree', look: 'tree', forward: 0.3, right: 0, up: 0.1, pitch: -0.2 },
+    { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
+    { id: 'tree', label: 'tree', look: 'tree', forward: -1.0, right: 3.0, up: 1.5, pitch: -0.2 },
     { id: 'route', label: 'route', look: 'route', forward: -1.2, right: 0, up: 0.5, pitch: -0.08 },
   ],
   grapple_skidder: [
-    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
-    { id: 'grapple', label: 'grapple', look: 'target', forward: 1.8, right: 0.7, up: 0.5, pitch: -0.12 },
-    { id: 'deck', label: 'deck', look: 'deck', deck: 'unprocessed', forward: -2.2, right: 0, up: 1.0, pitch: -0.15 },
+    { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
+    { id: 'grapple', label: 'grapple', look: 'equipment', equipment: 'grapple', forward: 0, right: 7.0, up: 3.5, pitch: -0.12 },
+    { id: 'deck', label: 'deck', look: 'deck', deck: 'unprocessed', forward: -5.0, right: 6.0, up: 4.0, pitch: -0.15 },
     { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
   ],
   skidder: [],
   forwarder: [
-    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
-    { id: 'grapple', label: 'grapple', look: 'target', forward: 1.8, right: 0.7, up: 0.5, pitch: -0.12 },
-    { id: 'deck', label: 'deck', look: 'deck', deck: 'unprocessed', forward: -2.2, right: 0, up: 1.0, pitch: -0.15 },
+    { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
+    { id: 'grapple', label: 'grapple', look: 'equipment', equipment: 'grapple', forward: 0, right: 7.0, up: 3.5, pitch: -0.12 },
+    { id: 'deck', label: 'deck', look: 'deck', deck: 'unprocessed', forward: -5.0, right: 6.0, up: 4.0, pitch: -0.15 },
     { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
   ],
   roadside_processor: [
-    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
-    { id: 'infeed', label: 'infeed', look: 'target', forward: 1.8, right: 0.5, up: 0.25, pitch: -0.18 },
-    { id: 'outfeed', label: 'outfeed', look: 'deck', deck: 'processed', forward: -2.0, right: 0, up: 0.9, pitch: -0.12 },
+    { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
+    { id: 'infeed', label: 'infeed', look: 'equipment', equipment: 'infeed', forward: 0, right: 7.0, up: 3.5, pitch: -0.18 },
+    { id: 'outfeed', label: 'outfeed', look: 'equipment', equipment: 'outfeed', forward: -5.0, right: 6.0, up: 3.5, pitch: -0.12 },
     { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
   ],
   processor: [],
   loader: [
-    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
-    { id: 'grapple', label: 'grapple', look: 'target', forward: 1.6, right: 0.5, up: 0.5, pitch: -0.2 },
-    { id: 'deck', label: 'deck', look: 'deck', deck: 'processed', forward: -2.0, right: 0, up: 1.0, pitch: -0.12 },
+    { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
+    { id: 'grapple', label: 'grapple', look: 'equipment', equipment: 'grapple', forward: 0, right: 7.0, up: 3.5, pitch: -0.2 },
+    { id: 'deck', label: 'deck', look: 'deck', deck: 'processed', forward: -5.0, right: 6.0, up: 4.0, pitch: -0.12 },
     { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
   ],
   cable_yarder: [
-    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+    { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
     { id: 'carriage', label: 'carriage', look: 'spar', position: 'carriage', forward: 0, right: 0, up: 0.4, pitch: 0 },
-    { id: 'landing', label: 'landing', look: 'spar', forward: 0, right: 0, up: 1.2, pitch: 0 },
+    { id: 'landing', label: 'landing', look: 'spar', forward: -3.0, right: 0, up: 1.8, pitch: 0 },
     { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
   ],
 };
@@ -87,7 +87,7 @@ OPERATOR_RIGS.skidder = OPERATOR_RIGS.grapple_skidder;
 OPERATOR_RIGS.processor = OPERATOR_RIGS.roadside_processor;
 
 const DEFAULT_OPERATOR_RIG = [
-  { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+  { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
   { id: 'work', label: 'work', look: 'target', forward: 0.9, right: 0, up: 0.35, pitch: -0.12 },
   { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
 ];
@@ -196,6 +196,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
+  const cabFrame = makeCabFrame();
+  camera.add(cabFrame);
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x25302d, 1.5));
   const sun = new THREE.DirectionalLight(0xfff2d8, 2.2);
@@ -268,7 +270,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
 
   function clearScene() {
     for (const child of [...scene.children]) {
-      if (child.isLight) continue;
+      if (child.isLight || child === camera) continue;
       scene.remove(child);
     }
     treeNodes = new Map();
@@ -418,6 +420,21 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     };
   }
 
+  function equipmentPoint(id, kind) {
+    const group = machines[id];
+    if (!group) return null;
+    const points = {
+      head: [3.0, 2.2, 0],
+      grapple: [2.7, 2.4, 0],
+      infeed: [3.0, 1.9, 0],
+      outfeed: [-2.8, 1.9, 0],
+    };
+    const local = points[kind] || points.head;
+    group.updateMatrixWorld(true);
+    const point = group.localToWorld(new THREE.Vector3(local[0], local[1], local[2]));
+    return { x: point.x, z: point.z, y: point.y };
+  }
+
   function operatorTarget(id, state, config) {
     switch (config.look) {
       case 'tree':
@@ -432,6 +449,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         return landingLookPoint();
       case 'spar':
         return sparLookPoint();
+      case 'equipment':
+        return equipmentPoint(id, config.equipment);
       case 'forward':
       default:
         return null;
@@ -695,6 +714,41 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     }
     const yaw = -povHeading - Math.PI / 2 + povYawOffset;
     const pitch = Math.max(-1.2, Math.min(0.75, povBasePitch + povPitchOffset));
+    const seat = povPreset === 'seat';
+    const hideChassis = seat || ['head', 'grapple', 'infeed', 'outfeed', 'deck'].includes(povPreset);
+    const handFaller = String(group.userData.type || '').includes('hand_faller');
+    cabFrame.visible = seat && !handFaller;
+    const ownRig = group.userData.rig || {};
+    group.visible = !handFaller;
+    if (ownRig.cab) ownRig.cab.visible = !hideChassis;
+    if (ownRig.glass) ownRig.glass.visible = !hideChassis;
+    if (ownRig.body) ownRig.body.visible = !hideChassis;
+    if (ownRig.tracks) for (const track of ownRig.tracks) track.visible = !hideChassis;
+    if (seat && ownRig.bunk) ownRig.bunk.visible = false;
+    const otherDistance = 20;
+    for (const [otherId, other] of Object.entries(machines)) {
+      if (otherId === povId) continue;
+      other.visible = Math.hypot(
+        other.position.x - povPosition.x,
+        other.position.z - povPosition.z,
+      ) > otherDistance;
+    }
+    updateTrucks(currentTime);
+    const truckDistance = 20;
+    for (const truck of Object.values(trucks)) {
+      if (Math.hypot(truck.position.x - povPosition.x, truck.position.z - povPosition.z) < truckDistance) {
+        truck.visible = false;
+      }
+    }
+    const treeRadius = seat ? 10 : 4;
+    for (const node of treeNodes.values()) {
+      if (node.visible && Math.hypot(
+        node.position.x - povPosition.x,
+        node.position.z - povPosition.z,
+      ) < treeRadius) {
+        node.visible = false;
+      }
+    }
     camera.position.copy(povPosition);
     camera.rotation.set(pitch, yaw, 0, 'YXZ');
   }
@@ -706,6 +760,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     povPreset = name;
     povPositionInitialized = false;
     updatePovCamera(0);
+    updateTrees(currentTime);
     if (onPov) onPov(povId, povPreset);
   }
 
@@ -715,6 +770,34 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     const index = rig.findIndex((preset) => preset.id === povPreset);
     const next = rig[(index + direction + rig.length) % rig.length];
     setPovPreset(next.id);
+  }
+
+  function setMachinePovVisibility(id, enabled) {
+    const group = machines[id];
+    if (!group) return;
+    const rig = group.userData.rig || {};
+    const handFaller = String(group.userData.type || '').includes('hand_faller');
+    if (rig.label) rig.label.visible = !enabled;
+    if (rig.beam) rig.beam.visible = !enabled;
+    if (rig.beacon) rig.beacon.visible = !enabled;
+    if (rig.cab) rig.cab.visible = true;
+    if (rig.glass) rig.glass.visible = true;
+    if (rig.body) rig.body.visible = true;
+    if (rig.tracks) for (const track of rig.tracks) track.visible = true;
+    group.visible = !(enabled && handFaller);
+    if (!enabled) {
+      const state = segmentAt(id, currentTime);
+      if (state) updateMachineRig(group, state);
+    }
+  }
+
+  function setAllPovLabelsVisible(visible) {
+    for (const group of Object.values(machines)) {
+      const rig = group.userData.rig || {};
+      if (rig.label) rig.label.visible = visible;
+      if (rig.beam) rig.beam.visible = visible;
+      if (rig.beacon) rig.beacon.visible = visible;
+    }
   }
 
   function setPov(id) {
@@ -740,11 +823,14 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       controls.enabled = false;
       userInteracted = true;
       povPreset = 'seat';
+      scene.add(camera);
+      setAllPovLabelsVisible(false);
       setRetentionOverlayMode('pov');
     }
-    if (povId && machines[povId]) machines[povId].visible = true;
+    if (povId) setMachinePovVisibility(povId, false);
     povId = id;
-    machines[id].visible = false;
+    setMachinePovVisibility(id, true);
+    setAllPovLabelsVisible(false);
     const rig = operatorRig(id);
     if (!rig.some((preset) => preset.id === povPreset)) povPreset = rig[0]?.id || 'seat';
     povYawOffset = 0;
@@ -757,16 +843,23 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     povHeading = heading;
     povLastHeading[id] = heading;
     updatePovCamera(0);
+    updateTrees(currentTime);
     if (onPov) onPov(id, povPreset);
   }
 
   function exitPov() {
     if (!povId && !povOrbitSnapshot) return;
     if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
-    if (povId && machines[povId]) machines[povId].visible = true;
+    if (povId) setMachinePovVisibility(povId, false);
     povId = null;
     povDragging = false;
     povLastPointer = null;
+    cabFrame.visible = false;
+    scene.remove(camera);
+    setAllPovLabelsVisible(true);
+    for (const group of Object.values(machines)) group.visible = true;
+    updateTrees(currentTime);
+    updateTrucks(currentTime);
     const snapshot = povOrbitSnapshot;
     povOrbitSnapshot = null;
     if (snapshot) {
@@ -1035,6 +1128,15 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       fallAxis.set(dz / length, 0, -dx / length);
       fallQuat.setFromAxisAngle(fallAxis, angle);
       node.quaternion.copy(base).premultiply(fallQuat);
+    }
+    if (povId) {
+      const radius = povPreset === 'seat' ? 10 : 4;
+      for (const node of treeNodes.values()) {
+        if (!node.visible) continue;
+        if (Math.hypot(node.position.x - povPosition.x, node.position.z - povPosition.z) < radius) {
+          node.visible = false;
+        }
+      }
     }
   }
 
@@ -1310,6 +1412,45 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     if (onTime) onTime(currentTime);
   }
 
+  function makeCabFrame() {
+    const group = new THREE.Group();
+    group.name = 'pov_cab_frame';
+    group.visible = false;
+    const dark = new THREE.MeshBasicMaterial({
+      color: 0x101416,
+      transparent: true,
+      opacity: 0.92,
+      depthTest: false,
+    });
+    const trim = new THREE.MeshBasicMaterial({
+      color: 0x2b3a40,
+      transparent: true,
+      opacity: 0.9,
+      depthTest: false,
+    });
+    const mirror = new THREE.MeshBasicMaterial({
+      color: 0x4b5d64,
+      transparent: true,
+      opacity: 0.95,
+      depthTest: false,
+    });
+    const addBar = (width, height, depth, x, y, z, material = dark) => {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), material);
+      mesh.position.set(x, y, z);
+      mesh.frustumCulled = false;
+      mesh.renderOrder = 100;
+      group.add(mesh);
+    };
+    addBar(2.6, 0.08, 0.08, 0, 0.7, -1.1);
+    addBar(0.08, 1.4, 0.08, -1.03, 0, -1.1);
+    addBar(0.08, 1.4, 0.08, 1.03, 0, -1.1);
+    addBar(2.1, 0.12, 0.08, 0, 0.33, -1.1, trim);
+    addBar(2.3, 0.22, 0.25, 0, -0.66, -1.0);
+    addBar(0.3, 0.18, 0.06, -1.16, 0.15, -1.1, mirror);
+    addBar(0.3, 0.18, 0.06, 1.16, 0.15, -1.1, mirror);
+    return group;
+  }
+
   function makeMachine(id, color, label, type = '') {
     const group = new THREE.Group();
     const lowerType = String(type);
@@ -1346,6 +1487,10 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     group.add(glass);
 
     const rig = {};
+    rig.body = body;
+    rig.cab = cab;
+    rig.glass = glass;
+    rig.tracks = [trackLeft, trackRight];
     if (isFeller) {
       const boom = new THREE.Group();
       boom.position.set(1.3, 2.2, 0);
@@ -1446,6 +1591,9 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     const beacon = new THREE.Mesh(new THREE.SphereGeometry(1.2, 14, 10), beaconMat);
     beacon.position.y = 15.5;
     group.add(beacon);
+    rig.label = sprite;
+    rig.beam = beam;
+    rig.beacon = beacon;
     group.scale.setScalar(1.1);
     group.userData = { id, type: lowerType, rig };
     scene.add(group);
