@@ -214,6 +214,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let treeFellEvents = new Map();
   let treeHideTimes = new Map();
   let logBatches = [];
+  let buckingStreams = [];
   let machines = {};
   let cards = new Map();
   let timelineByMachine = {};
@@ -278,6 +279,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     treeFellEvents = new Map();
     treeHideTimes = new Map();
     logBatches = [];
+    buckingStreams = [];
     machines = {};
     cards = new Map();
     trucks = {};
@@ -1255,6 +1257,68 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     }
   }
 
+  function buildBuckingStreams(events) {
+    buckingStreams = [];
+    const deck = decks.processed;
+    if (!deck) return;
+    for (const item of events.timeline || []) {
+      const type = events.machines?.[item.machine]?.type || '';
+      if (!['roadside_processor', 'processor'].includes(type) || item.type !== 'process') continue;
+      const start = Number(item.start_s);
+      const end = Number(item.end_s);
+      if (!Number.isFinite(start) || !Number.isFinite(end)) continue;
+      const count = Math.min(10, Math.max(4, Math.round((Number(item.logs) || 8) / 4)));
+      const group = new THREE.Group();
+      for (let index = 0; index < count; index += 1) {
+        const log = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.26, 0.26, 4.4, 7),
+          new THREE.MeshStandardMaterial({ color: 0xc9a36a, roughness: 0.9 }),
+        );
+        log.rotation.z = Math.PI / 2;
+        log.visible = false;
+        group.add(log);
+      }
+      scene.add(group);
+      buckingStreams.push({
+        group,
+        machine: item.machine,
+        start,
+        end,
+        count,
+        target: { x: deck.position.x, z: deck.position.z },
+      });
+    }
+  }
+
+  function updateBuckingStreams(t) {
+    for (const stream of buckingStreams) {
+      const machine = machines[stream.machine];
+      if (!machine) {
+        stream.group.visible = false;
+        continue;
+      }
+      if (t < stream.start || t > stream.end) {
+        stream.group.visible = false;
+        continue;
+      }
+      machine.updateMatrixWorld(true);
+      const outfeed = machine.localToWorld(new THREE.Vector3(-2.8, 1.9, 0));
+      const progress = Math.max(0, Math.min(1, (t - stream.start) / Math.max(0.001, stream.end - stream.start)));
+      stream.group.visible = true;
+      stream.group.children.forEach((log, index) => {
+        const local = progress * stream.count - index;
+        if (local < 0 || local >= 1) {
+          log.visible = false;
+          return;
+        }
+        log.visible = true;
+        const x = outfeed.x + (stream.target.x - outfeed.x) * local;
+        const z = outfeed.z + (stream.target.z - outfeed.z) * local;
+        log.position.set(x, sampleHeight(x, z) + 1.2 + local * 0.4, z);
+      });
+    }
+  }
+
   function buildDeckCurves(events) {
     const machineType = (id) => events.machines?.[id]?.type || '';
     const hasProcessor = Object.values(events.machines || {}).some((machine) =>
@@ -1525,6 +1589,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     updateCarriage(currentTime);
     updateTrees(currentTime);
     updateLogBatches(currentTime);
+    updateBuckingStreams(currentTime);
     if (onTime) onTime(currentTime);
   }
 
@@ -2432,6 +2497,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         addCable(events.cable);
         addBlockOutline(events.block_outline);
         buildLogBatches(events);
+        buildBuckingStreams(events);
 
         setTime(0);
         loaded = true;
