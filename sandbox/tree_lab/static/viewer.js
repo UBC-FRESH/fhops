@@ -215,6 +215,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let treeHideTimes = new Map();
   let logBatches = [];
   let buckingStreams = [];
+  let productShares = { sawlog: 0.7, pulp: 0.3 };
   let machines = {};
   let cards = new Map();
   let timelineByMachine = {};
@@ -280,6 +281,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     treeHideTimes = new Map();
     logBatches = [];
     buckingStreams = [];
+    productShares = { sawlog: 0.7, pulp: 0.3 };
     machines = {};
     cards = new Map();
     trucks = {};
@@ -393,7 +395,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   }
 
   function deckLookPoint(kind) {
-    const group = decks[kind] || decks.unprocessed || decks.processed;
+    const key = kind === 'processed' ? 'sawlog' : kind;
+    const group = decks[key] || decks.unprocessed || decks.sawlog || decks.pulp;
     if (group) return { x: group.position.x, z: group.position.z, y: group.position.y + 2.2 };
     return landingLookPoint();
   }
@@ -1202,7 +1205,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         });
       }
     }
-    const truckDeck = decks.processed || decks.unprocessed;
+    const truckDeck = decks.sawlog || decks.unprocessed;
     if (truckDeck) {
       const origin = { x: truckDeck.position.x, z: truckDeck.position.z };
       for (const event of events.truck_events || []) {
@@ -1259,7 +1262,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
 
   function buildBuckingStreams(events) {
     buckingStreams = [];
-    const deck = decks.processed;
+    const deck = decks.sawlog;
+    const pulpDeck = decks.pulp || deck;
     if (!deck) return;
     for (const item of events.timeline || []) {
       const type = events.machines?.[item.machine]?.type || '';
@@ -1285,7 +1289,9 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         start,
         end,
         count,
+        share: productShares.sawlog,
         target: { x: deck.position.x, z: deck.position.z },
+        pulpTarget: { x: pulpDeck.position.x, z: pulpDeck.position.z },
       });
     }
   }
@@ -1312,8 +1318,9 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
           return;
         }
         log.visible = true;
-        const x = outfeed.x + (stream.target.x - outfeed.x) * local;
-        const z = outfeed.z + (stream.target.z - outfeed.z) * local;
+        const target = index / stream.count < stream.share ? stream.target : stream.pulpTarget;
+        const x = outfeed.x + (target.x - outfeed.x) * local;
+        const z = outfeed.z + (target.z - outfeed.z) * local;
         log.position.set(x, sampleHeight(x, z) + 1.2 + local * 0.4, z);
       });
     }
@@ -1412,8 +1419,14 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   function updateDecks(t) {
     if (!deckCurves) return;
     const volumes = deckVolumesAt(t);
+    const sawlog = volumes.processed * productShares.sawlog;
+    const pulp = volumes.processed * productShares.pulp;
     for (const [key, group] of Object.entries(decks)) {
-      const volume = key === 'unprocessed' ? volumes.unprocessed : volumes.processed;
+      const volume = key === 'unprocessed'
+        ? volumes.unprocessed
+        : key === 'pulp'
+          ? pulp
+          : sawlog;
       const ratio = Math.min(1, volume / 40);
       group.visible = volume > 0.1;
       group.userData.logs.forEach((log, index) => {
@@ -2341,6 +2354,15 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       .filter((tree) => tree && tree.tree_id != null)
       .map((tree) => [tree.tree_id, tree]));
     duration = events.duration_s || 1;
+    const mix = events.product_mix || {};
+    const sawlog = Number(mix.sawlog_m3) || 0;
+    const pulp = Number(mix.pulp_m3) || 0;
+    if (sawlog + pulp > 0) {
+      productShares = {
+        sawlog: Math.max(0, Math.min(1, sawlog / (sawlog + pulp))),
+        pulp: Math.max(0, Math.min(1, pulp / (sawlog + pulp))),
+      };
+    }
     terrain = events.terrain || null;
     blockOutline = Array.isArray(events.block_outline) ? events.block_outline : null;
 
@@ -2467,7 +2489,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         deckCurves = buildDeckCurves(events);
         if (events.landing) {
           decks.unprocessed = makeDeck(events.landing, -52, 62, 0x7d5a36, 'unprocessed deck');
-          decks.processed = makeDeck(events.landing, 28, 62, 0xc9a36a, 'processed log deck');
+          decks.sawlog = makeDeck(events.landing, 28, 62, 0xc9a36a, 'sawlog deck');
+          decks.pulp = makeDeck(events.landing, 64, 62, 0xa98155, 'pulp deck');
           const hasProcessor = Object.values(events.machines || {}).some((machine) =>
             ['roadside_processor', 'processor'].includes(machine.type));
           if (hasProcessor) {
