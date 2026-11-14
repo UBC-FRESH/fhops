@@ -53,11 +53,19 @@ const TIMELINE_COLORS = {
   wait: "#52656b",
 };
 
+function syncPovPresetOptions(id, preset) {
+  const options = id
+    ? viewer.povPresets()
+    : [{ id: "seat", label: "seat" }, { id: "work", label: "work" }, { id: "route", label: "route" }];
+  povPresetSelect.replaceChildren(...options.map((option) => new Option(option.label, option.id)));
+  if (preset) povPresetSelect.value = preset;
+}
+
 function syncPovUi(id, preset) {
   povMachineId = id || null;
   povPresetName = preset || povPresetName || "seat";
   povSelect.value = id || "";
-  povPresetSelect.value = povPresetName;
+  syncPovPresetOptions(id, povPresetName);
   povPresetSelect.disabled = !id;
   operatorToggle.textContent = id ? "exit operator view" : "operator view";
   operatorToggle.classList.toggle("active", Boolean(id));

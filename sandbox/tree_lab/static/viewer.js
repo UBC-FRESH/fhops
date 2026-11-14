@@ -36,6 +36,62 @@ const ROLE_LABELS = {
 const MACHINE_OFFSETS = { H4: [12, 0], H5: [-12, 0], H6: [0, 12] };
 const SWATH_BAND_HEIGHT_M = 24;
 
+const OPERATOR_RIGS = {
+  feller_buncher: [
+    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+    { id: 'head', label: 'head', look: 'tree', forward: 2.1, right: 0.8, up: 0.5, pitch: -0.25 },
+    { id: 'tree', label: 'tree', look: 'tree', forward: 0.4, right: 0, up: 0.3, pitch: -0.25 },
+    { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
+  ],
+  harvester: [],
+  hand_faller: [
+    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+    { id: 'tree', label: 'tree', look: 'tree', forward: 0.3, right: 0, up: 0.1, pitch: -0.2 },
+    { id: 'route', label: 'route', look: 'route', forward: -1.2, right: 0, up: 0.5, pitch: -0.08 },
+  ],
+  grapple_skidder: [
+    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+    { id: 'grapple', label: 'grapple', look: 'target', forward: 1.8, right: 0.7, up: 0.5, pitch: -0.12 },
+    { id: 'deck', label: 'deck', look: 'deck', deck: 'unprocessed', forward: -2.2, right: 0, up: 1.0, pitch: -0.15 },
+    { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
+  ],
+  skidder: [],
+  forwarder: [
+    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+    { id: 'grapple', label: 'grapple', look: 'target', forward: 1.8, right: 0.7, up: 0.5, pitch: -0.12 },
+    { id: 'deck', label: 'deck', look: 'deck', deck: 'unprocessed', forward: -2.2, right: 0, up: 1.0, pitch: -0.15 },
+    { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
+  ],
+  roadside_processor: [
+    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+    { id: 'infeed', label: 'infeed', look: 'target', forward: 1.8, right: 0.5, up: 0.25, pitch: -0.18 },
+    { id: 'outfeed', label: 'outfeed', look: 'deck', deck: 'processed', forward: -2.0, right: 0, up: 0.9, pitch: -0.12 },
+    { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
+  ],
+  processor: [],
+  loader: [
+    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+    { id: 'grapple', label: 'grapple', look: 'target', forward: 1.6, right: 0.5, up: 0.5, pitch: -0.2 },
+    { id: 'deck', label: 'deck', look: 'deck', deck: 'processed', forward: -2.0, right: 0, up: 1.0, pitch: -0.12 },
+    { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
+  ],
+  cable_yarder: [
+    { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+    { id: 'carriage', label: 'carriage', look: 'spar', position: 'carriage', forward: 0, right: 0, up: 0.4, pitch: 0 },
+    { id: 'landing', label: 'landing', look: 'spar', forward: 0, right: 0, up: 1.2, pitch: 0 },
+    { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
+  ],
+};
+OPERATOR_RIGS.harvester = OPERATOR_RIGS.feller_buncher;
+OPERATOR_RIGS.skidder = OPERATOR_RIGS.grapple_skidder;
+OPERATOR_RIGS.processor = OPERATOR_RIGS.roadside_processor;
+
+const DEFAULT_OPERATOR_RIG = [
+  { id: 'seat', label: 'seat', look: 'forward', forward: 0, right: 0, up: 0, pitch: -0.08 },
+  { id: 'work', label: 'work', look: 'target', forward: 0.9, right: 0, up: 0.35, pitch: -0.12 },
+  { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
+];
+
 function treeBounds(events) {
   const trees = events.trees || [];
   if (!trees.length) return null;
@@ -309,6 +365,96 @@ export function createViewer(container, { onTime, onPov } = {}) {
     return 3.2;
   }
 
+  function operatorRig(id) {
+    const type = machineSpecs[id]?.type || '';
+    return OPERATOR_RIGS[type] || DEFAULT_OPERATOR_RIG;
+  }
+
+  function operatorRigPreset(id, presetId) {
+    const rig = operatorRig(id);
+    return rig.find((preset) => preset.id === presetId) || rig[0];
+  }
+
+  function deckLookPoint(kind) {
+    const group = decks[kind] || decks.unprocessed || decks.processed;
+    if (group) return { x: group.position.x, z: group.position.z, y: group.position.y + 2.2 };
+    return landingLookPoint();
+  }
+
+  function landingLookPoint() {
+    if (!payload?.landing) return null;
+    const x = Number(payload.landing.x);
+    const z = Number(payload.landing.y);
+    if (!Number.isFinite(x) || !Number.isFinite(z)) return null;
+    return { x, z, y: sampleHeight(x, z) + 2.0 };
+  }
+
+  function sparLookPoint() {
+    if (!cableSpec) return null;
+    return {
+      x: cableSpec.spar.x,
+      z: cableSpec.spar.y,
+      y: cableSpec.sparY,
+    };
+  }
+
+  function carriageCameraPoint() {
+    if (!carriage?.visible) return null;
+    return {
+      x: carriage.position.x,
+      z: carriage.position.z,
+      y: carriage.position.y + 1.0,
+    };
+  }
+
+  function operatorTarget(id, state, config) {
+    switch (config.look) {
+      case 'tree':
+        return activeTreePoint(state?.segment) || workLookPoint(id, state);
+      case 'target':
+        return workLookPoint(id, state);
+      case 'route':
+        return routeAheadPoint(id, state, 24);
+      case 'deck':
+        return deckLookPoint(config.deck);
+      case 'landing':
+        return landingLookPoint();
+      case 'spar':
+        return sparLookPoint();
+      case 'forward':
+      default:
+        return null;
+    }
+  }
+
+  function operatorCameraPosition(id, config, group) {
+    if (config.position === 'carriage') {
+      const carriagePoint = carriageCameraPoint();
+      if (carriagePoint) {
+        return {
+          x: carriagePoint.x,
+          z: carriagePoint.z,
+          y: carriagePoint.y + (Number(config.up) || 0),
+        };
+      }
+    }
+    const forwardX = Math.cos(povHeading);
+    const forwardZ = Math.sin(povHeading);
+    const rightX = -Math.sin(povHeading);
+    const rightZ = Math.cos(povHeading);
+    const x = group.position.x
+      + forwardX * (Number(config.forward) || 0)
+      + rightX * (Number(config.right) || 0);
+    const z = group.position.z
+      + forwardZ * (Number(config.forward) || 0)
+      + rightZ * (Number(config.right) || 0);
+    return {
+      x,
+      z,
+      y: sampleHeight(x, z) + povEyeHeight(id) + (Number(config.up) || 0),
+    };
+  }
+
   function directHeading(segment) {
     const x0 = Number(segment.x0), y0 = Number(segment.y0);
     const x1 = Number(segment.x1), y1 = Number(segment.y1);
@@ -505,54 +651,27 @@ export function createViewer(container, { onTime, onPov } = {}) {
     const group = machines[povId];
     if (!group) return;
     const state = segmentAt(povId, currentTime);
-    const eyeHeight = povEyeHeight(povId);
-    const forwardX = Math.cos(povHeading);
-    const forwardZ = Math.sin(povHeading);
-    let offset = 0;
-    let lift = 0;
-    if (povPreset === 'work') {
-      offset = 0.9;
-      lift = 0.35;
-    } else if (povPreset === 'route') {
-      offset = -1.5;
-      lift = 0.75;
-    }
-    const desiredX = group.position.x + forwardX * offset;
-    const desiredZ = group.position.z + forwardZ * offset;
-    const desiredY = sampleHeight(desiredX, desiredZ) + eyeHeight + lift;
-    const desired = new THREE.Vector3(desiredX, desiredY, desiredZ);
+    const config = operatorRigPreset(povId, povPreset);
+    povPreset = config.id;
+    const desired = operatorCameraPosition(povId, config, group);
     if (!povPositionInitialized || dt <= 0) {
-      povPosition.copy(desired);
+      povPosition.set(desired.x, desired.y, desired.z);
       povPositionInitialized = true;
     } else {
-      povPosition.lerp(desired, 1 - Math.exp(-10 * dt));
+      povPosition.lerp(new THREE.Vector3(desired.x, desired.y, desired.z), 1 - Math.exp(-10 * dt));
     }
 
     let targetHeading = state ? machineViewHeading(povId, state) : null;
-    let basePitch = -0.08;
-    if (povPreset === 'route') {
-      const route = routeAheadPoint(povId, state, 24);
-      if (route) {
-        targetHeading = route.heading;
-        const dx = route.x - povPosition.x;
-        const dz = route.z - povPosition.z;
-        const horizontal = Math.hypot(dx, dz);
-        if (horizontal > 0.2) basePitch = Math.atan2(route.y - povPosition.y, horizontal);
-      }
-    } else if (povPreset === 'work') {
-      const segmentType = String(state?.segment?.type || '');
-      const traveling = segmentType.startsWith('travel') || segmentType.includes('truck');
-      const target = traveling
-        ? routeAheadPoint(povId, state, 14)
-        : workLookPoint(povId, state);
-      if (target) {
-        const dx = target.x - povPosition.x;
-        const dz = target.z - povPosition.z;
-        const horizontal = Math.hypot(dx, dz);
-        if (horizontal > 0.4) {
-          targetHeading = target.heading ?? Math.atan2(dz, dx);
-          basePitch = Math.atan2(target.y - povPosition.y, horizontal);
-        }
+    const fallbackPitch = Number.isFinite(config.pitch) ? config.pitch : -0.08;
+    let basePitch = fallbackPitch;
+    const target = operatorTarget(povId, state, config);
+    if (target) {
+      const dx = target.x - povPosition.x;
+      const dz = target.z - povPosition.z;
+      const horizontal = Math.hypot(dx, dz);
+      if (horizontal > 0.4) {
+        targetHeading = Math.atan2(dz, dx);
+        basePitch = Math.atan2(target.y - povPosition.y, horizontal);
       }
     }
     if (targetHeading == null) targetHeading = povLastHeading[povId] ?? povHeading;
@@ -570,19 +689,21 @@ export function createViewer(container, { onTime, onPov } = {}) {
   }
 
   function setPovPreset(name) {
-    const presets = ['seat', 'work', 'route'];
-    if (!presets.includes(name) || name === povPreset) return;
-    povPreset = name;
     if (!povId) return;
+    const rig = operatorRig(povId);
+    if (!rig.some((preset) => preset.id === name) || name === povPreset) return;
+    povPreset = name;
     povPositionInitialized = false;
     updatePovCamera(0);
     if (onPov) onPov(povId, povPreset);
   }
 
   function cyclePovPreset(direction = 1) {
-    const presets = ['seat', 'work', 'route'];
-    const index = presets.indexOf(povPreset);
-    setPovPreset(presets[(index + direction + presets.length) % presets.length]);
+    const rig = operatorRig(povId);
+    if (!rig.length) return;
+    const index = rig.findIndex((preset) => preset.id === povPreset);
+    const next = rig[(index + direction + rig.length) % rig.length];
+    setPovPreset(next.id);
   }
 
   function setPov(id) {
@@ -612,6 +733,8 @@ export function createViewer(container, { onTime, onPov } = {}) {
     if (povId && machines[povId]) machines[povId].visible = true;
     povId = id;
     machines[id].visible = false;
+    const rig = operatorRig(id);
+    if (!rig.some((preset) => preset.id === povPreset)) povPreset = rig[0]?.id || 'seat';
     povYawOffset = 0;
     povPitchOffset = 0;
     povBasePitch = -0.08;
@@ -1897,6 +2020,7 @@ export function createViewer(container, { onTime, onPov } = {}) {
     setPovPreset,
     cyclePovPreset,
     povPreset: () => povPreset,
+    povPresets: () => operatorRig(povId).map((preset) => ({ id: preset.id, label: preset.label })),
     operatorState,
     seek: (t) => setTime(t),
     reset: () => setTime(0),
