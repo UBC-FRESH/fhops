@@ -1200,6 +1200,28 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         });
       }
     }
+    const truckDeck = decks.processed || decks.unprocessed;
+    if (truckDeck) {
+      const origin = { x: truckDeck.position.x, z: truckDeck.position.z };
+      for (const event of events.truck_events || []) {
+        if (event.type !== 'truck_load' || !trucks[event.machine]) continue;
+        const start = Number(event.start_s);
+        const end = Number(event.end_s);
+        if (!Number.isFinite(start) || !Number.isFinite(end)) continue;
+        const group = makeLogPile(5);
+        group.position.set(origin.x, sampleHeight(origin.x, origin.z) + 0.6, origin.z);
+        group.visible = false;
+        scene.add(group);
+        logBatches.push({
+          group,
+          machine: event.machine,
+          start,
+          end,
+          origin,
+          kind: 'truck',
+        });
+      }
+    }
   }
 
   function updateLogBatches(t) {
@@ -1208,15 +1230,26 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         batch.group.visible = false;
         continue;
       }
-      const machine = machines[batch.machine];
-      if (!machine) {
-        batch.group.visible = false;
-        continue;
+      let target = null;
+      if (batch.kind === 'truck') {
+        const truck = trucks[batch.machine];
+        if (!truck || !truck.visible) {
+          batch.group.visible = false;
+          continue;
+        }
+        target = truck.position;
+      } else {
+        const machine = machines[batch.machine];
+        if (!machine) {
+          batch.group.visible = false;
+          continue;
+        }
+        target = machine.position;
       }
       const span = Math.max(0.001, batch.end - batch.start);
       const progress = Math.max(0, Math.min(1, (t - batch.start) / span));
-      const x = batch.origin.x + (machine.position.x - batch.origin.x) * progress;
-      const z = batch.origin.z + (machine.position.z - batch.origin.z) * progress;
+      const x = batch.origin.x + (target.x - batch.origin.x) * progress;
+      const z = batch.origin.z + (target.z - batch.origin.z) * progress;
       batch.group.visible = true;
       batch.group.position.set(x, sampleHeight(x, z) + 0.6, z);
     }
