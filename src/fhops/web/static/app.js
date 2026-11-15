@@ -61,7 +61,9 @@ const DOMAIN_SKINS = {
 };
 
 function api(path) {
-  return new URL(path, document.baseURI).toString();
+  const raw = String(path || "");
+  if (raw.startsWith("/")) return raw;
+  return raw.startsWith("api/") ? `/${raw}` : `/api/${raw}`;
 }
 
 async function putJson(path, payload) {

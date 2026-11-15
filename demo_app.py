@@ -159,6 +159,11 @@ def _landing(_request: Request) -> FileResponse:
     return FileResponse(LANDING, headers={"Cache-Control": "no-store"})
 
 
+def _full_console(_request: Request) -> FileResponse:
+    path = ROOT / "src" / "fhops" / "web" / "static" / "index.html"
+    return FileResponse(path, headers={"Cache-Control": "no-store"})
+
+
 async def _sandbox_redirect(_request: Request) -> RedirectResponse:
     return RedirectResponse("/sandbox-v20261031i/", status_code=302)
 
@@ -177,4 +182,7 @@ app.router.routes.insert(0, Route("/sandbox-v20261031g", _sandbox_redirect, meth
 app.router.routes.insert(0, Route("/sandbox-v20261031g/", _sandbox_redirect, methods=["GET"]))
 app.router.routes.insert(0, Route("/sandbox-v20261031h", _sandbox_redirect, methods=["GET"]))
 app.router.routes.insert(0, Route("/sandbox-v20261031h/", _sandbox_redirect, methods=["GET"]))
+app.router.routes.insert(0, Route("/", _landing, methods=["GET"]))
 app.router.routes.insert(0, Route("/demo", _landing, methods=["GET"]))
+app.router.routes.insert(0, Route("/fhops", _full_console, methods=["GET"]))
+app.router.routes.insert(0, Route("/fhops/", _full_console, methods=["GET"]))
