@@ -9,21 +9,23 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
 from starlette.routing import Route
 
 from fhops.web.app import ServiceConfig, create_app
-from sandbox.tree_lab.app import ServiceConfig as TreeLabConfig
-from sandbox.tree_lab.app import create_app as create_tree_lab_app
 from sandbox.studio.app import StudioConfig
 from sandbox.studio.app import create_app as create_studio_app
+from sandbox.tree_lab.app import ServiceConfig as TreeLabConfig
+from sandbox.tree_lab.app import create_app as create_tree_lab_app
 
 ROOT = Path(__file__).resolve().parent
 LANDING = ROOT / "demo.html"
 
 app: FastAPI = create_app(
     ServiceConfig(
-        roots=[ROOT / "build"],
+        roots=[
+            ROOT / "docs" / "softwarex" / "assets" / "data" / "benchmarks",
+            ROOT / "docs" / "examples" / "analytics" / "data" / "operator_sweep",
+        ],
         workspace=ROOT,
         host="127.0.0.1",
         port=8780,
@@ -128,7 +130,27 @@ async def no_store_public_demo(request: Request, call_next: Any) -> Any:
         response.headers["Expires"] = "0"
         # Clear old module caches when a document is opened, so a stale
         # viewer.js cannot survive a normal reload or hard refresh.
-        if path in ("/", "/demo", "/game", "/sandbox", "/sandbox/", "/sandbox-v20261031i", "/sandbox-v20261031i/", "/sandbox-v20261031c", "/sandbox-v20261031c/", "/sandbox-v20261031d", "/sandbox-v20261031d/", "/sandbox-v20261031e", "/sandbox-v20261031e/", "/sandbox-v20261031f", "/sandbox-v20261031f/", "/sandbox-v20261031g", "/sandbox-v20261031g/", "/sandbox-v20261031h", "/sandbox-v20261031h/"):
+        if path in (
+            "/",
+            "/demo",
+            "/game",
+            "/sandbox",
+            "/sandbox/",
+            "/sandbox-v20261031i",
+            "/sandbox-v20261031i/",
+            "/sandbox-v20261031c",
+            "/sandbox-v20261031c/",
+            "/sandbox-v20261031d",
+            "/sandbox-v20261031d/",
+            "/sandbox-v20261031e",
+            "/sandbox-v20261031e/",
+            "/sandbox-v20261031f",
+            "/sandbox-v20261031f/",
+            "/sandbox-v20261031g",
+            "/sandbox-v20261031g/",
+            "/sandbox-v20261031h",
+            "/sandbox-v20261031h/",
+        ):
             response.headers["Clear-Site-Data"] = '"cache"'
     return response
 
@@ -155,5 +177,4 @@ app.router.routes.insert(0, Route("/sandbox-v20261031g", _sandbox_redirect, meth
 app.router.routes.insert(0, Route("/sandbox-v20261031g/", _sandbox_redirect, methods=["GET"]))
 app.router.routes.insert(0, Route("/sandbox-v20261031h", _sandbox_redirect, methods=["GET"]))
 app.router.routes.insert(0, Route("/sandbox-v20261031h/", _sandbox_redirect, methods=["GET"]))
-app.router.routes.insert(0, Route("/", _landing, methods=["GET"]))
 app.router.routes.insert(0, Route("/demo", _landing, methods=["GET"]))

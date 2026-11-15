@@ -220,3 +220,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .sort-button { border:0; background:transparent; padding:0; font:inherit; font-weight:600;
                color:var(--muted); cursor:pointer; text-align:left; }
 .sort-button:hover { color:var(--ink); text-decoration:underline; }
+
+.demo-home, .demo-game { color: var(--muted, #93a6ae); font-size: 11px; text-decoration: none; margin-left: 8px; }
+.demo-home:hover, .demo-game:hover { color: var(--accent, #f08a24); text-decoration: underline; }
+.demo-game { opacity: .65; }
