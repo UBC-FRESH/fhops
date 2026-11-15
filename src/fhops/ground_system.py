@@ -1512,7 +1512,7 @@ def simulate_ground_system(
                     {machine: processor_models[machine] for machine in landing_processors},
                     calendar=calendar,
                     landing_slots=landing_slots,
-                    landing_queue=landing_queue,
+                    landing_queue=False,
                 )
             except TerrainError as exc:
                 router.close()
@@ -1542,7 +1542,7 @@ def simulate_ground_system(
             seconds_per_m3=loader_seconds_per_m3,
             calendar=calendar,
             landing_slots=landing_slots,
-            landing_queue=landing_queue,
+            landing_queue=False,
             truck_spec=truck_spec,
             landing_truck_counts=truck_counts_by_landing,
             landing_truck_specs=landing_truck_specs_map,
