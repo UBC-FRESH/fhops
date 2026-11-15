@@ -22,10 +22,7 @@ LANDING = ROOT / "demo.html"
 
 app: FastAPI = create_app(
     ServiceConfig(
-        roots=[
-            ROOT / "docs" / "softwarex" / "assets" / "data" / "benchmarks",
-            ROOT / "docs" / "examples" / "analytics" / "data" / "operator_sweep",
-        ],
+        roots=[ROOT / "examples" / "demo_runs"],
         workspace=ROOT,
         host="127.0.0.1",
         port=8780,

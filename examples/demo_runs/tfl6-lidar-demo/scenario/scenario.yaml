@@ -1,0 +1,318 @@
+name: TFL 6 LidarBC Public Fixture
+num_days: 10
+start_date: '2026-01-01'
+data:
+  blocks: data/blocks.csv
+  machines: data/machines.csv
+  landings: data/landings.csv
+  calendar: data/calendar.csv
+  prod_rates: data/prod_rates.csv
+geo_block_path: blocks.geojson
+geo_landing_path: landings.geojson
+geo_crs: EPSG:3005
+road_construction:
+- id: R1
+  machine_slug: tr28
+  road_length_m: 500.0
+  notes: Synthetic smoke-test road job; not a LiDAR-derived cost.
+lidar_products:
+- bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  manifest_sha256: 1e10507db081f72722f367ece2e2ab241647f886daa9d05f58635555be2cf7b5
+  licence_id: OGL-BC
+  crs: EPSG:3005
+  aoi_bbox:
+  - 881700.0
+  - 627500.0
+  - 882700.0
+  - 628500.0
+  selection:
+    aoi_bbox_epsg3005:
+    - 881700.0
+    - 627500.0
+    - 882700.0
+    - 628500.0
+    generated_utc: '2026-10-25T21:59:58.740604+00:00'
+    requested_products:
+    - dem
+    - dsm
+    schema_version: femic.lidar.selection.v1
+    sha256: 085b8a0b6c8378b510bfcb4cf8aa6f87fa65f6bfd89f83b42b3508fd137db27c
+    source_layer_ids:
+    - 1
+    - 5
+    - 6
+    tile_count: 5
+    tile_ids:
+    - lidarbc:1:76699
+    - lidarbc:1:77788
+    - lidarbc:5:76205
+    - lidarbc:5:77294
+    - lidarbc:6:1207
+  products:
+  - product: canopy
+    relative_path: products/canopy__05__canopy_structure.json
+    sha256: 14414c258cb08fb4e9164d70dbd280210f02014c26991490878cde75c3fe6a57
+    crs: EPSG:3005
+    resolution_m: 1.0
+    vertical_datum: Canadian Geodetic Vertical Datum of 2013
+    source_tile_ids:
+    - lidarbc:5:76205
+    - lidarbc:5:77294
+    - lidarbc:1:76699
+    - lidarbc:1:77788
+  - product: chm
+    relative_path: products/chm__04__chm.tif
+    sha256: 06dd00a9aed651cb6bc2acc17d5e3623debbdec8555b66c4a3ba48ea92d736c0
+    crs: EPSG:3005
+    resolution_m: 1.0
+    vertical_datum: Canadian Geodetic Vertical Datum of 2013
+    source_tile_ids:
+    - lidarbc:5:76205
+    - lidarbc:5:77294
+    - lidarbc:1:76699
+    - lidarbc:1:77788
+  - product: dem
+    relative_path: products/dem__01__lidarbc_dem_aoi_1m.tif
+    sha256: d526c2906aaefc6a55270f104f79f74dd9c978b6904ffb2efdd231567dd0c7f6
+    crs: EPSG:3005
+    resolution_m: 1.0
+    vertical_datum: Canadian Geodetic Vertical Datum of 2013
+    source_tile_ids:
+    - lidarbc:5:76205
+    - lidarbc:5:77294
+  - product: dsm
+    relative_path: products/dsm__02__lidarbc_dsm_aoi_1m.tif
+    sha256: ac86b11c2a562aeafccbe10813ea766c6d1cb900613d5217e8c562db36f0612c
+    crs: EPSG:3005
+    resolution_m: 1.0
+    vertical_datum: Canadian Geodetic Vertical Datum of 2013
+    source_tile_ids:
+    - lidarbc:1:76699
+    - lidarbc:1:77788
+  - product: slope
+    relative_path: products/slope__03__lidarbc_slope_pct_1m.tif
+    sha256: 18669d359d12bca8ea5d9111683ab565f05724683ad7c2f434e43bf1faa262ae
+    crs: EPSG:3005
+    resolution_m: 1.0
+    vertical_datum: Canadian Geodetic Vertical Datum of 2013
+    source_tile_ids:
+    - lidarbc:5:76205
+    - lidarbc:5:77294
+lidar_support:
+- support_unit: block
+  support_id: T6_23339490
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 54285.204
+  valid_pixels: 54289
+  slope_percent: 18.093685
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m slope
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_23339461
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 22384.524
+  valid_pixels: 22372
+  slope_percent: 51.546347
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m slope
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_23339462
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 52234.36
+  valid_pixels: 52232
+  slope_percent: 19.693197
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m slope
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_23339458
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 731187.634
+  valid_pixels: 731180
+  slope_percent: 22.585566
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m slope
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_16625195
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 61266.772
+  valid_pixels: 61279
+  slope_percent: 40.468577
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m slope
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_16624698
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 66297.049
+  valid_pixels: 66306
+  slope_percent: 22.007911
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m slope
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_19212607
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 12344.457
+  valid_pixels: 12342
+  slope_percent: 27.323784
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m slope
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_23339490
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 54285.204
+  valid_pixels: 54289
+  canopy_height_m: 10.650112
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_23339461
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 22384.524
+  valid_pixels: 22372
+  canopy_height_m: 19.196865
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_23339462
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 52234.36
+  valid_pixels: 52232
+  canopy_height_m: 1.082238
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_23339458
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 731187.634
+  valid_pixels: 731180
+  canopy_height_m: 8.702228
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_16625195
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 61266.772
+  valid_pixels: 61279
+  canopy_height_m: 13.973793
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_16624698
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 66297.049
+  valid_pixels: 66306
+  canopy_height_m: 1.992587
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
+    mean; no reprojection or resampling
+- support_unit: block
+  support_id: T6_19212607
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 12344.457
+  valid_pixels: 12342
+  canopy_height_m: 16.535896
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
+    mean; no reprojection or resampling
+- support_unit: landing
+  support_id: L1
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 400.0
+  valid_pixels: 400
+  slope_percent: 24.030106
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m slope
+    mean; no reprojection or resampling
+- support_unit: landing
+  support_id: L1
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 400.0
+  valid_pixels: 400
+  canopy_height_m: 7.49356
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
+    mean; no reprojection or resampling
+- support_unit: road
+  support_id: R1
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: slope
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 6788.225
+  valid_pixels: 7200
+  slope_percent: 21.173559
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m slope
+    mean; no reprojection or resampling
+- support_unit: road
+  support_id: R1
+  bundle_id: lidarbc-995fb1f771f4d7fe
+  bundle_version: 2026.10.0-tfl6-pilot
+  product: chm
+  aggregation: mean
+  native_resolution_m: 1.0
+  support_area_m2: 6788.225
+  valid_pixels: 7200
+  canopy_height_m: 5.931823
+  provenance: FEMIC lidarbc-995fb1f771f4d7fe@2026.10.0-tfl6-pilot; native 1 m chm
+    mean; no reprojection or resampling

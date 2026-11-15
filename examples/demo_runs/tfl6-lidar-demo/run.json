@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "tfl6-lidar-demo",
+  "domain": "operational",
+  "run_type": "solve",
+  "status": "completed",
+  "files": {
+    "assignments": "assignments.csv",
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "day_summary": "day_summary.csv",
+    "shift_summary": "shift_summary.csv"
+  },
+  "warnings": [],
+  "generated_at": "2026-11-15T19:41:07.900725+00:00",
+  "command": "fhops solve-heur + eval-playback",
+  "scenario": "scenario/scenario.yaml",
+  "solver": "simulated-annealing",
+  "seed": 7
+}
