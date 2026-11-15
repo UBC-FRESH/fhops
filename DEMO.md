@@ -120,3 +120,11 @@ Knife Creek is present as a structural full-block pilot (`knife-structural`) so 
 block is visible in the console. The public instance still lacks an approved full-block
 selection schedule and a public financial-account surface; the run is labeled accordingly.
 The next Knife Creek gate is the reviewed schedule plus public account/provenance output.
+
+
+## AFRF financial screening envelope
+
+The Gavin and Knife KPIs now include a deliberately wide public AFRF finance envelope derived
+from MWP #3 Figure 7 (2005 CAD/m³), inflated by a stated 1.45 CPI screening factor. It is not a
+budget forecast and does not replace the AFRF ledger. Details:
+`examples/demo_runs/AFRF_FINANCE.md`.

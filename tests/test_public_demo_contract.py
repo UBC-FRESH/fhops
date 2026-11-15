@@ -208,3 +208,13 @@ def test_gavin_optimized_draft_is_complete(client: TestClient) -> None:
         if feature.get("properties", {}).get("layer") == "blocks"
     ]
     assert len(block_features) >= 2_900
+
+
+def test_afrf_finance_envelope_is_present_and_ordered(client: TestClient) -> None:
+    for run_id in ("gavin-full-estate", "gavin-optimized", "knife-structural"):
+        kpis = client.get(f"/api/runs/{run_id}/kpis").json()
+        low = kpis["finance_annual_net_revenue_cad_low"]
+        base = kpis["finance_annual_net_revenue_cad_base"]
+        high = kpis["finance_annual_net_revenue_cad_high"]
+        assert 0 < low < base < high
+        assert "not a budget forecast" in kpis["finance_basis"]

@@ -1,0 +1,15 @@
+{
+  "finance_net_value_per_m3_2026_cad_low": 79.75,
+  "finance_harvest_cost_per_m3_2026_cad_low": 40.6,
+  "finance_net_revenue_cad_low": 51751402.54,
+  "finance_annual_net_revenue_cad_low": 172504.68,
+  "finance_net_value_per_m3_2026_cad_base": 108.75,
+  "finance_harvest_cost_per_m3_2026_cad_base": 46.4,
+  "finance_net_revenue_cad_base": 70570094.37,
+  "finance_annual_net_revenue_cad_base": 235233.65,
+  "finance_net_value_per_m3_2026_cad_high": 145.0,
+  "finance_harvest_cost_per_m3_2026_cad_high": 72.5,
+  "finance_net_revenue_cad_high": 94093459.16,
+  "finance_annual_net_revenue_cad_high": 313644.86,
+  "finance_basis": "AFRF MWP #3 Figure 7 adjusted 2005 CAD/m3; CPI 1.45 to 2026; wide scenario envelope, not a budget forecast"
+}

@@ -23,5 +23,18 @@
   "status_note": "Draft WS4 target optimization; not an approved management plan.",
   "mean_period_production_m3": 180146.023,
   "min_period_production_m3": 174959.54,
-  "max_period_production_m3": 183803.997
+  "max_period_production_m3": 183803.997,
+  "finance_net_value_per_m3_2026_cad_low": 79.75,
+  "finance_harvest_cost_per_m3_2026_cad_low": 40.6,
+  "finance_net_revenue_cad_low": 430999360.03,
+  "finance_annual_net_revenue_cad_low": 1436664.53,
+  "finance_net_value_per_m3_2026_cad_base": 108.75,
+  "finance_harvest_cost_per_m3_2026_cad_base": 46.4,
+  "finance_net_revenue_cad_base": 587726400.04,
+  "finance_annual_net_revenue_cad_base": 1959088.0,
+  "finance_net_value_per_m3_2026_cad_high": 145.0,
+  "finance_harvest_cost_per_m3_2026_cad_high": 72.5,
+  "finance_net_revenue_cad_high": 783635200.05,
+  "finance_annual_net_revenue_cad_high": 2612117.33,
+  "finance_basis": "AFRF MWP #3 Figure 7 adjusted 2005 CAD/m3; CPI 1.45 to 2026; wide scenario envelope, not a budget forecast"
 }

@@ -21,5 +21,18 @@
   "targets_met": 4,
   "targets_below": 31,
   "targets_above": 26,
-  "revenue_note": "No public net-revenue account in the Gavin Lake baseline evidence; not fabricated."
+  "revenue_note": "No public net-revenue account in the Gavin Lake baseline evidence; not fabricated.",
+  "finance_net_value_per_m3_2026_cad_low": 79.75,
+  "finance_harvest_cost_per_m3_2026_cad_low": 40.6,
+  "finance_net_revenue_cad_low": 451411857.41,
+  "finance_annual_net_revenue_cad_low": 1504706.19,
+  "finance_net_value_per_m3_2026_cad_base": 108.75,
+  "finance_harvest_cost_per_m3_2026_cad_base": 46.4,
+  "finance_net_revenue_cad_base": 615561623.74,
+  "finance_annual_net_revenue_cad_base": 2051872.08,
+  "finance_net_value_per_m3_2026_cad_high": 145.0,
+  "finance_harvest_cost_per_m3_2026_cad_high": 72.5,
+  "finance_net_revenue_cad_high": 820748831.65,
+  "finance_annual_net_revenue_cad_high": 2735829.44,
+  "finance_basis": "AFRF MWP #3 Figure 7 adjusted 2005 CAD/m3; CPI 1.45 to 2026; wide scenario envelope, not a budget forecast"
 }
