@@ -1221,6 +1221,15 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     }
   }
 
+  function productForIndex(index, count, share) {
+    const sawCount = Math.max(0, Math.min(count, Math.round(count * Math.max(0, Math.min(1, share)))));
+    if (sawCount <= 0) return 'pulp';
+    if (sawCount >= count) return 'sawlog';
+    const before = Math.floor((index * sawCount) / count + 1e-9);
+    const after = Math.floor(((index + 1) * sawCount) / count + 1e-9);
+    return after > before ? 'sawlog' : 'pulp';
+  }
+
   function makeLogPile(count) {
     const group = new THREE.Group();
     const material = new THREE.MeshStandardMaterial({ color: 0x7d5a36, roughness: 0.95 });
@@ -1347,11 +1356,17 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       if (!Number.isFinite(start) || !Number.isFinite(end)) continue;
       const count = Math.min(10, Math.max(4, Math.round((Number(item.logs) || 8) / 4)));
       const group = new THREE.Group();
+      const sawlogMat = new THREE.MeshStandardMaterial({ color: 0xc9a36a, roughness: 0.9 });
+      const pulpMat = new THREE.MeshStandardMaterial({ color: 0xa98155, roughness: 0.95 });
+      const sawlogGeometry = new THREE.CylinderGeometry(0.26, 0.26, 4.4, 7);
+      const pulpGeometry = new THREE.CylinderGeometry(0.22, 0.22, 3.2, 7);
       for (let index = 0; index < count; index += 1) {
+        const product = productForIndex(index, count, productShares.sawlog);
         const log = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.26, 0.26, 4.4, 7),
-          new THREE.MeshStandardMaterial({ color: 0xc9a36a, roughness: 0.9 }),
+          product === 'pulp' ? pulpGeometry : sawlogGeometry,
+          product === 'pulp' ? pulpMat : sawlogMat,
         );
+        log.userData.product = product;
         log.rotation.z = Math.PI / 2;
         log.visible = false;
         group.add(log);
@@ -1392,7 +1407,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
           return;
         }
         log.visible = true;
-        const target = index / stream.count < stream.share ? stream.target : stream.pulpTarget;
+        const target = log.userData.product === 'pulp' ? stream.pulpTarget : stream.target;
         const x = outfeed.x + (target.x - outfeed.x) * local;
         const z = outfeed.z + (target.z - outfeed.z) * local;
         log.position.set(x, sampleHeight(x, z) + 1.2 + local * 0.4, z);
@@ -1966,10 +1981,17 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     cab.position.set(0, 3.2, -2.4);
     group.add(cab);
     const cargo = new THREE.Group();
-    const cargoMat = new THREE.MeshStandardMaterial({ color: 0x7d5a36, roughness: 0.95 });
+    const sawlogCargoMat = new THREE.MeshStandardMaterial({ color: 0xc9a36a, roughness: 0.9 });
+    const pulpCargoMat = new THREE.MeshStandardMaterial({ color: 0xa98155, roughness: 0.95 });
     for (let row = 0; row < 2; row += 1) {
       for (let logIndex = 0; logIndex < 3; logIndex += 1) {
-        const log = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 4.8, 7), cargoMat);
+        const cargoIndex = row * 3 + logIndex;
+        const product = productForIndex(cargoIndex, 6, productShares.sawlog);
+        const log = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.35, 0.35, 4.8, 7),
+          product === 'pulp' ? pulpCargoMat : sawlogCargoMat,
+        );
+        log.userData.product = product;
         log.rotation.z = Math.PI / 2;
         log.position.set((logIndex - 1) * 0.85, 2.9 + row * 0.75, -0.4);
         cargo.add(log);
