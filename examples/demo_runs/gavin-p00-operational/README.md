@@ -23,3 +23,7 @@ field-calibrated machine schedule.
 
 The result says the strategic P00 volume is operationally feasible within the screening
 assumptions. It does not prove field feasibility: rates, landings, roads, and haul are simplified.
+
+## Road/haul screen
+
+Public-geography screening to Williams Lake: mean one-way 58.3 km, weighted 57.8 km, max 64.2 km; 3,901 loads at 45 m³; 2 loads/truck-day; 6 trucks required for a 365-day window. This is not a road-network schedule.

@@ -25,5 +25,13 @@
   "screened_blocks": 192,
   "screened_area_ha": 505.135,
   "machine_rate_assumption": "1000 m3/day per assigned machine (screening assumption, not calibrated)",
-  "status_note": "Operational screening handoff only; not a field-calibrated schedule."
+  "status_note": "Operational screening handoff only; not a field-calibrated schedule.",
+  "haul_screen_mill": "Williams Lake screening destination",
+  "haul_screen_avg_one_way_km": 58.316,
+  "haul_screen_weighted_one_way_km": 57.797,
+  "haul_screen_max_one_way_km": 64.186,
+  "haul_screen_cycles_per_day": 2,
+  "haul_screen_loads_required": 3901,
+  "haul_screen_required_trucks": 6,
+  "haul_screen_note": "Public-geography screening: Williams Lake destination, 1.30 route factor, 50 km/h, 45 m3 trucks, 10-hour driver day. Not a road-network or contractor schedule."
 }

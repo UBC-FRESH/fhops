@@ -57,6 +57,10 @@ all 192 blocks in 315 days with zero sequencing violations under a 1,000 m³/day
 176,512 m³, five machines, eight landings, and a 365-day screening window. It completes all 237
 blocks in 355 days with zero sequencing violations.
 
+Both P00/P01 runs include a public-geography road/haul screen to Williams Lake: about 58 km
+mean one-way, 3,900 loads at 45 m³, 2 loads per truck-day, and 6 required trucks for the
+365-day window. This is a fleet screen, not a road-network schedule.
+
 `knife-structural` is a structural full-block Knife Creek pilot built from the existing
 160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.
 It is explicitly **not an approved management plan** and has no public revenue account.

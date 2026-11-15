@@ -261,3 +261,11 @@ def test_gavin_p01_operational_handoff(client: TestClient) -> None:
     assert kpis["remaining_work_total"] == 0
     assert kpis["total_production"] > 176_000
     assert kpis["makespan_day"] <= 365
+
+
+def test_gavin_operational_runs_carry_road_haul_screen(client: TestClient) -> None:
+    for run_id in ("gavin-p00-operational", "gavin-p01-operational"):
+        kpis = client.get(f"/api/runs/{run_id}/kpis").json()
+        assert kpis["haul_screen_avg_one_way_km"] > 0
+        assert kpis["haul_screen_required_trucks"] >= 1
+        assert kpis["haul_screen_loads_required"] > 0

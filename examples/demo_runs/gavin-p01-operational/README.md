@@ -18,3 +18,7 @@ Second operational screening handoff of the Gavin policy plan.
 - zero remaining work
 
 This is a screening feasibility case, not a field-calibrated road/haul plan.
+
+## Road/haul screen
+
+Public-geography screening to Williams Lake: mean one-way 58.4 km, weighted 58.4 km, max 64.6 km; 3,923 loads at 45 m³; 2 loads/truck-day; 6 trucks required for a 365-day window. This is not a road-network schedule.
