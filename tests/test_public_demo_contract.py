@@ -47,6 +47,11 @@ MODEL_INSTANCES = {
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
         "map_query": "day=1",
     },
+    "gavin-p01-operational": {
+        "domain": "operational",
+        "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
+        "map_query": "day=1",
+    },
     "tfl6-lidar-demo": {
         "domain": "operational",
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
@@ -246,4 +251,13 @@ def test_gavin_p00_operational_handoff(client: TestClient) -> None:
     assert kpis["completed_blocks"] == 192
     assert kpis["remaining_work_total"] == 0
     assert kpis["total_production"] > 175_000
+    assert kpis["makespan_day"] <= 365
+
+
+def test_gavin_p01_operational_handoff(client: TestClient) -> None:
+    _model_instance(client, "gavin-p01-operational")
+    kpis = client.get("/api/runs/gavin-p01-operational/kpis").json()
+    assert kpis["completed_blocks"] == 237
+    assert kpis["remaining_work_total"] == 0
+    assert kpis["total_production"] > 176_000
     assert kpis["makespan_day"] <= 365

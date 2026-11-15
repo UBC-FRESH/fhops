@@ -29,6 +29,7 @@ examples/demo_runs/gavin-full-estate
 examples/demo_runs/gavin-optimized
 examples/demo_runs/gavin-policy
 examples/demo_runs/gavin-p00-operational
+examples/demo_runs/gavin-p01-operational
 examples/demo_runs/knife-structural
 examples/demo_runs/mkrf-full-estate
 examples/demo_runs/tfl6-lidar-demo
@@ -51,6 +52,10 @@ management plan.
 `gavin-p00-operational` is the first operational handoff of `gavin-policy`: 192 P00 blocks,
 505.14 ha, 175,533 m³, five machines, eight landings, and a 365-day screening window. It completes
 all 192 blocks in 315 days with zero sequencing violations under a 1,000 m³/day screening rate.
+
+`gavin-p01-operational` is the second operational handoff: 237 P01 blocks, 492.08 ha,
+176,512 m³, five machines, eight landings, and a 365-day screening window. It completes all 237
+blocks in 355 days with zero sequencing violations.
 
 `knife-structural` is a structural full-block Knife Creek pilot built from the existing
 160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.
