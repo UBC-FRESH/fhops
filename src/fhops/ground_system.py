@@ -1271,6 +1271,7 @@ def simulate_ground_system(
         "edge_capacity": edge_capacity,
         "road_edges": len(router.road_edges(passing_bay_spacing_m)),
         "two_lane_edges": sum(1 for value in router.road_edge_one_lane(passing_bay_spacing_m).values() if not value),
+        "edge_metadata_source": "source_road_properties" if router._road_properties else "derived_from_geometry",
         "trail_headway_s": trail_headway_s,
         "landing_queue": landing_queue,
         "travel_queue": travel_queue,

@@ -206,29 +206,59 @@ class TerrainRouter:
                     edges.append(key)
         return tuple(edges)
 
+    def _terminal_points(self) -> list[tuple[float, float]]:
+        if isinstance(self._road, _RoadNetwork):
+            return [
+                self._road._coords[identifier]
+                for identifier, neighbors in self._road._adjacency.items()
+                if len(neighbors) == 1
+            ]
+        if self._road is not None:
+            try:
+                coords = [(float(x), float(y)) for x, y in self._road.coords]
+            except Exception:
+                return []
+            if coords:
+                return [coords[0], coords[-1]]
+        return []
+
+    def _derived_one_lane(self, edge: tuple[tuple[float, float], tuple[float, float]]) -> bool:
+        properties = self._road_properties
+        if "one_lane" in properties or "one_way" in properties:
+            value = properties.get("one_lane", properties.get("one_way", True))
+            if isinstance(value, str):
+                return value.lower() not in {"false", "0", "no"}
+            return bool(value)
+        terminals = self._terminal_points()
+        if not terminals:
+            return True
+        mx = (edge[0][0] + edge[1][0]) * 0.5
+        my = (edge[0][1] + edge[1][1]) * 0.5
+        # Wider apron near trail ends/landings; one lane in the interior.
+        return min(math.hypot(mx - x, my - y) for x, y in terminals) > 120.0
+
     def road_edge_one_lane(
         self, spacing_m: float = 150.0
     ) -> dict[tuple[tuple[float, float], tuple[float, float]], bool]:
         """Return per-edge one-lane metadata from the road source."""
-        properties = self._road_properties
-        value = properties.get("one_lane", properties.get("one_way", True))
-        one_lane = bool(value) if not isinstance(value, str) else value.lower() not in {"false", "0", "no"}
-        return {edge: one_lane for edge in self.road_edges(spacing_m)}
+        return {edge: self._derived_one_lane(edge) for edge in self.road_edges(spacing_m)}
 
     def road_edge_capacities(
         self, spacing_m: float = 150.0
     ) -> dict[tuple[tuple[float, float], tuple[float, float]], int]:
         """Return per-edge trail capacities from road properties when present."""
         properties = self._road_properties
-        one_lane = properties.get("one_lane", properties.get("one_way", True))
-        if isinstance(one_lane, str):
-            one_lane = one_lane.lower() not in {"false", "0", "no"}
-        raw = properties.get("capacity", properties.get("lanes", 1 if one_lane else 2))
-        try:
-            capacity = max(1, int(raw))
-        except (TypeError, ValueError):
-            capacity = 1 if one_lane else 2
-        return {edge: capacity for edge in self.road_edges(spacing_m)}
+        if "capacity" in properties or "lanes" in properties:
+            raw = properties.get("capacity", properties.get("lanes", 1))
+            try:
+                capacity = max(1, int(raw))
+            except (TypeError, ValueError):
+                capacity = 1
+            return {edge: capacity for edge in self.road_edges(spacing_m)}
+        return {
+            edge: 1 if self._derived_one_lane(edge) else 2
+            for edge in self.road_edges(spacing_m)
+        }
 
     def passing_bay_nodes(self, spacing_m: float = 150.0) -> tuple[tuple[float, float], ...]:
         """Return trail nodes plus regularly spaced passing bays along long edges."""
