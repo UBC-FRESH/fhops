@@ -640,6 +640,11 @@ def tree_system(
         "--travel-queue/--no-travel-queue",
         help="Keep machine travel corridors separated by time and clearance.",
     ),
+    path_clearance: float = typer.Option(
+        2.8,
+        "--path-clearance",
+        help="Clearance in metres for detouring travel paths around standing stems.",
+    ),
     landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
     landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
     landing: list[str] | None = typer.Option(
@@ -897,6 +902,7 @@ def tree_system(
             rate_model=rate_model,  # type: ignore[arg-type]
             landing_queue=landing_queue,
             travel_queue=travel_queue,
+            path_clearance_m=path_clearance,
             dem_path=dem,
             road_path=road,
             terrain_sample_step_m=terrain_step,

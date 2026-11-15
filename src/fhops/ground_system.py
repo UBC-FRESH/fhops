@@ -780,6 +780,7 @@ def simulate_ground_system(
     rate_model: Literal["calibrated", "reference"] = DEFAULT_RATE_MODEL,
     landing_queue: bool = False,
     travel_queue: bool = False,
+    path_clearance_m: float = 0.0,
     dem_path: str | Path | None = None,
     road_path: str | Path | None = None,
     terrain_sample_step_m: float = 10.0,
@@ -1488,6 +1489,11 @@ def simulate_ground_system(
     # reservation, not a visual push: skidders wait in the arrival queue and
     # loader/truck operations do not overlap in the same landing space.
     landing_slots: dict[str, float] = {landing.landing_id: 0.0 for landing in landing_choices}
+    tree_obstacles = [
+        (tree.x_m, tree.y_m, 1.2, tree.processed_s) for tree in trees
+    ] + [
+        (obstacle.x_m, obstacle.y_m, obstacle.radius_m, float("inf")) for obstacle in obstacles
+    ]
     feller_reservations = _feller_travel_reservations(events, feller_machine_id)
     loads, skidder_warnings = _simulate_skidders(
         events,
@@ -1503,6 +1509,8 @@ def simulate_ground_system(
         landing_queue=landing_queue,
         travel_queue=travel_queue,
         extra_reservations=feller_reservations,
+        path_clearance_m=path_clearance_m,
+        tree_obstacles=tree_obstacles,
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
@@ -1894,6 +1902,66 @@ def _build_bunches(
     return bunches
 
 
+def _path_length(path: Sequence[Sequence[float]]) -> float:
+    return sum(
+        math.hypot(float(path[index][0]) - float(path[index - 1][0]),
+                   float(path[index][1]) - float(path[index - 1][1]))
+        for index in range(1, len(path))
+    )
+
+
+def _point_segment_distance(
+    px: float, py: float, ax: float, ay: float, bx: float, by: float
+) -> float:
+    dx, dy = bx - ax, by - ay
+    length_sq = dx * dx + dy * dy
+    if length_sq < 1e-9:
+        return math.hypot(px - ax, py - ay)
+    u = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / length_sq))
+    return math.hypot(px - (ax + dx * u), py - (ay + dy * u))
+
+
+def _clear_travel_path(
+    path: Sequence[Sequence[float]],
+    obstacles: Sequence[tuple[float, float, float, float]],
+    start_s: float,
+    clearance_m: float,
+) -> list[list[float]]:
+    """Detour a route around standing stems/retained exclusions."""
+    points = [[float(point[0]), float(point[1])] for point in path]
+    if clearance_m <= 0 or not points:
+        return points
+    for _ in range(28):
+        found: tuple[int, float, float, float] | None = None
+        for index in range(len(points) - 1):
+            ax, ay = points[index]
+            bx, by = points[index + 1]
+            for ox, oy, radius, standing_until in obstacles:
+                if standing_until <= start_s:
+                    continue
+                if _point_segment_distance(ox, oy, ax, ay, bx, by) < clearance_m + radius:
+                    found = (index, ox, oy, radius)
+                    break
+            if found:
+                break
+        if not found:
+            break
+        index, ox, oy, radius = found
+        ax, ay = points[index]
+        bx, by = points[index + 1]
+        dx, dy = bx - ax, by - ay
+        length = math.hypot(dx, dy)
+        if length < 1e-6:
+            break
+        cross = dx * (oy - ay) - dy * (ox - ax)
+        side = -1.0 if cross >= 0 else 1.0
+        nx, ny = (-dy / length) * side, (dx / length) * side
+        offset = radius + clearance_m + 0.75
+        via = [ox + nx * offset, oy + ny * offset]
+        points = points[: index + 1] + [via] + points[index + 1 :]
+    return points
+
+
 def _feller_travel_reservations(
     events: Sequence[GroundSystemEvent],
     feller_machine_id: str,
@@ -2006,6 +2074,8 @@ def _simulate_skidders(
     landing_queue: bool = False,
     travel_queue: bool = False,
     extra_reservations: Sequence[_TravelReservation] = (),
+    path_clearance_m: float = 0.0,
+    tree_obstacles: Sequence[tuple[float, float, float, float]] = (),
 ) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
     travel_reservations: list[_TravelReservation] = list(extra_reservations)
@@ -2041,7 +2111,10 @@ def _simulate_skidders(
             continue
         landing = selected_landing
         route = selected_route
-        distance = route.distance_m
+        travel_path = _clear_travel_path(
+            route.path, tree_obstacles, start, path_clearance_m
+        )
+        distance = _path_length(travel_path) if path_clearance_m > 0 else route.distance_m
         empty_start = start
         if spec.forwarder_model or spec.productivity_m3_per_smh is not None:
             productivity = forwarder_productivity_for_distance(spec, distance)
@@ -2110,7 +2183,7 @@ def _simulate_skidders(
                 status="empty",
                 distance_m=route.distance_m,
                 max_grade_percent=route.max_grade_percent,
-                path=tuple(route.path),
+                path=tuple(travel_path),
             )
         )
         load_start = max(empty_end, bunch.ready_s)
@@ -2155,7 +2228,7 @@ def _simulate_skidders(
                 status="loaded",
                 distance_m=route.distance_m,
                 max_grade_percent=route.max_grade_percent,
-                path=tuple(reversed(route.path)),
+                path=tuple(reversed(travel_path)),
             )
         )
         if landing_queue:
