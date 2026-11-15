@@ -1554,6 +1554,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         group,
         logs,
         top,
+        machine: item.machine,
         treeId: String(tree.tree_id),
         start,
         end,
@@ -1573,6 +1574,16 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       }
       stream.group.visible = true;
       const progress = Math.max(0, Math.min(1, (t - stream.start) / Math.max(0.001, stream.end - stream.start)));
+      const machine = machines[stream.machine];
+      const head = machine?.userData.rig?.head;
+      let headX = 0;
+      let headZ = 0;
+      if (head) {
+        machine.updateMatrixWorld(true);
+        const headWorld = head.getWorldPosition(new THREE.Vector3());
+        headX = headWorld.x - stream.group.position.x;
+        headZ = headWorld.z - stream.group.position.z;
+      }
       stream.logs.forEach((log, index) => {
         const local = progress * stream.logs.length - index;
         if (t < stream.end && local < 0) {
@@ -1582,9 +1593,9 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         log.visible = true;
         const u = Math.max(0, Math.min(1, local));
         log.position.set(
-          log.userData.target.x * u,
+          headX + (log.userData.target.x - headX) * u,
           log.userData.target.y,
-          log.userData.target.z * u,
+          headZ + (log.userData.target.z - headZ) * u,
         );
       });
       stream.top.visible = t >= stream.end;
