@@ -86,6 +86,12 @@ OPERATOR_RIGS.harvester = OPERATOR_RIGS.feller_buncher;
 OPERATOR_RIGS.skidder = OPERATOR_RIGS.grapple_skidder;
 OPERATOR_RIGS.processor = OPERATOR_RIGS.roadside_processor;
 
+const TRUCK_OPERATOR_RIG = [
+  { id: 'seat', label: 'seat', look: 'forward', forward: 2.2, right: 0, up: 1.2, pitch: -0.08 },
+  { id: 'chase', label: 'chase', look: 'forward', forward: -14.0, right: 0, up: 8.5, pitch: -0.2 },
+  { id: 'mirror', label: 'mirror', look: 'forward', forward: -5.0, right: 9.0, up: 6.5, pitch: -0.16 },
+];
+
 const DEFAULT_OPERATOR_RIG = [
   { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
   { id: 'work', label: 'work', look: 'target', forward: 0.9, right: 0, up: 0.35, pitch: -0.12 },
@@ -226,6 +232,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let trucks = {};
   let deckCurves = null;
   let decks = {};
+  let landingLabels = [];
   let cableSpec = null;
   let cableYarderId = null;
   let carriage = null;
@@ -373,6 +380,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   }
 
   function povEyeHeight(id) {
+    if (trucks[id]) return 2.8;
     const type = machineSpecs[id]?.type || '';
     if (type.includes('hand_faller')) return 1.7;
     if (type.includes('feller') || type.includes('harvester')) return 3.6;
@@ -385,6 +393,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   }
 
   function operatorRig(id) {
+    if (trucks[id]) return TRUCK_OPERATOR_RIG;
     const type = machineSpecs[id]?.type || '';
     return OPERATOR_RIGS[type] || DEFAULT_OPERATOR_RIG;
   }
@@ -609,6 +618,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   }
 
   function initialPovHeading(id, t) {
+    if (trucks[id]) return Number(trucks[id].userData.heading) || 0;
     const segments = timelineByMachine[id] || [];
     let startIndex = -1;
     for (let index = 0; index < segments.length; index += 1) {
@@ -628,6 +638,50 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
 
   function operatorState() {
     if (!povId) return null;
+    if (trucks[povId]) {
+      const group = trucks[povId];
+      const schedule = truckSchedules[povId] || [];
+      const previous = schedule.filter((item) => item.loadStart <= currentTime).at(-1);
+      const nextLoad = schedule.find((item) => item.loadStart > currentTime) || null;
+      const status = String(group.userData.status || 'waiting');
+      let phase = 'waiting';
+      let start = 0;
+      let end = 0;
+      let volume = 0;
+      let next = nextLoad ? { type: 'load', start_s: nextLoad.loadStart } : null;
+      if (previous && currentTime <= previous.loadEnd) {
+        phase = 'loading';
+        start = previous.loadStart;
+        end = previous.loadEnd;
+        volume = previous.volume;
+        next = { type: 'depart', start_s: previous.loadEnd };
+      } else if (previous && currentTime <= previous.returnEnd) {
+        phase = status;
+        start = previous.loadEnd;
+        end = previous.returnEnd;
+        volume = previous.volume;
+        next = nextLoad ? { type: 'load', start_s: nextLoad.loadStart } : null;
+      }
+      const duration = Math.max(0, end - start);
+      const progress = duration ? Math.max(0, Math.min(1, (currentTime - start) / duration)) : 0;
+      return {
+        machineId: povId,
+        type: 'truck',
+        state: phase.replaceAll('_', ' '),
+        preset: povPreset,
+        active: phase !== 'waiting',
+        segment_type: `truck_${phase}`.replaceAll(' ', '_'),
+        start_s: start,
+        end_s: end,
+        progress,
+        elapsed_s: duration ? Math.max(0, Math.min(duration, currentTime - start)) : 0,
+        remaining_s: duration ? Math.max(0, Math.min(duration, end - currentTime)) : 0,
+        duration_s: duration,
+        volume_m3: volume,
+        tree_count: 0,
+        next,
+      };
+    }
     const segments = timelineByMachine[povId] || [];
     const state = segmentAt(povId, currentTime);
     const type = machineSpecs[povId]?.type || 'machine';
@@ -685,9 +739,10 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
 
   function updatePovCamera(dt) {
     if (!povId) return;
-    const group = machines[povId];
+    const isTruck = Boolean(trucks[povId]);
+    const group = machines[povId] || trucks[povId];
     if (!group) return;
-    const state = segmentAt(povId, currentTime);
+    const state = isTruck ? null : segmentAt(povId, currentTime);
     const config = operatorRigPreset(povId, povPreset);
     povPreset = config.id;
     const desired = operatorCameraPosition(povId, config, group);
@@ -698,7 +753,9 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       povPosition.lerp(new THREE.Vector3(desired.x, desired.y, desired.z), 1 - Math.exp(-10 * dt));
     }
 
-    let targetHeading = state ? machineViewHeading(povId, state) : null;
+    let targetHeading = state
+      ? machineViewHeading(povId, state)
+      : (isTruck ? Number(group.userData.heading) || 0 : null);
     const fallbackPitch = Number.isFinite(config.pitch) ? config.pitch : -0.08;
     let basePitch = fallbackPitch;
     const target = operatorTarget(povId, state, config);
@@ -726,7 +783,9 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     const handFaller = String(group.userData.type || '').includes('hand_faller');
     cabFrame.visible = seat && !handFaller;
     const ownRig = group.userData.rig || {};
-    group.visible = !handFaller;
+    group.visible = isTruck
+      ? (!seat && group.userData.status !== 'off map')
+      : !handFaller;
     if (ownRig.cab) ownRig.cab.visible = !hideChassis;
     if (ownRig.glass) ownRig.glass.visible = !hideChassis;
     if (ownRig.body) ownRig.body.visible = !hideChassis;
@@ -741,11 +800,14 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       ) > otherDistance;
     }
     updateTrucks(currentTime);
-    const truckDistance = 20;
-    for (const truck of Object.values(trucks)) {
-      if (Math.hypot(truck.position.x - povPosition.x, truck.position.z - povPosition.z) < truckDistance) {
-        truck.visible = false;
-      }
+    const truckDistance = seat ? 35 : 15;
+    for (const [truckId, truck] of Object.entries(trucks)) {
+      if (truckId === povId) continue;
+      const distance = Math.hypot(truck.position.x - povPosition.x, truck.position.z - povPosition.z);
+      if (distance < truckDistance) truck.visible = false;
+    }
+    if (isTruck) {
+      group.visible = !seat && group.userData.status !== 'off map';
     }
     const treeRadius = seat ? 10 : 4;
     for (const node of treeNodes.values()) {
@@ -805,6 +867,13 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       if (rig.beam) rig.beam.visible = visible;
       if (rig.beacon) rig.beacon.visible = visible;
     }
+    for (const truck of Object.values(trucks)) {
+      if (truck.userData.sprite) truck.userData.sprite.visible = visible;
+    }
+    for (const deck of Object.values(decks)) {
+      if (deck.userData.label?.sprite) deck.userData.label.sprite.visible = visible;
+    }
+    for (const sprite of landingLabels) sprite.visible = visible;
   }
 
   function setPov(id) {
@@ -813,7 +882,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       exitPov();
       return;
     }
-    if (!machines[id]) return;
+    if (!machines[id] && !trucks[id]) return;
     if (!povId) {
       povOrbitSnapshot = {
         position: camera.position.clone(),
@@ -834,9 +903,9 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       setAllPovLabelsVisible(false);
       setRetentionOverlayMode('pov');
     }
-    if (povId) setMachinePovVisibility(povId, false);
+    if (povId && machines[povId]) setMachinePovVisibility(povId, false);
     povId = id;
-    setMachinePovVisibility(id, true);
+    if (machines[id]) setMachinePovVisibility(id, true);
     setAllPovLabelsVisible(false);
     const rig = operatorRig(id);
     if (!rig.some((preset) => preset.id === povPreset)) povPreset = rig[0]?.id || 'seat';
@@ -857,7 +926,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   function exitPov() {
     if (!povId && !povOrbitSnapshot) return;
     if (document.pointerLockElement === renderer.domElement) document.exitPointerLock();
-    if (povId) setMachinePovVisibility(povId, false);
+    if (povId && machines[povId]) setMachinePovVisibility(povId, false);
     povId = null;
     povDragging = false;
     povLastPointer = null;
@@ -865,6 +934,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     scene.remove(camera);
     setAllPovLabelsVisible(true);
     for (const group of Object.values(machines)) group.visible = true;
+    updateDecks(currentTime);
     updateTrees(currentTime);
     updateTrucks(currentTime);
     const snapshot = povOrbitSnapshot;
@@ -886,7 +956,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   }
 
   function cyclePov(direction) {
-    const ids = Object.keys(machines).sort();
+    const ids = [...Object.keys(machines), ...Object.keys(trucks)].sort();
     if (!ids.length) return;
     const index = ids.indexOf(povId);
     const next = index < 0
@@ -1436,7 +1506,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       group.scale.set(1, scaleY, 1);
       // The label lives in world space, not inside the scaled deck group, so
       // its text aspect ratio and font size never change with deck volume.
-      group.userData.label.sprite.visible = group.visible;
+      group.userData.label.sprite.visible = group.visible && !povId;
       group.userData.label.sprite.position.set(group.position.x, group.position.y + 12, group.position.z);
       const rounded = volume < 10 ? volume.toFixed(1) : volume.toFixed(0);
       if (rounded !== group.userData.lastVolume) {
@@ -1565,9 +1635,10 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       group.visible = visible;
       if (visible) {
         group.position.set(x, sampleHeight(x, y) + 1.8, y);
-        group.rotation.y = heading;
+        group.rotation.y = -heading - Math.PI / 2;
       }
       group.userData.status = status;
+      group.userData.heading = heading;
     }
   }
 
@@ -1635,13 +1706,12 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       mesh.renderOrder = 100;
       group.add(mesh);
     };
-    addBar(2.6, 0.08, 0.08, 0, 0.7, -1.1);
-    addBar(0.08, 1.4, 0.08, -1.03, 0, -1.1);
-    addBar(0.08, 1.4, 0.08, 1.03, 0, -1.1);
-    addBar(2.1, 0.12, 0.08, 0, 0.33, -1.1, trim);
-    addBar(2.3, 0.22, 0.25, 0, -0.66, -1.0);
-    addBar(0.3, 0.18, 0.06, -1.16, 0.15, -1.1, mirror);
-    addBar(0.3, 0.18, 0.06, 1.16, 0.15, -1.1, mirror);
+    addBar(2.6, 0.08, 0.08, 0, 0.64, -1.1);
+    addBar(0.08, 1.4, 0.08, -0.95, 0, -1.1);
+    addBar(0.08, 1.4, 0.08, 0.95, 0, -1.1);
+    addBar(2.3, 0.22, 0.25, 0, -0.7, -1.0);
+    addBar(0.3, 0.18, 0.06, -1.05, 0.15, -1.1, mirror);
+    addBar(0.3, 0.18, 0.06, 1.05, 0.15, -1.1, mirror);
     return group;
   }
 
@@ -1911,9 +1981,9 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
     sprite.position.set(0, 7, 0); sprite.scale.set(8, 2, 1);
     group.add(sprite);
-    const home = [landing.x + (index - 1) * 8, landing.y];
+    const home = [landing.x + (index - 1) * 12, landing.y];
     group.scale.setScalar(1.7);
-    group.userData = { home, cargo, status: 'waiting', id, queueIndex: index };
+    group.userData = { home, cargo, status: 'waiting', id, queueIndex: index, sprite };
     group.position.set(home[0], sampleHeight(home[0], home[1]) + 1.8, home[1]);
     scene.add(group);
     trucks[id] = group;
@@ -2257,6 +2327,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       const label = makeTextSprite(index === 0 ? 'landing' : String(choice.id || `landing ${index + 1}`), 2.2);
       label.sprite.position.set(lx, sampleHeight(lx, ly) + (index === 0 ? 16 : 12), ly);
       scene.add(label.sprite);
+      landingLabels.push(label.sprite);
     });
   }
 
@@ -2345,6 +2416,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
 
   function load(payloadArg) {
     const { sceneUrl, events, residual } = payloadArg;
+    landingLabels = [];
     normalizeLanding(events);
     normalizeFellerSwath(events);
     const runKey = `${sceneUrl}`;
@@ -2701,6 +2773,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     deckVolumes: () => (deckCurves ? deckVolumesAt(currentTime) : { unprocessed: 0, processed: 0 }),
     truckStatuses: () => Object.entries(trucks).map(([id, group]) => `${id} ${group.userData.status || 'waiting'}`),
     machineStates,
+    truckIds: () => Object.keys(trucks).sort(),
     setPov,
     cyclePov,
     povMachine: () => povId,

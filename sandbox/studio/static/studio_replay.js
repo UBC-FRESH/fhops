@@ -1,4 +1,4 @@
-import { createViewer } from "../lab/viewer.js?v=20261114l";
+import { createViewer } from "../lab/viewer.js?v=20261114m";
 
 const API = new URL("api/", location.href).pathname;
 const params = new URLSearchParams(location.search);
@@ -79,7 +79,8 @@ function syncPovUi(id, preset) {
     if (!timelinePanel.hidden) drawTimeline();
     return;
   }
-  const spec = events?.machines?.[id] || {};
+  const spec = events?.machines?.[id]
+    || (viewer.truckIds().includes(id) ? { type: "truck" } : {});
   povTitle.textContent = `Operator view · ${id} · ${spec.type || "machine"}`;
   povState.textContent = "idle";
   povHint.hidden = false;
@@ -129,7 +130,8 @@ const viewer = createViewer(scene, {
       if (node) node.textContent = state;
     }
     if (povMachineId) {
-      povState.textContent = states[povMachineId] || "idle";
+      const povStateValue = viewer.operatorState();
+      povState.textContent = povStateValue?.state || states[povMachineId] || "idle";
       updateOperatorHud();
     }
     if (!timelinePanel.hidden) drawTimeline();
@@ -436,6 +438,9 @@ async function load() {
   povSelect.append(new Option("overview (orbit)", ""));
   for (const [id, spec] of Object.entries(events.machines || {})) {
     povSelect.append(new Option(`${id} · ${spec.type}`, id));
+  }
+  for (const id of viewer.truckIds()) {
+    povSelect.append(new Option(`${id} · truck`, id));
   }
   syncPovUi(viewer.povMachine(), viewer.povPreset());
   clock.textContent = `${events.block_id || "Edited scenario"} · ${events.tree_count || 0} trees · ${(Number(events.processed_volume_m3) || 0).toFixed(0)} m³`;
