@@ -1488,6 +1488,7 @@ def simulate_ground_system(
     # reservation, not a visual push: skidders wait in the arrival queue and
     # loader/truck operations do not overlap in the same landing space.
     landing_slots: dict[str, float] = {landing.landing_id: 0.0 for landing in landing_choices}
+    feller_reservations = _feller_travel_reservations(events, feller_machine_id)
     loads, skidder_warnings = _simulate_skidders(
         events,
         bunches,
@@ -1501,6 +1502,7 @@ def simulate_ground_system(
         landing_slots=landing_slots,
         landing_queue=landing_queue,
         travel_queue=travel_queue,
+        extra_reservations=feller_reservations,
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
@@ -1892,6 +1894,28 @@ def _build_bunches(
     return bunches
 
 
+def _feller_travel_reservations(
+    events: Sequence[GroundSystemEvent],
+    feller_machine_id: str,
+) -> list[_TravelReservation]:
+    """Reserve the feller's travel path and processing work zone."""
+    reservations: list[_TravelReservation] = []
+    for event in events:
+        if event.machine != feller_machine_id:
+            continue
+        if event.type == "travel":
+            points = _travel_samples(((event.x0, event.y0), (event.x1, event.y1)))
+        elif event.type == "process":
+            points = ((event.x0, event.y0),)
+        else:
+            continue
+        if points:
+            reservations.append(
+                _TravelReservation(event.machine, event.start_s, event.end_s, points)
+            )
+    return reservations
+
+
 def _travel_samples(path: Sequence[Sequence[float]], step_m: float = 5.0) -> tuple[tuple[float, float], ...]:
     points: list[tuple[float, float]] = []
     if not path:
@@ -1981,9 +2005,10 @@ def _simulate_skidders(
     landing_slots: dict[str, float],
     landing_queue: bool = False,
     travel_queue: bool = False,
+    extra_reservations: Sequence[_TravelReservation] = (),
 ) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
-    travel_reservations: list[_TravelReservation] = []
+    travel_reservations: list[_TravelReservation] = list(extra_reservations)
     blocked: list[str] = []
     available = {machine: 0.0 for machine in skidder_ids}
     for bunch in bunches:
