@@ -35,6 +35,10 @@ const ROLE_LABELS = {
 };
 const MACHINE_OFFSETS = { H4: [12, 0], H5: [-12, 0], H6: [0, 12] };
 const SWATH_BAND_HEIGHT_M = 24;
+// A typical single-grip harvester boom reaches roughly 9 m from the machine.
+// The rig below is ~4.1 m long at unit scale, so scale it to the working reach.
+const HARVESTER_BOOM_REACH_M = 8.5;
+const HARVESTER_BOOM_VISUAL_SCALE = 1.75;
 
 const OPERATOR_RIGS = {
   feller_buncher: [
@@ -1939,6 +1943,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       // upper stick, and a head that can slew toward the active stem.
       const boom = new THREE.Group();
       boom.position.set(0.9, 2.55, 0);
+      boom.scale.setScalar(HARVESTER_BOOM_VISUAL_SCALE);
       const lower = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.38, 0.42), baseMat);
       lower.position.x = 1.05;
       boom.add(lower);
@@ -2170,8 +2175,25 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       let y = point.y;
       const offset = MACHINE_OFFSETS[id] || [0, 0];
       x += offset[0]; y += offset[1];
-      group.position.set(x, sampleHeight(x, y) + 0.15, y);
       const segmentType = String(segment.type || '');
+      const machineType = String(group.userData.type || '');
+      const workingTree = activeTreePoint(segment);
+      if (
+        workingTree
+        && ['process', 'fell', 'fall'].includes(segmentType)
+        && (machineType.includes('feller') || machineType.includes('harvester'))
+      ) {
+        // Keep the head within the physical boom reach instead of letting the
+        // machine stop at a path endpoint or a fixed offset far from the stem.
+        const dx = x - workingTree.x;
+        const dz = y - workingTree.z;
+        const distance = Math.hypot(dx, dz);
+        if (distance > HARVESTER_BOOM_REACH_M) {
+          x = workingTree.x + (dx / distance) * HARVESTER_BOOM_REACH_M;
+          y = workingTree.z + (dz / distance) * HARVESTER_BOOM_REACH_M;
+        }
+      }
+      group.position.set(x, sampleHeight(x, y) + 0.15, y);
       const heading = segmentType.startsWith('travel')
         ? point.heading
         : (machineViewHeading(id, state) ?? point.heading ?? 0);
