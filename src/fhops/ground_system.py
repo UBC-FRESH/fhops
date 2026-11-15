@@ -1267,7 +1267,7 @@ def simulate_ground_system(
         "passing_bay_nodes": [[round(x, 3), round(y, 3)] for x, y in passing_bay_nodes],
         "passing_bay_spacing_m": passing_bay_spacing_m,
         "edge_capacity": edge_capacity,
-        "road_edges": len(router.road_edges()),
+        "road_edges": len(router.road_edges(passing_bay_spacing_m)),
         "trail_headway_s": trail_headway_s,
         "landing_queue": landing_queue,
         "travel_queue": travel_queue,
@@ -1536,7 +1536,7 @@ def simulate_ground_system(
         passing_bays=router.passing_bay_nodes(passing_bay_spacing_m),
         passing_bay_spacing_m=passing_bay_spacing_m,
         edge_capacity=edge_capacity,
-        graph_edges=router.road_edges(),
+        graph_edges=router.road_edges(passing_bay_spacing_m),
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []

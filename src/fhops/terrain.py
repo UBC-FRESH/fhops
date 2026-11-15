@@ -160,10 +160,12 @@ class TerrainRouter:
                 return ()
         return ()
 
-    def road_edges(self) -> tuple[tuple[tuple[float, float], tuple[float, float]], ...]:
-        """Return the actual road/trail graph edges as coordinate pairs."""
+    def road_edges(self, spacing_m: float = 150.0) -> tuple[tuple[tuple[float, float], tuple[float, float]], ...]:
+        """Return actual road/trail edges, split at passing-bay nodes."""
+        if self._road is None:
+            return ()
         if isinstance(self._road, _RoadNetwork):
-            edges = []
+            base = []
             seen = set()
             for identifier, neighbors in self._road._adjacency.items():
                 ax, ay = self._road._coords[identifier]
@@ -174,19 +176,34 @@ class TerrainRouter:
                     key = tuple(sorted(((round(ax, 2), round(ay, 2)), (round(bx, 2), round(by, 2)))))
                     if key not in seen:
                         seen.add(key)
-                        edges.append(key)
-            return tuple(edges)
-        if self._road is not None:
-            try:
-                coords = [(float(x), float(y)) for x, y in self._road.coords]
-            except Exception:
-                return ()
-            return tuple(
-                tuple(sorted(((round(coords[index][0], 2), round(coords[index][1], 2)),
-                              (round(coords[index + 1][0], 2), round(coords[index + 1][1], 2)))))
-                for index in range(len(coords) - 1)
-            )
-        return ()
+                        base.append(key)
+            return tuple(base)
+        try:
+            coords = [(float(x), float(y)) for x, y in self._road.coords]
+        except Exception:
+            return ()
+        bays = list(self.passing_bay_nodes(spacing_m))
+        edges = []
+        seen = set()
+        for (x0, y0), (x1, y1) in zip(coords[:-1], coords[1:], strict=True):
+            dx, dy = x1 - x0, y1 - y0
+            length_sq = dx * dx + dy * dy
+            if length_sq < 1e-9:
+                continue
+            points = [(x0, y0), (x1, y1)]
+            for bx, by in bays:
+                u = ((bx - x0) * dx + (by - y0) * dy) / length_sq
+                if 0.001 < u < 0.999:
+                    px, py = x0 + dx * u, y0 + dy * u
+                    if math.hypot(px - bx, py - by) <= 1.0:
+                        points.append((bx, by))
+            points.sort(key=lambda point: (point[0] - x0) * dx + (point[1] - y0) * dy)
+            for a, b in zip(points[:-1], points[1:], strict=True):
+                key = tuple(sorted(((round(a[0], 2), round(a[1], 2)), (round(b[0], 2), round(b[1], 2)))))
+                if key not in seen:
+                    seen.add(key)
+                    edges.append(key)
+        return tuple(edges)
 
     def passing_bay_nodes(self, spacing_m: float = 150.0) -> tuple[tuple[float, float], ...]:
         """Return trail nodes plus regularly spaced passing bays along long edges."""
