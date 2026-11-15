@@ -240,6 +240,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let treeNodes = new Map();
   let treeFellEvents = new Map();
   let treeHideTimes = new Map();
+  let treePickupTimes = new Map();
   let logBatches = [];
   let buckingStreams = [];
   let harvesterStreams = [];
@@ -309,6 +310,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     treeNodes = new Map();
     treeFellEvents = new Map();
     treeHideTimes = new Map();
+    treePickupTimes = new Map();
     logBatches = [];
     buckingStreams = [];
     harvesterStreams = [];
@@ -1187,6 +1189,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   function buildTreeLifecycle(events) {
     treeFellEvents = new Map();
     treeHideTimes = new Map();
+    treePickupTimes = new Map();
     const pickup = new Map();
     const processing = new Map();
     for (const item of events.timeline || []) {
@@ -1224,12 +1227,17 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         }
       }
     }
+    for (const [treeId, pickupEvent] of pickup) {
+      treePickupTimes.set(treeId, Number(pickupEvent.start_s));
+    }
     for (const [treeId, fell] of treeFellEvents) {
       let hide = Number.POSITIVE_INFINITY;
       const pickupEvent = pickup.get(treeId);
       const processEvent = processing.get(treeId);
       if (pickupEvent) hide = Math.min(hide, Number(pickupEvent.start_s));
       if (processEvent) hide = Math.min(hide, Number(processEvent.start_s));
+      const fellType = machineSpecs[fell.machine]?.type || '';
+      if (fellType.includes('harvester')) hide = Math.min(hide, Number(fell.end_s));
       if (Number.isFinite(hide)) treeHideTimes.set(treeId, hide);
     }
   }
@@ -1559,7 +1567,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         start,
         end,
         pickup: Math.max(
-          Number(treeHideTimes.get(String(tree.tree_id)) ?? Number.POSITIVE_INFINITY),
+          Number(treePickupTimes.get(String(tree.tree_id)) ?? Number.POSITIVE_INFINITY),
           end + 2,
         ),
       });
