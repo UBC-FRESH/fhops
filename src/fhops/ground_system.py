@@ -784,6 +784,7 @@ def simulate_ground_system(
     path_clearance_m: float = 0.0,
     trail_headway_s: float = 120.0,
     passing_bay_spacing_m: float = 150.0,
+    edge_capacity: int = 1,
     dem_path: str | Path | None = None,
     road_path: str | Path | None = None,
     terrain_sample_step_m: float = 10.0,
@@ -1264,6 +1265,7 @@ def simulate_ground_system(
         "passing_bays": len(passing_bay_nodes),
         "passing_bay_nodes": [[round(x, 3), round(y, 3)] for x, y in passing_bay_nodes],
         "passing_bay_spacing_m": passing_bay_spacing_m,
+        "edge_capacity": edge_capacity,
         "trail_headway_s": trail_headway_s,
         "landing_queue": landing_queue,
         "travel_queue": travel_queue,
@@ -1531,6 +1533,7 @@ def simulate_ground_system(
         trail_headway_s=trail_headway_s,
         passing_bays=router.passing_bay_nodes(passing_bay_spacing_m),
         passing_bay_spacing_m=passing_bay_spacing_m,
+        edge_capacity=edge_capacity,
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
@@ -2136,9 +2139,11 @@ def _travel_conflict(
     direction: tuple[float, float] = (0.0, 0.0),
     headway_s: float = 120.0,
     edges: frozenset[tuple[tuple[float, float], tuple[float, float]]] = frozenset(),
+    edge_capacity: int = 1,
 ) -> float | None:
     """Return the end time of the first conflicting reservation, if any."""
     conflict_end: float | None = None
+    active_on_shared_edge = 0
     for reservation in reservations:
         if reservation.machine == machine:
             continue
@@ -2151,7 +2156,12 @@ def _travel_conflict(
             # Following traffic on a trail with a safe time headway does not
             # need to wait for the leader's entire trip to finish.
             continue
-        close = bool(edges and reservation.edges and not edges.isdisjoint(reservation.edges))
+        shared_edge = bool(edges and reservation.edges and not edges.isdisjoint(reservation.edges))
+        if shared_edge:
+            active_on_shared_edge += 1
+            if active_on_shared_edge < edge_capacity:
+                continue
+        close = shared_edge
         if not close:
             for x0, y0 in points:
                 for x1, y1 in reservation.points:
@@ -2177,6 +2187,7 @@ def _schedule_travel(
     clearance_m: float = 7.0,
     queue: bool = True,
     headway_s: float = 120.0,
+    edge_capacity: int = 1,
 ) -> tuple[float, float]:
     """Schedule a travel event and reserve its corridor when queued."""
     points = _travel_samples(path)
@@ -2299,6 +2310,7 @@ def _schedule_travel_parts(
     queue: bool = True,
     headway_s: float = 120.0,
     passing_bays: Sequence[tuple[float, float]] = (),
+    edge_capacity: int = 1,
 ) -> list[dict[str, Any]]:
     """Schedule one travel leg, splitting at a midpoint passing bay on conflict."""
     if not queue or not path:
@@ -2309,7 +2321,7 @@ def _schedule_travel_parts(
     edges = _travel_edges(points)
     full_start, full_end = _schedule_task(calendar, start_s, duration_s, machine)
     conflict_end = _travel_conflict(
-        reservations, machine, full_start, full_end, points, clearance_m, direction, headway_s, edges
+        reservations, machine, full_start, full_end, points, clearance_m, direction, headway_s, edges, edge_capacity
     )
     if conflict_end is None:
         reservations.append(_TravelReservation(machine, full_start, full_end, points, direction, edges))
@@ -2331,6 +2343,7 @@ def _schedule_travel_parts(
             first_conflict = _travel_conflict(
                 reservations, machine, first_start, first_end, first_points,
                 clearance_m, _path_direction(first_points), headway_s,
+                _travel_edges(first_points), edge_capacity,
             )
         else:
             first_conflict = conflict_end
@@ -2341,7 +2354,7 @@ def _schedule_travel_parts(
             )
             second_conflict = _travel_conflict(
                 reservations, machine, second_start, second_end, second_points,
-                clearance_m, _path_direction(second_points), headway_s, _travel_edges(second_points),
+                clearance_m, _path_direction(second_points), headway_s, _travel_edges(second_points), edge_capacity,
             )
             if second_conflict is None:
                 reservations.append(
@@ -2378,6 +2391,7 @@ def _schedule_travel_parts(
     s, e = _schedule_travel(
         calendar, start_s, duration_s, machine, path, reservations,
         clearance_m=clearance_m, queue=queue, headway_s=headway_s,
+        edge_capacity=edge_capacity,
     )
     return [{"start": s, "end": e, "path": list(path), "distance": _path_length(path)}]
 
@@ -2402,6 +2416,7 @@ def _simulate_skidders(
     trail_headway_s: float = 120.0,
     passing_bays: Sequence[tuple[float, float]] = (),
     passing_bay_spacing_m: float = 150.0,
+    edge_capacity: int = 1,
 ) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
     travel_reservations: list[_TravelReservation] = list(extra_reservations)
@@ -2501,6 +2516,7 @@ def _simulate_skidders(
             queue=travel_queue,
             headway_s=trail_headway_s,
             passing_bays=route_bay_targets,
+            edge_capacity=edge_capacity,
         )
         _append_wait_event(
             events, machine, empty_requested, empty_parts[0]["start"],
@@ -2558,6 +2574,7 @@ def _simulate_skidders(
             queue=travel_queue,
             headway_s=trail_headway_s,
             passing_bays=route_bay_targets,
+            edge_capacity=edge_capacity,
         )
         for part in loaded_parts:
             if part.get("wait_start") is not None:

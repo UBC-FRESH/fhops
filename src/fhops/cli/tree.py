@@ -655,6 +655,11 @@ def tree_system(
         "--passing-bay-spacing",
         help="Spacing in metres for additional passing bays along long trail edges.",
     ),
+    edge_capacity: int = typer.Option(
+        1,
+        "--edge-capacity",
+        help="Maximum simultaneous travel reservations on a shared trail edge.",
+    ),
     landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
     landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
     landing: list[str] | None = typer.Option(
@@ -915,6 +920,7 @@ def tree_system(
             path_clearance_m=path_clearance,
             trail_headway_s=trail_headway,
             passing_bay_spacing_m=passing_bay_spacing,
+            edge_capacity=edge_capacity,
             dem_path=dem,
             road_path=road,
             terrain_sample_step_m=terrain_step,
