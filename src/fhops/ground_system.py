@@ -1864,6 +1864,38 @@ def _schedule_landing_task(
     return start, end
 
 
+def _append_wait_event(
+    events: list[GroundSystemEvent],
+    machine: str,
+    start_s: float,
+    end_s: float,
+    x: float,
+    y: float,
+    status: str,
+    *,
+    volume_m3: float = 0.0,
+    logs: int = 0,
+) -> None:
+    """Record a visible traffic/shift wait in the machine timeline."""
+    if end_s - start_s <= 0.5:
+        return
+    events.append(
+        GroundSystemEvent(
+            machine=machine,
+            type="wait",
+            start_s=start_s,
+            end_s=end_s,
+            x0=x,
+            y0=y,
+            x1=x,
+            y1=y,
+            volume_m3=volume_m3,
+            logs=logs,
+            status=status,
+        )
+    )
+
+
 def _build_bunches(
     trees: list[GroundSystemTree],
     target_volume_m3: float,
@@ -2167,6 +2199,7 @@ def _simulate_skidders(
             pieces = len(bunch.tree_ids)
             load_time = spec.load_fixed_s + spec.load_per_log_s * pieces
             unload_time = spec.unload_fixed_s + spec.unload_per_log_s * pieces
+        empty_requested = empty_start
         empty_start, empty_end = _schedule_travel(
             calendar,
             empty_start,
@@ -2175,6 +2208,10 @@ def _simulate_skidders(
             route.path,
             travel_reservations,
             queue=travel_queue,
+        )
+        _append_wait_event(
+            events, machine, empty_requested, empty_start,
+            landing.x_m, landing.y_m, "waiting for travel corridor",
         )
         events.append(
             GroundSystemEvent(
@@ -2243,6 +2280,11 @@ def _simulate_skidders(
             )
         else:
             unload_start, unload_end = _schedule_task(calendar, loaded_end, unload_time, machine)
+        _append_wait_event(
+            events, machine, loaded_end, unload_start,
+            landing.x_m, landing.y_m, "waiting for landing slot",
+            volume_m3=bunch.volume_m3, logs=bunch.logs,
+        )
         events.append(
             GroundSystemEvent(
                 machine=machine,
