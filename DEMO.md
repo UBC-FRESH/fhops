@@ -27,6 +27,7 @@ It contains five model instances:
 ```text
 examples/demo_runs/gavin-full-estate
 examples/demo_runs/gavin-optimized
+examples/demo_runs/gavin-policy
 examples/demo_runs/knife-structural
 examples/demo_runs/mkrf-full-estate
 examples/demo_runs/tfl6-lidar-demo
@@ -37,9 +38,14 @@ baseline handoff: 2,907 blocks, 5,663.66 ha, 10,113 harvest events over 300 year
 of harvest, and the full growing-stock/target evidence surface. No public Gavin net-revenue
 account is present, so none is fabricated.
 
-`gavin-optimized` is a draft WS4 simulated-annealing optimization against the Gavin LTSY
-targets. It schedules 2,863 blocks, produces 5.40 million m³, ends at 631,180 m³ growing stock,
-and reports 13 targets met, 37 below, and 11 above. It is labeled a draft, not an approved plan.
+`gavin-optimized` is a draft WS4 simulated-annealing optimization against the original Gavin
+LTSY targets. It schedules 2,863 blocks, produces 5.40 million m³, ends at 631,180 m³ growing
+stock, and reports 13 targets met, 37 below, and 11 above.
+
+`gavin-policy` is the decision-grade public policy screen: 174,000 m³/period floor, 600,000 m³
+growing-stock floor, ±4% even-flow. It schedules 2,812 blocks, produces 5.39 million m³, ends at
+610,004 m³, and **meets all 61 targets**. It remains a public scenario choice, not an approved
+management plan.
 
 `knife-structural` is a structural full-block Knife Creek pilot built from the existing
 160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.

@@ -32,6 +32,11 @@ MODEL_INSTANCES = {
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
         "map_query": "period=P00",
     },
+    "gavin-policy": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
     "mkrf-full-estate": {
         "domain": "tactical_operational",
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
@@ -211,10 +216,20 @@ def test_gavin_optimized_draft_is_complete(client: TestClient) -> None:
 
 
 def test_afrf_finance_envelope_is_present_and_ordered(client: TestClient) -> None:
-    for run_id in ("gavin-full-estate", "gavin-optimized", "knife-structural"):
+    for run_id in ("gavin-full-estate", "gavin-optimized", "gavin-policy", "knife-structural"):
         kpis = client.get(f"/api/runs/{run_id}/kpis").json()
         low = kpis["finance_annual_net_revenue_cad_low"]
         base = kpis["finance_annual_net_revenue_cad_base"]
         high = kpis["finance_annual_net_revenue_cad_high"]
         assert 0 < low < base < high
         assert "not a budget forecast" in kpis["finance_basis"]
+
+
+def test_gavin_policy_meets_all_public_targets(client: TestClient) -> None:
+    _model_instance(client, "gavin-policy")
+    kpis = client.get("/api/runs/gavin-policy/kpis").json()
+    assert kpis["targets_met"] == 61
+    assert kpis["targets_below"] == 0
+    assert kpis["targets_above"] == 0
+    assert kpis["incumbent_objective"] == 0.0
+    assert kpis["total_production_m3"] > 5_000_000

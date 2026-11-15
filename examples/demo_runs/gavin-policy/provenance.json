@@ -1,0 +1,9 @@
+{
+  "instance": "/srv/shared-data/gep/ws4/tmp/afrf-gavin-policy-v2",
+  "targets": "174000 m3/period floor; 600000 m3 growing stock at period 30; \u00b14% even-flow",
+  "iterations": 600,
+  "caveats": [
+    "Draft policy screen; not an approved management plan.",
+    "Public AFRF net-revenue envelope only; not a budget forecast."
+  ]
+}
