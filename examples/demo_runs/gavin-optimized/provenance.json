@@ -1,0 +1,11 @@
+{
+  "source": "/srv/shared-data/gep/ws4/tmp/afrf-gavin-opt-v2",
+  "instance": "gavin-lake",
+  "targets": "ws4/targets_gavin_ltsy.yaml",
+  "crs": "EPSG:3005",
+  "caveats": [
+    "Draft optimization; not an approved management plan.",
+    "No public Gavin financial account; none fabricated.",
+    "Target status is preserved from WS4 report_targets.csv."
+  ]
+}

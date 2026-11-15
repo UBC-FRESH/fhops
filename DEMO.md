@@ -22,10 +22,11 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains four model instances:
+It contains five model instances:
 
 ```text
 examples/demo_runs/gavin-full-estate
+examples/demo_runs/gavin-optimized
 examples/demo_runs/knife-structural
 examples/demo_runs/mkrf-full-estate
 examples/demo_runs/tfl6-lidar-demo
@@ -35,6 +36,10 @@ examples/demo_runs/tfl6-lidar-demo
 baseline handoff: 2,907 blocks, 5,663.66 ha, 10,113 harvest events over 300 years, 5.66 million m³
 of harvest, and the full growing-stock/target evidence surface. No public Gavin net-revenue
 account is present, so none is fabricated.
+
+`gavin-optimized` is a draft WS4 simulated-annealing optimization against the Gavin LTSY
+targets. It schedules 2,863 blocks, produces 5.40 million m³, ends at 631,180 m³ growing stock,
+and reports 13 targets met, 37 below, and 11 above. It is labeled a draft, not an approved plan.
 
 `knife-structural` is a structural full-block Knife Creek pilot built from the existing
 160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.

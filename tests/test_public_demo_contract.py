@@ -27,6 +27,11 @@ MODEL_INSTANCES = {
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
         "map_query": "period=P00",
     },
+    "gavin-optimized": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
     "mkrf-full-estate": {
         "domain": "tactical_operational",
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
@@ -188,3 +193,18 @@ def test_knife_structural_covers_the_whole_block(client: TestClient) -> None:
         if feature.get("properties", {}).get("layer") == "blocks"
     ]
     assert len(block_features) >= 160
+
+
+def test_gavin_optimized_draft_is_complete(client: TestClient) -> None:
+    _model_instance(client, "gavin-optimized")
+    kpis = client.get("/api/runs/gavin-optimized/kpis").json()
+    assert kpis["blocks_total"] >= 2_900
+    assert kpis["total_production_m3"] > 5_000_000
+    assert kpis["targets_met"] + kpis["targets_below"] + kpis["targets_above"] == 61
+    map_payload = client.get("/api/runs/gavin-optimized/map?period=P00").json()
+    block_features = [
+        feature
+        for feature in map_payload.get("features", [])
+        if feature.get("properties", {}).get("layer") == "blocks"
+    ]
+    assert len(block_features) >= 2_900

@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "gavin-optimized",
+  "domain": "tactical_operational",
+  "run_type": "tactical_operational",
+  "status": "optimized-draft",
+  "files": {
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "harvest_decisions": "harvest_decisions.csv",
+    "production": "production.csv",
+    "tactical_summary": "tactical_summary.json"
+  },
+  "warnings": [],
+  "generated_at": "2026-11-15T21:21:50.015958+00:00",
+  "command": "WS4 Gavin Lake LTSY target optimization",
+  "scenario": "scenario.yaml",
+  "solver": "ws4-sa"
+}
