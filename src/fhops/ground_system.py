@@ -2180,6 +2180,44 @@ def _schedule_travel(
     return _schedule_task(calendar, candidate, duration_s, machine)
 
 
+def _snap_path_to_bays(
+    path: Sequence[Sequence[float]],
+    passing_bays: Sequence[tuple[float, float]],
+    max_distance_m: float = 30.0,
+) -> list[list[float]]:
+    """Insert nearby trail passing bays into route geometry for explicit use."""
+    if not passing_bays:
+        return [[float(point[0]), float(point[1])] for point in path]
+    points = [[float(point[0]), float(point[1])] for point in path]
+    for bx, by in passing_bays:
+        best: tuple[float, float, int, float] | None = None
+        for index in range(len(points) - 1):
+            ax, ay = points[index]
+            cx, cy = points[index + 1]
+            dx, dy = cx - ax, cy - ay
+            length_sq = dx * dx + dy * dy
+            if length_sq < 1e-9:
+                continue
+            u = max(0.0, min(1.0, ((bx - ax) * dx + (by - ay) * dy) / length_sq))
+            px, py = ax + dx * u, ay + dy * u
+            distance = math.hypot(bx - px, by - py)
+            if best is None or distance < best[0]:
+                best = (distance, u, index, length_sq)
+        if best is None or best[0] > max_distance_m:
+            continue
+        _, u, index, _ = best
+        point = [float(bx), float(by)]
+        if u <= 0.02:
+            insert_at = index
+        elif u >= 0.98:
+            insert_at = index + 1
+        else:
+            insert_at = index + 1
+        if math.hypot(points[insert_at][0] - bx, points[insert_at][1] - by) > 1.0:
+            points.insert(insert_at, point)
+    return points
+
+
 def _split_path_at_midpoint(
     path: Sequence[Sequence[float]],
     passing_bays: Sequence[tuple[float, float]] = (),
@@ -2200,7 +2238,10 @@ def _split_path_at_midpoint(
         previous = points[index - 1]
         walked += math.hypot(point[0] - previous[0], point[1] - previous[1])
         distance = abs(walked - target)
-        if index < len(points) - 1 and distance < best_distance:
+        near_bay = not passing_bays or any(
+            math.hypot(point[0] - x, point[1] - y) <= 15.0 for x, y in passing_bays
+        )
+        if index < len(points) - 1 and near_bay and distance < best_distance:
             best_index = index
             best_distance = distance
     if best_index is None:
@@ -2347,7 +2388,8 @@ def _simulate_skidders(
         travel_path = _clear_travel_path(
             route.path, tree_obstacles, start, path_clearance_m
         )
-        distance = _path_length(travel_path) if path_clearance_m > 0 else route.distance_m
+        travel_path = _snap_path_to_bays(travel_path, passing_bays)
+        distance = _path_length(travel_path)
         empty_start = start
         if spec.forwarder_model or spec.productivity_m3_per_smh is not None:
             productivity = forwarder_productivity_for_distance(spec, distance)
