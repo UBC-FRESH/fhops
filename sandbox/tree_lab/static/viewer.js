@@ -867,6 +867,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       ) > otherDistance;
     }
     updateTrucks(currentTime);
+    resolveSceneCollisions();
     const truckDistance = seat ? 35 : 15;
     for (const [truckId, truck] of Object.entries(trucks)) {
       if (truckId === povId) continue;
