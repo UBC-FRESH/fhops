@@ -2179,16 +2179,23 @@ def _split_path_at_midpoint(path: Sequence[Sequence[float]]) -> tuple[list[list[
         return None
     target = total * 0.5
     walked = 0.0
-    for index in range(len(points) - 1):
-        ax, ay = points[index]
-        bx, by = points[index + 1]
-        segment = math.hypot(bx - ax, by - ay)
-        if walked + segment >= target:
-            u = 0.0 if segment <= 1e-9 else (target - walked) / segment
-            mid = [ax + (bx - ax) * u, ay + (by - ay) * u]
-            return points[: index + 1] + [mid], [mid] + points[index + 1 :], mid
-        walked += segment
-    return None
+    best_index = None
+    best_distance = float("inf")
+    for index, point in enumerate(points):
+        if index == 0:
+            continue
+        previous = points[index - 1]
+        walked += math.hypot(point[0] - previous[0], point[1] - previous[1])
+        distance = abs(walked - target)
+        if index < len(points) - 1 and distance < best_distance:
+            best_index = index
+            best_distance = distance
+    if best_index is None:
+        return None
+    # A passing bay must be a real route vertex/trail node, not an
+    # interpolated point in the middle of a segment.
+    bay = points[best_index]
+    return points[: best_index + 1], points[best_index:], bay
 
 
 def _schedule_travel_parts(
