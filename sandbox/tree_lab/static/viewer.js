@@ -2132,18 +2132,38 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         else if (working && (type.includes('skidder') || type.includes('forwarder') || type.includes('loader'))) elbowAngle = -0.28;
         rig.elbow.rotation.z = elbowAngle;
       }
-      if (fellerLike) {
-        const tree = active ? activeTreePoint(segment) : null;
+      const aimAt = (point, rate = 0.18) => {
         let desiredYaw = 0;
-        if (tree) {
-          const dx = tree.x - group.position.x;
-          const dz = tree.z - group.position.z;
+        if (point) {
+          const dx = point.x - group.position.x;
+          const dz = point.z - group.position.z;
           if (Math.hypot(dx, dz) > 1) {
-            const targetHeading = Math.atan2(dz, dx);
-            desiredYaw = -targetHeading - group.rotation.y;
+            desiredYaw = -Math.atan2(dz, dx) - group.rotation.y;
           }
         }
-        rig.boom.rotation.y += shortestAngleDelta(rig.boom.rotation.y, desiredYaw) * 0.22;
+        rig.boom.rotation.y += shortestAngleDelta(rig.boom.rotation.y, desiredYaw) * rate;
+      };
+      if (fellerLike) {
+        aimAt(active ? activeTreePoint(segment) : null, 0.22);
+      } else if (active && segmentType === 'load'
+        && (type.includes('skidder') || type.includes('forwarder'))) {
+        const ids = Array.isArray(segment.tree_ids) ? segment.tree_ids : [];
+        let sx = 0;
+        let sz = 0;
+        let count = 0;
+        for (const treeId of ids) {
+          const tree = eventTreesById.get(treeId);
+          if (!tree) continue;
+          sx += Number(tree.x);
+          sz += Number(tree.y);
+          count += 1;
+        }
+        aimAt(count ? { x: sx / count, z: sz / count } : null, 0.16);
+      } else if (type.includes('loader') && truckLoad) {
+        const truck = trucks[truckLoad.machine];
+        aimAt(truck ? { x: truck.position.x, z: truck.position.z } : null, 0.16);
+      } else if (rig.boom.rotation.y !== 0) {
+        aimAt(null, 0.12);
       }
     }
     if (rig.saw) {
