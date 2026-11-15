@@ -804,6 +804,7 @@ def simulate_ground_system(
     feller_reach_radius_m: float = DEFAULT_FELLER_REACH_M,
     feller_travel_speed_m_per_s: float = DEFAULT_FELLER_TRAVEL_SPEED_MPS,
     feller_processing_time_multiplier: float = 1.0,
+    harvester_model: str = "adv6n10",
     damage_downgrade_fraction: float = 0.0,
     processor_productivity_multiplier: float = 1.0,
     path_mode: Literal["nearest", "swath"] = "nearest",
@@ -1102,6 +1103,7 @@ def simulate_ground_system(
             travel_speed_m_per_s=feller_travel_speed_m_per_s,
             processing_time_multiplier=feller_processing_time_multiplier,
             processing_model=processing_model,
+            harvester_model=harvester_model,  # type: ignore[arg-type]
             path_mode=path_mode,
             obstacles=obstacles,
         )
@@ -1236,9 +1238,14 @@ def simulate_ground_system(
         "machine_id": feller_machine_id,
         "scenario_role": machines[feller_machine_id].role,
         "processing_model": processing_model,
-        "model": "ADV6N10 CTL harvester regression"
-        if processing_model == "harvester"
-        else "ADV6N10 whole-tree reference",
+        "harvester_model": harvester_model,
+        "model": (
+            "Kellogg & Bettinger (1994) harvester regression"
+            if harvester_model == "kellogg1994"
+            else "ADV6N10 CTL harvester regression"
+            if processing_model == "harvester"
+            else "ADV6N10 whole-tree reference"
+        ),
     }
     rate_provenance["damage"] = {
         "sawlog_to_pulp_fraction": damage_downgrade_fraction,

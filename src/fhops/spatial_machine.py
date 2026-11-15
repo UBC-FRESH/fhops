@@ -18,9 +18,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 
+from fhops.core.errors import FHOPSValueError
 from fhops.productivity.harvester_ctl import (
     ADV6N10HarvesterInputs,
     estimate_harvester_productivity_adv6n10,
+    estimate_harvester_productivity_kellogg1994,
 )
 from fhops.scenario.io import load_scenario
 from fhops.stem import StemInventory, StemModelError, StemResult, build_stem_inventory
@@ -286,6 +288,7 @@ def simulate_block(
     max_slope_percent: float = DEFAULT_MAX_SLOPE_PERCENT,
     processing_time_multiplier: float = 1.0,
     processing_model: Literal["feller_buncher", "harvester"] = "feller_buncher",
+    harvester_model: Literal["adv6n10", "kellogg1994"] = "adv6n10",
     path_mode: Literal["nearest", "swath"] = "nearest",
     swath_band_height_m: float | None = None,
     max_total_time_s: float | None = None,
@@ -391,6 +394,8 @@ def simulate_block(
         raise SpatialMachineError("path_mode must be 'nearest' or 'swath'.")
     if processing_model not in {"feller_buncher", "harvester"}:
         raise SpatialMachineError("processing_model must be 'feller_buncher' or 'harvester'.")
+    if harvester_model not in {"adv6n10", "kellogg1994"}:
+        raise SpatialMachineError("harvester_model must be 'adv6n10' or 'kellogg1994'.")
     ordered_trees = (
         _swath_order(
             trees,
@@ -420,6 +425,7 @@ def simulate_block(
         max_slope_percent=max_slope_percent,
         processing_time_multiplier=processing_time_multiplier,
         processing_model=processing_model,
+        harvester_model=harvester_model,
         max_total_time_s=max_total_time_s,
         target_merchantable_volume_m3=target_merchantable_volume_m3,
         obstacles=obstacles,
@@ -570,6 +576,7 @@ def _simulate_events(
     max_slope_percent: float,
     processing_time_multiplier: float,
     processing_model: Literal["feller_buncher", "harvester"],
+    harvester_model: Literal["adv6n10", "kellogg1994"] = "adv6n10",
     max_total_time_s: float | None,
     target_merchantable_volume_m3: float | None,
     obstacles: tuple[Obstacle, ...],
@@ -669,7 +676,7 @@ def _simulate_events(
         horizontal = math.hypot(target.x_m - current_x, target.y_m - current_y)
         slope = abs(terrain_z - current_z) / horizontal * 100.0 if horizontal > 0 else 0.0
         move_time = move_distance / travel_speed_m_per_s
-        processing_time = _processing_time(target, processing_model) * processing_time_multiplier
+        processing_time = _processing_time(target, processing_model, harvester_model) * processing_time_multiplier
         start_s = elapsed
         elapsed += move_time + processing_time
         events.append(
@@ -702,10 +709,21 @@ def _simulate_events(
 
 
 def _processing_time(
-    tree: StemResult, processing_model: Literal["feller_buncher", "harvester"]
+    tree: StemResult,
+    processing_model: Literal["feller_buncher", "harvester"],
+    harvester_model: Literal["adv6n10", "kellogg1994"] = "adv6n10",
 ) -> float:
     if tree.merchantable_volume_m3 <= 0:
         return 0.0
+    if harvester_model == "kellogg1994":
+        try:
+            productivity = estimate_harvester_productivity_kellogg1994(dbh_cm=tree.dbh_cm)
+        except FHOPSValueError:
+            # Kellogg is calibrated for 10–50 cm DBH. Keep the run usable for
+            # mixed-size stands by falling back to ADV6N10 outside that window.
+            pass
+        else:
+            return tree.merchantable_volume_m3 / productivity * 3600.0
     if processing_model == "harvester" and tree.logs:
         products_count = float(max(1, len(tree.logs)))
         mean_log_length = sum(log.length_m for log in tree.logs) / len(tree.logs)

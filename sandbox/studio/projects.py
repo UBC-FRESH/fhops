@@ -977,6 +977,7 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
     # The machine-spec multiplier is the base calibration; operator policy
     # composes on top of it in apply_operator_policies.
     args.pop("feller_productivity_multiplier", None)
+    args.pop("harvester_model", None)
     loader_specs: dict[str, dict[str, float]] = {}
     skidder_specs: dict[str, dict[str, float]] = {}
     processor_specs: dict[str, dict[str, float]] = {}
@@ -993,6 +994,8 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
                 value = float(spec["productivity_multiplier"])
                 if value > 0:
                     args["feller_productivity_multiplier"] = value
+            if spec.get("harvester_model") in {"adv6n10", "kellogg1994"}:
+                args["harvester_model"] = str(spec["harvester_model"])
         elif role == "loader":
             loader_specs[machine_id] = {
                 key: float(spec[key])

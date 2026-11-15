@@ -737,6 +737,11 @@ def tree_system(
         "--feller-productivity-multiplier",
         help="Multiplier on feller processing productivity (<1 slows selection-cut work).",
     ),
+    harvester_model: str = typer.Option(
+        "adv6n10",
+        "--harvester-model",
+        help="Harvester regression: adv6n10 (default) or kellogg1994.",
+    ),
     damage_downgrade_fraction: float = typer.Option(
         0.0,
         "--damage-downgrade-fraction",
@@ -846,6 +851,8 @@ def tree_system(
             )
         if feller_productivity_multiplier <= 0:
             raise GroundSystemError("feller-productivity-multiplier must be positive.")
+        if harvester_model not in {"adv6n10", "kellogg1994"}:
+            raise GroundSystemError("harvester-model must be adv6n10 or kellogg1994.")
         if processor_productivity_multiplier <= 0:
             raise GroundSystemError("processor-productivity-multiplier must be positive.")
         if not 0 <= damage_downgrade_fraction <= 1:
@@ -913,6 +920,7 @@ def tree_system(
             feller_reach_radius_m=feller_reach,
             feller_travel_speed_m_per_s=feller_speed,
             feller_processing_time_multiplier=1.0 / feller_productivity_multiplier,
+            harvester_model=harvester_model,
             damage_downgrade_fraction=damage_downgrade_fraction,
             processor_productivity_multiplier=processor_productivity_multiplier,
             path_mode=path_mode,  # type: ignore[arg-type]

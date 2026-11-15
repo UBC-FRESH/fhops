@@ -731,7 +731,8 @@ const SPEC_FIELDS = {
     ["productivity_multiplier", "productivity multiplier (1.0 = ADV6N10)"],
   ],
   harvester: [
-    ["productivity_multiplier", "productivity multiplier (1.0 = ADV6N10)"],
+    ["harvester_model", "harvester regression"],
+    ["productivity_multiplier", "productivity multiplier"],
   ],
   hand_faller: [
     ["productivity_multiplier", "productivity multiplier"],
@@ -823,20 +824,25 @@ function renderMachineSpecs() {
       const text = document.createElement("label");
       text.textContent = label;
       let input;
-      if (key === "forwarder_model") {
+      if (key === "forwarder_model" || key === "harvester_model") {
         input = document.createElement("select");
-        const options = [
-          ["", "default (Eriksson final felling)"],
-          ["eriksson-final-felling", "Eriksson final felling"],
-          ["eriksson-thinning", "Eriksson thinning"],
-          ["adv1n12-shortwood", "ADV1N12 shortwood"],
-          ["ghaffariyan-small", "Ghaffariyan small"],
-          ["ghaffariyan-large", "Ghaffariyan large"],
-        ];
+        const options = key === "harvester_model"
+          ? [
+            ["adv6n10", "ADV6N10 (default)"],
+            ["kellogg1994", "Kellogg & Bettinger 1994"],
+          ]
+          : [
+            ["", "default (Eriksson final felling)"],
+            ["eriksson-final-felling", "Eriksson final felling"],
+            ["eriksson-thinning", "Eriksson thinning"],
+            ["adv1n12-shortwood", "ADV1N12 shortwood"],
+            ["ghaffariyan-small", "Ghaffariyan small"],
+            ["ghaffariyan-large", "Ghaffariyan large"],
+          ];
         input.innerHTML = options.map(([value, textValue]) => (
           `<option value="${escapeHtml(value)}">${escapeHtml(textValue)}</option>`
         )).join("");
-        input.value = spec[key] || "";
+        input.value = spec[key] || (key === "harvester_model" ? "adv6n10" : "");
       } else {
         input = document.createElement("input");
         input.type = "number";
