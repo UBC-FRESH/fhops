@@ -101,3 +101,13 @@ cd /srv/shared-data/gep/ws4/fhops-public-demo
 
 The test checks the gateway doors, the console shell paths, all complete model-instance
 artifacts, full-estate coverage, scenario/geometry/map payloads, KPIs, playback, and LiDAR.
+
+## AFRF status
+
+Gavin Lake is now a runnable full-estate handoff (`gavin-full-estate`).
+
+Knife Creek is not added as a console run yet. The public Knife Creek instance has a
+160-block spatial dataset and FVS-BC state-transition evidence, but no approved
+full-block schedule or public financial-account surface. Adding a placeholder pulse
+schedule would misrepresent it as a management plan. The next Knife Creek gate is a
+reviewed full-block selection schedule and public account/provenance output.
