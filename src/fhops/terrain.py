@@ -96,6 +96,7 @@ class TerrainRouter:
         self.grade_speed_factor = grade_speed_factor
         self._dataset: Any | None = None
         self._road: Any | None = None
+        self._road_properties: dict[str, Any] = {}
         if self.dem_path is not None:
             try:
                 import rasterio
@@ -204,6 +205,18 @@ class TerrainRouter:
                     seen.add(key)
                     edges.append(key)
         return tuple(edges)
+
+    def road_edge_capacities(
+        self, spacing_m: float = 150.0
+    ) -> dict[tuple[tuple[float, float], tuple[float, float]], int]:
+        """Return per-edge trail capacities from road properties when present."""
+        properties = self._road_properties
+        raw = properties.get("capacity", properties.get("lanes", 1))
+        try:
+            capacity = max(1, int(raw))
+        except (TypeError, ValueError):
+            capacity = 1
+        return {edge: capacity for edge in self.road_edges(spacing_m)}
 
     def passing_bay_nodes(self, spacing_m: float = 150.0) -> tuple[tuple[float, float], ...]:
         """Return trail nodes plus regularly spaced passing bays along long edges."""
@@ -406,6 +419,9 @@ class TerrainRouter:
             geometry = feature.get("geometry") if isinstance(feature, dict) else None
             if not isinstance(geometry, dict):
                 continue
+            properties = feature.get("properties") if isinstance(feature, dict) else None
+            if isinstance(properties, dict):
+                self._road_properties.update(properties)
             geom = shape(geometry)
             if geom.geom_type in {"LineString", "MultiLineString"}:
                 geometries.append(geom)
