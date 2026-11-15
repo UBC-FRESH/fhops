@@ -1997,6 +1997,48 @@ def _clear_travel_path(
         offset = radius + clearance_m + 0.75
         via = [ox + nx * offset, oy + ny * offset]
         points = points[: index + 1] + [via] + points[index + 1 :]
+    points = _simplify_clear_path(points, obstacles, start_s, clearance_m)
+    return points
+
+
+def _path_segment_is_clear(
+    ax: float,
+    ay: float,
+    bx: float,
+    by: float,
+    obstacles: Sequence[tuple[float, float, float, float]],
+    start_s: float,
+    clearance_m: float,
+) -> bool:
+    for ox, oy, radius, standing_until in obstacles:
+        if standing_until <= start_s:
+            continue
+        if _point_segment_distance(ox, oy, ax, ay, bx, by) < clearance_m + radius:
+            return False
+    return True
+
+
+def _simplify_clear_path(
+    points: list[list[float]],
+    obstacles: Sequence[tuple[float, float, float, float]],
+    start_s: float,
+    clearance_m: float,
+) -> list[list[float]]:
+    """Remove detour vertices that are no longer needed, reducing zigzagging."""
+    changed = True
+    while changed and len(points) > 2:
+        changed = False
+        for index in range(1, len(points) - 1):
+            previous = points[index - 1]
+            current = points[index]
+            following = points[index + 1]
+            if _path_segment_is_clear(
+                previous[0], previous[1], following[0], following[1],
+                obstacles, start_s, clearance_m,
+            ):
+                points.pop(index)
+                changed = True
+                break
     return points
 
 
