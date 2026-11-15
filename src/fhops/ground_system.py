@@ -2302,10 +2302,17 @@ def _schedule_travel_parts(
         first_duration = duration_s * (_path_length(first_path) / total)
         second_duration = max(0.0, duration_s - first_duration)
         first_start, first_end = _schedule_task(calendar, start_s, first_duration, machine)
-        first_conflict = _travel_conflict(
-            reservations, machine, first_start, first_end, first_points,
-            clearance_m, _path_direction(first_points), headway_s,
-        )
+        # Only split when the midpoint wait actually saves time; extra legs
+        # cost reservations and dispatch overhead even when the bay is useless.
+        estimated_full_end = conflict_end + duration_s
+        estimated_split_end = max(first_end, conflict_end) + second_duration
+        if estimated_split_end < estimated_full_end - 5.0:
+            first_conflict = _travel_conflict(
+                reservations, machine, first_start, first_end, first_points,
+                clearance_m, _path_direction(first_points), headway_s,
+            )
+        else:
+            first_conflict = conflict_end
         if first_conflict is None:
             second_start = max(first_end, conflict_end)
             second_start, second_end = _schedule_task(
