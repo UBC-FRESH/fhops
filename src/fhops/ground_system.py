@@ -1494,6 +1494,7 @@ def simulate_ground_system(
     ] + [
         (obstacle.x_m, obstacle.y_m, obstacle.radius_m, float("inf")) for obstacle in obstacles
     ]
+    truck_slots = {landing.landing_id: 0.0 for landing in landing_choices} if travel_queue else None
     feller_reservations = _feller_travel_reservations(events, feller_machine_id)
     loads, skidder_warnings = _simulate_skidders(
         events,
@@ -1555,6 +1556,7 @@ def simulate_ground_system(
             calendar=calendar,
             landing_slots=landing_slots,
             landing_queue=False,
+            truck_slots=truck_slots,
             truck_spec=truck_spec,
             landing_truck_counts=truck_counts_by_landing,
             landing_truck_specs=landing_truck_specs_map,
@@ -2181,7 +2183,7 @@ def _simulate_skidders(
                 x1=bx,
                 y1=by,
                 status="empty",
-                distance_m=route.distance_m,
+                distance_m=distance,
                 max_grade_percent=route.max_grade_percent,
                 path=tuple(travel_path),
             )
@@ -2226,7 +2228,7 @@ def _simulate_skidders(
                 volume_m3=bunch.volume_m3,
                 logs=bunch.logs,
                 status="loaded",
-                distance_m=route.distance_m,
+                distance_m=distance,
                 max_grade_percent=route.max_grade_percent,
                 path=tuple(reversed(travel_path)),
             )
@@ -2347,6 +2349,7 @@ def _simulate_loader(
     landing_truck_counts: Mapping[str, int] | None,
     landing_truck_specs: Mapping[str, TruckSpec] | None,
     landing_capacity_m3: float | None,
+    truck_slots: dict[str, float] | None = None,
 ) -> tuple[
     float,
     dict[str, float],
@@ -2404,10 +2407,15 @@ def _simulate_loader(
         if not availability:
             raise GroundSystemError(f"No trucks are assigned to landing {truck_landing_id!r}.")
         truck_index = min(range(len(availability)), key=lambda index: availability[index])
-        start = max(start_s, availability[truck_index])
+        if truck_slots is not None:
+            start = max(start_s, availability[truck_index], truck_slots.get(truck_landing_id, 0.0))
+        else:
+            start = max(start_s, availability[truck_index])
         load_volume = min(truck_choice.capacity_m3, available_volume)
         truck_id = f"{truck_prefix}-{truck_index + 1:02d}"
         start, load_end = _schedule_task(calendar, start, truck_choice.load_time_s, truck_id)
+        if truck_slots is not None:
+            truck_slots[truck_landing_id] = load_end
         if truck_choice.one_way_distance_m is not None:
             nonlocal mill_wait_s
             travel_s = truck_choice.one_way_distance_m / truck_choice.speed_mps
