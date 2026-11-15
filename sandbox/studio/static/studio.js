@@ -1810,6 +1810,23 @@ function realizedText(rates, machineId, types, label) {
   return `<span class="rate-realized">${label || "realized"} ${(volume / (seconds / 3600)).toFixed(1)} m³/h · ${count} events</span>`;
 }
 
+function renderTrafficWaits(events) {
+  const waits = (events?.timeline || []).filter((event) => event.type === 'wait');
+  if (!waits.length) return "";
+  const byReason = new Map();
+  for (const item of waits) {
+    const reason = String(item.status || 'wait');
+    const existing = byReason.get(reason) || { seconds: 0, count: 0 };
+    existing.seconds += Math.max(0, Number(item.end_s) - Number(item.start_s));
+    existing.count += 1;
+    byReason.set(reason, existing);
+  }
+  const rows = [...byReason.entries()]
+    .sort((a, b) => b[1].seconds - a[1].seconds)
+    .map(([reason, value]) => `<li><b>${escapeHtml(reason)}</b> ${(value.seconds / 3600).toFixed(1)} h · ${value.count} waits</li>`);
+  return `<details class="rate-card"><summary>Traffic waits</summary><ul>${rows.join("")}</ul><p class="muted">Wait events are emitted by landing and travel corridor reservations.</p></details>`;
+}
+
 function renderRateAssumptions(summary, events) {
   const provenance = summary?.rate_provenance || {};
   const harvester = provenance.harvester || {};
@@ -1876,7 +1893,7 @@ async function runScenario() {
       runEvents = null;
     }
     const rateCard = renderRateAssumptions(runSummary, runEvents);
-    $("#run-result").innerHTML = `<b>Run ${escapeHtml(record.run_id)}</b><div class="stat-grid" style="margin-top:7px">${rows.map(([label, value]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("")}</div>${rateCard}${warningHtml}<p><a class="back" href="replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(record.run_id)}" target="_blank">Open 3D replay →</a></p>`;
+    $("#run-result").innerHTML = `<b>Run ${escapeHtml(record.run_id)}</b><div class="stat-grid" style="margin-top:7px">${rows.map(([label, value]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("")}</div>${rateCard}${renderTrafficWaits(runEvents)}${warningHtml}<p><a class="back" href="replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(record.run_id)}" target="_blank">Open 3D replay →</a></p>`;
     setStatus(`Run complete · ${record.run_id}`);
     renderProjectMeta();
     await loadRunHistory();
