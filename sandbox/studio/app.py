@@ -14,10 +14,10 @@ import json
 import math
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from threading import Lock
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from threading import Lock
 from typing import Any
 
 import pandas as pd
@@ -87,6 +87,7 @@ def create_app(config: StudioConfig) -> FastAPI:
         project_id: str,
         run_id: str,
         on_stage: Any | None = None,
+        on_progress: Any | None = None,
     ) -> dict[str, Any]:
         if on_stage:
             on_stage("materializing")
@@ -99,7 +100,7 @@ def create_app(config: StudioConfig) -> FastAPI:
         if on_stage:
             on_stage("running")
         runs_root = project_path(config.projects_root, project_id) / "runs"
-        return run_case(derived, runs_root, run_id=run_id)
+        return run_case(derived, runs_root, run_id=run_id, progress=on_progress)
 
     @app.middleware("http")
     async def no_store(request: Request, call_next: Any) -> Any:
@@ -344,6 +345,7 @@ def create_app(config: StudioConfig) -> FastAPI:
                 "run_id": run_id,
                 "status": "queued",
                 "stage": "queued",
+                "progress": 0.0,
                 "started_utc": datetime.now(UTC).isoformat(),
                 "updated_utc": datetime.now(UTC).isoformat(),
             }
@@ -354,7 +356,12 @@ def create_app(config: StudioConfig) -> FastAPI:
         def worker() -> None:
             try:
                 _set_job(job_id, status="running", stage="materializing")
-                record = _execute_run(project_id, run_id, lambda stage: _set_job(job_id, stage=stage))
+                record = _execute_run(
+                    project_id,
+                    run_id,
+                    lambda stage: _set_job(job_id, stage=stage),
+                    lambda value: _set_job(job_id, progress=value),
+                )
                 _set_job(job_id, status="complete", stage="complete", record=record)
             except (StudioError, CaseError, RunError, OSError) as exc:
                 _set_job(job_id, status="error", stage="error", error=str(exc))

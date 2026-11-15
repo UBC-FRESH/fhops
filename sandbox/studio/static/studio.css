@@ -173,3 +173,5 @@ textarea { width: 100%; resize: vertical; }
 .rate-card li { margin: 2px 0; }
 .rate-card .muted { margin: 6px 0 0; font-size: 10px; }
 .rate-realized { display: block; color: #9fc7b4; font-size: 10px; margin-top: 2px; }
+.run-progress { height: 4px; margin-top: 6px; background: #1b2428; border-radius: 3px; overflow: hidden; }
+.run-progress span { display: block; width: 0%; height: 100%; background: #f08a24; transition: width 0.4s ease; }

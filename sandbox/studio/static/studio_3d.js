@@ -112,6 +112,16 @@ function updateRunClocks() {
   document.querySelectorAll(".run-clock").forEach((node) => { node.textContent = elapsed; });
 }
 
+function setRunProgress(value) {
+  const bar = document.querySelector("#run-result .run-progress span, #run-output .run-progress span");
+  if (!bar) return;
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    bar.style.width = "35%";
+    return;
+  }
+  bar.style.width = `${Math.max(0, Math.min(100, value))}%`;
+}
+
 function setRunStage(label) {
   const indicatorLabel = $("#run-indicator-label");
   if (indicatorLabel) indicatorLabel.textContent = label;
@@ -174,6 +184,7 @@ async function pollRunJob(jobId) {
     if (!response.ok) throw new Error(`job ${response.status}`);
     const job = await response.json();
     if (job.stage && RUN_STAGE_LABELS[job.stage]) setRunStage(RUN_STAGE_LABELS[job.stage]);
+    if (typeof job.progress === "number") setRunProgress(job.progress);
     if (job.status === "complete" && job.record) return job.record;
     if (job.status === "error") throw new Error(job.error || "Scenario run failed.");
     await new Promise((resolve) => setTimeout(resolve, 800));
@@ -181,7 +192,7 @@ async function pollRunJob(jobId) {
 }
 
 function runWaitingMarkup(label = "Simulation running…") {
-  return `<div class="run-wait" role="status"><span class="hourglass" aria-hidden="true">⌛</span><div><b>${escapeHtml(label)}</b><div class="muted">Please wait — the simulation is running. Do not click Run scenario again.</div></div><span class="run-clock">0:00</span></div>`;
+  return `<div class="run-wait" role="status"><span class="hourglass" aria-hidden="true">⌛</span><div><b>${escapeHtml(label)}</b><div class="muted">Please wait — the simulation is running. Do not click Run scenario again.</div><div class="run-progress"><span></span></div></div><span class="run-clock">0:00</span></div>`;
 }
 
 function markDirty() { dirty = true; setStatus("Unsaved 3D edits"); }

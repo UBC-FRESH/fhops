@@ -30,7 +30,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from sandbox.tree_lab.cases import Case, ensure_pinned, validate_case
 from sandbox.tree_lab.harvest import write_run_inputs
@@ -345,6 +345,7 @@ def run_case(
     *,
     run_id: str | None = None,
     timeout_s: float = DEFAULT_TIMEOUT_S,
+    progress: Callable[[float], None] | None = None,
 ) -> dict[str, Any]:
     """Validate, pin, simulate, and export one case.
 
@@ -374,11 +375,17 @@ def run_case(
     run_dir.mkdir(parents=True, exist_ok=True)
     started = _utc_now()
 
+    def report(value: float) -> None:
+        if progress:
+            progress(max(0.0, min(100.0, value)))
+
+    report(5.0)
     validation = validate_case(case)
     if not validation["valid"]:
         raise RunError("Case validation failed: " + "; ".join(validation["errors"]))
     pin = ensure_pinned(case)
     derived = write_run_inputs(case, run_dir)
+    report(12.0)
 
     commands: list[dict[str, Any]] = []
     if case.manifest.get("system_kind") == "cable_standing":
@@ -386,24 +393,28 @@ def run_case(
 
         system = write_cable_system(case, derived, run_dir)
     else:
+        report(18.0)
         system = _run_command(
             _system_command(case, run_dir, derived.scenario),
             run_dir / "logs" / "system.log",
             timeout_s,
         )
     commands.append(system)
+    report(55.0)
     if system.get("returncode") != 0:
         raise RunError(
             "system simulation failed: "
             + " / ".join(system.get("stderr_tail") or ["see logs/system.log"])
         )
 
+    report(62.0)
     scene = _run_command(
         _scene_command(case, run_dir, derived.scenario, derived.assignments),
         run_dir / "logs" / "scene.log",
         timeout_s,
     )
     commands.append(scene)
+    report(92.0)
     if scene.get("returncode") != 0:
         raise RunError(
             "fhops tree scene failed: "
@@ -414,6 +425,7 @@ def run_case(
     events_path = run_dir / "system" / "system_events.json"
     if not summary_path.is_file() or not events_path.is_file():
         raise RunError("Simulation did not produce system_summary.json and system_events.json.")
+    report(97.0)
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     events = json.loads(events_path.read_text(encoding="utf-8"))
     studio = {
@@ -473,6 +485,7 @@ def run_case(
         "duration_s": round(sum(cmd["duration_s"] for cmd in commands), 3),
     }
     (run_dir / "run.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    report(100.0)
     return record
 
 

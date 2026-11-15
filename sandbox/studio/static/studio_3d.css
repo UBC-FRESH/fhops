@@ -103,3 +103,5 @@ header button.running {
 .run-wait b { display: block; font-size: 11px; }
 .run-wait .muted { color: #d8c58a; font-size: 10px; line-height: 1.35; margin-top: 2px; }
 .run-wait .run-clock { font-size: 12px; font-weight: 650; }
+.run-progress { height: 4px; margin-top: 6px; background: #1b2428; border-radius: 3px; overflow: hidden; }
+.run-progress span { display: block; width: 0%; height: 100%; background: #f08a24; transition: width 0.4s ease; }
