@@ -1715,6 +1715,7 @@ class _TravelReservation:
     end_s: float
     points: tuple[tuple[float, float], ...]
     direction: tuple[float, float] = (0.0, 0.0)
+    edges: frozenset[tuple[tuple[float, float], tuple[float, float]]] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -2081,6 +2082,7 @@ def _feller_travel_reservations(
                     event.end_s,
                     points,
                     _path_direction(points),
+                    _travel_edges(points),
                 )
             )
     return reservations
@@ -2111,6 +2113,19 @@ def _path_direction(points: tuple[tuple[float, float], ...]) -> tuple[float, flo
     return (dx / length, dz / length) if length > 1e-9 else (0.0, 0.0)
 
 
+def _travel_edges(
+    points: tuple[tuple[float, float], ...],
+) -> frozenset[tuple[tuple[float, float], tuple[float, float]]]:
+    edges: set[tuple[tuple[float, float], tuple[float, float]]] = set()
+    for index in range(len(points) - 1):
+        a = (round(points[index][0], 2), round(points[index][1], 2))
+        b = (round(points[index + 1][0], 2), round(points[index + 1][1], 2))
+        if a == b:
+            continue
+        edges.add(tuple(sorted((a, b))))
+    return frozenset(edges)
+
+
 def _travel_conflict(
     reservations: Sequence[_TravelReservation],
     machine: str,
@@ -2120,6 +2135,7 @@ def _travel_conflict(
     clearance_m: float,
     direction: tuple[float, float] = (0.0, 0.0),
     headway_s: float = 120.0,
+    edges: frozenset[tuple[tuple[float, float], tuple[float, float]]] = frozenset(),
 ) -> float | None:
     """Return the end time of the first conflicting reservation, if any."""
     conflict_end: float | None = None
@@ -2135,14 +2151,15 @@ def _travel_conflict(
             # Following traffic on a trail with a safe time headway does not
             # need to wait for the leader's entire trip to finish.
             continue
-        close = False
-        for x0, y0 in points:
-            for x1, y1 in reservation.points:
-                if math.hypot(x0 - x1, y0 - y1) < clearance_m:
-                    close = True
+        close = bool(edges and reservation.edges and not edges.isdisjoint(reservation.edges))
+        if not close:
+            for x0, y0 in points:
+                for x1, y1 in reservation.points:
+                    if math.hypot(x0 - x1, y0 - y1) < clearance_m:
+                        close = True
+                        break
+                if close:
                     break
-            if close:
-                break
         if not close:
             continue
         conflict_end = max(conflict_end or 0.0, reservation.end_s)
@@ -2166,15 +2183,16 @@ def _schedule_travel(
     if not queue or not points:
         return _schedule_task(calendar, start_s, duration_s, machine)
     direction = _path_direction(points)
+    edges = _travel_edges(points)
     candidate = start_s
     for _ in range(16):
         start, end = _schedule_task(calendar, candidate, duration_s, machine)
         conflict_end = _travel_conflict(
-            reservations, machine, start, end, points, clearance_m, direction, headway_s
+            reservations, machine, start, end, points, clearance_m, direction, headway_s, edges
         )
         if conflict_end is None:
             reservations.append(
-                _TravelReservation(machine, start, end, points, direction)
+                _TravelReservation(machine, start, end, points, direction, edges)
             )
             return start, end
         candidate = max(candidate, conflict_end + 5.0)
@@ -2288,12 +2306,13 @@ def _schedule_travel_parts(
         return [{"start": s, "end": e, "path": list(path), "distance": _path_length(path)}]
     points = _travel_samples(path)
     direction = _path_direction(points)
+    edges = _travel_edges(points)
     full_start, full_end = _schedule_task(calendar, start_s, duration_s, machine)
     conflict_end = _travel_conflict(
-        reservations, machine, full_start, full_end, points, clearance_m, direction, headway_s
+        reservations, machine, full_start, full_end, points, clearance_m, direction, headway_s, edges
     )
     if conflict_end is None:
-        reservations.append(_TravelReservation(machine, full_start, full_end, points, direction))
+        reservations.append(_TravelReservation(machine, full_start, full_end, points, direction, edges))
         return [{"start": full_start, "end": full_end, "path": list(path), "distance": _path_length(path)}]
     split = _split_path_at_midpoint(path, passing_bays)
     if split is not None:
@@ -2322,14 +2341,14 @@ def _schedule_travel_parts(
             )
             second_conflict = _travel_conflict(
                 reservations, machine, second_start, second_end, second_points,
-                clearance_m, _path_direction(second_points), headway_s,
+                clearance_m, _path_direction(second_points), headway_s, _travel_edges(second_points),
             )
             if second_conflict is None:
                 reservations.append(
-                    _TravelReservation(machine, first_start, first_end, first_points, _path_direction(first_points))
+                    _TravelReservation(machine, first_start, first_end, first_points, _path_direction(first_points), _travel_edges(first_points))
                 )
                 reservations.append(
-                    _TravelReservation(machine, second_start, second_end, second_points, _path_direction(second_points))
+                    _TravelReservation(machine, second_start, second_end, second_points, _path_direction(second_points), _travel_edges(second_points))
                 )
                 if second_start > first_end + 0.5:
                     # A machine stopped at the bay occupies that node until it
