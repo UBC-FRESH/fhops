@@ -258,6 +258,8 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         command.extend([flag, str(value)])
     for downtime in args.get("downtime") or []:
         command.extend(["--downtime", str(downtime)])
+    if args.get("landing_queue") is False:
+        command.append("--no-landing-queue")
     if args.get("processor_model"):
         command.extend(["--processor-model", str(args["processor_model"])])
     if args.get("processor_rate"):

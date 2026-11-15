@@ -778,6 +778,7 @@ def simulate_ground_system(
     landing_fleets: Sequence[LandingFleet] = (),
     bunch_volume_m3: float = DEFAULT_BUNCH_VOLUME_M3,
     rate_model: Literal["calibrated", "reference"] = DEFAULT_RATE_MODEL,
+    landing_queue: bool = False,
     dem_path: str | Path | None = None,
     road_path: str | Path | None = None,
     terrain_sample_step_m: float = 10.0,
@@ -1482,6 +1483,10 @@ def simulate_ground_system(
             f"({max_bunch_volume_m3:.2f} m3)."
         )
     bunches = _build_bunches(trees, bunch_volume_m3, max_bunch_volume_m3)
+    # One active landing operation at a time per landing. This is a schedule
+    # reservation, not a visual push: skidders wait in the arrival queue and
+    # loader/truck operations do not overlap in the same landing space.
+    landing_slots: dict[str, float] = {landing.landing_id: 0.0 for landing in landing_choices}
     loads, skidder_warnings = _simulate_skidders(
         events,
         bunches,
@@ -1492,6 +1497,8 @@ def simulate_ground_system(
         speed_profile=speed_profile,
         router=router,
         calendar=calendar,
+        landing_slots=landing_slots,
+        landing_queue=landing_queue,
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
@@ -1504,6 +1511,8 @@ def simulate_ground_system(
                     landing_loads,
                     {machine: processor_models[machine] for machine in landing_processors},
                     calendar=calendar,
+                    landing_slots=landing_slots,
+                    landing_queue=landing_queue,
                 )
             except TerrainError as exc:
                 router.close()
@@ -1532,6 +1541,8 @@ def simulate_ground_system(
             rate_model=rate_model,
             seconds_per_m3=loader_seconds_per_m3,
             calendar=calendar,
+            landing_slots=landing_slots,
+            landing_queue=landing_queue,
             truck_spec=truck_spec,
             landing_truck_counts=truck_counts_by_landing,
             landing_truck_specs=landing_truck_specs_map,
@@ -1803,6 +1814,28 @@ def _schedule_task(
     return calendar.schedule(start_s, duration_s, machine_id)
 
 
+
+def _schedule_landing_task(
+    calendar: _ShiftCalendar | None,
+    slots: dict[str, float],
+    landing_id: str,
+    start_s: float,
+    duration_s: float,
+    machine_id: str | None = None,
+) -> tuple[float, float]:
+    """Schedule a landing operation, yielding to the landing queue if it fits."""
+    queued_start = max(start_s, slots.get(landing_id, 0.0))
+    try:
+        start, end = _schedule_task(calendar, queued_start, duration_s, machine_id)
+    except GroundSystemError:
+        # Tight shift windows can make a queued operation impossible. Preserve
+        # the run and fall back to the unqueued start rather than failing.
+        start, end = _schedule_task(calendar, start_s, duration_s, machine_id)
+        return start, end
+    slots[landing_id] = end
+    return start, end
+
+
 def _build_bunches(
     trees: list[GroundSystemTree],
     target_volume_m3: float,
@@ -1858,6 +1891,8 @@ def _simulate_skidders(
     speed_profile: SkidderSpeedProfile | None,
     router: TerrainRouter,
     calendar: _ShiftCalendar | None,
+    landing_slots: dict[str, float],
+    landing_queue: bool = False,
 ) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
     blocked: list[str] = []
@@ -1993,12 +2028,17 @@ def _simulate_skidders(
                 path=tuple(reversed(route.path)),
             )
         )
-        unload_end = _schedule_task(calendar, loaded_end, unload_time, machine)[1]
+        if landing_queue:
+            unload_start, unload_end = _schedule_landing_task(
+                calendar, landing_slots, landing.landing_id, loaded_end, unload_time, machine
+            )
+        else:
+            unload_start, unload_end = _schedule_task(calendar, loaded_end, unload_time, machine)
         events.append(
             GroundSystemEvent(
                 machine=machine,
                 type="unload",
-                start_s=loaded_end,
+                start_s=unload_start,
                 end_s=unload_end,
                 x0=landing.x_m,
                 y0=landing.y_m,
@@ -2037,6 +2077,8 @@ def _simulate_processor(
     specs: Mapping[str, ProcessorSpec],
     *,
     calendar: _ShiftCalendar | None,
+    landing_slots: dict[str, float],
+    landing_queue: bool = False,
 ) -> tuple[float, list[_Load]]:
     processors = tuple(specs)
     available = {machine: 0.0 for machine in processors}
@@ -2046,7 +2088,12 @@ def _simulate_processor(
         spec = specs[machine]
         start = max(available[machine], load.ready_s)
         duration = spec.fixed_s + spec.seconds_per_m3 * load.volume_m3 + spec.per_log_s * load.logs
-        start, end = _schedule_task(calendar, start, duration, spec.machine_id)
+        if landing_queue:
+            start, end = _schedule_landing_task(
+                calendar, landing_slots, load.landing_id, start, duration, spec.machine_id
+            )
+        else:
+            start, end = _schedule_task(calendar, start, duration, spec.machine_id)
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -2091,7 +2138,9 @@ def _simulate_loader(
     rate_model: str,
     seconds_per_m3: float | None,
     calendar: _ShiftCalendar | None,
-    truck_spec: TruckSpec | None,
+    landing_slots: dict[str, float],
+    landing_queue: bool = False,
+    truck_spec: TruckSpec | None = None,
     landing_truck_counts: Mapping[str, int] | None,
     landing_truck_specs: Mapping[str, TruckSpec] | None,
     landing_capacity_m3: float | None,
@@ -2240,7 +2289,12 @@ def _simulate_loader(
                     wait_until, landing_id, load.landing_x_m, load.landing_y_m
                 )
                 start = max(start, truck_start)
-        start, end = _schedule_task(calendar, start, process_time)
+        if landing_queue:
+            start, end = _schedule_landing_task(
+                calendar, landing_slots, load.landing_id, start, process_time
+            )
+        else:
+            start, end = _schedule_task(calendar, start, process_time)
         events.append(
             GroundSystemEvent(
                 machine=spec.machine_id,

@@ -630,6 +630,11 @@ def tree_system(
         "--rate-model",
         help="calibrated (Han/Barko) or reference (fixed MachineSpec cycle times).",
     ),
+    landing_queue: bool = typer.Option(
+        True,
+        "--landing-queue/--no-landing-queue",
+        help="Serialize skidder/loader/processor operations at each landing.",
+    ),
     landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
     landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
     landing: list[str] | None = typer.Option(
@@ -885,6 +890,7 @@ def tree_system(
             landing_fleets=landing_fleets,
             bunch_volume_m3=bunch_volume,
             rate_model=rate_model,  # type: ignore[arg-type]
+            landing_queue=landing_queue,
             dem_path=dem,
             road_path=road,
             terrain_sample_step_m=terrain_step,
