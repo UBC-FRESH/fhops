@@ -264,6 +264,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let loadedRunKey = null;
   let baseElevation = 0;
   let residualGroup = null;
+  let residualTreePoints = [];
   let retentionGroup = null;
   let terrain = null;
   let terrainMesh = null;
@@ -327,6 +328,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     landingPosition = null;
     roadEndpoints = null;
     residualGroup = null;
+    residualTreePoints = [];
     retentionGroup = null;
     timelineByMachine = {};
     processedTimes = [];
@@ -1269,22 +1271,35 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     for (const group of Object.values(trucks)) {
       if (group.visible) others.push({ x: group.position.x, z: group.position.z });
     }
+    // Standing stems and the retained treeline are fall obstacles too. A stem
+    // should not be dropped across an uncut boundary just to avoid a machine.
+    const obstacleReach = radius + 8;
+    for (const [otherId, treeNode] of treeNodes) {
+      if (String(otherId) === String(treeId) || !treeNode.visible) continue;
+      if (Math.hypot(treeNode.position.x - baseX, treeNode.position.z - baseZ) > obstacleReach) continue;
+      others.push({ x: treeNode.position.x, z: treeNode.position.z, radius: 1.8 });
+    }
+    for (const point of residualTreePoints) {
+      if (Math.hypot(point.x - baseX, point.z - baseZ) > obstacleReach) continue;
+      others.push({ x: point.x, z: point.z, radius: 2.4 });
+    }
     let bestAngle = baseAngle;
     let bestScore = -Infinity;
-    for (let step = 0; step < 24; step += 1) {
-      const angle = baseAngle + (step / 24) * Math.PI * 2;
+    for (let step = 0; step < 36; step += 1) {
+      const angle = baseAngle + (step / 36) * Math.PI * 2;
       const endX = baseX + Math.cos(angle) * radius;
       const endZ = baseZ + Math.sin(angle) * radius;
       let clearance = Infinity;
       for (const other of others) {
+        const obstacleRadius = Number(other.radius) || 0;
         clearance = Math.min(
           clearance,
-          pointToSegmentDistance(other.x, other.z, baseX, baseZ, endX, endZ),
+          pointToSegmentDistance(other.x, other.z, baseX, baseZ, endX, endZ) - obstacleRadius,
         );
       }
       if (!Number.isFinite(clearance)) clearance = 999;
-      // Prefer the natural fall direction slightly, but make machine clearance
-      // dominant so a stem is not dropped through a forwarder.
+      // Prefer the natural fall direction slightly, but make clearance
+      // dominant so stems are not dropped through machines or the treeline.
       const score = clearance - Math.abs(shortestAngleDelta(baseAngle, angle)) * 0.35;
       if (score > bestScore) {
         bestScore = score;
@@ -2660,6 +2675,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       const x = Number(tree.x);
       const y = Number(tree.y);
       const base = surfaceHeight(x, y);
+      residualTreePoints.push({ x, z: y });
       const trunk = new THREE.Mesh(trunkGeo, trunkMat);
       trunk.scale.set(dbh * 1.5, height * 0.48, dbh * 1.5);
       trunk.position.set(x, base + height * 0.24, y);
