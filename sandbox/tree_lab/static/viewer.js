@@ -1883,6 +1883,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     currentTime = Math.max(0, Math.min(duration, t));
     updateMachines(currentTime);
     updateTrucks(currentTime);
+    resolveSceneCollisions();
     updateDecks(currentTime);
     updateCarriage(currentTime);
     updateTrees(currentTime);
@@ -2230,6 +2231,122 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       if (processing) {
         rig.feedLog.position.x = 3.3 - progress * 5.4;
         rig.feedLog.position.y = 2.0 - Math.sin(progress * Math.PI) * 0.12;
+      }
+    }
+  }
+
+  const MACHINE_COLLISION_RADIUS = {
+    feller_buncher: 4.2,
+    harvester: 4.2,
+    hand_faller: 1.2,
+    grapple_skidder: 4.6,
+    skidder: 4.6,
+    forwarder: 4.8,
+    roadside_processor: 4.8,
+    processor: 4.8,
+    loader: 4.4,
+    cable_yarder: 5.0,
+  };
+
+  function collisionRadius(group, isTruck = false) {
+    if (isTruck) return 5.0;
+    const type = String(group.userData.type || '');
+    return MACHINE_COLLISION_RADIUS[type] || 3.8;
+  }
+
+  function resolveSceneCollisions() {
+    const bodies = [];
+    const workingTreesByMachine = new Map();
+    for (const [id, group] of Object.entries(machines)) {
+      if (!group.visible) continue;
+      const state = segmentAt(id, currentTime);
+      const segment = state?.segment;
+      const active = segment
+        && currentTime >= segment.start_s
+        && currentTime <= segment.end_s;
+      const working = new Set();
+      if (active && ['process', 'fell', 'fall', 'load', 'unload', 'yard'].includes(String(segment.type))) {
+        for (const treeId of segment.tree_ids || []) working.add(String(treeId));
+      }
+      workingTreesByMachine.set(id, working);
+      bodies.push({
+        group,
+        radius: collisionRadius(group),
+        isTruck: false,
+        yOffset: 0.15,
+        working,
+      });
+    }
+    for (const group of Object.values(trucks)) {
+      if (!group.visible) continue;
+      bodies.push({
+        group,
+        radius: collisionRadius(group, true),
+        isTruck: true,
+        yOffset: 1.8,
+        working: new Set(),
+      });
+    }
+    if (!bodies.length) return;
+
+    const pushApart = (body, x, y, distance, minDistance, seed) => {
+      let dx = body.group.position.x - x;
+      let dz = body.group.position.z - y;
+      let length = Math.hypot(dx, dz);
+      if (length < 1e-5) {
+        const angle = (seed * 2.399963) % (Math.PI * 2);
+        dx = Math.cos(angle);
+        dz = Math.sin(angle);
+        length = 1;
+      }
+      const push = (minDistance - distance) + 0.05;
+      body.group.position.x += (dx / length) * push;
+      body.group.position.z += (dz / length) * push;
+    };
+
+    for (let iteration = 0; iteration < 2; iteration += 1) {
+      for (let i = 0; i < bodies.length; i += 1) {
+        const a = bodies[i];
+        for (let j = i + 1; j < bodies.length; j += 1) {
+          const b = bodies[j];
+          const dx = b.group.position.x - a.group.position.x;
+          const dz = b.group.position.z - a.group.position.z;
+          const distance = Math.hypot(dx, dz);
+          const minDistance = a.radius + b.radius;
+          if (distance >= minDistance || minDistance <= 0) continue;
+          if (distance < 1e-5) {
+            a.group.position.x -= 0.02;
+            a.group.position.z -= 0.02;
+            b.group.position.x += 0.02;
+            b.group.position.z += 0.02;
+            continue;
+          }
+          const overlap = (minDistance - distance) * 0.5;
+          const nx = dx / distance;
+          const nz = dz / distance;
+          a.group.position.x -= nx * overlap;
+          a.group.position.z -= nz * overlap;
+          b.group.position.x += nx * overlap;
+          b.group.position.z += nz * overlap;
+        }
+      }
+      // Keep powered machines and trucks out of standing stems. Their active
+      // work tree is excluded so they can still reach the stem to process it.
+      for (let index = 0; index < bodies.length; index += 1) {
+        const body = bodies[index];
+        const px = body.group.position.x;
+        const pz = body.group.position.z;
+        for (const [treeId, node] of treeNodes) {
+          if (!node.visible || body.working.has(String(treeId))) continue;
+          const dx = body.group.position.x - node.position.x;
+          const dz = body.group.position.z - node.position.z;
+          const distance = Math.hypot(dx, dz);
+          const minDistance = body.radius + 1.35;
+          if (distance >= minDistance) continue;
+          pushApart(body, node.position.x, node.position.z, distance, minDistance, index + 1);
+        }
+        // Re-seat against terrain after any horizontal collision resolution.
+        body.group.position.y = sampleHeight(body.group.position.x, body.group.position.z) + body.yOffset;
       }
     }
   }
