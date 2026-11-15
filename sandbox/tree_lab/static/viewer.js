@@ -2344,13 +2344,28 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       });
       const geometry = new THREE.ShapeGeometry(shape);
       geometry.rotateX(Math.PI / 2);
+      if (geometry.attributes.position) {
+        const positions = geometry.attributes.position;
+        for (let index = 0; index < positions.count; index += 1) {
+          positions.setY(
+            index,
+            surfaceHeight(positions.getX(index), positions.getZ(index)) + 0.8,
+          );
+        }
+        positions.needsUpdate = true;
+        geometry.computeVertexNormals();
+      }
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.y = sampleHeight(polygon[0][0], polygon[0][1]) + 0.8;
+      mesh.position.y = 0;
       mesh.renderOrder = 3;
       mesh.userData.orbitOpacity = baseOpacity;
       fills.push(mesh);
       group.add(mesh);
-      const points = polygon.map(([x, y]) => new THREE.Vector3(Number(x), sampleHeight(Number(x), Number(y)) + 1.0, Number(y)));
+      const points = polygon.map(([x, y]) => new THREE.Vector3(
+        Number(x),
+        surfaceHeight(Number(x), Number(y)) + 1.0,
+        Number(y),
+      ));
       const outline = new THREE.LineLoop(
         new THREE.BufferGeometry().setFromPoints(points),
         new THREE.LineBasicMaterial({
@@ -2379,7 +2394,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         depthTest: false,
         transparent: true,
       }));
-      label.position.set(cx, sampleHeight(cx, cy) + 14, cy);
+      label.position.set(cx, surfaceHeight(cx, cy) + 14, cy);
       label.scale.set(42, 7.9, 1);
       label.renderOrder = 10;
       labels.push(label);
