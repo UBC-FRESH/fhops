@@ -265,6 +265,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let baseElevation = 0;
   let residualGroup = null;
   let residualTreePoints = [];
+  let passingBayGroup = null;
   let retentionGroup = null;
   let terrain = null;
   let terrainMesh = null;
@@ -329,6 +330,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     roadEndpoints = null;
     residualGroup = null;
     residualTreePoints = [];
+    passingBayGroup = null;
     retentionGroup = null;
     timelineByMachine = {};
     processedTimes = [];
@@ -2617,6 +2619,32 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     scene.add(group);
   }
 
+  function addPassingBays(nodes) {
+    if (!Array.isArray(nodes) || !nodes.length) return;
+    const group = new THREE.Group();
+    group.name = 'passing_bays';
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xd8b85a,
+      transparent: true,
+      opacity: 0.4,
+      side: THREE.DoubleSide,
+      depthTest: true,
+      depthWrite: false,
+    });
+    for (const node of nodes) {
+      const x = Number(node[0]);
+      const y = Number(node[1]);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+      const ring = new THREE.Mesh(new THREE.RingGeometry(2.2, 3.0, 18), material);
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.set(x, surfaceHeight(x, y) + 0.35, y);
+      ring.renderOrder = 3;
+      group.add(ring);
+    }
+    passingBayGroup = group;
+    scene.add(group);
+  }
+
   function addResidualTrees(payload) {
     if (!payload || !Array.isArray(payload.trees) || !payload.trees.length) return;
     const group = new THREE.Group();
@@ -3110,6 +3138,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         for (const tree of sorted) { sum += tree.volume_m3 || 0; cumulativeVolume.push(sum); }
 
         addResidualTrees(residual);
+        addPassingBays(events.traffic?.passing_bay_nodes);
         retentionClumps = residual?.clumps || [];
         addRetentionClumps(retentionClumps);
         retainedObstacles = (residual?.trees || []).map((tree) => ({

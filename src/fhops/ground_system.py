@@ -714,6 +714,7 @@ class GroundSystemResult:
             "bunch_volume_m3": self.bunch_volume_m3,
             "rate_model": self.rate_model,
             "rate_provenance": self.rate_provenance,
+            "traffic": self.rate_provenance.get("traffic", {}),
             "shift_windows": [list(window) for window in self.shift_windows],
             "downtime_windows": [
                 {
@@ -1261,6 +1262,7 @@ def simulate_ground_system(
     passing_bay_nodes = router.passing_bay_nodes(passing_bay_spacing_m)
     rate_provenance["traffic"] = {
         "passing_bays": len(passing_bay_nodes),
+        "passing_bay_nodes": [[round(x, 3), round(y, 3)] for x, y in passing_bay_nodes],
         "passing_bay_spacing_m": passing_bay_spacing_m,
         "trail_headway_s": trail_headway_s,
         "landing_queue": landing_queue,
