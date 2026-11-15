@@ -2331,6 +2331,18 @@ def _schedule_travel_parts(
                 reservations.append(
                     _TravelReservation(machine, second_start, second_end, second_points, _path_direction(second_points))
                 )
+                if second_start > first_end + 0.5:
+                    # A machine stopped at the bay occupies that node until it
+                    # resumes; another machine cannot use the same bay then.
+                    reservations.append(
+                        _TravelReservation(
+                            machine,
+                            first_end,
+                            second_start,
+                            ((bay[0], bay[1]),),
+                            (0.0, 0.0),
+                        )
+                    )
                 return [
                     {"start": first_start, "end": first_end, "path": first_path, "distance": _path_length(first_path)},
                     {
