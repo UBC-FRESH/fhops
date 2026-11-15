@@ -22,14 +22,20 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains two validated model instances:
+It contains three validated model instances:
 
 ```text
+examples/demo_runs/gavin-full-estate
 examples/demo_runs/mkrf-full-estate
 examples/demo_runs/tfl6-lidar-demo
 ```
 
-`mkrf-full-estate` is the default console run. It is the full WS4 MKRF estate handoff:
+`gavin-full-estate` is the default console run by run-id order. It is the full WS4 Gavin Lake
+baseline handoff: 2,907 blocks, 5,663.66 ha, 10,113 harvest events over 300 years, 5.66 million m³
+of harvest, and the full growing-stock/target evidence surface. No public Gavin net-revenue
+account is present, so none is fabricated.
+
+`mkrf-full-estate` is the full WS4 MKRF estate handoff:
 
 - 1,763 blocks covering 4,810.85 ha in EPSG:3005;
 - 1,221 blocks scheduled across 1,346 harvest events;
@@ -93,5 +99,5 @@ cd /srv/shared-data/gep/ws4/fhops-public-demo
 /home/gep/.venv/bin/python -m pytest tests/test_public_demo_contract.py -q
 ```
 
-The test checks the gateway doors, the console shell paths, both complete model-instance
+The test checks the gateway doors, the console shell paths, all complete model-instance
 artifacts, full-estate coverage, scenario/geometry/map payloads, KPIs, playback, and LiDAR.

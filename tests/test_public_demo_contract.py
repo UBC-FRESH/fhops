@@ -15,8 +15,13 @@ from fastapi.testclient import TestClient
 
 from demo_app import ROOT, app
 
-DEFAULT_MODEL_INSTANCE_ID = "mkrf-full-estate"
+DEFAULT_MODEL_INSTANCE_ID = "gavin-full-estate"
 MODEL_INSTANCES = {
+    "gavin-full-estate": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
     "mkrf-full-estate": {
         "domain": "tactical_operational",
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
@@ -148,3 +153,18 @@ def test_full_estate_covers_the_whole_forest(client: TestClient) -> None:
         if feature.get("properties", {}).get("layer") == "blocks"
     ]
     assert len(block_features) >= 1_700
+
+
+def test_gavin_full_estate_covers_the_whole_forest(client: TestClient) -> None:
+    _model_instance(client, "gavin-full-estate")
+    kpis = client.get("/api/runs/gavin-full-estate/kpis").json()
+    assert kpis["blocks_total"] >= 2_900
+    assert kpis["blocks_scheduled"] >= 2_900
+    assert kpis["total_production_m3"] > 5_000_000
+    map_payload = client.get("/api/runs/gavin-full-estate/map?period=P00").json()
+    block_features = [
+        feature
+        for feature in map_payload.get("features", [])
+        if feature.get("properties", {}).get("layer") == "blocks"
+    ]
+    assert len(block_features) >= 2_900

@@ -1,0 +1,215 @@
+# Gavin Lake first-guess LTSY harvest target.
+#
+# Derivation: ws4/estimate_ltsy_target.py
+#   THLB proxy (CONTCLAS=C): 4,662.96 ha
+#   area-weighted mean yield CMAI: 3.599653 m3/ha/yr at age 100
+#   LTSY annual: 16,785.06 m3/yr
+#   10-year LTSY: 167,850.57 m3/period
+#   x1.1 first guess: 184,635.63 m3/period, rounded to 185,000
+#
+# This is a first guess for a periodic harvest level, not an AAC
+# determination. It replaces the literal 500,000 as the runnable target;
+# the literal remains in ws4/targets_legacy_harvest.yaml as a parity
+# reference and possible pull-up target.
+#
+# The growing-stock floor is the legacy scenario value. It is consistent
+# with 90% of the measured initial growing stock (1,418,962.31 m3).
+#
+# The horizon is 30 ten-year periods (300 years).
+targets:
+  - account: product.yield.managed.total
+    period: 1
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 2
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 3
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 4
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 5
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 6
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 7
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 8
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 9
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 10
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 11
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 12
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 13
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 14
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 15
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 16
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 17
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 18
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 19
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 20
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 21
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 22
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 23
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 24
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 25
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 26
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 27
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 28
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 29
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: product.yield.managed.total
+    period: 30
+    minimum: 185000
+    period_width: 10
+    min_weight: 1.0
+    shape: linear
+  - account: feature.yield.managed.total
+    period: 30
+    minimum: 1277067
+    period_width: 10
+    min_weight: 1.0
+  - account: product.yield.managed.total
+    period: 1
+    minimum: -1.0
+    maximum: 1.0
+    flow: even
+    period_width: 10
+    flow_start_period: 1
+    flow_end_period: 30
+    min_weight: 1000.0
+    max_weight: 1000.0
+    shape: non_linear

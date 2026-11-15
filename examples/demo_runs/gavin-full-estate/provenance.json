@@ -1,0 +1,13 @@
+{
+  "schema_version": "fhops.afrf.handoff.v1",
+  "instance": "/srv/shared-data/gep/ws4/femic/external/femic-afrf-gavinlake-instance",
+  "source": "ws4/schedules/baseline_evenflow.csv",
+  "evidence": "ws4/evidence/baseline",
+  "geometry": "data/legacy_gavinlake/spatial/fragments.shp, simplified at 4 m",
+  "crs": "EPSG:3005",
+  "notes": [
+    "Read-only FHOPS tactical view of the WS4 Gavin Lake baseline.",
+    "All 2,907 blocks are included; the baseline re-enters blocks every 80 years.",
+    "No public net-revenue account is present in the baseline evidence."
+  ]
+}
