@@ -1780,27 +1780,63 @@ async function pollRunJob(jobId) {
   }
 }
 
-function renderRateAssumptions(summary) {
+function realizedRates(events) {
+  const rates = {};
+  for (const event of events?.timeline || []) {
+    const type = events?.machines?.[event.machine]?.type || '';
+    if (!['process', 'load'].includes(String(event.type))) continue;
+    const volume = Number(event.volume_m3) || 0;
+    const seconds = Number(event.end_s) - Number(event.start_s);
+    if (volume <= 0 || seconds <= 0) continue;
+    const key = `${event.machine}:${event.type}`;
+    const item = rates[key] || (rates[key] = { volume: 0, seconds: 0, count: 0 });
+    item.volume += volume;
+    item.seconds += seconds;
+    item.count += 1;
+  }
+  for (const item of Object.values(rates)) {
+    item.m3_per_hour = item.volume / (item.seconds / 3600);
+  }
+  return rates;
+}
+
+function realizedText(rates, machineId, types, label) {
+  const entries = types.map((type) => rates[`${machineId}:${type}`]).filter(Boolean);
+  if (!entries.length) return "";
+  const volume = entries.reduce((sum, item) => sum + item.volume, 0);
+  const seconds = entries.reduce((sum, item) => sum + item.seconds, 0);
+  const count = entries.reduce((sum, item) => sum + item.count, 0);
+  if (seconds <= 0) return "";
+  return `<span class="rate-realized">${label || "realized"} ${(volume / (seconds / 3600)).toFixed(1)} m³/h · ${count} events</span>`;
+}
+
+function renderRateAssumptions(summary, events) {
   const provenance = summary?.rate_provenance || {};
   const harvester = provenance.harvester || {};
   const loader = provenance.loader || {};
   const forwarders = Array.isArray(provenance.forwarders) ? provenance.forwarders : [];
+  const rates = realizedRates(events);
   const items = [];
   if (harvester.model) {
-    items.push(`<li><b>Harvester</b> ${escapeHtml(harvester.model)}${harvester.processing_model ? ` · ${escapeHtml(harvester.processing_model)}` : ""}</li>`);
+    const machineId = harvester.machine_id || "";
+    items.push(`<li><b>Harvester</b> ${escapeHtml(harvester.model)}${harvester.processing_model ? ` · ${escapeHtml(harvester.processing_model)}` : ""} ${realizedText(rates, machineId, ["process"], "realized")}</li>`);
   }
   for (const item of forwarders) {
     const rate = item.productivity_m3_per_smh
       ? ` · ${Number(item.productivity_m3_per_smh).toFixed(1)} m³/SMH`
       : "";
-    items.push(`<li><b>${escapeHtml(item.machine_id || "forwarder")}</b> ${escapeHtml(item.model || "configured rate")}${rate}</li>`);
+    items.push(`<li><b>${escapeHtml(item.machine_id || "forwarder")}</b> ${escapeHtml(item.model || "configured rate")}${rate} ${realizedText(rates, item.machine_id || "", ["load"], "realized load")}</li>`);
   }
   if (loader.model) {
     const rate = loader.seconds_per_m3 ? ` · ${(3600 / Number(loader.seconds_per_m3)).toFixed(1)} m³/SMH` : "";
-    items.push(`<li><b>Loader</b> ${escapeHtml(loader.model)}${rate}</li>`);
+    const loaderIds = Object.entries(events?.machines || {})
+      .filter(([, machine]) => String(machine.type || "").includes("loader"))
+      .map(([id]) => id);
+    const realized = loaderIds.map((id) => realizedText(rates, id, ["process"], id)).filter(Boolean).join(" · ");
+    items.push(`<li><b>Loader</b> ${escapeHtml(loader.model)}${rate} ${realized}</li>`);
   }
   if (!items.length) return "";
-  return `<details class="rate-card" open><summary>Rate assumptions</summary><ul>${items.join("")}</ul><p class="muted">Model rates are FHOPS reference assumptions; edit machine specs or the harvester productivity multiplier to calibrate them.</p></details>`;
+  return `<details class="rate-card" open><summary>Rate assumptions</summary><ul>${items.join("")}</ul><p class="muted">Model rates are FHOPS reference assumptions; realized rates are computed from this run's event durations. Edit machine specs or the harvester productivity multiplier to calibrate them.</p></details>`;
 }
 
 async function runScenario() {
@@ -1831,12 +1867,15 @@ async function runScenario() {
       ? `<div class="banner warn"><b>Blocked / warnings</b><ul>${warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul></div>`
       : "";
     let runSummary = null;
+    let runEvents = null;
     try {
       runSummary = await api(`projects/${encodeURIComponent(state.project.project_id)}/runs/${encodeURIComponent(record.run_id)}/summary`);
+      runEvents = await api(`projects/${encodeURIComponent(state.project.project_id)}/runs/${encodeURIComponent(record.run_id)}/events`);
     } catch (summaryError) {
       runSummary = null;
+      runEvents = null;
     }
-    const rateCard = renderRateAssumptions(runSummary);
+    const rateCard = renderRateAssumptions(runSummary, runEvents);
     $("#run-result").innerHTML = `<b>Run ${escapeHtml(record.run_id)}</b><div class="stat-grid" style="margin-top:7px">${rows.map(([label, value]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("")}</div>${rateCard}${warningHtml}<p><a class="back" href="replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(record.run_id)}" target="_blank">Open 3D replay →</a></p>`;
     setStatus(`Run complete · ${record.run_id}`);
     renderProjectMeta();

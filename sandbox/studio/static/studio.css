@@ -172,3 +172,4 @@ textarea { width: 100%; resize: vertical; }
 .rate-card ul { margin: 6px 0 0 16px; padding: 0; color: #d5e0e4; font-size: 10.5px; }
 .rate-card li { margin: 2px 0; }
 .rate-card .muted { margin: 6px 0 0; font-size: 10px; }
+.rate-realized { display: block; color: #9fc7b4; font-size: 10px; margin-top: 2px; }
