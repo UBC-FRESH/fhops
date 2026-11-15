@@ -787,6 +787,7 @@ def simulate_ground_system(
     edge_capacity: int = 1,
     graph_edges: Sequence[tuple[tuple[float, float], tuple[float, float]]] = (),
     edge_capacities: Mapping[tuple[tuple[float, float], tuple[float, float]], int] | None = None,
+    edge_one_lane: Mapping[tuple[tuple[float, float], tuple[float, float]], bool] | None = None,
     dem_path: str | Path | None = None,
     road_path: str | Path | None = None,
     terrain_sample_step_m: float = 10.0,
@@ -1269,6 +1270,7 @@ def simulate_ground_system(
         "passing_bay_spacing_m": passing_bay_spacing_m,
         "edge_capacity": edge_capacity,
         "road_edges": len(router.road_edges(passing_bay_spacing_m)),
+        "two_lane_edges": sum(1 for value in router.road_edge_one_lane(passing_bay_spacing_m).values() if not value),
         "trail_headway_s": trail_headway_s,
         "landing_queue": landing_queue,
         "travel_queue": travel_queue,
@@ -1539,6 +1541,7 @@ def simulate_ground_system(
         edge_capacity=edge_capacity,
         graph_edges=router.road_edges(passing_bay_spacing_m),
         edge_capacities=router.road_edge_capacities(passing_bay_spacing_m),
+        edge_one_lane=router.road_edge_one_lane(passing_bay_spacing_m),
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
@@ -2161,6 +2164,7 @@ def _travel_conflict(
     edges: frozenset[tuple[tuple[float, float], tuple[float, float]]] = frozenset(),
     edge_capacity: int = 1,
     edge_capacities: Mapping[tuple[tuple[float, float], tuple[float, float]], int] | None = None,
+    edge_one_lane: Mapping[tuple[tuple[float, float], tuple[float, float]], bool] | None = None,
 ) -> float | None:
     """Return the end time of the first conflicting reservation, if any."""
     conflict_end: float | None = None
@@ -2180,6 +2184,8 @@ def _travel_conflict(
         shared_edge = bool(edges and reservation.edges and not edges.isdisjoint(reservation.edges))
         if shared_edge:
             shared = edges & reservation.edges
+            if edge_one_lane and not any(edge_one_lane.get(edge, True) for edge in shared):
+                continue
             capacity = edge_capacity
             if edge_capacities:
                 capacity = min(capacity, *(edge_capacities.get(edge, edge_capacity) for edge in shared))
@@ -2215,6 +2221,7 @@ def _schedule_travel(
     edge_capacity: int = 1,
     graph_edges: Sequence[tuple[tuple[float, float], tuple[float, float]]] = (),
     edge_capacities: Mapping[tuple[tuple[float, float], tuple[float, float]], int] | None = None,
+    edge_one_lane: Mapping[tuple[tuple[float, float], tuple[float, float]], bool] | None = None,
 ) -> tuple[float, float]:
     """Schedule a travel event and reserve its corridor when queued."""
     points = _travel_samples(path)
@@ -2340,6 +2347,7 @@ def _schedule_travel_parts(
     edge_capacity: int = 1,
     graph_edges: Sequence[tuple[tuple[float, float], tuple[float, float]]] = (),
     edge_capacities: Mapping[tuple[tuple[float, float], tuple[float, float]], int] | None = None,
+    edge_one_lane: Mapping[tuple[tuple[float, float], tuple[float, float]], bool] | None = None,
 ) -> list[dict[str, Any]]:
     """Schedule one travel leg, splitting at a midpoint passing bay on conflict."""
     if not queue or not path:
@@ -2350,7 +2358,7 @@ def _schedule_travel_parts(
     edges = _travel_edges(points, graph_edges)
     full_start, full_end = _schedule_task(calendar, start_s, duration_s, machine)
     conflict_end = _travel_conflict(
-        reservations, machine, full_start, full_end, points, clearance_m, direction, headway_s, edges, edge_capacity, edge_capacities
+        reservations, machine, full_start, full_end, points, clearance_m, direction, headway_s, edges, edge_capacity, edge_capacities, edge_one_lane
     )
     if conflict_end is None:
         reservations.append(_TravelReservation(machine, full_start, full_end, points, direction, edges))
@@ -2372,7 +2380,7 @@ def _schedule_travel_parts(
             first_conflict = _travel_conflict(
                 reservations, machine, first_start, first_end, first_points,
                 clearance_m, _path_direction(first_points), headway_s,
-                _travel_edges(first_points, graph_edges), edge_capacity, edge_capacities,
+                _travel_edges(first_points, graph_edges), edge_capacity, edge_capacities, edge_one_lane,
             )
         else:
             first_conflict = conflict_end
@@ -2383,7 +2391,7 @@ def _schedule_travel_parts(
             )
             second_conflict = _travel_conflict(
                 reservations, machine, second_start, second_end, second_points,
-                clearance_m, _path_direction(second_points), headway_s, _travel_edges(second_points, graph_edges), edge_capacity, edge_capacities,
+                clearance_m, _path_direction(second_points), headway_s, _travel_edges(second_points, graph_edges), edge_capacity, edge_capacities, edge_one_lane,
             )
             if second_conflict is None:
                 reservations.append(
@@ -2420,7 +2428,7 @@ def _schedule_travel_parts(
     s, e = _schedule_travel(
         calendar, start_s, duration_s, machine, path, reservations,
         clearance_m=clearance_m, queue=queue, headway_s=headway_s,
-        edge_capacity=edge_capacity, graph_edges=graph_edges, edge_capacities=edge_capacities,
+        edge_capacity=edge_capacity, graph_edges=graph_edges, edge_capacities=edge_capacities, edge_one_lane=edge_one_lane,
     )
     return [{"start": s, "end": e, "path": list(path), "distance": _path_length(path)}]
 
@@ -2448,6 +2456,7 @@ def _simulate_skidders(
     edge_capacity: int = 1,
     graph_edges: Sequence[tuple[tuple[float, float], tuple[float, float]]] = (),
     edge_capacities: Mapping[tuple[tuple[float, float], tuple[float, float]], int] | None = None,
+    edge_one_lane: Mapping[tuple[tuple[float, float], tuple[float, float]], bool] | None = None,
 ) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
     travel_reservations: list[_TravelReservation] = list(extra_reservations)
@@ -2550,6 +2559,7 @@ def _simulate_skidders(
             edge_capacity=edge_capacity,
             graph_edges=graph_edges,
             edge_capacities=edge_capacities,
+            edge_one_lane=edge_one_lane,
         )
         _append_wait_event(
             events, machine, empty_requested, empty_parts[0]["start"],
@@ -2610,6 +2620,7 @@ def _simulate_skidders(
             edge_capacity=edge_capacity,
             graph_edges=graph_edges,
             edge_capacities=edge_capacities,
+            edge_one_lane=edge_one_lane,
         )
         for part in loaded_parts:
             if part.get("wait_start") is not None:

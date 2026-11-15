@@ -206,16 +206,28 @@ class TerrainRouter:
                     edges.append(key)
         return tuple(edges)
 
+    def road_edge_one_lane(
+        self, spacing_m: float = 150.0
+    ) -> dict[tuple[tuple[float, float], tuple[float, float]], bool]:
+        """Return per-edge one-lane metadata from the road source."""
+        properties = self._road_properties
+        value = properties.get("one_lane", properties.get("one_way", True))
+        one_lane = bool(value) if not isinstance(value, str) else value.lower() not in {"false", "0", "no"}
+        return {edge: one_lane for edge in self.road_edges(spacing_m)}
+
     def road_edge_capacities(
         self, spacing_m: float = 150.0
     ) -> dict[tuple[tuple[float, float], tuple[float, float]], int]:
         """Return per-edge trail capacities from road properties when present."""
         properties = self._road_properties
-        raw = properties.get("capacity", properties.get("lanes", 1))
+        one_lane = properties.get("one_lane", properties.get("one_way", True))
+        if isinstance(one_lane, str):
+            one_lane = one_lane.lower() not in {"false", "0", "no"}
+        raw = properties.get("capacity", properties.get("lanes", 1 if one_lane else 2))
         try:
             capacity = max(1, int(raw))
         except (TypeError, ValueError):
-            capacity = 1
+            capacity = 1 if one_lane else 2
         return {edge: capacity for edge in self.road_edges(spacing_m)}
 
     def passing_bay_nodes(self, spacing_m: float = 150.0) -> tuple[tuple[float, float], ...]:
