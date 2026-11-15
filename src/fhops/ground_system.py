@@ -1489,10 +1489,14 @@ def simulate_ground_system(
     # reservation, not a visual push: skidders wait in the arrival queue and
     # loader/truck operations do not overlap in the same landing space.
     landing_slots: dict[str, float] = {landing.landing_id: 0.0 for landing in landing_choices}
+    # Clear-cut skidder traffic follows the felling operation. Merchantable
+    # stems are harvested, so the only static path exclusions are retained
+    # treeline/riparian patches supplied as obstacles. Treating every
+    # merchantable stem as an obstacle makes machines weave pointlessly
+    # between trees that the feller has removed.
     tree_obstacles = [
-        (tree.x_m, tree.y_m, 1.2, tree.processed_s) for tree in trees
-    ] + [
-        (obstacle.x_m, obstacle.y_m, obstacle.radius_m, float("inf")) for obstacle in obstacles
+        (obstacle.x_m, obstacle.y_m, obstacle.radius_m, float("inf"))
+        for obstacle in obstacles
     ]
     truck_slots = {landing.landing_id: 0.0 for landing in landing_choices} if travel_queue else None
     feller_reservations = _feller_travel_reservations(events, feller_machine_id)
