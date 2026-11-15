@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FHOPS Scenario Studio</title>
-  <link rel="stylesheet" href="static/studio.css?v=20261115i" />
+  <link rel="stylesheet" href="static/studio.css?v=20261115j" />
 </head>
 <body>
   <header id="topbar">
@@ -115,6 +115,19 @@
         <button id="reset-boundary" class="btn small">Reset to base</button>
       </section>
       <section class="panel">
+        <h2>Traffic model</h2>
+        <label class="field">Preset
+          <select id="traffic-preset">
+            <option value="balanced">Balanced queues + clearance</option>
+            <option value="reference">Reference — no queues</option>
+            <option value="clear_cut">Clear-cut — queues, no stem detours</option>
+            <option value="landing_only">Landing queue only</option>
+            <option value="travel_only">Travel corridor queue only</option>
+          </select>
+        </label>
+        <p class="note">Changes landing/travel queues and path clearance for the next run. Reference runs are fastest but not physically queued.</p>
+      </section>
+      <section class="panel">
         <h2>Run result</h2>
         <div id="run-result" class="muted">Save a project and run it to see simulation KPIs.</div>
       </section>
@@ -162,6 +175,6 @@
     </form>
   </dialog>
 
-  <script type="module" src="static/studio.js?v=20261115i"></script>
+  <script type="module" src="static/studio.js?v=20261115j"></script>
 </body>
 </html>

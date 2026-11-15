@@ -882,6 +882,14 @@ const FORWARDER_PRESET = {
   forwarder_unload_fixed_s: 180.0,
 };
 
+const TRAFFIC_PRESETS = {
+  balanced: { landing_queue: true, travel_queue: true, path_clearance_m: 2.8 },
+  reference: { landing_queue: false, travel_queue: false, path_clearance_m: 0 },
+  clear_cut: { landing_queue: true, travel_queue: true, path_clearance_m: 0 },
+  landing_only: { landing_queue: true, travel_queue: false, path_clearance_m: 0 },
+  travel_only: { landing_queue: false, travel_queue: true, path_clearance_m: 0 },
+};
+
 const SYSTEM_PRESETS = {
   full_tree: {
     fellerRole: "feller_buncher",
@@ -1714,6 +1722,8 @@ async function loadProject(projectId) {
     state.dirty = false;
     state.selectedTree = null;
     state.selectedVertex = null;
+    const trafficPreset = $("#traffic-preset");
+    if (trafficPreset) trafficPreset.value = state.project.traffic_preset || "balanced";
     state.scale = 1;
     recomputeStats();
     renderLandingList();
@@ -1931,6 +1941,12 @@ function bindEvents() {
   $("#duplicate").addEventListener("click", duplicateProject);
   $("#add-machine").addEventListener("click", addMachine);
   $("#apply-preset").addEventListener("click", () => applySystemPreset($("#system-preset").value));
+  $("#traffic-preset").addEventListener("change", (event) => {
+    if (!state.project) return;
+    pushHistory();
+    state.project.traffic_preset = event.target.value;
+    markDirty();
+  });
   for (const id of ["compare-left-run", "compare-right-run"]) {
     $(`#${id}`).addEventListener("change", () => {
       updateComparisonLinks($("#compare-left-run").value, $("#compare-right-run").value);

@@ -926,6 +926,15 @@ def stream_buffer_polygon(points: Sequence[Sequence[float]], width_m: float) -> 
 def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
     """Synchronize the active machine list into Tree Lab system arguments."""
     args = json.loads(json.dumps(project.get("system_args") or {}))
+    traffic_presets = {
+        "balanced": {"landing_queue": True, "travel_queue": True, "path_clearance_m": 2.8},
+        "reference": {"landing_queue": False, "travel_queue": False, "path_clearance_m": 0.0},
+        "clear_cut": {"landing_queue": True, "travel_queue": True, "path_clearance_m": 0.0},
+        "landing_only": {"landing_queue": True, "travel_queue": False, "path_clearance_m": 0.0},
+        "travel_only": {"landing_queue": False, "travel_queue": True, "path_clearance_m": 0.0},
+    }
+    traffic = traffic_presets.get(str(project.get("traffic_preset") or "balanced"), traffic_presets["balanced"])
+    args.update(traffic)
     machines = project.get("machines") or []
     roles = [
         (str(item.get("id")), str(item.get("role", ""))) for item in machines if item.get("id")

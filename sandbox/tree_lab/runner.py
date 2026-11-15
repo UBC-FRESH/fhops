@@ -234,6 +234,7 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         "feller_reach_m": "--feller-reach",
         "feller_speed_mps": "--feller-speed",
         "feller_productivity_multiplier": "--feller-productivity-multiplier",
+        "path_clearance_m": "--path-clearance",
         "harvester_model": "--harvester-model",
         "damage_downgrade_fraction": "--damage-downgrade-fraction",
         "processor_productivity_multiplier": "--processor-productivity-multiplier",
@@ -260,8 +261,12 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         command.extend(["--downtime", str(downtime)])
     if args.get("landing_queue") is False:
         command.append("--no-landing-queue")
+    elif args.get("landing_queue") is True:
+        command.append("--landing-queue")
     if args.get("travel_queue") is False:
         command.append("--no-travel-queue")
+    elif args.get("travel_queue") is True:
+        command.append("--travel-queue")
     if args.get("processor_model"):
         command.extend(["--processor-model", str(args["processor_model"])])
     if args.get("processor_rate"):
