@@ -160,6 +160,34 @@ class TerrainRouter:
                 return ()
         return ()
 
+    def road_edges(self) -> tuple[tuple[tuple[float, float], tuple[float, float]], ...]:
+        """Return the actual road/trail graph edges as coordinate pairs."""
+        if isinstance(self._road, _RoadNetwork):
+            edges = []
+            seen = set()
+            for identifier, neighbors in self._road._adjacency.items():
+                ax, ay = self._road._coords[identifier]
+                for neighbor, _length in neighbors:
+                    if neighbor <= identifier:
+                        continue
+                    bx, by = self._road._coords[neighbor]
+                    key = tuple(sorted(((round(ax, 2), round(ay, 2)), (round(bx, 2), round(by, 2)))))
+                    if key not in seen:
+                        seen.add(key)
+                        edges.append(key)
+            return tuple(edges)
+        if self._road is not None:
+            try:
+                coords = [(float(x), float(y)) for x, y in self._road.coords]
+            except Exception:
+                return ()
+            return tuple(
+                tuple(sorted(((round(coords[index][0], 2), round(coords[index][1], 2)),
+                              (round(coords[index + 1][0], 2), round(coords[index + 1][1], 2)))))
+                for index in range(len(coords) - 1)
+            )
+        return ()
+
     def passing_bay_nodes(self, spacing_m: float = 150.0) -> tuple[tuple[float, float], ...]:
         """Return trail nodes plus regularly spaced passing bays along long edges."""
         base = list(self.road_nodes())
