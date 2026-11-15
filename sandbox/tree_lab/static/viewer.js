@@ -40,7 +40,7 @@ const OPERATOR_RIGS = {
   feller_buncher: [
     { id: 'seat', label: 'seat', look: 'forward', forward: -1.6, right: 0, up: 0.55, pitch: -0.08 },
     { id: 'head', label: 'head', look: 'equipment', equipment: 'head', forward: 0, right: 7.0, up: 3.5, pitch: -0.25 },
-    { id: 'tree', label: 'tree', look: 'tree', forward: -2.0, right: 3.8, up: 2.4, pitch: -0.25 },
+    { id: 'tree', label: 'tree', look: 'tree', forward: -7.0, right: 7.5, up: 4.5, pitch: -0.3 },
     { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
   ],
   harvester: [],
@@ -238,6 +238,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let treeHideTimes = new Map();
   let logBatches = [];
   let buckingStreams = [];
+  let harvesterStreams = [];
   let productShares = { sawlog: 0.7, pulp: 0.3 };
   let machines = {};
   let cards = new Map();
@@ -305,6 +306,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     treeHideTimes = new Map();
     logBatches = [];
     buckingStreams = [];
+    harvesterStreams = [];
     productShares = { sawlog: 0.7, pulp: 0.3 };
     machines = {};
     cards = new Map();
@@ -1235,7 +1237,11 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       node.visible = true;
       const base = node.userData.baseQuaternion
         || (node.userData.baseQuaternion = node.quaternion.clone());
-      const progress = Math.max(0, Math.min(1, (t - start) / Math.max(0.001, end - start)));
+      const type = machineSpecs[fell.machine]?.type || '';
+      const fallEnd = type.includes('harvester')
+        ? start + Math.min(8, (end - start) * 0.3)
+        : end;
+      const progress = Math.max(0, Math.min(1, (t - start) / Math.max(0.001, fallEnd - start)));
       const angle = smoothstep(0.05, 0.6, progress) * (Math.PI / 2);
       if (angle <= 1e-4) {
         node.quaternion.copy(base);
@@ -1476,6 +1482,95 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         const z = outfeed.z + (target.z - outfeed.z) * local;
         log.position.set(x, sampleHeight(x, z) + 1.2 + local * 0.4, z);
       });
+    }
+  }
+
+  function buildHarvesterStreams(events) {
+    harvesterStreams = [];
+    for (const item of events.timeline || []) {
+      const type = events.machines?.[item.machine]?.type || '';
+      if (!type.includes('harvester') || item.type !== 'process') continue;
+      const ids = Array.isArray(item.tree_ids) ? item.tree_ids : [];
+      const tree = ids.length ? eventTreesById.get(ids[0]) : null;
+      const start = Number(item.start_s);
+      const end = Number(item.end_s);
+      if (!tree || !Number.isFinite(start) || !Number.isFinite(end)) continue;
+      const count = Math.min(8, Math.max(3, Number(item.logs) || 5));
+      const group = new THREE.Group();
+      const x = Number(tree.x);
+      const z = Number(tree.y);
+      group.position.set(x, sampleHeight(x, z) + 0.35, z);
+      const sawlogMat = new THREE.MeshStandardMaterial({ color: 0xc9a36a, roughness: 0.9 });
+      const pulpMat = new THREE.MeshStandardMaterial({ color: 0xa98155, roughness: 0.95 });
+      const logs = [];
+      for (let index = 0; index < count; index += 1) {
+        const product = productForIndex(index, count, productShares.sawlog);
+        const length = product === 'pulp' ? 2.1 + (index % 3) * 0.25 : 2.8 + (index % 3) * 0.3;
+        const log = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.24, 0.24, length, 7),
+          product === 'pulp' ? pulpMat : sawlogMat,
+        );
+        log.rotation.z = Math.PI / 2;
+        log.position.set(0, 0.3 + (index % 2) * 0.42, 0);
+        log.visible = false;
+        log.userData = {
+          product,
+          target: {
+            x: 1.8 + (index % 2) * 0.55,
+            y: 0.3 + (index % 2) * 0.42,
+            z: (index - (count - 1) / 2) * 0.62,
+          },
+        };
+        group.add(log);
+        logs.push(log);
+      }
+      const top = new THREE.Mesh(
+        new THREE.ConeGeometry(0.24, 2.2, 6),
+        new THREE.MeshStandardMaterial({ color: 0x6b4d32, roughness: 0.95 }),
+      );
+      top.rotation.z = Math.PI / 2;
+      top.position.set(3.25, 0.4, (logs.length - 1) * 0.3);
+      top.visible = false;
+      group.add(top);
+      scene.add(group);
+      harvesterStreams.push({
+        group,
+        logs,
+        top,
+        treeId: String(tree.tree_id),
+        start,
+        end,
+        pickup: Math.max(
+          Number(treeHideTimes.get(String(tree.tree_id)) ?? Number.POSITIVE_INFINITY),
+          end + 2,
+        ),
+      });
+    }
+  }
+
+  function updateHarvesterStreams(t) {
+    for (const stream of harvesterStreams) {
+      if (t < stream.start || t > stream.pickup) {
+        stream.group.visible = false;
+        continue;
+      }
+      stream.group.visible = true;
+      const progress = Math.max(0, Math.min(1, (t - stream.start) / Math.max(0.001, stream.end - stream.start)));
+      stream.logs.forEach((log, index) => {
+        const local = progress * stream.logs.length - index;
+        if (t < stream.end && local < 0) {
+          log.visible = false;
+          return;
+        }
+        log.visible = true;
+        const u = Math.max(0, Math.min(1, local));
+        log.position.set(
+          log.userData.target.x * u,
+          log.userData.target.y,
+          log.userData.target.z * u,
+        );
+      });
+      stream.top.visible = t >= stream.end;
     }
   }
 
@@ -1757,6 +1852,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     updateTrees(currentTime);
     updateLogBatches(currentTime);
     updateBuckingStreams(currentTime);
+    updateHarvesterStreams(currentTime);
     if (onTime) onTime(currentTime);
   }
 
@@ -2751,6 +2847,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         addBlockOutline(events.block_outline);
         buildLogBatches(events);
         buildBuckingStreams(events);
+        buildHarvesterStreams(events);
 
         setTime(0);
         loaded = true;
