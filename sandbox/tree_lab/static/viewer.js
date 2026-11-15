@@ -1985,6 +1985,14 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       saw.position.set(0, -0.5, 0.06);
       saw.userData.spinAxis = 'y';
       head.add(saw);
+      const rollers = [];
+      for (const z of [-0.42, 0.42]) {
+        const roller = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.8, 10), steelMat);
+        roller.rotation.x = Math.PI / 2;
+        roller.position.set(0.12, 0.03, z);
+        head.add(roller);
+        rollers.push(roller);
+      }
       elbow.add(head);
       const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.6, 10), steelMat);
       pin.rotation.x = Math.PI / 2;
@@ -1995,6 +2003,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       rig.elbow = elbow;
       rig.head = head;
       rig.saw = saw;
+      rig.rollers = rollers;
+      rig.headBaseX = head.position.x;
     } else if (isSkidder) {
       const bunk = new THREE.Group();
       bunk.position.set(-1.6, 2.05, 0);
@@ -2143,19 +2153,29 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         else if (working && (type.includes('skidder') || type.includes('forwarder') || type.includes('loader'))) elbowAngle = -0.28;
         rig.elbow.rotation.z = elbowAngle;
       }
-      const aimAt = (point, rate = 0.18) => {
-        let desiredYaw = 0;
+      const aimAt = (point, rate = 0.18, sweep = 0) => {
+        let desiredYaw = sweep;
         if (point) {
           const dx = point.x - group.position.x;
           const dz = point.z - group.position.z;
           if (Math.hypot(dx, dz) > 1) {
-            desiredYaw = -Math.atan2(dz, dx) - group.rotation.y;
+            desiredYaw += -Math.atan2(dz, dx) - group.rotation.y;
           }
         }
         rig.boom.rotation.y += shortestAngleDelta(rig.boom.rotation.y, desiredYaw) * rate;
       };
       if (fellerLike) {
-        aimAt(active ? activeTreePoint(segment) : null, 0.22);
+        const sweep = active ? Math.sin(progress * Math.PI * 2) * 0.16 : 0;
+        aimAt(active ? activeTreePoint(segment) : null, 0.22, sweep);
+        if (rig.head) {
+          const baseX = Number(rig.headBaseX ?? rig.head.position.x);
+          const feed = active ? Math.sin(progress * Math.PI) * 0.42 : 0;
+          rig.head.position.x = baseX + feed;
+        }
+        if (rig.rollers) {
+          const feeding = active && ['process', 'fell', 'fall'].includes(segmentType);
+          for (const roller of rig.rollers) roller.rotation.z += feeding ? 0.28 : 0;
+        }
       } else if (active && segmentType === 'load'
         && (type.includes('skidder') || type.includes('forwarder'))) {
         const ids = Array.isArray(segment.tree_ids) ? segment.tree_ids : [];
