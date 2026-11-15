@@ -1528,6 +1528,7 @@ def simulate_ground_system(
         tree_obstacles=tree_obstacles,
         trail_headway_s=trail_headway_s,
         passing_bays=router.passing_bay_nodes(passing_bay_spacing_m),
+        passing_bay_spacing_m=passing_bay_spacing_m,
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
@@ -2218,6 +2219,16 @@ def _snap_path_to_bays(
     return points
 
 
+def _route_bay_points(
+    path: Sequence[Sequence[float]],
+    spacing_m: float,
+) -> tuple[tuple[float, float], ...]:
+    if spacing_m <= 0 or len(path) < 2:
+        return ()
+    points = _travel_samples(path, step_m=spacing_m)
+    return tuple(points[1:-1])
+
+
 def _split_path_at_midpoint(
     path: Sequence[Sequence[float]],
     passing_bays: Sequence[tuple[float, float]] = (),
@@ -2350,6 +2361,7 @@ def _simulate_skidders(
     tree_obstacles: Sequence[tuple[float, float, float, float]] = (),
     trail_headway_s: float = 120.0,
     passing_bays: Sequence[tuple[float, float]] = (),
+    passing_bay_spacing_m: float = 150.0,
 ) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
     travel_reservations: list[_TravelReservation] = list(extra_reservations)
@@ -2388,7 +2400,9 @@ def _simulate_skidders(
         travel_path = _clear_travel_path(
             route.path, tree_obstacles, start, path_clearance_m
         )
-        travel_path = _snap_path_to_bays(travel_path, passing_bays)
+        route_bays = _route_bay_points(travel_path, passing_bay_spacing_m)
+        travel_path = _snap_path_to_bays(travel_path, (*passing_bays, *route_bays))
+        route_bay_targets = tuple((*passing_bays, *route_bays))
         distance = _path_length(travel_path)
         empty_start = start
         if spec.forwarder_model or spec.productivity_m3_per_smh is not None:
@@ -2446,7 +2460,7 @@ def _simulate_skidders(
             travel_reservations,
             queue=travel_queue,
             headway_s=trail_headway_s,
-            passing_bays=passing_bays,
+            passing_bays=route_bay_targets,
         )
         _append_wait_event(
             events, machine, empty_requested, empty_parts[0]["start"],
@@ -2503,7 +2517,7 @@ def _simulate_skidders(
             travel_reservations,
             queue=travel_queue,
             headway_s=trail_headway_s,
-            passing_bays=passing_bays,
+            passing_bays=route_bay_targets,
         )
         for part in loaded_parts:
             if part.get("wait_start") is not None:
