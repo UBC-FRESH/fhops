@@ -1,0 +1,29 @@
+{
+  "schema_version": "fhops.tree.inventory.v1",
+  "inventory_id": "mkrf_684-faib-psp-v1",
+  "generated_utc": "2026-10-31T00:00:00+00:00",
+  "source_id": "faib-psp-cwhdm",
+  "producer": "Nemora",
+  "method": "Weibull DBH fit to FAIB PSP live trees; species composition and height allometry from the same BEC/TSA/age window; deterministic placement inside the VRI polygon.",
+  "crs": "EPSG:3005",
+  "units": {
+    "x_y": "m",
+    "elevation": "m",
+    "dbh": "cm",
+    "height": "m",
+    "crown_radius": "m"
+  },
+  "review_status": "not_reviewed",
+  "reviewed_by": null,
+  "block_ids": [
+    "B01"
+  ],
+  "caveats": [
+    "Synthetic tree map; not a surveyed stand or operational inventory.",
+    "DBH distribution is fitted to regional PSP live trees in the stated BEC/TSA/age window.",
+    "Species composition and height allometry are regional PSP summaries, not measured stand values.",
+    "Tree placement is deterministic Poisson, not a mapped stem map."
+  ],
+  "tree_count": 4798,
+  "inventory_sha256": "3ce8e7a832324e1771bafa36c9b4d60789aa6c3e6e152e24f12adf1ad55e5dfe"
+}

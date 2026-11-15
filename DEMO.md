@@ -22,19 +22,24 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains the validated TFL 6 LiDAR model instance:
+It contains two validated model instances:
 
 ```text
+examples/demo_runs/mkrf-cedar-flat
 examples/demo_runs/tfl6-lidar-demo
 ```
 
-The instance includes the scenario bundle, seven-block EPSG:3005 geometry, operational
-assignments, day/shift playback summaries, KPIs, reports, LiDAR support, and `run.json`.
-The console auto-selects it, so `/fhops/` opens with map geometry and results available.
+`mkrf-cedar-flat` is the default console run. It includes the MKRF Cedar Flat scenario,
+matching block/landing geometry, tree inventory, operational assignments, playback summaries,
+KPIs, reports, and `run.json`.
 
-Do not add benchmark-only or metadata-only directories to the console run root. A run without
-a scenario and block geometry recreates the empty-map failure mode. The contract test at
-`tests/test_public_demo_contract.py` is the regression guard.
+`tfl6-lidar-demo` includes the TFL 6 LiDAR scenario, seven-block EPSG:3005 geometry, operational
+assignments, playback summaries, KPIs, reports, LiDAR support, and `run.json`.
+
+The console auto-selects the first run, so `/fhops/` opens with map geometry and results
+available. Do not add benchmark-only or metadata-only directories to the console run root. A
+run without a scenario and block geometry recreates the empty-map failure mode. The contract
+test at `tests/test_public_demo_contract.py` is the regression guard.
 
 ## Start/restart
 

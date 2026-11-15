@@ -113,7 +113,13 @@ def _geometry_candidates(
         try:
             meta = yaml.safe_load(scenario_path.read_text(encoding="utf-8")) or {}
             data = meta.get("data") or {}
-            block_geo = meta.get("geo_block_path") or data.get("geo_block_path")
+            geo = meta.get("geo") or {}
+            block_geo = (
+                meta.get("geo_block_path")
+                or data.get("geo_block_path")
+                or geo.get("block_geojson")
+                or geo.get("block_geojson_path")
+            )
             if block_geo:
                 candidates.append((scenario_path.parent / str(block_geo)).resolve())
         except (OSError, yaml.YAMLError):
@@ -132,7 +138,8 @@ def _scenario_crs(record: RunRecord) -> str | None:
     except (OSError, yaml.YAMLError):
         return None
     data = meta.get("data") or {}
-    return meta.get("geo_crs") or data.get("geo_crs")
+    geo = meta.get("geo") or {}
+    return meta.get("geo_crs") or data.get("geo_crs") or geo.get("crs")
 
 
 def _transformer(source_crs: str):

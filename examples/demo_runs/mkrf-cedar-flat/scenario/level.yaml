@@ -1,0 +1,106 @@
+schema_version: fhops.game.level.v1
+level_id: mkrf_684
+order: 1
+name: MKRF Cedar Flat
+area_ha: 6.863879171972996
+difficulty: starter
+boundary: ../../stands/mkrf_684.geojson
+scenario: scenario.yaml
+prices: prices.yaml
+stem_form_factor: 0.2
+selection_cut: false
+machine_ids:
+  feller: H1
+  skidders:
+  - H2
+  - H3
+  processors:
+  - H5
+  loader: H4
+care_levels:
+- 0.0
+skidder_counts:
+- 1
+- 2
+bucking:
+  log_length_m:
+  - 4.9
+  - 6.1
+  sawlog_min_dbh_cm:
+  - 20.0
+landing_options:
+  main: 0.0
+briefing:
+  forest: Malcolm Knapp Research Forest
+  stand: RES_KEY 684 (VRI-derived)
+  area_ha: 6.863879
+  bec: CWHdm
+  species: HW / FDC
+  age_years: 104
+  stems_per_ha: 699.1
+  basal_area_m2_per_ha: 77.3
+  volume_m3_per_ha: 599.7
+  mean_height_m: 24.4
+  slope_percent: 8.0
+  prescription: clearcut
+  removal_fraction: 1.0
+  harvest_system: 'tree-length: feller-buncher + grapple skidder + roadside processor
+    + loader'
+  machine_operating_cost_per_smh: 600.0
+  mobilisation_cost: 25000.0
+  landing: main; existing access
+  planning_assumptions:
+  - Slope is a level planning assumption, not a surveyed terrain product.
+  - Product prices are a synthetic game deck, not a mill forecast.
+  - Tree list is synthetic and calibrated to regional PSP distributions.
+  unknowns:
+  - Hidden breakdown timing.
+  - Exact productivity response to care settings.
+  - Actual road/landing construction quantities.
+contractors:
+- id: northpoint
+  name: Northpoint Contracting
+  rate_multiplier: 0.95
+  mobilisation_adjustment: 6000.0
+  note: Low hourly rate, higher move-in.
+- id: lakeview
+  name: Lakeview Harvesting
+  rate_multiplier: 1.0
+  mobilisation_adjustment: 0.0
+  note: Balanced quote.
+- id: ridge
+  name: Ridge Line Logging
+  rate_multiplier: 1.08
+  mobilisation_adjustment: -4000.0
+  note: Higher rate, lower move-in.
+- id: spot
+  name: Spot Crew Co.
+  rate_multiplier: 1.15
+  mobilisation_adjustment: -8000.0
+  note: Premium availability, highest rate.
+consultants:
+- id: scout
+  name: Operations Scout
+  tier: cheap
+  fee: 1500.0
+  parameters:
+  - skidder_count
+  note: One narrow operational tip.
+- id: planner
+  name: Harvest Planner
+  tier: balanced
+  fee: 5000.0
+  parameters:
+  - care_level
+  - log_length_m
+  note: Two overlapping parameter tips.
+- id: specialist
+  name: Senior Specialist
+  tier: premium
+  fee: 12000.0
+  parameters:
+  - care_level
+  - log_length_m
+  - skidder_count
+  note: Highest precision; heavily overlaps the other consultants.
+max_consultants: 3

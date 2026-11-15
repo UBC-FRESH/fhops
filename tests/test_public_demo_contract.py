@@ -15,7 +15,8 @@ from fastapi.testclient import TestClient
 
 from demo_app import ROOT, app
 
-MODEL_INSTANCE_ID = "tfl6-lidar-demo"
+DEFAULT_MODEL_INSTANCE_ID = "mkrf-cedar-flat"
+MODEL_INSTANCE_IDS = ("mkrf-cedar-flat", "tfl6-lidar-demo")
 REQUIRED_ARTIFACTS = {
     "assignments",
     "kpis",
@@ -38,10 +39,10 @@ def _runs(client: TestClient) -> list[dict[str, object]]:
     return payload
 
 
-def _model_instance(client: TestClient) -> dict[str, object]:
+def _model_instance(client: TestClient, run_id: str) -> dict[str, object]:
     runs = _runs(client)
-    record = next((run for run in runs if run.get("run_id") == MODEL_INSTANCE_ID), None)
-    assert record is not None, f"{MODEL_INSTANCE_ID} must remain discoverable: {runs}"
+    record = next((run for run in runs if run.get("run_id") == run_id), None)
+    assert record is not None, f"{run_id} must remain discoverable: {runs}"
     return record
 
 
@@ -65,17 +66,13 @@ def test_full_console_shell_is_served_at_fhops(client: TestClient) -> None:
     assert 'href="static/' not in body
 
 
-def test_console_run_has_a_complete_model_instance(client: TestClient) -> None:
-    runs = _runs(client)
-    record = _model_instance(client)
-    assert runs[0]["run_id"] == MODEL_INSTANCE_ID, (
-        "the console selects runs[0] and must not open on a benchmark-only run"
-    )
+def _assert_complete_model_instance(record: dict[str, object]) -> None:
+    run_id = str(record["run_id"])
     assert record["domain"] == "operational"
     files = record["files"]
     assert isinstance(files, dict)
     missing = REQUIRED_ARTIFACTS - set(files)
-    assert not missing, f"{MODEL_INSTANCE_ID} is missing {sorted(missing)}"
+    assert not missing, f"{run_id} is missing {sorted(missing)}"
 
     manifest = record["manifest"]
     assert isinstance(manifest, dict)
@@ -86,19 +83,31 @@ def test_console_run_has_a_complete_model_instance(client: TestClient) -> None:
     assert scenario_path.is_relative_to(ROOT.resolve())
 
 
-def test_console_model_instance_has_scenario_geometry_and_results(client: TestClient) -> None:
-    _model_instance(client)
+def test_console_run_has_a_complete_model_instance(client: TestClient) -> None:
+    runs = _runs(client)
+    assert runs[0]["run_id"] == DEFAULT_MODEL_INSTANCE_ID, (
+        "the console selects runs[0] and must not open on a benchmark-only run"
+    )
+    _assert_complete_model_instance(_model_instance(client, DEFAULT_MODEL_INSTANCE_ID))
+
+
+@pytest.mark.parametrize("run_id", MODEL_INSTANCE_IDS)
+def test_console_model_instance_has_scenario_geometry_and_results(
+    client: TestClient, run_id: str
+) -> None:
+    record = _model_instance(client, run_id)
+    _assert_complete_model_instance(record)
     for path in (
-        f"/api/scenarios/{MODEL_INSTANCE_ID}",
-        f"/api/runs/{MODEL_INSTANCE_ID}/kpis",
-        f"/api/runs/{MODEL_INSTANCE_ID}/summary",
-        f"/api/runs/{MODEL_INSTANCE_ID}/playback?scope=day",
-        f"/api/runs/{MODEL_INSTANCE_ID}/lidar",
+        f"/api/scenarios/{run_id}",
+        f"/api/runs/{run_id}/kpis",
+        f"/api/runs/{run_id}/summary",
+        f"/api/runs/{run_id}/playback?scope=day",
+        f"/api/runs/{run_id}/lidar",
     ):
         response = client.get(path)
         assert response.status_code == 200, f"{path}: {response.text}"
 
-    map_response = client.get(f"/api/runs/{MODEL_INSTANCE_ID}/map?day=1")
+    map_response = client.get(f"/api/runs/{run_id}/map?day=1")
     assert map_response.status_code == 200, map_response.text
     payload = map_response.json()
     features = payload.get("features", [])
