@@ -727,6 +727,15 @@ function renderMachines() {
 }
 
 const SPEC_FIELDS = {
+  feller_buncher: [
+    ["productivity_multiplier", "productivity multiplier (1.0 = ADV6N10)"],
+  ],
+  harvester: [
+    ["productivity_multiplier", "productivity multiplier (1.0 = ADV6N10)"],
+  ],
+  hand_faller: [
+    ["productivity_multiplier", "productivity multiplier"],
+  ],
   loader: [
     ["process_fixed_s", "fixed process time (s)"],
     ["process_per_log_s", "process time per log (s)"],
@@ -775,6 +784,8 @@ const SPEC_FIELDS = {
   ],
 };
 
+SPEC_FIELDS.forwarder = SPEC_FIELDS.grapple_skidder;
+
 function renderPolicyEffects() {
   const node = $("#policy-effects");
   if (!node || !state.project) return;
@@ -811,16 +822,33 @@ function renderMachineSpecs() {
       row.className = "spec-field";
       const text = document.createElement("label");
       text.textContent = label;
-      const input = document.createElement("input");
-      input.type = key === "forwarder_model" ? "text" : "number";
-      if (input.type === "number") input.step = "any";
-      input.placeholder = "default";
-      input.value = spec[key] ?? "";
+      let input;
+      if (key === "forwarder_model") {
+        input = document.createElement("select");
+        const options = [
+          ["", "default (Eriksson final felling)"],
+          ["eriksson-final-felling", "Eriksson final felling"],
+          ["eriksson-thinning", "Eriksson thinning"],
+          ["adv1n12-shortwood", "ADV1N12 shortwood"],
+          ["ghaffariyan-small", "Ghaffariyan small"],
+          ["ghaffariyan-large", "Ghaffariyan large"],
+        ];
+        input.innerHTML = options.map(([value, textValue]) => (
+          `<option value="${escapeHtml(value)}">${escapeHtml(textValue)}</option>`
+        )).join("");
+        input.value = spec[key] || "";
+      } else {
+        input = document.createElement("input");
+        input.type = "number";
+        input.step = "any";
+        input.placeholder = "default";
+        input.value = spec[key] ?? "";
+      }
       input.addEventListener("change", () => {
         pushHistory();
         const next = machine.spec || {};
         if (input.value === "") delete next[key];
-        else next[key] = input.type === "text" ? input.value : Number(input.value);
+        else next[key] = input.tagName === "SELECT" ? input.value : Number(input.value);
         if (Object.keys(next).length) machine.spec = next;
         else delete machine.spec;
         markDirty();
@@ -1729,6 +1757,29 @@ async function createNew() {
   }
 }
 
+function renderRateAssumptions(summary) {
+  const provenance = summary?.rate_provenance || {};
+  const harvester = provenance.harvester || {};
+  const loader = provenance.loader || {};
+  const forwarders = Array.isArray(provenance.forwarders) ? provenance.forwarders : [];
+  const items = [];
+  if (harvester.model) {
+    items.push(`<li><b>Harvester</b> ${escapeHtml(harvester.model)}${harvester.processing_model ? ` · ${escapeHtml(harvester.processing_model)}` : ""}</li>`);
+  }
+  for (const item of forwarders) {
+    const rate = item.productivity_m3_per_smh
+      ? ` · ${Number(item.productivity_m3_per_smh).toFixed(1)} m³/SMH`
+      : "";
+    items.push(`<li><b>${escapeHtml(item.machine_id || "forwarder")}</b> ${escapeHtml(item.model || "configured rate")}${rate}</li>`);
+  }
+  if (loader.model) {
+    const rate = loader.seconds_per_m3 ? ` · ${(3600 / Number(loader.seconds_per_m3)).toFixed(1)} m³/SMH` : "";
+    items.push(`<li><b>Loader</b> ${escapeHtml(loader.model)}${rate}</li>`);
+  }
+  if (!items.length) return "";
+  return `<details class="rate-card" open><summary>Rate assumptions</summary><ul>${items.join("")}</ul><p class="muted">Model rates are FHOPS reference assumptions; edit machine specs or the harvester productivity multiplier to calibrate them.</p></details>`;
+}
+
 async function runScenario() {
   if (!state.project) return;
   if (!beginScenarioRun("Saving before run…")) return;
@@ -1755,7 +1806,14 @@ async function runScenario() {
     const warningHtml = warnings.length
       ? `<div class="banner warn"><b>Blocked / warnings</b><ul>${warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul></div>`
       : "";
-    $("#run-result").innerHTML = `<b>Run ${escapeHtml(record.run_id)}</b><div class="stat-grid" style="margin-top:7px">${rows.map(([label, value]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("")}</div>${warningHtml}<p><a class="back" href="replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(record.run_id)}" target="_blank">Open 3D replay →</a></p>`;
+    let runSummary = null;
+    try {
+      runSummary = await api(`projects/${encodeURIComponent(state.project.project_id)}/runs/${encodeURIComponent(record.run_id)}/summary`);
+    } catch (summaryError) {
+      runSummary = null;
+    }
+    const rateCard = renderRateAssumptions(runSummary);
+    $("#run-result").innerHTML = `<b>Run ${escapeHtml(record.run_id)}</b><div class="stat-grid" style="margin-top:7px">${rows.map(([label, value]) => `<div class="stat"><b>${value}</b><span>${label}</span></div>`).join("")}</div>${rateCard}${warningHtml}<p><a class="back" href="replay?project=${encodeURIComponent(state.project.project_id)}&run=${encodeURIComponent(record.run_id)}" target="_blank">Open 3D replay →</a></p>`;
     setStatus(`Run complete · ${record.run_id}`);
     renderProjectMeta();
     await loadRunHistory();

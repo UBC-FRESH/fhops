@@ -974,6 +974,9 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
     args["loader"] = primary_fleet["loader"]
     args["processors"] = primary_fleet["processors"]
     args["landing_fleets"] = fleets
+    # The machine-spec multiplier is the base calibration; operator policy
+    # composes on top of it in apply_operator_policies.
+    args.pop("feller_productivity_multiplier", None)
     loader_specs: dict[str, dict[str, float]] = {}
     skidder_specs: dict[str, dict[str, float]] = {}
     processor_specs: dict[str, dict[str, float]] = {}
@@ -985,7 +988,12 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
         role = str(machine.get("role") or "")
         if not machine_id:
             continue
-        if role == "loader":
+        if role in {"feller_buncher", "harvester", "hand_faller"}:
+            if "productivity_multiplier" in spec:
+                value = float(spec["productivity_multiplier"])
+                if value > 0:
+                    args["feller_productivity_multiplier"] = value
+        elif role == "loader":
             loader_specs[machine_id] = {
                 key: float(spec[key])
                 for key in ("process_fixed_s", "process_per_log_s")
@@ -1059,7 +1067,10 @@ def sync_system_args(project: dict[str, Any]) -> dict[str, Any]:
         args.pop("landing_truck_specs", None)
     policy = project.get("operator_policies", {}).get(feller, "steady")
     preset = POLICY_PRESETS.get(policy, POLICY_PRESETS["steady"])
-    args["feller_productivity_multiplier"] = 1.0 / max(0.5, float(preset["cycle_multiplier"]))
+    base_feller_multiplier = float(args.get("feller_productivity_multiplier", 1.0) or 1.0)
+    args["feller_productivity_multiplier"] = round(
+        base_feller_multiplier / max(0.5, float(preset["cycle_multiplier"])), 4
+    )
     project["system_args"] = args
     return args
 
