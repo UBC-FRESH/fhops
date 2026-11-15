@@ -803,6 +803,10 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     const truckDistance = seat ? 35 : 15;
     for (const [truckId, truck] of Object.entries(trucks)) {
       if (truckId === povId) continue;
+      if (isTruck) {
+        truck.visible = false;
+        continue;
+      }
       const distance = Math.hypot(truck.position.x - povPosition.x, truck.position.z - povPosition.z);
       if (distance < truckDistance) truck.visible = false;
     }
