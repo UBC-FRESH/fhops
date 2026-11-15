@@ -1763,6 +1763,23 @@ async function createNew() {
   }
 }
 
+const RUN_STAGE_LABELS = {
+  queued: "Queued…",
+  materializing: "Preparing block and inventory…",
+  running: "Simulating…",
+  complete: "Finishing run…",
+};
+
+async function pollRunJob(jobId) {
+  for (;;) {
+    const job = await api(`run-jobs/${encodeURIComponent(jobId)}`);
+    if (job.stage && RUN_STAGE_LABELS[job.stage]) setRunStage(RUN_STAGE_LABELS[job.stage]);
+    if (job.status === "complete" && job.record) return job.record;
+    if (job.status === "error") throw new Error(job.error || "Scenario run failed.");
+    await new Promise((resolve) => setTimeout(resolve, 800));
+  }
+}
+
 function renderRateAssumptions(summary) {
   const provenance = summary?.rate_provenance || {};
   const harvester = provenance.harvester || {};
@@ -1799,8 +1816,9 @@ async function runScenario() {
     state.dirty = false;
     setRunStage("Running scenario…");
     setStatus("Running edited scenario…");
-    $("#run-result").innerHTML = runWaitingMarkup("Simulation running…");
-    const record = await api(`projects/${encodeURIComponent(state.project.project_id)}/run`, { method: "POST" });
+    $("#run-result").innerHTML = runWaitingMarkup("Simulation queued…");
+    const started = await api(`projects/${encodeURIComponent(state.project.project_id)}/run-async`, { method: "POST" });
+    const record = await pollRunJob(started.job_id);
     const kpis = record.kpis || {};
     const rows = [
       ["trees", kpis.tree_count ?? "—"],

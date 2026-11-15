@@ -161,6 +161,25 @@ function finishScenarioRun() {
   if (indicator) indicator.hidden = true;
 }
 
+const RUN_STAGE_LABELS = {
+  queued: "Queued…",
+  materializing: "Preparing block and inventory…",
+  running: "Simulating…",
+  complete: "Finishing run…",
+};
+
+async function pollRunJob(jobId) {
+  for (;;) {
+    const response = await fetch(`${API}run-jobs/${encodeURIComponent(jobId)}`);
+    if (!response.ok) throw new Error(`job ${response.status}`);
+    const job = await response.json();
+    if (job.stage && RUN_STAGE_LABELS[job.stage]) setRunStage(RUN_STAGE_LABELS[job.stage]);
+    if (job.status === "complete" && job.record) return job.record;
+    if (job.status === "error") throw new Error(job.error || "Scenario run failed.");
+    await new Promise((resolve) => setTimeout(resolve, 800));
+  }
+}
+
 function runWaitingMarkup(label = "Simulation running…") {
   return `<div class="run-wait" role="status"><span class="hourglass" aria-hidden="true">⌛</span><div><b>${escapeHtml(label)}</b><div class="muted">Please wait — the simulation is running. Do not click Run scenario again.</div></div><span class="run-clock">0:00</span></div>`;
 }
@@ -904,11 +923,12 @@ async function runScenario() {
     if (!saved) return;
     setRunStage("Running scenario…");
     setStatus("Running edited scenario…");
-    $("#run-output").innerHTML = runWaitingMarkup("Simulation running…");
-    const record = await fetch(`${API}projects/${encodeURIComponent(projectId)}/run`, { method: "POST" }).then((response) => {
+    $("#run-output").innerHTML = runWaitingMarkup("Simulation queued…");
+    const started = await fetch(`${API}projects/${encodeURIComponent(projectId)}/run-async`, { method: "POST" }).then((response) => {
       if (!response.ok) throw new Error(`run ${response.status}`);
       return response.json();
     });
+    const record = await pollRunJob(started.job_id);
     const link = $("#replay-link");
     link.href = `replay?project=${encodeURIComponent(projectId)}&run=${encodeURIComponent(record.run_id)}`;
     link.hidden = false;

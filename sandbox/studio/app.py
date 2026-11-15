@@ -12,6 +12,9 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import uuid
+from concurrent.futures import ThreadPoolExecutor
+from threading import Lock
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -70,6 +73,33 @@ def _case(config: StudioConfig, case_id: str):
 def create_app(config: StudioConfig) -> FastAPI:
     """Build the Studio FastAPI application."""
     app = FastAPI(title="FHOPS Scenario Studio", version="0.1.0")
+    run_jobs: dict[str, dict[str, Any]] = {}
+    run_jobs_lock = Lock()
+    run_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="studio-run")
+
+    def _set_job(job_id: str, **updates: Any) -> None:
+        with run_jobs_lock:
+            if job_id in run_jobs:
+                run_jobs[job_id].update(updates)
+                run_jobs[job_id]["updated_utc"] = datetime.now(UTC).isoformat()
+
+    def _execute_run(
+        project_id: str,
+        run_id: str,
+        on_stage: Any | None = None,
+    ) -> dict[str, Any]:
+        if on_stage:
+            on_stage("materializing")
+        project = load_project(config.projects_root, project_id)
+        road_check = road_network_validation(project)
+        if not road_check["connected"]:
+            raise StudioError(" ".join(road_check["warnings"]))
+        base = _case(config, str(project.get("base_case_id", "")))
+        derived = materialize_case(config.projects_root, project, base)
+        if on_stage:
+            on_stage("running")
+        runs_root = project_path(config.projects_root, project_id) / "runs"
+        return run_case(derived, runs_root, run_id=run_id)
 
     @app.middleware("http")
     async def no_store(request: Request, call_next: Any) -> Any:
@@ -291,18 +321,58 @@ def create_app(config: StudioConfig) -> FastAPI:
     @app.post("/api/projects/{project_id}/run")
     def run_project(project_id: str) -> dict[str, Any]:
         try:
+            run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+            return _execute_run(project_id, run_id)
+        except (StudioError, CaseError, RunError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @app.post("/api/projects/{project_id}/run-async")
+    def run_project_async(project_id: str) -> dict[str, Any]:
+        try:
             project = load_project(config.projects_root, project_id)
             road_check = road_network_validation(project)
             if not road_check["connected"]:
                 raise StudioError(" ".join(road_check["warnings"]))
-            base = _case(config, str(project.get("base_case_id", "")))
-            derived = materialize_case(config.projects_root, project, base)
-            run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-            runs_root = project_path(config.projects_root, project_id) / "runs"
-            record = run_case(derived, runs_root, run_id=run_id)
-            return record
-        except (StudioError, CaseError, RunError) as exc:
+        except (StudioError, CaseError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+        run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+        job_id = uuid.uuid4().hex[:12]
+        with run_jobs_lock:
+            run_jobs[job_id] = {
+                "job_id": job_id,
+                "project_id": project_id,
+                "run_id": run_id,
+                "status": "queued",
+                "stage": "queued",
+                "started_utc": datetime.now(UTC).isoformat(),
+                "updated_utc": datetime.now(UTC).isoformat(),
+            }
+            if len(run_jobs) > 32:
+                for stale_id in list(run_jobs)[: len(run_jobs) - 32]:
+                    run_jobs.pop(stale_id, None)
+
+        def worker() -> None:
+            try:
+                _set_job(job_id, status="running", stage="materializing")
+                record = _execute_run(project_id, run_id, lambda stage: _set_job(job_id, stage=stage))
+                _set_job(job_id, status="complete", stage="complete", record=record)
+            except (StudioError, CaseError, RunError, OSError) as exc:
+                _set_job(job_id, status="error", stage="error", error=str(exc))
+            except Exception as exc:  # noqa: BLE001 - report background failures to the UI
+                _set_job(job_id, status="error", stage="error", error=f"{type(exc).__name__}: {exc}")
+
+        run_executor.submit(worker)
+        return {"job_id": job_id, "run_id": run_id}
+
+    @app.get("/api/run-jobs/{job_id}")
+    def run_job(job_id: str) -> dict[str, Any]:
+        with run_jobs_lock:
+            job = dict(run_jobs.get(job_id) or {})
+        if not job:
+            raise HTTPException(status_code=404, detail="Unknown run job.")
+        started = datetime.fromisoformat(str(job.get("started_utc")))
+        job["elapsed_s"] = round((datetime.now(UTC) - started).total_seconds(), 1)
+        return job
 
     def _run_path(project_id: str, run_id: str) -> Path:
         if "/" in run_id or ".." in run_id:
