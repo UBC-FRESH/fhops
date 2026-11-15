@@ -643,7 +643,12 @@ def tree_system(
     path_clearance: float = typer.Option(
         2.8,
         "--path-clearance",
-        help="Clearance in metres for detouring travel paths around standing stems.",
+        help="Clearance in metres for detouring travel paths around retained exclusions.",
+    ),
+    trail_headway: float = typer.Option(
+        120.0,
+        "--trail-headway",
+        help="Minimum trailing headway in seconds for same-direction trail traffic.",
     ),
     landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
     landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
@@ -903,6 +908,7 @@ def tree_system(
             landing_queue=landing_queue,
             travel_queue=travel_queue,
             path_clearance_m=path_clearance,
+            trail_headway_s=trail_headway,
             dem_path=dem,
             road_path=road,
             terrain_sample_step_m=terrain_step,

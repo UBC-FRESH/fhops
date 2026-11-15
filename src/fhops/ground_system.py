@@ -781,6 +781,7 @@ def simulate_ground_system(
     landing_queue: bool = False,
     travel_queue: bool = False,
     path_clearance_m: float = 0.0,
+    trail_headway_s: float = 120.0,
     dem_path: str | Path | None = None,
     road_path: str | Path | None = None,
     terrain_sample_step_m: float = 10.0,
@@ -1516,6 +1517,7 @@ def simulate_ground_system(
         extra_reservations=feller_reservations,
         path_clearance_m=path_clearance_m,
         tree_obstacles=tree_obstacles,
+        trail_headway_s=trail_headway_s,
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
@@ -1699,6 +1701,7 @@ class _TravelReservation:
     start_s: float
     end_s: float
     points: tuple[tuple[float, float], ...]
+    direction: tuple[float, float] = (0.0, 0.0)
 
 
 @dataclass(frozen=True)
@@ -2059,7 +2062,13 @@ def _feller_travel_reservations(
             continue
         if points:
             reservations.append(
-                _TravelReservation(event.machine, event.start_s, event.end_s, points)
+                _TravelReservation(
+                    event.machine,
+                    event.start_s,
+                    event.end_s,
+                    points,
+                    _path_direction(points),
+                )
             )
     return reservations
 
@@ -2080,6 +2089,15 @@ def _travel_samples(path: Sequence[Sequence[float]], step_m: float = 5.0) -> tup
     return tuple(points)
 
 
+def _path_direction(points: tuple[tuple[float, float], ...]) -> tuple[float, float]:
+    if len(points) < 2:
+        return (0.0, 0.0)
+    dx = points[-1][0] - points[0][0]
+    dz = points[-1][1] - points[0][1]
+    length = math.hypot(dx, dz)
+    return (dx / length, dz / length) if length > 1e-9 else (0.0, 0.0)
+
+
 def _travel_conflict(
     reservations: Sequence[_TravelReservation],
     machine: str,
@@ -2087,6 +2105,8 @@ def _travel_conflict(
     end_s: float,
     points: tuple[tuple[float, float], ...],
     clearance_m: float,
+    direction: tuple[float, float] = (0.0, 0.0),
+    headway_s: float = 120.0,
 ) -> float | None:
     """Return the end time of the first conflicting reservation, if any."""
     conflict_end: float | None = None
@@ -2094,6 +2114,13 @@ def _travel_conflict(
         if reservation.machine == machine:
             continue
         if start_s >= reservation.end_s or end_s <= reservation.start_s:
+            continue
+        same_direction = (
+            direction[0] * reservation.direction[0] + direction[1] * reservation.direction[1] > 0.65
+        )
+        if same_direction and start_s >= reservation.start_s + headway_s:
+            # Following traffic on a trail with a safe time headway does not
+            # need to wait for the leader's entire trip to finish.
             continue
         close = False
         for x0, y0 in points:
@@ -2119,19 +2146,23 @@ def _schedule_travel(
     *,
     clearance_m: float = 7.0,
     queue: bool = True,
+    headway_s: float = 120.0,
 ) -> tuple[float, float]:
     """Schedule a travel event and reserve its corridor when queued."""
     points = _travel_samples(path)
     if not queue or not points:
         return _schedule_task(calendar, start_s, duration_s, machine)
+    direction = _path_direction(points)
     candidate = start_s
     for _ in range(16):
         start, end = _schedule_task(calendar, candidate, duration_s, machine)
         conflict_end = _travel_conflict(
-            reservations, machine, start, end, points, clearance_m
+            reservations, machine, start, end, points, clearance_m, direction, headway_s
         )
         if conflict_end is None:
-            reservations.append(_TravelReservation(machine, start, end, points))
+            reservations.append(
+                _TravelReservation(machine, start, end, points, direction)
+            )
             return start, end
         candidate = max(candidate, conflict_end + 5.0)
     # If repeated conflicts cannot be resolved inside the shift window, keep
@@ -2156,6 +2187,7 @@ def _simulate_skidders(
     extra_reservations: Sequence[_TravelReservation] = (),
     path_clearance_m: float = 0.0,
     tree_obstacles: Sequence[tuple[float, float, float, float]] = (),
+    trail_headway_s: float = 120.0,
 ) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
     travel_reservations: list[_TravelReservation] = list(extra_reservations)
@@ -2247,9 +2279,10 @@ def _simulate_skidders(
             empty_start,
             empty_time,
             machine,
-            route.path,
+            travel_path,
             travel_reservations,
             queue=travel_queue,
+            headway_s=trail_headway_s,
         )
         _append_wait_event(
             events, machine, empty_requested, empty_start,
@@ -2294,9 +2327,10 @@ def _simulate_skidders(
             load_end,
             loaded_time,
             machine,
-            tuple(reversed(route.path)),
+            tuple(reversed(travel_path)),
             travel_reservations,
             queue=travel_queue,
+            headway_s=trail_headway_s,
         )
         events.append(
             GroundSystemEvent(
