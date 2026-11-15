@@ -1,9 +1,9 @@
 """Public-demo contract tests.
 
 These tests guard the deployed demo surface, not just the FHOPS library. The console is only
-useful when it is served with a complete model instance: scenario, assignments, block geometry,
-KPIs, and playback artifacts. A future change that points the console at benchmark-only runs
-should fail here before it reaches the gateway.
+useful when it is served with a complete model instance: scenario, block geometry, domain
+artifacts, KPIs, and map/result payloads. A future change that points the console at a
+benchmark-only or partial run should fail here before it reaches the gateway.
 """
 
 from __future__ import annotations
@@ -15,13 +15,18 @@ from fastapi.testclient import TestClient
 
 from demo_app import ROOT, app
 
-DEFAULT_MODEL_INSTANCE_ID = "mkrf-cedar-flat"
-MODEL_INSTANCE_IDS = ("mkrf-cedar-flat", "tfl6-lidar-demo")
-REQUIRED_ARTIFACTS = {
-    "assignments",
-    "kpis",
-    "day_summary",
-    "shift_summary",
+DEFAULT_MODEL_INSTANCE_ID = "mkrf-full-estate"
+MODEL_INSTANCES = {
+    "mkrf-full-estate": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
+    "tfl6-lidar-demo": {
+        "domain": "operational",
+        "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
+        "map_query": "day=1",
+    },
 }
 
 
@@ -68,10 +73,11 @@ def test_full_console_shell_is_served_at_fhops(client: TestClient) -> None:
 
 def _assert_complete_model_instance(record: dict[str, object]) -> None:
     run_id = str(record["run_id"])
-    assert record["domain"] == "operational"
+    spec = MODEL_INSTANCES[run_id]
+    assert record["domain"] == spec["domain"]
     files = record["files"]
     assert isinstance(files, dict)
-    missing = REQUIRED_ARTIFACTS - set(files)
+    missing = set(spec["artifacts"]) - set(files)
     assert not missing, f"{run_id} is missing {sorted(missing)}"
 
     manifest = record["manifest"]
@@ -91,23 +97,32 @@ def test_console_run_has_a_complete_model_instance(client: TestClient) -> None:
     _assert_complete_model_instance(_model_instance(client, DEFAULT_MODEL_INSTANCE_ID))
 
 
-@pytest.mark.parametrize("run_id", MODEL_INSTANCE_IDS)
+@pytest.mark.parametrize("run_id", tuple(MODEL_INSTANCES))
 def test_console_model_instance_has_scenario_geometry_and_results(
     client: TestClient, run_id: str
 ) -> None:
     record = _model_instance(client, run_id)
     _assert_complete_model_instance(record)
-    for path in (
+    spec = MODEL_INSTANCES[run_id]
+    paths = [
         f"/api/scenarios/{run_id}",
         f"/api/runs/{run_id}/kpis",
         f"/api/runs/{run_id}/summary",
-        f"/api/runs/{run_id}/playback?scope=day",
-        f"/api/runs/{run_id}/lidar",
-    ):
+    ]
+    if spec["domain"] == "tactical_operational":
+        paths.append(f"/api/runs/{run_id}/tactical/harvest?period=P00")
+    else:
+        paths.extend(
+            [
+                f"/api/runs/{run_id}/playback?scope=day",
+                f"/api/runs/{run_id}/lidar",
+            ]
+        )
+    for path in paths:
         response = client.get(path)
         assert response.status_code == 200, f"{path}: {response.text}"
 
-    map_response = client.get(f"/api/runs/{run_id}/map?day=1")
+    map_response = client.get(f"/api/runs/{run_id}/map?{spec['map_query']}")
     assert map_response.status_code == 200, map_response.text
     payload = map_response.json()
     features = payload.get("features", [])
@@ -117,3 +132,19 @@ def test_console_model_instance_has_scenario_geometry_and_results(
         and feature.get("geometry") is not None
         for feature in features
     ), "the model instance must render block geometry, not an empty map"
+
+
+def test_full_estate_covers_the_whole_forest(client: TestClient) -> None:
+    _model_instance(client, "mkrf-full-estate")
+    kpis = client.get("/api/runs/mkrf-full-estate/kpis").json()
+    assert kpis["blocks_total"] >= 1_700
+    assert kpis["blocks_scheduled"] >= 1_200
+    assert kpis["total_production_m3"] > 3_000_000
+    assert kpis["net_revenue_cad"] > 0
+    map_payload = client.get("/api/runs/mkrf-full-estate/map?period=P00").json()
+    block_features = [
+        feature
+        for feature in map_payload.get("features", [])
+        if feature.get("properties", {}).get("layer") == "blocks"
+    ]
+    assert len(block_features) >= 1_700

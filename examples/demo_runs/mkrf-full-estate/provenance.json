@@ -1,0 +1,17 @@
+{
+  "schema_version": "fhops.mkrf.handoff.v1",
+  "generated_from": {
+    "instance": "/srv/shared-data/gep/ws4/femic/external/femic-mkrf-instance",
+    "matrix": "/srv/shared-data/gep/ws4/femic/external/femic-mkrf-instance/ws4/runtime/matrix_silv",
+    "run": "/srv/shared-data/gep/ws4/ws4-public-demo/runs/femic-mkrf-instance/scenario-base-44"
+  },
+  "model": "WS4 matrix_silv / MKRF canonical rebuild",
+  "scenario": "scenario-base-44",
+  "crs": "EPSG:3005",
+  "geometry": "ws4/runtime/fragments.geojson, block polygons simplified at 4 m for web transfer",
+  "notes": [
+    "The FHOPS handoff is a read-only tactical view of the WS4 plan; it does not re-solve the estate model.",
+    "Net revenue and harvest cost are WS4 public model accounts; raw contractor/cost overlays remain outside this public artifact.",
+    "Patch metrics and target status are copied from the WS4 report surface."
+  ]
+}

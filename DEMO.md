@@ -25,16 +25,25 @@ examples/demo_runs
 It contains two validated model instances:
 
 ```text
-examples/demo_runs/mkrf-cedar-flat
+examples/demo_runs/mkrf-full-estate
 examples/demo_runs/tfl6-lidar-demo
 ```
 
-`mkrf-cedar-flat` is the default console run. It includes the MKRF Cedar Flat scenario,
-matching block/landing geometry, tree inventory, operational assignments, playback summaries,
-KPIs, reports, and `run.json`.
+`mkrf-full-estate` is the default console run. It is the full WS4 MKRF estate handoff:
 
-`tfl6-lidar-demo` includes the TFL 6 LiDAR scenario, seven-block EPSG:3005 geometry, operational
-assignments, playback summaries, KPIs, reports, LiDAR support, and `run.json`.
+- 1,763 blocks covering 4,810.85 ha in EPSG:3005;
+- 1,221 blocks scheduled across 1,346 harvest events;
+- a 100-year base plan in ten 10-year periods (`P00`–`P09`);
+- 3.15 million m³ of total production;
+- public WS4 net-revenue and harvest-cost accounts;
+- patch-size metrics, target status, inventory, and provenance reports.
+
+The handoff is read-only in FHOPS; the source of truth is the MKRF WS4 instance and its
+`scenario-base-44` full-estate run. `scripts/build_mkrf_full_estate.py` documents and reproduces
+the conversion.
+
+`tfl6-lidar-demo` remains the operational example: seven-block TFL 6 LiDAR scenario, assignments,
+playback, KPIs, reports, and LiDAR support.
 
 The console auto-selects the first run, so `/fhops/` opens with map geometry and results
 available. Do not add benchmark-only or metadata-only directories to the console run root. A
@@ -84,5 +93,5 @@ cd /srv/shared-data/gep/ws4/fhops-public-demo
 /home/gep/.venv/bin/python -m pytest tests/test_public_demo_contract.py -q
 ```
 
-The test checks the gateway doors, the console shell paths, the complete model-instance
-artifacts, scenario/geometry/map payloads, KPIs, playback, and LiDAR.
+The test checks the gateway doors, the console shell paths, both complete model-instance
+artifacts, full-estate coverage, scenario/geometry/map payloads, KPIs, playback, and LiDAR.
