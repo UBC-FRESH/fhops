@@ -265,6 +265,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   let residualGroup = null;
   let retentionGroup = null;
   let terrain = null;
+  let terrainMesh = null;
   let loaded = false;
   let userInteracted = false;
   let blockOutline = null;
@@ -329,6 +330,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     processedTimes = [];
     cumulativeVolume = [];
     terrain = null;
+    terrainMesh = null;
     blockOutline = null;
     retainedObstacles = [];
     retentionClumps = [];
@@ -367,6 +369,17 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
 
   function sampleHeight(x, y) {
     return terrainHeight(x, y);
+  }
+
+  function surfaceHeight(x, z) {
+    if (!terrainMesh) return sampleHeight(x, z);
+    terrainMesh.updateMatrixWorld(true);
+    const ray = new THREE.Raycaster(
+      new THREE.Vector3(x, 1e6, z),
+      new THREE.Vector3(0, -1, 0),
+    );
+    const hits = ray.intersectObject(terrainMesh, false);
+    return hits.length ? hits[0].point.y : sampleHeight(x, z);
   }
 
   function segmentAt(machine, t) {
@@ -2370,7 +2383,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       const crownRadius = Math.max(2.5, Number(tree.crown_radius_m) || dbh * 3);
       const x = Number(tree.x);
       const y = Number(tree.y);
-      const base = sampleHeight(x, y);
+      const base = surfaceHeight(x, y);
       const trunk = new THREE.Mesh(trunkGeo, trunkMat);
       trunk.scale.set(dbh * 1.5, height * 0.48, dbh * 1.5);
       trunk.position.set(x, base + height * 0.24, y);
@@ -2477,6 +2490,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     position.needsUpdate = true;
     geometry.computeVertexNormals();
     scene.add(mesh);
+    terrainMesh = mesh;
     const wireframe = new THREE.Mesh(
       geometry.clone(),
       new THREE.MeshBasicMaterial({ color: 0x1b2b24, wireframe: true, transparent: true, opacity: 0.22 }),
@@ -2488,7 +2502,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     for (const node of treeNodes.values()) {
       const x = node.position.x;
       const z = node.position.z;
-      node.position.y = terrainHeight(x, z);
+      node.position.y = surfaceHeight(x, z);
     }
   }
 
