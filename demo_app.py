@@ -1,4 +1,4 @@
-"""Public demo wrapper: FHOPS serious game + Tree Lab 3D sandbox."""
+"""Public demo wrapper: gateway, full FHOPS console, Studio, Tree Lab, and serious game."""
 
 from __future__ import annotations
 
@@ -121,7 +121,7 @@ async def no_store_public_demo(request: Request, call_next: Any) -> Any:
     """Never let browsers cache the demo shell or its modules."""
     response = await call_next(request)
     path = request.url.path
-    if path.startswith(("/game", "/sandbox", "/studio", "/static")):
+    if path.startswith(("/game", "/sandbox", "/studio", "/fhops", "/static")):
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
@@ -130,6 +130,8 @@ async def no_store_public_demo(request: Request, call_next: Any) -> Any:
         if path in (
             "/",
             "/demo",
+            "/fhops",
+            "/fhops/",
             "/game",
             "/sandbox",
             "/sandbox/",
