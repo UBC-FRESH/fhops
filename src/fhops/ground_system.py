@@ -1257,6 +1257,13 @@ def simulate_ground_system(
         if damage_downgrade_fraction
         else "No product downgrade applied.",
     }
+    passing_bay_nodes = router.road_nodes()
+    rate_provenance["traffic"] = {
+        "passing_bays": len(passing_bay_nodes),
+        "trail_headway_s": trail_headway_s,
+        "landing_queue": landing_queue,
+        "travel_queue": travel_queue,
+    }
     rate_provenance["landings"] = [
         {"id": item.landing_id, "x": item.x_m, "y": item.y_m} for item in landing_choices
     ]
@@ -1518,6 +1525,7 @@ def simulate_ground_system(
         path_clearance_m=path_clearance_m,
         tree_obstacles=tree_obstacles,
         trail_headway_s=trail_headway_s,
+        passing_bays=router.road_nodes(),
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
@@ -2170,7 +2178,10 @@ def _schedule_travel(
     return _schedule_task(calendar, candidate, duration_s, machine)
 
 
-def _split_path_at_midpoint(path: Sequence[Sequence[float]]) -> tuple[list[list[float]], list[list[float]], list[float]] | None:
+def _split_path_at_midpoint(
+    path: Sequence[Sequence[float]],
+    passing_bays: Sequence[tuple[float, float]] = (),
+) -> tuple[list[list[float]], list[list[float]], list[float]] | None:
     points = [[float(point[0]), float(point[1])] for point in path]
     if len(points) < 2:
         return None
@@ -2192,9 +2203,13 @@ def _split_path_at_midpoint(path: Sequence[Sequence[float]]) -> tuple[list[list[
             best_distance = distance
     if best_index is None:
         return None
+    bay = points[best_index]
+    if passing_bays and not any(
+        math.hypot(bay[0] - x, bay[1] - y) <= 15.0 for x, y in passing_bays
+    ):
+        return None
     # A passing bay must be a real route vertex/trail node, not an
     # interpolated point in the middle of a segment.
-    bay = points[best_index]
     return points[: best_index + 1], points[best_index:], bay
 
 
@@ -2209,6 +2224,7 @@ def _schedule_travel_parts(
     clearance_m: float = 7.0,
     queue: bool = True,
     headway_s: float = 120.0,
+    passing_bays: Sequence[tuple[float, float]] = (),
 ) -> list[dict[str, Any]]:
     """Schedule one travel leg, splitting at a midpoint passing bay on conflict."""
     if not queue or not path:
@@ -2223,7 +2239,7 @@ def _schedule_travel_parts(
     if conflict_end is None:
         reservations.append(_TravelReservation(machine, full_start, full_end, points, direction))
         return [{"start": full_start, "end": full_end, "path": list(path), "distance": _path_length(path)}]
-    split = _split_path_at_midpoint(path)
+    split = _split_path_at_midpoint(path, passing_bays)
     if split is not None:
         first_path, second_path, bay = split
         first_points = _travel_samples(first_path)
@@ -2290,6 +2306,7 @@ def _simulate_skidders(
     path_clearance_m: float = 0.0,
     tree_obstacles: Sequence[tuple[float, float, float, float]] = (),
     trail_headway_s: float = 120.0,
+    passing_bays: Sequence[tuple[float, float]] = (),
 ) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
     travel_reservations: list[_TravelReservation] = list(extra_reservations)
@@ -2385,6 +2402,7 @@ def _simulate_skidders(
             travel_reservations,
             queue=travel_queue,
             headway_s=trail_headway_s,
+            passing_bays=passing_bays,
         )
         _append_wait_event(
             events, machine, empty_requested, empty_parts[0]["start"],
@@ -2441,6 +2459,7 @@ def _simulate_skidders(
             travel_reservations,
             queue=travel_queue,
             headway_s=trail_headway_s,
+            passing_bays=passing_bays,
         )
         for part in loaded_parts:
             if part.get("wait_start") is not None:

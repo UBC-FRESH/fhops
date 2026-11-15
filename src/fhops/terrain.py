@@ -149,6 +149,17 @@ class TerrainRouter:
             path=tuple(points),
         )
 
+    def road_nodes(self) -> tuple[tuple[float, float], ...]:
+        """Return known road/trail graph nodes for passing-bay placement."""
+        if isinstance(self._road, _RoadNetwork):
+            return tuple(self._road._coords.values())
+        if self._road is not None:
+            try:
+                return tuple((float(x), float(y)) for x, y in self._road.coords)
+            except Exception:
+                return ()
+        return ()
+
     def _profile(self, points: list[tuple[float, float]]) -> RouteProfile:
         elevations = [self._elevation(x, y) for x, y in points]
         distance = 0.0
