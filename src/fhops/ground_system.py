@@ -2170,6 +2170,101 @@ def _schedule_travel(
     return _schedule_task(calendar, candidate, duration_s, machine)
 
 
+def _split_path_at_midpoint(path: Sequence[Sequence[float]]) -> tuple[list[list[float]], list[list[float]], list[float]] | None:
+    points = [[float(point[0]), float(point[1])] for point in path]
+    if len(points) < 2:
+        return None
+    total = _path_length(points)
+    if total < 80.0:
+        return None
+    target = total * 0.5
+    walked = 0.0
+    for index in range(len(points) - 1):
+        ax, ay = points[index]
+        bx, by = points[index + 1]
+        segment = math.hypot(bx - ax, by - ay)
+        if walked + segment >= target:
+            u = 0.0 if segment <= 1e-9 else (target - walked) / segment
+            mid = [ax + (bx - ax) * u, ay + (by - ay) * u]
+            return points[: index + 1] + [mid], [mid] + points[index + 1 :], mid
+        walked += segment
+    return None
+
+
+def _schedule_travel_parts(
+    calendar: _ShiftCalendar | None,
+    start_s: float,
+    duration_s: float,
+    machine: str,
+    path: Sequence[Sequence[float]],
+    reservations: list[_TravelReservation],
+    *,
+    clearance_m: float = 7.0,
+    queue: bool = True,
+    headway_s: float = 120.0,
+) -> list[dict[str, Any]]:
+    """Schedule one travel leg, splitting at a midpoint passing bay on conflict."""
+    if not queue or not path:
+        s, e = _schedule_task(calendar, start_s, duration_s, machine)
+        return [{"start": s, "end": e, "path": list(path), "distance": _path_length(path)}]
+    points = _travel_samples(path)
+    direction = _path_direction(points)
+    full_start, full_end = _schedule_task(calendar, start_s, duration_s, machine)
+    conflict_end = _travel_conflict(
+        reservations, machine, full_start, full_end, points, clearance_m, direction, headway_s
+    )
+    if conflict_end is None:
+        reservations.append(_TravelReservation(machine, full_start, full_end, points, direction))
+        return [{"start": full_start, "end": full_end, "path": list(path), "distance": _path_length(path)}]
+    split = _split_path_at_midpoint(path)
+    if split is not None:
+        first_path, second_path, bay = split
+        first_points = _travel_samples(first_path)
+        second_points = _travel_samples(second_path)
+        total = max(1e-6, _path_length(path))
+        first_duration = duration_s * (_path_length(first_path) / total)
+        second_duration = max(0.0, duration_s - first_duration)
+        first_start, first_end = _schedule_task(calendar, start_s, first_duration, machine)
+        first_conflict = _travel_conflict(
+            reservations, machine, first_start, first_end, first_points,
+            clearance_m, _path_direction(first_points), headway_s,
+        )
+        if first_conflict is None:
+            second_start = max(first_end, conflict_end)
+            second_start, second_end = _schedule_task(
+                calendar, second_start, second_duration, machine
+            )
+            second_conflict = _travel_conflict(
+                reservations, machine, second_start, second_end, second_points,
+                clearance_m, _path_direction(second_points), headway_s,
+            )
+            if second_conflict is None:
+                reservations.append(
+                    _TravelReservation(machine, first_start, first_end, first_points, _path_direction(first_points))
+                )
+                reservations.append(
+                    _TravelReservation(machine, second_start, second_end, second_points, _path_direction(second_points))
+                )
+                return [
+                    {"start": first_start, "end": first_end, "path": first_path, "distance": _path_length(first_path)},
+                    {
+                        "start": second_start,
+                        "end": second_end,
+                        "path": second_path,
+                        "distance": _path_length(second_path),
+                        "wait_start": first_end,
+                        "wait_end": second_start,
+                        "bay": bay,
+                    },
+                ]
+    # Fall back to the original whole-route queue.
+    s, e = _schedule_travel(
+        calendar, start_s, duration_s, machine, path, reservations,
+        clearance_m=clearance_m, queue=queue, headway_s=headway_s,
+    )
+    return [{"start": s, "end": e, "path": list(path), "distance": _path_length(path)}]
+
+
 def _simulate_skidders(
     events: list[GroundSystemEvent],
     bunches: list[_Bunch],
@@ -2274,7 +2369,7 @@ def _simulate_skidders(
             load_time = spec.load_fixed_s + spec.load_per_log_s * pieces
             unload_time = spec.unload_fixed_s + spec.unload_per_log_s * pieces
         empty_requested = empty_start
-        empty_start, empty_end = _schedule_travel(
+        empty_parts = _schedule_travel_parts(
             calendar,
             empty_start,
             empty_time,
@@ -2285,25 +2380,33 @@ def _simulate_skidders(
             headway_s=trail_headway_s,
         )
         _append_wait_event(
-            events, machine, empty_requested, empty_start,
+            events, machine, empty_requested, empty_parts[0]["start"],
             landing.x_m, landing.y_m, "waiting for travel corridor",
         )
-        events.append(
-            GroundSystemEvent(
-                machine=machine,
-                type="travel_empty",
-                start_s=empty_start,
-                end_s=empty_end,
-                x0=landing.x_m,
-                y0=landing.y_m,
-                x1=bx,
-                y1=by,
-                status="empty",
-                distance_m=distance,
-                max_grade_percent=route.max_grade_percent,
-                path=tuple(travel_path),
+        for part in empty_parts:
+            if part.get("wait_start") is not None:
+                _append_wait_event(
+                    events, machine, part["wait_start"], part["wait_end"],
+                    part["bay"][0], part["bay"][1], "waiting at passing bay",
+                )
+            part_path = part["path"]
+            events.append(
+                GroundSystemEvent(
+                    machine=machine,
+                    type="travel_empty",
+                    start_s=part["start"],
+                    end_s=part["end"],
+                    x0=part_path[0][0],
+                    y0=part_path[0][1],
+                    x1=part_path[-1][0],
+                    y1=part_path[-1][1],
+                    status="empty",
+                    distance_m=part["distance"],
+                    max_grade_percent=route.max_grade_percent,
+                    path=tuple(part_path),
+                )
             )
-        )
+        empty_end = empty_parts[-1]["end"]
         load_start = max(empty_end, bunch.ready_s)
         load_start, load_end = _schedule_task(calendar, load_start, load_time, machine)
         events.append(
@@ -2322,7 +2425,7 @@ def _simulate_skidders(
                 status="loading",
             )
         )
-        loaded_start, loaded_end = _schedule_travel(
+        loaded_parts = _schedule_travel_parts(
             calendar,
             load_end,
             loaded_time,
@@ -2332,24 +2435,33 @@ def _simulate_skidders(
             queue=travel_queue,
             headway_s=trail_headway_s,
         )
-        events.append(
-            GroundSystemEvent(
-                machine=machine,
-                type="travel_loaded",
-                start_s=loaded_start,
-                end_s=loaded_end,
-                x0=bx,
-                y0=by,
-                x1=landing.x_m,
-                y1=landing.y_m,
-                volume_m3=bunch.volume_m3,
-                logs=bunch.logs,
-                status="loaded",
-                distance_m=distance,
-                max_grade_percent=route.max_grade_percent,
-                path=tuple(reversed(travel_path)),
+        for part in loaded_parts:
+            if part.get("wait_start") is not None:
+                _append_wait_event(
+                    events, machine, part["wait_start"], part["wait_end"],
+                    part["bay"][0], part["bay"][1], "waiting at passing bay",
+                    volume_m3=bunch.volume_m3, logs=bunch.logs,
+                )
+            part_path = part["path"]
+            events.append(
+                GroundSystemEvent(
+                    machine=machine,
+                    type="travel_loaded",
+                    start_s=part["start"],
+                    end_s=part["end"],
+                    x0=part_path[0][0],
+                    y0=part_path[0][1],
+                    x1=part_path[-1][0],
+                    y1=part_path[-1][1],
+                    volume_m3=bunch.volume_m3,
+                    logs=bunch.logs,
+                    status="loaded",
+                    distance_m=part["distance"],
+                    max_grade_percent=route.max_grade_percent,
+                    path=tuple(part_path),
+                )
             )
-        )
+        loaded_end = loaded_parts[-1]["end"]
         if landing_queue:
             unload_start, unload_end = _schedule_landing_task(
                 calendar, landing_slots, landing.landing_id, loaded_end, unload_time, machine
