@@ -2343,7 +2343,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         transparent: true,
         opacity: baseOpacity,
         side: THREE.DoubleSide,
-        depthTest: false,
+        depthTest: true,
         depthWrite: false,
       });
       const shape = new THREE.Shape();
@@ -2377,12 +2377,14 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       const outline = new THREE.LineLoop(
         new THREE.BufferGeometry().setFromPoints(points),
         new THREE.LineBasicMaterial({
-          color: clump.kind === "riparian" ? 0x9fd8ff : 0x8ff0e5,
-          depthTest: false,
+          color: clump.kind === "riparian" ? 0x5fa8c8 : 0x5eaaa0,
+          transparent: true,
+          opacity: 0.55,
+          depthTest: true,
         }),
       );
       outline.renderOrder = 4;
-      outline.userData.orbitDepthTest = false;
+      outline.userData.orbitDepthTest = true;
       outlines.push(outline);
       group.add(outline);
 
@@ -2399,11 +2401,12 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       labelCtx.fillText(String(clump.label || clump.kind || 'retention clump').slice(0, 34), 12, 58);
       const label = new THREE.Sprite(new THREE.SpriteMaterial({
         map: new THREE.CanvasTexture(labelCanvas),
-        depthTest: false,
+        depthTest: true,
         transparent: true,
+        opacity: 0.72,
       }));
       label.position.set(cx, surfaceHeight(cx, cy) + 14, cy);
-      label.scale.set(42, 7.9, 1);
+      label.scale.set(30, 5.6, 1);
       label.renderOrder = 10;
       labels.push(label);
       group.add(label);
@@ -2424,29 +2427,29 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     // Bright teal and a ground ring keep leave trees readable against the
     // darker harvested stand at the replay camera scale.
     const crownMat = new THREE.MeshStandardMaterial({
-      color: 0x2fe0c8,
-      emissive: 0x0d5f58,
-      emissiveIntensity: 0.75,
-      roughness: 0.6,
-      metalness: 0.05,
-      transparent: true,
-      opacity: 0.82,
-      depthTest: false,
-      depthWrite: false,
+      color: 0x4f9f7f,
+      emissive: 0x000000,
+      emissiveIntensity: 0,
+      roughness: 0.9,
+      metalness: 0.02,
+      transparent: false,
+      opacity: 1,
+      depthTest: true,
+      depthWrite: true,
     });
     const markerMat = new THREE.MeshBasicMaterial({
-      color: 0x7dfff0,
+      color: 0x5eaaa0,
       transparent: true,
-      opacity: 0.95,
-      depthTest: false,
+      opacity: 0.28,
+      depthTest: true,
       depthWrite: false,
     });
     const ringMat = new THREE.MeshBasicMaterial({
-      color: 0x7dfff0,
+      color: 0x5eaaa0,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.5,
       side: THREE.DoubleSide,
-      depthTest: false,
+      depthTest: true,
       depthWrite: false,
     });
     const markers = [];
@@ -2489,14 +2492,14 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     const pov = mode === 'pov';
     if (residualGroup?.userData?.crownMat) {
       const { crownMat, markers, rings } = residualGroup.userData;
-      crownMat.depthTest = !pov;
-      crownMat.depthWrite = !pov;
-      crownMat.transparent = !pov;
-      crownMat.opacity = pov ? 1 : 0.82;
-      crownMat.color.setHex(pov ? 0x3f8f5a : 0x2fe0c8);
-      crownMat.emissive.setHex(pov ? 0x000000 : 0x0d5f58);
-      crownMat.emissiveIntensity = pov ? 0 : 0.75;
-      crownMat.roughness = pov ? 0.9 : 0.6;
+      crownMat.depthTest = true;
+      crownMat.depthWrite = true;
+      crownMat.transparent = false;
+      crownMat.opacity = 1;
+      crownMat.color.setHex(pov ? 0x3f8f5a : 0x4f9f7f);
+      crownMat.emissive.setHex(0x000000);
+      crownMat.emissiveIntensity = 0;
+      crownMat.roughness = 0.9;
       crownMat.needsUpdate = true;
       for (const marker of markers) marker.visible = !pov;
       for (const ring of rings) ring.visible = !pov;
@@ -2509,12 +2512,12 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     if (retentionGroup?.userData) {
       const { fills, outlines, labels } = retentionGroup.userData;
       for (const fill of fills) {
-        fill.material.depthTest = pov;
-        fill.material.opacity = pov ? (fill.userData.orbitOpacity || 0.16) * 0.7 : (fill.userData.orbitOpacity || 0.16);
+        fill.material.depthTest = true;
+        fill.material.opacity = pov ? (fill.userData.orbitOpacity || 0.16) * 0.7 : (fill.userData.orbitOpacity || 0.16) * 0.55;
         fill.material.needsUpdate = true;
       }
       for (const outline of outlines) {
-        outline.material.depthTest = pov;
+        outline.material.depthTest = true;
         outline.material.needsUpdate = true;
       }
       for (const label of labels) label.visible = !pov;

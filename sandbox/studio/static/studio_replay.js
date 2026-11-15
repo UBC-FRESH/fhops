@@ -1,4 +1,4 @@
-import { createViewer } from "../lab/viewer.js?v=20261114z";
+import { createViewer } from "../lab/viewer.js?v=20261115a";
 
 const API = new URL("api/", location.href).pathname;
 const params = new URLSearchParams(location.search);
