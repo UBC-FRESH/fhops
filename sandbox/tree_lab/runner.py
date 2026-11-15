@@ -236,6 +236,7 @@ def _system_command(case: Case, run_dir: Path, scenario: Path) -> list[str]:
         "feller_productivity_multiplier": "--feller-productivity-multiplier",
         "path_clearance_m": "--path-clearance",
         "trail_headway_s": "--trail-headway",
+        "passing_bay_spacing_m": "--passing-bay-spacing",
         "harvester_model": "--harvester-model",
         "damage_downgrade_fraction": "--damage-downgrade-fraction",
         "processor_productivity_multiplier": "--processor-productivity-multiplier",

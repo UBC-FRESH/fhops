@@ -650,6 +650,11 @@ def tree_system(
         "--trail-headway",
         help="Minimum trailing headway in seconds for same-direction trail traffic.",
     ),
+    passing_bay_spacing: float = typer.Option(
+        150.0,
+        "--passing-bay-spacing",
+        help="Spacing in metres for additional passing bays along long trail edges.",
+    ),
     landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
     landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
     landing: list[str] | None = typer.Option(
@@ -909,6 +914,7 @@ def tree_system(
             travel_queue=travel_queue,
             path_clearance_m=path_clearance,
             trail_headway_s=trail_headway,
+            passing_bay_spacing_m=passing_bay_spacing,
             dem_path=dem,
             road_path=road,
             terrain_sample_step_m=terrain_step,

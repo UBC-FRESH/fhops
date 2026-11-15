@@ -160,6 +160,42 @@ class TerrainRouter:
                 return ()
         return ()
 
+    def passing_bay_nodes(self, spacing_m: float = 150.0) -> tuple[tuple[float, float], ...]:
+        """Return trail nodes plus regularly spaced passing bays along long edges."""
+        base = list(self.road_nodes())
+        if self._road is None or spacing_m <= 0:
+            return tuple(base)
+        if isinstance(self._road, _RoadNetwork):
+            # Graph nodes are already explicit trail junctions. Add edge
+            # midpoints for long graph edges as additional passing places.
+            seen = {(round(x, 6), round(y, 6)) for x, y in base}
+            for identifier, neighbors in self._road._adjacency.items():
+                ax, ay = self._road._coords[identifier]
+                for neighbor, length in neighbors:
+                    if neighbor <= identifier or length < spacing_m:
+                        continue
+                    bx, by = self._road._coords[neighbor]
+                    key = (round((ax + bx) / 2, 6), round((ay + by) / 2, 6))
+                    if key not in seen:
+                        seen.add(key)
+                        base.append(((ax + bx) / 2, (ay + by) / 2))
+            return tuple(base)
+        try:
+            coords = [(float(x), float(y)) for x, y in self._road.coords]
+        except Exception:
+            return tuple(base)
+        if len(coords) < 2:
+            return tuple(base)
+        # Keep the original vertices and fill long straight edges with bays.
+        result = [coords[0]]
+        for (x0, y0), (x1, y1) in zip(coords[:-1], coords[1:], strict=True):
+            length = math.hypot(x1 - x0, y1 - y0)
+            count = max(1, int(math.ceil(length / spacing_m)))
+            for index in range(1, count + 1):
+                u = index / count
+                result.append((x0 + (x1 - x0) * u, y0 + (y1 - y0) * u))
+        return tuple(result)
+
     def _profile(self, points: list[tuple[float, float]]) -> RouteProfile:
         elevations = [self._elevation(x, y) for x, y in points]
         distance = 0.0

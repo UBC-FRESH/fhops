@@ -782,6 +782,7 @@ def simulate_ground_system(
     travel_queue: bool = False,
     path_clearance_m: float = 0.0,
     trail_headway_s: float = 120.0,
+    passing_bay_spacing_m: float = 150.0,
     dem_path: str | Path | None = None,
     road_path: str | Path | None = None,
     terrain_sample_step_m: float = 10.0,
@@ -1257,9 +1258,10 @@ def simulate_ground_system(
         if damage_downgrade_fraction
         else "No product downgrade applied.",
     }
-    passing_bay_nodes = router.road_nodes()
+    passing_bay_nodes = router.passing_bay_nodes(passing_bay_spacing_m)
     rate_provenance["traffic"] = {
         "passing_bays": len(passing_bay_nodes),
+        "passing_bay_spacing_m": passing_bay_spacing_m,
         "trail_headway_s": trail_headway_s,
         "landing_queue": landing_queue,
         "travel_queue": travel_queue,
@@ -1525,7 +1527,7 @@ def simulate_ground_system(
         path_clearance_m=path_clearance_m,
         tree_obstacles=tree_obstacles,
         trail_headway_s=trail_headway_s,
-        passing_bays=router.road_nodes(),
+        passing_bays=router.passing_bay_nodes(passing_bay_spacing_m),
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
