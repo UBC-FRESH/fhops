@@ -779,6 +779,7 @@ def simulate_ground_system(
     bunch_volume_m3: float = DEFAULT_BUNCH_VOLUME_M3,
     rate_model: Literal["calibrated", "reference"] = DEFAULT_RATE_MODEL,
     landing_queue: bool = False,
+    travel_queue: bool = False,
     dem_path: str | Path | None = None,
     road_path: str | Path | None = None,
     terrain_sample_step_m: float = 10.0,
@@ -1499,6 +1500,7 @@ def simulate_ground_system(
         calendar=calendar,
         landing_slots=landing_slots,
         landing_queue=landing_queue,
+        travel_queue=travel_queue,
     )
     processor_total = 0.0
     processed_loads: list[_Load] = []
@@ -1671,6 +1673,16 @@ class _Bunch:
     ready_s: float
     x: float
     y: float
+
+
+@dataclass(frozen=True)
+class _TravelReservation:
+    """A machine's occupied travel corridor for a time window."""
+
+    machine: str
+    start_s: float
+    end_s: float
+    points: tuple[tuple[float, float], ...]
 
 
 @dataclass(frozen=True)
@@ -1880,6 +1892,81 @@ def _build_bunches(
     return bunches
 
 
+def _travel_samples(path: Sequence[Sequence[float]], step_m: float = 5.0) -> tuple[tuple[float, float], ...]:
+    points: list[tuple[float, float]] = []
+    if not path:
+        return tuple(points)
+    for index in range(len(path) - 1):
+        x0, y0 = float(path[index][0]), float(path[index][1])
+        x1, y1 = float(path[index + 1][0]), float(path[index + 1][1])
+        length = math.hypot(x1 - x0, y1 - y0)
+        count = max(1, min(80, int(math.ceil(length / max(1.0, step_m)))))
+        for step in range(count):
+            u = step / count
+            points.append((x0 + (x1 - x0) * u, y0 + (y1 - y0) * u))
+    points.append((float(path[-1][0]), float(path[-1][1])))
+    return tuple(points)
+
+
+def _travel_conflict(
+    reservations: Sequence[_TravelReservation],
+    machine: str,
+    start_s: float,
+    end_s: float,
+    points: tuple[tuple[float, float], ...],
+    clearance_m: float,
+) -> float | None:
+    """Return the end time of the first conflicting reservation, if any."""
+    conflict_end: float | None = None
+    for reservation in reservations:
+        if reservation.machine == machine:
+            continue
+        if start_s >= reservation.end_s or end_s <= reservation.start_s:
+            continue
+        close = False
+        for x0, y0 in points:
+            for x1, y1 in reservation.points:
+                if math.hypot(x0 - x1, y0 - y1) < clearance_m:
+                    close = True
+                    break
+            if close:
+                break
+        if not close:
+            continue
+        conflict_end = max(conflict_end or 0.0, reservation.end_s)
+    return conflict_end
+
+
+def _schedule_travel(
+    calendar: _ShiftCalendar | None,
+    start_s: float,
+    duration_s: float,
+    machine: str,
+    path: Sequence[Sequence[float]],
+    reservations: list[_TravelReservation],
+    *,
+    clearance_m: float = 7.0,
+    queue: bool = True,
+) -> tuple[float, float]:
+    """Schedule a travel event and reserve its corridor when queued."""
+    points = _travel_samples(path)
+    if not queue or not points:
+        return _schedule_task(calendar, start_s, duration_s, machine)
+    candidate = start_s
+    for _ in range(16):
+        start, end = _schedule_task(calendar, candidate, duration_s, machine)
+        conflict_end = _travel_conflict(
+            reservations, machine, start, end, points, clearance_m
+        )
+        if conflict_end is None:
+            reservations.append(_TravelReservation(machine, start, end, points))
+            return start, end
+        candidate = max(candidate, conflict_end + 5.0)
+    # If repeated conflicts cannot be resolved inside the shift window, keep
+    # the run deterministic by scheduling without a new reservation.
+    return _schedule_task(calendar, candidate, duration_s, machine)
+
+
 def _simulate_skidders(
     events: list[GroundSystemEvent],
     bunches: list[_Bunch],
@@ -1893,8 +1980,10 @@ def _simulate_skidders(
     calendar: _ShiftCalendar | None,
     landing_slots: dict[str, float],
     landing_queue: bool = False,
+    travel_queue: bool = False,
 ) -> tuple[list[_Load], list[str]]:
     loads: list[_Load] = []
+    travel_reservations: list[_TravelReservation] = []
     blocked: list[str] = []
     available = {machine: 0.0 for machine in skidder_ids}
     for bunch in bunches:
@@ -1974,7 +2063,15 @@ def _simulate_skidders(
             pieces = len(bunch.tree_ids)
             load_time = spec.load_fixed_s + spec.load_per_log_s * pieces
             unload_time = spec.unload_fixed_s + spec.unload_per_log_s * pieces
-        empty_start, empty_end = _schedule_task(calendar, empty_start, empty_time, machine)
+        empty_start, empty_end = _schedule_travel(
+            calendar,
+            empty_start,
+            empty_time,
+            machine,
+            route.path,
+            travel_reservations,
+            queue=travel_queue,
+        )
         events.append(
             GroundSystemEvent(
                 machine=machine,
@@ -2009,12 +2106,20 @@ def _simulate_skidders(
                 status="loading",
             )
         )
-        loaded_end = _schedule_task(calendar, load_end, loaded_time, machine)[1]
+        loaded_start, loaded_end = _schedule_travel(
+            calendar,
+            load_end,
+            loaded_time,
+            machine,
+            tuple(reversed(route.path)),
+            travel_reservations,
+            queue=travel_queue,
+        )
         events.append(
             GroundSystemEvent(
                 machine=machine,
                 type="travel_loaded",
-                start_s=load_end,
+                start_s=loaded_start,
                 end_s=loaded_end,
                 x0=bx,
                 y0=by,

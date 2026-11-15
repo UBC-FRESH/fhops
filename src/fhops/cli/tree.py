@@ -633,7 +633,12 @@ def tree_system(
     landing_queue: bool = typer.Option(
         True,
         "--landing-queue/--no-landing-queue",
-        help="Serialize skidder/loader/processor operations at each landing.",
+        help="Serialize skidder unload operations at each landing.",
+    ),
+    travel_queue: bool = typer.Option(
+        True,
+        "--travel-queue/--no-travel-queue",
+        help="Keep machine travel corridors separated by time and clearance.",
     ),
     landing_x: float | None = typer.Option(None, "--landing-x", help="Landing easting (m)."),
     landing_y: float | None = typer.Option(None, "--landing-y", help="Landing northing (m)."),
@@ -891,6 +896,7 @@ def tree_system(
             bunch_volume_m3=bunch_volume,
             rate_model=rate_model,  # type: ignore[arg-type]
             landing_queue=landing_queue,
+            travel_queue=travel_queue,
             dem_path=dem,
             road_path=road,
             terrain_sample_step_m=terrain_step,
