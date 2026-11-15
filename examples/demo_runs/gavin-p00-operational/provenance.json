@@ -1,0 +1,9 @@
+{
+  "source": "examples/demo_runs/gavin-policy",
+  "scenario": "gavin P00 operational window",
+  "notes": [
+    "192 blocks from policy P00; 365-day window.",
+    "Production rates are screening assumptions, not calibrated.",
+    "No public Gavin financial account; not fabricated."
+  ]
+}

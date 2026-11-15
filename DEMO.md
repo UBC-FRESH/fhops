@@ -22,12 +22,13 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains five model instances:
+It contains six model instances:
 
 ```text
 examples/demo_runs/gavin-full-estate
 examples/demo_runs/gavin-optimized
 examples/demo_runs/gavin-policy
+examples/demo_runs/gavin-p00-operational
 examples/demo_runs/knife-structural
 examples/demo_runs/mkrf-full-estate
 examples/demo_runs/tfl6-lidar-demo
@@ -46,6 +47,10 @@ stock, and reports 13 targets met, 37 below, and 11 above.
 growing-stock floor, ±4% even-flow. It schedules 2,812 blocks, produces 5.39 million m³, ends at
 610,004 m³, and **meets all 61 targets**. It remains a public scenario choice, not an approved
 management plan.
+
+`gavin-p00-operational` is the first operational handoff of `gavin-policy`: 192 P00 blocks,
+505.14 ha, 175,533 m³, five machines, eight landings, and a 365-day screening window. It completes
+all 192 blocks in 315 days with zero sequencing violations under a 1,000 m³/day screening rate.
 
 `knife-structural` is a structural full-block Knife Creek pilot built from the existing
 160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.

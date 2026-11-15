@@ -42,6 +42,11 @@ MODEL_INSTANCES = {
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
         "map_query": "period=P00",
     },
+    "gavin-p00-operational": {
+        "domain": "operational",
+        "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
+        "map_query": "day=1",
+    },
     "tfl6-lidar-demo": {
         "domain": "operational",
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
@@ -233,3 +238,12 @@ def test_gavin_policy_meets_all_public_targets(client: TestClient) -> None:
     assert kpis["targets_above"] == 0
     assert kpis["incumbent_objective"] == 0.0
     assert kpis["total_production_m3"] > 5_000_000
+
+
+def test_gavin_p00_operational_handoff(client: TestClient) -> None:
+    _model_instance(client, "gavin-p00-operational")
+    kpis = client.get("/api/runs/gavin-p00-operational/kpis").json()
+    assert kpis["completed_blocks"] == 192
+    assert kpis["remaining_work_total"] == 0
+    assert kpis["total_production"] > 175_000
+    assert kpis["makespan_day"] <= 365
