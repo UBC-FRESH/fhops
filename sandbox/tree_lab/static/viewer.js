@@ -86,7 +86,18 @@ OPERATOR_RIGS.harvester = OPERATOR_RIGS.feller_buncher;
 OPERATOR_RIGS.skidder = OPERATOR_RIGS.grapple_skidder;
 OPERATOR_RIGS.processor = OPERATOR_RIGS.roadside_processor;
 
+const AERIAL_OPERATOR_PRESET = {
+  id: 'aerial',
+  label: 'aerial',
+  look: 'forward',
+  forward: -16.0,
+  right: 0,
+  up: 26.0,
+  pitch: -0.65,
+};
+
 const TRUCK_OPERATOR_RIG = [
+  { id: 'aerial', label: 'aerial', look: 'forward', forward: -14.0, right: 0, up: 8.5, pitch: -0.2 },
   { id: 'seat', label: 'seat', look: 'forward', forward: 2.2, right: 0, up: 1.2, pitch: -0.08 },
   { id: 'chase', label: 'chase', look: 'forward', forward: -14.0, right: 0, up: 8.5, pitch: -0.2 },
   { id: 'mirror', label: 'mirror', look: 'forward', forward: -5.0, right: 9.0, up: 6.5, pitch: -0.16 },
@@ -97,6 +108,12 @@ const DEFAULT_OPERATOR_RIG = [
   { id: 'work', label: 'work', look: 'target', forward: 0.9, right: 0, up: 0.35, pitch: -0.12 },
   { id: 'route', label: 'route', look: 'route', forward: -1.5, right: 0, up: 0.75, pitch: -0.08 },
 ];
+for (const key of Object.keys(OPERATOR_RIGS)) {
+  const presets = OPERATOR_RIGS[key];
+  if (presets.some((preset) => preset.id === 'aerial')) continue;
+  OPERATOR_RIGS[key] = [AERIAL_OPERATOR_PRESET, ...presets];
+}
+DEFAULT_OPERATOR_RIG.unshift(AERIAL_OPERATOR_PRESET);
 
 function treeBounds(events) {
   const trees = events.trees || [];
@@ -365,7 +382,11 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       const state = segmentAt(id, currentTime);
       if (!state) { states[id] = 'idle'; continue; }
       const active = currentTime >= state.segment.start_s && currentTime <= state.segment.end_s;
-      states[id] = active ? state.segment.type.replaceAll('_', ' ') : 'idle';
+      let label = active ? state.segment.type.replaceAll('_', ' ') : 'idle';
+      const type = machineSpecs[id]?.type || '';
+      if (active && type.includes('loader') && state.segment.type === 'process') label = 'loading logs';
+      if (active && type.includes('forwarder') && state.segment.type === 'load') label = 'loading logs';
+      states[id] = label;
     }
     return states;
   }
@@ -439,6 +460,13 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
   function equipmentPoint(id, kind) {
     const group = machines[id];
     if (!group) return null;
+    const rig = group.userData.rig || {};
+    const object = kind === 'head' ? rig.head : (kind === 'grapple' ? rig.grapple : null);
+    group.updateMatrixWorld(true);
+    if (object) {
+      const point = object.getWorldPosition(new THREE.Vector3());
+      return { x: point.x, z: point.z, y: point.y };
+    }
     const points = {
       head: [3.0, 2.2, 0],
       grapple: [2.7, 2.4, 0],
@@ -446,7 +474,6 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       outfeed: [-2.8, 1.9, 0],
     };
     const local = points[kind] || points.head;
-    group.updateMatrixWorld(true);
     const point = group.localToWorld(new THREE.Vector3(local[0], local[1], local[2]));
     return { x: point.x, z: point.z, y: point.y };
   }
@@ -473,7 +500,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     }
   }
 
-  function operatorCameraPosition(id, config, group) {
+  function operatorCameraPosition(id, config, group, heading = povHeading) {
     if (config.position === 'carriage') {
       const carriagePoint = carriageCameraPoint();
       if (carriagePoint) {
@@ -484,10 +511,14 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         };
       }
     }
-    const forwardX = Math.cos(povHeading);
-    const forwardZ = Math.sin(povHeading);
-    const rightX = -Math.sin(povHeading);
-    const rightZ = Math.cos(povHeading);
+    // Anchor the camera offset to the machine's travel/work heading, not the
+    // smoothed view heading. Using the view heading here creates a feedback
+    // loop for side/tree cameras: the camera moves around the machine as it
+    // turns toward the target, which in turn rotates the target vector.
+    const forwardX = Math.cos(heading);
+    const forwardZ = Math.sin(heading);
+    const rightX = -Math.sin(heading);
+    const rightZ = Math.cos(heading);
     const x = group.position.x
       + forwardX * (Number(config.forward) || 0)
       + rightX * (Number(config.right) || 0);
@@ -714,8 +745,12 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       }
     }
     let label = String(segment.type || 'idle').replaceAll('_', ' ');
+    if (type.includes('loader') && String(segment.type) === 'process') label = 'loading logs';
+    if (type.includes('forwarder') && String(segment.type) === 'load') label = 'loading logs';
     if (!active) label = currentTime < start ? 'waiting' : 'idle';
     const next = segments.find((item) => Number(item.start_s) > currentTime) || null;
+    const logHandlingTypes = ['forwarder', 'skidder', 'grapple_skidder', 'loader'];
+    const usesLogs = logHandlingTypes.some((kind) => type.includes(kind));
     return {
       machineId: povId,
       type,
@@ -730,7 +765,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       remaining_s: Math.max(0, Math.min(span, end - currentTime)),
       duration_s: span,
       volume_m3: volume,
-      tree_count: treeIds.length,
+      tree_count: usesLogs ? 0 : treeIds.length,
+      log_count: usesLogs ? (Number(segment.logs) || 0) : 0,
       next: next
         ? { type: next.type, start_s: Number(next.start_s) || 0, end_s: Number(next.end_s) || 0 }
         : null,
@@ -745,7 +781,10 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     const state = isTruck ? null : segmentAt(povId, currentTime);
     const config = operatorRigPreset(povId, povPreset);
     povPreset = config.id;
-    const desired = operatorCameraPosition(povId, config, group);
+    const anchorHeading = isTruck
+      ? (Number(group.userData.heading) || 0)
+      : (state ? (machineViewHeading(povId, state) ?? povLastHeading[povId] ?? povHeading) : povHeading);
+    const desired = operatorCameraPosition(povId, config, group, anchorHeading);
     if (!povPositionInitialized || dt <= 0) {
       povPosition.set(desired.x, desired.y, desired.z);
       povPositionInitialized = true;
@@ -753,9 +792,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       povPosition.lerp(new THREE.Vector3(desired.x, desired.y, desired.z), 1 - Math.exp(-10 * dt));
     }
 
-    let targetHeading = state
-      ? machineViewHeading(povId, state)
-      : (isTruck ? Number(group.userData.heading) || 0 : null);
+    let targetHeading = anchorHeading;
     const fallbackPitch = Number.isFinite(config.pitch) ? config.pitch : -0.08;
     let basePitch = fallbackPitch;
     const target = operatorTarget(povId, state, config);
@@ -764,8 +801,13 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       const dz = target.z - povPosition.z;
       const horizontal = Math.hypot(dx, dz);
       if (horizontal > 0.4) {
-        targetHeading = Math.atan2(dz, dx);
-        basePitch = Math.atan2(target.y - povPosition.y, horizontal);
+        const targetYaw = Math.atan2(dz, dx);
+        // A route look-ahead can fold back on itself around tight swaths.
+        // Ignore an extreme target reversal and keep the machine heading.
+        if (config.look !== 'route' || Math.abs(shortestAngleDelta(anchorHeading, targetYaw)) < 1.9) {
+          targetHeading = targetYaw;
+          basePitch = Math.atan2(target.y - povPosition.y, horizontal);
+        }
       }
     }
     if (targetHeading == null) targetHeading = povLastHeading[povId] ?? povHeading;
@@ -773,7 +815,11 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       povHeading = targetHeading;
       povBasePitch = basePitch;
     } else {
-      povHeading += shortestAngleDelta(povHeading, targetHeading) * (1 - Math.exp(-5 * dt));
+      // Limit turn rate so a target change cannot whip the camera around in
+      // one frame. This also keeps the ground from spinning in side/tree views.
+      const turnRate = 0.9; // radians per second
+      const step = shortestAngleDelta(povHeading, targetHeading) * (1 - Math.exp(-5 * dt));
+      povHeading += Math.max(-turnRate * dt, Math.min(turnRate * dt, step));
       povBasePitch += (basePitch - povBasePitch) * (1 - Math.exp(-6 * dt));
     }
     const yaw = -povHeading - Math.PI / 2 + povYawOffset;
@@ -813,12 +859,19 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     if (isTruck) {
       group.visible = !seat && group.userData.status !== 'off map';
     }
-    const treeRadius = seat ? 10 : 4;
+    const aerial = povPreset === 'aerial';
+    const treeRadius = aerial ? 34 : (seat ? 10 : 4);
     for (const node of treeNodes.values()) {
-      if (node.visible && Math.hypot(
+      if (!node.visible) continue;
+      const cameraDistance = Math.hypot(
         node.position.x - povPosition.x,
         node.position.z - povPosition.z,
-      ) < treeRadius) {
+      );
+      const machineDistance = Math.hypot(
+        node.position.x - group.position.x,
+        node.position.z - group.position.z,
+      );
+      if (cameraDistance < treeRadius || (aerial && machineDistance < 18)) {
         node.visible = false;
       }
     }
@@ -902,7 +955,7 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       camera.updateProjectionMatrix();
       controls.enabled = false;
       userInteracted = true;
-      povPreset = 'seat';
+      povPreset = 'aerial';
       scene.add(camera);
       setAllPovLabelsVisible(false);
       setRetentionOverlayMode('pov');
@@ -1318,6 +1371,19 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         batch.group.visible = false;
         continue;
       }
+      const span = Math.max(0.001, batch.end - batch.start);
+      const progress = Math.max(0, Math.min(1, (t - batch.start) / span));
+      if (batch.kind === 'pickup') {
+        // The forwarder/skidder goes to the pile; the pile does not travel to
+        // the machine on its own. Leave it planted and remove logs over the
+        // loading event as the grapple takes them away.
+        batch.group.position.set(batch.origin.x, sampleHeight(batch.origin.x, batch.origin.z) + 0.6, batch.origin.z);
+        batch.group.visible = progress < 1;
+        const count = batch.group.children.length;
+        const remaining = Math.max(0, Math.ceil(count * (1 - progress)));
+        batch.group.children.forEach((log, index) => { log.visible = index < remaining; });
+        continue;
+      }
       let target = null;
       if (batch.kind === 'truck') {
         const truck = trucks[batch.machine];
@@ -1334,8 +1400,6 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         }
         target = machine.position;
       }
-      const span = Math.max(0.001, batch.end - batch.start);
-      const progress = Math.max(0, Math.min(1, (t - batch.start) / span));
       const x = batch.origin.x + (target.x - batch.origin.x) * progress;
       const z = batch.origin.z + (target.z - batch.origin.z) * progress;
       batch.group.visible = true;
@@ -1775,22 +1839,35 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     rig.glass = glass;
     rig.tracks = [trackLeft, trackRight];
     if (isFeller) {
+      // Two-piece articulated feller/harvester boom: lower lift, knuckle,
+      // upper stick, and a head that can slew toward the active stem.
       const boom = new THREE.Group();
-      boom.position.set(1.3, 2.2, 0);
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.32, 0.32), baseMat);
-      arm.position.x = 1.45;
-      boom.add(arm);
+      boom.position.set(0.9, 2.55, 0);
+      const lower = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.38, 0.42), baseMat);
+      lower.position.x = 1.05;
+      boom.add(lower);
+      const elbow = new THREE.Group();
+      elbow.position.x = 2.1;
+      boom.add(elbow);
+      const upper = new THREE.Mesh(new THREE.BoxGeometry(1.65, 0.3, 0.34), baseMat);
+      upper.position.x = 0.82;
+      elbow.add(upper);
       const head = new THREE.Group();
-      head.position.set(2.95, -0.2, 0);
-      const headBox = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.9, 1.3), darkMat);
+      head.position.set(1.65, -0.26, 0);
+      const headBox = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.85, 1.15), darkMat);
       head.add(headBox);
-      const saw = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.14, 18), steelMat);
-      saw.rotation.x = Math.PI / 2;
-      saw.position.z = 0.72;
+      const saw = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.46, 0.07, 20), steelMat);
+      saw.position.set(0, -0.5, 0.06);
+      saw.userData.spinAxis = 'y';
       head.add(saw);
-      boom.add(head);
+      elbow.add(head);
+      const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.6, 10), steelMat);
+      pin.rotation.x = Math.PI / 2;
+      pin.position.x = 2.1;
+      boom.add(pin);
       group.add(boom);
       rig.boom = boom;
+      rig.elbow = elbow;
       rig.head = head;
       rig.saw = saw;
     } else if (isSkidder) {
@@ -1807,15 +1884,27 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       bunk.visible = false;
       group.add(bunk);
       const boom = new THREE.Group();
-      boom.position.set(1.2, 2.35, 0);
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.28, 0.28), baseMat);
-      arm.position.x = 1.3;
-      boom.add(arm);
+      boom.position.set(1.0, 2.4, 0);
+      const lower = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.3, 0.34), baseMat);
+      lower.position.x = 0.85;
+      boom.add(lower);
+      const elbow = new THREE.Group();
+      elbow.position.x = 1.7;
+      boom.add(elbow);
+      const upper = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.26, 0.3), baseMat);
+      upper.position.x = 0.68;
+      elbow.add(upper);
       const grapple = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.65, 0.9), darkMat);
-      grapple.position.set(2.65, -0.1, 0);
-      boom.add(grapple);
+      grapple.position.set(1.45, -0.1, 0);
+      elbow.add(grapple);
+      const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.48, 10), steelMat);
+      pin.rotation.x = Math.PI / 2;
+      pin.position.x = 1.7;
+      boom.add(pin);
       group.add(boom);
       rig.boom = boom;
+      rig.elbow = elbow;
+      rig.grapple = grapple;
       rig.bunk = bunk;
     } else if (isProcessor) {
       const infeed = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.32, 2.0), steelMat);
@@ -1837,15 +1926,23 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       rig.feedLog = feedLog;
     } else if (isLoader) {
       const boom = new THREE.Group();
-      boom.position.set(1.2, 2.45, 0);
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.3, 0.3), baseMat);
-      arm.position.x = 1.5;
-      boom.add(arm);
+      boom.position.set(1.0, 2.5, 0);
+      const lower = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.32, 0.36), baseMat);
+      lower.position.x = 0.9;
+      boom.add(lower);
+      const elbow = new THREE.Group();
+      elbow.position.x = 1.8;
+      boom.add(elbow);
+      const upper = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.28, 0.32), baseMat);
+      upper.position.x = 0.75;
+      elbow.add(upper);
       const grapple = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.7, 1.0), darkMat);
-      grapple.position.set(3.0, -0.2, 0);
-      boom.add(grapple);
+      grapple.position.set(1.55, -0.2, 0);
+      elbow.add(grapple);
+      rig.grapple = grapple;
       group.add(boom);
       rig.boom = boom;
+      rig.elbow = elbow;
     } else if (isYarder) {
       const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.8, 6.2, 8), baseMat);
       tower.position.set(-1.6, 3.2, 0);
@@ -1902,7 +1999,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
 
     if (rig.boom) {
       let angle = 0.08;
-      if (active && (type.includes('feller') || type.includes('harvester'))) {
+      const fellerLike = type.includes('feller') || type.includes('harvester');
+      if (active && fellerLike) {
         angle = 0.1 - Math.sin(progress * Math.PI) * 0.5;
       } else if (type.includes('loader') && truckLoad) {
         angle = -0.25 - Math.sin(truckProgress * Math.PI) * 0.45;
@@ -1914,9 +2012,32 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         angle = 0.2;
       }
       rig.boom.rotation.z = angle;
+      if (rig.elbow) {
+        let elbowAngle = 0;
+        if (fellerLike && active) elbowAngle = -0.2 + Math.sin(progress * Math.PI) * 0.35;
+        else if (working && (type.includes('skidder') || type.includes('forwarder') || type.includes('loader'))) elbowAngle = -0.28;
+        rig.elbow.rotation.z = elbowAngle;
+      }
+      if (fellerLike) {
+        const tree = active ? activeTreePoint(segment) : null;
+        let desiredYaw = 0;
+        if (tree) {
+          const dx = tree.x - group.position.x;
+          const dz = tree.z - group.position.z;
+          if (Math.hypot(dx, dz) > 1) {
+            const targetHeading = Math.atan2(dz, dx);
+            desiredYaw = -targetHeading - group.rotation.y;
+          }
+        }
+        rig.boom.rotation.y += shortestAngleDelta(rig.boom.rotation.y, desiredYaw) * 0.22;
+      }
     }
     if (rig.saw) {
-      rig.saw.rotation.z += active ? 0.18 : 0.02;
+      const cutting = active && ['process', 'fell', 'fall'].includes(segmentType);
+      if (cutting) {
+        if (rig.saw.userData.spinAxis === 'y') rig.saw.rotation.y += 0.28;
+        else rig.saw.rotation.z += 0.18;
+      }
     }
     if (rig.bunk) {
       const loaded = ['load', 'travel_loaded', 'unload'].includes(segmentType);
@@ -2207,7 +2328,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
       if (child.name === 'ground') child.parent?.remove(child);
     }
 
-    const geometry = new THREE.PlaneGeometry(width, height, 32, 32);
+    const terrainSegments = Math.min(160, Math.max(96, Number(terrain.resolution) || 96));
+    const geometry = new THREE.PlaneGeometry(width, height, terrainSegments, terrainSegments);
     geometry.rotateX(-Math.PI / 2);
     const mesh = new THREE.Mesh(
       geometry,

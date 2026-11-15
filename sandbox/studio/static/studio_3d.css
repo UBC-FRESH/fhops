@@ -49,3 +49,57 @@ body.walking #tools button, body.walking #tools label, body.walking #tools input
 .walk-help kbd { display: inline-block; min-width: 11px; padding: 1px 3px; margin-right: 1px; border: 1px solid #52656b; border-radius: 3px; background: #1b2428; color: #e6eef2; font: 10px/1.2 system-ui, sans-serif; text-align: center; }
 #walk-exit { margin-top: 9px; background: #2fbfb0; color: #071312; border: 0; border-radius: 5px; padding: 5px 9px; font-weight: 700; cursor: pointer; }
 #walk-crosshair { position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; margin: -5px 0 0 -5px; border: 1px solid #ffffffd9; border-radius: 50%; box-shadow: 0 0 0 1px #0006; pointer-events: none; z-index: 7; }
+
+/* Scenario run feedback */
+.run-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid #80631b;
+  border-radius: 6px;
+  background: #2a2410;
+  color: #f7d08a;
+  font-size: 11px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.run-indicator[hidden] { display: none; }
+.hourglass {
+  display: inline-block;
+  animation: hourglass-turn 2.2s ease-in-out infinite;
+  transform-origin: center;
+}
+.run-clock {
+  color: #e8d49b;
+  font-variant-numeric: tabular-nums;
+}
+@keyframes hourglass-turn {
+  0%, 38% { transform: rotate(0deg); }
+  50%, 88% { transform: rotate(180deg); }
+  100% { transform: rotate(180deg); }
+}
+header button.running:disabled,
+header button.running {
+  opacity: 1;
+  background: #2a2410;
+  border-color: #80631b;
+  color: #f7d08a;
+  cursor: progress;
+}
+.run-wait {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #80631b;
+  border-radius: 7px;
+  background: #2a2410;
+  color: #f7d08a;
+  padding: 8px 9px;
+  margin: 7px 0;
+}
+.run-wait .hourglass { font-size: 18px; }
+.run-wait > div { flex: 1 1 auto; min-width: 0; }
+.run-wait b { display: block; font-size: 11px; }
+.run-wait .muted { color: #d8c58a; font-size: 10px; line-height: 1.35; margin-top: 2px; }
+.run-wait .run-clock { font-size: 12px; font-weight: 650; }

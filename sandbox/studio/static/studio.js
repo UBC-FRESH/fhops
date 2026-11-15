@@ -94,6 +94,78 @@ function setStatus(text, error = false) {
   state.lastStatus = text;
 }
 
+let runInProgress = false;
+let runStartedAt = 0;
+let runClockTimer = null;
+
+function formatRunClock(ms) {
+  const seconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  return hours
+    ? `${hours}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`
+    : `${minutes}:${String(secs).padStart(2, "0")}`;
+}
+
+function updateRunClocks() {
+  const elapsed = formatRunClock(performance.now() - runStartedAt);
+  document.querySelectorAll(".run-clock").forEach((node) => { node.textContent = elapsed; });
+}
+
+function setRunStage(label) {
+  const indicatorLabel = $("#run-indicator-label");
+  if (indicatorLabel) indicatorLabel.textContent = label;
+  const panelLabel = document.querySelector("#run-result .run-wait b");
+  if (panelLabel) panelLabel.textContent = label;
+}
+
+function beginScenarioRun(label = "Running scenario…") {
+  if (runInProgress) return false;
+  runInProgress = true;
+  runStartedAt = performance.now();
+  const button = $("#run");
+  if (button) {
+    button.dataset.idleLabel = button.dataset.idleLabel || button.textContent;
+    button.innerHTML = '<span class="hourglass" aria-hidden="true">⌛</span> <span class="run-clock">0:00</span>';
+    button.setAttribute('aria-label', 'Running scenario');
+    button.disabled = true;
+    button.classList.add("running");
+    button.setAttribute("aria-busy", "true");
+    button.title = "Scenario is running; please wait";
+  }
+  const indicator = $("#run-indicator");
+  if (indicator) {
+    indicator.hidden = false;
+    setRunStage(label);
+  }
+  updateRunClocks();
+  clearInterval(runClockTimer);
+  runClockTimer = window.setInterval(updateRunClocks, 1000);
+  return true;
+}
+
+function finishScenarioRun() {
+  runInProgress = false;
+  clearInterval(runClockTimer);
+  runClockTimer = null;
+  const button = $("#run");
+  if (button) {
+    button.textContent = button.dataset.idleLabel || "Run scenario";
+    button.disabled = false;
+    button.classList.remove("running");
+    button.removeAttribute("aria-busy");
+    button.removeAttribute("aria-label");
+    button.title = "Save the project and run a new simulation";
+  }
+  const indicator = $("#run-indicator");
+  if (indicator) indicator.hidden = true;
+}
+
+function runWaitingMarkup(label = "Simulation running…") {
+  return `<div class="run-wait" role="status"><span class="hourglass" aria-hidden="true">⌛</span><div><b>${escapeHtml(label)}</b><div class="muted">Please wait — the simulation is running. Do not click Run scenario again.</div></div><span class="run-clock">0:00</span></div>`;
+}
+
 function markDirty() {
   state.dirty = true;
   setStatus("Unsaved changes");
@@ -1542,14 +1614,22 @@ async function loadRunHistory() {
       rerun.title = "Run the current project edits and create a fresh run";
       rerun.hidden = !stale;
       rerun.addEventListener("click", async () => {
+        if (!beginScenarioRun("Running fresh scenario…")) {
+          setStatus("A scenario run is already in progress.", true);
+          return;
+        }
         rerun.disabled = true;
         rerun.textContent = "Running…";
         try {
+          $("#run-result").innerHTML = runWaitingMarkup("Simulation running…");
           const record = await api(`projects/${encodeURIComponent(state.project.project_id)}/run`, { method: "POST" });
           setStatus(`Fresh run complete · ${record.run_id}`);
           await loadRunHistory();
         } catch (error) {
           setStatus(`Rerun failed: ${error.message}`, true);
+          $("#run-result").textContent = `Rerun failed: ${error.message}`;
+        } finally {
+          finishScenarioRun();
           rerun.disabled = false;
           rerun.textContent = "Rerun";
         }
@@ -1651,16 +1731,18 @@ async function createNew() {
 
 async function runScenario() {
   if (!state.project) return;
-  setStatus("Saving before run…");
+  if (!beginScenarioRun("Saving before run…")) return;
   try {
+    setStatus("Saving before run…");
     const saved = await api(`projects/${encodeURIComponent(state.project.project_id)}`, {
       method: "PUT", body: JSON.stringify(state.project),
     });
     state.project = saved;
     state.dataset.project = saved;
     state.dirty = false;
+    setRunStage("Running scenario…");
     setStatus("Running edited scenario…");
-    $("#run-result").textContent = "Simulation running…";
+    $("#run-result").innerHTML = runWaitingMarkup("Simulation running…");
     const record = await api(`projects/${encodeURIComponent(state.project.project_id)}/run`, { method: "POST" });
     const kpis = record.kpis || {};
     const rows = [
@@ -1680,6 +1762,8 @@ async function runScenario() {
   } catch (error) {
     setStatus(`Run failed: ${error.message}`, true);
     $("#run-result").textContent = `Run failed: ${error.message}`;
+  } finally {
+    finishScenarioRun();
   }
 }
 

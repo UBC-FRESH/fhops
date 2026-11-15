@@ -106,3 +106,57 @@ textarea { width: 100%; resize: vertical; }
 .spec-field input { width: 100%; background: #11181b; color: #e6eef2; border: 1px solid #3e5056; border-radius: 4px; padding: 2px 4px; font-size: 10px; }
 .landing-row input { min-width: 0; background: #11181b; color: #e6eef2; border: 1px solid #3e5056; border-radius: 4px; padding: 2px 4px; font-size: 10px; }
 .landing-row button { padding: 2px 5px; font-size: 10px; }
+
+/* Scenario run feedback */
+.run-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid #80631b;
+  border-radius: 6px;
+  background: #2a2410;
+  color: #f7d08a;
+  font-size: 11px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.run-indicator[hidden] { display: none; }
+.hourglass {
+  display: inline-block;
+  animation: hourglass-turn 2.2s ease-in-out infinite;
+  transform-origin: center;
+}
+.run-clock {
+  color: #e8d49b;
+  font-variant-numeric: tabular-nums;
+}
+@keyframes hourglass-turn {
+  0%, 38% { transform: rotate(0deg); }
+  50%, 88% { transform: rotate(180deg); }
+  100% { transform: rotate(180deg); }
+}
+.btn.running:disabled,
+.btn.running {
+  opacity: 1;
+  background: #2a2410;
+  border-color: #80631b;
+  color: #f7d08a;
+  cursor: progress;
+}
+.run-wait {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #80631b;
+  border-radius: 7px;
+  background: #2a2410;
+  color: #f7d08a;
+  padding: 8px 9px;
+  margin: 7px 0;
+}
+.run-wait .hourglass { font-size: 18px; }
+.run-wait > div { flex: 1 1 auto; min-width: 0; }
+.run-wait b { display: block; font-size: 11px; }
+.run-wait .muted { color: #d8c58a; font-size: 10px; line-height: 1.35; margin-top: 2px; }
+.run-wait .run-clock { font-size: 12px; font-weight: 650; }

@@ -1,4 +1,4 @@
-import { createViewer } from "../lab/viewer.js?v=20261114o";
+import { createViewer } from "../lab/viewer.js?v=20261114p";
 
 const API = new URL("api/", location.href).pathname;
 const params = new URLSearchParams(location.search);
@@ -109,7 +109,12 @@ function updateOperatorHud() {
     ? `T+${fmt(state.elapsed_s)} / ${fmt(state.duration_s)}`
     : "—";
   operatorRemaining.textContent = state.duration_s ? fmt(state.remaining_s) : "—";
-  operatorVolume.textContent = `${Number(state.volume_m3 || 0).toFixed(1)} m³${state.tree_count ? ` · ${state.tree_count} trees` : ""}`;
+  const unitCount = state.log_count
+    ? ` · ${state.log_count.toLocaleString()} logs`
+    : state.tree_count
+      ? ` · ${state.tree_count.toLocaleString()} trees`
+      : "";
+  operatorVolume.textContent = `${Number(state.volume_m3 || 0).toFixed(1)} m³${unitCount}`;
   operatorNext.textContent = state.next
     ? `${String(state.next.type).replaceAll("_", " ")} @ T+${fmt(state.next.start_s)}`
     : "end of schedule";

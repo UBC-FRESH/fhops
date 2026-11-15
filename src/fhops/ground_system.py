@@ -15,7 +15,7 @@ import hashlib
 import json
 import math
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
@@ -73,6 +73,7 @@ __all__ = [
     "MachineSpec",
     "default_loader_spec",
     "default_skidder_spec",
+    "default_forwarder_spec",
     "simulate_ground_system",
     "write_ground_system",
 ]
@@ -529,6 +530,21 @@ def default_processor_spec(machine_id: str) -> ProcessorSpec:
 def default_skidder_spec(machine_id: str) -> MachineSpec:
     """Return the default grapple-skidder specification for ``machine_id``."""
     return MachineSpec(machine_id=machine_id, machine_type="grapple_skidder")
+
+
+def default_forwarder_spec(machine_id: str) -> MachineSpec:
+    """Return the default shortwood-forwarder specification for ``machine_id``."""
+    return MachineSpec(
+        machine_id=machine_id,
+        machine_type="forwarder",
+        capacity_m3=16.0,
+        empty_speed_mps=1.2,
+        loaded_speed_mps=1.0,
+        forwarder_model="eriksson-final-felling",
+        forwarder_stem_size_m3=0.3,
+        forwarder_load_fixed_s=300.0,
+        forwarder_unload_fixed_s=180.0,
+    )
 
 
 def default_loader_spec(machine_id: str) -> MachineSpec:
@@ -1137,7 +1153,22 @@ def simulate_ground_system(
         )
     skidder_specs = dict(skidder_specs or {})
     for machine in skidders:
-        skidder_specs.setdefault(machine, default_skidder_spec(machine))
+        is_forwarder = machines[machine].role == "forwarder"
+        if machine not in skidder_specs:
+            skidder_specs[machine] = (
+                default_forwarder_spec(machine)
+                if is_forwarder
+                else default_skidder_spec(machine)
+            )
+        elif is_forwarder and not skidder_specs[machine].forwarder_model:
+            spec = skidder_specs[machine]
+            if spec.productivity_m3_per_smh is None:
+                skidder_specs[machine] = replace(
+                    spec,
+                    machine_type="forwarder",
+                    forwarder_model="eriksson-final-felling",
+                    forwarder_stem_size_m3=spec.forwarder_stem_size_m3 or 0.3,
+                )
         if skidder_specs[machine].machine_id != machine:
             raise GroundSystemError(
                 f"Skidder spec ID {skidder_specs[machine].machine_id!r} does not match {machine!r}."
@@ -1170,6 +1201,17 @@ def simulate_ground_system(
                 "speed_profile": speed_profile.key,
                 "speed_profile_description": speed_profile.description,
             },
+            "forwarders": [
+                {
+                    "machine_id": machine,
+                    "model": spec.forwarder_model,
+                    "productivity_m3_per_smh": spec.productivity_m3_per_smh,
+                }
+                for machine, spec in skidder_specs.items()
+                if machines[machine].role == "forwarder" and (
+                    spec.forwarder_model or spec.productivity_m3_per_smh is not None
+                )
+            ],
             "loader": {
                 "model": "Barko 450 TN-46 ground-skid loader",
                 "avg_volume_per_shift_m3": loader_result.avg_volume_per_shift_m3,
@@ -2172,8 +2214,10 @@ def _simulate_loader(
         if rate_model == "calibrated":
             if seconds_per_m3 is None:
                 raise GroundSystemError("Calibrated rate model requires loader seconds per m3.")
+            # The Barko 450 shift rate is already volume-based and includes
+            # piece handling. Adding process_per_log_s on top double-counts
+            # that work and made short loads look ten minutes long.
             process_time = seconds_per_m3 * load.volume_m3
-            process_time += spec.process_per_log_s * load.logs
         else:
             process_time = spec.process_fixed_s + spec.process_per_log_s * load.logs
         landing_id = load.landing_id
@@ -2202,8 +2246,8 @@ def _simulate_loader(
                 y1=load.landing_y_m,
                 volume_m3=load.volume_m3,
                 logs=load.logs,
-                tree_ids=load.tree_ids,
-                status="processing",
+                tree_ids=(),
+                status="loading_logs",
             )
         )
         available_by_loader[spec.machine_id] = end

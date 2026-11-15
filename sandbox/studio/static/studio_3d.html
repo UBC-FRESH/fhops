@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FHOPS Studio 3D</title>
-  <link rel="stylesheet" href="static/studio_3d.css" />
+  <link rel="stylesheet" href="static/studio_3d.css?v=20261114p" />
   <script type="importmap">{"imports":{"three":"./lab/vendor/three/three.module.js"}}</script>
 </head>
 <body>
@@ -16,7 +16,7 @@
     <button id="undo" class="secondary">Undo</button>
     <button id="redo" class="secondary">Redo</button>
     <button id="save">Save 3D edits</button>
-    <button id="run" class="secondary">Run scenario</button>
+    <button id="run" class="secondary" title="Save the project and run a new simulation">Run scenario</button>
     <a id="replay-link" href="#" target="_blank" hidden>Open 3D replay →</a>
   </header>
   <main>
@@ -67,6 +67,6 @@
       <p class="hint">3D editing writes the same project used by the plan editor and simulation.</p>
     </aside>
   </main>
-  <script type="module" src="static/studio_3d.js"></script>
+  <script type="module" src="static/studio_3d.js?v=20261114p"></script>
 </body>
 </html>
