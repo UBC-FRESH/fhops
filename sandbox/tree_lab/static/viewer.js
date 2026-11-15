@@ -1243,6 +1243,64 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
     }
   }
 
+  function pointToSegmentDistance(px, pz, ax, az, bx, bz) {
+    const abx = bx - ax;
+    const abz = bz - az;
+    const lengthSq = abx * abx + abz * abz;
+    if (lengthSq < 1e-9) return Math.hypot(px - ax, pz - az);
+    const u = Math.max(0, Math.min(1, ((px - ax) * abx + (pz - az) * abz) / lengthSq));
+    return Math.hypot(px - (ax + abx * u), pz - (az + abz * u));
+  }
+
+  function chooseFallDirection(node, treeId, fell, fallX, fallZ) {
+    const key = `${fell.start_s}:${fell.end_s}:${treeId}`;
+    if (node.userData.fallKey === key && node.userData.fallDirection) {
+      return node.userData.fallDirection;
+    }
+    const baseX = node.position.x;
+    const baseZ = node.position.z;
+    const baseAngle = Math.atan2(fallZ, fallX);
+    const radius = Math.min(42, Math.max(8, Number(node.userData.height_m) || 20));
+    const others = [];
+    for (const [id, group] of Object.entries(machines)) {
+      if (id === fell.machine || !group.visible) continue;
+      others.push({ x: group.position.x, z: group.position.z });
+    }
+    for (const group of Object.values(trucks)) {
+      if (group.visible) others.push({ x: group.position.x, z: group.position.z });
+    }
+    let bestAngle = baseAngle;
+    let bestScore = -Infinity;
+    for (let step = 0; step < 24; step += 1) {
+      const angle = baseAngle + (step / 24) * Math.PI * 2;
+      const endX = baseX + Math.cos(angle) * radius;
+      const endZ = baseZ + Math.sin(angle) * radius;
+      let clearance = Infinity;
+      for (const other of others) {
+        clearance = Math.min(
+          clearance,
+          pointToSegmentDistance(other.x, other.z, baseX, baseZ, endX, endZ),
+        );
+      }
+      if (!Number.isFinite(clearance)) clearance = 999;
+      // Prefer the natural fall direction slightly, but make machine clearance
+      // dominant so a stem is not dropped through a forwarder.
+      const score = clearance - Math.abs(shortestAngleDelta(baseAngle, angle)) * 0.35;
+      if (score > bestScore) {
+        bestScore = score;
+        bestAngle = angle;
+      }
+    }
+    const direction = {
+      x: Math.cos(bestAngle),
+      z: Math.sin(bestAngle),
+      key,
+    };
+    node.userData.fallKey = key;
+    node.userData.fallDirection = direction;
+    return direction;
+  }
+
   function updateTrees(t) {
     const fallAxis = new THREE.Vector3();
     const fallQuat = new THREE.Quaternion();
@@ -1291,7 +1349,8 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         }
       }
       const length = Math.max(1e-6, Math.hypot(dx, dz));
-      fallAxis.set(dz / length, 0, -dx / length);
+      const fallDirection = chooseFallDirection(node, treeId, fell, dx / length, dz / length);
+      fallAxis.set(fallDirection.z, 0, -fallDirection.x);
       fallQuat.setFromAxisAngle(fallAxis, angle);
       node.quaternion.copy(base).premultiply(fallQuat);
     }
@@ -2276,16 +2335,19 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
         isTruck: false,
         yOffset: 0.15,
         working,
+        moving: Boolean(active && String(segment.type || '').startsWith('travel')),
       });
     }
     for (const group of Object.values(trucks)) {
       if (!group.visible) continue;
+      const truckStatus = String(group.userData.status || '');
       bodies.push({
         group,
         radius: collisionRadius(group, true),
         isTruck: true,
         yOffset: 1.8,
         working: new Set(),
+        moving: truckStatus === 'loaded outbound' || truckStatus === 'returning empty',
       });
     }
     if (!bodies.length) return;
@@ -2316,19 +2378,38 @@ export function createViewer(container, { onTime, onPov, realTime = false } = {}
           const minDistance = a.radius + b.radius;
           if (distance >= minDistance || minDistance <= 0) continue;
           if (distance < 1e-5) {
-            a.group.position.x -= 0.02;
-            a.group.position.z -= 0.02;
-            b.group.position.x += 0.02;
-            b.group.position.z += 0.02;
+            if (a.moving && !b.moving) {
+              a.group.position.x -= 0.02;
+              a.group.position.z -= 0.02;
+            } else if (b.moving && !a.moving) {
+              b.group.position.x += 0.02;
+              b.group.position.z += 0.02;
+            } else {
+              a.group.position.x -= 0.02;
+              a.group.position.z -= 0.02;
+              b.group.position.x += 0.02;
+              b.group.position.z += 0.02;
+            }
             continue;
           }
-          const overlap = (minDistance - distance) * 0.5;
+          const overlap = minDistance - distance + 0.05;
           const nx = dx / distance;
           const nz = dz / distance;
-          a.group.position.x -= nx * overlap;
-          a.group.position.z -= nz * overlap;
-          b.group.position.x += nx * overlap;
-          b.group.position.z += nz * overlap;
+          if (a.moving && !b.moving) {
+            // Working/stationary machines hold their ground; the moving
+            // machine yields instead of ramming them out of the way.
+            a.group.position.x -= nx * overlap;
+            a.group.position.z -= nz * overlap;
+          } else if (b.moving && !a.moving) {
+            b.group.position.x += nx * overlap;
+            b.group.position.z += nz * overlap;
+          } else {
+            const split = overlap * 0.5;
+            a.group.position.x -= nx * split;
+            a.group.position.z -= nz * split;
+            b.group.position.x += nx * split;
+            b.group.position.z += nz * split;
+          }
         }
       }
       // Keep powered machines and trucks out of standing stems. Their active
