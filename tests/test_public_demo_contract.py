@@ -22,6 +22,11 @@ MODEL_INSTANCES = {
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
         "map_query": "period=P00",
     },
+    "knife-structural": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
     "mkrf-full-estate": {
         "domain": "tactical_operational",
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
@@ -168,3 +173,18 @@ def test_gavin_full_estate_covers_the_whole_forest(client: TestClient) -> None:
         if feature.get("properties", {}).get("layer") == "blocks"
     ]
     assert len(block_features) >= 2_900
+
+
+def test_knife_structural_covers_the_whole_block(client: TestClient) -> None:
+    _model_instance(client, "knife-structural")
+    kpis = client.get("/api/runs/knife-structural/kpis").json()
+    assert kpis["blocks_total"] >= 160
+    assert kpis["blocks_scheduled"] >= 150
+    assert kpis["total_production_m3"] > 0
+    map_payload = client.get("/api/runs/knife-structural/map?period=P00").json()
+    block_features = [
+        feature
+        for feature in map_payload.get("features", [])
+        if feature.get("properties", {}).get("layer") == "blocks"
+    ]
+    assert len(block_features) >= 160

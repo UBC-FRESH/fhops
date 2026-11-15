@@ -22,10 +22,11 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains three validated model instances:
+It contains four model instances:
 
 ```text
 examples/demo_runs/gavin-full-estate
+examples/demo_runs/knife-structural
 examples/demo_runs/mkrf-full-estate
 examples/demo_runs/tfl6-lidar-demo
 ```
@@ -34,6 +35,10 @@ examples/demo_runs/tfl6-lidar-demo
 baseline handoff: 2,907 blocks, 5,663.66 ha, 10,113 harvest events over 300 years, 5.66 million m³
 of harvest, and the full growing-stock/target evidence surface. No public Gavin net-revenue
 account is present, so none is fabricated.
+
+`knife-structural` is a structural full-block Knife Creek pilot built from the existing
+160-block WS4 spatial dataset. It schedules 157 eligible blocks and retains all 160 on the map.
+It is explicitly **not an approved management plan** and has no public revenue account.
 
 `mkrf-full-estate` is the full WS4 MKRF estate handoff:
 
@@ -106,8 +111,7 @@ artifacts, full-estate coverage, scenario/geometry/map payloads, KPIs, playback,
 
 Gavin Lake is now a runnable full-estate handoff (`gavin-full-estate`).
 
-Knife Creek is not added as a console run yet. The public Knife Creek instance has a
-160-block spatial dataset and FVS-BC state-transition evidence, but no approved
-full-block schedule or public financial-account surface. Adding a placeholder pulse
-schedule would misrepresent it as a management plan. The next Knife Creek gate is a
-reviewed full-block selection schedule and public account/provenance output.
+Knife Creek is present as a structural full-block pilot (`knife-structural`) so the whole
+block is visible in the console. The public instance still lacks an approved full-block
+selection schedule and a public financial-account surface; the run is labeled accordingly.
+The next Knife Creek gate is the reviewed schedule plus public account/provenance output.

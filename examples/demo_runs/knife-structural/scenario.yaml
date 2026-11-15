@@ -1,0 +1,21 @@
+name: Knife Creek structural full-block pilot
+planning_level: tactical_operational
+schema_version: 0.1.0
+geo_block_path: blocks.geojson
+geo_crs: EPSG:3005
+periods:
+- period_id: P00
+  start_date: '2026-01-01'
+  end_date: '2035-12-31'
+  duration_years: 10
+- period_id: P01
+  start_date: '2036-01-01'
+  end_date: '2045-12-31'
+  duration_years: 10
+- period_id: P02
+  start_date: '2046-01-01'
+  end_date: '2055-12-31'
+  duration_years: 10
+source: femic-afrf-knifecreek-instance ws4/dataset_kc_spatial_v3
+notes: Structural full-block simulation from existing data; not an approved plan;
+  no public revenue account.

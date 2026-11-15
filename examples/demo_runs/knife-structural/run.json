@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "knife-structural",
+  "domain": "tactical_operational",
+  "run_type": "tactical_operational",
+  "status": "structural",
+  "files": {
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "harvest_decisions": "harvest_decisions.csv",
+    "production": "production.csv",
+    "tactical_summary": "tactical_summary.json"
+  },
+  "warnings": [],
+  "generated_at": "2026-11-15T21:14:16.310763+00:00",
+  "command": "WS4 Knife Creek structural full-block pilot",
+  "scenario": "scenario.yaml",
+  "solver": "ws4"
+}
