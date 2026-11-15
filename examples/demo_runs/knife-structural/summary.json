@@ -1,19 +1,19 @@
 {
   "run_id": "knife-structural",
-  "label": "Knife Creek \u2014 structural full-block pilot (not approved plan)",
+  "label": "Knife Creek \u2014 structural 30-year selection cycle (not approved plan)",
   "planning_level": "tactical_operational",
   "source": "AFRF Knife Creek ws4 dataset_kc_spatial_v3 structural simulation",
   "horizon_years": 300,
-  "periods": 3,
+  "periods": 30,
   "period_width_years": 10,
   "blocks_total": 160,
   "blocks_scheduled": 157,
-  "schedule_events": 157,
+  "schedule_events": 1570,
   "area_total_ha": 3481.774,
   "scheduled_area_ha": 3480.204,
-  "total_production_m3": 546222.904,
+  "total_production_m3": 648920.408,
   "growing_stock_initial_m3": null,
   "growing_stock_final_m3": null,
   "revenue_note": "No public Knife Creek financial account committed; not fabricated.",
-  "status_note": "Structural pilot built from the existing 160-block spatial dataset; not an approved management plan."
+  "status_note": "Structural 30-year selection-cycle pilot built from the existing 160-block dataset; not an approved management plan."
 }

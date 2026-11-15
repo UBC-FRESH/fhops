@@ -9,7 +9,7 @@ WS4 spatial dataset. It is a **structural pilot**, not an approved management pl
 - 3,481.77 ha
 - 157 eligible blocks scheduled
 - 3 blocks retained on the map but unscheduled because the dataset has no treatment option
-- 546,222.9 m³ in the structural first-entry schedule
+- 648,920.4 m³ in the structural 30-year selection cycle
 - EPSG:3005 geometry
 - no public net-revenue account; none fabricated
 

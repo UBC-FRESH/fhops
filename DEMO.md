@@ -37,7 +37,7 @@ of harvest, and the full growing-stock/target evidence surface. No public Gavin 
 account is present, so none is fabricated.
 
 `knife-structural` is a structural full-block Knife Creek pilot built from the existing
-160-block WS4 spatial dataset. It schedules 157 eligible blocks and retains all 160 on the map.
+160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.
 It is explicitly **not an approved management plan** and has no public revenue account.
 
 `mkrf-full-estate` is the full WS4 MKRF estate handoff:

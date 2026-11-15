@@ -1,11 +1,11 @@
 {
   "source": "/srv/shared-data/gep/ws4/femic/external/femic-afrf-knifecreek-instance",
   "dataset": "ws4/dataset_kc_spatial_v3",
-  "schedule": "structural one-entry-per-block stagger",
+  "schedule": "structural 30-year selection cycle with staggered phases",
   "crs": "EPSG:3005",
   "caveats": [
     "No public financial account; none fabricated.",
-    "Structural pilot only; not approved management plan.",
+    "Structural pilot only; not an approved management plan.",
     "3 blocks with no treatment in the dataset are retained on the map but not scheduled."
   ]
 }
