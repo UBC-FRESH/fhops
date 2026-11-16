@@ -11,23 +11,30 @@
 - P00: 192 blocks, 175,533 m³, 315-day screen
 - P01: 237 blocks, 176,512 m³, 355-day screen
 
-## Knife Creek — structural screen, not yet a policy plan
+## Knife Creek — GWM multi-entry policy screen
 
-- 160 blocks / 3,481.77 ha
-- 648,920 m³ structural cycle
-- annual net after cost under the public envelope: CAD 235k/yr
-- NPV 4%: CAD 35.3M
-- P00: 50 blocks, 158,230 m³, 138-day screen
-- P00 truck screen: 31.6 km mean one-way, 5 trucks
+- 160 blocks / 3,481.77 ha; 157 blocks scheduled
+- 4-entry FVS-BC state library: 120 states, 96 transitions, 32 canonical states, 4 cycles
+- compiled spatial dataset: 128 tracks, 79 treatments
+- 1,306 scheduled entries over 300 years
+- 574,458 m³ total production
+- P00: 59 blocks, 172,832 m³
+- production is zero after P11
+- annual net after cost under the public envelope: approximately CAD 208k/yr
+- NPV 4%: approximately CAD 30.4M
 
-The Knife structural run is not the full GWM state-transition policy. The committed canonical
-Knife graph has 6 terminal states and 0 cycles, so it cannot represent a full repeated 30-year
-selection policy without extending the state library. Its low annual contribution is a
-consequence of that structural schedule, not a conclusion about Knife Creek's long-run potential.
+The graph now closes cycles, so this is a real multi-entry GWM policy screen, not a single-cycle
+structural placeholder. The result is still not a sustained-yield plan: the canonical policy
+enters a reserve cycle after about 120 years. The remaining limitation is stand-specific state
+resolution and KC calibration, not a missing state transition.
+
+The earlier `knife-structural` run remains as a comparison. The `knife-p00-operational` handoff
+is from that earlier structural P00, not from this new policy screen.
 
 ## Decision
 
-Gavin is ready for a public decision-grade review. Knife needs a full GWM state-transition
-optimization before it can be compared with Gavin on equal terms.
+Gavin is ready for a public decision-grade review. Knife now has a complete state-transition
+policy screen, but it does not yet have a sustained-yield GWM plan that can be compared with
+Gavin on equal terms.
 
 Finance is a public MWP #3 Figure 7 screening envelope, not a budget forecast.

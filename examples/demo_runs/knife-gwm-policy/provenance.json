@@ -1,0 +1,13 @@
+{
+  "source": "femic-afrf-knifecreek-instance",
+  "dataset": "ws4/dataset_kc_spatial_v4",
+  "state_library": "ws4/state_library_v2",
+  "schedule": "greedy best-cut path through canonical GWM transitions, staggered phases",
+  "crs": "EPSG:3005",
+  "caveats": [
+    "PSP-derived regional IDF Cariboo analog, not KC CFI.",
+    "GWM 2007 structural screen; not legal-compliance proof.",
+    "Canonical state graph has 4 cycles, but the policy enters a reserve cycle after about 120 years.",
+    "3 blocks with no treatment remain unscheduled."
+  ]
+}

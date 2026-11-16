@@ -27,6 +27,11 @@ MODEL_INSTANCES = {
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
         "map_query": "period=P00",
     },
+    "knife-gwm-policy": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
     "gavin-optimized": {
         "domain": "tactical_operational",
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
@@ -269,6 +274,26 @@ def test_knife_structural_covers_the_whole_block(client: TestClient) -> None:
     assert len(block_features) >= 160
 
 
+def test_knife_gwm_policy_uses_the_state_transition_library(client: TestClient) -> None:
+    _model_instance(client, "knife-gwm-policy")
+    kpis = client.get("/api/runs/knife-gwm-policy/kpis").json()
+    assert kpis["blocks_total"] == 160
+    assert kpis["blocks_scheduled"] == 157
+    assert kpis["schedule_events"] == 1306
+    assert kpis["total_production_m3"] > 500_000
+    production = client.get("/api/runs/knife-gwm-policy/tactical/production?limit=50").json()
+    assert len(production["rows"]) == 30
+    assert float(production["rows"][0]["volume_m3"]) > 0
+    assert float(production["rows"][-1]["volume_m3"]) == 0
+    map_payload = client.get("/api/runs/knife-gwm-policy/map?period=P00").json()
+    block_features = [
+        feature
+        for feature in map_payload.get("features", [])
+        if feature.get("properties", {}).get("layer") == "blocks"
+    ]
+    assert len(block_features) >= 160
+
+
 def test_gavin_optimized_draft_is_complete(client: TestClient) -> None:
     _model_instance(client, "gavin-optimized")
     kpis = client.get("/api/runs/gavin-optimized/kpis").json()
@@ -285,7 +310,13 @@ def test_gavin_optimized_draft_is_complete(client: TestClient) -> None:
 
 
 def test_afrf_finance_envelope_is_present_and_ordered(client: TestClient) -> None:
-    for run_id in ("gavin-full-estate", "gavin-optimized", "gavin-policy", "knife-structural"):
+    for run_id in (
+        "gavin-full-estate",
+        "gavin-optimized",
+        "gavin-policy",
+        "knife-structural",
+        "knife-gwm-policy",
+    ):
         kpis = client.get(f"/api/runs/{run_id}/kpis").json()
         low = kpis["finance_annual_net_revenue_cad_low"]
         base = kpis["finance_annual_net_revenue_cad_base"]

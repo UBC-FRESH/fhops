@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "knife-gwm-policy",
+  "domain": "tactical_operational",
+  "run_type": "tactical_operational",
+  "status": "policy-screen",
+  "files": {
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "harvest_decisions": "harvest_decisions.csv",
+    "production": "production.csv",
+    "tactical_summary": "tactical_summary.json"
+  },
+  "warnings": [
+    "Canonical policy screen; not an approved management plan.",
+    "No sustained yield after the reserve cycle."
+  ],
+  "generated_at": "2026-11-16T06:00:00+00:00",
+  "command": "WS4 Knife Creek GWM multi-entry policy screen",
+  "scenario": "scenario.yaml",
+  "solver": "ws4-sa"
+}

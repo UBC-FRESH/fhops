@@ -100,7 +100,7 @@ windows, 303,765.7 m³ delivered, 8,295 truckloads, plus 12 monthly Phase II day
 (282 loads). It is a rolling aggregation, not a single 365-day MILP or continuous truck schedule.
 The one-page MKRF decision pack is `examples/demo_runs/MKRF_DECISION_PACK.md`.
 The AFRF comparison is `examples/demo_runs/AFRF_DECISION_PACK.md`; Gavin is decision-grade,
-while Knife remains a structural screen pending the full GWM policy run.
+while the new Knife GWM policy screen reaches a reserve cycle after about 120 years.
 
 `mkrf-high-p01-haul-30d` is the matching actual FHOPS Phase I/II high-scenario sample:
 30-day horizon, 112 blocks, 12 trucks, 1,110 truckloads / 49,932 m³, and 37 loads on day 1.
@@ -109,9 +109,15 @@ while Knife remains a structural screen pending the full GWM policy run.
 979.27 ha, 158,230 m³, completed in 138 days with zero remaining work under the 1,500 m³/day
 screen and a Williams Lake truck screen.
 
-`knife-structural` is a structural full-block Knife Creek pilot built from the existing
-160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.
-It is explicitly **not an approved management plan** and has no public revenue account.
+`knife-structural` is the earlier single-cycle structural full-block Knife Creek pilot. It is
+retained for comparison.
+
+`knife-gwm-policy` is the new multi-entry GWM state-transition policy screen. It uses the
+4-entry FVS-BC library (`ws4/state_library_v2`: 120 states, 96 transitions, 32 canonical states,
+4 cycles) and the compiled spatial dataset (`ws4/dataset_kc_spatial_v4`: 128 tracks,
+79 treatments). It schedules 157 of 160 blocks, 1,306 entries, and 574,458 m³. P00 produces
+172,832 m³, then the canonical policy enters a reserve cycle; production is zero after P11.
+This is a real model result, not a sustained-yield plan and not an approved management plan.
 
 `mkrf-full-estate` is the full WS4 MKRF estate handoff:
 
