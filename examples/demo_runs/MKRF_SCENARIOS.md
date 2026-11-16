@@ -33,3 +33,15 @@ schedules.
 | high-44 P01 | 30 days | 49,932 m³ | 1,110 | 37 | 11 |
 
 These are actual FHOPS haul runs on 30-day screening horizons, not full-year haul plans.
+
+## Rolling full-year Phase I
+
+`mkrf-low-p01-haul-year` aggregates twelve 30-day FHOPS Phase I windows:
+
+- 303,765.7 m³ delivered
+- 8,295 truckloads
+- all 12 months feasible
+- 20 trucks per monthly window
+- 832 m³/day demand
+
+This is a rolling Phase I aggregate, not a single 365-day MILP.

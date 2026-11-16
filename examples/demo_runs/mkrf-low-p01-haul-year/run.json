@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "mkrf-low-p01-haul-year",
+  "domain": "hauling",
+  "run_type": "haul_plan",
+  "status": "feasible",
+  "files": {
+    "kpis": "kpis.json",
+    "haul_flows": "haul_flows.csv",
+    "haul_truckloads": "haul_truckloads.csv",
+    "haul_kpis": "haul_kpis.json",
+    "haul_summary": "haul_summary.json"
+  },
+  "warnings": [],
+  "generated_at": "2026-11-16T04:04:40.482780+00:00",
+  "command": "12 rolling FHOPS haul Phase I months",
+  "scenario": "scenario.yaml",
+  "solver": "highs",
+  "seed": 42
+}

@@ -97,6 +97,11 @@ MODEL_INSTANCES = {
         "artifacts": {"haul_flows", "haul_schedule", "haul_summary", "haul_kpis"},
         "map_query": "day=1",
     },
+    "mkrf-low-p01-haul-year": {
+        "domain": "hauling",
+        "artifacts": {"haul_flows", "haul_truckloads", "haul_summary", "haul_kpis"},
+        "map_query": "day=1",
+    },
     "tfl6-lidar-demo": {
         "domain": "operational",
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
@@ -187,12 +192,9 @@ def test_console_model_instance_has_scenario_geometry_and_results(
     if spec["domain"] == "tactical_operational":
         paths.append(f"/api/runs/{run_id}/tactical/harvest?period=P00")
     elif spec["domain"] == "hauling":
-        paths.extend(
-            [
-                f"/api/runs/{run_id}/hauling/flows?day=1",
-                f"/api/runs/{run_id}/hauling/schedule",
-            ]
-        )
+        paths.append(f"/api/runs/{run_id}/hauling/flows?day=1")
+        if "haul_schedule" in record["files"]:
+            paths.append(f"/api/runs/{run_id}/hauling/schedule")
     else:
         paths.extend(
             [
@@ -404,3 +406,13 @@ def test_mkrf_high_p01_haul_phase_i_ii(client: TestClient) -> None:
     assert kpis["phase_i_truckloads"] >= 1_000
     assert kpis["loads"] > 0
     assert kpis["trucks_used"] > 0
+
+
+def test_mkrf_low_p01_rolling_year_haul(client: TestClient) -> None:
+    _model_instance(client, "mkrf-low-p01-haul-year")
+    kpis = client.get("/api/runs/mkrf-low-p01-haul-year/kpis").json()
+    assert kpis["phase_i_delivered_m3"] > 303_000
+    assert kpis["phase_i_truckloads"] > 8_000
+    assert kpis["months"] == 12
+    flows = client.get("/api/runs/mkrf-low-p01-haul-year/hauling/flows?day=1").json()
+    assert flows["total"] > 0

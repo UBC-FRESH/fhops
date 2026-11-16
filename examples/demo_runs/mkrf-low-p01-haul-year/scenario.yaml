@@ -1,0 +1,14 @@
+name: MKRF low-44 P01 rolling full-year haul
+num_days: 365
+start_date: '2036-01-01'
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: prod_rates.csv
+  harvest_systems: harvest_systems.yaml
+geo_block_path: blocks.geojson
+geo_crs: EPSG:3005
+schema_version: 1.1.0
+notes: 12 rolling 30-day FHOPS Phase I windows; aggregate flows cover days 1-360.

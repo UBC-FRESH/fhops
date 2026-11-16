@@ -1,0 +1,78 @@
+{
+  "source": "/srv/shared-data/gep/ws4/fhops-public-demo/examples/demo_runs/mkrf-low-p01-operational",
+  "method": "12 rolling 30-day Phase I windows",
+  "months": [
+    {
+      "month": 1,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 2,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 3,
+      "delivered_m3": 25314.15113416667,
+      "truckloads": 911,
+      "status": "feasible"
+    },
+    {
+      "month": 4,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 5,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 6,
+      "delivered_m3": 25314.15113416667,
+      "truckloads": 911,
+      "status": "feasible"
+    },
+    {
+      "month": 7,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 8,
+      "delivered_m3": 25314.15113416667,
+      "truckloads": 911,
+      "status": "feasible"
+    },
+    {
+      "month": 9,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 10,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 11,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 12,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    }
+  ]
+}

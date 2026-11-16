@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.1.0",
+  "run_type": "plan",
+  "phase": "I rolling",
+  "scenario": "MKRF low-44 P01 rolling full-year haul",
+  "start_day": 1,
+  "status": "feasible",
+  "months": 12,
+  "planning_horizon_days": 360,
+  "delivered_m3": 303765.712,
+  "truckloads": 8295,
+  "monthly": [
+    {
+      "month": 1,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 2,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 3,
+      "delivered_m3": 25314.15113416667,
+      "truckloads": 911,
+      "status": "feasible"
+    },
+    {
+      "month": 4,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 5,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 6,
+      "delivered_m3": 25314.15113416667,
+      "truckloads": 911,
+      "status": "feasible"
+    },
+    {
+      "month": 7,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 8,
+      "delivered_m3": 25314.15113416667,
+      "truckloads": 911,
+      "status": "feasible"
+    },
+    {
+      "month": 9,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 10,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 11,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    },
+    {
+      "month": 12,
+      "delivered_m3": 25313.695399833334,
+      "truckloads": 618,
+      "status": "feasible"
+    }
+  ],
+  "files": {
+    "flows": "haul_flows.csv",
+    "truckloads": "haul_truckloads.csv"
+  },
+  "note": "Twelve rolling 30-day Phase I windows; not a single 365-day MIP."
+}

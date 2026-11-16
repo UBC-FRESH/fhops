@@ -22,7 +22,7 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains seventeen model instances:
+It contains eighteen model instances:
 
 ```text
 examples/demo_runs/gavin-full-estate
@@ -40,6 +40,7 @@ examples/demo_runs/mkrf-high-p00-operational
 examples/demo_runs/mkrf-low-p01-operational
 examples/demo_runs/mkrf-high-p01-operational
 examples/demo_runs/mkrf-low-p01-haul-30d
+examples/demo_runs/mkrf-low-p01-haul-year
 examples/demo_runs/mkrf-high-p01-haul-30d
 examples/demo_runs/tfl6-lidar-demo
 ```
@@ -93,6 +94,9 @@ handoffs: low 110 blocks / 303,770 m³ / 269 days / 10 Vancouver trucks; high 11
 horizon, 110 blocks, 12 trucks, 1,110 truckloads / 49,934 m³ delivered, and 37 loads
 scheduled on day 1.
 
+`mkrf-low-p01-haul-year` is the rolling full-year Phase I aggregate: 12 monthly FHOPS
+windows, 303,765.7 m³ delivered, 8,295 truckloads, all months feasible. It is a rolling
+aggregation, not a single 365-day MILP.
 `mkrf-high-p01-haul-30d` is the matching actual FHOPS Phase I/II high-scenario sample:
 30-day horizon, 112 blocks, 12 trucks, 1,110 truckloads / 49,932 m³, and 37 loads on day 1.
 
