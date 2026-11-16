@@ -22,7 +22,7 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains eighteen model instances:
+It contains nineteen model instances:
 
 ```text
 examples/demo_runs/gavin-full-estate
@@ -31,6 +31,7 @@ examples/demo_runs/gavin-policy
 examples/demo_runs/gavin-p00-operational
 examples/demo_runs/gavin-p01-operational
 examples/demo_runs/knife-structural
+examples/demo_runs/knife-p00-operational
 examples/demo_runs/mkrf-full-estate
 examples/demo_runs/mkrf-low-estate
 examples/demo_runs/mkrf-high-estate
@@ -101,6 +102,10 @@ The one-page MKRF decision pack is `examples/demo_runs/MKRF_DECISION_PACK.md`.
 
 `mkrf-high-p01-haul-30d` is the matching actual FHOPS Phase I/II high-scenario sample:
 30-day horizon, 112 blocks, 12 trucks, 1,110 truckloads / 49,932 m³, and 37 loads on day 1.
+
+`knife-p00-operational` is the first operational handoff of Knife Creek: 50 blocks,
+979.27 ha, 158,230 m³, completed in 138 days with zero remaining work under the 1,500 m³/day
+screen and a Williams Lake truck screen.
 
 `knife-structural` is a structural full-block Knife Creek pilot built from the existing
 160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.

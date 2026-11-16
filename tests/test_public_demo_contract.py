@@ -102,6 +102,11 @@ MODEL_INSTANCES = {
         "artifacts": {"haul_flows", "haul_truckloads", "haul_summary", "haul_kpis"},
         "map_query": "day=1",
     },
+    "knife-p00-operational": {
+        "domain": "operational",
+        "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
+        "map_query": "day=1",
+    },
     "tfl6-lidar-demo": {
         "domain": "operational",
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
@@ -419,3 +424,13 @@ def test_mkrf_low_p01_rolling_year_haul(client: TestClient) -> None:
     assert kpis["phase_ii_max_trucks"] > 0
     flows = client.get("/api/runs/mkrf-low-p01-haul-year/hauling/flows?day=1").json()
     assert flows["total"] > 0
+
+
+def test_knife_p00_operational_handoff(client: TestClient) -> None:
+    _model_instance(client, "knife-p00-operational")
+    kpis = client.get("/api/runs/knife-p00-operational/kpis").json()
+    assert kpis["completed_blocks"] == 50
+    assert kpis["remaining_work_total"] == 0
+    assert kpis["total_production"] > 158_000
+    assert kpis["makespan_day"] <= 365
+    assert kpis["haul_screen_required_trucks"] >= 1

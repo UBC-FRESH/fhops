@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "knife-p00-operational",
+  "domain": "operational",
+  "run_type": "solve",
+  "status": "screened",
+  "files": {
+    "assignments": "assignments.csv",
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "day_summary": "day_summary.csv",
+    "shift_summary": "shift_summary.csv"
+  },
+  "warnings": [],
+  "generated_at": "2026-11-16T05:47:20.353316+00:00",
+  "command": "Knife P00 operational handoff; FHOPS heuristic screening",
+  "scenario": "scenario.yaml",
+  "solver": "simulated-annealing",
+  "seed": 7
+}

@@ -1,0 +1,8 @@
+{
+  "source": "examples/demo_runs/knife-structural",
+  "period": "P00",
+  "notes": [
+    "50 blocks; 1,500 m3/day screen.",
+    "Public-geography Williams Lake truck screen."
+  ]
+}
