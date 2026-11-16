@@ -112,18 +112,14 @@ screen and a Williams Lake truck screen.
 `knife-structural` is the earlier single-cycle structural full-block Knife Creek pilot. It is
 retained for comparison.
 
-`knife-gwm-policy` is the HMZ-constrained multi-entry GWM state-transition policy screen. It uses
-the 4-entry FVS-BC library (`ws4/state_library_v2`: 120 states, 96 transitions, 32 canonical
-states, 4 cycles) and the compiled spatial dataset (`ws4/dataset_kc_spatial_v4`: 128 tracks,
-79 treatments). It schedules 157 of 160 blocks, 1,306 entries, and 574,458 m³. P00 produces
-172,832 m³, then the canonical policy enters a reserve cycle; production is zero after P11.
-This is a real model result, not a sustained-yield plan and not an approved management plan.
-
-`knife-gwm-high-policy` is the high-regime upper bound. It deliberately does **not** enforce the
-HMZ matrix and offers High/Moderate/Low on every block. It schedules 157 blocks, 1,570 entries,
-and 1,329,309 m³; production continues through P29. It demonstrates that the revised graph can
-carry sustained entries, but it is not an HMZ-compliant plan and must not be read as an approved
-harvest level.
+`knife-gwm-policy` is the HMZ-constrained sustained GWM state-transition policy screen. It uses
+the 8-entry FVS-BC library (`ws4/state_library_v3`: 216 per-chain states, 192 transitions,
+35 canonical states, 48 canonical transitions, 2 cycles) and the compiled spatial dataset
+(`ws4/dataset_kc_spatial_v5`: 140 tracks, 96 treatments). It schedules 157 of 160 blocks,
+1,570 entries, and 2,433,385 m³. Production is positive in all 30 periods; P00 is 208,452 m³
+and P29 is 29,632 m³. The key correction is that clump-harvest volume is now counted in the
+transition, not just the FVS cut. It remains a structural public policy screen, not an approved
+management plan.
 
 `mkrf-full-estate` is the full WS4 MKRF estate handoff:
 

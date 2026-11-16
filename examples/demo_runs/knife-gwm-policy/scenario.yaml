@@ -1,4 +1,4 @@
-name: Knife Creek GWM multi-entry state-transition policy screen
+name: Knife Creek GWM sustained state-transition policy screen
 planning_level: tactical_operational
 schema_version: 0.1.0
 geo_block_path: blocks.geojson
@@ -124,6 +124,6 @@ periods:
   start_date: '2316-01-01'
   end_date: '2325-12-31'
   duration_years: 10
-source: femic-afrf-knifecreek-instance ws4/dataset_kc_spatial_v4
-notes: GWM multi-entry policy screen from the 4-entry FVS-BC state library; not an approved
-  plan; no sustained yield after the reserve cycle.
+source: femic-afrf-knifecreek-instance ws4/dataset_kc_spatial_v5
+notes: HMZ-constrained GWM sustained policy screen from the 8-entry FVS-BC state library; not an
+  approved management plan.
