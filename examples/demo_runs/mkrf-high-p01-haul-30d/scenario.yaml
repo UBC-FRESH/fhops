@@ -1,0 +1,2351 @@
+name: MKRF high-44 P01 30-day haul Phase I
+num_days: 365
+start_date: '2036-01-01'
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: prod_rates.csv
+  harvest_systems: harvest_systems.yaml
+geo_block_path: blocks.geojson
+geo_crs: EPSG:3005
+schema_version: 1.1.0
+hauling:
+  planning_horizon_days: 30
+  start_day: 1
+  log_sorts:
+  - id: mixed
+    product_id: mixed
+    sorted: false
+    description: Unsorted mixed logs
+  contractors:
+  - id: c1
+    name: Screening hauler
+    preferred_daily_truckloads: 11
+  truck_types:
+  - id: highway
+    capacity_m3: 45
+    fixed_cost: 120.0
+    variable_cost_per_minute: 1.2
+    overtime_cost_per_minute: 1.8
+    can_carry_sorted: true
+    can_carry_unsorted: true
+  trucks:
+  - id: c1_h1
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h2
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h3
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h4
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h5
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h6
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h7
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h8
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h9
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h10
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h11
+    contractor_id: c1
+    truck_type_id: highway
+  - id: c1_h12
+    contractor_id: c1
+    truck_type_id: highway
+  depots:
+  - id: depot
+    name: Vancouver screening depot
+  sort_yards:
+  - id: y_gl
+    facility_id: mill_gl
+    unsorted_storage_m3: 20000
+    sorted_processing_m3_per_day: 0
+    unsorted_processing_m3_per_day: 2000
+    total_processing_m3_per_day: 2000
+    initial_unsorted_inventory_m3: 0
+    initial_water_inventory_m3: 0
+  loader_locations:
+  - loader_id: ldr_G123
+    location_id: G123
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G137
+    location_id: G137
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G466
+    location_id: G466
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G593
+    location_id: G593
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G665
+    location_id: G665
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G970
+    location_id: G970
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1145
+    location_id: G1145
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1475
+    location_id: G1475
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G380
+    location_id: G380
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G381
+    location_id: G381
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G516
+    location_id: G516
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G714
+    location_id: G714
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G862
+    location_id: G862
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G863
+    location_id: G863
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1072
+    location_id: G1072
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1176
+    location_id: G1176
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1243
+    location_id: G1243
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1359
+    location_id: G1359
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1497
+    location_id: G1497
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1867
+    location_id: G1867
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G133
+    location_id: G133
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G336
+    location_id: G336
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G452
+    location_id: G452
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G529
+    location_id: G529
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G867
+    location_id: G867
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G978
+    location_id: G978
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1427
+    location_id: G1427
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G511
+    location_id: G511
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G541
+    location_id: G541
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G748
+    location_id: G748
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G891
+    location_id: G891
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G965
+    location_id: G965
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1006
+    location_id: G1006
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1049
+    location_id: G1049
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1063
+    location_id: G1063
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1193
+    location_id: G1193
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1265
+    location_id: G1265
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1267
+    location_id: G1267
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1268
+    location_id: G1268
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1269
+    location_id: G1269
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1337
+    location_id: G1337
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1346
+    location_id: G1346
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1347
+    location_id: G1347
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G267
+    location_id: G267
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G286
+    location_id: G286
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G522
+    location_id: G522
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G530
+    location_id: G530
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G617
+    location_id: G617
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G700
+    location_id: G700
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G803
+    location_id: G803
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G967
+    location_id: G967
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1274
+    location_id: G1274
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1435
+    location_id: G1435
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G147
+    location_id: G147
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G352
+    location_id: G352
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G402
+    location_id: G402
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G540
+    location_id: G540
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G564
+    location_id: G564
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G682
+    location_id: G682
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G685
+    location_id: G685
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G797
+    location_id: G797
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G890
+    location_id: G890
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G972
+    location_id: G972
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1012
+    location_id: G1012
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1053
+    location_id: G1053
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1224
+    location_id: G1224
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1295
+    location_id: G1295
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G318
+    location_id: G318
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G335
+    location_id: G335
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G387
+    location_id: G387
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G451
+    location_id: G451
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G454
+    location_id: G454
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G547
+    location_id: G547
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G847
+    location_id: G847
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G851
+    location_id: G851
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1248
+    location_id: G1248
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1262
+    location_id: G1262
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1364
+    location_id: G1364
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1376
+    location_id: G1376
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1451
+    location_id: G1451
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1515
+    location_id: G1515
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G265
+    location_id: G265
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G450
+    location_id: G450
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G742
+    location_id: G742
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1062
+    location_id: G1062
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1108
+    location_id: G1108
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1171
+    location_id: G1171
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1245
+    location_id: G1245
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G234
+    location_id: G234
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G519
+    location_id: G519
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G746
+    location_id: G746
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G912
+    location_id: G912
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1126
+    location_id: G1126
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G308
+    location_id: G308
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G392
+    location_id: G392
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G498
+    location_id: G498
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G500
+    location_id: G500
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G582
+    location_id: G582
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G632
+    location_id: G632
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G645
+    location_id: G645
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G669
+    location_id: G669
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G722
+    location_id: G722
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G907
+    location_id: G907
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G949
+    location_id: G949
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1117
+    location_id: G1117
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1157
+    location_id: G1157
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1581
+    location_id: G1581
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1018
+    location_id: G1018
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1528
+    location_id: G1528
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G293
+    location_id: G293
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G1312
+    location_id: G1312
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_G864
+    location_id: G864
+    location_kind: pickup
+    service_minutes: 22
+  - loader_id: ldr_y
+    location_id: y_gl
+    location_kind: delivery
+    service_minutes: 18
+  supply:
+  - block_id: G123
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1936.244351
+  - block_id: G137
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1160.930069
+  - block_id: G466
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3960.099103
+  - block_id: G593
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 4207.634438
+  - block_id: G665
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 8006.438729
+  - block_id: G970
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2836.465019
+  - block_id: G1145
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3864.537374
+  - block_id: G1475
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5734.786619
+  - block_id: G380
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1777.875796
+  - block_id: G381
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1150.494443
+  - block_id: G516
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3069.987024
+  - block_id: G714
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1228.065208
+  - block_id: G862
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2774.555246
+  - block_id: G863
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 6696.493488
+  - block_id: G1072
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1419.178815
+  - block_id: G1176
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 904.966642
+  - block_id: G1243
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 387.174794
+  - block_id: G1359
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 4887.339708
+  - block_id: G1497
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5299.806005
+  - block_id: G1867
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1416.927646
+  - block_id: G133
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5477.669368
+  - block_id: G336
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 4354.212594
+  - block_id: G452
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1652.761893
+  - block_id: G529
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3886.459347
+  - block_id: G867
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5664.957039
+  - block_id: G978
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 7615.454415
+  - block_id: G1427
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2399.305474
+  - block_id: G511
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5941.784495
+  - block_id: G541
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1113.455884
+  - block_id: G748
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3534.074569
+  - block_id: G891
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 993.197624
+  - block_id: G965
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 124.189269
+  - block_id: G1006
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 144.369672
+  - block_id: G1049
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 7589.017627
+  - block_id: G1063
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1660.219383
+  - block_id: G1193
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 705.419032
+  - block_id: G1265
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1971.082964
+  - block_id: G1267
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1285.125906
+  - block_id: G1268
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 272.841942
+  - block_id: G1269
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 93.586374
+  - block_id: G1337
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1668.812308
+  - block_id: G1346
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1117.434175
+  - block_id: G1347
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1973.537054
+  - block_id: G267
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2384.177067
+  - block_id: G286
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 4769.255126
+  - block_id: G522
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5057.165715
+  - block_id: G530
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1619.687178
+  - block_id: G617
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2774.239373
+  - block_id: G700
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1469.229892
+  - block_id: G803
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5547.215254
+  - block_id: G967
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 69.079628
+  - block_id: G1274
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 851.340487
+  - block_id: G1435
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5709.835287
+  - block_id: G147
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 762.62683
+  - block_id: G352
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5468.205659
+  - block_id: G402
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2684.031722
+  - block_id: G540
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 917.675108
+  - block_id: G564
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 523.983875
+  - block_id: G682
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1620.028005
+  - block_id: G685
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 125.605772
+  - block_id: G797
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5909.146485
+  - block_id: G890
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 911.62821
+  - block_id: G972
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1280.442975
+  - block_id: G1012
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1645.308344
+  - block_id: G1053
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 278.631412
+  - block_id: G1224
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 7303.28597
+  - block_id: G1295
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 520.365456
+  - block_id: G318
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1285.439808
+  - block_id: G335
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 4697.477116
+  - block_id: G387
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1512.622028
+  - block_id: G451
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 359.604542
+  - block_id: G454
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 134.366812
+  - block_id: G547
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1706.635624
+  - block_id: G847
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3679.132464
+  - block_id: G851
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 4595.01872
+  - block_id: G1248
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1082.700634
+  - block_id: G1262
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 6292.405375
+  - block_id: G1364
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 631.699815
+  - block_id: G1376
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1472.255311
+  - block_id: G1451
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1437.670841
+  - block_id: G1515
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 804.054118
+  - block_id: G265
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 6238.080491
+  - block_id: G450
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1478.216837
+  - block_id: G742
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5871.085443
+  - block_id: G1062
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2612.341053
+  - block_id: G1108
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 4675.120408
+  - block_id: G1171
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3264.034768
+  - block_id: G1245
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3349.758468
+  - block_id: G234
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 7824.889963
+  - block_id: G519
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5870.315134
+  - block_id: G746
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 6206.919401
+  - block_id: G912
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1103.367653
+  - block_id: G1126
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 4122.678421
+  - block_id: G308
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2606.986318
+  - block_id: G392
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3759.879688
+  - block_id: G498
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1049.920777
+  - block_id: G500
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1572.268812
+  - block_id: G582
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 650.642338
+  - block_id: G632
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1043.793763
+  - block_id: G645
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1401.187851
+  - block_id: G669
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1380.431521
+  - block_id: G722
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 214.47638
+  - block_id: G907
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 451.33508
+  - block_id: G949
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 5801.6466
+  - block_id: G1117
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 1418.288329
+  - block_id: G1157
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2670.456412
+  - block_id: G1581
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 2745.406285
+  - block_id: G1018
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 3414.649005
+  - block_id: G1528
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 4161.861107
+  - block_id: G293
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 324.980013
+  - block_id: G1312
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 7131.286285
+  - block_id: G864
+    log_sort_id: mixed
+    sorted_m3: 0
+    unsorted_m3: 281.367226
+  demand:
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 1
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 2
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 3
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 4
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 5
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 6
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 7
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 8
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 9
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 10
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 11
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 12
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 13
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 14
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 15
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 16
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 17
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 18
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 19
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 20
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 21
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 22
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 23
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 24
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 25
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 26
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 27
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 28
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 29
+    volume_m3: 480.0
+  - yard_id: y_gl
+    log_sort_id: mixed
+    day: 30
+    volume_m3: 480.0
+  haul_arcs:
+  - block_id: G123
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.89
+    distance_km: 54.905
+  - block_id: G137
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.65
+    distance_km: 53.042
+  - block_id: G466
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.76
+    distance_km: 53.134
+  - block_id: G593
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 81.19
+    distance_km: 55.16
+  - block_id: G665
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.8
+    distance_km: 54.834
+  - block_id: G970
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.42
+    distance_km: 54.514
+  - block_id: G1145
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.49
+    distance_km: 54.571
+  - block_id: G1475
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 75.01
+    distance_km: 50.005
+  - block_id: G380
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.62
+    distance_km: 53.853
+  - block_id: G381
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.59
+    distance_km: 53.825
+  - block_id: G516
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.56
+    distance_km: 56.296
+  - block_id: G714
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.36
+    distance_km: 56.137
+  - block_id: G862
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.45
+    distance_km: 53.706
+  - block_id: G863
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.15
+    distance_km: 53.457
+  - block_id: G1072
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.28
+    distance_km: 56.067
+  - block_id: G1176
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.14
+    distance_km: 53.451
+  - block_id: G1243
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.31
+    distance_km: 56.09
+  - block_id: G1359
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 75.92
+    distance_km: 50.764
+  - block_id: G1497
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.86
+    distance_km: 53.213
+  - block_id: G1867
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.06
+    distance_km: 53.385
+  - block_id: G133
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 83.3
+    distance_km: 56.914
+  - block_id: G336
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.77
+    distance_km: 56.478
+  - block_id: G452
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.6
+    distance_km: 56.331
+  - block_id: G529
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.52
+    distance_km: 52.932
+  - block_id: G867
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.58
+    distance_km: 53.814
+  - block_id: G978
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 81.16
+    distance_km: 55.132
+  - block_id: G1427
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.67
+    distance_km: 53.06
+  - block_id: G511
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.71
+    distance_km: 54.755
+  - block_id: G541
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.6
+    distance_km: 54.663
+  - block_id: G748
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.75
+    distance_km: 54.789
+  - block_id: G891
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.57
+    distance_km: 54.638
+  - block_id: G965
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.59
+    distance_km: 52.995
+  - block_id: G1006
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.71
+    distance_km: 53.089
+  - block_id: G1049
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.46
+    distance_km: 52.885
+  - block_id: G1063
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.48
+    distance_km: 52.903
+  - block_id: G1193
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.47
+    distance_km: 52.893
+  - block_id: G1265
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.25
+    distance_km: 52.711
+  - block_id: G1267
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.28
+    distance_km: 52.731
+  - block_id: G1268
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.26
+    distance_km: 52.718
+  - block_id: G1269
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.48
+    distance_km: 52.903
+  - block_id: G1337
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.46
+    distance_km: 52.884
+  - block_id: G1346
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.44
+    distance_km: 52.869
+  - block_id: G1347
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.65
+    distance_km: 53.043
+  - block_id: G267
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.02
+    distance_km: 54.186
+  - block_id: G286
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 81.53
+    distance_km: 55.442
+  - block_id: G522
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.44
+    distance_km: 54.53
+  - block_id: G530
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.61
+    distance_km: 53.01
+  - block_id: G617
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.62
+    distance_km: 53.015
+  - block_id: G700
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.78
+    distance_km: 53.147
+  - block_id: G803
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.91
+    distance_km: 54.093
+  - block_id: G967
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.58
+    distance_km: 52.98
+  - block_id: G1274
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.6
+    distance_km: 54.669
+  - block_id: G1435
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.49
+    distance_km: 54.572
+  - block_id: G147
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.4
+    distance_km: 54.496
+  - block_id: G352
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 76.4
+    distance_km: 51.164
+  - block_id: G402
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.57
+    distance_km: 54.641
+  - block_id: G540
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.45
+    distance_km: 54.544
+  - block_id: G564
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.68
+    distance_km: 54.736
+  - block_id: G682
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.43
+    distance_km: 54.526
+  - block_id: G685
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 75.03
+    distance_km: 50.028
+  - block_id: G797
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.79
+    distance_km: 54.821
+  - block_id: G890
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.42
+    distance_km: 54.517
+  - block_id: G972
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.63
+    distance_km: 54.695
+  - block_id: G1012
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.44
+    distance_km: 54.535
+  - block_id: G1053
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.68
+    distance_km: 54.733
+  - block_id: G1224
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 74.98
+    distance_km: 49.982
+  - block_id: G1295
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.53
+    distance_km: 54.612
+  - block_id: G318
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.84
+    distance_km: 54.036
+  - block_id: G335
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.58
+    distance_km: 56.315
+  - block_id: G387
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.67
+    distance_km: 53.891
+  - block_id: G451
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.31
+    distance_km: 56.089
+  - block_id: G454
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.24
+    distance_km: 56.034
+  - block_id: G547
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.38
+    distance_km: 56.153
+  - block_id: G847
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.38
+    distance_km: 56.153
+  - block_id: G851
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.54
+    distance_km: 53.784
+  - block_id: G1248
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.25
+    distance_km: 52.711
+  - block_id: G1262
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 76.14
+    distance_km: 50.952
+  - block_id: G1364
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 77.95
+    distance_km: 52.459
+  - block_id: G1376
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.15
+    distance_km: 52.621
+  - block_id: G1451
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.06
+    distance_km: 52.549
+  - block_id: G1515
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.03
+    distance_km: 52.522
+  - block_id: G265
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 77.73
+    distance_km: 52.275
+  - block_id: G450
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.44
+    distance_km: 54.537
+  - block_id: G742
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.81
+    distance_km: 54.844
+  - block_id: G1062
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.26
+    distance_km: 54.381
+  - block_id: G1108
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.65
+    distance_km: 53.044
+  - block_id: G1171
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.24
+    distance_km: 54.37
+  - block_id: G1245
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 81.59
+    distance_km: 55.489
+  - block_id: G234
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 81.93
+    distance_km: 55.776
+  - block_id: G519
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 81.78
+    distance_km: 55.65
+  - block_id: G746
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 81.89
+    distance_km: 55.738
+  - block_id: G912
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.56
+    distance_km: 53.796
+  - block_id: G1126
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.15
+    distance_km: 53.461
+  - block_id: G308
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.51
+    distance_km: 54.593
+  - block_id: G392
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.73
+    distance_km: 56.442
+  - block_id: G498
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.0
+    distance_km: 54.17
+  - block_id: G500
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.32
+    distance_km: 54.432
+  - block_id: G582
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.57
+    distance_km: 54.644
+  - block_id: G632
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.58
+    distance_km: 54.646
+  - block_id: G645
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.59
+    distance_km: 54.661
+  - block_id: G669
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 82.43
+    distance_km: 56.192
+  - block_id: G722
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.4
+    distance_km: 54.499
+  - block_id: G907
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.67
+    distance_km: 54.723
+  - block_id: G949
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.26
+    distance_km: 54.383
+  - block_id: G1117
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.99
+    distance_km: 54.157
+  - block_id: G1157
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 80.21
+    distance_km: 54.342
+  - block_id: G1581
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 75.9
+    distance_km: 50.747
+  - block_id: G1018
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 77.79
+    distance_km: 52.327
+  - block_id: G1528
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 76.98
+    distance_km: 51.651
+  - block_id: G293
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 76.91
+    distance_km: 51.593
+  - block_id: G1312
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 79.19
+    distance_km: 53.49
+  - block_id: G864
+    yard_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 78.51
+    distance_km: 52.925
+  depot_legs:
+  - depot_id: depot
+    location_id: G123
+    truck_type_id: highway
+    travel_minutes: 80.89
+  - depot_id: depot
+    location_id: G137
+    truck_type_id: highway
+    travel_minutes: 78.65
+  - depot_id: depot
+    location_id: G466
+    truck_type_id: highway
+    travel_minutes: 78.76
+  - depot_id: depot
+    location_id: G593
+    truck_type_id: highway
+    travel_minutes: 81.19
+  - depot_id: depot
+    location_id: G665
+    truck_type_id: highway
+    travel_minutes: 80.8
+  - depot_id: depot
+    location_id: G970
+    truck_type_id: highway
+    travel_minutes: 80.42
+  - depot_id: depot
+    location_id: G1145
+    truck_type_id: highway
+    travel_minutes: 80.49
+  - depot_id: depot
+    location_id: G1475
+    truck_type_id: highway
+    travel_minutes: 75.01
+  - depot_id: depot
+    location_id: G380
+    truck_type_id: highway
+    travel_minutes: 79.62
+  - depot_id: depot
+    location_id: G381
+    truck_type_id: highway
+    travel_minutes: 79.59
+  - depot_id: depot
+    location_id: G516
+    truck_type_id: highway
+    travel_minutes: 82.56
+  - depot_id: depot
+    location_id: G714
+    truck_type_id: highway
+    travel_minutes: 82.36
+  - depot_id: depot
+    location_id: G862
+    truck_type_id: highway
+    travel_minutes: 79.45
+  - depot_id: depot
+    location_id: G863
+    truck_type_id: highway
+    travel_minutes: 79.15
+  - depot_id: depot
+    location_id: G1072
+    truck_type_id: highway
+    travel_minutes: 82.28
+  - depot_id: depot
+    location_id: G1176
+    truck_type_id: highway
+    travel_minutes: 79.14
+  - depot_id: depot
+    location_id: G1243
+    truck_type_id: highway
+    travel_minutes: 82.31
+  - depot_id: depot
+    location_id: G1359
+    truck_type_id: highway
+    travel_minutes: 75.92
+  - depot_id: depot
+    location_id: G1497
+    truck_type_id: highway
+    travel_minutes: 78.86
+  - depot_id: depot
+    location_id: G1867
+    truck_type_id: highway
+    travel_minutes: 79.06
+  - depot_id: depot
+    location_id: G133
+    truck_type_id: highway
+    travel_minutes: 83.3
+  - depot_id: depot
+    location_id: G336
+    truck_type_id: highway
+    travel_minutes: 82.77
+  - depot_id: depot
+    location_id: G452
+    truck_type_id: highway
+    travel_minutes: 82.6
+  - depot_id: depot
+    location_id: G529
+    truck_type_id: highway
+    travel_minutes: 78.52
+  - depot_id: depot
+    location_id: G867
+    truck_type_id: highway
+    travel_minutes: 79.58
+  - depot_id: depot
+    location_id: G978
+    truck_type_id: highway
+    travel_minutes: 81.16
+  - depot_id: depot
+    location_id: G1427
+    truck_type_id: highway
+    travel_minutes: 78.67
+  - depot_id: depot
+    location_id: G511
+    truck_type_id: highway
+    travel_minutes: 80.71
+  - depot_id: depot
+    location_id: G541
+    truck_type_id: highway
+    travel_minutes: 80.6
+  - depot_id: depot
+    location_id: G748
+    truck_type_id: highway
+    travel_minutes: 80.75
+  - depot_id: depot
+    location_id: G891
+    truck_type_id: highway
+    travel_minutes: 80.57
+  - depot_id: depot
+    location_id: G965
+    truck_type_id: highway
+    travel_minutes: 78.59
+  - depot_id: depot
+    location_id: G1006
+    truck_type_id: highway
+    travel_minutes: 78.71
+  - depot_id: depot
+    location_id: G1049
+    truck_type_id: highway
+    travel_minutes: 78.46
+  - depot_id: depot
+    location_id: G1063
+    truck_type_id: highway
+    travel_minutes: 78.48
+  - depot_id: depot
+    location_id: G1193
+    truck_type_id: highway
+    travel_minutes: 78.47
+  - depot_id: depot
+    location_id: G1265
+    truck_type_id: highway
+    travel_minutes: 78.25
+  - depot_id: depot
+    location_id: G1267
+    truck_type_id: highway
+    travel_minutes: 78.28
+  - depot_id: depot
+    location_id: G1268
+    truck_type_id: highway
+    travel_minutes: 78.26
+  - depot_id: depot
+    location_id: G1269
+    truck_type_id: highway
+    travel_minutes: 78.48
+  - depot_id: depot
+    location_id: G1337
+    truck_type_id: highway
+    travel_minutes: 78.46
+  - depot_id: depot
+    location_id: G1346
+    truck_type_id: highway
+    travel_minutes: 78.44
+  - depot_id: depot
+    location_id: G1347
+    truck_type_id: highway
+    travel_minutes: 78.65
+  - depot_id: depot
+    location_id: G267
+    truck_type_id: highway
+    travel_minutes: 80.02
+  - depot_id: depot
+    location_id: G286
+    truck_type_id: highway
+    travel_minutes: 81.53
+  - depot_id: depot
+    location_id: G522
+    truck_type_id: highway
+    travel_minutes: 80.44
+  - depot_id: depot
+    location_id: G530
+    truck_type_id: highway
+    travel_minutes: 78.61
+  - depot_id: depot
+    location_id: G617
+    truck_type_id: highway
+    travel_minutes: 78.62
+  - depot_id: depot
+    location_id: G700
+    truck_type_id: highway
+    travel_minutes: 78.78
+  - depot_id: depot
+    location_id: G803
+    truck_type_id: highway
+    travel_minutes: 79.91
+  - depot_id: depot
+    location_id: G967
+    truck_type_id: highway
+    travel_minutes: 78.58
+  - depot_id: depot
+    location_id: G1274
+    truck_type_id: highway
+    travel_minutes: 80.6
+  - depot_id: depot
+    location_id: G1435
+    truck_type_id: highway
+    travel_minutes: 80.49
+  - depot_id: depot
+    location_id: G147
+    truck_type_id: highway
+    travel_minutes: 80.4
+  - depot_id: depot
+    location_id: G352
+    truck_type_id: highway
+    travel_minutes: 76.4
+  - depot_id: depot
+    location_id: G402
+    truck_type_id: highway
+    travel_minutes: 80.57
+  - depot_id: depot
+    location_id: G540
+    truck_type_id: highway
+    travel_minutes: 80.45
+  - depot_id: depot
+    location_id: G564
+    truck_type_id: highway
+    travel_minutes: 80.68
+  - depot_id: depot
+    location_id: G682
+    truck_type_id: highway
+    travel_minutes: 80.43
+  - depot_id: depot
+    location_id: G685
+    truck_type_id: highway
+    travel_minutes: 75.03
+  - depot_id: depot
+    location_id: G797
+    truck_type_id: highway
+    travel_minutes: 80.79
+  - depot_id: depot
+    location_id: G890
+    truck_type_id: highway
+    travel_minutes: 80.42
+  - depot_id: depot
+    location_id: G972
+    truck_type_id: highway
+    travel_minutes: 80.63
+  - depot_id: depot
+    location_id: G1012
+    truck_type_id: highway
+    travel_minutes: 80.44
+  - depot_id: depot
+    location_id: G1053
+    truck_type_id: highway
+    travel_minutes: 80.68
+  - depot_id: depot
+    location_id: G1224
+    truck_type_id: highway
+    travel_minutes: 74.98
+  - depot_id: depot
+    location_id: G1295
+    truck_type_id: highway
+    travel_minutes: 80.53
+  - depot_id: depot
+    location_id: G318
+    truck_type_id: highway
+    travel_minutes: 79.84
+  - depot_id: depot
+    location_id: G335
+    truck_type_id: highway
+    travel_minutes: 82.58
+  - depot_id: depot
+    location_id: G387
+    truck_type_id: highway
+    travel_minutes: 79.67
+  - depot_id: depot
+    location_id: G451
+    truck_type_id: highway
+    travel_minutes: 82.31
+  - depot_id: depot
+    location_id: G454
+    truck_type_id: highway
+    travel_minutes: 82.24
+  - depot_id: depot
+    location_id: G547
+    truck_type_id: highway
+    travel_minutes: 82.38
+  - depot_id: depot
+    location_id: G847
+    truck_type_id: highway
+    travel_minutes: 82.38
+  - depot_id: depot
+    location_id: G851
+    truck_type_id: highway
+    travel_minutes: 79.54
+  - depot_id: depot
+    location_id: G1248
+    truck_type_id: highway
+    travel_minutes: 78.25
+  - depot_id: depot
+    location_id: G1262
+    truck_type_id: highway
+    travel_minutes: 76.14
+  - depot_id: depot
+    location_id: G1364
+    truck_type_id: highway
+    travel_minutes: 77.95
+  - depot_id: depot
+    location_id: G1376
+    truck_type_id: highway
+    travel_minutes: 78.15
+  - depot_id: depot
+    location_id: G1451
+    truck_type_id: highway
+    travel_minutes: 78.06
+  - depot_id: depot
+    location_id: G1515
+    truck_type_id: highway
+    travel_minutes: 78.03
+  - depot_id: depot
+    location_id: G265
+    truck_type_id: highway
+    travel_minutes: 77.73
+  - depot_id: depot
+    location_id: G450
+    truck_type_id: highway
+    travel_minutes: 80.44
+  - depot_id: depot
+    location_id: G742
+    truck_type_id: highway
+    travel_minutes: 80.81
+  - depot_id: depot
+    location_id: G1062
+    truck_type_id: highway
+    travel_minutes: 80.26
+  - depot_id: depot
+    location_id: G1108
+    truck_type_id: highway
+    travel_minutes: 78.65
+  - depot_id: depot
+    location_id: G1171
+    truck_type_id: highway
+    travel_minutes: 80.24
+  - depot_id: depot
+    location_id: G1245
+    truck_type_id: highway
+    travel_minutes: 81.59
+  - depot_id: depot
+    location_id: G234
+    truck_type_id: highway
+    travel_minutes: 81.93
+  - depot_id: depot
+    location_id: G519
+    truck_type_id: highway
+    travel_minutes: 81.78
+  - depot_id: depot
+    location_id: G746
+    truck_type_id: highway
+    travel_minutes: 81.89
+  - depot_id: depot
+    location_id: G912
+    truck_type_id: highway
+    travel_minutes: 79.56
+  - depot_id: depot
+    location_id: G1126
+    truck_type_id: highway
+    travel_minutes: 79.15
+  - depot_id: depot
+    location_id: G308
+    truck_type_id: highway
+    travel_minutes: 80.51
+  - depot_id: depot
+    location_id: G392
+    truck_type_id: highway
+    travel_minutes: 82.73
+  - depot_id: depot
+    location_id: G498
+    truck_type_id: highway
+    travel_minutes: 80.0
+  - depot_id: depot
+    location_id: G500
+    truck_type_id: highway
+    travel_minutes: 80.32
+  - depot_id: depot
+    location_id: G582
+    truck_type_id: highway
+    travel_minutes: 80.57
+  - depot_id: depot
+    location_id: G632
+    truck_type_id: highway
+    travel_minutes: 80.58
+  - depot_id: depot
+    location_id: G645
+    truck_type_id: highway
+    travel_minutes: 80.59
+  - depot_id: depot
+    location_id: G669
+    truck_type_id: highway
+    travel_minutes: 82.43
+  - depot_id: depot
+    location_id: G722
+    truck_type_id: highway
+    travel_minutes: 80.4
+  - depot_id: depot
+    location_id: G907
+    truck_type_id: highway
+    travel_minutes: 80.67
+  - depot_id: depot
+    location_id: G949
+    truck_type_id: highway
+    travel_minutes: 80.26
+  - depot_id: depot
+    location_id: G1117
+    truck_type_id: highway
+    travel_minutes: 79.99
+  - depot_id: depot
+    location_id: G1157
+    truck_type_id: highway
+    travel_minutes: 80.21
+  - depot_id: depot
+    location_id: G1581
+    truck_type_id: highway
+    travel_minutes: 75.9
+  - depot_id: depot
+    location_id: G1018
+    truck_type_id: highway
+    travel_minutes: 77.79
+  - depot_id: depot
+    location_id: G1528
+    truck_type_id: highway
+    travel_minutes: 76.98
+  - depot_id: depot
+    location_id: G293
+    truck_type_id: highway
+    travel_minutes: 76.91
+  - depot_id: depot
+    location_id: G1312
+    truck_type_id: highway
+    travel_minutes: 79.19
+  - depot_id: depot
+    location_id: G864
+    truck_type_id: highway
+    travel_minutes: 78.51
+  - depot_id: depot
+    location_id: y_gl
+    truck_type_id: highway
+    travel_minutes: 15
+  contractor_blocks:
+  - contractor_id: c1
+    block_id: G123
+  - contractor_id: c1
+    block_id: G137
+  - contractor_id: c1
+    block_id: G466
+  - contractor_id: c1
+    block_id: G593
+  - contractor_id: c1
+    block_id: G665
+  - contractor_id: c1
+    block_id: G970
+  - contractor_id: c1
+    block_id: G1145
+  - contractor_id: c1
+    block_id: G1475
+  - contractor_id: c1
+    block_id: G380
+  - contractor_id: c1
+    block_id: G381
+  - contractor_id: c1
+    block_id: G516
+  - contractor_id: c1
+    block_id: G714
+  - contractor_id: c1
+    block_id: G862
+  - contractor_id: c1
+    block_id: G863
+  - contractor_id: c1
+    block_id: G1072
+  - contractor_id: c1
+    block_id: G1176
+  - contractor_id: c1
+    block_id: G1243
+  - contractor_id: c1
+    block_id: G1359
+  - contractor_id: c1
+    block_id: G1497
+  - contractor_id: c1
+    block_id: G1867
+  - contractor_id: c1
+    block_id: G133
+  - contractor_id: c1
+    block_id: G336
+  - contractor_id: c1
+    block_id: G452
+  - contractor_id: c1
+    block_id: G529
+  - contractor_id: c1
+    block_id: G867
+  - contractor_id: c1
+    block_id: G978
+  - contractor_id: c1
+    block_id: G1427
+  - contractor_id: c1
+    block_id: G511
+  - contractor_id: c1
+    block_id: G541
+  - contractor_id: c1
+    block_id: G748
+  - contractor_id: c1
+    block_id: G891
+  - contractor_id: c1
+    block_id: G965
+  - contractor_id: c1
+    block_id: G1006
+  - contractor_id: c1
+    block_id: G1049
+  - contractor_id: c1
+    block_id: G1063
+  - contractor_id: c1
+    block_id: G1193
+  - contractor_id: c1
+    block_id: G1265
+  - contractor_id: c1
+    block_id: G1267
+  - contractor_id: c1
+    block_id: G1268
+  - contractor_id: c1
+    block_id: G1269
+  - contractor_id: c1
+    block_id: G1337
+  - contractor_id: c1
+    block_id: G1346
+  - contractor_id: c1
+    block_id: G1347
+  - contractor_id: c1
+    block_id: G267
+  - contractor_id: c1
+    block_id: G286
+  - contractor_id: c1
+    block_id: G522
+  - contractor_id: c1
+    block_id: G530
+  - contractor_id: c1
+    block_id: G617
+  - contractor_id: c1
+    block_id: G700
+  - contractor_id: c1
+    block_id: G803
+  - contractor_id: c1
+    block_id: G967
+  - contractor_id: c1
+    block_id: G1274
+  - contractor_id: c1
+    block_id: G1435
+  - contractor_id: c1
+    block_id: G147
+  - contractor_id: c1
+    block_id: G352
+  - contractor_id: c1
+    block_id: G402
+  - contractor_id: c1
+    block_id: G540
+  - contractor_id: c1
+    block_id: G564
+  - contractor_id: c1
+    block_id: G682
+  - contractor_id: c1
+    block_id: G685
+  - contractor_id: c1
+    block_id: G797
+  - contractor_id: c1
+    block_id: G890
+  - contractor_id: c1
+    block_id: G972
+  - contractor_id: c1
+    block_id: G1012
+  - contractor_id: c1
+    block_id: G1053
+  - contractor_id: c1
+    block_id: G1224
+  - contractor_id: c1
+    block_id: G1295
+  - contractor_id: c1
+    block_id: G318
+  - contractor_id: c1
+    block_id: G335
+  - contractor_id: c1
+    block_id: G387
+  - contractor_id: c1
+    block_id: G451
+  - contractor_id: c1
+    block_id: G454
+  - contractor_id: c1
+    block_id: G547
+  - contractor_id: c1
+    block_id: G847
+  - contractor_id: c1
+    block_id: G851
+  - contractor_id: c1
+    block_id: G1248
+  - contractor_id: c1
+    block_id: G1262
+  - contractor_id: c1
+    block_id: G1364
+  - contractor_id: c1
+    block_id: G1376
+  - contractor_id: c1
+    block_id: G1451
+  - contractor_id: c1
+    block_id: G1515
+  - contractor_id: c1
+    block_id: G265
+  - contractor_id: c1
+    block_id: G450
+  - contractor_id: c1
+    block_id: G742
+  - contractor_id: c1
+    block_id: G1062
+  - contractor_id: c1
+    block_id: G1108
+  - contractor_id: c1
+    block_id: G1171
+  - contractor_id: c1
+    block_id: G1245
+  - contractor_id: c1
+    block_id: G234
+  - contractor_id: c1
+    block_id: G519
+  - contractor_id: c1
+    block_id: G746
+  - contractor_id: c1
+    block_id: G912
+  - contractor_id: c1
+    block_id: G1126
+  - contractor_id: c1
+    block_id: G308
+  - contractor_id: c1
+    block_id: G392
+  - contractor_id: c1
+    block_id: G498
+  - contractor_id: c1
+    block_id: G500
+  - contractor_id: c1
+    block_id: G582
+  - contractor_id: c1
+    block_id: G632
+  - contractor_id: c1
+    block_id: G645
+  - contractor_id: c1
+    block_id: G669
+  - contractor_id: c1
+    block_id: G722
+  - contractor_id: c1
+    block_id: G907
+  - contractor_id: c1
+    block_id: G949
+  - contractor_id: c1
+    block_id: G1117
+  - contractor_id: c1
+    block_id: G1157
+  - contractor_id: c1
+    block_id: G1581
+  - contractor_id: c1
+    block_id: G1018
+  - contractor_id: c1
+    block_id: G1528
+  - contractor_id: c1
+    block_id: G293
+  - contractor_id: c1
+    block_id: G1312
+  - contractor_id: c1
+    block_id: G864
+  driver_policy:
+    regular_minutes: 600
+    max_overtime_minutes: 120
+    overtime_violation_penalty_per_minute: 10
+  roadside_inventory_penalty_per_m3: 25
+  loader_travel_cost_per_km: 0
+  default_loader_service_minutes: 20

@@ -1,0 +1,9 @@
+{
+  "source": "examples/demo_runs/mkrf-high-p01-operational",
+  "hauling": "fhops haul solve --day 1 --solver sa",
+  "horizon_days": 30,
+  "caveats": [
+    "30-day screening horizon, not a full-year haul plan.",
+    "Actual FHOPS Phase I flow and Phase II/III truck schedule."
+  ]
+}

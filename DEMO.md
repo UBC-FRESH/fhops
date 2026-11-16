@@ -22,7 +22,7 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains sixteen model instances:
+It contains seventeen model instances:
 
 ```text
 examples/demo_runs/gavin-full-estate
@@ -40,6 +40,7 @@ examples/demo_runs/mkrf-high-p00-operational
 examples/demo_runs/mkrf-low-p01-operational
 examples/demo_runs/mkrf-high-p01-operational
 examples/demo_runs/mkrf-low-p01-haul-30d
+examples/demo_runs/mkrf-high-p01-haul-30d
 examples/demo_runs/tfl6-lidar-demo
 ```
 
@@ -91,6 +92,9 @@ handoffs: low 110 blocks / 303,770 m³ / 269 days / 10 Vancouver trucks; high 11
 `mkrf-low-p01-haul-30d` is the actual FHOPS Phase I/II hauling run: 30-day low-44 P01
 horizon, 110 blocks, 12 trucks, 1,110 truckloads / 49,934 m³ delivered, and 37 loads
 scheduled on day 1.
+
+`mkrf-high-p01-haul-30d` is the matching actual FHOPS Phase I/II high-scenario sample:
+30-day horizon, 112 blocks, 12 trucks, 1,110 truckloads / 49,932 m³, and 37 loads on day 1.
 
 `knife-structural` is a structural full-block Knife Creek pilot built from the existing
 160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.

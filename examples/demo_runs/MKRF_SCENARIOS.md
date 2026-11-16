@@ -24,3 +24,12 @@ the FHOPS **Compare** panel; the maps use the shared MKRF block geometry.
 All three P00 handoffs complete every selected block with zero sequencing violations under a
 1,500 m³/day screening rate. The truck counts are public-geography fleet screens, not road-network
 schedules.
+
+## Actual FHOPS Phase I/II samples
+
+| Scenario | Horizon | Phase I delivered | Phase I loads | Day-1 loads | Day-1 trucks |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| low-44 P01 | 30 days | 49,934 m³ | 1,110 | 37 | 12 |
+| high-44 P01 | 30 days | 49,932 m³ | 1,110 | 37 | 11 |
+
+These are actual FHOPS haul runs on 30-day screening horizons, not full-year haul plans.

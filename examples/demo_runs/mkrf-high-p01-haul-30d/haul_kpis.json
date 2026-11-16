@@ -1,0 +1,23 @@
+{
+  "status": "feasible",
+  "objective": 27852.208000000002,
+  "fixed_cost": 1320.0,
+  "variable_cost": 7868.352,
+  "overtime_cost": 1969.056,
+  "violation_cost": 16694.800000000003,
+  "violation_minutes": 1669.4800000000005,
+  "loads": 37,
+  "trucks_used": 11,
+  "regular_minutes": 6556.96,
+  "overtime_minutes": 1093.92,
+  "loader_busy_minutes": 1480.0,
+  "barge_trips": 0,
+  "barge_volume_m3": 0.0,
+  "barge_objective": null,
+  "barge_fixed_cost": 0.0,
+  "barges_used": 0,
+  "label": "MKRF high-44 P01 \u2014 30-day FHOPS haul Phase I/II",
+  "phase_i_delivered_m3": 49932.34,
+  "phase_i_truckloads": 1110,
+  "note": "Actual FHOPS Phase I/II run on a 30-day screening horizon; not a full-year haul plan."
+}

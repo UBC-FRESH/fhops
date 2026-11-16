@@ -1,0 +1,3 @@
+loader_id,kind,location_id,loads,busy_minutes,first_start,last_finish
+ldr_G1224,pickup,G1224,37,814.0,74.98,1450.8200000000002
+ldr_y,delivery,y_gl,37,666.0,171.96,1543.8000000000002
