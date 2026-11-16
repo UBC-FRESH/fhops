@@ -21,5 +21,11 @@
   "targets_met": 32,
   "targets_below": 3,
   "targets_above": 2,
-  "opening_size_policy": "5-40 ha dominant; patch metrics included in reports"
+  "opening_size_policy": "5-40 ha dominant; patch metrics included in reports",
+  "npv_net_2pct_cad": 76944546.152,
+  "npv_net_4pct_cad": 42544856.659,
+  "npv_net_6pct_cad": 27980320.639,
+  "npv_gross_4pct_cad": 81631844.795,
+  "npv_cost_4pct_cad": 39086988.136,
+  "annualized_net_after_cost_cad": 1807994.074
 }

@@ -307,3 +307,13 @@ def test_mkrf_p00_operational_handoff(client: TestClient) -> None:
     assert kpis["total_production"] > 390_000
     assert kpis["makespan_day"] <= 365
     assert kpis["haul_screen_required_trucks"] >= 1
+
+
+def test_mkrf_scenario_comparison_npv(client: TestClient) -> None:
+    rows = {}
+    for run_id in ("mkrf-full-estate", "mkrf-low-estate", "mkrf-high-estate"):
+        kpis = client.get(f"/api/runs/{run_id}/kpis").json()
+        rows[run_id] = kpis
+        assert 0 < kpis["npv_net_6pct_cad"] < kpis["npv_net_4pct_cad"] < kpis["npv_net_2pct_cad"]
+        assert kpis["annualized_net_after_cost_cad"] > 0
+    assert rows["mkrf-low-estate"]["npv_net_2pct_cad"] > rows["mkrf-full-estate"]["npv_net_2pct_cad"]

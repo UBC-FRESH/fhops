@@ -1,0 +1,295 @@
+{
+  "discount_rates": [
+    0.02,
+    0.04,
+    0.06
+  ],
+  "discounting": "annual cash flows uniform within each 10-year period",
+  "scenarios": {
+    "base": {
+      "summary": {
+        "scenario": "base",
+        "run_id": "mkrf-full-estate",
+        "source": "WS4 scenario-base-44",
+        "blocks_scheduled": 1221,
+        "area_total_ha": 4810.85,
+        "scheduled_area_ha": 4055.447,
+        "total_production_m3": 3148735.056,
+        "net_revenue_cad": 376792739.85,
+        "harvest_cost_cad": 173180428.079,
+        "net_after_harvest_cost_cad": 203612311.77,
+        "annualized_net_after_cost_cad": 2036123.118,
+        "targets_met": 29,
+        "targets_below": 7,
+        "targets_above": 1,
+        "npv_net_2pct_cad": 86007714.122,
+        "npv_net_4pct_cad": 48195744.981,
+        "npv_net_6pct_cad": 32476163.056,
+        "npv_gross_4pct_cad": 92055424.686,
+        "npv_cost_4pct_cad": 43859679.704
+      },
+      "periods": [
+        {
+          "period_id": "P00",
+          "harvest_cost_cad": 21503090.005612075,
+          "net_revenue_cad": 42434064.194626965,
+          "volume_m3": 390965.2728293104,
+          "net_after_cost_cad": 20930974.18901489
+        },
+        {
+          "period_id": "P01",
+          "harvest_cost_cad": 16562309.853566028,
+          "net_revenue_cad": 32536686.352490906,
+          "volume_m3": 301132.90642847324,
+          "net_after_cost_cad": 15974376.498924877
+        },
+        {
+          "period_id": "P02",
+          "harvest_cost_cad": 15402505.7481255,
+          "net_revenue_cad": 33842857.35517253,
+          "volume_m3": 280045.5590568273,
+          "net_after_cost_cad": 18440351.60704703
+        },
+        {
+          "period_id": "P03",
+          "harvest_cost_cad": 14878975.696670828,
+          "net_revenue_cad": 38631170.02497032,
+          "volume_m3": 270526.8308485605,
+          "net_after_cost_cad": 23752194.328299493
+        },
+        {
+          "period_id": "P04",
+          "harvest_cost_cad": 16580731.889249876,
+          "net_revenue_cad": 37701051.3644627,
+          "volume_m3": 301467.85253181594,
+          "net_after_cost_cad": 21120319.475212827
+        },
+        {
+          "period_id": "P05",
+          "harvest_cost_cad": 15923411.948121676,
+          "net_revenue_cad": 34382061.22617899,
+          "volume_m3": 289516.5808749396,
+          "net_after_cost_cad": 18458649.278057314
+        },
+        {
+          "period_id": "P06",
+          "harvest_cost_cad": 17462414.455061965,
+          "net_revenue_cad": 40137085.064597696,
+          "volume_m3": 317498.4446374903,
+          "net_after_cost_cad": 22674670.60953573
+        },
+        {
+          "period_id": "P07",
+          "harvest_cost_cad": 15849476.487090036,
+          "net_revenue_cad": 35650063.881297186,
+          "volume_m3": 288172.2997652734,
+          "net_after_cost_cad": 19800587.39420715
+        },
+        {
+          "period_id": "P08",
+          "harvest_cost_cad": 17793680.515353594,
+          "net_revenue_cad": 38476209.98837985,
+          "volume_m3": 323521.4639155199,
+          "net_after_cost_cad": 20682529.473026257
+        },
+        {
+          "period_id": "P09",
+          "harvest_cost_cad": 21223831.480553508,
+          "net_revenue_cad": 43001490.39756064,
+          "volume_m3": 385887.84510097286,
+          "net_after_cost_cad": 21777658.917007133
+        }
+      ]
+    },
+    "low": {
+      "summary": {
+        "scenario": "low",
+        "run_id": "mkrf-low-estate",
+        "source": "WS4 scenario-low-44",
+        "blocks_scheduled": 1212,
+        "area_total_ha": 4810.85,
+        "scheduled_area_ha": 3569.511,
+        "total_production_m3": 3170457.676,
+        "net_revenue_cad": 380226270.752,
+        "harvest_cost_cad": 174375172.199,
+        "net_after_harvest_cost_cad": 205851098.553,
+        "annualized_net_after_cost_cad": 2058510.986,
+        "targets_met": 33,
+        "targets_below": 3,
+        "targets_above": 1,
+        "npv_net_2pct_cad": 87264222.282,
+        "npv_net_4pct_cad": 48305306.723,
+        "npv_net_6pct_cad": 31939874.632,
+        "npv_gross_4pct_cad": 92430114.247,
+        "npv_cost_4pct_cad": 44124807.524
+      },
+      "periods": [
+        {
+          "period_id": "P00",
+          "volume_m3": 367237.68098942586,
+          "net_revenue_cad": 38729475.48668956,
+          "harvest_cost_cad": 20198072.45441842,
+          "net_after_cost_cad": 18531403.03227114
+        },
+        {
+          "period_id": "P01",
+          "volume_m3": 303769.81361157045,
+          "net_revenue_cad": 33216019.1090619,
+          "harvest_cost_cad": 16707339.748636372,
+          "net_after_cost_cad": 16508679.360425528
+        },
+        {
+          "period_id": "P02",
+          "volume_m3": 315882.22620962287,
+          "net_revenue_cad": 38785068.75642206,
+          "harvest_cost_cad": 17373522.441529255,
+          "net_after_cost_cad": 21411546.314892802
+        },
+        {
+          "period_id": "P03",
+          "volume_m3": 291985.71683894814,
+          "net_revenue_cad": 41496085.8154234,
+          "harvest_cost_cad": 16059214.426142149,
+          "net_after_cost_cad": 25436871.38928125
+        },
+        {
+          "period_id": "P04",
+          "volume_m3": 324497.2480967621,
+          "net_revenue_cad": 40433405.87863998,
+          "harvest_cost_cad": 17847348.645321913,
+          "net_after_cost_cad": 22586057.233318068
+        },
+        {
+          "period_id": "P05",
+          "volume_m3": 297640.4701342953,
+          "net_revenue_cad": 35257428.400193594,
+          "harvest_cost_cad": 16370225.857386244,
+          "net_after_cost_cad": 18887202.542807348
+        },
+        {
+          "period_id": "P06",
+          "volume_m3": 315717.4398251077,
+          "net_revenue_cad": 39638592.76285045,
+          "harvest_cost_cad": 17364459.190380923,
+          "net_after_cost_cad": 22274133.572469525
+        },
+        {
+          "period_id": "P07",
+          "volume_m3": 299256.034562546,
+          "net_revenue_cad": 36947952.14819197,
+          "harvest_cost_cad": 16459081.90094003,
+          "net_after_cost_cad": 20488870.247251943
+        },
+        {
+          "period_id": "P08",
+          "volume_m3": 326765.7200730703,
+          "net_revenue_cad": 39128056.80975176,
+          "harvest_cost_cad": 17972114.60401887,
+          "net_after_cost_cad": 21155942.205732886
+        },
+        {
+          "period_id": "P09",
+          "volume_m3": 327705.326003831,
+          "net_revenue_cad": 36594185.58461989,
+          "harvest_cost_cad": 18023792.930210706,
+          "net_after_cost_cad": 18570392.65440918
+        }
+      ]
+    },
+    "high": {
+      "summary": {
+        "scenario": "high",
+        "run_id": "mkrf-high-estate",
+        "source": "WS4 scenario-high-44",
+        "blocks_scheduled": 1211,
+        "area_total_ha": 4810.85,
+        "scheduled_area_ha": 3581.861,
+        "total_production_m3": 2794061.618,
+        "net_revenue_cad": 334472796.397,
+        "harvest_cost_cad": 153673388.983,
+        "net_after_harvest_cost_cad": 180799407.414,
+        "annualized_net_after_cost_cad": 1807994.074,
+        "targets_met": 32,
+        "targets_below": 3,
+        "targets_above": 2,
+        "npv_net_2pct_cad": 76944546.152,
+        "npv_net_4pct_cad": 42544856.659,
+        "npv_net_6pct_cad": 27980320.639,
+        "npv_gross_4pct_cad": 81631844.795,
+        "npv_cost_4pct_cad": 39086988.136
+      },
+      "periods": [
+        {
+          "period_id": "P00",
+          "volume_m3": 299973.24606114905,
+          "net_revenue_cad": 31436551.83732004,
+          "harvest_cost_cad": 16498528.5333632,
+          "net_after_cost_cad": 14938023.30395684
+        },
+        {
+          "period_id": "P01",
+          "volume_m3": 308549.9147942373,
+          "net_revenue_cad": 33332334.85376553,
+          "harvest_cost_cad": 16970245.31368305,
+          "net_after_cost_cad": 16362089.540082477
+        },
+        {
+          "period_id": "P02",
+          "volume_m3": 289654.1651480239,
+          "net_revenue_cad": 35742799.37876555,
+          "harvest_cost_cad": 15930979.083141316,
+          "net_after_cost_cad": 19811820.295624238
+        },
+        {
+          "period_id": "P03",
+          "volume_m3": 252114.23658080463,
+          "net_revenue_cad": 35949975.23502764,
+          "harvest_cost_cad": 13866283.011944257,
+          "net_after_cost_cad": 22083692.223083384
+        },
+        {
+          "period_id": "P04",
+          "volume_m3": 275887.1741658202,
+          "net_revenue_cad": 34355737.72286721,
+          "harvest_cost_cad": 15173794.57912011,
+          "net_after_cost_cad": 19181943.143747102
+        },
+        {
+          "period_id": "P05",
+          "volume_m3": 256315.88898090937,
+          "net_revenue_cad": 30324186.054609165,
+          "harvest_cost_cad": 14097373.893950015,
+          "net_after_cost_cad": 16226812.16065915
+        },
+        {
+          "period_id": "P06",
+          "volume_m3": 277179.6496290453,
+          "net_revenue_cad": 35141268.13039772,
+          "harvest_cost_cad": 15244880.72959749,
+          "net_after_cost_cad": 19896387.40080023
+        },
+        {
+          "period_id": "P07",
+          "volume_m3": 278160.9746888758,
+          "net_revenue_cad": 34458474.92180384,
+          "harvest_cost_cad": 15298853.607888168,
+          "net_after_cost_cad": 19159621.31391567
+        },
+        {
+          "period_id": "P08",
+          "volume_m3": 270311.9305291924,
+          "net_revenue_cad": 31908787.370989986,
+          "harvest_cost_cad": 14867156.179105582,
+          "net_after_cost_cad": 17041631.191884406
+        },
+        {
+          "period_id": "P09",
+          "volume_m3": 285914.43729006674,
+          "net_revenue_cad": 31822680.89124484,
+          "harvest_cost_cad": 15725294.050953671,
+          "net_after_cost_cad": 16097386.840291169
+        }
+      ]
+    }
+  }
+}

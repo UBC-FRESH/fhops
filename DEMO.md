@@ -67,7 +67,9 @@ mean one-way, 3,900 loads at 45 m³, 2 loads per truck-day, and 6 required truck
 The MKRF scenario set also includes `mkrf-low-estate` (scenario-low-44) and
 `mkrf-high-estate` (scenario-high-44). The three MKRF runs share the 1,763-block estate and
 provide the console scenario comparison: base CAD 376.8M, low CAD 380.2M, high CAD 334.5M
-net revenue over 100 years. See `examples/demo_runs/MKRF_SCENARIOS.md`.
+net revenue over 100 years. See `examples/demo_runs/MKRF_SCENARIOS.md` and the NPV comparison in
+`examples/demo_runs/MKRF_SCENARIO_COMPARISON.md`. The annual after-cost net revenue range is
+about CAD 1.81–2.06M/year; NPV at 2/4/6% is in the comparison report.
 
 `mkrf-p00-operational` is the first operational handoff of the MKRF base plan: 115 blocks,
 654.99 ha, 390,965 m³, five machines, eight landings, a 365-day window, and a Vancouver

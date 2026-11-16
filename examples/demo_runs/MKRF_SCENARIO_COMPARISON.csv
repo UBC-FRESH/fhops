@@ -1,0 +1,4 @@
+scenario,run_id,source,blocks_scheduled,area_total_ha,scheduled_area_ha,total_production_m3,net_revenue_cad,harvest_cost_cad,net_after_harvest_cost_cad,annualized_net_after_cost_cad,targets_met,targets_below,targets_above,npv_net_2pct_cad,npv_net_4pct_cad,npv_net_6pct_cad,npv_gross_4pct_cad,npv_cost_4pct_cad
+base,mkrf-full-estate,WS4 scenario-base-44,1221,4810.85,4055.447,3148735.056,376792739.85,173180428.079,203612311.77,2036123.118,29,7,1,86007714.122,48195744.981,32476163.056,92055424.686,43859679.704
+low,mkrf-low-estate,WS4 scenario-low-44,1212,4810.85,3569.511,3170457.676,380226270.752,174375172.199,205851098.553,2058510.986,33,3,1,87264222.282,48305306.723,31939874.632,92430114.247,44124807.524
+high,mkrf-high-estate,WS4 scenario-high-44,1211,4810.85,3581.861,2794061.618,334472796.397,153673388.983,180799407.414,1807994.074,32,3,2,76944546.152,42544856.659,27980320.639,81631844.795,39086988.136
