@@ -99,6 +99,8 @@ scheduled on day 1.
 windows, 303,765.7 m³ delivered, 8,295 truckloads, plus 12 monthly Phase II day-1 samples
 (282 loads). It is a rolling aggregation, not a single 365-day MILP or continuous truck schedule.
 The one-page MKRF decision pack is `examples/demo_runs/MKRF_DECISION_PACK.md`.
+The AFRF comparison is `examples/demo_runs/AFRF_DECISION_PACK.md`; Gavin is decision-grade,
+while Knife remains a structural screen pending the full GWM policy run.
 
 `mkrf-high-p01-haul-30d` is the matching actual FHOPS Phase I/II high-scenario sample:
 30-day horizon, 112 blocks, 12 trucks, 1,110 truckloads / 49,932 m³, and 37 loads on day 1.

@@ -29,5 +29,9 @@
   "haul_screen_avg_one_way_km": 31.569,
   "haul_screen_required_trucks": 5,
   "haul_screen_loads_required": 3517,
-  "status_note": "Operational screening handoff; not a field-calibrated schedule."
+  "status_note": "Operational screening handoff; not a field-calibrated schedule.",
+  "finance_net_value_per_m3_2026_cad_base": 108.75,
+  "finance_net_revenue_cad_base": 17207518.49,
+  "finance_annual_net_revenue_cad_base": 1720751.85,
+  "finance_basis": "AFRF MWP #3 Figure 7 public envelope; operational P00 screen; not a budget forecast"
 }

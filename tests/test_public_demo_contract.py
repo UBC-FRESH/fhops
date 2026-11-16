@@ -434,3 +434,10 @@ def test_knife_p00_operational_handoff(client: TestClient) -> None:
     assert kpis["total_production"] > 158_000
     assert kpis["makespan_day"] <= 365
     assert kpis["haul_screen_required_trucks"] >= 1
+
+
+def test_knife_structural_finance_screen(client: TestClient) -> None:
+    kpis = client.get("/api/runs/knife-structural/kpis").json()
+    assert kpis["finance_annual_net_revenue_cad_base"] > 0
+    assert kpis["finance_npv_net_4pct_cad"] > 0
+    assert kpis["finance_npv_net_6pct_cad"] < kpis["finance_npv_net_4pct_cad"]
