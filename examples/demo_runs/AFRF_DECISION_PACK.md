@@ -20,8 +20,10 @@
 - P00: 50 blocks, 158,230 m³, 138-day screen
 - P00 truck screen: 31.6 km mean one-way, 5 trucks
 
-The Knife structural run is not the full GWM state-transition policy. Its low annual contribution is
-a consequence of the structural schedule, not a conclusion about Knife Creek's long-run potential.
+The Knife structural run is not the full GWM state-transition policy. The committed canonical
+Knife graph has 6 terminal states and 0 cycles, so it cannot represent a full repeated 30-year
+selection policy without extending the state library. Its low annual contribution is a
+consequence of that structural schedule, not a conclusion about Knife Creek's long-run potential.
 
 ## Decision
 
