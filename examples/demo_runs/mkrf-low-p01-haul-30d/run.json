@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "mkrf-low-p01-haul-30d",
+  "domain": "hauling",
+  "run_type": "haul_solve",
+  "status": "feasible",
+  "files": {
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "haul_flows": "haul_flows.csv",
+    "haul_truckloads": "haul_truckloads.csv",
+    "haul_yard_inventory": "haul_yard_inventory.csv",
+    "haul_block_inventory": "haul_block_inventory.csv",
+    "haul_contractor_workload": "haul_contractor_workload.csv",
+    "haul_schedule": "haul_schedule.csv",
+    "haul_truck_summary": "haul_truck_summary.csv",
+    "haul_loader_summary": "haul_loader_summary.csv",
+    "haul_kpis": "haul_kpis.json",
+    "haul_summary": "haul_summary.json"
+  },
+  "warnings": [],
+  "generated_at": "2026-11-16T02:17:13.884250+00:00",
+  "command": "fhops haul solve 30-day screening horizon",
+  "scenario": "scenario.yaml",
+  "solver": "sa",
+  "seed": 42
+}

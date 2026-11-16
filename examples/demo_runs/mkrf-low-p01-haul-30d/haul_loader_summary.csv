@@ -1,0 +1,4 @@
+loader_id,kind,location_id,loads,busy_minutes,first_start,last_finish
+ldr_G1475,pickup,G1475,18,396.0,75.01,739.05
+ldr_G1515,pickup,G1515,19,418.0,78.03,796.0699999999999
+ldr_y,delivery,y_gl,37,666.0,172.02,892.0999999999999
