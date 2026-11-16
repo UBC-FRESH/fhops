@@ -8,13 +8,16 @@
     "kpis": "kpis.json",
     "haul_flows": "haul_flows.csv",
     "haul_truckloads": "haul_truckloads.csv",
+    "haul_schedule": "haul_schedule.csv",
+    "haul_truck_summary": "haul_truck_summary.csv",
+    "haul_loader_summary": "haul_loader_summary.csv",
     "haul_kpis": "haul_kpis.json",
     "haul_summary": "haul_summary.json"
   },
   "warnings": [],
-  "generated_at": "2026-11-16T04:04:40.482780+00:00",
-  "command": "12 rolling FHOPS haul Phase I months",
+  "generated_at": "2026-11-16T04:11:43.442815+00:00",
+  "command": "12 rolling FHOPS Phase I months + monthly Phase II day samples",
   "scenario": "scenario.yaml",
-  "solver": "highs",
+  "solver": "highs+sa",
   "seed": 42
 }

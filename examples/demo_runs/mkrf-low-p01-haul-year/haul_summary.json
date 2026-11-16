@@ -87,5 +87,154 @@
     "flows": "haul_flows.csv",
     "truckloads": "haul_truckloads.csv"
   },
-  "note": "Twelve rolling 30-day Phase I windows; not a single 365-day MIP."
+  "note": "Twelve rolling 30-day Phase I windows; not a single 365-day MIP.",
+  "phase_ii_monthly_samples": [
+    {
+      "month": 1,
+      "status": "feasible",
+      "loads": 20,
+      "trucks_used": 8,
+      "objective": 7050.932000000001,
+      "fixed_cost": 960.0,
+      "variable_cost": 5362.08,
+      "overtime_cost": 480.852,
+      "violation_cost": 248.00000000000068,
+      "violation_minutes": 24.800000000000068
+    },
+    {
+      "month": 2,
+      "status": "feasible",
+      "loads": 20,
+      "trucks_used": 8,
+      "objective": 7050.932000000001,
+      "fixed_cost": 960.0,
+      "variable_cost": 5362.08,
+      "overtime_cost": 480.852,
+      "violation_cost": 248.00000000000068,
+      "violation_minutes": 24.800000000000068
+    },
+    {
+      "month": 3,
+      "status": "feasible",
+      "loads": 34,
+      "trucks_used": 14,
+      "objective": 15270.207999999995,
+      "fixed_cost": 1680.0,
+      "variable_cost": 9445.751999999999,
+      "overtime_cost": 1801.6559999999995,
+      "violation_cost": 2342.7999999999975,
+      "violation_minutes": 234.27999999999975
+    },
+    {
+      "month": 4,
+      "status": "feasible",
+      "loads": 20,
+      "trucks_used": 8,
+      "objective": 7050.932000000001,
+      "fixed_cost": 960.0,
+      "variable_cost": 5362.08,
+      "overtime_cost": 480.852,
+      "violation_cost": 248.00000000000068,
+      "violation_minutes": 24.800000000000068
+    },
+    {
+      "month": 5,
+      "status": "feasible",
+      "loads": 20,
+      "trucks_used": 8,
+      "objective": 7050.932000000001,
+      "fixed_cost": 960.0,
+      "variable_cost": 5362.08,
+      "overtime_cost": 480.852,
+      "violation_cost": 248.00000000000068,
+      "violation_minutes": 24.800000000000068
+    },
+    {
+      "month": 6,
+      "status": "feasible",
+      "loads": 34,
+      "trucks_used": 14,
+      "objective": 15270.207999999995,
+      "fixed_cost": 1680.0,
+      "variable_cost": 9445.751999999999,
+      "overtime_cost": 1801.6559999999995,
+      "violation_cost": 2342.7999999999975,
+      "violation_minutes": 234.27999999999975
+    },
+    {
+      "month": 7,
+      "status": "feasible",
+      "loads": 20,
+      "trucks_used": 8,
+      "objective": 7050.932000000001,
+      "fixed_cost": 960.0,
+      "variable_cost": 5362.08,
+      "overtime_cost": 480.852,
+      "violation_cost": 248.00000000000068,
+      "violation_minutes": 24.800000000000068
+    },
+    {
+      "month": 8,
+      "status": "feasible",
+      "loads": 34,
+      "trucks_used": 14,
+      "objective": 15270.207999999995,
+      "fixed_cost": 1680.0,
+      "variable_cost": 9445.751999999999,
+      "overtime_cost": 1801.6559999999995,
+      "violation_cost": 2342.7999999999975,
+      "violation_minutes": 234.27999999999975
+    },
+    {
+      "month": 9,
+      "status": "feasible",
+      "loads": 20,
+      "trucks_used": 8,
+      "objective": 7050.932000000001,
+      "fixed_cost": 960.0,
+      "variable_cost": 5362.08,
+      "overtime_cost": 480.852,
+      "violation_cost": 248.00000000000068,
+      "violation_minutes": 24.800000000000068
+    },
+    {
+      "month": 10,
+      "status": "feasible",
+      "loads": 20,
+      "trucks_used": 8,
+      "objective": 7050.932000000001,
+      "fixed_cost": 960.0,
+      "variable_cost": 5362.08,
+      "overtime_cost": 480.852,
+      "violation_cost": 248.00000000000068,
+      "violation_minutes": 24.800000000000068
+    },
+    {
+      "month": 11,
+      "status": "feasible",
+      "loads": 20,
+      "trucks_used": 8,
+      "objective": 7050.932000000001,
+      "fixed_cost": 960.0,
+      "variable_cost": 5362.08,
+      "overtime_cost": 480.852,
+      "violation_cost": 248.00000000000068,
+      "violation_minutes": 24.800000000000068
+    },
+    {
+      "month": 12,
+      "status": "feasible",
+      "loads": 20,
+      "trucks_used": 8,
+      "objective": 7050.932000000001,
+      "fixed_cost": 960.0,
+      "variable_cost": 5362.08,
+      "overtime_cost": 480.852,
+      "violation_cost": 248.00000000000068,
+      "violation_minutes": 24.800000000000068
+    }
+  ],
+  "phase_ii_total_loads": 282,
+  "phase_ii_trucks_used_max": 14,
+  "phase_ii_note": "One Phase II/III day-1 schedule per 30-day Phase I window; not a 365-day continuous truck schedule."
 }

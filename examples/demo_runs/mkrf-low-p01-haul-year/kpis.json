@@ -4,5 +4,9 @@
   "phase_i_truckloads": 8295,
   "months": 12,
   "label": "MKRF low-44 P01 \u2014 rolling full-year Phase I haul",
-  "note": "12 rolling 30-day FHOPS Phase I windows; Phase II/III day samples are separate."
+  "note": "12 rolling 30-day FHOPS Phase I windows; Phase II/III day samples are separate.",
+  "phase_ii_months": 12,
+  "phase_ii_loads": 282,
+  "phase_ii_max_trucks": 14,
+  "phase_ii_note": "One Phase II/III day-1 schedule per 30-day Phase I window; not a 365-day continuous truck schedule."
 }

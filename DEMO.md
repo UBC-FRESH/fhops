@@ -95,8 +95,10 @@ horizon, 110 blocks, 12 trucks, 1,110 truckloads / 49,934 m³ delivered, and 37 
 scheduled on day 1.
 
 `mkrf-low-p01-haul-year` is the rolling full-year Phase I aggregate: 12 monthly FHOPS
-windows, 303,765.7 m³ delivered, 8,295 truckloads, all months feasible. It is a rolling
-aggregation, not a single 365-day MILP.
+windows, 303,765.7 m³ delivered, 8,295 truckloads, plus 12 monthly Phase II day-1 samples
+(282 loads). It is a rolling aggregation, not a single 365-day MILP or continuous truck schedule.
+The one-page MKRF decision pack is `examples/demo_runs/MKRF_DECISION_PACK.md`.
+
 `mkrf-high-p01-haul-30d` is the matching actual FHOPS Phase I/II high-scenario sample:
 30-day horizon, 112 blocks, 12 trucks, 1,110 truckloads / 49,932 m³, and 37 loads on day 1.
 

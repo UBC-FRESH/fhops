@@ -414,5 +414,8 @@ def test_mkrf_low_p01_rolling_year_haul(client: TestClient) -> None:
     assert kpis["phase_i_delivered_m3"] > 303_000
     assert kpis["phase_i_truckloads"] > 8_000
     assert kpis["months"] == 12
+    assert kpis["phase_ii_months"] == 12
+    assert kpis["phase_ii_loads"] > 0
+    assert kpis["phase_ii_max_trucks"] > 0
     flows = client.get("/api/runs/mkrf-low-p01-haul-year/hauling/flows?day=1").json()
     assert flows["total"] > 0
