@@ -1,0 +1,9 @@
+{
+  "source": "examples/demo_runs/mkrf-high-estate",
+  "period": "P00",
+  "notes": [
+    "Operational screening handoff.",
+    "1,500 m3/day screening rate.",
+    "Public-geography Vancouver market haul screen."
+  ]
+}

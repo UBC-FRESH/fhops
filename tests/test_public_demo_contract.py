@@ -67,6 +67,16 @@ MODEL_INSTANCES = {
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
         "map_query": "day=1",
     },
+    "mkrf-low-p00-operational": {
+        "domain": "operational",
+        "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
+        "map_query": "day=1",
+    },
+    "mkrf-high-p00-operational": {
+        "domain": "operational",
+        "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
+        "map_query": "day=1",
+    },
     "tfl6-lidar-demo": {
         "domain": "operational",
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
@@ -317,3 +327,13 @@ def test_mkrf_scenario_comparison_npv(client: TestClient) -> None:
         assert 0 < kpis["npv_net_6pct_cad"] < kpis["npv_net_4pct_cad"] < kpis["npv_net_2pct_cad"]
         assert kpis["annualized_net_after_cost_cad"] > 0
     assert rows["mkrf-low-estate"]["npv_net_2pct_cad"] > rows["mkrf-full-estate"]["npv_net_2pct_cad"]
+
+
+def test_high_mkrf_p00_operational_handoff(client: TestClient) -> None:
+    _model_instance(client, "mkrf-high-p00-operational")
+    kpis = client.get("/api/runs/mkrf-high-p00-operational/kpis").json()
+    assert kpis["completed_blocks"] == 78
+    assert kpis["remaining_work_total"] == 0
+    assert kpis["total_production"] > 298973
+    assert kpis["makespan_day"] <= 365
+    assert kpis["haul_screen_required_trucks"] >= 1

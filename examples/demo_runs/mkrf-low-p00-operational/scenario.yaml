@@ -1,0 +1,12 @@
+name: MKRF low-44 P00 operational feasibility window
+num_days: 365
+start_date: '2026-01-01'
+data:
+  blocks: blocks.csv
+  machines: machines.csv
+  landings: landings.csv
+  calendar: calendar.csv
+  prod_rates: prod_rates.csv
+  harvest_systems: harvest_systems.yaml
+geo_block_path: blocks.geojson
+geo_crs: EPSG:3005

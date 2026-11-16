@@ -12,3 +12,15 @@ the WS4 schedule and public account outcomes.
 
 These are public WS4 model accounts, not a budget forecast. The comparison is available through
 the FHOPS **Compare** panel; the maps use the shared MKRF block geometry.
+
+## P00 operational comparison
+
+| Scenario | P00 blocks | P00 volume | Makespan | Remaining | Vancouver trucks |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| base | 115 | 390,965 m³ | 329 days | 0 | 12 |
+| low | 86 | 367,238 m³ | 296 days | 0 | 12 |
+| high | 78 | 299,973 m³ | 247 days | 0 | 10 |
+
+All three P00 handoffs complete every selected block with zero sequencing violations under a
+1,500 m³/day screening rate. The truck counts are public-geography fleet screens, not road-network
+schedules.
