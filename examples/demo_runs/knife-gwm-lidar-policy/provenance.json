@@ -1,0 +1,13 @@
+{
+  "source": "femic-afrf-knifecreek-instance",
+  "dataset": "ws4/dataset_kc_spatial_v5",
+  "state_library": "ws4/state_library_v3",
+  "lidar": "data/lidar/kc_2024/block_reserve_summary.csv",
+  "gate": "blocks with harvest_tph > 0",
+  "crs": "EPSG:3005",
+  "caveats": [
+    "Block-level LiDAR gate only; DBH-ranked clump proxy remains in FVS.",
+    "LiDAR DBH is height-allometry; no species or CFI.",
+    "Structural screen; not an approved management plan."
+  ]
+}

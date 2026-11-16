@@ -121,6 +121,11 @@ and P29 is 29,632 m³. The key correction is that clump-harvest volume is now co
 transition, not just the FVS cut. It remains a structural public policy screen, not an approved
 management plan.
 
+`knife-gwm-lidar-policy` applies the 2024 LiDAR reserve scenario as a block-level harvest gate.
+Blocks with zero LiDAR harvest trees are excluded: 135 of 160 blocks are scheduled, with
+1,350 entries and 2,343,814 m³. Production remains positive in all 30 periods. This is a
+block-level LiDAR gate, not yet a replacement of the DBH-ranked clump proxy inside FVS.
+
 `mkrf-full-estate` is the full WS4 MKRF estate handoff:
 
 - 1,763 blocks covering 4,810.85 ha in EPSG:3005;

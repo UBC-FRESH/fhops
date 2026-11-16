@@ -30,6 +30,18 @@ production because the state library counts the post-FVS clump harvest volume, n
 selection cut. The earlier v2 library omitted that clump volume and entered a zero-yield reserve
 cycle after about 120 years.
 
+A second version applies the 2024 LiDAR reserve scenario as a block-level harvest gate:
+
+- 135 of 160 blocks scheduled
+- 1,350 entries
+- 2,343,814 m³ total production
+- positive production in all 30 periods
+- annual net after cost under the public envelope: approximately CAD 850k/yr
+
+This is a real use of LiDAR, but only as a block-level gate. It excludes blocks where the LiDAR
+reserve scenario finds no harvest trees. It does not yet replace the DBH-ranked six-tree proxy
+inside FVS.
+
 The earlier `knife-structural` run remains as a comparison. The `knife-p00-operational` handoff
 is from that earlier structural P00, not from this new policy screen.
 
@@ -40,7 +52,8 @@ sustained GWM policy screen that can be compared with Gavin on volume and financ
 caveats:
 
 - Knife tree lists are PSP-derived regional analogs, not KC CFI.
-- Clump reserve is still a DBH-ranked proxy, not a spatial clump.
+- The LiDAR-constrained plan excludes blocks with no LiDAR harvest trees, but the FVS cut
+  still uses the DBH-ranked proxy, not the observed spatial clumps.
 - The policy screen is not an approved management plan.
 
 Finance is a public MWP #3 Figure 7 screening envelope, not a budget forecast.

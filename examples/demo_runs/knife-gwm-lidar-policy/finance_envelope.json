@@ -1,0 +1,18 @@
+{
+  "finance_net_value_per_m3_2026_cad_low": 79.75,
+  "finance_harvest_cost_per_m3_2026_cad_low": 40.6,
+  "finance_net_revenue_cad_low": 186919191.61,
+  "finance_annual_net_revenue_cad_low": 623063.97,
+  "finance_net_value_per_m3_2026_cad_base": 108.75,
+  "finance_harvest_cost_per_m3_2026_cad_base": 46.4,
+  "finance_net_revenue_cad_base": 254889806.74,
+  "finance_annual_net_revenue_cad_base": 849632.69,
+  "finance_net_value_per_m3_2026_cad_high": 145.0,
+  "finance_harvest_cost_per_m3_2026_cad_high": 72.5,
+  "finance_net_revenue_cad_high": 339853075.66,
+  "finance_annual_net_revenue_cad_high": 1132843.59,
+  "finance_basis": "AFRF MWP #3 Figure 7 public envelope; LiDAR-constrained GWM policy screen; not a budget forecast",
+  "finance_npv_net_2pct_cad": 61148999.58,
+  "finance_npv_net_4pct_cad": 38010091.77,
+  "finance_npv_net_6pct_cad": 28542882.2
+}

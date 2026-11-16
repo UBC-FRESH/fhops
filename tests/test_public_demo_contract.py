@@ -32,6 +32,11 @@ MODEL_INSTANCES = {
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
         "map_query": "period=P00",
     },
+    "knife-gwm-lidar-policy": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
     "gavin-optimized": {
         "domain": "tactical_operational",
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
@@ -295,6 +300,29 @@ def test_knife_gwm_policy_uses_the_state_transition_library(client: TestClient) 
     assert len(block_features) >= 160
 
 
+def test_knife_gwm_lidar_policy_gates_on_lidar_harvest(client: TestClient) -> None:
+    _model_instance(client, "knife-gwm-lidar-policy")
+    kpis = client.get("/api/runs/knife-gwm-lidar-policy/kpis").json()
+    assert kpis["blocks_total"] == 160
+    assert kpis["blocks_scheduled"] == 135
+    assert kpis["schedule_events"] == 1350
+    assert kpis["total_production_m3"] > 2_300_000
+    assert "LiDAR" in kpis["status_note"]
+    production = client.get(
+        "/api/runs/knife-gwm-lidar-policy/tactical/production?limit=50"
+    ).json()
+    assert len(production["rows"]) == 30
+    assert float(production["rows"][-1]["volume_m3"]) > 0
+    map_payload = client.get("/api/runs/knife-gwm-lidar-policy/map?period=P00").json()
+    blocks = [
+        feature
+        for feature in map_payload.get("features", [])
+        if feature.get("properties", {}).get("layer") == "blocks"
+    ]
+    assert len(blocks) == 160
+    assert any("lidar_harvest_tph" in feature["properties"] for feature in blocks)
+
+
 def test_gavin_optimized_draft_is_complete(client: TestClient) -> None:
     _model_instance(client, "gavin-optimized")
     kpis = client.get("/api/runs/gavin-optimized/kpis").json()
@@ -317,6 +345,7 @@ def test_afrf_finance_envelope_is_present_and_ordered(client: TestClient) -> Non
         "gavin-policy",
         "knife-structural",
         "knife-gwm-policy",
+        "knife-gwm-lidar-policy",
     ):
         kpis = client.get(f"/api/runs/{run_id}/kpis").json()
         low = kpis["finance_annual_net_revenue_cad_low"]
