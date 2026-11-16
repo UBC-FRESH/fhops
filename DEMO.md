@@ -22,7 +22,7 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains six model instances:
+It contains eleven model instances:
 
 ```text
 examples/demo_runs/gavin-full-estate
@@ -32,6 +32,9 @@ examples/demo_runs/gavin-p00-operational
 examples/demo_runs/gavin-p01-operational
 examples/demo_runs/knife-structural
 examples/demo_runs/mkrf-full-estate
+examples/demo_runs/mkrf-low-estate
+examples/demo_runs/mkrf-high-estate
+examples/demo_runs/mkrf-p00-operational
 examples/demo_runs/tfl6-lidar-demo
 ```
 
@@ -60,6 +63,15 @@ blocks in 355 days with zero sequencing violations.
 Both P00/P01 runs include a public-geography road/haul screen to Williams Lake: about 58 km
 mean one-way, 3,900 loads at 45 m³, 2 loads per truck-day, and 6 required trucks for the
 365-day window. This is a fleet screen, not a road-network schedule.
+
+The MKRF scenario set also includes `mkrf-low-estate` (scenario-low-44) and
+`mkrf-high-estate` (scenario-high-44). The three MKRF runs share the 1,763-block estate and
+provide the console scenario comparison: base CAD 376.8M, low CAD 380.2M, high CAD 334.5M
+net revenue over 100 years. See `examples/demo_runs/MKRF_SCENARIOS.md`.
+
+`mkrf-p00-operational` is the first operational handoff of the MKRF base plan: 115 blocks,
+654.99 ha, 390,965 m³, five machines, eight landings, a 365-day window, and a Vancouver
+truck screen of 8,689 loads / 12 trucks. It completes all 115 blocks in 329 days.
 
 `knife-structural` is a structural full-block Knife Creek pilot built from the existing
 160-block WS4 spatial dataset. It applies a structural 30-year selection cycle to 157 eligible blocks and retains all 160 on the map.

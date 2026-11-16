@@ -1,0 +1,8 @@
+{
+  "run": "/srv/shared-data/gep/ws4/ws4-public-demo/runs/femic-mkrf-instance/scenario-low-44",
+  "dataset": "ws4/runtime/matrix_silv",
+  "notes": [
+    "Read-only WS4 scenario handoff.",
+    "Public WS4 revenue/cost accounts."
+  ]
+}

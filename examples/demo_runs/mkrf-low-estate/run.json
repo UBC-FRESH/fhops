@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "mkrf-low-estate",
+  "domain": "tactical_operational",
+  "run_type": "tactical_operational",
+  "status": "completed",
+  "files": {
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "harvest_decisions": "harvest_decisions.csv",
+    "production": "production.csv",
+    "tactical_summary": "tactical_summary.json"
+  },
+  "warnings": [],
+  "generated_at": "2026-11-16T01:35:27.288221+00:00",
+  "command": "WS4 scenario-low-44 MKRF estate handoff",
+  "scenario": "scenario.yaml",
+  "solver": "ws4",
+  "seed": 44
+}

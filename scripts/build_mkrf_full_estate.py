@@ -72,7 +72,7 @@ def _simplified_blocks(areas: pd.Series) -> dict[str, Any]:
                 "id": block_id,
                 "properties": {
                     "block_id": block_id,
-                    "area_ha": round(float(areas.get(block_id, 0.0)), 6),
+                    "area_ha": round(float(areas.get(int(block_id), 0.0)), 6),
                 },
                 "geometry": mapping(simplified),
             }

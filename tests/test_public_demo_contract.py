@@ -42,12 +42,27 @@ MODEL_INSTANCES = {
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
         "map_query": "period=P00",
     },
+    "mkrf-low-estate": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
+    "mkrf-high-estate": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
     "gavin-p00-operational": {
         "domain": "operational",
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
         "map_query": "day=1",
     },
     "gavin-p01-operational": {
+        "domain": "operational",
+        "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
+        "map_query": "day=1",
+    },
+    "mkrf-p00-operational": {
         "domain": "operational",
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
         "map_query": "day=1",
@@ -269,3 +284,26 @@ def test_gavin_operational_runs_carry_road_haul_screen(client: TestClient) -> No
         assert kpis["haul_screen_avg_one_way_km"] > 0
         assert kpis["haul_screen_required_trucks"] >= 1
         assert kpis["haul_screen_loads_required"] > 0
+
+
+def test_mkrf_scenario_set_is_complete(client: TestClient) -> None:
+    rows = {}
+    for run_id in ("mkrf-full-estate", "mkrf-low-estate", "mkrf-high-estate"):
+        kpis = client.get(f"/api/runs/{run_id}/kpis").json()
+        rows[run_id] = kpis
+        assert kpis["blocks_total"] >= 1_700
+        assert kpis["area_total_ha"] > 4_000
+        assert kpis["net_revenue_cad"] > 0
+        assert kpis["targets_met"] > 0
+    assert rows["mkrf-full-estate"]["net_revenue_cad"] != rows["mkrf-low-estate"]["net_revenue_cad"]
+    assert rows["mkrf-full-estate"]["net_revenue_cad"] != rows["mkrf-high-estate"]["net_revenue_cad"]
+
+
+def test_mkrf_p00_operational_handoff(client: TestClient) -> None:
+    _model_instance(client, "mkrf-p00-operational")
+    kpis = client.get("/api/runs/mkrf-p00-operational/kpis").json()
+    assert kpis["completed_blocks"] == 115
+    assert kpis["remaining_work_total"] == 0
+    assert kpis["total_production"] > 390_000
+    assert kpis["makespan_day"] <= 365
+    assert kpis["haul_screen_required_trucks"] >= 1

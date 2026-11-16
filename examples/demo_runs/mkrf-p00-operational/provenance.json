@@ -1,0 +1,9 @@
+{
+  "source": "examples/demo_runs/mkrf-full-estate",
+  "period": "P00",
+  "notes": [
+    "115 blocks from MKRF base P00.",
+    "1,500 m3/day screening rate.",
+    "Public-geography Vancouver market haul screen."
+  ]
+}

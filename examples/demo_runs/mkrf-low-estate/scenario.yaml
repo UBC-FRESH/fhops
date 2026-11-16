@@ -1,0 +1,49 @@
+name: "MKRF full estate \u2014 scenario-low-44"
+planning_level: tactical_operational
+schema_version: 0.1.0
+geo_block_path: blocks.geojson
+geo_crs: EPSG:3005
+periods:
+- period_id: P00
+  start_date: '2026-01-01'
+  end_date: '2035-12-31'
+  duration_years: 10
+- period_id: P01
+  start_date: '2036-01-01'
+  end_date: '2045-12-31'
+  duration_years: 10
+- period_id: P02
+  start_date: '2046-01-01'
+  end_date: '2055-12-31'
+  duration_years: 10
+- period_id: P03
+  start_date: '2056-01-01'
+  end_date: '2065-12-31'
+  duration_years: 10
+- period_id: P04
+  start_date: '2066-01-01'
+  end_date: '2075-12-31'
+  duration_years: 10
+- period_id: P05
+  start_date: '2076-01-01'
+  end_date: '2085-12-31'
+  duration_years: 10
+- period_id: P06
+  start_date: '2086-01-01'
+  end_date: '2095-12-31'
+  duration_years: 10
+- period_id: P07
+  start_date: '2096-01-01'
+  end_date: '2105-12-31'
+  duration_years: 10
+- period_id: P08
+  start_date: '2106-01-01'
+  end_date: '2115-12-31'
+  duration_years: 10
+- period_id: P09
+  start_date: '2116-01-01'
+  end_date: '2125-12-31'
+  duration_years: 10
+source: femic-mkrf-instance scenario-low-44
+notes: Full 1,763-block MKRF ESRI:3005 estate handoff from WS4. The FHOPS console
+  is a read-only view of the WS4 base plan.
