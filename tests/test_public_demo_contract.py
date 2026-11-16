@@ -82,6 +82,16 @@ MODEL_INSTANCES = {
         "artifacts": {"haul_flows", "haul_schedule", "haul_summary", "haul_kpis"},
         "map_query": "day=1",
     },
+    "mkrf-low-p01-operational": {
+        "domain": "operational",
+        "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
+        "map_query": "day=1",
+    },
+    "mkrf-high-p01-operational": {
+        "domain": "operational",
+        "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
+        "map_query": "day=1",
+    },
     "tfl6-lidar-demo": {
         "domain": "operational",
         "artifacts": {"assignments", "kpis", "day_summary", "shift_summary"},
@@ -360,3 +370,23 @@ def test_mkrf_low_p01_haul_phase_i_ii(client: TestClient) -> None:
     assert kpis["trucks_used"] > 0
     flows = client.get("/api/runs/mkrf-low-p01-haul-30d/hauling/flows?day=1").json()
     assert flows["total"] > 0
+
+
+def test_mkrf_low_p01_operational_handoff(client: TestClient) -> None:
+    _model_instance(client, "mkrf-low-p01-operational")
+    kpis = client.get("/api/runs/mkrf-low-p01-operational/kpis").json()
+    assert kpis["completed_blocks"] == 110
+    assert kpis["remaining_work_total"] == 0
+    assert kpis["total_production"] > 302769
+    assert kpis["makespan_day"] <= 365
+    assert kpis["haul_screen_required_trucks"] >= 1
+
+
+def test_mkrf_high_p01_operational_handoff(client: TestClient) -> None:
+    _model_instance(client, "mkrf-high-p01-operational")
+    kpis = client.get("/api/runs/mkrf-high-p01-operational/kpis").json()
+    assert kpis["completed_blocks"] == 112
+    assert kpis["remaining_work_total"] == 0
+    assert kpis["total_production"] > 307549
+    assert kpis["makespan_day"] <= 365
+    assert kpis["haul_screen_required_trucks"] >= 1

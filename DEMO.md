@@ -22,7 +22,7 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains fourteen model instances:
+It contains sixteen model instances:
 
 ```text
 examples/demo_runs/gavin-full-estate
@@ -37,6 +37,8 @@ examples/demo_runs/mkrf-high-estate
 examples/demo_runs/mkrf-p00-operational
 examples/demo_runs/mkrf-low-p00-operational
 examples/demo_runs/mkrf-high-p00-operational
+examples/demo_runs/mkrf-low-p01-operational
+examples/demo_runs/mkrf-high-p01-operational
 examples/demo_runs/mkrf-low-p01-haul-30d
 examples/demo_runs/tfl6-lidar-demo
 ```
@@ -81,6 +83,10 @@ truck screen of 8,689 loads / 12 trucks. It completes all 115 blocks in 329 days
 `mkrf-low-p00-operational` and `mkrf-high-p00-operational` apply the same operational screen
 to the low/high scenarios: 86 blocks / 367,238 m³ / 296 days and 78 blocks / 299,973 m³ /
 247 days respectively, both with zero remaining work and the Vancouver truck screen.
+
+`mkrf-low-p01-operational` and `mkrf-high-p01-operational` are the second-period operational
+handoffs: low 110 blocks / 303,770 m³ / 269 days / 10 Vancouver trucks; high 112 blocks /
+308,550 m³ / 264 days / 10 trucks. Both have zero remaining work and zero sequencing violations.
 
 `mkrf-low-p01-haul-30d` is the actual FHOPS Phase I/II hauling run: 30-day low-44 P01
 horizon, 110 blocks, 12 trucks, 1,110 truckloads / 49,934 m³ delivered, and 37 loads
