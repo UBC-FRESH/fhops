@@ -1,0 +1,13 @@
+{
+  "source": "femic-afrf-knifecreek-instance",
+  "dataset": "ws4/dataset_kc_spatial_v4_high",
+  "state_library": "ws4/state_library_v2",
+  "schedule": "greedy best-cut path through canonical GWM transitions; high regime offered in every HMZ group",
+  "crs": "EPSG:3005",
+  "caveats": [
+    "HMZ matrix is not enforced in this upper-bound run.",
+    "PSP-derived regional IDF Cariboo analog, not KC CFI.",
+    "GWM 2007 structural screen; not legal-compliance proof.",
+    "3 blocks with no treatment remain unscheduled."
+  ]
+}

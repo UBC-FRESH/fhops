@@ -1,0 +1,18 @@
+{
+  "finance_net_value_per_m3_2026_cad_low": 79.75,
+  "finance_harvest_cost_per_m3_2026_cad_low": 40.6,
+  "finance_net_revenue_cad_low": 106012412.33,
+  "finance_annual_net_revenue_cad_low": 353374.71,
+  "finance_net_value_per_m3_2026_cad_base": 108.75,
+  "finance_harvest_cost_per_m3_2026_cad_base": 46.4,
+  "finance_net_revenue_cad_base": 144562380.46,
+  "finance_annual_net_revenue_cad_base": 481874.6,
+  "finance_net_value_per_m3_2026_cad_high": 145.0,
+  "finance_harvest_cost_per_m3_2026_cad_high": 72.5,
+  "finance_net_revenue_cad_high": 192749840.61,
+  "finance_annual_net_revenue_cad_high": 642499.47,
+  "finance_basis": "AFRF MWP #3 Figure 7 public envelope; GWM high-regime upper-bound policy screen; not a budget forecast",
+  "finance_npv_net_2pct_cad": 32948498.83,
+  "finance_npv_net_4pct_cad": 18009898.31,
+  "finance_npv_net_6pct_cad": 12382538.64
+}
