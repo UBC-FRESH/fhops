@@ -55,9 +55,9 @@ A spatial-clump FVS screen now uses the LiDAR trees directly:
 - annual net after cost under the public envelope: approximately CAD 930k
 - NPV 4%: approximately CAD 55.6M
 
-This is a structural pilot. LiDAR DBH is height-allometry, species is assigned Douglas-fir,
-and the one-hectare sample is scaled to VRI TPH. It is not a CFI or an approved plan, and it
-should not be treated as a decision-grade revenue forecast.
+This is a structural pilot. LiDAR DBH is height-allometry, tree-level species is sampled from
+VRI composition, and the one-hectare sample is scaled to VRI TPH/BA. It is not a CFI or an
+approved plan, and it should not be treated as a decision-grade revenue forecast.
 
 The earlier `knife-structural` run remains as a comparison. The `knife-p00-operational` handoff
 is from that earlier structural P00, not from this new policy screen.
@@ -74,3 +74,9 @@ caveats:
 - The policy screen is not an approved management plan.
 
 Finance is a public MWP #3 Figure 7 screening envelope, not a budget forecast.
+
+## Early management-plan brief
+
+The Dean's Office draft is `AFRF_EARLY_MANAGEMENT_PLAN.md` (also `.docx` and
+`.html`). It separates the working model structure and preview results from the
+field-calibration and legal-review work that is still required.

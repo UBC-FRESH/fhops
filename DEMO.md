@@ -22,7 +22,7 @@ The console is not intended to open as an empty workbench. Its run discovery roo
 examples/demo_runs
 ```
 
-It contains nineteen model instances:
+It contains twenty-two model instances:
 
 ```text
 examples/demo_runs/gavin-full-estate
@@ -31,6 +31,9 @@ examples/demo_runs/gavin-policy
 examples/demo_runs/gavin-p00-operational
 examples/demo_runs/gavin-p01-operational
 examples/demo_runs/knife-structural
+examples/demo_runs/knife-gwm-policy
+examples/demo_runs/knife-gwm-lidar-policy
+examples/demo_runs/knife-lidar-clump-policy
 examples/demo_runs/knife-p00-operational
 examples/demo_runs/mkrf-full-estate
 examples/demo_runs/mkrf-low-estate
@@ -99,7 +102,9 @@ scheduled on day 1.
 windows, 303,765.7 m³ delivered, 8,295 truckloads, plus 12 monthly Phase II day-1 samples
 (282 loads). It is a rolling aggregation, not a single 365-day MILP or continuous truck schedule.
 The one-page MKRF decision pack is `examples/demo_runs/MKRF_DECISION_PACK.md`.
-The AFRF comparison is `examples/demo_runs/AFRF_DECISION_PACK.md`; Gavin is decision-grade,
+The early management-plan brief is `examples/demo_runs/AFRF_EARLY_MANAGEMENT_PLAN.md`
+(also distributed as `.docx` and `.html`). The AFRF comparison is
+`examples/demo_runs/AFRF_DECISION_PACK.md`; Gavin is decision-grade,
 while the new Knife GWM policy screen reaches a reserve cycle after about 120 years.
 
 `mkrf-high-p01-haul-30d` is the matching actual FHOPS Phase I/II high-scenario sample:

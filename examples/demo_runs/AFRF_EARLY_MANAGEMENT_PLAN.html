@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2026-11-17" />
+  <title>AFRF Knife Creek — Early Draft Management Plan</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">AFRF Knife Creek — Early Draft Management Plan</h1>
+<p class="subtitle">Draft for AFRF leadership and the Dean’s Office</p>
+<p class="date">17 November 2026</p>
+</header>
+<h1
+id="afrf-knife-creek-early-draft-management-plan-and-modelling-brief">AFRF
+Knife Creek — Early Draft Management Plan and Modelling Brief</h1>
+<p><strong>Status:</strong> Draft for discussion. Not an approved
+management plan, not a legal compliance determination, and not an
+audited financial forecast.</p>
+<p><strong>Prepared for:</strong> AFRF leadership and the Dean’s
+Office</p>
+<p><strong>Purpose:</strong> Show the structure of the management plan,
+the modelling approach, the scenario plan, and early preview results
+now, so the faculty can decide whether to support a focused calibration
+and review programme before committing to a full field campaign.</p>
+<h2 id="executive-summary">1. Executive summary</h2>
+<p>We have a working, reproducible modelling stack for the AFRF
+estates:</p>
+<ul>
+<li>a full-estate Gavin Lake policy screen;</li>
+<li>a full-block Knife Creek screening chain;</li>
+<li>a LiDAR-informed Knife Creek spatial-clump screen;</li>
+<li>a separate MKRF full-estate scenario set that exercises the same
+stack at a much larger scale.</li>
+</ul>
+<p>The Knife Creek work now has a coherent draft management story:</p>
+<ul>
+<li>3,481.77 ha of VRI blocks inside the Knife Creek SUP;</li>
+<li>160 spatial blocks;</li>
+<li>HMZ-restricted silviculture;</li>
+<li>a four-to-eight-entry FVS-BC state-transition library;</li>
+<li>a compiled WS4 dataset with HMZ-specific track offers;</li>
+<li>a 300-year sustained legal-HMZ policy screen;</li>
+<li>a 2024 LiDAR canopy inventory with 278,318 canopy trees, spatial
+clumps, and a first block-level FVS clump screen.</li>
+</ul>
+<p>The early numbers are useful for structure and direction:</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 22%" />
+<col style="width: 22%" />
+<col style="width: 22%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Screen</th>
+<th style="text-align: right;">Production</th>
+<th style="text-align: right;">Annual net after cost</th>
+<th style="text-align: right;">NPV 4%</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Gavin policy</td>
+<td style="text-align: right;">5,385,149 m³ / 300 yr</td>
+<td style="text-align: right;">~CAD 1.95M/yr</td>
+<td style="text-align: right;">~CAD 48.3M</td>
+<td>decision-grade public policy screen</td>
+</tr>
+<tr class="even">
+<td>Knife legal-HMZ GWM</td>
+<td style="text-align: right;">2,433,385 m³ / 300 yr</td>
+<td style="text-align: right;">~CAD 882k/yr</td>
+<td style="text-align: right;">~CAD 39.3M</td>
+<td>structural policy screen</td>
+</tr>
+<tr class="odd">
+<td>Knife LiDAR-gated GWM</td>
+<td style="text-align: right;">2,343,814 m³ / 300 yr</td>
+<td style="text-align: right;">~CAD 850k/yr</td>
+<td style="text-align: right;">~CAD 38.0M</td>
+<td>structural policy screen with a real LiDAR block gate</td>
+</tr>
+<tr class="even">
+<td>Knife LiDAR spatial-clump FVS</td>
+<td style="text-align: right;">2,564,179 m³ / 300 yr</td>
+<td style="text-align: right;">~CAD 930k/yr</td>
+<td style="text-align: right;">~CAD 55.6M</td>
+<td>structural LiDAR pilot, not decision-grade</td>
+</tr>
+</tbody>
+</table>
+<p>The Knife numbers are now plausible enough to support an early draft,
+but they are not yet defensible as a final AAC or budget. The main
+missing ingredient is not more model plumbing. It is field calibration:
+measured DBH, species composition, mortality, damage, and a CFI or
+released tree list for Knife Creek.</p>
+<p><strong>Decision requested:</strong> endorse this as the draft
+structure and modelling framework, and support a focused calibration and
+technical-review programme. That programme should be staged: a small,
+high-value field and LiDAR calibration campaign first, followed by a
+decision on a larger field season only if the early results remain
+encouraging.</p>
+<h2 id="why-this-matters-now">2. Why this matters now</h2>
+<p>The Dean’s Office needs to see enough structure and evidence to judge
+whether this is a credible path, without waiting for a full field
+campaign.</p>
+<p>This brief is deliberately written to separate:</p>
+<ol type="1">
+<li>what is already strong enough to support a management-plan
+structure;</li>
+<li>what is provisional and should be labelled as such; and</li>
+<li>what cannot be claimed without field calibration or legal
+review.</li>
+</ol>
+<p>That separation is the difference between a useful early draft and a
+result that looks more certain than it is.</p>
+<h2 id="management-context-and-draft-objectives">3. Management context
+and draft objectives</h2>
+<h3 id="resource">3.1 Resource</h3>
+<ul>
+<li>Knife Creek SUP S15382: 3,533.13 ha legal gross boundary.</li>
+<li>Modelled VRI block area: 3,481.77 ha.</li>
+<li>160 spatial blocks after the VRI/HMZ join.</li>
+<li>BEC: predominantly IDFdk3, with IDFxm at the margins.</li>
+<li>Mule-deer HMZ is a first-order constraint:
+<ul>
+<li>HMZ 1/3/4 (M): Low or Moderate only;</li>
+<li>HMZ 2 (L): Low only;</li>
+<li>HMZ 5 (A): all classes, effectively absent inside the SUP.</li>
+</ul></li>
+<li>The current work uses the public HMZ layer and the legal matrix as a
+structural constraint. It is not a legal compliance opinion.</li>
+</ul>
+<h3 id="draft-management-objectives">3.2 Draft management
+objectives</h3>
+<ol type="1">
+<li>Maintain continuous forest cover and the uneven-aged stand structure
+required by the Knife Creek GWM context.</li>
+<li>Respect the HMZ offer matrix and retain the 4–10-tree clump and
+canopy-opening structure.</li>
+<li>Produce a sustainable, defensible harvest level without treating the
+first model result as an approved AAC.</li>
+<li>Maintain or improve mule-deer winter-range habitat indicators.</li>
+<li>Provide a transparent, reproducible evidence trail from inventory to
+treatment to schedule to finance.</li>
+<li>Build a plan that can be recalibrated when CFI and LiDAR calibration
+data arrive, rather than rebuilding the framework.</li>
+</ol>
+<h3 id="draft-management-plan-structure">3.3 Draft management plan
+structure</h3>
+<p>The early draft should follow this structure:</p>
+<ol type="1">
+<li><strong>Purpose, legal context and decision framework</strong></li>
+<li><strong>Resource description and information quality</strong></li>
+<li><strong>Management objectives, constraints and zones</strong></li>
+<li><strong>Silvicultural system and GWM/HMZ rules</strong></li>
+<li><strong>Growth, yield and state-transition model</strong></li>
+<li><strong>Harvest scheduling, AAC and scenario logic</strong></li>
+<li><strong>Access, hauling, landing and operational
+feasibility</strong></li>
+<li><strong>Habitat, biodiversity and mule-deer monitoring</strong></li>
+<li><strong>Financial analysis and sensitivity</strong></li>
+<li><strong>Adaptive management, review triggers and
+governance</strong></li>
+<li><strong>Appendices: data provenance, model cards, run register,
+assumptions</strong></li>
+</ol>
+<p>This is the structure we recommend bringing to the Dean’s Office. The
+current brief fills in the modelling and early-results sections; the
+legal and silvicultural sections still need internal review.</p>
+<h2 id="modelling-approach">4. Modelling approach</h2>
+<h3 id="evidence-chain">4.1 Evidence chain</h3>
+<p>The stack is deliberately traceable:</p>
+<pre class="text"><code>public inventory / LiDAR / PSP
+        ↓
+FVS-BC state-transition library
+        ↓
+canonical state graph + HMZ tracks
+        ↓
+WS4 compiled spatial dataset
+        ↓
+FHOPS / WS4 schedule and scenario simulation
+        ↓
+operational screens, finance envelope, run register</code></pre>
+<p>The important design choice is that the state-transition library is
+the bridge. Every track is tied to an FVS-BC state, a selection regime,
+a stem list, and a run record. A track with no provenance is treated as
+a curve, not evidence.</p>
+<h3 id="fvs-bc-state-library">4.2 FVS-BC state library</h3>
+<p>Current Knife Creek library:</p>
+<ul>
+<li>eight 30-year entries per stand/regime;</li>
+<li>216 per-chain states;</li>
+<li>192 transitions;</li>
+<li>35 canonical states;</li>
+<li>48 canonical transitions;</li>
+<li>two canonical cycles;</li>
+<li>clump-harvest volume counted in the transition cut.</li>
+</ul>
+<p>The clump-volume correction is material. Earlier versions counted
+only the FVS selection cut and left post-FVS clump harvest out of the
+reported yield. That made a productive cycle look like a zero-yield
+reserve cycle.</p>
+<h3 id="spatial-dataset-and-hmz">4.3 Spatial dataset and HMZ</h3>
+<p><code>ws4/dataset_kc_spatial_v5</code>:</p>
+<ul>
+<li>160 blocks;</li>
+<li>140 tracks: 35 canonical states × 4 HMZ groups;</li>
+<li>96 treatments;</li>
+<li>HMZ offers enforced through track copies;</li>
+<li><code>ws4 validate</code> passes.</li>
+</ul>
+<p>The dataset is a structural fixture, not a KC operating model. Its
+tree lists are PSP-derived analogs; its clump reserve is a proxy unless
+the LiDAR clump path is used.</p>
+<h3 id="lidar">4.4 LiDAR</h3>
+<p>The 2024 LidarBC inventory provides:</p>
+<ul>
+<li>278,318 canopy trees;</li>
+<li>160/160 blocks with coverage;</li>
+<li>117,297 trees at least 20 m tall;</li>
+<li>6,046 four-to-ten-tree clumps at 10 m linkage;</li>
+<li>88,640 reserve trees and 28,191 harvest trees in the spatial reserve
+scenario.</li>
+</ul>
+<p>The current spatial-clump FVS pilot:</p>
+<ul>
+<li>takes a one-hectare LiDAR sample per block;</li>
+<li>groups trees at least 20 m into 10 m clumps;</li>
+<li>splits clumps into 4–10-tree groups;</li>
+<li>reserves the three largest trees per clump;</li>
+<li>harvests the remaining clump trees;</li>
+<li>treats singletons as reserved;</li>
+<li>uses a stable three-digit FVS plot key so after-treatment rows can
+be traced back to the source clump;</li>
+<li>scales LiDAR TPH to VRI live stems per hectare;</li>
+<li>scales LiDAR DBH so block BA matches VRI BA;</li>
+<li>samples tree-level species from the VRI species composition.</li>
+</ul>
+<p>This is a real spatial-clump implementation, but it is still a
+<strong>structural pilot</strong>. The LiDAR DBH is height-allometry,
+the species are sampled from VRI composition, and the one-hectare sample
+is scaled to VRI TPH/BA.</p>
+<h3 id="operational-and-financial-layer">4.5 Operational and financial
+layer</h3>
+<p>FHOPS and WS4 operational screens provide:</p>
+<ul>
+<li>block-level harvest decisions;</li>
+<li>landing and machine constraints;</li>
+<li>haul distance and truck-fleet screens;</li>
+<li>period production and target reports;</li>
+<li>public finance envelopes.</li>
+</ul>
+<p>The finance values are an AFRF MWP #3 Figure 7 public envelope. They
+are not a budget forecast. NPV uses annual cash flows spread uniformly
+inside 10-year periods.</p>
+<h2 id="scenario-plan">5. Scenario plan</h2>
+<p>The scenario plan is intentionally layered. We do not want one “best”
+number; we want a defensible family of screens that shows what changes
+when an assumption changes.</p>
+<h3 id="afrf-scenarios">5.1 AFRF scenarios</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>Purpose</th>
+<th>Current status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>gavin-policy</code></td>
+<td>Decision-grade Gavin public policy screen</td>
+<td>61/61 targets met; use as AFRF benchmark</td>
+</tr>
+<tr class="even">
+<td><code>knife-gwm-policy</code></td>
+<td>Legal-HMZ sustained GWM screen</td>
+<td>structural; main Knife policy candidate</td>
+</tr>
+<tr class="odd">
+<td><code>knife-gwm-lidar-policy</code></td>
+<td>Adds a real LiDAR block-level harvest gate</td>
+<td>structural; tests LiDAR eligibility</td>
+</tr>
+<tr class="even">
+<td><code>knife-lidar-clump-policy</code></td>
+<td>Replaces the proxy with spatial LiDAR clumps in FVS</td>
+<td>structural pilot; strongest LiDAR test</td>
+</tr>
+<tr class="odd">
+<td><code>knife-structural</code></td>
+<td>Earlier single-cycle comparison</td>
+<td>retained for traceability</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mkrf-scenarios">5.2 MKRF scenarios</h3>
+<p>The MKRF set is a separate estate and a stress test of the same
+stack:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th style="text-align: right;">Production</th>
+<th style="text-align: right;">Annual net after cost</th>
+<th style="text-align: right;">NPV 4%</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>low-44</td>
+<td style="text-align: right;">3,170,458 m³ / 100 yr</td>
+<td style="text-align: right;">~CAD 2.06M/yr</td>
+<td style="text-align: right;">~CAD 48.3M</td>
+</tr>
+<tr class="even">
+<td>base-44</td>
+<td style="text-align: right;">3,148,735 m³ / 100 yr</td>
+<td style="text-align: right;">~CAD 2.04M/yr</td>
+<td style="text-align: right;">~CAD 48.2M</td>
+</tr>
+<tr class="odd">
+<td>high-44</td>
+<td style="text-align: right;">2,794,062 m³ / 100 yr</td>
+<td style="text-align: right;">~CAD 1.81M/yr</td>
+<td style="text-align: right;">~CAD 42.5M</td>
+</tr>
+</tbody>
+</table>
+<p>MKRF is not the Knife Creek management plan. It is evidence that the
+modelling stack and scenario discipline are portable to a much larger
+estate.</p>
+<h3 id="scenario-logic">5.3 Scenario logic</h3>
+<p>The plan should carry three Knife Creek cases forward:</p>
+<ol type="1">
+<li><strong>Legal-HMZ GWM base case</strong> — the constraint-respecting
+screen.</li>
+<li><strong>LiDAR-informed spatial clump case</strong> — the case that
+tests whether observed clump geometry changes the harvest level.</li>
+<li><strong>Stress/sensitivity case</strong> — low/base/high finance,
+plus a no-harvest or reserve-heavy habitat case.</li>
+</ol>
+<p>The decision rule should not be “pick the highest NPV.” It should
+be:</p>
+<ul>
+<li>does the case meet the HMZ constraints?</li>
+<li>is the growth/yield evidence strong enough for the claimed harvest
+level?</li>
+<li>does the operational screen close?</li>
+<li>does the habitat indicator stay within the intended range?</li>
+<li>can we explain the result without hiding the uncertainty?</li>
+</ul>
+<h2 id="early-preview-results">6. Early preview results</h2>
+<h3 id="gavin-lake">6.1 Gavin Lake</h3>
+<ul>
+<li>2,907 blocks / 5,663.66 ha</li>
+<li>5,385,149 m³ over 300 years</li>
+<li>61/61 public policy targets met</li>
+<li>annual net after cost ~CAD 1.95M</li>
+<li>NPV 4% ~CAD 48.3M</li>
+<li>P00: 192 blocks, 175,533 m³, 315-day screen</li>
+<li>P01: 237 blocks, 176,512 m³, 355-day screen</li>
+</ul>
+<h3 id="knife-creek-legal-hmz-gwm">6.2 Knife Creek legal-HMZ GWM</h3>
+<ul>
+<li>160 blocks / 3,481.77 ha</li>
+<li>157 blocks scheduled</li>
+<li>1,570 entries</li>
+<li>2,433,385 m³ over 300 years</li>
+<li>production positive in all 30 periods</li>
+<li>annual net after cost ~CAD 882k</li>
+<li>NPV 4% ~CAD 39.3M</li>
+<li>P00: 208,452 m³; P29: 29,632 m³</li>
+</ul>
+<h3 id="knife-creek-lidar-spatial-clump">6.3 Knife Creek LiDAR spatial
+clump</h3>
+<ul>
+<li>132 blocks scheduled / 160 mapped</li>
+<li>624 entries</li>
+<li>2,564,179 m³ over 300 years</li>
+<li>production positive in all 30 periods</li>
+<li>annual net after cost ~CAD 930k</li>
+<li>NPV 4% ~CAD 55.6M</li>
+<li>P00: 384,283 m³; P29: 83,255 m³</li>
+</ul>
+<p>The LiDAR case is not automatically better because its NPV is higher.
+It harvests more volume earlier. That is exactly why the scenario must
+be reviewed for habitat and legal fit, not selected on NPV alone.</p>
+<h2 id="confidence-ladder">7. Confidence ladder</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Area</th>
+<th>Current confidence</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estate boundary and block geometry</td>
+<td>High</td>
+<td>Public SUP, VRI and HMZ layers are explicit and reproducible</td>
+</tr>
+<tr class="even">
+<td>HMZ area and offer matrix</td>
+<td>Medium-high</td>
+<td>Public layer and legal matrix captured; current order still needs
+review</td>
+</tr>
+<tr class="odd">
+<td>FVS-BC state transitions</td>
+<td>Medium</td>
+<td>Structural runs exist; PSP analog is not KC-calibrated</td>
+</tr>
+<tr class="even">
+<td>Clump-harvest accounting</td>
+<td>High</td>
+<td>Fixed and traceable in the v3 library</td>
+</tr>
+<tr class="odd">
+<td>LiDAR tree positions and clumps</td>
+<td>Medium</td>
+<td>Real canopy inventory; DBH is allometry and species are
+VRI-sampled</td>
+</tr>
+<tr class="even">
+<td>Growth and yield level</td>
+<td>Low-medium</td>
+<td>No KC CFI; PSP analog; model response uncertain</td>
+</tr>
+<tr class="odd">
+<td>Financial envelope</td>
+<td>Low-medium</td>
+<td>Public MWP #3 Figure 7 envelope, not a budget</td>
+</tr>
+<tr class="even">
+<td>Operational feasibility</td>
+<td>Medium</td>
+<td>Queue/landing/haul screens exist; roads are not surveyed</td>
+</tr>
+<tr class="odd">
+<td>Legal compliance</td>
+<td>Not established</td>
+<td>Structural HMZ envelope only; no legal opinion</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-field-data-buys">8. What field data buys</h2>
+<p>A focused calibration programme would change the quality of the plan
+in four specific ways:</p>
+<ol type="1">
+<li><strong>Measured DBH and BA.</strong> Calibrates the LiDAR
+height–DBH relation and replaces the VRI scaling assumption.</li>
+<li><strong>Species composition.</strong> Replaces VRI-sampled species
+with measured tree-level composition.</li>
+<li><strong>Mortality, damage and ingrowth.</strong> Makes the state
+transitions defensible instead of structural.</li>
+<li><strong>CFI or released tree list.</strong> Anchors the growth and
+yield model to Knife Creek rather than a regional PSP analog.</li>
+</ol>
+<p>The field programme does not need to cover the whole estate at once.
+A stratified pilot across the main HMZ/BEC/productivity strata would be
+enough to test whether the current results are credible. If the pilot
+shows the model is tracking, it justifies a larger campaign. If it does
+not, we learn that early, before the plan is presented as final.</p>
+<h2 id="staged-workplan">9. Staged workplan</h2>
+<h3 id="next-24-weeks">Next 2–4 weeks</h3>
+<ul>
+<li>Internal review of this draft and the scenario logic.</li>
+<li>Choose calibration strata and sample design.</li>
+<li>Validate the LiDAR clump layer against VRI and available PSP
+plots.</li>
+<li>Fix or explicitly document the small number of blocks that fail the
+current FVS row mapping.</li>
+<li>Produce a legal/HMZ review checklist.</li>
+</ul>
+<h3 id="next-field-season">Next field season</h3>
+<ul>
+<li>CFI/PSP remeasurement in the selected strata.</li>
+<li>Measured species, DBH, height, damage and mortality.</li>
+<li>LiDAR plot calibration and, if possible, point-cloud CHM
+improvement.</li>
+<li>Re-run the FVS-BC library with calibrated tree lists.</li>
+</ul>
+<h3 id="next-46-months">Next 4–6 months</h3>
+<ul>
+<li>Rebuild the state library and WS4 dataset.</li>
+<li>Re-run legal-HMZ, LiDAR-gated and spatial-clump scenarios.</li>
+<li>Complete the operational and finance review.</li>
+<li>Produce the first full draft management plan for internal
+review.</li>
+</ul>
+<h3 id="decision-gate">Decision gate</h3>
+<p>Do not treat this as an approved AAC or budget. The gate is:</p>
+<ul>
+<li>calibrated growth/yield evidence;</li>
+<li>HMZ/legal review;</li>
+<li>operational feasibility;</li>
+<li>habitat indicators;</li>
+<li>transparent finance envelope.</li>
+</ul>
+<h2 id="what-we-are-asking-for">10. What we are asking for</h2>
+<p>We are asking the Dean’s Office to support:</p>
+<ol type="1">
+<li><strong>Endorsement of the draft structure and scenario
+framework</strong> as the basis for consultation, not as an approved
+plan.</li>
+<li><strong>A focused calibration and technical-review
+programme</strong> — field pilot, LiDAR calibration, legal/HMZ review,
+and model review.</li>
+<li><strong>A staged resource decision</strong> — small calibration
+first, larger field campaign only if the early results remain
+credible.</li>
+</ol>
+<p>The current work is strong enough to show the structure, the
+modelling approach, the scenario plan and preliminary results. It is not
+strong enough to defend a final AAC, a final revenue forecast, or a
+legal compliance claim. That is the honest boundary, and it is the right
+basis for a Dean’s Office conversation.</p>
+<h2 id="appendix-a-run-register">Appendix A — Run register</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Run</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>gavin-policy</code></td>
+<td>Gavin decision-grade public policy screen</td>
+</tr>
+<tr class="even">
+<td><code>knife-gwm-policy</code></td>
+<td>Legal-HMZ sustained GWM screen</td>
+</tr>
+<tr class="odd">
+<td><code>knife-gwm-lidar-policy</code></td>
+<td>LiDAR block-gate screen</td>
+</tr>
+<tr class="even">
+<td><code>knife-lidar-clump-policy</code></td>
+<td>LiDAR spatial-clump FVS pilot</td>
+</tr>
+<tr class="odd">
+<td><code>knife-structural</code></td>
+<td>Earlier structural comparison</td>
+</tr>
+<tr class="even">
+<td><code>mkrf-low-estate</code></td>
+<td>MKRF low-44 full-estate screen</td>
+</tr>
+<tr class="odd">
+<td><code>mkrf-full-estate</code></td>
+<td>MKRF base-44 full-estate screen</td>
+</tr>
+<tr class="even">
+<td><code>mkrf-high-estate</code></td>
+<td>MKRF high-44 full-estate screen</td>
+</tr>
+</tbody>
+</table>
+<h2 id="appendix-b-evidence-paths">Appendix B — Evidence paths</h2>
+<pre class="text"><code>fhops-public-demo/examples/demo_runs/
+fhops-public-demo/examples/demo_runs/AFRF_DECISION_PACK.md
+fhops-public-demo/examples/demo_runs/MKRF_DECISION_PACK.md
+fhops-public-demo/examples/demo_runs/MKRF_SCENARIO_COMPARISON.md
+femic-afrf-knifecreek-instance/ws4/state_library_v3/
+femic-afrf-knifecreek-instance/ws4/dataset_kc_spatial_v5/
+femic-afrf-knifecreek-instance/data/lidar/kc_2024/
+femic-afrf-knifecreek-instance/notes/reference/lidarbc-kc-pilot.md</code></pre>
+<h2 id="appendix-c-what-not-to-say">Appendix C — What not to say</h2>
+<p>Do not say:</p>
+<ul>
+<li>“This is the approved AAC.”</li>
+<li>“This is a budget forecast.”</li>
+<li>“This proves legal compliance with the GWM order.”</li>
+<li>“The LiDAR inventory is a CFI.”</li>
+<li>“The Knife Creek results are calibrated.”</li>
+</ul>
+<p>Say instead:</p>
+<ul>
+<li>“This is a reproducible early-draft policy screen.”</li>
+<li>“The legal-HMZ case and the LiDAR spatial-clump case bracket the
+current modelling range.”</li>
+<li>“The remaining uncertainty is field calibration and legal review,
+not a missing modelling framework.”</li>
+</ul>
+</body>
+</html>
