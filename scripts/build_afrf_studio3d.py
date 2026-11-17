@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Build a WS4 studio-3D scene for an AFRF block from public geometry.
 
-This is a visual scene pack, not an inventory.  It uses public block polygons,
-an SRTM terrain surface, and block-level stem density/height.  The browser
-synthesises the full stem field inside the polygons; it does not claim measured
-tree positions.
+This is a visual scene pack, not an inventory.  It can use LidarBC DEM/CHM
+rasters when present, an SRTM terrain fallback, and block-level stem
+density/height/species.  The browser synthesises the full stem field inside the
+polygons; it does not claim measured tree positions.  CHM no-data gaps are
+filled from block height for display only and are labelled as fallback.
 """
 
 from __future__ import annotations
@@ -22,6 +23,7 @@ import rasterio
 from affine import Affine
 from pyproj import Transformer
 from rasterio.enums import Resampling
+from rasterio.features import rasterize
 from rasterio.warp import reproject
 
 SCENE_CRS = "EPSG:3005"
@@ -82,6 +84,48 @@ def _polygon_ring(geometry: object) -> list[list[float]]:
     return []
 
 
+def _choose_default_block(block_rows: list[dict[str, object]]) -> dict[str, object] | None:
+    """Pick a central production block, not the first row in the inventory."""
+    if not block_rows:
+        return None
+    total_area = sum(float(row["area_ha"]) for row in block_rows) or 1.0
+    center_x = sum(float(row["centroid"][0]) * float(row["area_ha"]) for row in block_rows)
+    center_z = sum(float(row["centroid"][1]) * float(row["area_ha"]) for row in block_rows)
+    center_x /= total_area
+    center_z /= total_area
+    candidates = [row for row in block_rows if float(row["area_ha"]) >= 1.0]
+    if not candidates:
+        candidates = block_rows
+    return min(
+        candidates,
+        key=lambda row: (
+            (float(row["centroid"][0]) - center_x) ** 2
+            + (float(row["centroid"][1]) - center_z) ** 2
+        ),
+    )
+
+
+def _rasterize_block_heights(
+    block_rows: list[dict[str, object]], dx: float, ny: int, nx: int
+) -> np.ndarray:
+    """Burn block heights onto the scene grid for CHM no-data fallback."""
+    shapes = [
+        ({"type": "Polygon", "coordinates": [row["polygon"]]}, row["height_m"])
+        for row in block_rows
+        if isinstance(row.get("polygon"), list) and len(row["polygon"]) >= 4
+    ]
+    if not shapes:
+        return np.zeros((ny, nx), dtype=np.float32)
+    return rasterize(
+        shapes,
+        out_shape=(ny, nx),
+        transform=Affine(dx, 0.0, 0.0, 0.0, dx, 0.0),
+        fill=0.0,
+        all_touched=True,
+        dtype="float32",
+    )
+
+
 def build(args: argparse.Namespace) -> dict[str, object]:
     blocks = gpd.read_file(args.blocks).to_crs(SOURCE_CRS)
     metrics = pd.read_csv(args.metrics) if args.metrics else None
@@ -104,6 +148,16 @@ def build(args: argparse.Namespace) -> dict[str, object]:
     scene_left = float(left)
     scene_top = float(top)
     synthetic_canopy = True
+    canopy_valid: np.ndarray | None = None
+    canopy_fallback = False
+    chm_valid_fraction: float | None = None
+    to_wgs = Transformer.from_crs(SOURCE_CRS, "EPSG:4326", always_xy=True)
+    lon, lat = to_wgs.transform(xx, yy)
+    srtm = (
+        _sample_srtm(lat, lon, Path(args.srtm_dir))
+        if args.srtm_dir is not None
+        else np.full((ny, nx), np.nan, dtype=np.float32)
+    )
     if args.dem and args.chm:
         dst_transform = Affine(dx, 0.0, scene_left, 0.0, -dx, scene_top)
 
@@ -123,16 +177,18 @@ def build(args: argparse.Namespace) -> dict[str, object]:
                 )
                 return dst
 
-        terrain = _read_raster(Path(args.dem))
-        canopy = _read_raster(Path(args.chm))
+        terrain_source = _read_raster(Path(args.dem))
+        canopy_source = _read_raster(Path(args.chm))
+        canopy_valid = np.isfinite(canopy_source)
+        # LidarBC coverage is not wall-to-wall. Use the real 30 m SRTM surface
+        # only where lidar DEM has no data; never fill CHM canopy here.
+        terrain = np.where(np.isfinite(terrain_source), terrain_source, srtm)
         terrain = np.where(np.isfinite(terrain), terrain, np.nanmean(terrain))
-        canopy = np.where(np.isfinite(canopy), canopy, 0.0)
+        canopy = np.where(canopy_valid, canopy_source, 0.0)
         synthetic_canopy = False
+        chm_valid_fraction = float(np.mean(canopy_valid))
     else:
-        to_wgs = Transformer.from_crs(SOURCE_CRS, "EPSG:4326", always_xy=True)
-        lon, lat = to_wgs.transform(xx, yy)
-        terrain = _sample_srtm(lat, lon, Path(args.srtm_dir))
-        terrain = np.where(np.isfinite(terrain), terrain, np.nanmean(terrain))
+        terrain = np.where(np.isfinite(srtm), srtm, np.nanmean(srtm))
         canopy = np.zeros_like(terrain)
     block_rows = []
     for _, row in blocks.iterrows():
@@ -159,6 +215,18 @@ def build(args: argparse.Namespace) -> dict[str, object]:
             and pd.notna(metric[args.height_field])
             else float(args.default_height)
         )
+        species = [["FD", 100.0]]
+        if (
+            metric is not None
+            and args.species_field in metric
+            and pd.notna(metric[args.species_field])
+        ):
+            try:
+                parsed = json.loads(str(metric[args.species_field]))
+                if isinstance(parsed, list) and parsed:
+                    species = parsed
+            except (TypeError, ValueError, json.JSONDecodeError):
+                species = [["FD", 100.0]]
         centroid = geom.centroid
         local_ring = [
             [round(float(x) - scene_left, 2), round(scene_top - float(y), 2)] for x, y in ring
@@ -178,14 +246,29 @@ def build(args: argparse.Namespace) -> dict[str, object]:
                 "au_id": str(metric[args.au_field])
                 if metric is not None and args.au_field in metric
                 else "",
-                "species": [["FD", 70.0], ["PL", 20.0], ["AT", 10.0]],
+                "species": species,
                 "treatment": "",
                 "treat_year": None,
                 "removal": 0.0,
                 "retention": 1.0,
             }
         )
-    default = block_rows[0] if block_rows else None
+    if canopy_valid is not None:
+        block_heights = _rasterize_block_heights(block_rows, dx, ny, nx)
+        fallback = (~canopy_valid) & (block_heights > 0.0)
+        canopy[fallback] = block_heights[fallback]
+        canopy_fallback = bool(fallback.any())
+        if canopy_fallback:
+            block_mask = block_heights > 0.0
+            if block_mask.any():
+                chm_valid_fraction = float(canopy_valid[block_mask].mean())
+    default = _choose_default_block(block_rows)
+    source_note = args.source_note
+    if chm_valid_fraction is not None and canopy_fallback:
+        source_note = (
+            f"{source_note} LidarBC CHM is valid over {chm_valid_fraction:.0%} "
+            "of the block area; CHM no-data gaps use block-height fallback, not measured canopy."
+        )
     payload: dict[str, object] = {
         "schema": "ws4.studio3d.v1",
         "label": args.label,
@@ -193,7 +276,11 @@ def build(args: argparse.Namespace) -> dict[str, object]:
         "generated_utc": dt.datetime.now(dt.UTC).isoformat(),
         "crs": SCENE_CRS,
         "synthetic_canopy": synthetic_canopy,
-        "source_note": args.source_note,
+        "canopy_fallback": canopy_fallback,
+        "chm_valid_fraction": round(chm_valid_fraction, 4)
+        if chm_valid_fraction is not None
+        else None,
+        "source_note": source_note,
         "bounds": {
             "min_x": 0.0,
             "max_x": round((nx - 1) * dx, 2),
@@ -218,16 +305,27 @@ def build(args: argparse.Namespace) -> dict[str, object]:
             "ny": ny,
             "values": canopy.tolist(),
         },
+        "canopy_valid": {
+            "x0": round(x0, 2),
+            "z0": 0.0,
+            "dx": round(dx, 3),
+            "dy": round(dx, 3),
+            "nx": nx,
+            "ny": ny,
+            "values": canopy_valid.astype(np.uint8).tolist()
+            if canopy_valid is not None
+            else None,
+        },
         "blocks": block_rows,
         "default_block": default["id"] if default else None,
         "default_center": default["centroid"] if default else [0.0, 0.0],
         "solar": {"tracks": []},
         "light": None,
         "method": {
-            "terrain": "5 m DEM bilinear sample"
+            "terrain": "5 m LidarBC DEM bilinear sample; SRTM 1 arc-second in DEM no-data gaps"
             if not synthetic_canopy
             else "SRTM 1 arc-second bilinear sample",
-            "canopy": "5 m LidarBC CHM bilinear sample"
+            "canopy": "5 m LidarBC CHM bilinear sample; block-height fallback in CHM no-data gaps"
             if not synthetic_canopy
             else "synthetic block-height field; no CHM installed",
             "stem_placement": "deterministic browser stems at block density inside block polygon",
@@ -243,6 +341,7 @@ def main() -> None:
     parser.add_argument("--id-field", default="block_id")
     parser.add_argument("--density-field", default="density")
     parser.add_argument("--height-field", default="height_m")
+    parser.add_argument("--species-field", default="species")
     parser.add_argument("--au-field", default="au_id")
     parser.add_argument("--default-density", type=float, default=700.0)
     parser.add_argument("--default-height", type=float, default=25.0)
