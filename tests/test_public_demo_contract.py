@@ -333,8 +333,8 @@ def test_knife_lidar_clump_policy_uses_spatial_clumps(client: TestClient) -> Non
     kpis = client.get("/api/runs/knife-lidar-clump-policy/kpis").json()
     assert kpis["blocks_total"] == 160
     assert kpis["blocks_scheduled"] == 134
-    assert kpis["schedule_events"] == 1230
-    assert kpis["total_production_m3"] > 11_000_000
+    assert kpis["schedule_events"] == 642
+    assert kpis["total_production_m3"] > 2_500_000
     assert "spatial-clump" in kpis["status_note"]
     production = client.get(
         "/api/runs/knife-lidar-clump-policy/tactical/production?limit=50"

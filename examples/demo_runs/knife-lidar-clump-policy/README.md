@@ -5,28 +5,30 @@ spatial-clump screen.
 
 ## Method
 
-- One-hectare LiDAR sample per block.
-- Trees >=20 m grouped into 10 m components and split into 4-10-tree clumps.
-- The three largest trees in each 4-10-tree clump are reserved.
-- Remaining clump trees are harvested.
-- Singletons are reserved.
-- Each clump is a separate FVS plot with a stable 3-digit plot key.
-- LiDAR TPH is scaled to VRI live stems per hectare.
-- Species is assigned Douglas-fir; DBH is LiDAR height-allometry.
+- one-hectare LiDAR sample per block
+- trees >=20 m grouped into 10 m components and split into 4-10-tree clumps
+- three largest trees reserved per clump
+- remaining clump trees harvested
+- singletons reserved
+- each clump is a separate FVS plot with a stable 3-digit plot key
+- LiDAR TPH scaled to VRI live stems per hectare
+- LiDAR DBH scaled so block BA matches VRI BA
+- dominant VRI species assigned to the block
 
 ## Result
 
 - 134 blocks scheduled / 160 mapped
-- 1,230 entries
-- 11,458,742 m3 total production
+- 642 entries
+- 2,584,936 m3 total production
 - positive production in all 30 periods
-- P00: 393,156 m3
-- P29: 290,274 m3
-- annual net after cost: ~CAD 4.15M
+- P00: 388,074 m3
+- P29: 85,132 m3
+- annual net after cost: approximately CAD 937k
 - NPV 4%: see `finance_envelope.json`
 
 ## Limits
 
-This is a structural pilot, not a CFI or an approved plan. The LiDAR DBH is
-height-allometry, species is assigned, and the one-hectare sample is scaled to
-VRI TPH. It is not a legal-compliance determination.
+This is a structural pilot, not a CFI or an approved plan. LiDAR DBH is
+height-allometry, species is the block-dominant VRI species rather than
+tree-level composition, and the one-hectare sample is scaled to VRI TPH/BA.
+Block 108 failed the FVS run and is excluded.

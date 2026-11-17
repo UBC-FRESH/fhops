@@ -12,8 +12,8 @@
     "tactical_summary": "tactical_summary.json"
   },
   "warnings": [
-    "LiDAR DBH is height-allometry; species assigned FD.",
-    "One-hectare sample scaled to VRI TPH; structural pilot.",
+    "LiDAR DBH is height-allometry.",
+    "One-hectare sample scaled to VRI TPH and VRI BA; dominant VRI species assigned.",
     "Not an approved management plan."
   ],
   "generated_at": "2026-11-17T09:00:00+00:00",
