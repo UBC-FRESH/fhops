@@ -9,6 +9,7 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.routing import Route
 
 from fhops.web.app import ServiceConfig, create_app
@@ -41,6 +42,23 @@ app: FastAPI = create_app(
         game_session_store=ROOT / "build" / "demo_game_sessions.json",
         game_explanation_cache=ROOT / "build" / "demo_explanations.json",
     )
+)
+
+# Public research-forest cards, PDF briefs, full stem CSVs, and 3D stand viewers.
+app.mount(
+    "/briefs",
+    StaticFiles(directory=ROOT / "examples" / "demo_runs"),
+    name="briefs",
+)
+app.mount(
+    "/stems",
+    StaticFiles(directory=ROOT / "examples" / "game" / "stands"),
+    name="stems",
+)
+app.mount(
+    "/flyovers",
+    StaticFiles(directory=ROOT / "examples" / "game" / "replays"),
+    name="flyovers",
 )
 
 # Fancy Tree Lab sandbox, mounted at /sandbox. Its assets and API use relative paths.
@@ -163,10 +181,16 @@ def _full_console(_request: Request) -> FileResponse:
     return FileResponse(path, headers={"Cache-Control": "no-store"})
 
 
+def _forests(_request: Request) -> FileResponse:
+    return FileResponse(ROOT / "forests.html", headers={"Cache-Control": "no-store"})
+
+
 async def _sandbox_redirect(_request: Request) -> RedirectResponse:
     return RedirectResponse("/sandbox-v20261031i/", status_code=302)
 
 
+app.router.routes.insert(0, Route("/forests", _forests, methods=["GET"]))
+app.router.routes.insert(0, Route("/forests/", _forests, methods=["GET"]))
 app.router.routes.insert(0, Route("/sandbox", _sandbox_redirect, methods=["GET"]))
 app.router.routes.insert(0, Route("/sandbox/", _sandbox_redirect, methods=["GET"]))
 app.router.routes.insert(0, Route("/sandbox-v20261031c", _sandbox_redirect, methods=["GET"]))

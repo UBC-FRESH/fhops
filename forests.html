@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UBC Research Forests · WS4 + FHOPS</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; --ink:#14251b; --muted:#5a6b60; --forest:#145c3a; --line:#cddbd1; --card:#ffffff; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); background: radial-gradient(circle at 10% 0%, #dfeee4 0, #f2f6f2 48%, #e9efe9 100%); }
+    header { max-width:1180px; margin:0 auto; padding:42px 24px 14px; }
+    .kicker { color:var(--forest); text-transform:uppercase; letter-spacing:.14em; font-size:.72rem; font-weight:800; }
+    h1 { margin:.35rem 0 .5rem; font-size:clamp(2.2rem,4.6vw,3.8rem); letter-spacing:-.055em; line-height:1.02; }
+    .lead { max-width:850px; color:var(--muted); font-size:1.06rem; line-height:1.55; }
+    main { max-width:1180px; margin:0 auto; padding:16px 24px 42px; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 14px 42px #173d2a14; display:flex; flex-direction:column; min-height:540px; }
+    .card.mkrf { border-top:5px solid #1f7a4b; }
+    .card.gavin { border-top:5px solid #2b6ca3; }
+    .card.knife { border-top:5px solid #a56b1f; }
+    h2 { margin:.25rem 0 .2rem; font-size:1.55rem; letter-spacing:-.03em; }
+    .sub { color:var(--muted); font-size:.92rem; line-height:1.45; min-height:3.4em; }
+    .stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0; }
+    .stat { background:#f5f8f5; border-radius:10px; padding:9px 10px; }
+    .stat b { display:block; font-size:1.05rem; color:var(--forest); }
+    .stat span { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .chips { display:flex; flex-wrap:wrap; gap:6px; margin:2px 0 16px; }
+    .chip { font-size:.74rem; background:#edf4ee; color:#245c3d; border:1px solid #d3e5d7; padding:4px 7px; border-radius:999px; }
+    .actions { margin-top:auto; display:grid; gap:8px; }
+    .btn { display:block; text-align:center; text-decoration:none; padding:10px 12px; border-radius:9px; font-weight:700; font-size:.88rem; border:1px solid #c6d8cc; color:var(--forest); background:#f7fbf7; }
+    .btn.primary { color:#fff; background:var(--forest); border-color:var(--forest); }
+    .btn:hover { filter:brightness(.96); }
+    .note { color:var(--muted); font-size:.76rem; line-height:1.45; margin-top:12px; border-top:1px solid #e2ebe5; padding-top:10px; }
+    .small { font-size:.78rem; color:var(--muted); }
+    .small a { color:var(--forest); }
+    footer { max-width:1180px; margin:0 auto; padding:0 24px 34px; color:var(--muted); font-size:.8rem; }
+    @media (max-width:980px) { .grid { grid-template-columns:1fr; } .card { min-height:0; } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="kicker">UBC Research Forests · WS4 + FHOPS · public working portal</div>
+  <h1>Three forests.<br>Three models. One planning stack.</h1>
+  <p class="lead">Scenario preloads, full-stem 3D stand flyovers, and early-draft management briefs for Malcolm Knapp, Gavin Lake and Knife Creek. The cards open the planning console on a preloaded scenario, the 3D stand viewer, or the current PDF brief.</p>
+</header>
+<main>
+  <div class="grid">
+    <section class="card mkrf">
+      <div class="kicker">Malcolm Knapp Research Forest</div>
+      <h2>MKRF</h2>
+      <div class="sub">The larger-estate stress test: 1,763 blocks across 4,810.85 ha, with three 100-year WS4 scenarios, public finance, and operational handoffs.</div>
+      <div class="stats">
+        <div class="stat"><b>3.17M m³</b><span>low-44 production</span></div>
+        <div class="stat"><b>~CAD 2.06M</b><span>annual net, low</span></div>
+        <div class="stat"><b>CAD 48.3M</b><span>NPV 4%, low</span></div>
+        <div class="stat"><b>33 / 3 / 1</b><span>targets met/below/above</span></div>
+      </div>
+      <div class="chips"><span class="chip">base-44</span><span class="chip">low-44</span><span class="chip">high-44</span><span class="chip">P00/P01 ops</span></div>
+      <div class="actions">
+        <a class="btn primary" href="/fhops/?run=mkrf-low-estate">Open low-44 in FHOPS →</a>
+        <a class="btn" href="/fhops/?run=mkrf-full-estate">Open base-44 →</a>
+        <a class="btn" href="/flyovers/mkrf_684/optimal/viewer.html">3D stand flyover →</a>
+        <a class="btn" href="/briefs/MKRF_EARLY_MANAGEMENT_PLAN.pdf">MKRF draft management plan (PDF) →</a>
+      </div>
+      <div class="note">Representative stand flyover: MKRF RES_KEY 684, 6.86 ha, 4,798 stems. <a href="/stems/mkrf_684/trees.csv">Full stem CSV</a>. Scenario numbers are public WS4 screens, not a budget forecast.</div>
+    </section>
+
+    <section class="card gavin">
+      <div class="kicker">Alex Fraser Research Forest</div>
+      <h2>Gavin Lake</h2>
+      <div class="sub">The separate AFRF block and current benchmark: 2,907 blocks across 5,663.66 ha. Timber-only upper bound plus the pending Beaver Valley mule-deer constraint.</div>
+      <div class="stats">
+        <div class="stat"><b>5.39M m³</b><span>300-year production</span></div>
+        <div class="stat"><b>~CAD 1.95M</b><span>annual net</span></div>
+        <div class="stat"><b>CAD 48.3M</b><span>NPV 4%</span></div>
+        <div class="stat"><b>2,846 ha</b><span>Beaver Valley MDWR</span></div>
+      </div>
+      <div class="chips"><span class="chip">gavin-policy</span><span class="chip">gavin-optimized</span><span class="chip">P00/P01 ops</span><span class="chip">MDWR review</span></div>
+      <div class="actions">
+        <a class="btn primary" href="/fhops/?run=gavin-policy">Open Gavin policy in FHOPS →</a>
+        <a class="btn" href="/fhops/?run=gavin-optimized">Open LTSY draft →</a>
+        <a class="btn" href="/flyovers/gavin_1032/optimal/viewer.html">3D stand flyover →</a>
+        <a class="btn" href="/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf">AFRF draft management plan (PDF) →</a>
+      </div>
+      <div class="note">Representative stand flyover: Gavin block 1032, 10.00 ha, 18,595 stems. <a href="/stems/gavin_1032/trees.csv">Full stem CSV</a>. Gavin is not decision-grade until the MDWR constraint is carried.</div>
+    </section>
+
+    <section class="card knife">
+      <div class="kicker">Alex Fraser Research Forest</div>
+      <h2>Knife Creek</h2>
+      <div class="sub">The separate AFRF GWM block: 160 blocks across 3,481.77 ha, with legal-HMZ and LiDAR spatial-clump scenarios and a sustained 300-year screen.</div>
+      <div class="stats">
+        <div class="stat"><b>2.56M m³</b><span>LiDAR clump production</span></div>
+        <div class="stat"><b>~CAD 930k</b><span>annual net</span></div>
+        <div class="stat"><b>CAD 55.6M</b><span>NPV 4%</span></div>
+        <div class="stat"><b>278,318</b><span>LiDAR canopy trees</span></div>
+      </div>
+      <div class="chips"><span class="chip">knife-gwm-policy</span><span class="chip">knife-gwm-lidar-policy</span><span class="chip">knife-lidar-clump-policy</span><span class="chip">HMZ</span></div>
+      <div class="actions">
+        <a class="btn primary" href="/fhops/?run=knife-lidar-clump-policy">Open LiDAR clump policy →</a>
+        <a class="btn" href="/fhops/?run=knife-gwm-policy">Open legal-HMZ policy →</a>
+        <a class="btn" href="/flyovers/kc_57254551/optimal/viewer.html">3D stand flyover →</a>
+        <a class="btn" href="/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf">AFRF draft management plan (PDF) →</a>
+      </div>
+      <div class="note">Representative stand flyover: Knife VRI 57254551, 35.95 ha, 17,221 stems. <a href="/stems/kc_57254551/trees.csv">Full stem CSV</a>. Structural LiDAR pilot; not an approved plan.</div>
+    </section>
+  </div>
+</main>
+<footer>Public experimental portal · WS4 + FHOPS · no login · scenarios open in the planning console · 3D stand viewers use full stem lists · draft PDFs are for discussion, not approval.</footer>
+</body>
+</html>

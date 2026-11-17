@@ -58,7 +58,7 @@ account is present, so none is fabricated.
 LTSY targets. It schedules 2,863 blocks, produces 5.40 million m³, ends at 631,180 m³ growing
 stock, and reports 13 targets met, 37 below, and 11 above.
 
-`gavin-policy` is the decision-grade public policy screen: 174,000 m³/period floor, 600,000 m³
+`gavin-policy` is the timber-only public policy screen: 174,000 m³/period floor, 600,000 m³
 growing-stock floor, ±4% even-flow. It schedules 2,812 blocks, produces 5.39 million m³, ends at
 610,004 m³, and **meets all 61 targets**. It remains a public scenario choice, not an approved
 management plan.
@@ -102,9 +102,9 @@ scheduled on day 1.
 windows, 303,765.7 m³ delivered, 8,295 truckloads, plus 12 monthly Phase II day-1 samples
 (282 loads). It is a rolling aggregation, not a single 365-day MILP or continuous truck schedule.
 The one-page MKRF decision pack is `examples/demo_runs/MKRF_DECISION_PACK.md`.
-The early management-plan brief is `examples/demo_runs/AFRF_EARLY_MANAGEMENT_PLAN.md`
-(also distributed as `.docx` and `.html`). The AFRF comparison is
-`examples/demo_runs/AFRF_DECISION_PACK.md`; Gavin is decision-grade,
+The early management-plan brief is `examples/demo_runs/AFRF_EARLY_MANAGEMENT_PLAN.pdf`
+(also available as `.md` and `.html`). The AFRF comparison is
+`examples/demo_runs/AFRF_DECISION_PACK.md`; Gavin is a timber-only upper bound,
 while the new Knife GWM policy screen reaches a reserve cycle after about 120 years.
 
 `mkrf-high-p01-haul-30d` is the matching actual FHOPS Phase I/II high-scenario sample:

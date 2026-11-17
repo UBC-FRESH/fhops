@@ -161,6 +161,23 @@ def test_gateway_keeps_every_demo_door(client: TestClient) -> None:
     assert "Experimental · classroom only" in body
 
 
+def test_research_forest_portal_and_briefs(client: TestClient) -> None:
+    response = client.get("/forests/")
+    assert response.status_code == 200
+    body = response.text
+    for label in ("MKRF", "Gavin Lake", "Knife Creek"):
+        assert label in body
+    for path in (
+        "/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf",
+        "/briefs/MKRF_EARLY_MANAGEMENT_PLAN.pdf",
+        "/flyovers/gavin_1032/optimal/viewer.html",
+        "/flyovers/kc_57254551/optimal/viewer.html",
+        "/stems/gavin_1032/trees.csv",
+        "/stems/kc_57254551/trees.csv",
+    ):
+        assert client.get(path).status_code == 200, path
+
+
 def test_full_console_shell_is_served_at_fhops(client: TestClient) -> None:
     response = client.get("/fhops/")
     assert response.status_code == 200

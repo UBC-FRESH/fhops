@@ -1,6 +1,6 @@
 # AFRF decision pack
 
-## Gavin Lake — decision-grade public policy screen
+## Gavin Lake — timber-only upper bound (MDWR pending)
 
 - 2,907 blocks / 5,663.66 ha
 - 5,385,148.57 m³ production over 300 years
@@ -64,7 +64,8 @@ is from that earlier structural P00, not from this new policy screen.
 
 ## Decision
 
-Gavin remains the larger decision-grade public policy screen. Knife now has a legal-HMZ,
+Gavin remains the larger timber-only policy screen. It is **not decision-grade until the
+Beaver Valley MDWR constraint is carried**. Knife now has a legal-HMZ,
 sustained GWM policy screen that can be compared with Gavin on volume and finance, with these
 caveats:
 
