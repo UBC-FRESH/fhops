@@ -1,0 +1,13 @@
+{
+  "source": "femic-afrf-knifecreek-instance",
+  "lidar": "data/lidar/kc_2024/trees.parquet",
+  "blocks": "ws4/lidar_clump_policy/cuts.csv",
+  "method": "one-ha LiDAR samples; 10 m clumps; 4-10 trees; reserve 3; VRI TPH scaling; FD species",
+  "crs": "EPSG:3005",
+  "caveats": [
+    "LiDAR DBH is height-allometry, not measured.",
+    "No species, understory, damage or mortality.",
+    "One FVS case per block; residual state is structural.",
+    "Not an approved management plan."
+  ]
+}

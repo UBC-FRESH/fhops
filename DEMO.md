@@ -126,6 +126,12 @@ Blocks with zero LiDAR harvest trees are excluded: 135 of 160 blocks are schedul
 1,350 entries and 2,343,814 m³. Production remains positive in all 30 periods. This is a
 block-level LiDAR gate, not yet a replacement of the DBH-ranked clump proxy inside FVS.
 
+`knife-lidar-clump-policy` is the spatial-clump FVS screen. It uses one-hectare LiDAR samples,
+groups trees ≥20 m into 10 m clumps, reserves the three largest trees per 4–10-tree clump, and
+runs block-level FVS entries. It schedules 134 of 160 blocks, 1,230 entries, and 11.46 million m³.
+Production is positive in all 30 periods. This is a structural LiDAR pilot, not a CFI or an
+approved plan; LiDAR DBH is height-allometry and species is assigned Douglas-fir.
+
 `mkrf-full-estate` is the full WS4 MKRF estate handoff:
 
 - 1,763 blocks covering 4,810.85 ha in EPSG:3005;

@@ -42,6 +42,21 @@ This is a real use of LiDAR, but only as a block-level gate. It excludes blocks 
 reserve scenario finds no harvest trees. It does not yet replace the DBH-ranked six-tree proxy
 inside FVS.
 
+A spatial-clump FVS screen now uses the LiDAR trees directly:
+
+- one-hectare LiDAR sample per block
+- 10 m clumps, 4–10 trees, three reserved trees per clump
+- block-level FVS entries
+- 134 of 160 blocks scheduled
+- 11,458,742 m³ total production
+- positive production in all 30 periods
+- annual net after cost under the public envelope: approximately CAD 4.15M
+- NPV 4%: approximately CAD 99.4M
+
+This is a structural pilot. LiDAR DBH is height-allometry, species is assigned Douglas-fir,
+and the one-hectare sample is scaled to VRI TPH. It is not a CFI or an approved plan, and it
+should not be treated as a decision-grade revenue forecast.
+
 The earlier `knife-structural` run remains as a comparison. The `knife-p00-operational` handoff
 is from that earlier structural P00, not from this new policy screen.
 
