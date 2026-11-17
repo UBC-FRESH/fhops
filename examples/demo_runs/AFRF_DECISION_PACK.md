@@ -47,13 +47,13 @@ A spatial-clump FVS screen now uses the LiDAR trees directly:
 - one-hectare LiDAR sample per block
 - 10 m clumps, 4–10 trees, three reserved trees per clump
 - block-level FVS entries; LiDAR TPH/BA calibrated to VRI
-- dominant VRI species assigned per block
-- 134 of 160 blocks scheduled
-- 642 entries
-- 2,584,936 m³ total production
+- tree-level species sampled from VRI composition
+- 132 of 160 blocks scheduled
+- 624 entries
+- 2,564,179 m³ total production
 - positive production in all 30 periods
-- annual net after cost under the public envelope: approximately CAD 937k
-- NPV 4%: approximately CAD 56.8M
+- annual net after cost under the public envelope: approximately CAD 930k
+- NPV 4%: approximately CAD 55.6M
 
 This is a structural pilot. LiDAR DBH is height-allometry, species is assigned Douglas-fir,
 and the one-hectare sample is scaled to VRI TPH. It is not a CFI or an approved plan, and it

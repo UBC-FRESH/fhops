@@ -1,18 +1,18 @@
 {
   "finance_net_value_per_m3_2026_cad_low": 79.75,
   "finance_harvest_cost_per_m3_2026_cad_low": 40.6,
-  "finance_net_revenue_cad_low": 206148683.16,
-  "finance_annual_net_revenue_cad_low": 687162.28,
+  "finance_net_revenue_cad_low": 204493282.94,
+  "finance_annual_net_revenue_cad_low": 681644.28,
   "finance_net_value_per_m3_2026_cad_base": 108.75,
   "finance_harvest_cost_per_m3_2026_cad_base": 46.4,
-  "finance_net_revenue_cad_base": 281111840.68,
-  "finance_annual_net_revenue_cad_base": 937039.47,
+  "finance_net_revenue_cad_base": 278854476.73,
+  "finance_annual_net_revenue_cad_base": 929514.92,
   "finance_net_value_per_m3_2026_cad_high": 145,
   "finance_harvest_cost_per_m3_2026_cad_high": 72.5,
-  "finance_net_revenue_cad_high": 374815787.57,
-  "finance_annual_net_revenue_cad_high": 1249385.96,
+  "finance_net_revenue_cad_high": 371805968.98,
+  "finance_annual_net_revenue_cad_high": 1239353.23,
   "finance_basis": "AFRF MWP #3 Figure 7 public envelope; LiDAR spatial-clump FVS screen; not a budget forecast",
-  "finance_npv_net_2pct_cad": 84209247.77,
-  "finance_npv_net_4pct_cad": 56789124.08,
-  "finance_npv_net_6pct_cad": 44393624.22
+  "finance_npv_net_2pct_cad": 82660528.88,
+  "finance_npv_net_4pct_cad": 55607960.18,
+  "finance_npv_net_6pct_cad": 43508739.64
 }

@@ -13,7 +13,7 @@
   },
   "warnings": [
     "LiDAR DBH is height-allometry.",
-    "One-hectare sample scaled to VRI TPH and VRI BA; dominant VRI species assigned.",
+    "One-hectare sample scaled to VRI TPH and VRI BA; tree-level VRI species composition.",
     "Not an approved management plan."
   ],
   "generated_at": "2026-11-17T09:00:00+00:00",

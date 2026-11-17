@@ -129,9 +129,9 @@ block-level LiDAR gate, not yet a replacement of the DBH-ranked clump proxy insi
 `knife-lidar-clump-policy` is the spatial-clump FVS screen. It uses one-hectare LiDAR samples,
 groups trees ≥20 m into 10 m clumps, reserves the three largest trees per 4–10-tree clump, and
 runs block-level FVS entries. It calibrates LiDAR TPH and BA to VRI and assigns the dominant VRI
-species. It schedules 134 of 160 blocks, 642 entries, and 2.58 million m³. Production is positive
+species. It schedules 132 of 160 blocks, 624 entries, and 2.56 million m³. Production is positive
 in all 30 periods. This is a structural LiDAR pilot, not a CFI or an approved plan; LiDAR DBH is
-height-allometry and species is block-dominant, not tree-level composition.
+height-allometry and species is sampled from VRI composition, not measured tree-level composition.
 
 `mkrf-full-estate` is the full WS4 MKRF estate handoff:
 

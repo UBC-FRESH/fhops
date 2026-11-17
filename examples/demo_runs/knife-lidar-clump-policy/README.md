@@ -13,22 +13,22 @@ spatial-clump screen.
 - each clump is a separate FVS plot with a stable 3-digit plot key
 - LiDAR TPH scaled to VRI live stems per hectare
 - LiDAR DBH scaled so block BA matches VRI BA
-- dominant VRI species assigned to the block
+- tree-level species sampled from the VRI species composition
 
 ## Result
 
-- 134 blocks scheduled / 160 mapped
-- 642 entries
-- 2,584,936 m3 total production
+- 132 blocks scheduled / 160 mapped
+- 624 entries
+- 2,564,179 m3 total production
 - positive production in all 30 periods
-- P00: 388,074 m3
-- P29: 85,132 m3
-- annual net after cost: approximately CAD 937k
+- P00: 384,283 m3
+- P29: 83,255 m3
+- annual net after cost: approximately CAD 930k
 - NPV 4%: see `finance_envelope.json`
 
 ## Limits
 
 This is a structural pilot, not a CFI or an approved plan. LiDAR DBH is
-height-allometry, species is the block-dominant VRI species rather than
+height-allometry, species is sampled from VRI composition rather than measured
 tree-level composition, and the one-hectare sample is scaled to VRI TPH/BA.
-Block 108 failed the FVS run and is excluded.
+Blocks 49, 74 and 108 failed the FVS run and are excluded.
