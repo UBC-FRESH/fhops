@@ -7,8 +7,9 @@ from collections import defaultdict, deque
 from pathlib import Path
 from typing import Any
 
+import httpx
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.routing import Route
 
@@ -183,6 +184,31 @@ def _full_console(_request: Request) -> FileResponse:
 
 def _forests(_request: Request) -> FileResponse:
     return FileResponse(ROOT / "forests.html", headers={"Cache-Control": "no-store"})
+
+
+@app.get("/ws4/{path:path}")
+@app.head("/ws4/{path:path}")
+async def _ws4_proxy(request: Request, path: str) -> Response:
+    """Proxy the WS4 instance portal through the public 8780 origin."""
+    url = f"http://127.0.0.1:8790/{path}"
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        upstream = await client.request(
+            request.method,
+            url,
+            params=request.query_params,
+            content=await request.body(),
+            headers={
+                key: value
+                for key, value in request.headers.items()
+                if key.lower() not in {"host", "content-length", "connection"}
+            },
+        )
+    headers = {
+        key: value
+        for key, value in upstream.headers.items()
+        if key.lower() not in {"content-encoding", "transfer-encoding", "connection", "content-length"}
+    }
+    return Response(content=upstream.content, status_code=upstream.status_code, headers=headers)
 
 
 async def _sandbox_redirect(_request: Request) -> RedirectResponse:
