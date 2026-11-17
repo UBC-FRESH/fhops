@@ -50,6 +50,30 @@ conversation:
 | low-44 | 3,170,458 m³ | CAD 2.06M/yr | CAD 48.3M | 33 / 3 / 1 |
 | high-44 | 2,794,062 m³ | CAD 1.81M/yr | CAD 42.5M | 32 / 3 / 2 |
 
+### Retention-value caveat
+
+The low/base/high variants are **area-retention** model rebuilds. WS4 moves a
+fraction of eligible fragment area to an unmanaged state; it does not select
+species, DBH, or the largest Douglas-fir stems. The current numbers therefore
+carry an average area slice, not the high-graded residual cohort described in
+the field.
+
+A retention-value audit is in `MKRF_RETENTION_AUDIT.md`. The audit uses the
+pinned MKRF 684 tree list to show that the largest 5% of stems contain about
+33% of gross value. Treating the current retained-area fraction as a proxy for
+residual stems gives the following high-grading sensitivity (not a re-optimized
+WS4 run):
+
+| Scenario | Area-retention gross | High-graded gross | Gross change | Current net after all cost | Corrected net after all cost |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| low-44 | CAD 673.3M | CAD 474.8M | −29.5% | CAD 380.2M | CAD 233.3M |
+| base-44 | CAD 668.2M | CAD 419.7M | −37.2% | CAD 376.8M | CAD 192.7M |
+| high-44 | CAD 592.6M | CAD 315.6M | −46.8% | CAD 334.5M | CAD 128.9M |
+
+The current NPV screens should not be read as if retention were a largest-DF
+stem prescription until the retention operator is made species/DBH-aware and
+the target search is re-run.
+
 **Decision requested:** endorse this as the draft structure for MKRF, and
 support the same staged modelling and review path proposed for AFRF. The current
 numbers are strong enough for scenario direction, not for a final AAC or budget.

@@ -35,6 +35,19 @@ def main() -> None:
     for label, run_id in RUNS.items():
         run = ROOT / "examples" / "demo_runs" / run_id
         summary = json.loads((run / "summary.json").read_text(encoding="utf-8"))
+        accounts = pd.read_csv(run / "report_accounts.csv")
+
+        def account_mean(account: str) -> float:
+            row = accounts.loc[accounts["account"] == account]
+            if row.empty:
+                raise KeyError(f"missing account {account!r} in {run}")
+            return float(row.iloc[0]["mean"])
+
+        gross_log_value = account_mean("product.LogValue.managed.total") * 100.0
+        managed_area = account_mean("feature.area.managed.total")
+        retention_area = account_mean("feature.area.retention.total")
+        eligible_area = managed_area + retention_area
+        retention_share = retention_area / eligible_area if eligible_area else 0.0
         periods = pd.read_csv(run / "revenue_by_period.csv")
         periods = periods.reset_index(drop=True)
         periods["net_after_cost_cad"] = periods["net_revenue_cad"] - periods["harvest_cost_cad"]
@@ -63,6 +76,13 @@ def main() -> None:
             "area_total_ha": summary.get("area_total_ha"),
             "scheduled_area_ha": summary.get("scheduled_area_ha"),
             "total_production_m3": summary.get("total_production_m3"),
+            "gross_log_value_cad": round(gross_log_value, 3),
+            "gross_per_managed_ha_cad": round(gross_log_value / managed_area, 3)
+            if managed_area
+            else None,
+            "managed_area_ha": round(managed_area, 3),
+            "retention_area_ha": round(retention_area, 3),
+            "retention_share": round(retention_share, 6),
             "net_revenue_cad": summary.get("net_revenue_cad"),
             "harvest_cost_cad": summary.get("harvest_cost_cad"),
             "net_after_harvest_cost_cad": summary.get("net_revenue_after_harvest_cost_cad"),
@@ -102,14 +122,14 @@ def main() -> None:
     lines = [
         "# MKRF scenario comparison",
         "",
-        "NPV screens use annual cash flows spread uniformly within each 10-year period. Net is after harvest cost.",
+        "NPV screens use annual cash flows spread uniformly within each 10-year period. Net is after harvest cost. These are **area-retention** variants; the model does not select largest-DF residual stems. See `MKRF_RETENTION_AUDIT.md`.",
         "",
-        "| Scenario | Blocks | Production | Net after cost | Annualized | NPV 2% | NPV 4% | NPV 6% | Targets (met/below/above) |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| Scenario | Blocks | Gross log value | Retention area | Production | Net after cost | Annualized | NPV 2% | NPV 4% | NPV 6% | Targets (met/below/above) |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for row in rows:
         lines.append(
-            f"| {row['scenario']} | {row['blocks_scheduled']:,} | {row['total_production_m3']:,.0f} m³ | CAD {row['net_after_harvest_cost_cad']:,.0f} | CAD {row['annualized_net_after_cost_cad']:,.0f}/yr | CAD {row['npv_net_2pct_cad']:,.0f} | CAD {row['npv_net_4pct_cad']:,.0f} | CAD {row['npv_net_6pct_cad']:,.0f} | {row['targets_met']}/{row['targets_below']}/{row['targets_above']} |"
+            f"| {row['scenario']} | {row['blocks_scheduled']:,} | CAD {row['gross_log_value_cad']:,.0f} | {row['retention_area_ha']:,.1f} ha | {row['total_production_m3']:,.0f} m³ | CAD {row['net_after_harvest_cost_cad']:,.0f} | CAD {row['annualized_net_after_cost_cad']:,.0f}/yr | CAD {row['npv_net_2pct_cad']:,.0f} | CAD {row['npv_net_4pct_cad']:,.0f} | CAD {row['npv_net_6pct_cad']:,.0f} | {row['targets_met']}/{row['targets_below']}/{row['targets_above']} |"
         )
     (ROOT / "examples" / "demo_runs" / "MKRF_SCENARIO_COMPARISON.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(summary[["scenario", "total_production_m3", "net_after_harvest_cost_cad", "annualized_net_after_cost_cad", "npv_net_2pct_cad", "npv_net_4pct_cad", "npv_net_6pct_cad"]].to_string(index=False))

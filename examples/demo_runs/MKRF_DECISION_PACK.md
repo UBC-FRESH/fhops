@@ -16,6 +16,19 @@ Carry **`scenario-low-44`** forward.
 
 Comparison at 4% NPV: low CAD 48.3M, base CAD 48.2M, high CAD 42.5M.
 
+## Retention-value caveat
+
+The current low/base/high runs are **area-retention** variants. WS4 does not
+select the largest Douglas-fir stems; it moves a fraction of eligible area to
+an unmanaged state. The reported finance is therefore an average-area screen,
+not a high-graded residual prescription.
+
+The audit in `MKRF_RETENTION_AUDIT.md` uses the pinned MKRF 684 tree list to
+estimate the high-grading sensitivity. If the retained-area fraction is used
+as a proxy for residual stems, gross value falls by about 29.5% for low-44,
+37.2% for base-44, and 46.8% for high-44 versus the current area-retention
+numbers. These are sensitivity results, not re-optimized scenarios.
+
 ## Operational evidence
 
 - P00: 86 blocks, 367,238 m³, 296 days, zero remaining work.

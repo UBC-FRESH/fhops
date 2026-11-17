@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>MKRF Retention-Value Audit</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">MKRF Retention-Value Audit</h1>
+</header>
+<h1 id="mkrf-retention-value-audit">MKRF retention-value audit</h1>
+<p>Status: <strong>audit and sensitivity, not a re-optimized WS4
+scenario</strong>.</p>
+<h2 id="finding">Finding</h2>
+<p>WS4’s ForestModelXML <code>&lt;retention&gt;</code> rule is
+implemented as an <strong>area split</strong>. The compiler moves a
+fraction of an eligible fragment’s area to an unmanaged state. It does
+not select species, DBH, or the largest Douglas-fir stems. The retained
+area therefore removes an average area slice, not a high-graded residual
+cohort.</p>
+<p>This explains why the current low/base/high numbers move mainly with
+retained area: gross log value per managed hectare is nearly constant
+across the variants. The model is not representing the operational
+prescription described as ‘leave the biggest Douglas-fir’.</p>
+<h2 id="audit-tree-list">Audit tree list</h2>
+<p><code>mkrf_684</code> has <strong>4,798</strong> pinned trees,
+<strong>3,542</strong> Douglas-fir, 4,116.6 m³ merchantable volume and
+CAD 434,150 gross log value (CAD 105.46/m³, game price deck).</p>
+<p>The tree list is synthetic and represents one stand; it is used here
+to measure the value profile, not as an estate inventory.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Fraction of all stems</th>
+<th style="text-align: right;">Selected largest DF</th>
+<th style="text-align: right;">Volume share</th>
+<th style="text-align: right;">Gross-value share</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">5%</td>
+<td style="text-align: right;">240</td>
+<td style="text-align: right;">32.6%</td>
+<td style="text-align: right;">32.6%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10%</td>
+<td style="text-align: right;">480</td>
+<td style="text-align: right;">45.9%</td>
+<td style="text-align: right;">46.0%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15%</td>
+<td style="text-align: right;">720</td>
+<td style="text-align: right;">54.1%</td>
+<td style="text-align: right;">54.3%</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20%</td>
+<td style="text-align: right;">960</td>
+<td style="text-align: right;">59.8%</td>
+<td style="text-align: right;">60.1%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">30%</td>
+<td style="text-align: right;">1,439</td>
+<td style="text-align: right;">66.8%</td>
+<td style="text-align: right;">67.3%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sensitivity-method">Sensitivity method</h2>
+<ul>
+<li>Current WS4 low/base/high schedules are treated as the
+<strong>area-retention</strong> case.</li>
+<li>The current retention-area fraction is used as a proxy for the
+fraction of stems left as residual.</li>
+<li>Residual stems are selected as the largest Douglas-fir from the MKRF
+684 tree list, then the resulting value and volume shares are applied to
+the current schedule’s potential gross/volume.</li>
+<li>Potential gross and volume add back the average retained area slice.
+This isolates the difference between average-area retention and
+largest-DF stem retention.</li>
+<li>Harvest cost is scaled with harvested volume; other costs are held
+fixed. No schedule is re-optimized and no target is re-run.</li>
+</ul>
+<h2 id="corrected-scenario-numbers">Corrected scenario numbers</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th style="text-align: right;">Retention ha</th>
+<th style="text-align: right;">Gross current</th>
+<th style="text-align: right;">Gross corrected</th>
+<th style="text-align: right;">Δ gross</th>
+<th style="text-align: right;">Volume current</th>
+<th style="text-align: right;">Volume corrected</th>
+<th style="text-align: right;">Net after all cost current</th>
+<th style="text-align: right;">Net after all cost corrected</th>
+<th style="text-align: right;">NPV4 gross current</th>
+<th style="text-align: right;">NPV4 gross corrected</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>low-44</td>
+<td style="text-align: right;">181.1</td>
+<td style="text-align: right;">CAD 673.3M</td>
+<td style="text-align: right;">CAD 474.8M</td>
+<td style="text-align: right;">-29.5%</td>
+<td style="text-align: right;">3.17M m³</td>
+<td style="text-align: right;">2.23M m³</td>
+<td style="text-align: right;">CAD 380.2M</td>
+<td style="text-align: right;">CAD 233.3M</td>
+<td style="text-align: right;">CAD 92.4M</td>
+<td style="text-align: right;">CAD 65.2M</td>
+</tr>
+<tr class="even">
+<td>base-44</td>
+<td style="text-align: right;">362.1</td>
+<td style="text-align: right;">CAD 668.2M</td>
+<td style="text-align: right;">CAD 419.7M</td>
+<td style="text-align: right;">-37.2%</td>
+<td style="text-align: right;">3.15M m³</td>
+<td style="text-align: right;">1.98M m³</td>
+<td style="text-align: right;">CAD 376.8M</td>
+<td style="text-align: right;">CAD 192.7M</td>
+<td style="text-align: right;">CAD 92.1M</td>
+<td style="text-align: right;">CAD 57.8M</td>
+</tr>
+<tr class="odd">
+<td>high-44</td>
+<td style="text-align: right;">647.6</td>
+<td style="text-align: right;">CAD 592.6M</td>
+<td style="text-align: right;">CAD 315.6M</td>
+<td style="text-align: right;">-46.8%</td>
+<td style="text-align: right;">2.79M m³</td>
+<td style="text-align: right;">1.49M m³</td>
+<td style="text-align: right;">CAD 334.5M</td>
+<td style="text-align: right;">CAD 128.9M</td>
+<td style="text-align: right;">CAD 81.6M</td>
+<td style="text-align: right;">CAD 43.5M</td>
+</tr>
+</tbody>
+</table>
+<p>The public <strong>net-after-harvest-cost</strong> convention is
+retained in <code>MKRF_RETENTION_VALUE_SCENARIOS.csv</code>; it is lower
+because the existing public comparison subtracts harvest cost from the
+already netted revenue account. The table above uses <strong>net after
+all cost</strong> to avoid that double-counting.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th style="text-align: right;">Current net NPV 4%</th>
+<th style="text-align: right;">Corrected net NPV 4%</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>low-44</td>
+<td style="text-align: right;">CAD 48.3M</td>
+<td style="text-align: right;">CAD 25.9M</td>
+</tr>
+<tr class="even">
+<td>base-44</td>
+<td style="text-align: right;">CAD 48.2M</td>
+<td style="text-align: right;">CAD 19.9M</td>
+</tr>
+<tr class="odd">
+<td>high-44</td>
+<td style="text-align: right;">CAD 42.5M</td>
+<td style="text-align: right;">CAD 11.0M</td>
+</tr>
+</tbody>
+</table>
+<h2 id="why-the-correction-is-material">Why the correction is
+material</h2>
+<p>Retained area is only 4.4%, 8.8% and 15.7% of the eligible area, but
+the largest-DF profile represents 32.6%, 42.8% and 55.1% of gross value.
+Per retained hectare, the high-graded residual is about 7.4x, 4.9x and
+3.5x the average value of the area slice in the low/base/high cases.</p>
+<h2 id="files">Files</h2>
+<ul>
+<li><code>MKRF_RETENTION_VALUE_SCENARIOS.csv</code> — full
+current/corrected metrics</li>
+<li><code>MKRF_RETENTION_AUDIT.md</code> — this report</li>
+<li><code>MKRF_SCENARIO_COMPARISON.csv</code> — existing area-retention
+comparison</li>
+</ul>
+<h2 id="decision-boundary">Decision boundary</h2>
+<p>These corrected numbers show the direction and magnitude of the
+high-grading error. They are not an approved AAC, cash-flow forecast, or
+re-optimized plan. A production fix should make the retention operator
+species/DBH-aware, or apply an explicit residual-tree profile inside
+each harvested block, and then re-run the target search.</p>
+</body>
+</html>
