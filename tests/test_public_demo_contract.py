@@ -156,9 +156,17 @@ def test_gateway_keeps_every_demo_door(client: TestClient) -> None:
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-store"
     body = response.text
-    for href in ("/fhops/", "/studio/", "/sandbox-v20261031i/", "/game"):
+    for href in (
+        "/fhops/",
+        "/forests/",
+        "/studio/",
+        "/sandbox-v20261031i/",
+        "/game",
+    ):
         assert f'href="{href}"' in body
     assert "Experimental · classroom only" in body
+    assert "/briefs/MKRF_EARLY_MANAGEMENT_PLAN.pdf" in body
+    assert "/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf" in body
 
 
 def test_research_forest_portal_and_briefs(client: TestClient) -> None:
@@ -170,12 +178,15 @@ def test_research_forest_portal_and_briefs(client: TestClient) -> None:
     for path in (
         "/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf",
         "/briefs/MKRF_EARLY_MANAGEMENT_PLAN.pdf",
+        "/briefs/MKRF_RETENTION_AUDIT.pdf",
         "/flyovers/gavin_1032/optimal/viewer.html",
         "/flyovers/kc_57254551/optimal/viewer.html",
         "/stems/gavin_1032/trees.csv",
         "/stems/kc_57254551/trees.csv",
     ):
         assert client.get(path).status_code == 200, path
+    assert 'id="briefs"' in body
+    assert body.count("/briefs/") >= 4
 
 
 def test_full_console_shell_is_served_at_fhops(client: TestClient) -> None:

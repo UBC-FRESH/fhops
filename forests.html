@@ -33,6 +33,10 @@
     .note { color:var(--muted); font-size:.76rem; line-height:1.45; margin-top:12px; border-top:1px solid #e2ebe5; padding-top:10px; }
     .small { font-size:.78rem; color:var(--muted); }
     .small a { color:var(--forest); }
+    .briefs { max-width:1180px; margin:0 auto 4px; padding:0 24px; }
+    .briefs-inner { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 14px; padding:10px 12px; border:1px solid #c6d8cc; border-left:4px solid var(--forest); border-radius:10px; background:#f7fbf7; font-size:.84rem; }
+    .briefs-inner strong { color:var(--forest); text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; }
+    .briefs-inner a { color:var(--forest); font-weight:700; }
     footer { max-width:1180px; margin:0 auto; padding:0 24px 34px; color:var(--muted); font-size:.8rem; }
     @media (max-width:980px) { .grid { grid-template-columns:1fr; } .card { min-height:0; } }
   </style>
@@ -42,6 +46,14 @@
   <div class="kicker">UBC Research Forests · WS4 + FHOPS · public working portal</div>
   <h1>Three forests.<br>Three models. One planning stack.</h1>
   <p class="lead">Scenario preloads, full-stem stand playback, and early-draft management briefs for Malcolm Knapp, Gavin Lake and Knife Creek. The cards open the planning console on a preloaded scenario, the stand viewer, or the current PDF brief.</p>
+  <div class="briefs" id="briefs">
+    <div class="briefs-inner">
+      <strong>Briefs</strong>
+      <a href="/briefs/MKRF_EARLY_MANAGEMENT_PLAN.pdf">MKRF management brief (PDF)</a>
+      <a href="/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf">AFRF Gavin Lake + Knife Creek brief (PDF)</a>
+      <a href="/briefs/MKRF_RETENTION_AUDIT.pdf">MKRF retention audit (PDF)</a>
+    </div>
+  </div>
   <p class="lead" style="font-size:.9rem; padding:10px 12px; border-left:4px solid #1f7a4b; background:#f2fbf4; max-width:900px;"><strong>3D status:</strong> all three instances now have full-estate <em>WS4 3D</em> scene packs. Use the WS4 3D links below; the full-stem stand links are the separate representative-stand playback.</p>
   <p class="small">All three scenes open in full-tree mode by default. The in-scene <strong>Render all trees</strong> control can switch to LOD only if a laptop GPU needs it.</p>
 </header>
@@ -63,8 +75,8 @@
         <a class="btn" href="/fhops/?run=mkrf-full-estate">Open base-44 →</a>
         <a class="btn" href="/flyovers/mkrf_684/optimal/viewer.html">Full-stem stand playback →</a>
         <a class="btn" href="/ws4/instance/femic-mkrf-instance/static/studio3d.html?all=1">Open MKRF WS4 3D landscape →</a>
-        <a class="btn" href="/briefs/MKRF_EARLY_MANAGEMENT_PLAN.pdf">MKRF draft management plan (PDF) →</a>
-        <a class="btn" href="/briefs/MKRF_RETENTION_AUDIT.pdf">MKRF retention audit (PDF) →</a>
+        <a class="btn" href="/briefs/MKRF_EARLY_MANAGEMENT_PLAN.pdf">Read MKRF management brief (PDF) →</a>
+        <a class="btn" href="/briefs/MKRF_RETENTION_AUDIT.pdf">Read MKRF retention audit (PDF) →</a>
       </div>
       <div class="note">Representative stand playback: MKRF RES_KEY 684, 6.86 ha, 4,798 stems. <a href="/stems/mkrf_684/trees.csv">Full stem CSV</a>. Scenario numbers are public WS4 screens, not a budget forecast.</div>
     </section>
@@ -85,7 +97,7 @@
         <a class="btn" href="/fhops/?run=gavin-optimized">Open LTSY draft →</a>
         <a class="btn" href="/flyovers/gavin_1032/optimal/viewer.html">Full-stem stand playback →</a>
         <a class="btn" href="/ws4/instance/femic-afrf-gavinlake-instance/static/studio3d.html?all=1">Open Gavin WS4 3D landscape →</a>
-        <a class="btn" href="/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf">AFRF draft management plan (PDF) →</a>
+        <a class="btn" href="/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf">Read AFRF Gavin + Knife brief (PDF) →</a>
       </div>
       <div class="note">Representative stand playback: Gavin block 1032, 10.00 ha, 18,595 stems. <a href="/stems/gavin_1032/trees.csv">Full stem CSV</a>. Gavin is not decision-grade until the MDWR constraint is carried.</div>
     </section>
@@ -106,7 +118,7 @@
         <a class="btn" href="/fhops/?run=knife-gwm-policy">Open legal-HMZ policy →</a>
         <a class="btn" href="/flyovers/kc_57254551/optimal/viewer.html">Full-stem stand playback →</a>
         <a class="btn" href="/ws4/instance/femic-afrf-knifecreek-instance/static/studio3d.html?all=1">Open Knife WS4 3D landscape →</a>
-        <a class="btn" href="/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf">AFRF draft management plan (PDF) →</a>
+        <a class="btn" href="/briefs/AFRF_EARLY_MANAGEMENT_PLAN.pdf">Read AFRF Gavin + Knife brief (PDF) →</a>
       </div>
       <div class="note">Representative stand playback: Knife VRI 57254551, 35.95 ha, 17,221 stems. <a href="/stems/kc_57254551/trees.csv">Full stem CSV</a>. Structural LiDAR pilot; not an approved plan.</div>
     </section>
