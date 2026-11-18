@@ -1,3 +1,10 @@
+# 2026-11-18 — Gavin MDWR official habitat map acquisition
+
+- Acquired the public BC long-term habitat objective map for Beaver Valley North (Prouton Lakes), dated 6 December 2001, and digitized its High/Moderate/Low polygons.
+- Built a 1,443-block class table and clipped EPSG:3005 class polygons in the Gavin instance. The official fine map gives 682.3 ha High, 1,115.4 ha Moderate and 898.4 ha Low by largest-intersection assignment, versus the BEC proxy's 14.27 / 213.06 / 2,571.98 ha.
+- The public MDWR run still uses the BEC proxy. The adjusted Appendix 9 compartment map and legal order remain to be reconciled before the matrix is rebuilt.
+- Added `notes/2026-11-18_gavin-mdwr-official-habitat.md` and updated the MDWR brief/card to state the acquisition and the unresolved legal-map step.
+
 # 2026-11-18 — MKRF full-estate 3D scene and browser audit
 
 - Built `planning/studio3d/mkrf_scene.json` in the MKRF instance from 2016 LidarBC 5 m CHM / 1 m DEM, 1,763 public blocks, WS4 block metrics and the AU species summary. The scene is 17.5 MB, 3.58M synthetic stems, with CHM valid over 99.6% of the block area.

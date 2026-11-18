@@ -63,10 +63,32 @@ standing stock.
 The target status is reported against the existing 174k policy target set. It
 is a **trade-off result**, not a failure hidden by a redefined target.
 
+## Official habitat-map acquisition
+
+The public BC long-term habitat objective map for Beaver Valley North (Prouton
+Lakes) has now been acquired and digitized. It gives a fine-scale
+High/Moderate/Low split for the MDWR that is very different from the BEC proxy:
+
+| Class | BEC proxy | Official fine map |
+| --- | ---: | ---: |
+| High | 14.27 ha | 682.3 ha |
+| Moderate | 213.06 ha | 1,115.4 ha |
+| Low | 2,571.98 ha | 898.4 ha |
+
+The official polygons cover 84.6% of the MDWR block area. The adjusted
+Appendix 9 compartment map still has to be reconciled with these fine polygons,
+and the 2007 legal order and current UWR boundary still need review. The
+results in this brief therefore still use the BEC proxy; the model has not been
+rebuilt with the official classes.
+
+Details:
+`notes/2026-11-18_gavin-mdwr-official-habitat.md`.
+
 ## Limits
 
-- The official Appendix 9 habitat-class map is not in the legacy layer; the BEC
-  proxy must be replaced before a compliance claim.
+- The official Appendix 9 compartment map has not been reconciled with the
+  fine-scale BC long-term objective polygons; the BEC proxy must be replaced
+  before a compliance claim.
 - The block-level partial-cut curve is a volume screen. It does not lay out
   spatial groups, enforce the 0.4/0.7 ha group-size cap, or simulate
   within-block cohort structure.

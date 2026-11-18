@@ -1,0 +1,105 @@
+> Public project-note copy. See the matching instance planning note.
+
+# Gavin Lake MDWR official habitat-class map acquisition
+
+Date: 2026-11-18
+
+Status: **official fine-scale habitat polygons acquired and digitized; public
+model still uses the BEC proxy until the adjusted Appendix 9 compartment map and
+legal order are reviewed**
+
+## Source
+
+The public BC Ministry of Environment map is:
+
+- *Long-Term Habitat Objectives: Beaver Valley North (Prouton Lakes)*
+- dated 6 December 2001
+- Appendix 11 of the regional long-term habitat objectives set
+- source:
+  `https://www.env.gov.bc.ca/cariboo/env_stewardship/ecosystems/mdwr_strat/maps/beavervly_lto.pdf`
+- SHA-256:
+  `1889b3c668f66435e56d9778bb8c10b586a996f0244799e5c2d402ade1c7d2e3`
+
+The 2007 AFRF Management and Working Plan #3 says the Beaver Valley MDWR
+habitat classes are depicted in **Appendix 9**, with the class distribution
+"adjusted slightly to coincide with our total chance harvest blocks." Table 30
+sets the pass intensities:
+
+| Habitat class | Harvest per pass | Cutting cycle | Cohorts | Oldest-cohort maximum age |
+| --- | ---: | ---: | ---: | ---: |
+| High | 33% | 40 years | 3 | 120 years |
+| Moderate | 25% | 40 years | 4 | 160 years |
+| Low | 20% | 40 years | 5 | 200 years |
+
+Source: 2007 AFRF MWP #3, section 7.4.2 and Table 30.
+
+The Appendix 9 map in the MWP is a **compartment-level adjusted**
+representation. The BC map used here is the finer long-term-objective polygon
+layer; it is not being represented as the adjusted Appendix 9 compartment
+boundaries.
+
+## Method
+
+- Extract the teal (High), green (Moderate) and pale-green (Low) filled
+  polygons from the PDF vector content.
+- Georeference from the printed 4 km UTM grid:
+  - x: PDF 210.71875–1931.261719 points ↔ UTM 560000–592000 m;
+  - y: PDF 270.378906–1908.121094 points ↔ UTM 5836000–5808000 m;
+  - UTM zone 10N, reprojected to EPSG:3005 for the block overlay.
+- Intersect with the 1,443 MDWR block polygons.
+- Assign each block the class with the largest intersected area.
+- If the official polygons cover less than 50% of a block, fall back to the
+  documented BEC proxy for that block and mark the basis.
+
+The georeference is a printed-grid fit, not a survey control. The class
+assignment is suitable for a screening run, not a legal boundary
+determination.
+
+## Result
+
+| Class | BEC proxy area | BEC blocks | Official fine-map area | Official blocks |
+| --- | ---: | ---: | ---: | ---: |
+| High | 14.27 ha | 19 | 682.3 ha | 251 |
+| Moderate | 213.06 ha | 136 | 1,115.4 ha | 585 |
+| Low | 2,571.98 ha | 1,288 | 898.4 ha | 512 |
+| Unclassified | — | — | 103.3 ha | 95 |
+
+After applying the 50% coverage floor and BEC fallback, the model classes are:
+
+| Model class | Area | Blocks |
+| --- | ---: | ---: |
+| High | 600.0 ha | 239 |
+| Moderate | 1,082.1 ha | 582 |
+| Low | 1,117.2 ha | 622 |
+
+The official polygons cover **2,367.7 ha of 2,799.3 ha (84.6%)** of the MDWR
+block area. The unclassified remainder is non-productive/non-forest, map
+whitespace, or boundary/georeference edge. It is not assigned a fabricated
+class.
+
+This is a material change from the BEC proxy: the proxy calls 92% of the MDWR
+low habitat, while the official fine map puts 24% high, 40% moderate and 32%
+low before the fallback. After fallback the model classes are 21% high, 39%
+moderate and 40% low. The public MDWR numbers must not be treated as final
+until the matrix is rebuilt with these classes.
+
+## Files
+
+- `planning/2026-11-18_gavin_mdwr_official_habitat.csv` — block-level class
+  areas, coverage, official class, model class and basis.
+- `planning/2026-11-18_gavin_mdwr_official_habitat.geojson` — clipped official
+  class polygons in EPSG:3005.
+- `planning/2026-11-18_gavin_mdwr_official_habitat.json` — source hash,
+  georeference constants, class areas and caveat.
+- `scripts/build_mdwr_official_habitat.py` — reproducible extractor.
+
+## What this does not settle
+
+- The Appendix 9 compartment map has not been digitized or reconciled against
+  these fine polygons.
+- The 2007 legal order and current ungulate winter range boundary still need a
+  separate review.
+- The model still uses the BEC proxy. Rebuilding `mdwr_group_selection`, the
+  40-year schedule, the 300-year screen and the public PDF is the next step.
+- The fine-map georeference is a screening fit from the printed grid; retained
+  boundary uncertainty should be carried into any compliance discussion.
