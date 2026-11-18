@@ -15,6 +15,7 @@ core treatment-split operator is added to WS4.
 
 from __future__ import annotations
 
+import argparse
 import math
 import sys
 from pathlib import Path
@@ -93,6 +94,36 @@ def _age_trend(frame: pd.DataFrame, column: str) -> tuple[np.ndarray, np.ndarray
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--age-anchor",
+        choices=("asof", "rotation_plus_50"),
+        default="asof",
+        help="Use the block's current/rotation profile age or force rotation+50.",
+    )
+    args = parser.parse_args()
+    forced_r50 = args.age_anchor == "rotation_plus_50"
+    out_path = (
+        INSTANCE / "planning" / "2026-11-18_mkrf_retention_profiles_r50.csv"
+        if forced_r50
+        else OUT
+    )
+    grid_path = (
+        INSTANCE / "planning" / "2026-11-18_mkrf_retention_profile_grid_r50.csv"
+        if forced_r50
+        else GRID_OUT
+    )
+    summary_path = (
+        INSTANCE / "planning" / "2026-11-18_mkrf_retention_profiles_r50.json"
+        if forced_r50
+        else SUMMARY
+    )
+    grid_summary_path = (
+        INSTANCE / "planning" / "2026-11-18_mkrf_retention_profile_grid_r50.json"
+        if forced_r50
+        else GRID_SUMMARY
+    )
+
     regime = pd.read_csv(
         INSTANCE / "data" / "model_input_bundle" / "silviculture_regime_assignment.csv"
     )
@@ -156,7 +187,11 @@ def main() -> None:
         age = float(record.AGE_2020)
         au_id = str(record.au_id) if pd.notna(record.au_id) else ""
         rotation_age = rotation.get(au_id, 90)
-        profile_age = min(180, max(60, max(age, rotation_age)))
+        profile_age = (
+            min(180, rotation_age + 50)
+            if forced_r50
+            else min(180, max(60, max(age, rotation_age)))
+        )
         ba = float(record.TCL_1_BASAL_AREA) if pd.notna(record.TCL_1_BASAL_AREA) else np.nan
         tph = (
             float(record.TCL_1_VRI_LIVE_STEMS_PER_HA)
@@ -298,8 +333,8 @@ def main() -> None:
                     "harvest_volume_share": 1.0 - retained_volume / total_volume,
                     "harvest_value_share": 1.0 - retained_value / total_value,
                     "profile_note": (
-                        "VRI scale + MKRF 684 species shape; BA target; "
-                        "DF-first largest-DBH selection; synthetic bootstrap"
+                        "VRI scale + rotation/rotation+50 species shape; "
+                        "BA target; DF-first largest-DBH selection; bootstrap"
                     ),
                 }
             )
@@ -308,8 +343,8 @@ def main() -> None:
     original = out.loc[
         out["retention_target_ba_pct"].eq(out["regime_target_ba_pct"])
     ]
-    out.to_csv(GRID_OUT, index=False)
-    original.to_csv(OUT, index=False)
+    out.to_csv(grid_path, index=False)
+    original.to_csv(out_path, index=False)
     summary = {
         "blocks": int(out["block_id"].nunique()),
         "rows": int(len(out)),
@@ -333,13 +368,20 @@ def main() -> None:
                 / "silviculture_regime_assignment.csv"
             ),
         },
+        "age_anchor": args.age_anchor,
+        "anchor_file": str(ANCHOR),
         "caveat": (
-            "First-pass bootstrap. Species DBH shapes come from one synthetic "
-            "MKRF stand; VRI supplies scale. Not a full-estate tree list."
+            "First-pass bootstrap. Species DBH shapes blend the synthetic "
+            "MKRF 684 rotation stand and the PSP CWHdm rotation+50 anchor; "
+            "VRI supplies scale. Not a full-estate tree list."
         ),
     }
-    SUMMARY.write_text(pd.Series(summary).to_json(indent=2) + "\n", encoding="utf-8")
-    GRID_SUMMARY.write_text(pd.Series(summary).to_json(indent=2) + "\n", encoding="utf-8")
+    summary_path.write_text(
+        pd.Series(summary).to_json(indent=2) + "\n", encoding="utf-8"
+    )
+    grid_summary_path.write_text(
+        pd.Series(summary).to_json(indent=2) + "\n", encoding="utf-8"
+    )
     print(out.head().to_string(index=False))
     print(pd.Series(summary).to_string())
 

@@ -4,8 +4,8 @@
 # Variable-retention implementation — first pass
 
 Status: **full-area one-rotation overlay, discrete retention-intensity grid,
-retention policy target and two-anchor age interpolation complete;
-grade-specific bucking still pending**
+retention policy target, two-anchor age interpolation and R+50 sensitivity
+complete; grade-specific bucking and public scenario still pending**
 
 Date: 2026-11-18
 
@@ -35,7 +35,7 @@ The profile builder now uses two DBH anchors:
 - the blended shape is scaled to the VRI QMD and BA trends at the profile age.
 
 The `age_interpolation_fraction` column records the blend. The current matrix
-uses one profile age per block; it does not yet build a separate R+50 matrix.
+uses one profile age per block; a forced R+50 sensitivity matrix is now available.
 
 The profile builder now writes a grid as well as the original regime-target
 rows.
@@ -188,6 +188,28 @@ The strong result is that the retention policy changes the economics
 materially: about **CAD 76M less gross log value** and **CAD 43M less net after
 all cost** than the no-retention baseline.
 
+### 6. R+50 sensitivity
+
+A forced rotation+50 profile grid and matrix are now built:
+
+```text
+planning/2026-11-18_mkrf_retention_profile_grid_r50.csv
+ws4/runtime/matrix_vr_grid_r50
+ws4/runtime/vr_policy_r50_s44
+```
+
+The profile age range is 110–170 years and the older PSP CWHdm anchor is used
+for the full blend (`age_interpolation_fraction = 1`).
+
+| Scenario | Gross log value | Net after all cost | Retained BA | Targets |
+| --- | ---: | ---: | ---: | --- |
+| Current/as-of profile, policy 400 | CAD 632.4M | CAD 356.1M | 12,807 m² | 44/2/1 |
+| Forced R+50 profile, policy 400 | **CAD 630.6M** | **CAD 355.0M** | **13,535 m²** | **45/1/1** |
+
+The older-age sensitivity retains about **6% more BA** and slightly reduces
+gross/net revenue. It also improves target performance from 44/2/1 to 45/1/1.
+This is a material age-distribution sensitivity, not a final calibration.
+
 ## Important implementation limits
 
 - **Retention intensity is a discrete grid**, currently 10/20/30% BA plus CC.
@@ -201,8 +223,8 @@ all cost** than the no-retention baseline.
   and the PSP CWHdm rotation+50 FD anchor, scaled by VRI TPH/BA/species share.
   It is not a full-estate measured tree list.
 - **Age interpolation is a two-anchor quantile blend**, not a full
-  age-continuous matrix. The current matrix uses one profile age per block;
-  a separate R+50 matrix is still a useful sensitivity.
+  age-continuous matrix. The current matrix uses one profile age per block; the
+  forced R+50 matrix is a sensitivity, not a continuous age model.
 - **Aggregate product scaling.** The harvested product curves are scaled by
   volume/value share; the residual stem grade mix is not re-bucketed tree by
   tree.
@@ -214,15 +236,11 @@ all cost** than the no-retention baseline.
    - Buck the selected residual stems with the same stem/price model.
    - Remove their sawlog/pulp volumes and values from the first-harvest ledger
      and add them to the next composite final-felling ledger.
-2. **R+50 age sensitivity.**
-   - Build a parallel matrix with the profile age forced to rotation+50.
-   - Compare retained volume/value and policy performance against the current
-     blended-age matrix.
-3. **Grid calibration.**
+2. **Grid calibration.**
    - Test 5/15/25% and a wider target set.
    - Check whether the optimizer's near-zero retention choice is driven by the
      target weights, economics, or the sparse treatment alternatives.
-4. **Validation and public scenario.**
+3. **Validation and public scenario.**
    - Conservation tests for area/BA/volume/value.
    - Re-run low/base/high or the decided target set.
    - Publish the scenario and update the MKRF card/brief.

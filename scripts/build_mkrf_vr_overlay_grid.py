@@ -17,6 +17,7 @@ search; the full matrix remains the source of the other accounts.
 
 from __future__ import annotations
 
+import argparse
 import json
 import shutil
 from pathlib import Path
@@ -114,10 +115,16 @@ def is_volume_feature(label: str) -> bool:
 
 
 def main() -> None:
-    if OUT.exists():
-        shutil.rmtree(OUT)
-    shutil.copytree(BASE, OUT)
-    profiles = pd.read_csv(PROFILE)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--profile", type=Path, default=PROFILE)
+    parser.add_argument("--out", type=Path, default=OUT)
+    args = parser.parse_args()
+    profile_path = args.profile
+    out_dir = args.out
+    if out_dir.exists():
+        shutil.rmtree(out_dir)
+    shutil.copytree(BASE, out_dir)
+    profiles = pd.read_csv(profile_path)
     profiles = profiles.loc[profiles["retention_target_ba_pct"].gt(0)].copy()
     profile_by_block: dict[int, dict[float, dict[str, object]]] = {}
     for row in profiles.itertuples(index=False):
@@ -125,13 +132,13 @@ def main() -> None:
             round(float(row.retention_target_ba_pct), 2)
         ] = row._asdict()
 
-    fragments = pd.read_parquet(OUT / "fragments.parquet")
-    blocks = pd.read_parquet(OUT / "blocks.parquet")
-    tracks = pd.read_parquet(OUT / "tracks.parquet")
-    features = pd.read_parquet(OUT / "features.parquet")
-    products = pd.read_parquet(OUT / "products.parquet")
-    treatments = pd.read_parquet(OUT / "treatments.parquet")
-    curves = pd.read_parquet(OUT / "curves.parquet")
+    fragments = pd.read_parquet(out_dir / "fragments.parquet")
+    blocks = pd.read_parquet(out_dir / "blocks.parquet")
+    tracks = pd.read_parquet(out_dir / "tracks.parquet")
+    features = pd.read_parquet(out_dir / "features.parquet")
+    products = pd.read_parquet(out_dir / "products.parquet")
+    treatments = pd.read_parquet(out_dir / "treatments.parquet")
+    curves = pd.read_parquet(out_dir / "curves.parquet")
     lookup = {
         int(curve_id): group.sort_values("x")[["x", "y"]].to_numpy()
         for curve_id, group in curves.groupby("curve_id", sort=False)
@@ -393,16 +400,16 @@ def main() -> None:
         .agg(offset=("age", "min"), area_ha=("area_ha", "sum"))
         .loc[:, ["block_id", "track_id", "offset", "area_ha"]]
     )
-    curves.to_parquet(OUT / "curves.parquet", index=False)
-    tracks.to_parquet(OUT / "tracks.parquet", index=False)
-    features.to_parquet(OUT / "features.parquet", index=False)
-    products.to_parquet(OUT / "products.parquet", index=False)
-    treatments.to_parquet(OUT / "treatments.parquet", index=False)
-    fragments.to_parquet(OUT / "fragments.parquet", index=False)
-    blocks.to_parquet(OUT / "blocks.parquet", index=False)
+    curves.to_parquet(out_dir / "curves.parquet", index=False)
+    tracks.to_parquet(out_dir / "tracks.parquet", index=False)
+    features.to_parquet(out_dir / "features.parquet", index=False)
+    products.to_parquet(out_dir / "products.parquet", index=False)
+    treatments.to_parquet(out_dir / "treatments.parquet", index=False)
+    fragments.to_parquet(out_dir / "fragments.parquet", index=False)
+    blocks.to_parquet(out_dir / "blocks.parquet", index=False)
     metadata = {
         "source_matrix": str(BASE),
-        "profile": str(PROFILE),
+        "profile": str(profile_path),
         "blocks_with_choice": blocks_overlaid,
         "intensities": list(INTENSITIES),
         "treatments": ["CC", "VR10", "VR20", "VR30"],
@@ -421,7 +428,7 @@ def main() -> None:
             "Species DBH shape is the synthetic MKRF 684 tree list at rotation and PSP CWHdm FD at rotation+50, scaled by VRI.",
         ],
     }
-    (OUT / "vr_grid_assumptions.json").write_text(
+    (out_dir / "vr_grid_assumptions.json").write_text(
         json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(metadata, indent=2))
