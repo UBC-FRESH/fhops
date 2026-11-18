@@ -3,8 +3,8 @@
 
 # Variable-retention implementation — first pass
 
-Status: **full-area one-rotation overlay complete; retention-intensity
-decision variable and age interpolation still pending**
+Status: **full-area one-rotation overlay and discrete retention-intensity grid
+complete; age interpolation and grade-specific bucking still pending**
 
 Date: 2026-11-18
 
@@ -25,13 +25,25 @@ The profile selects **Douglas-fir first, largest DBH first**, until the
 **pre-harvest basal-area target** is met. It records retained stems, TPH,
 BA, volume and value, and the residual area fraction.
 
-First-pass coverage:
+The profile builder now writes a grid as well as the original regime-target
+rows.
 
-- 741 blocks;
-- 2,306.10 ha;
-- 244.55 ha of basal-area-equivalent residual area;
-- retention targets 10% and 20% of pre-harvest BA;
-- mean retained BA share 10.34%, volume share 11.43%, gross value share 11.65%.
+Grid coverage:
+
+- 923 blocks;
+- 2,728.57 ha;
+- retention targets 0%, 10%, 20% and 30% of pre-harvest BA;
+- 741 blocks have enough DF to produce a nonzero retained cohort in the
+  overlay matrix;
+- the original regime-target overlay covers 2,306.10 ha and 244.55 ha of
+  basal-area-equivalent residual area.
+
+Files:
+
+```text
+planning/2026-11-18_mkrf_retention_profile_grid.csv
+planning/2026-11-18_mkrf_retention_profile_grid.json
+```
 
 Files:
 
@@ -91,10 +103,42 @@ remains 4,810.85 ha. This is the key correction from the earlier split matrix.
 The old split comparison had managed area 3,876.1 ha and unmanaged area
 934.7 ha.
 
+### 4. Retention-intensity choice grid
+
+`build_mkrf_vr_overlay_grid.py` builds `ws4/runtime/matrix_vr_grid`. Each
+profiled block has a choice track with:
+
+```text
+CC      = no retention
+VR10    = 10% pre-harvest BA
+VR20    = 20% pre-harvest BA
+VR30    = 30% pre-harvest BA
+```
+
+The optimizer chose the following in the 120-iteration, seed-44 run:
+
+| Treatment | Blocks/events |
+| --- | ---: |
+| CC | 1,344 |
+| VR10 | 14 |
+| VR20 | 4 |
+| VR30 | 0 |
+
+The grid run produced:
+
+| Scenario | Gross log value | Production | Net after all cost | Harvest cost | Targets |
+| --- | ---: | ---: | ---: | ---: | --- |
+| No retention | CAD 716.7M | 3.378M m³ | CAD 403.7M | CAD 185.8M | 31/5/1 |
+| VR grid, re-optimized | CAD 713.6M | 3.363M m³ | CAD 402.2M | CAD 185.0M | 29/7/1 |
+
+The optimizer mostly chooses no retention under the current target set. That is
+a real result, not a fallback: the grid makes retention intensity a choice and
+the search is not forced to use it.
+
 ## Important implementation limits
 
-- **Retention intensity is fixed**, not an optimizer decision. Current groups
-  use 10% or 20% BA from the silviculture assignment.
+- **Retention intensity is a discrete grid**, currently 10/20/30% BA plus CC.
+  It is not continuous and does not yet include 5/15/25%.
 - **The composite track is additive.** It is not a two-cohort growth model and
   does not model competition, windthrow or retained-tree mortality.
 - **Species DBH shape comes from the synthetic MKRF 684 tree list**, scaled by
@@ -108,18 +152,18 @@ The old split comparison had managed area 3,876.1 ha and unmanaged area
 
 ## What must be built next
 
-1. **Retention intensity as a decision variable.**
-   - Precompute a retention ledger over a 0–30% BA grid.
-   - Let the optimizer choose the treatment variant per block.
-   - Reject intensities the AU/age profile cannot represent.
-2. **Age-specific distribution interpolation.**
+1. **Age-specific distribution interpolation.**
    - Build the rotation and rotation+50 anchors.
    - Interpolate quantiles by treatment age.
    - Add the two-anchor uncertainty report.
-3. **Grade-specific product removal.**
+2. **Grade-specific product removal.**
    - Buck the selected residual stems with the same stem/price model.
    - Remove their sawlog/pulp volumes and values from the first-harvest ledger
      and add them to the next composite final-felling ledger.
+3. **Grid calibration.**
+   - Test 5/15/25% and a wider target set.
+   - Check whether the optimizer's near-zero retention choice is driven by the
+     target weights, economics, or the sparse treatment alternatives.
 4. **Validation and public scenario.**
    - Conservation tests for area/BA/volume/value.
    - Re-run low/base/high or the decided target set.

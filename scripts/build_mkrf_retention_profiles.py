@@ -30,7 +30,10 @@ VRI_PATH = WORKSPACE / "sources" / "mkrf-gis-2026-11-02" / "processed" / "vri_20
 STAND = ROOT / "examples" / "game" / "stands" / "mkrf_684"
 LEVEL = ROOT / "examples" / "game" / "levels" / "mkrf_684"
 OUT = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profiles.csv"
+GRID_OUT = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profile_grid.csv"
+GRID_SUMMARY = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profile_grid.json"
 SUMMARY = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profiles.json"
+TARGET_GRID = (0.0, 0.10, 0.20, 0.30)
 
 sys.path.insert(0, str(ROOT / "src"))
 
@@ -182,59 +185,70 @@ def main() -> None:
         frame["ba_total"] = frame["weight"] * frame["ba_per_tree"]
         frame["volume_total"] = frame["weight"] * frame["volume_per_tree"]
         frame["value_total"] = frame["weight"] * frame["value_per_tree"]
-        target_ba = target_pct * float(frame["ba_total"].sum())
-        df = frame.loc[frame["species"].eq("FD")].sort_values("dbh", ascending=False)
-        selected = df.loc[df["ba_total"].cumsum().le(target_ba)]
-        if len(selected) < len(df):
-            selected = df.iloc[: len(selected) + 1]
-        if selected.empty:
-            continue
         total_ba = float(frame["ba_total"].sum())
         total_volume = float(frame["volume_total"].sum())
         total_value = float(frame["value_total"].sum())
-        retained_ba = float(selected["ba_total"].sum())
-        retained_volume = float(selected["volume_total"].sum())
-        retained_value = float(selected["value_total"].sum())
-        retained_tph = float(selected["weight"].sum() / area)
-        rows.append(
-            {
-                "block_id": block_id,
-                "au_id": au_id,
-                "silv_group": str(record.silv_group),
-                "area_ha": area,
-                "current_age": age,
-                "rotation_age": rotation_age,
-                "profile_age": profile_age,
-                "vri_tph": tph,
-                "vri_ba_m2_ha": ba,
-                "qmd_cm": qmd,
-                "retention_target_ba_pct": target_pct,
-                "total_stems": float(frame["weight"].sum()),
-                "total_ba_m2": total_ba,
-                "total_volume_m3": total_volume,
-                "total_gross_value_cad": total_value,
-                "retained_stems": float(selected["weight"].sum()),
-                "retained_tph": retained_tph,
-                "retained_ba_m2": retained_ba,
-                "retained_ba_share": retained_ba / total_ba,
-                "retained_volume_share": retained_volume / total_volume,
-                "retained_value_share": retained_value / total_value,
-                "min_retained_dbh_cm": float(selected["dbh"].min()),
-                "residual_area_fraction": retained_ba / total_ba,
-                "harvest_volume_share": 1.0 - retained_volume / total_volume,
-                "harvest_value_share": 1.0 - retained_value / total_value,
-                "profile_note": (
-                    "VRI scale + MKRF 684 species shape; BA target; "
-                    "DF-first largest-DBH selection; synthetic bootstrap"
-                ),
-            }
-        )
+        df = frame.loc[frame["species"].eq("FD")].sort_values("dbh", ascending=False)
+        targets = sorted(set((float(target_pct), *TARGET_GRID)))
+        for target in targets:
+            target_ba = target * total_ba
+            if target <= 0.0:
+                selected = df.iloc[:0]
+            else:
+                selected = df.loc[df["ba_total"].cumsum().le(target_ba)]
+                if len(selected) < len(df):
+                    selected = df.iloc[: len(selected) + 1]
+            retained_ba = float(selected["ba_total"].sum())
+            retained_volume = float(selected["volume_total"].sum())
+            retained_value = float(selected["value_total"].sum())
+            retained_tph = float(selected["weight"].sum() / area)
+            rows.append(
+                {
+                    "block_id": block_id,
+                    "au_id": au_id,
+                    "silv_group": str(record.silv_group),
+                    "area_ha": area,
+                    "current_age": age,
+                    "rotation_age": rotation_age,
+                    "profile_age": profile_age,
+                    "vri_tph": tph,
+                    "vri_ba_m2_ha": ba,
+                    "qmd_cm": qmd,
+                    "regime_target_ba_pct": target_pct,
+                    "retention_target_ba_pct": target,
+                    "total_stems": float(frame["weight"].sum()),
+                    "total_ba_m2": total_ba,
+                    "total_volume_m3": total_volume,
+                    "total_gross_value_cad": total_value,
+                    "retained_stems": float(selected["weight"].sum()),
+                    "retained_tph": retained_tph,
+                    "retained_ba_m2": retained_ba,
+                    "retained_ba_share": retained_ba / total_ba,
+                    "retained_volume_share": retained_volume / total_volume,
+                    "retained_value_share": retained_value / total_value,
+                    "min_retained_dbh_cm": (
+                        float(selected["dbh"].min()) if not selected.empty else 0.0
+                    ),
+                    "residual_area_fraction": retained_ba / total_ba,
+                    "harvest_volume_share": 1.0 - retained_volume / total_volume,
+                    "harvest_value_share": 1.0 - retained_value / total_value,
+                    "profile_note": (
+                        "VRI scale + MKRF 684 species shape; BA target; "
+                        "DF-first largest-DBH selection; synthetic bootstrap"
+                    ),
+                }
+            )
 
-    out = pd.DataFrame(rows).sort_values("block_id")
-    out.to_csv(OUT, index=False)
+    out = pd.DataFrame(rows).sort_values(["block_id", "retention_target_ba_pct"])
+    original = out.loc[
+        out["retention_target_ba_pct"].eq(out["regime_target_ba_pct"])
+    ]
+    out.to_csv(GRID_OUT, index=False)
+    original.to_csv(OUT, index=False)
     summary = {
-        "blocks": int(len(out)),
-        "area_ha": float(out["area_ha"].sum()),
+        "blocks": int(out["block_id"].nunique()),
+        "rows": int(len(out)),
+        "area_ha": float(out.drop_duplicates("block_id")["area_ha"].sum()),
         "mean_retained_ba_share": float(out["retained_ba_share"].mean()),
         "mean_retained_volume_share": float(out["retained_volume_share"].mean()),
         "mean_retained_value_share": float(out["retained_value_share"].mean()),
@@ -260,6 +274,7 @@ def main() -> None:
         ),
     }
     SUMMARY.write_text(pd.Series(summary).to_json(indent=2) + "\n", encoding="utf-8")
+    GRID_SUMMARY.write_text(pd.Series(summary).to_json(indent=2) + "\n", encoding="utf-8")
     print(out.head().to_string(index=False))
     print(pd.Series(summary).to_string())
 
