@@ -3,8 +3,9 @@
 
 # Variable-retention implementation — first pass
 
-Status: **full-area one-rotation overlay and discrete retention-intensity grid
-complete; age interpolation and grade-specific bucking still pending**
+Status: **full-area one-rotation overlay, discrete retention-intensity grid,
+retention policy target and two-anchor age interpolation complete;
+grade-specific bucking still pending**
 
 Date: 2026-11-18
 
@@ -24,6 +25,17 @@ profile using:
 The profile selects **Douglas-fir first, largest DBH first**, until the
 **pre-harvest basal-area target** is met. It records retained stems, TPH,
 BA, volume and value, and the residual area fraction.
+
+The profile builder now uses two DBH anchors:
+
+- **rotation anchor**: the pinned MKRF 684 tree list;
+- **rotation+50 anchor**: FAIB PSP CWHdm live FD, age 140–180, 2,817 records
+  on 13 sites (`2026-11-18_mkrf_dbh_anchors.csv`);
+- quantiles are linearly blended by the profile age between the anchors;
+- the blended shape is scaled to the VRI QMD and BA trends at the profile age.
+
+The `age_interpolation_fraction` column records the blend. The current matrix
+uses one profile age per block; it does not yet build a separate R+50 matrix.
 
 The profile builder now writes a grid as well as the original regime-target
 rows.
@@ -129,11 +141,12 @@ The grid run produced:
 | Scenario | Gross log value | Production | Net after all cost | Harvest cost | Targets |
 | --- | ---: | ---: | ---: | ---: | --- |
 | No retention | CAD 716.7M | 3.378M m³ | CAD 403.7M | CAD 185.8M | 31/5/1 |
-| VR grid, re-optimized | CAD 713.6M | 3.363M m³ | CAD 402.2M | CAD 185.0M | 29/7/1 |
+| VR grid, pre-age profile, no policy | CAD 713.6M | 3.363M m³ | CAD 402.2M | CAD 185.0M | 29/7/1 |
 
-The optimizer mostly chooses no retention under the current target set. That is
-a real result, not a fallback: the grid makes retention intensity a choice and
-the search is not forced to use it.
+The optimizer mostly chooses no retention when no policy target is present.
+That is a real result, not a fallback: the grid makes retention intensity a
+choice and the search is not forced to use it. The age-aware policy result is
+in §5.
 
 ### 5. Explicit retention policy target
 
@@ -163,16 +176,16 @@ blocks with `VR10` gives:
 | Scenario | Gross log value | Net after all cost | Retained BA | Targets |
 | --- | ---: | ---: | ---: | --- |
 | No retention, 400 m² policy evaluated | CAD 716.7M | CAD 403.7M | 0 | 31/15/1 |
-| Retention seed, 400 m² policy | CAD 654.0M | CAD 368.5M | 10,166 m² | **43/3/1** |
-| Retention seed + 120 iterations, 400 m² policy | CAD 648.5M | CAD 365.4M | 10,462 m² | **44/2/1** |
+| Retention seed, age-aware profile | CAD 640.2M | CAD 360.7M | 12,464 m² | **44/2/1** |
+| Retention seed + 120 iterations, age-aware profile | CAD 632.4M | CAD 356.1M | 12,807 m² | **44/2/1** |
 
-The re-optimized seed meets **all ten 400 m² retention targets**. Only two
-even-flow yield checks remain below and one above; all other targets are met.
-At 500 m², the same re-optimized seed meets 9 of 10 retention periods and
-scores 43/3/1.
+The age-aware seed and re-optimized seed meet **all ten 400 m² retention
+targets**. Only two even-flow yield checks remain below and one above; all
+other targets are met. At 500 m², the pre-age profile result was 43/3/1 and
+is retained as a sensitivity.
 
 The strong result is that the retention policy changes the economics
-materially: about **CAD 68M less gross log value** and **CAD 38M less net after
+materially: about **CAD 76M less gross log value** and **CAD 43M less net after
 all cost** than the no-retention baseline.
 
 ## Important implementation limits
@@ -184,10 +197,12 @@ all cost** than the no-retention baseline.
   retention screen rather than a replacement for the CT schedule.
 - **The composite track is additive.** It is not a two-cohort growth model and
   does not model competition, windthrow or retained-tree mortality.
-- **Species DBH shape comes from the synthetic MKRF 684 tree list**, scaled by
-  VRI TPH/BA/species share. It is not a full-estate measured tree list.
-- **No age interpolation yet.** The profile uses the AU rotation age, or the
-  current age if older; the +50-year anchor is not wired into the matrix.
+- **Species DBH shape is a blend** of the synthetic MKRF 684 rotation stand
+  and the PSP CWHdm rotation+50 FD anchor, scaled by VRI TPH/BA/species share.
+  It is not a full-estate measured tree list.
+- **Age interpolation is a two-anchor quantile blend**, not a full
+  age-continuous matrix. The current matrix uses one profile age per block;
+  a separate R+50 matrix is still a useful sensitivity.
 - **Aggregate product scaling.** The harvested product curves are scaled by
   volume/value share; the residual stem grade mix is not re-bucketed tree by
   tree.
@@ -195,14 +210,14 @@ all cost** than the no-retention baseline.
 
 ## What must be built next
 
-1. **Age-specific distribution interpolation.**
-   - Build the rotation and rotation+50 anchors.
-   - Interpolate quantiles by treatment age.
-   - Add the two-anchor uncertainty report.
-2. **Grade-specific product removal.**
+1. **Grade-specific product removal.**
    - Buck the selected residual stems with the same stem/price model.
    - Remove their sawlog/pulp volumes and values from the first-harvest ledger
      and add them to the next composite final-felling ledger.
+2. **R+50 age sensitivity.**
+   - Build a parallel matrix with the profile age forced to rotation+50.
+   - Compare retained volume/value and policy performance against the current
+     blended-age matrix.
 3. **Grid calibration.**
    - Test 5/15/25% and a wider target set.
    - Check whether the optimizer's near-zero retention choice is driven by the

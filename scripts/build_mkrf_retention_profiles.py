@@ -33,7 +33,9 @@ OUT = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profiles.csv"
 GRID_OUT = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profile_grid.csv"
 GRID_SUMMARY = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profile_grid.json"
 SUMMARY = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profiles.json"
+ANCHOR = INSTANCE / "planning" / "2026-11-18_mkrf_dbh_anchors.csv"
 TARGET_GRID = (0.0, 0.10, 0.20, 0.30)
+DBH_QUANTILES = np.linspace(0.01, 0.99, 99)
 
 sys.path.insert(0, str(ROOT / "src"))
 
@@ -70,6 +72,26 @@ def _tree_value(tree, model, prices) -> tuple[float, float]:
     return float(result.merchantable_volume_m3), float(value)
 
 
+def _age_trend(frame: pd.DataFrame, column: str) -> tuple[np.ndarray, np.ndarray]:
+    """Return a median age trend for a VRI column."""
+    valid = frame.loc[
+        frame["age"].between(0, 300)
+        & frame[column].notna()
+        & frame[column].between(0, 200)
+    ]
+    if valid.empty:
+        return np.array([0.0, 300.0]), np.array([0.0, 0.0])
+    bins = np.arange(0, 311, 10)
+    valid = valid.assign(
+        age_bin=pd.cut(valid["age"], bins, right=False, include_lowest=True)
+    )
+    medians = valid.groupby("age_bin", observed=True)[column].median()
+    centers = np.array(
+        [interval.mid for interval in medians.index], dtype=float
+    )
+    return centers, medians.to_numpy(dtype=float)
+
+
 def main() -> None:
     regime = pd.read_csv(
         INSTANCE / "data" / "model_input_bundle" / "silviculture_regime_assignment.csv"
@@ -84,6 +106,17 @@ def main() -> None:
         .merge(vri, on="forest_cover_id", how="left")
     )
 
+    merged["age"] = pd.to_numeric(merged["AGE_2020"], errors="coerce")
+    merged["ba"] = pd.to_numeric(merged["TCL_1_BASAL_AREA"], errors="coerce")
+    merged["tph"] = pd.to_numeric(
+        merged["TCL_1_VRI_LIVE_STEMS_PER_HA"], errors="coerce"
+    )
+    merged["qmd"] = 100.0 * np.sqrt(
+        4.0 * merged["ba"] / (np.pi * merged["tph"])
+    )
+    qmd_age, qmd_trend = _age_trend(merged, "qmd")
+    ba_age, ba_trend = _age_trend(merged, "ba")
+
     managed = pd.read_csv(
         INSTANCE / "data" / "model_input_bundle" / "managed_au_curves.csv"
     )
@@ -93,6 +126,11 @@ def main() -> None:
         valid = frame["age"] > 0
         mai = frame.loc[valid, "volume"] / frame.loc[valid, "age"]
         rotation[str(au_id)] = int(frame.loc[mai.idxmax(), "age"])
+
+    anchors = pd.read_csv(ANCHOR)
+    old_anchor = anchors.loc[anchors["anchor"].eq("rotation_plus_50")]
+    old_quantile = old_anchor["quantile"].to_numpy(dtype=float)
+    old_dbh = old_anchor["dbh_cm"].to_numpy(dtype=float)
 
     inventory = load_tree_inventory(
         STAND / "trees.csv", metadata_path=STAND / "inventory.meta.json"
@@ -135,8 +173,27 @@ def main() -> None:
         if not math.isfinite(target_pct) or target_pct <= 0:
             continue
 
-        # Scale the representative species shapes to the VRI QMD.  Use a
-        # quantile grid so the selection remains tractable for 1,763 blocks.
+        age_fraction = float(np.clip((profile_age - rotation_age) / 50.0, 0.0, 1.0))
+        qmd_current_trend = float(np.interp(age, qmd_age, qmd_trend))
+        qmd_profile_trend = float(np.interp(profile_age, qmd_age, qmd_trend))
+        ba_current_trend = float(np.interp(age, ba_age, ba_trend))
+        ba_profile_trend = float(np.interp(profile_age, ba_age, ba_trend))
+        qmd_factor = (
+            qmd_profile_trend / qmd_current_trend
+            if qmd_current_trend > 1e-9
+            else 1.0
+        )
+        ba_factor = (
+            ba_profile_trend / ba_current_trend
+            if ba_current_trend > 1e-9
+            else 1.0
+        )
+        profile_qmd = float(np.clip(qmd * qmd_factor, 5.0, 100.0))
+        profile_ba = float(np.clip(ba * ba_factor, 5.0, 150.0))
+
+        # Build a relative species shape at the rotation anchor and at
+        # rotation+50, then interpolate the quantiles by age.  FD uses the
+        # PSP CWHdm older anchor; other species keep the tree-list shape.
         cohort: list[dict[str, float | str]] = []
         for species, share in sorted(shares.items(), key=lambda item: -item[1]):
             source = by_species.get(species) or by_species.get("FD")
@@ -148,8 +205,14 @@ def main() -> None:
             source_value = np.array([row[3] for row in source], dtype=float)
             count = max(24, int(round(240 * share)))
             quantiles = np.linspace(0.01, 0.99, count)
+            rotation_shape = np.quantile(source_dbh, quantiles)
+            older_shape = rotation_shape
+            if species == "FD":
+                older_shape = np.interp(quantiles, old_quantile, old_dbh)
+            shape = (1.0 - age_fraction) * rotation_shape + age_fraction * older_shape
+            shape_qmd = 100.0 * math.sqrt(float(np.mean(shape**2)))
             dbh = np.clip(
-                np.quantile(source_dbh, quantiles) * (qmd / np.median(source_dbh)),
+                shape * (profile_qmd / shape_qmd) if shape_qmd > 1e-9 else shape,
                 5.0,
                 150.0,
             )
@@ -175,12 +238,11 @@ def main() -> None:
         frame["ba_total"] = frame["weight"] * frame["ba_per_tree"]
         frame["volume_total"] = frame["weight"] * frame["volume_per_tree"]
         frame["value_total"] = frame["weight"] * frame["value_per_tree"]
-        # Normalize the cohort to the VRI BA; this keeps area and BA coherent
-        # even when the representative shape differs from the block.
+        # Normalize the cohort to the age-interpolated BA target.
         ba_total = float(frame["ba_total"].sum())
         if ba_total <= 0:
             continue
-        scale = ba / (ba_total / area)
+        scale = profile_ba / (ba_total / area)
         frame["weight"] *= scale
         frame["ba_total"] = frame["weight"] * frame["ba_per_tree"]
         frame["volume_total"] = frame["weight"] * frame["volume_per_tree"]
@@ -211,9 +273,12 @@ def main() -> None:
                     "current_age": age,
                     "rotation_age": rotation_age,
                     "profile_age": profile_age,
+                    "age_interpolation_fraction": age_fraction,
                     "vri_tph": tph,
                     "vri_ba_m2_ha": ba,
-                    "qmd_cm": qmd,
+                    "profile_ba_m2_ha": profile_ba,
+                    "vri_qmd_cm": qmd,
+                    "qmd_cm": profile_qmd,
                     "regime_target_ba_pct": target_pct,
                     "retention_target_ba_pct": target,
                     "total_stems": float(frame["weight"].sum()),

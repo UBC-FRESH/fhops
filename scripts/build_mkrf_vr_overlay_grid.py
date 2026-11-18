@@ -252,6 +252,32 @@ def main() -> None:
                 }
             )
 
+            # Retention policy accounts.  These are first-entry products, not
+            # harvested timber: they expose the retained cohort to targets.
+            area = float(row["area_ha"])
+            retained_ba = float(row["retained_ba_m2"])
+            retained_volume = float(row["total_volume_m3"]) * r_vol
+            retained_value = float(row["total_gross_value_cad"]) * r_val
+            for account, value in (
+                ("product.ba.retention.total", retained_ba / area),
+                ("product.area.retention.total", float(row["residual_area_fraction"])),
+                ("product.volume.retention.total", retained_volume / area),
+                ("product.LogValue.retention.total", retained_value / area),
+            ):
+                curve_id, next_curve = add_grid_curve(
+                    curve_rows,
+                    next_curve,
+                    np.full(GRID.shape, float(value), dtype=float),
+                )
+                new_products.append(
+                    {
+                        "track_id": choice_track,
+                        "treatment": label,
+                        "label": account,
+                        "curve_id": curve_id,
+                    }
+                )
+
             # Composite track features: plantation plus retained overstory.
             for feature in plantation_features.itertuples(index=False):
                 name = str(feature.label)
@@ -391,8 +417,8 @@ def main() -> None:
             "Composite curves are additive, not a two-cohort growth model.",
             "The grid uses a 20-year curve grid for combined tracks.",
             "Only target-relevant product/feature labels are retained on the choice and composite tracks.",
-            "Profile age is one anchor; no rotation+50 interpolation yet.",
-            "Species DBH shape is the synthetic MKRF 684 tree list scaled by VRI.",
+            "Profile age uses a rotation/rotation+50 quantile blend; one profile age per block.",
+            "Species DBH shape is the synthetic MKRF 684 tree list at rotation and PSP CWHdm FD at rotation+50, scaled by VRI.",
         ],
     }
     (OUT / "vr_grid_assumptions.json").write_text(
