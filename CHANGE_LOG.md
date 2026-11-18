@@ -1,3 +1,10 @@
+# 2026-11-18 — MKRF full-estate 3D scene and browser audit
+
+- Built `planning/studio3d/mkrf_scene.json` in the MKRF instance from 2016 LidarBC 5 m CHM / 1 m DEM, 1,763 public blocks, WS4 block metrics and the AU species summary. The scene is 17.5 MB, 3.58M synthetic stems, with CHM valid over 99.6% of the block area.
+- Fixed the portal's MKRF WS4 3D API from HTTP 404 to HTTP 200; the scene now opens with all trees enabled.
+- Audited all three scenes in Chromium: MKRF 3.58M stems, Gavin 3.49M, Knife 2.92M, no scene or JS errors. The host browser falls back to SwiftShader because NVIDIA GL/EGL/Vulkan userspace is absent; all-tree screenshots still time out in software rendering.
+- Recorded the scene sources, build command and GPU limitation in `notes/2026-11-18_3d-scene-audit.md`.
+
 # 2026-11-02 — deploy road validation and grade-aware routing
 
 - Synced Studio road connectivity blocking and DEM-grade road-network costs from merged `main` (`4ad83be5`).

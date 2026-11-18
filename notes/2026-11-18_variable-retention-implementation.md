@@ -4,8 +4,9 @@
 
 Status: **full-area one-rotation overlay, discrete retention-intensity grid,
 retention policy target, two-anchor age interpolation, R+50 sensitivity and
-bucked log-assortment ledger, public policy scenario and 200-year next-rotation
-validation complete; coastal-grade mapping still pending**
+bucked log-assortment ledger, public policy scenario, 200-year next-rotation
+validation and full-estate 3D scene complete; coastal-grade mapping and a
+real-GPU browser pass still pending**
 
 Date: 2026-11-18
 
@@ -267,6 +268,25 @@ This is a **manual schedule extension**, not a 200-year optimized search. The
 retention target remains a first-rotation policy; no second-rotation retention
 choice was added.
 
+### 8. Full-estate 3D scene
+
+The portal's MKRF 3D link was pointing at an API that returned HTTP 404. A
+full-estate scene was built at `planning/studio3d/mkrf_scene.json` from the
+2016 LidarBC 5 m CHM and 1 m DEM, 1,763 block polygons, WS4 block metrics and
+the AU species summary.
+
+- 17.5 MB scene pack, 15 m grid, 452 × 908 cells;
+- CHM valid over 99.6% of the block area;
+- 3.58M synthetic stems at block density;
+- the API now returns 200.
+
+Browser audit: all three scenes load with all trees enabled and no JS errors:
+MKRF 3.58M stems, Gavin 3.49M, Knife 2.92M. The host has an NVIDIA RTX PRO 6000
+but the container lacks NVIDIA GL/EGL/Vulkan userspace, so Chromium falls back
+to SwiftShader. All-tree screenshots time out in software rendering; the LOD
+screenshot and scene counters pass. See
+`2026-11-18_3d-scene-audit.md`.
+
 ## Important implementation limits
 
 - **Retention intensity is a discrete grid**, currently 10/20/30% BA plus CC.
@@ -301,6 +321,11 @@ choice was added.
    - Conservation tests for area/BA/volume/grade value.
    - Re-run low/base/high or the decided target set.
    - Publish the scenario and update the MKRF card/brief.
+4. **Real-GPU 3D pass.**
+   - Install or mount the NVIDIA GL/EGL/Vulkan userspace stack, or run the
+     browser on a GPU display host.
+   - Re-run all-tree screenshots for MKRF, Gavin and Knife.
+   - Record frame rate separately from scene correctness.
 
 ## Assumptions currently used
 
