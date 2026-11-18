@@ -1,5 +1,4 @@
-> Public project-note copy. The full instance implementation note is kept at
-> `femic/external/femic-mkrf-instance/planning/2026-11-18_variable-retention-implementation.md`.
+> Public project-note copy. See the matching instance planning note.
 
 # Variable-retention implementation — first pass
 
@@ -180,8 +179,8 @@ blocks with `VR10` gives:
 | Scenario | Gross log value | Net after all cost | Retained BA | Targets |
 | --- | ---: | ---: | ---: | --- |
 | No retention, 400 m² policy evaluated | CAD 716.7M | CAD 403.7M | 0 | 31/15/1 |
-| Retention seed, age-aware and bucked | CAD 655.2M | CAD 369.2M | 12,798 m² | **44/2/1** |
-| Retention seed + 120 iterations | CAD 641.8M | CAD 361.2M | 13,368 m² | 42/4/1 |
+| Retention seed, age-aware and bucked | CAD 655.2M | CAD 369.2M | 12,670 m² | **44/2/1** |
+| Retention seed + 120 iterations | CAD 641.8M | CAD 361.2M | 13,234 m² | 42/4/1 |
 
 The seed meets **all ten 400 m² retention targets**. The re-optimized search
 reduces gross/net further but loses two target passes, so the seed remains the
@@ -216,8 +215,8 @@ the first-harvest product curves.
 
 | Scenario | Retained volume | Retained value | Butt volume | Upper volume | Pulp volume |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Age-aware seed | 193,970 m³ | CAD 41.70M | 24,858 m³ | 168,490 m³ | 621 m³ |
-| Forced R+50 seed | 248,061 m³ | CAD 53.39M | 30,573 m³ | 217,223 m³ | 266 m³ |
+| Age-aware seed | 192,030 m³ | CAD 41.29M | 24,610 m³ | 166,805 m³ | 615 m³ |
+| Forced R+50 seed | 245,581 m³ | CAD 52.85M | 30,268 m³ | 215,050 m³ | 263 m³ |
 
 This is a **bucked log-assortment ledger**, not yet a complete coastal-grade
 matrix substitution. The matrix coastal grade products D/F/H/I/J/U/X/Y remain
@@ -239,9 +238,9 @@ for the full blend (`age_interpolation_fraction = 1`).
 
 | Scenario | Gross log value | Net after all cost | Retained BA | Targets |
 | --- | ---: | ---: | ---: | --- |
-| Current/as-of profile, 400 m² policy | CAD 655.2M | CAD 369.2M | 12,798 m² | 44/2/1 |
-| Forced R+50 profile, seed, 400 m² policy | CAD 657.7M | CAD 370.6M | 13,538 m² | 44/2/1 |
-| Forced R+50 profile, re-optimized | **CAD 652.6M** | **CAD 367.7M** | **13,985 m²** | **45/1/1** |
+| Current/as-of profile, 400 m² policy | CAD 655.2M | CAD 369.2M | 12,670 m² | 44/2/1 |
+| Forced R+50 profile, seed, 400 m² policy | CAD 657.7M | CAD 370.6M | 13,403 m² | 44/2/1 |
+| Forced R+50 profile, re-optimized | **CAD 652.6M** | **CAD 367.7M** | **13,845 m²** | **45/1/1** |
 
 The older-age sensitivity retains about **6% more BA** than the current-age
 profile. The re-optimized R+50 case improves target performance from 44/2/1 to
