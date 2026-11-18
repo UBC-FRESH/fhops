@@ -139,6 +139,9 @@ the search is not forced to use it.
 
 - **Retention intensity is a discrete grid**, currently 10/20/30% BA plus CC.
   It is not continuous and does not yet include 5/15/25%.
+- **The choice track exposes CC and VRxx final treatments.** The base CT rows
+  are not carried on the choice track, so the grid result is a final-harvest
+  retention screen rather than a replacement for the CT schedule.
 - **The composite track is additive.** It is not a two-cohort growth model and
   does not model competition, windthrow or retained-tree mortality.
 - **Species DBH shape comes from the synthetic MKRF 684 tree list**, scaled by
