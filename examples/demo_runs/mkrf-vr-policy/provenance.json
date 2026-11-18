@@ -1,0 +1,15 @@
+{
+  "instance": "/srv/shared-data/gep/ws4/femic/external/femic-mkrf-instance",
+  "matrix": "/srv/shared-data/gep/ws4/femic/external/femic-mkrf-instance/ws4/runtime/matrix_vr_grid",
+  "source_run": "/srv/shared-data/gep/ws4/femic/external/femic-mkrf-instance/ws4/runtime/vr_grade_seed_asof",
+  "policy_targets": "/srv/shared-data/gep/ws4/femic/external/femic-mkrf-instance/ws4/targets_vr_policy.yaml",
+  "geometry": "examples/demo_runs/mkrf-full-estate/blocks.geojson",
+  "retention_basis": "m\u00b2 retained basal area per 10-year period",
+  "state": "full managed block; composite plantation + retained-DF track",
+  "caveats": [
+    "Policy seed schedule, not a fully re-optimized target search.",
+    "Bucked sawlog butt/upper/pulp ledger; coastal grade mapping still pending.",
+    "Composite retained-overstory curves are additive.",
+    "400 m\u00b2 floor is a scenario policy, not a legal requirement."
+  ]
+}
