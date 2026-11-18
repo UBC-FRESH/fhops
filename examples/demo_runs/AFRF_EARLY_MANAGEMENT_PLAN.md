@@ -41,7 +41,8 @@ The early numbers are useful for structure and direction:
 
 | Screen | Production | Annual net after cost | NPV 4% | Status |
 | --- | ---: | ---: | ---: | --- |
-| Gavin policy | 5,385,149 m³ / 300 yr | ~CAD 1.95M/yr | ~CAD 48.3M | timber-only upper bound; MDWR pending |
+| Gavin policy | 5,385,149 m³ / 300 yr | ~CAD 1.95M/yr | ~CAD 48.3M | timber-only upper bound |
+| Gavin MDWR group selection | 3,735,231 m³ / 300 yr | not fabricated | — | no-clearcut MDWR screen; BEC habitat-class proxy; 10/43/8 targets |
 | Knife legal-HMZ GWM | 2,433,385 m³ / 300 yr | ~CAD 882k/yr | ~CAD 39.3M | structural policy screen |
 | Knife LiDAR-gated GWM | 2,343,814 m³ / 300 yr | ~CAD 850k/yr | ~CAD 38.0M | structural policy screen with a real LiDAR block gate |
 | Knife LiDAR spatial-clump FVS | 2,564,179 m³ / 300 yr | ~CAD 930k/yr | ~CAD 55.6M | structural LiDAR pilot, not decision-grade |
@@ -59,7 +60,7 @@ interchangeable, and they must not be merged into one headline number.
 | Instance | Role in this brief | Scale | Current status |
 | --- | --- | ---: | --- |
 | MKRF | Larger-estate stress test of the same WS4/FHOPS scenario stack | 1,763 blocks / 4,810.85 ha | three 100-year scenario screens, with public finance and operational handoffs |
-| Gavin Lake | Separate AFRF block and the current AFRF benchmark | 2,907 blocks / 5,663.66 ha | timber-only policy screen; **mule-deer working-circle constraints not yet carried** |
+| Gavin Lake | Separate AFRF block and the current AFRF benchmark | 2,907 blocks / 5,663.66 ha | timber-only upper bound plus a no-clearcut MDWR group-selection screen; **BEC habitat-class proxy, not decision-grade** |
 | Knife Creek | Separate AFRF block and the current GWM/LiDAR pilot | 160 blocks / 3,481.77 ha | HMZ-constrained policy screen and LiDAR spatial-clump pilot |
 
 MKRF is not an AFRF block. Gavin Lake and Knife Creek are separate AFRF blocks
@@ -180,31 +181,32 @@ shows the scale of the gap:
 - The Gavin block layer shown in the console does not expose `WORKING_CI`,
   habitat class, or MDWR status.
 
-So the current Gavin result is useful as a **timber-only upper bound**, not as a
-management-plan result. It should not be called decision-grade until the MDWR
-constraint is carried.
+So the current Gavin result is useful as a **timber-only upper bound**. A second
+screen, `gavin-mdwr`, now carries the no-clearcut MDWR constraint and a Table 30
+group-selection approximation. It schedules **0 MDWR clearcuts**, **3.735M m³
+over 300 years**, and meets **10/43/8** of the existing policy targets. That is
+a trade-off screen, not a decision-grade result.
+
+The habitat-class assignment in `gavin-mdwr` is a **BEC proxy** because the
+official Appendix 9 layer is not in the legacy spatial package. The screen also
+uses a full-area partial-cut volume approximation rather than spatial groups.
 
 ### Opportunities to strengthen the Gavin scenarios
 
-1. **Carry `WORKING_CI` into the Gavin block and run contract.** At minimum,
-   expose MDWR, Gavin Lake Demonstration Area, Timber Production Area, and
-   reserves/LMZ. This is the single highest-value change.
-2. **Add a no-clearcut MDWR constraint as the first legal screen.** Even before
-   group-selection curves exist, remove clearcut eligibility from the 2,846 ha
-   Beaver Valley MDWR. This gives a defensible lower-bound scenario.
-3. **Build a Beaver Valley group-selection regime.** Use 40-year re-entry,
-   20–33% area per pass by habitat class, 3–5 cohorts, and maximum group size
-   0.4/0.7 ha. The regime is materially different from the Knife Creek BDq
-   single-tree selection and must not reuse the Knife curves.
+1. **Verify and replace the habitat-class proxy.** The `gavin-mdwr` screen uses
+   ICHmk3 → High, ICHmk3/SBSdw → Moderate, SBSdw1 → Low. That is a screening
+   assumption, not the legal Appendix 9 delineation.
+2. **Add the spatial group layout.** Enforce the 0.4 ha warm-aspect and 0.7 ha
+   other-aspect group-size caps, and represent the 3–5 cohort structure.
+3. **Add the preparatory thinning pass.** The 2007 plan expects thinning at
+   least ten years before group selection.
 4. **Add habitat accounts.** Report MDWR area scheduled, habitat-class area,
    residual basal area, canopy cover, cohort age distribution, maximum group
    size, and the proportion of the working circle in each habitat class.
-5. **Run at least three Gavin scenarios:**
-   - `gavin-timber-only`: current H-matrix upper bound, no MDWR constraint;
-   - `gavin-mdwr-floor`: MDWR no-clearcut, with group selection where curves
-     are available and deferral elsewhere;
-   - `gavin-mdwr-mp3`: 45% MDWR target with High/Moderate/Low habitat classes
-     and Table 30 harvest intensities.
+5. **Run the remaining Gavin scenarios:**
+   - `gavin-mdwr-floor`: MDWR no-clearcut, with deferral rather than group
+     selection (the current screen reports 3.560M m³ / 300 years);
+   - `gavin-mdwr-mp3`: 45% MDWR target with the verified habitat-class map.
 6. **Add a CCLUP-minimum sensitivity.** Test 18% MDWR as the lower policy
    envelope against the MP#3 45% target, so the trade-off is explicit.
 7. **Protect the Gavin Lake Demonstration Area separately.** The 2007 plan gives
@@ -326,6 +328,7 @@ changes.
 | Scenario | Purpose | Current status |
 | --- | --- | --- |
 | `gavin-policy` | Timber-only Gavin upper bound | 61/61 targets meet, but no MDWR constraint; not decision-grade |
+| `gavin-mdwr` | MDWR no-clearcut / Table 30 group-selection screen | 10/43/8 targets; 3.735M m³ / 300 yr; BEC habitat-class proxy |
 | `knife-gwm-policy` | Legal-HMZ sustained GWM screen | structural; main Knife policy candidate |
 | `knife-gwm-lidar-policy` | Adds a real LiDAR block-level harvest gate | structural; tests LiDAR eligibility |
 | `knife-lidar-clump-policy` | Replaces the proxy with spatial LiDAR clumps in FVS | structural pilot; strongest LiDAR test |

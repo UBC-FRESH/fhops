@@ -52,6 +52,11 @@ MODEL_INSTANCES = {
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
         "map_query": "period=P00",
     },
+    "gavin-mdwr": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
     "mkrf-full-estate": {
         "domain": "tactical_operational",
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
@@ -182,6 +187,7 @@ def test_research_forest_portal_and_briefs(client: TestClient) -> None:
         "/briefs/MKRF_DFRET_SCENARIOS.pdf",
         "/briefs/MKRF_DFRET_REOPTIMIZED.pdf",
         "/briefs/MKRF_DFRET_STATE_AWARE.pdf",
+        "/briefs/GAVIN_MDWR_SCENARIO.pdf",
         "/flyovers/gavin_1032/optimal/viewer.html",
         "/flyovers/kc_57254551/optimal/viewer.html",
         "/stems/gavin_1032/trees.csv",

@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "gavin-mdwr",
+  "domain": "tactical_operational",
+  "run_type": "tactical_operational",
+  "status": "policy-screen",
+  "files": {
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "harvest_decisions": "harvest_decisions.csv",
+    "production": "production.csv",
+    "tactical_summary": "tactical_summary.json"
+  },
+  "warnings": [
+    "BEC proxy for Table 30 habitat classes; official Appendix 9 map is not available.",
+    "Full-area partial-cut volume screen; no spatial group layout or 0.4/0.7 ha size cap.",
+    "No preparative thinning; no private finance."
+  ],
+  "generated_at": "2026-11-18T07:00:00+00:00",
+  "command": "WS4 Gavin MDWR no-clearcut / group-selection simulation",
+  "scenario": "scenario.yaml",
+  "solver": "ws4-simulate"
+}
