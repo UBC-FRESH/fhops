@@ -193,6 +193,7 @@ def test_research_forest_portal_and_briefs(client: TestClient) -> None:
         "/briefs/MKRF_DFRET_REOPTIMIZED.pdf",
         "/briefs/MKRF_DFRET_STATE_AWARE.pdf",
         "/briefs/MKRF_VR_POLICY.pdf",
+        "/briefs/MKRF_VR_POLICY_AUDIT.pdf",
         "/briefs/GAVIN_MDWR_SCENARIO.pdf",
         "/flyovers/gavin_1032/optimal/viewer.html",
         "/flyovers/kc_57254551/optimal/viewer.html",

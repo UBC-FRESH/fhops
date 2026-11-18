@@ -141,14 +141,18 @@ def main() -> None:
             return 0.0
         return float(row.iloc[0]["mean"]) * (100.0 if annual else 1.0)
 
+    def total(account: str) -> float:
+        rows = accounts.loc[accounts["account"] == account]
+        return float(rows["value"].sum()) if not rows.empty else 0.0
+
     targets = pd.read_csv(SOURCE / "report_targets.csv")["status"].value_counts().to_dict()
     gross = mean("product.LogValue.managed.total")
     net = mean("product.NetRevenue.managed.total")
     cost = mean("product.Cost_Harvesting.managed.total")
     volume = mean("product.yield.managed.total")
-    retained_ba = mean("product.ba.retention.total")
-    retained_volume = mean("product.retention.total.volume")
-    retained_value = mean("product.retention.total.value")
+    retained_ba = total("product.ba.retention.total")
+    retained_volume = total("product.retention.total.volume")
+    retained_value = total("product.retention.total.value")
     periods_total = values.reset_index()
     summary = {
         "run_id": "mkrf-vr-policy",
@@ -232,7 +236,7 @@ def main() -> None:
                 "- full managed block area;",
                 "- retained DF carried into the composite next-rotation track;",
                 "- 44/2/1 targets; gross CAD 655.2M; net CAD 369.2M;",
-                "- retained BA 12,798 m²; retained log volume 193,970 m³;",
+                "- retained BA 12,670 m²; retained log volume 192,030 m³;",
                 "- bucked sawlog butt/upper/pulp ledger;",
                 "- coastal grade mapping still pending.",
                 "",

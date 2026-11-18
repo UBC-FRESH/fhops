@@ -12,7 +12,7 @@
     "tactical_summary": "tactical_summary.json"
   },
   "warnings": [],
-  "generated_at": "2026-11-18T18:50:25.221992+00:00",
+  "generated_at": "2026-11-18T19:15:20.488293+00:00",
   "command": "WS4 MKRF variable-retention policy handoff",
   "scenario": "scenario.yaml",
   "solver": "ws4",

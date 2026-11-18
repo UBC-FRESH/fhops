@@ -28,9 +28,9 @@ The screen uses **dispersed retention** on the MKRF full estate:
 | Harvest cost | CAD 170.0M |
 | Managed area | 4,120.7 ha |
 | Unmanaged area | 690.2 ha |
-| Retained BA | 12,798 m² |
-| Retained volume | 193,970 m³ |
-| Retained log value | CAD 41.70M |
+| Retained BA | 12,670 m² |
+| Retained volume | 192,030 m³ |
+| Retained log value | CAD 41.29M |
 | Targets | **44 met / 2 below / 1 above** |
 
 All ten 400 m² retention targets are met. The two remaining misses are
@@ -40,10 +40,10 @@ even-flow yield checks; one even-flow check is above the band.
 
 | Class | Volume | Value |
 | --- | ---: | ---: |
-| Sawlog butt | 24,858 m³ | CAD 7.13M |
-| Sawlog upper | 168,490 m³ | CAD 34.51M |
-| Pulp | 621 m³ | CAD 0.06M |
-| **Total** | **193,970 m³** | **CAD 41.70M** |
+| Sawlog butt | 24,610 m³ | CAD 7.06M |
+| Sawlog upper | 166,805 m³ | CAD 34.17M |
+| Pulp | 615 m³ | CAD 0.06M |
+| **Total** | **192,030 m³** | **CAD 41.29M** |
 
 The residual cohort is dominated by sawlog upper, with a smaller high-value
 butt component.
@@ -52,11 +52,11 @@ butt component.
 
 | Profile | Gross | Net | Retained BA | Targets |
 | --- | ---: | ---: | ---: | --- |
-| Current/as-of age | CAD 655.2M | CAD 369.2M | 12,798 m² | 44/2/1 |
-| Forced rotation+50 | CAD 657.7M | CAD 370.6M | 13,538 m² | 44/2/1 |
+| Current/as-of age | CAD 655.2M | CAD 369.2M | 12,670 m² | 44/2/1 |
+| Forced rotation+50 | CAD 657.7M | CAD 370.6M | 13,403 m² | 44/2/1 |
 
 A re-optimized R+50 run reached **45/1/1** at CAD 652.6M gross and CAD 367.7M
-net, with 13,985 m² retained BA.
+net, with 13,845 m² retained BA.
 
 ## Method
 

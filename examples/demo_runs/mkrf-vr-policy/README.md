@@ -7,7 +7,7 @@ Public tactical handoff for the MKRF dispersed-retention policy.
 - full managed block area;
 - retained DF carried into the composite next-rotation track;
 - 44/2/1 targets; gross CAD 655.2M; net CAD 369.2M;
-- retained BA 12,798 m²; retained log volume 193,970 m³;
+- retained BA 12,670 m²; retained log volume 192,030 m³;
 - bucked sawlog butt/upper/pulp ledger;
 - coastal grade mapping still pending.
 
