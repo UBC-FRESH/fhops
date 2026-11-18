@@ -2,8 +2,10 @@
 
 - Acquired the public BC long-term habitat objective map for Beaver Valley North (Prouton Lakes), dated 6 December 2001, and digitized its High/Moderate/Low polygons.
 - Built a 1,443-block class table and clipped EPSG:3005 class polygons in the Gavin instance. The official fine map gives 682.3 ha High, 1,115.4 ha Moderate and 898.4 ha Low by largest-intersection assignment, versus the BEC proxy's 14.27 / 213.06 / 2,571.98 ha.
-- The public MDWR run still uses the BEC proxy. The adjusted Appendix 9 compartment map and legal order remain to be reconciled before the matrix is rebuilt.
+- The public MDWR run still uses the BEC proxy. The adjusted Appendix 9 compartment map and legal order remain to be reconciled; an official-class matrix was built as a sensitivity but is not public.
 - Added `notes/2026-11-18_gavin-mdwr-official-habitat.md` and updated the MDWR brief/card to state the acquisition and the unresolved legal-map step.
+- Re-entry audit: the MDWR clone resets fragment age on every pass while pass curves start at age 79. Block 266 yields 15.4 m³ on the first GS20 pass and 0.0 m³ on every later pass; the official GS33 matrix shows 25.4 m³ then 0.0. The published 3.735M m³ result is therefore a first-entry screen, not a validated 40-year re-entry result.
+- Added optional `--habitat-table` support to the MDWR matrix builder for the official fine-map classes; the official matrix was built but is not published.
 
 # 2026-11-18 — MKRF full-estate 3D scene and browser audit
 

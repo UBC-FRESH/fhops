@@ -103,3 +103,30 @@ until the matrix is rebuilt with these classes.
   40-year schedule, the 300-year screen and the public PDF is the next step.
 - The fine-map georeference is a screening fit from the printed grid; retained
   boundary uncertainty should be carried into any compliance discussion.
+
+## Re-entry audit finding
+
+The official-class matrix was built at
+`ws4/runtime/mdwr_group_selection_official` and simulated for 300 years. It was
+not published, because the check exposed a pre-existing re-entry problem in the
+MDWR clone matrix.
+
+The matrix builder resets the fragment age to zero on every group-selection
+pass. The pass product curves are stand-age curves that start at age 79. A
+40-year re-entry event therefore lands at offset 40, where the curve is still
+zero, and resets the age again. In a block isolation test (block 266):
+
+- BEC `GS20`: first pass at offset 23 gives 15.4 m³; offsets 63, 103, 143,
+  183, 223 and 263 each give 0.0 m³;
+- official `GS33`: first pass at offset 23 gives 25.4 m³; all later passes
+  give 0.0 m³.
+
+The aggregate official run gives 3.7727M m³ versus 3.7352M m³ for the BEC
+matrix, but the difference is only the first-entry pulse; after period 9 the
+two runs are identical. The target status is unchanged at 10 met / 43 below /
+8 above.
+
+Consequence: the current public `gavin-mdwr` total must be treated as a
+**first-entry / full-area partial-cut screen**, not as a validated 40-year
+re-entry result, until the age-reset semantics are fixed. The official-class
+replacement is deliberately not published.

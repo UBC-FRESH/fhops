@@ -6,20 +6,26 @@ clones the tracks used by Beaver Valley MDWR blocks, removes clearcut from those
 clones, and adds a group-selection treatment with the Table 30 pass intensity and
 a 40-year re-entry.
 
-The 2007 MWP #3 Table 30 habitat classes are not carried as a spatial attribute
-in the available legacy layer.  The class assignment here is a documented BEC
-proxy, not the official Appendix 9 habitat-class map:
+The legacy layer does not carry the adjusted 2007 Appendix 9 habitat-class
+attribute.  By default the script uses the documented BEC proxy:
 
 - ICHmk3 -> High (33% per pass)
 - ICHmk3/SBSdw -> Moderate (25% per pass)
 - SBSdw1 -> Low (20% per pass)
 
+``--habitat-table`` can instead supply block-level ``model_class`` values from
+the official long-term objective extraction in the instance planning folder.
+
 The result is a full-area partial-cut volume screen.  It does not split a block
-into spatial groups or model the 0.4/0.7 ha group-size limit.
+into spatial groups or model the 0.4/0.7 ha group-size limit.  The current clone
+resets fragment age on every pass, so the 40-year re-entry needs a separate
+state fix before its later-pass volumes can be treated as validated.
 """
 
 from __future__ import annotations
 
+import argparse
+import hashlib
 import json
 import shutil
 from pathlib import Path
@@ -42,7 +48,7 @@ FIRST_ENTRY_AGE = 80
 REENTRY_YEARS = 40
 
 
-def spatial_attributes() -> pd.DataFrame:
+def spatial_attributes(habitat_table: Path | None = None) -> pd.DataFrame:
     frame = gpd.read_file(SPATIAL)
     frame["block_id"] = frame["RES_KEY"].astype(int)
     working = (
@@ -55,7 +61,19 @@ def spatial_attributes() -> pd.DataFrame:
         .agg(lambda values: values.mode().iloc[0])
         .rename("bec")
     )
-    return pd.concat([working, bec], axis=1).reset_index()
+    attrs = pd.concat([working, bec], axis=1)
+    if habitat_table is None:
+        attrs["habitat"] = attrs["bec"].map(
+            {"ICHmk3": "High", "ICHmk3/SBSdw": "Moderate", "SBSdw1": "Low"}
+        ).fillna("Low")
+        attrs["class_basis"] = "bec_proxy"
+    else:
+        table = pd.read_csv(habitat_table)
+        table["block_id"] = table["block_id"].astype(int)
+        table = table.set_index("block_id")
+        attrs["habitat"] = table["model_class"].reindex(attrs.index).fillna("Low")
+        attrs["class_basis"] = table["class_basis"].reindex(attrs.index).fillna("bec_fallback")
+    return attrs.reset_index()
 
 
 def scaled_curve(
@@ -81,17 +99,22 @@ def scaled_curve(
 
 
 def main() -> None:
-    if OUT.exists():
-        shutil.rmtree(OUT)
-    shutil.copytree(BASE, OUT)
-    fragments = pd.read_parquet(OUT / "fragments.parquet")
-    blocks = pd.read_parquet(OUT / "blocks.parquet")
-    tracks = pd.read_parquet(OUT / "tracks.parquet")
-    features = pd.read_parquet(OUT / "features.parquet")
-    products = pd.read_parquet(OUT / "products.parquet")
-    treatments = pd.read_parquet(OUT / "treatments.parquet")
-    curves = pd.read_parquet(OUT / "curves.parquet")
-    attrs = spatial_attributes().set_index("block_id")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path, default=OUT)
+    parser.add_argument("--habitat-table", type=Path)
+    args = parser.parse_args()
+    out = args.out
+    if out.exists():
+        shutil.rmtree(out)
+    shutil.copytree(BASE, out)
+    fragments = pd.read_parquet(out / "fragments.parquet")
+    blocks = pd.read_parquet(out / "blocks.parquet")
+    tracks = pd.read_parquet(out / "tracks.parquet")
+    features = pd.read_parquet(out / "features.parquet")
+    products = pd.read_parquet(out / "products.parquet")
+    treatments = pd.read_parquet(out / "treatments.parquet")
+    curves = pd.read_parquet(out / "curves.parquet")
+    attrs = spatial_attributes(args.habitat_table).set_index("block_id")
 
     next_track = int(tracks["track_id"].max()) + 1
     next_curve = int(curves["curve_id"].max()) + 1
@@ -145,9 +168,9 @@ def main() -> None:
         props = attrs.loc[block_id]
         if props["working_circle"] != "MDWR":
             continue
-        habitat, _fraction, _treatment = CLASSES.get(
-            str(props["bec"]), ("Low", 0.20, "GS20")
-        )
+        habitat = str(props["habitat"])
+        if habitat not in CLASSES_BY_HABITAT:
+            habitat = "Low"
         tracks_for_block = clone_track(int(row["track_id"]), habitat)
         fragments.at[index, "track_id"] = tracks_for_block["initial"]
         area_by_class[habitat] = area_by_class.get(habitat, 0.0) + float(row["area_ha"])
@@ -227,13 +250,13 @@ def main() -> None:
             [treatments, pd.DataFrame(new_treatments)], ignore_index=True
         )
 
-    curves.to_parquet(OUT / "curves.parquet", index=False)
-    tracks.to_parquet(OUT / "tracks.parquet", index=False)
-    features.to_parquet(OUT / "features.parquet", index=False)
-    products.to_parquet(OUT / "products.parquet", index=False)
-    treatments.to_parquet(OUT / "treatments.parquet", index=False)
-    fragments.to_parquet(OUT / "fragments.parquet", index=False)
-    blocks.to_parquet(OUT / "blocks.parquet", index=False)
+    curves.to_parquet(out / "curves.parquet", index=False)
+    tracks.to_parquet(out / "tracks.parquet", index=False)
+    features.to_parquet(out / "features.parquet", index=False)
+    products.to_parquet(out / "products.parquet", index=False)
+    treatments.to_parquet(out / "treatments.parquet", index=False)
+    fragments.to_parquet(out / "fragments.parquet", index=False)
+    blocks.to_parquet(out / "blocks.parquet", index=False)
 
     metadata = {
         "source": str(BASE),
@@ -247,11 +270,23 @@ def main() -> None:
             "Moderate": {"fraction": 0.25, "treatment": "GS25", "cohorts": 4, "max_age": 160},
             "Low": {"fraction": 0.20, "treatment": "GS20", "cohorts": 5, "max_age": 200},
         },
+        "habitat_class_source": (
+            "official_fine_map" if args.habitat_table else "bec_proxy"
+        ),
+        "habitat_table": str(args.habitat_table) if args.habitat_table else None,
+        "habitat_table_sha256": (
+            hashlib.sha256(args.habitat_table.read_bytes()).hexdigest()
+            if args.habitat_table
+            else None
+        ),
         "habitat_class_proxy": {
             "ICHmk3": "High",
             "ICHmk3/SBSdw": "Moderate",
             "SBSdw1": "Low",
-            "note": "BEC proxy only; the official Appendix 9 habitat-class map is not in the legacy layer.",
+            "note": (
+                "BEC proxy used only where the official table falls back or "
+                "where no habitat table is supplied."
+            ),
         },
         "area_by_class_ha": area_by_class,
         "blocks_by_class": blocks_by_class,
@@ -264,12 +299,12 @@ def main() -> None:
             "Carbon curves are scaled with the pass fraction as a rough screen.",
         ],
     }
-    (OUT / "mdwr_assumptions.json").write_text(
+    (out / "mdwr_assumptions.json").write_text(
         json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
     )
     print(
         "built",
-        OUT,
+        out,
         "classes",
         area_by_class,
         "blocks",

@@ -81,6 +81,13 @@ and the 2007 legal order and current UWR boundary still need review. The
 results in this brief therefore still use the BEC proxy; the model has not been
 rebuilt with the official classes.
 
+A re-entry audit also found that the current MDWR clone resets the fragment age
+on every pass, while the pass product curves start at age 79. In a block test,
+the first pass produced volume and every later 40-year pass produced zero. The
+public **3.735M m³** result is therefore a **first-entry / full-area partial-cut
+screen**, not a validated 40-year re-entry result. The official-class matrix is
+built but not published.
+
 Details:
 `notes/2026-11-18_gavin-mdwr-official-habitat.md`.
 
