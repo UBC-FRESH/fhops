@@ -66,6 +66,26 @@ search:
 All ten retention targets are met. The two remaining misses are even-flow
 yield checks; one even-flow check is above the band.
 
+## 200-year next-rotation validation
+
+To exercise the retained-DF state, the 100-year seed schedule was extended with
+second and third entries at +80/+160 years, capped at 200 years. The same
+matrix and 400 m² first-rotation policy were used.
+
+| Scenario | Gross log value | Production | Net revenue | Targets |
+| --- | ---: | ---: | ---: | --- |
+| 200-year retention | CAD 1,769.8M | 8.319M m³ | CAD 1,001.3M | 68/13/6 |
+| 200-year no retention | CAD 1,739.4M | 8.178M m³ | CAD 983.1M | 63/19/5 |
+
+The retained-DF composite track adds about **140,434 m³** and **CAD 30.3M** gross
+over the two rotations relative to the no-retention schedule. The second
+rotation harvest is concentrated at offsets 80 and 160, as expected from the
+manual 80-year re-entry.
+
+This validates that the retained cohort is carried into the next final-felling
+ledger. It does not validate a 200-year optimized schedule; the extension is a
+manual sensitivity.
+
 ## Remaining limits
 
 - Coastal grade products D/F/H/I/J/U/X/Y are still aggregate-scaled.

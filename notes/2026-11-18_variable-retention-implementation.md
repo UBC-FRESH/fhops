@@ -4,8 +4,8 @@
 
 Status: **full-area one-rotation overlay, discrete retention-intensity grid,
 retention policy target, two-anchor age interpolation, R+50 sensitivity and
-bucked log-assortment ledger and public policy scenario complete;
-coastal-grade mapping still pending**
+bucked log-assortment ledger, public policy scenario and 200-year next-rotation
+validation complete; coastal-grade mapping still pending**
 
 Date: 2026-11-18
 
@@ -246,6 +246,26 @@ The older-age sensitivity retains about **6% more BA** than the current-age
 profile. The re-optimized R+50 case improves target performance from 44/2/1 to
 45/1/1. This is a material age-distribution sensitivity, not a final
 calibration.
+
+### 7. 200-year next-rotation validation
+
+The 100-year seed schedule was extended with CC entries at +80 and +160 years
+(capped at 200 years), and simulated on `matrix_vr_grid` with the 400 m²
+first-rotation policy.
+
+| Scenario | Gross log value | Production | Net revenue | Targets |
+| --- | ---: | ---: | ---: | --- |
+| 200-year retention | CAD 1,769.8M | 8.319M m³ | CAD 1,001.3M | 68/13/6 |
+| 200-year no retention | CAD 1,739.4M | 8.178M m³ | CAD 983.1M | 63/19/5 |
+
+The retained composite track adds **140,434 m³** and **CAD 30.3M** gross over
+the two rotations relative to the same schedule with all first entries
+converted to CC. This confirms that retained DF is carried into the next
+final-felling ledger.
+
+This is a **manual schedule extension**, not a 200-year optimized search. The
+retention target remains a first-rotation policy; no second-rotation retention
+choice was added.
 
 ## Important implementation limits
 
