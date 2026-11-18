@@ -5,10 +5,13 @@
 
 Status: **full-area one-rotation overlay, discrete retention-intensity grid,
 retention policy target, two-anchor age interpolation, R+50 sensitivity and
-bucked log-assortment ledger complete; coastal-grade mapping and public
-scenario still pending**
+bucked log-assortment ledger and public policy scenario complete;
+coastal-grade mapping still pending**
 
 Date: 2026-11-18
+
+Public scenario: `mkrf-vr-policy`; brief
+`MKRF_VR_POLICY.pdf`; portal card `/fhops/?run=mkrf-vr-policy`.
 
 ## What is now built
 
