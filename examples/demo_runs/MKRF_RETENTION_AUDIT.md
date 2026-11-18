@@ -50,10 +50,22 @@ The public **net-after-harvest-cost** convention is retained in `MKRF_RETENTION_
 
 Retained area is only 4.4%, 8.8% and 15.7% of the eligible area, but the largest-DF profile represents 32.6%, 42.8% and 55.1% of gross value. Per retained hectare, the high-graded residual is about 7.4x, 4.9x and 3.5x the average value of the area slice in the low/base/high cases.
 
+## State-aware follow-up
+
+A state-aware **value-equivalent residual-area proxy** is now published in
+`MKRF_DFRET_STATE_AWARE.md`. It splits each block into harvested and residual
+tracks, leaves the residual track in the state to age, and applies the
+largest-DF value/volume reduction through the harvested product curves. It
+reproduces the product-ledger gross/volume/net totals and adds the residual
+area to the state, but it is still **not** a species/DBH tree-level residual
+selector: the retained cohort is represented by a value-equivalent area rather
+than a measured stem footprint.
+
 ## Files
 
 - `MKRF_RETENTION_VALUE_SCENARIOS.csv` — full current/corrected metrics
 - `MKRF_RETENTION_AUDIT.md` — this report
+- `MKRF_DFRET_STATE_AWARE.md` — state-aware residual-area target-search results
 - `MKRF_SCENARIO_COMPARISON.csv` — existing area-retention comparison
 
 ## Decision boundary

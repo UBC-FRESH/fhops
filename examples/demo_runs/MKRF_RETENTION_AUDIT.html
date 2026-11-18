@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>MKRF Retention-Value Audit</title>
+  <title>MKRF retention-value audit</title>
   <style>
 html {
 color: #1a1a1a;
@@ -165,7 +165,7 @@ vertical-align: middle;
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">MKRF Retention-Value Audit</h1>
+<h1 class="title">MKRF retention-value audit</h1>
 </header>
 <h1 id="mkrf-retention-value-audit">MKRF retention-value audit</h1>
 <p>Status: <strong>audit and sensitivity, not a re-optimized WS4
@@ -359,11 +359,23 @@ material</h2>
 the largest-DF profile represents 32.6%, 42.8% and 55.1% of gross value.
 Per retained hectare, the high-graded residual is about 7.4x, 4.9x and
 3.5x the average value of the area slice in the low/base/high cases.</p>
+<h2 id="state-aware-follow-up">State-aware follow-up</h2>
+<p>A state-aware <strong>value-equivalent residual-area proxy</strong>
+is now published in <code>MKRF_DFRET_STATE_AWARE.md</code>. It splits
+each block into harvested and residual tracks, leaves the residual track
+in the state to age, and applies the largest-DF value/volume reduction
+through the harvested product curves. It reproduces the product-ledger
+gross/volume/net totals and adds the residual area to the state, but it
+is still <strong>not</strong> a species/DBH tree-level residual
+selector: the retained cohort is represented by a value-equivalent area
+rather than a measured stem footprint.</p>
 <h2 id="files">Files</h2>
 <ul>
 <li><code>MKRF_RETENTION_VALUE_SCENARIOS.csv</code> — full
 current/corrected metrics</li>
 <li><code>MKRF_RETENTION_AUDIT.md</code> — this report</li>
+<li><code>MKRF_DFRET_STATE_AWARE.md</code> — state-aware residual-area
+target-search results</li>
 <li><code>MKRF_SCENARIO_COMPARISON.csv</code> — existing area-retention
 comparison</li>
 </ul>

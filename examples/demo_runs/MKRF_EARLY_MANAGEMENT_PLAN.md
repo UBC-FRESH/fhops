@@ -72,9 +72,17 @@ against the canonical matrix. The no-retention baseline is now:
 - net NPV 4%: **CAD 100.9M**
 
 I then built residual-product matrices and re-ran the same target search for
-the three residual cases. The product ledgers now carry the largest-DF
-value/volume reduction, while the state transition still harvests the full
-area; this is a **finance/curve screen**, not yet a state-aware residual model.
+the three residual cases. The product ledgers carry the largest-DF
+value/volume reduction, but that product screen still harvests the full area.
+
+I also built a **state-aware value-equivalent residual-area variant**. Each
+no-retention block is split into a harvested track and a residual track; the
+residual track carries copied feature curves, ages through the horizon and is
+not re-entered in this screen. The harvested net/cost curves include a
+fixed-cost correction, so the state totals reconcile with the product-ledger
+screen. Residual areas are 1,567 ha (low), 2,055 ha (base) and 2,652 ha
+(high). The low state run resolves one additional feature-yield target
+(32/4/1 instead of 31/5/1); base and high are unchanged.
 
 | Scenario | Gross | Production | Net after all cost | Net after harvest cost | Net NPV 4% | Targets |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
@@ -83,12 +91,14 @@ area; this is a **finance/curve screen**, not yet a state-aware residual model.
 | base-44-dfret | CAD 421.6M | 1.99M m³ | CAD 181.4M | CAD 72.1M | CAD 45.2M | 21/15/1 |
 | high-44-dfret | CAD 324.8M | 1.54M m³ | CAD 111.8M | CAD 27.3M | CAD 27.6M | 21/15/1 |
 
-The current NPV screens should not be read as if retention were a fully
-state-aware largest-DF stem prescription until residual stems are carried into
-the next state.
+Neither screen is yet a species/DBH tree-level largest-DF stem prescription.
+The state-aware variant carries a **value-equivalent residual area**, not a
+measured stem footprint; the residual track has no scheduled re-entry; and the
+species/DBH profile still comes from the pinned MKRF 684 tree list rather than a
+full-estate tree list.
 
-Implementation detail and the full overlay table are in
-`MKRF_DFRET_REOPTIMIZED.md`.
+Implementation detail is in `MKRF_DFRET_REOPTIMIZED.md` (product-ledger screen)
+and `MKRF_DFRET_STATE_AWARE.md` (state-aware area proxy).
 
 **Decision requested:** endorse this as the draft structure for MKRF, and
 support the same staged modelling and review path proposed for AFRF. The current

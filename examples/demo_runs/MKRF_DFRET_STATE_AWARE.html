@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>MKRF state-aware residual-area scenarios</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">MKRF state-aware residual-area scenarios</h1>
+</header>
+<h1 id="mkrf-state-aware-residual-area-scenarios">MKRF state-aware
+residual-area scenarios</h1>
+<p>Status: <strong>state-aware residual-area proxy; not yet a
+species/DBH tree-level residual selector and not a decision-grade
+plan.</strong></p>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th style="text-align: right;">Residual area</th>
+<th style="text-align: right;">Gross</th>
+<th style="text-align: right;">Production</th>
+<th style="text-align: right;">Net after all cost</th>
+<th style="text-align: right;">Net after harvest cost</th>
+<th style="text-align: right;">Gross NPV 4%</th>
+<th style="text-align: right;">Net NPV 4%</th>
+<th>Targets met/below/above</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>no-retention</td>
+<td style="text-align: right;">0 ha</td>
+<td style="text-align: right;">CAD 716.7M</td>
+<td style="text-align: right;">3.38M m³</td>
+<td style="text-align: right;">CAD 403.7M</td>
+<td style="text-align: right;">CAD 217.8M</td>
+<td style="text-align: right;">CAD 182.6M</td>
+<td style="text-align: right;">CAD 100.9M</td>
+<td>31/5/1</td>
+</tr>
+<tr class="even">
+<td>low-44-state</td>
+<td style="text-align: right;">1,567 ha</td>
+<td style="text-align: right;">CAD 482.1M</td>
+<td style="text-align: right;">2.27M m³</td>
+<td style="text-align: right;">CAD 230.1M</td>
+<td style="text-align: right;">CAD 105.2M</td>
+<td style="text-align: right;">CAD 126.2M</td>
+<td style="text-align: right;">CAD 59.3M</td>
+<td>32/4/1</td>
+</tr>
+<tr class="odd">
+<td>base-44-state</td>
+<td style="text-align: right;">2,055 ha</td>
+<td style="text-align: right;">CAD 421.6M</td>
+<td style="text-align: right;">1.99M m³</td>
+<td style="text-align: right;">CAD 181.4M</td>
+<td style="text-align: right;">CAD 72.1M</td>
+<td style="text-align: right;">CAD 106.9M</td>
+<td style="text-align: right;">CAD 45.2M</td>
+<td>21/15/1</td>
+</tr>
+<tr class="even">
+<td>high-44-state</td>
+<td style="text-align: right;">2,652 ha</td>
+<td style="text-align: right;">CAD 324.8M</td>
+<td style="text-align: right;">1.54M m³</td>
+<td style="text-align: right;">CAD 111.8M</td>
+<td style="text-align: right;">CAD 27.3M</td>
+<td style="text-align: right;">CAD 81.6M</td>
+<td style="text-align: right;">CAD 27.6M</td>
+<td>21/15/1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-is-now-carried-in-the-state">What is now carried in the
+state</h2>
+<ul>
+<li>Each no-retention block fragment is split into a harvested portion
+and a residual portion. The split is the largest-DF
+<strong>value-equivalent area</strong> from the pinned MKRF 684
+profile.</li>
+<li>The residual portion is on its own track, with copied feature
+curves. It ages and grows through the 100-year horizon, but has no
+scheduled product treatment and is not re-entered in this screen.</li>
+<li>The harvested product curves carry the residual value/volume
+reduction and a fixed-cost correction. Gross, production, harvest cost,
+total cost and net revenue therefore reconcile with the earlier
+product-ledger screen at the same schedule.</li>
+<li>The target search was rerun with the same seed (44), target set
+(<code>targets_risk_cost_opt.yaml</code>), route configuration,
+topology, patch accounts and 100-year horizon.</li>
+</ul>
+<h2 id="results">Results</h2>
+<p>The state-aware run preserves the product-ledger economics:</p>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th style="text-align: right;">State gross</th>
+<th style="text-align: right;">Product-screen gross</th>
+<th style="text-align: right;">State volume</th>
+<th style="text-align: right;">Product-screen volume</th>
+<th style="text-align: right;">State net</th>
+<th style="text-align: right;">Product-screen net</th>
+<th>State targets</th>
+<th>Product-screen targets</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>low-44-state</td>
+<td style="text-align: right;">CAD 482.1M</td>
+<td style="text-align: right;">CAD 482.1M</td>
+<td style="text-align: right;">2.27M m³</td>
+<td style="text-align: right;">2.27M m³</td>
+<td style="text-align: right;">CAD 230.1M</td>
+<td style="text-align: right;">CAD 230.1M</td>
+<td>32/4/1</td>
+<td>31/5/1</td>
+</tr>
+<tr class="even">
+<td>base-44-state</td>
+<td style="text-align: right;">CAD 421.6M</td>
+<td style="text-align: right;">CAD 421.6M</td>
+<td style="text-align: right;">1.99M m³</td>
+<td style="text-align: right;">1.99M m³</td>
+<td style="text-align: right;">CAD 181.4M</td>
+<td style="text-align: right;">CAD 181.4M</td>
+<td>21/15/1</td>
+<td>21/15/1</td>
+</tr>
+<tr class="odd">
+<td>high-44-state</td>
+<td style="text-align: right;">CAD 324.8M</td>
+<td style="text-align: right;">CAD 324.8M</td>
+<td style="text-align: right;">1.54M m³</td>
+<td style="text-align: right;">1.54M m³</td>
+<td style="text-align: right;">CAD 111.8M</td>
+<td style="text-align: right;">CAD 111.8M</td>
+<td>21/15/1</td>
+<td>21/15/1</td>
+</tr>
+</tbody>
+</table>
+<p>The low case resolves one additional feature-yield target because the
+residual cohort remains in the state and continues to age; base and high
+retain the same target status.</p>
+<h2 id="limits">Limits</h2>
+<ul>
+<li>The residual area is a <strong>value-equivalent area proxy</strong>,
+not a measured stem footprint. It is larger than the physical area that
+would be occupied by a scattered largest-DF retention cohort.</li>
+<li>Species/DBH selection is still represented by the pinned MKRF 684
+profile, not by a full-estate tree list.</li>
+<li>The residual track has no scheduled re-entry or partial harvest
+during the horizon. A production implementation needs an explicit
+residual state, re-entry rule and tree-level residual selector.</li>
+</ul>
+<p>Files: <code>MKRF_DFRET_STATE_AWARE.csv</code>,
+<code>MKRF_DFRET_REOPTIMIZED.csv</code>,
+<code>MKRF_DFRET_REOPTIMIZED.md</code>,
+<code>MKRF_RETENTION_AUDIT.md</code>.</p>
+</body>
+</html>

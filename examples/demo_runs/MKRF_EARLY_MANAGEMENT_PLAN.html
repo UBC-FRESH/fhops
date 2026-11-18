@@ -5,7 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="dcterms.date" content="2026-11-17" />
-  <title>MKRF Malcolm Knapp Research Forest — Early Draft Management Plan and Modelling Brief</title>
+  <title>---</title>
   <style>
 html {
 color: #1a1a1a;
@@ -166,8 +166,7 @@ vertical-align: middle;
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">MKRF Malcolm Knapp Research Forest — Early Draft
-Management Plan and Modelling Brief</h1>
+<h1 class="title">---</h1>
 <p class="subtitle">Draft for UBC Research Forests leadership and the
 Dean’s Office</p>
 <p class="date">17 November 2026</p>
@@ -293,10 +292,18 @@ baseline is now:</p>
 <li>net NPV 4%: <strong>CAD 100.9M</strong></li>
 </ul>
 <p>I then built residual-product matrices and re-ran the same target
-search for the three residual cases. The product ledgers now carry the
-largest-DF value/volume reduction, while the state transition still
-harvests the full area; this is a <strong>finance/curve screen</strong>,
-not yet a state-aware residual model.</p>
+search for the three residual cases. The product ledgers carry the
+largest-DF value/volume reduction, but that product screen still
+harvests the full area.</p>
+<p>I also built a <strong>state-aware value-equivalent residual-area
+variant</strong>. Each no-retention block is split into a harvested
+track and a residual track; the residual track carries copied feature
+curves, ages through the horizon and is not re-entered in this screen.
+The harvested net/cost curves include a fixed-cost correction, so the
+state totals reconcile with the product-ledger screen. Residual areas
+are 1,567 ha (low), 2,055 ha (base) and 2,652 ha (high). The low state
+run resolves one additional feature-yield target (32/4/1 instead of
+31/5/1); base and high are unchanged.</p>
 <table>
 <colgroup>
 <col style="width: 11%" />
@@ -357,11 +364,15 @@ not yet a state-aware residual model.</p>
 </tr>
 </tbody>
 </table>
-<p>The current NPV screens should not be read as if retention were a
-fully state-aware largest-DF stem prescription until residual stems are
-carried into the next state.</p>
-<p>Implementation detail and the full overlay table are in
-<code>MKRF_DFRET_REOPTIMIZED.md</code>.</p>
+<p>Neither screen is yet a species/DBH tree-level largest-DF stem
+prescription. The state-aware variant carries a <strong>value-equivalent
+residual area</strong>, not a measured stem footprint; the residual
+track has no scheduled re-entry; and the species/DBH profile still comes
+from the pinned MKRF 684 tree list rather than a full-estate tree
+list.</p>
+<p>Implementation detail is in <code>MKRF_DFRET_REOPTIMIZED.md</code>
+(product-ledger screen) and <code>MKRF_DFRET_STATE_AWARE.md</code>
+(state-aware area proxy).</p>
 <p><strong>Decision requested:</strong> endorse this as the draft
 structure for MKRF, and support the same staged modelling and review
 path proposed for AFRF. The current numbers are strong enough for
