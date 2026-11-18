@@ -137,20 +137,22 @@ the search is not forced to use it.
 
 ### 5. Explicit retention policy target
 
-`ws4/targets_vr_policy.yaml` adds ten targets (and is the policy target file
-for the grid runs):
+`ws4/targets_vr_policy.yaml` now uses the calibrated **400 m² retained BA per
+10-year period** floor:
 
 ```text
 account: product.ba.retention.total
-minimum: 500 m² per 10-year period
+minimum: 400 m² per 10-year period
 ```
 
-This is a **scenario policy target**, not a legal requirement. It is paired
-with the existing yield, net-revenue, route and stock targets.
+The 500 m² version is retained as a sensitivity in
+`ws4/targets_vr_policy_500.yaml`. This is a **scenario policy target**, not a
+legal requirement. It is paired with the existing yield, net-revenue, route
+and stock targets.
 
-Starting from the no-retention schedule, the targets are not met:
+Starting from the no-retention schedule, retention targets are not met:
 
-- 31 met / 15 below / 1 above;
+- 31 met / 15 below / 1 above at the 400 m² floor;
 - 10 retention targets all below;
 - the search finds only 2,350 m² retained BA across the horizon even at 600
   iterations.
@@ -160,14 +162,14 @@ blocks with `VR10` gives:
 
 | Scenario | Gross log value | Net after all cost | Retained BA | Targets |
 | --- | ---: | ---: | ---: | --- |
-| No retention, policy evaluated | CAD 716.7M | CAD 403.7M | 0 | 31/15/1 |
-| Retention seed | CAD 654.0M | CAD 368.5M | 10,166 m² | **43/3/1** |
-| Retention seed + 120 iterations | CAD 648.5M | CAD 365.4M | 10,462 m² | **43/3/1** |
+| No retention, 400 m² policy evaluated | CAD 716.7M | CAD 403.7M | 0 | 31/15/1 |
+| Retention seed, 400 m² policy | CAD 654.0M | CAD 368.5M | 10,166 m² | **43/3/1** |
+| Retention seed + 120 iterations, 400 m² policy | CAD 648.5M | CAD 365.4M | 10,462 m² | **44/2/1** |
 
-The seed run meets the 500 m² policy floor in 9 of 10 periods; period 8 is
-below at 347 m². The re-optimized seed meets period 8 but falls below in period
-9 at 470 m². This is a feasible policy direction, not yet a fully met target
-set.
+The re-optimized seed meets **all ten 400 m² retention targets**. Only two
+even-flow yield checks remain below and one above; all other targets are met.
+At 500 m², the same re-optimized seed meets 9 of 10 retention periods and
+scores 43/3/1.
 
 The strong result is that the retention policy changes the economics
 materially: about **CAD 68M less gross log value** and **CAD 38M less net after
