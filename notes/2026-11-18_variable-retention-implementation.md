@@ -4,8 +4,9 @@
 # Variable-retention implementation — first pass
 
 Status: **full-area one-rotation overlay, discrete retention-intensity grid,
-retention policy target, two-anchor age interpolation and R+50 sensitivity
-complete; grade-specific bucking and public scenario still pending**
+retention policy target, two-anchor age interpolation, R+50 sensitivity and
+bucked log-assortment ledger complete; coastal-grade mapping and public
+scenario still pending**
 
 Date: 2026-11-18
 
@@ -176,17 +177,48 @@ blocks with `VR10` gives:
 | Scenario | Gross log value | Net after all cost | Retained BA | Targets |
 | --- | ---: | ---: | ---: | --- |
 | No retention, 400 m² policy evaluated | CAD 716.7M | CAD 403.7M | 0 | 31/15/1 |
-| Retention seed, age-aware profile | CAD 640.2M | CAD 360.7M | 12,464 m² | **44/2/1** |
-| Retention seed + 120 iterations, age-aware profile | CAD 632.4M | CAD 356.1M | 12,807 m² | **44/2/1** |
+| Retention seed, age-aware and bucked | CAD 655.2M | CAD 369.2M | 12,798 m² | **44/2/1** |
+| Retention seed + 120 iterations | CAD 641.8M | CAD 361.2M | 13,368 m² | 42/4/1 |
 
-The age-aware seed and re-optimized seed meet **all ten 400 m² retention
-targets**. Only two even-flow yield checks remain below and one above; all
-other targets are met. At 500 m², the pre-age profile result was 43/3/1 and
-is retained as a sensitivity.
+The seed meets **all ten 400 m² retention targets**. The re-optimized search
+reduces gross/net further but loses two target passes, so the seed remains the
+cleaner policy screen at this stage.
 
 The strong result is that the retention policy changes the economics
-materially: about **CAD 76M less gross log value** and **CAD 43M less net after
-all cost** than the no-retention baseline.
+materially: about **CAD 61.5M less gross log value** and **CAD 34.5M less net
+after all cost** than the no-retention baseline.
+
+### 5a. Bucked log assortment ledger
+
+The retention profile now carries the selected cohort's bucked log classes:
+
+```text
+sawlog_butt
+sawlog_upper
+pulp
+```
+
+The grid exposes them as first-entry products:
+
+```text
+product.retention.sawlog_butt.volume / .value
+product.retention.sawlog_upper.volume / .value
+product.retention.pulp.volume / .value
+product.retention.total.volume / .value
+```
+
+The log-class shares come from the MKRF 684 tree list's stem bucking. They are
+scaled to the matrix volume and gross-value ledger so the totals reconcile with
+the first-harvest product curves.
+
+| Scenario | Retained volume | Retained value | Butt volume | Upper volume | Pulp volume |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Age-aware seed | 193,970 m³ | CAD 41.70M | 24,858 m³ | 168,490 m³ | 621 m³ |
+| Forced R+50 seed | 248,061 m³ | CAD 53.39M | 30,573 m³ | 217,223 m³ | 266 m³ |
+
+This is a **bucked log-assortment ledger**, not yet a complete coastal-grade
+matrix substitution. The matrix coastal grade products D/F/H/I/J/U/X/Y remain
+aggregate-scaled for the first entry.
 
 ### 6. R+50 sensitivity
 
@@ -195,7 +227,8 @@ A forced rotation+50 profile grid and matrix are now built:
 ```text
 planning/2026-11-18_mkrf_retention_profile_grid_r50.csv
 ws4/runtime/matrix_vr_grid_r50
-ws4/runtime/vr_policy_r50_s44
+ws4/runtime/vr_grade_seed_r50
+ws4/runtime/vr_grade_r50_s44
 ```
 
 The profile age range is 110–170 years and the older PSP CWHdm anchor is used
@@ -203,12 +236,14 @@ for the full blend (`age_interpolation_fraction = 1`).
 
 | Scenario | Gross log value | Net after all cost | Retained BA | Targets |
 | --- | ---: | ---: | ---: | --- |
-| Current/as-of profile, policy 400 | CAD 632.4M | CAD 356.1M | 12,807 m² | 44/2/1 |
-| Forced R+50 profile, policy 400 | **CAD 630.6M** | **CAD 355.0M** | **13,535 m²** | **45/1/1** |
+| Current/as-of profile, 400 m² policy | CAD 655.2M | CAD 369.2M | 12,798 m² | 44/2/1 |
+| Forced R+50 profile, seed, 400 m² policy | CAD 657.7M | CAD 370.6M | 13,538 m² | 44/2/1 |
+| Forced R+50 profile, re-optimized | **CAD 652.6M** | **CAD 367.7M** | **13,985 m²** | **45/1/1** |
 
-The older-age sensitivity retains about **6% more BA** and slightly reduces
-gross/net revenue. It also improves target performance from 44/2/1 to 45/1/1.
-This is a material age-distribution sensitivity, not a final calibration.
+The older-age sensitivity retains about **6% more BA** than the current-age
+profile. The re-optimized R+50 case improves target performance from 44/2/1 to
+45/1/1. This is a material age-distribution sensitivity, not a final
+calibration.
 
 ## Important implementation limits
 
@@ -225,23 +260,23 @@ This is a material age-distribution sensitivity, not a final calibration.
 - **Age interpolation is a two-anchor quantile blend**, not a full
   age-continuous matrix. The current matrix uses one profile age per block; the
   forced R+50 matrix is a sensitivity, not a continuous age model.
-- **Aggregate product scaling.** The harvested product curves are scaled by
-  volume/value share; the residual stem grade mix is not re-bucketed tree by
-  tree.
+- **Bucked log assortment exists, but coastal grade mapping is not complete.**
+  Sawlog butt/upper/pulp volumes and values are carried; the matrix coastal
+  grades D/F/H/I/J/U/X/Y remain aggregate-scaled.
 - **The retained-overstory curve is additive**, not a mapped physical reserve.
 
 ## What must be built next
 
-1. **Grade-specific product removal.**
-   - Buck the selected residual stems with the same stem/price model.
-   - Remove their sawlog/pulp volumes and values from the first-harvest ledger
-     and add them to the next composite final-felling ledger.
+1. **Coastal-grade mapping.**
+   - Map the bucked sawlog butt/upper/pulp ledger to the MKRF
+     D/F/H/I/J/U/X/Y grade products.
+   - Reconcile retained grade volumes/values with the matrix grade curves.
 2. **Grid calibration.**
    - Test 5/15/25% and a wider target set.
    - Check whether the optimizer's near-zero retention choice is driven by the
      target weights, economics, or the sparse treatment alternatives.
 3. **Validation and public scenario.**
-   - Conservation tests for area/BA/volume/value.
+   - Conservation tests for area/BA/volume/grade value.
    - Re-run low/base/high or the decided target set.
    - Publish the scenario and update the MKRF card/brief.
 

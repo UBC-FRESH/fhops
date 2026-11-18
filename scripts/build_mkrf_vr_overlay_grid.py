@@ -32,6 +32,7 @@ PROFILE = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profile_grid.csv"
 OUT = INSTANCE / "ws4" / "runtime" / "matrix_vr_grid"
 GRID = np.arange(0, 301, 20, dtype=float)
 INTENSITIES = (0.10, 0.20, 0.30)
+LOG_CLASSES = ("sawlog_butt", "sawlog_upper", "pulp")
 KEY_FEATURES = {
     "feature.area.managed.total",
     "feature.area.managed.seral.le10",
@@ -261,16 +262,61 @@ def main() -> None:
 
             # Retention policy accounts.  These are first-entry products, not
             # harvested timber: they expose the retained cohort to targets.
+            # Scale the bucked log-class shares to the matrix product ledger so
+            # the grade volumes/values reconcile with matrix gross/volume.
             area = float(row["area_ha"])
             retained_ba = float(row["retained_ba_m2"])
-            retained_volume = float(row["total_volume_m3"]) * r_vol
-            retained_value = float(row["total_gross_value_cad"]) * r_val
-            for account, value in (
-                ("product.ba.retention.total", retained_ba / area),
-                ("product.area.retention.total", float(row["residual_area_fraction"])),
-                ("product.volume.retention.total", retained_volume / area),
-                ("product.LogValue.retention.total", retained_value / area),
-            ):
+            profile_age = float(row["profile_age"])
+            base_yield = source_cc_products.loc[
+                source_cc_products["label"].eq("product.yield.managed.total")
+            ]
+            base_log_value = source_cc_products.loc[
+                source_cc_products["label"].eq("product.LogValue.managed.total")
+            ]
+            if base_yield.empty or base_log_value.empty:
+                base_volume = float(row["total_volume_m3"])
+                base_value = float(row["total_gross_value_cad"])
+            else:
+                base_volume = area * curve_at(
+                    lookup, int(base_yield.iloc[0]["curve_id"]), profile_age
+                )
+                base_value = area * curve_at(
+                    lookup, int(base_log_value.iloc[0]["curve_id"]), profile_age
+                )
+            retained_volume = base_volume * r_vol
+            retained_value = base_value * r_val
+            profile_volume = sum(float(row[f"retained_{p}_m3"]) for p in LOG_CLASSES)
+            profile_value = sum(
+                float(row[f"retained_{p}_value_cad"]) for p in LOG_CLASSES
+            )
+            volume_scale = retained_volume / profile_volume if profile_volume > 1e-9 else 0.0
+            value_scale = retained_value / profile_value if profile_value > 1e-9 else 0.0
+            accounts = {
+                "product.ba.retention.total": retained_ba / area,
+                "product.area.retention.total": float(row["residual_area_fraction"]),
+            }
+            for product in LOG_CLASSES:
+                accounts[f"product.retention.{product}.volume"] = (
+                    float(row[f"retained_{product}_m3"]) * volume_scale / area
+                )
+                accounts[f"product.retention.{product}.value"] = (
+                    float(row[f"retained_{product}_value_cad"]) * value_scale / area
+                )
+            accounts["product.retention.total.volume"] = sum(
+                accounts[f"product.retention.{product}.volume"]
+                for product in LOG_CLASSES
+            )
+            accounts["product.retention.total.value"] = sum(
+                accounts[f"product.retention.{product}.value"]
+                for product in LOG_CLASSES
+            )
+            accounts["product.volume.retention.total"] = accounts[
+                "product.retention.total.volume"
+            ]
+            accounts["product.LogValue.retention.total"] = accounts[
+                "product.retention.total.value"
+            ]
+            for account, value in accounts.items():
                 curve_id, next_curve = add_grid_curve(
                     curve_rows,
                     next_curve,

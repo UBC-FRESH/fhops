@@ -37,6 +37,7 @@ SUMMARY = INSTANCE / "planning" / "2026-11-18_mkrf_retention_profiles.json"
 ANCHOR = INSTANCE / "planning" / "2026-11-18_mkrf_dbh_anchors.csv"
 TARGET_GRID = (0.0, 0.10, 0.20, 0.30)
 DBH_QUANTILES = np.linspace(0.01, 0.99, 99)
+LOG_CLASSES = ("sawlog_butt", "sawlog_upper", "pulp")
 
 sys.path.insert(0, str(ROOT / "src"))
 
@@ -67,10 +68,23 @@ def _vri_species(row: pd.Series) -> dict[str, float]:
     return {key: value / total for key, value in totals.items() if value > 0}
 
 
-def _tree_value(tree, model, prices) -> tuple[float, float]:
+def _tree_value(
+    tree, model, prices
+) -> tuple[float, float, dict[str, float], dict[str, float]]:
     result = model.evaluate(tree)
-    value = prices.value_logs(result.logs)["gross_log_value"]
-    return float(result.merchantable_volume_m3), float(value)
+    valued = prices.value_logs(result.logs)
+    return (
+        float(result.merchantable_volume_m3),
+        float(valued["gross_log_value"]),
+        {
+            product: float(valued["product_volume_m3"].get(product, 0.0))
+            for product in LOG_CLASSES
+        },
+        {
+            product: float(valued["product_value"].get(product, 0.0))
+            for product in LOG_CLASSES
+        },
+    )
 
 
 def _age_trend(frame: pd.DataFrame, column: str) -> tuple[np.ndarray, np.ndarray]:
@@ -170,12 +184,21 @@ def main() -> None:
     model = ReferenceStemModel(
         form_factor=0.2, log_length_m=6.1, sawlog_min_dbh_cm=20.0
     )
-    by_species: dict[str, list[tuple[float, float, float, float]]] = {}
+    by_species: dict[
+        str, list[tuple[float, float, float, float, dict[str, float], dict[str, float]]]
+    ] = {}
     for tree in inventory.rows:
         species = _species_code(tree.species_code)
-        volume, value = _tree_value(tree, model, prices)
+        volume, value, log_volumes, log_values = _tree_value(tree, model, prices)
         by_species.setdefault(species, []).append(
-            (float(tree.dbh_cm), float(tree.height_m), volume, value)
+            (
+                float(tree.dbh_cm),
+                float(tree.height_m),
+                volume,
+                value,
+                log_volumes,
+                log_values,
+            )
         )
     for species in by_species:
         by_species[species].sort(key=lambda row: row[0])
@@ -238,6 +261,18 @@ def main() -> None:
             source_height = np.array([row[1] for row in source], dtype=float)
             source_volume = np.array([row[2] for row in source], dtype=float)
             source_value = np.array([row[3] for row in source], dtype=float)
+            source_log_volume = {
+                product: np.array(
+                    [row[4].get(product, 0.0) for row in source], dtype=float
+                )
+                for product in LOG_CLASSES
+            }
+            source_log_value = {
+                product: np.array(
+                    [row[5].get(product, 0.0) for row in source], dtype=float
+                )
+                for product in LOG_CLASSES
+            }
             count = max(24, int(round(240 * share)))
             quantiles = np.linspace(0.01, 0.99, count)
             rotation_shape = np.quantile(source_dbh, quantiles)
@@ -245,7 +280,7 @@ def main() -> None:
             if species == "FD":
                 older_shape = np.interp(quantiles, old_quantile, old_dbh)
             shape = (1.0 - age_fraction) * rotation_shape + age_fraction * older_shape
-            shape_qmd = 100.0 * math.sqrt(float(np.mean(shape**2)))
+            shape_qmd = math.sqrt(float(np.mean(shape**2)))
             dbh = np.clip(
                 shape * (profile_qmd / shape_qmd) if shape_qmd > 1e-9 else shape,
                 5.0,
@@ -255,17 +290,33 @@ def main() -> None:
             weights = np.full(count, area * tph * share / count, dtype=float)
             volume = np.interp(dbh, source_dbh, source_volume)
             value = np.interp(dbh, source_dbh, source_value)
-            for d, h, w, v, g in zip(dbh, height, weights, volume, value, strict=True):
-                cohort.append(
-                    {
-                        "species": species,
-                        "dbh": float(max(5.0, d)),
-                        "height": float(min(60.0, max(2.0, h))),
-                        "weight": float(w),
-                        "volume_per_tree": float(max(0.0, v)),
-                        "value_per_tree": float(max(0.0, g)),
-                    }
-                )
+            log_volume = {
+                product: np.interp(dbh, source_dbh, source_log_volume[product])
+                for product in LOG_CLASSES
+            }
+            log_value = {
+                product: np.interp(dbh, source_dbh, source_log_value[product])
+                for product in LOG_CLASSES
+            }
+            for index, (d, h, w, v, g) in enumerate(
+                zip(dbh, height, weights, volume, value, strict=True)
+            ):
+                row_record = {
+                    "species": species,
+                    "dbh": float(max(5.0, d)),
+                    "height": float(min(60.0, max(2.0, h))),
+                    "weight": float(w),
+                    "volume_per_tree": float(max(0.0, v)),
+                    "value_per_tree": float(max(0.0, g)),
+                }
+                for product in LOG_CLASSES:
+                    row_record[f"log_volume_{product}"] = float(
+                        max(0.0, log_volume[product][index])
+                    )
+                    row_record[f"log_value_{product}"] = float(
+                        max(0.0, log_value[product][index])
+                    )
+                cohort.append(row_record)
         if not cohort:
             continue
         frame = pd.DataFrame(cohort)
@@ -273,6 +324,13 @@ def main() -> None:
         frame["ba_total"] = frame["weight"] * frame["ba_per_tree"]
         frame["volume_total"] = frame["weight"] * frame["volume_per_tree"]
         frame["value_total"] = frame["weight"] * frame["value_per_tree"]
+        for product in LOG_CLASSES:
+            frame[f"log_volume_total_{product}"] = (
+                frame["weight"] * frame[f"log_volume_{product}"]
+            )
+            frame[f"log_value_total_{product}"] = (
+                frame["weight"] * frame[f"log_value_{product}"]
+            )
         # Normalize the cohort to the age-interpolated BA target.
         ba_total = float(frame["ba_total"].sum())
         if ba_total <= 0:
@@ -282,6 +340,13 @@ def main() -> None:
         frame["ba_total"] = frame["weight"] * frame["ba_per_tree"]
         frame["volume_total"] = frame["weight"] * frame["volume_per_tree"]
         frame["value_total"] = frame["weight"] * frame["value_per_tree"]
+        for product in LOG_CLASSES:
+            frame[f"log_volume_total_{product}"] = (
+                frame["weight"] * frame[f"log_volume_{product}"]
+            )
+            frame[f"log_value_total_{product}"] = (
+                frame["weight"] * frame[f"log_value_{product}"]
+            )
         total_ba = float(frame["ba_total"].sum())
         total_volume = float(frame["volume_total"].sum())
         total_value = float(frame["value_total"].sum())
@@ -299,6 +364,20 @@ def main() -> None:
             retained_volume = float(selected["volume_total"].sum())
             retained_value = float(selected["value_total"].sum())
             retained_tph = float(selected["weight"].sum() / area)
+            retained_logs = {
+                product: {
+                    "volume_m3": float(selected[f"log_volume_total_{product}"].sum()),
+                    "value_cad": float(selected[f"log_value_total_{product}"].sum()),
+                }
+                for product in LOG_CLASSES
+            }
+            total_logs = {
+                product: {
+                    "volume_m3": float(frame[f"log_volume_total_{product}"].sum()),
+                    "value_cad": float(frame[f"log_value_total_{product}"].sum()),
+                }
+                for product in LOG_CLASSES
+            }
             rows.append(
                 {
                     "block_id": block_id,
@@ -326,6 +405,25 @@ def main() -> None:
                     "retained_ba_share": retained_ba / total_ba,
                     "retained_volume_share": retained_volume / total_volume,
                     "retained_value_share": retained_value / total_value,
+                    **{
+                        f"retained_{product}_m3": retained_logs[product]["volume_m3"]
+                        for product in LOG_CLASSES
+                    },
+                    **{
+                        f"retained_{product}_value_cad": retained_logs[product][
+                            "value_cad"
+                        ]
+                        for product in LOG_CLASSES
+                    },
+                    **{
+                        f"total_{product}_m3": total_logs[product]["volume_m3"]
+                        for product in LOG_CLASSES
+                    },
+                    **{
+                        f"harvest_{product}_m3": total_logs[product]["volume_m3"]
+                        - retained_logs[product]["volume_m3"]
+                        for product in LOG_CLASSES
+                    },
                     "min_retained_dbh_cm": (
                         float(selected["dbh"].min()) if not selected.empty else 0.0
                     ),
@@ -352,6 +450,13 @@ def main() -> None:
         "mean_retained_ba_share": float(out["retained_ba_share"].mean()),
         "mean_retained_volume_share": float(out["retained_volume_share"].mean()),
         "mean_retained_value_share": float(out["retained_value_share"].mean()),
+        "retained_log_volume_share": {
+            product: float(
+                out[f"retained_{product}_m3"].sum()
+                / max(1e-9, out[f"total_{product}_m3"].sum())
+            )
+            for product in LOG_CLASSES
+        },
         "retention_target_pct": sorted(out["retention_target_ba_pct"].unique().tolist()),
         "profile_age_range": [
             float(out["profile_age"].min()),
