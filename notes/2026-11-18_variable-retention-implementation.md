@@ -3,8 +3,8 @@
 
 # Variable-retention implementation — first pass
 
-Status: **first-pass matrix screen complete; core treatment-time split not yet
-implemented**
+Status: **full-area one-rotation overlay complete; retention-intensity
+decision variable and age interpolation still pending**
 
 Date: 2026-11-18
 
@@ -40,47 +40,63 @@ planning/2026-11-18_mkrf_retention_profiles.csv
 planning/2026-11-18_mkrf_retention_profiles.json
 ```
 
-### 2. Matrix variant
+### 2. Original area-split comparison
 
-`build_mkrf_vr_matrix.py` builds `ws4/runtime/matrix_vr_base` from the
-no-retention matrix. For each profiled block it:
+`build_mkrf_vr_matrix.py` builds `ws4/runtime/matrix_vr_base` as an earlier
+comparison. It splits area into harvested and unmanaged residual fragments.
+This is **not** the intended one-rotation rule and is retained only as a
+comparison surface.
 
-- splits area into a harvested fraction and a basal-area-equivalent residual
-  fraction;
-- puts the harvested fraction on a cloned managed track;
-- puts the residual fraction on a cloned **unmanaged** track at the same age;
-- scales harvested product curves by the harvested volume/value share;
-- scales residual yield/carbon feature curves by the residual cohort density;
-- leaves the residual track with no scheduled treatment.
+### 2b. Corrected full-area overlay
+
+`build_mkrf_vr_overlay_matrix.py` builds
+`ws4/runtime/matrix_vr_overlay_base` from the no-retention matrix. For each
+profiled block it:
+
+- keeps the full block area managed;
+- reduces the first-harvest product curves by the retained volume/value;
+- transitions the full area to a composite **plantation + retained-DF** track;
+- adds the retained overstory to the composite yield and product curves;
+- returns the block to the normal plantation track after the next final
+  harvest;
+- leaves feature area managed and unchanged.
 
 The matrix passes `ws4 validate`.
 
+The retention trees are therefore counted in the next final-felling harvest
+volume and gross revenue, not moved to an unmanaged area. A two-entry check on
+block 14 (offset 73 first entry, offset 153 second entry) gives:
+
+| Entry | No retention yield | Overlay yield | No retention gross | Overlay gross |
+| --- | ---: | ---: | ---: | ---: |
+| First, offset 73 | 2,719.5 m³ | 2,572.0 m³ | CAD 645,738 | CAD 610,836 |
+| Second, offset 153 | 1,641.9 m³ | **1,807.3 m³** | CAD 389,869 | **CAD 429,021** |
+
+The second entry is higher because the retained DF cohort is now included in
+the composite track.
+
 ### 3. Target search
 
-The VR matrix was run with the existing target set, seed 44, 120 iterations
-and the no-retention schedule as the initial schedule.
+The overlay matrix was run with the existing target set, seed 44, 120
+iterations and the no-retention schedule as the initial schedule.
 
 | Scenario | Gross log value | Production | Net after all cost | Harvest cost | Targets |
 | --- | ---: | ---: | ---: | ---: | --- |
 | No retention | CAD 716.7M | 3.378M m³ | CAD 403.7M | CAD 185.8M | 31/5/1 |
-| VR base, existing schedule | CAD 666.6M | 3.150M m³ | CAD 375.1M | CAD 173.3M | 30/6/1 |
-| VR base, re-optimized | CAD 668.9M | 3.163M m³ | CAD 376.2M | CAD 174.0M | 28/8/1 |
+| VR overlay, existing schedule | CAD 672.2M | 3.177M m³ | CAD 378.2M | CAD 174.7M | 29/7/1 |
+| VR overlay, re-optimized | CAD 674.8M | 3.188M m³ | CAD 379.7M | CAD 175.4M | 29/7/1 |
 
-Managed area falls from 4,120.7 ha to 3,876.1 ha; unmanaged area rises from
-690.2 ha to 934.7 ha. Total area remains 4,810.85 ha.
-
-The existing-schedule and re-optimized cases are close because the matrix
-retention intensity is fixed by the silviculture group. The optimizer can move
-harvest entries, but cannot choose 0/5/10/15/20/25/30% retention per block yet.
+Managed area remains 4,120.7 ha and unmanaged area remains 690.2 ha; total area
+remains 4,810.85 ha. This is the key correction from the earlier split matrix.
+The old split comparison had managed area 3,876.1 ha and unmanaged area
+934.7 ha.
 
 ## Important implementation limits
 
-- **Matrix-level pre-split, not a treatment-time split.** The residual area is
-  set aside from the start of the horizon. For a one-entry reserve the state
-  trajectory is close, but the simulator does not yet move area at the harvest
-  year.
 - **Retention intensity is fixed**, not an optimizer decision. Current groups
   use 10% or 20% BA from the silviculture assignment.
+- **The composite track is additive.** It is not a two-cohort growth model and
+  does not model competition, windthrow or retained-tree mortality.
 - **Species DBH shape comes from the synthetic MKRF 684 tree list**, scaled by
   VRI TPH/BA/species share. It is not a full-estate measured tree list.
 - **No age interpolation yet.** The profile uses the AU rotation age, or the
@@ -88,42 +104,36 @@ harvest entries, but cannot choose 0/5/10/15/20/25/30% retention per block yet.
 - **Aggregate product scaling.** The harvested product curves are scaled by
   volume/value share; the residual stem grade mix is not re-bucketed tree by
   tree.
-- **Residual area is basal-area-equivalent**, not a mapped physical reserve.
-- **The residual feature scaling is a state-density approximation**, not a
-  measured big-DF growth curve.
+- **The retained-overstory curve is additive**, not a mapped physical reserve.
 
 ## What must be built next
 
-1. **Treatment-time split in the simulator/optimizer.**
-   - At harvest, produce products on the harvested area only.
-   - Append a residual fragment on the residual track at the pre-treatment
-     offset.
-   - Move the harvested fragment to the plantation track at age 0.
-   - Keep area, BA, volume and value conservation.
-2. **Retention intensity as a decision variable.**
+1. **Retention intensity as a decision variable.**
    - Precompute a retention ledger over a 0–30% BA grid.
    - Let the optimizer choose the treatment variant per block.
    - Reject intensities the AU/age profile cannot represent.
-3. **Age-specific distribution interpolation.**
+2. **Age-specific distribution interpolation.**
    - Build the rotation and rotation+50 anchors.
    - Interpolate quantiles by treatment age.
    - Add the two-anchor uncertainty report.
-4. **Grade-specific product removal.**
+3. **Grade-specific product removal.**
    - Buck the selected residual stems with the same stem/price model.
-   - Remove their sawlog/pulp volumes and values from the harvest ledger.
-5. **Validation and public scenario.**
+   - Remove their sawlog/pulp volumes and values from the first-harvest ledger
+     and add them to the next composite final-felling ledger.
+4. **Validation and public scenario.**
    - Conservation tests for area/BA/volume/value.
    - Re-run low/base/high or the decided target set.
-   - Publish the scenario and update the MKRF card/brief once the core split is
-     in.
+   - Publish the scenario and update the MKRF card/brief.
 
 ## Assumptions currently used
 
 - dispersed retention, not group retention;
 - retention basis = percent of pre-harvest basal area;
 - DF first, largest DBH first;
-- residual is a long-term reserve with no re-entry in the current rotation;
-- residual area for state accounting is basal-area-equivalent;
+- retained trees remain for one rotation on the managed block;
+- retained volume/value is removed from the first harvest and added to the next
+  composite final-felling curves;
+- residual area is an audit statistic only; it does not move area to unmanaged;
 - 10%/20% group targets are new BA targets, not reinterpreted old area targets.
 
 These assumptions are documented but **not yet locked as an operational

@@ -313,6 +313,31 @@ so a single area fraction is an accounting abstraction. I recommend:
 If the user wants actual groups, the correct model is a group-retention
 treatment with whole-patch retention, not a right-tail DBH selection.
 
+## Addendum: one-rotation retention is a composite managed track
+
+The user clarified the intended tenure rule: retained trees must remain for
+**one rotation**, but they remain on the **managed** block and are counted in
+the next final-felling volume and gross revenue. That changes the state design.
+
+The corrected state is:
+
+- the full block area remains managed;
+- the first final harvest removes only the harvested volume/value from the
+  product ledger;
+- the block transitions to a **composite plantation + retained-DF track** at
+  age 0 for the plantation component, with the retained DF represented as an
+  additive overstory curve in the same track;
+- at the next final harvest, the composite product curves include the retained
+  DF volume and value;
+- after that next entry the block returns to the normal plantation track.
+
+There is **no residual unmanaged area split** for this prescription. A
+basal-area-equivalent area can still be recorded as an audit statistic, but it
+must not be used to move block area out of the managed estate.
+
+The first-pass implementation of this corrected design is
+`matrix_vr_overlay_base`, built by `build_mkrf_vr_overlay_matrix.py`.
+
 ## Implementation design
 
 ### New data
