@@ -24,12 +24,17 @@ an unmanaged state. The reported finance is therefore an average-area screen,
 not a high-graded residual prescription.
 
 The audit in `MKRF_RETENTION_AUDIT.md` uses the pinned MKRF 684 tree list to
-estimate the high-grading sensitivity. The no-retention baseline is CAD 716.7M
-gross, 3.38M m³, and CAD 403.7M net after all cost. Applying the largest-DF
-profile gives residual gross values of CAD 483.2M for `low-44-dfret`,
-CAD 410.6M for `base-44-dfret`, and CAD 321.6M for `high-44-dfret`. These are
-sensitivity results, not re-optimized scenarios. Full detail is in
-`MKRF_DFRET_SCENARIOS.md`.
+estimate the high-grading effect. The no-retention baseline is CAD 716.7M
+gross, 3.38M m³, and CAD 403.7M net after all cost. The residual-product target
+search gives:
+
+- `low-44-dfret`: CAD 482.1M gross, 2.27M m³, CAD 230.1M net after all cost;
+- `base-44-dfret`: CAD 421.6M gross, 1.99M m³, CAD 181.4M net after all cost;
+- `high-44-dfret`: CAD 324.8M gross, 1.54M m³, CAD 111.8M net after all cost.
+
+This is a product-ledger residual screen. The state transition still harvests
+the full area and does not yet carry residual stems forward. Full detail is in
+`MKRF_DFRET_REOPTIMIZED.md`.
 
 ## Operational evidence
 

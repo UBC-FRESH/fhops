@@ -292,65 +292,76 @@ baseline is now:</p>
 <li>gross NPV 4%: <strong>CAD 182.6M</strong></li>
 <li>net NPV 4%: <strong>CAD 100.9M</strong></li>
 </ul>
-<p>Applying the largest-DF value/volume profile to that no-retention
-baseline gives the following residual overlay (still not a re-optimized
-residual search):</p>
+<p>I then built residual-product matrices and re-ran the same target
+search for the three residual cases. The product ledgers now carry the
+largest-DF value/volume reduction, while the state transition still
+harvests the full area; this is a <strong>finance/curve screen</strong>,
+not yet a state-aware residual model.</p>
 <table>
 <colgroup>
 <col style="width: 11%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 11%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th>Scenario</th>
-<th style="text-align: right;">Retained fraction</th>
-<th style="text-align: right;">Residual gross</th>
-<th style="text-align: right;">Gross change</th>
-<th style="text-align: right;">Residual volume</th>
+<th style="text-align: right;">Gross</th>
+<th style="text-align: right;">Production</th>
 <th style="text-align: right;">Net after all cost</th>
+<th style="text-align: right;">Net after harvest cost</th>
 <th style="text-align: right;">Net NPV 4%</th>
+<th>Targets</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>low-44-dfret</td>
-<td style="text-align: right;">4.39%</td>
-<td style="text-align: right;">CAD 483.2M</td>
-<td style="text-align: right;">−32.6%</td>
-<td style="text-align: right;">2.28M m³</td>
-<td style="text-align: right;">CAD 230.9M</td>
-<td style="text-align: right;">CAD 57.7M</td>
+<td>no-retention</td>
+<td style="text-align: right;">CAD 716.7M</td>
+<td style="text-align: right;">3.38M m³</td>
+<td style="text-align: right;">CAD 403.7M</td>
+<td style="text-align: right;">CAD 217.8M</td>
+<td style="text-align: right;">CAD 100.9M</td>
+<td>31/5/1</td>
 </tr>
 <tr class="even">
-<td>base-44-dfret</td>
-<td style="text-align: right;">8.79%</td>
-<td style="text-align: right;">CAD 410.6M</td>
-<td style="text-align: right;">−42.7%</td>
-<td style="text-align: right;">1.94M m³</td>
-<td style="text-align: right;">CAD 176.9M</td>
-<td style="text-align: right;">CAD 44.2M</td>
+<td>low-44-dfret</td>
+<td style="text-align: right;">CAD 482.1M</td>
+<td style="text-align: right;">2.27M m³</td>
+<td style="text-align: right;">CAD 230.1M</td>
+<td style="text-align: right;">CAD 105.2M</td>
+<td style="text-align: right;">CAD 59.3M</td>
+<td>31/5/1</td>
 </tr>
 <tr class="odd">
+<td>base-44-dfret</td>
+<td style="text-align: right;">CAD 421.6M</td>
+<td style="text-align: right;">1.99M m³</td>
+<td style="text-align: right;">CAD 181.4M</td>
+<td style="text-align: right;">CAD 72.1M</td>
+<td style="text-align: right;">CAD 45.2M</td>
+<td>21/15/1</td>
+</tr>
+<tr class="even">
 <td>high-44-dfret</td>
-<td style="text-align: right;">15.72%</td>
-<td style="text-align: right;">CAD 321.6M</td>
-<td style="text-align: right;">−55.1%</td>
-<td style="text-align: right;">1.52M m³</td>
-<td style="text-align: right;">CAD 110.7M</td>
-<td style="text-align: right;">CAD 27.7M</td>
+<td style="text-align: right;">CAD 324.8M</td>
+<td style="text-align: right;">1.54M m³</td>
+<td style="text-align: right;">CAD 111.8M</td>
+<td style="text-align: right;">CAD 27.3M</td>
+<td style="text-align: right;">CAD 27.6M</td>
+<td>21/15/1</td>
 </tr>
 </tbody>
 </table>
 <p>The current NPV screens should not be read as if retention were a
-largest-DF stem prescription until the retention operator is made
-species/DBH-aware and the target search is re-run.</p>
+fully state-aware largest-DF stem prescription until residual stems are
+carried into the next state.</p>
 <p>Implementation detail and the full overlay table are in
-<code>MKRF_DFRET_SCENARIOS.md</code>.</p>
+<code>MKRF_DFRET_REOPTIMIZED.md</code>.</p>
 <p><strong>Decision requested:</strong> endorse this as the draft
 structure for MKRF, and support the same staged modelling and review
 path proposed for AFRF. The current numbers are strong enough for

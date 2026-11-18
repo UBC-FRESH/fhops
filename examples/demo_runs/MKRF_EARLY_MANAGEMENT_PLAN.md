@@ -71,21 +71,24 @@ against the canonical matrix. The no-retention baseline is now:
 - gross NPV 4%: **CAD 182.6M**
 - net NPV 4%: **CAD 100.9M**
 
-Applying the largest-DF value/volume profile to that no-retention baseline gives
-the following residual overlay (still not a re-optimized residual search):
+I then built residual-product matrices and re-ran the same target search for
+the three residual cases. The product ledgers now carry the largest-DF
+value/volume reduction, while the state transition still harvests the full
+area; this is a **finance/curve screen**, not yet a state-aware residual model.
 
-| Scenario | Retained fraction | Residual gross | Gross change | Residual volume | Net after all cost | Net NPV 4% |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| low-44-dfret | 4.39% | CAD 483.2M | −32.6% | 2.28M m³ | CAD 230.9M | CAD 57.7M |
-| base-44-dfret | 8.79% | CAD 410.6M | −42.7% | 1.94M m³ | CAD 176.9M | CAD 44.2M |
-| high-44-dfret | 15.72% | CAD 321.6M | −55.1% | 1.52M m³ | CAD 110.7M | CAD 27.7M |
+| Scenario | Gross | Production | Net after all cost | Net after harvest cost | Net NPV 4% | Targets |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| no-retention | CAD 716.7M | 3.38M m³ | CAD 403.7M | CAD 217.8M | CAD 100.9M | 31/5/1 |
+| low-44-dfret | CAD 482.1M | 2.27M m³ | CAD 230.1M | CAD 105.2M | CAD 59.3M | 31/5/1 |
+| base-44-dfret | CAD 421.6M | 1.99M m³ | CAD 181.4M | CAD 72.1M | CAD 45.2M | 21/15/1 |
+| high-44-dfret | CAD 324.8M | 1.54M m³ | CAD 111.8M | CAD 27.3M | CAD 27.6M | 21/15/1 |
 
-The current NPV screens should not be read as if retention were a largest-DF
-stem prescription until the retention operator is made species/DBH-aware and
-the target search is re-run.
+The current NPV screens should not be read as if retention were a fully
+state-aware largest-DF stem prescription until residual stems are carried into
+the next state.
 
 Implementation detail and the full overlay table are in
-`MKRF_DFRET_SCENARIOS.md`.
+`MKRF_DFRET_REOPTIMIZED.md`.
 
 **Decision requested:** endorse this as the draft structure for MKRF, and
 support the same staged modelling and review path proposed for AFRF. The current
