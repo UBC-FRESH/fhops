@@ -135,6 +135,44 @@ The optimizer mostly chooses no retention under the current target set. That is
 a real result, not a fallback: the grid makes retention intensity a choice and
 the search is not forced to use it.
 
+### 5. Explicit retention policy target
+
+`ws4/targets_vr_policy.yaml` adds ten targets (and is the policy target file
+for the grid runs):
+
+```text
+account: product.ba.retention.total
+minimum: 500 m² per 10-year period
+```
+
+This is a **scenario policy target**, not a legal requirement. It is paired
+with the existing yield, net-revenue, route and stock targets.
+
+Starting from the no-retention schedule, the targets are not met:
+
+- 31 met / 15 below / 1 above;
+- 10 retention targets all below;
+- the search finds only 2,350 m² retained BA across the horizon even at 600
+  iterations.
+
+Starting from a retention seed that replaces the first CC on 789 profiled
+blocks with `VR10` gives:
+
+| Scenario | Gross log value | Net after all cost | Retained BA | Targets |
+| --- | ---: | ---: | ---: | --- |
+| No retention, policy evaluated | CAD 716.7M | CAD 403.7M | 0 | 31/15/1 |
+| Retention seed | CAD 654.0M | CAD 368.5M | 10,166 m² | **43/3/1** |
+| Retention seed + 120 iterations | CAD 648.5M | CAD 365.4M | 10,462 m² | **43/3/1** |
+
+The seed run meets the 500 m² policy floor in 9 of 10 periods; period 8 is
+below at 347 m². The re-optimized seed meets period 8 but falls below in period
+9 at 470 m². This is a feasible policy direction, not yet a fully met target
+set.
+
+The strong result is that the retention policy changes the economics
+materially: about **CAD 68M less gross log value** and **CAD 38M less net after
+all cost** than the no-retention baseline.
+
 ## Important implementation limits
 
 - **Retention intensity is a discrete grid**, currently 10/20/30% BA plus CC.
