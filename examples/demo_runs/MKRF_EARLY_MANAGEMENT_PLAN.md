@@ -60,19 +60,32 @@ the field.
 
 A retention-value audit is in `MKRF_RETENTION_AUDIT.md`. The audit uses the
 pinned MKRF 684 tree list to show that the largest 5% of stems contain about
-33% of gross value. Treating the current retained-area fraction as a proxy for
-residual stems gives the following high-grading sensitivity (not a re-optimized
-WS4 run):
+33% of gross value.
 
-| Scenario | Area-retention gross | High-graded gross | Gross change | Current net after all cost | Corrected net after all cost |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| low-44 | CAD 673.3M | CAD 474.8M | −29.5% | CAD 380.2M | CAD 233.3M |
-| base-44 | CAD 668.2M | CAD 419.7M | −37.2% | CAD 376.8M | CAD 192.7M |
-| high-44 | CAD 592.6M | CAD 315.6M | −46.8% | CAD 334.5M | CAD 128.9M |
+I also rebuilt the **no-retention** matrix and repaired its product curve table
+against the canonical matrix. The no-retention baseline is now:
+
+- gross log value: **CAD 716.7M**
+- production: **3.38M m³**
+- net after all cost: **CAD 403.7M**
+- gross NPV 4%: **CAD 182.6M**
+- net NPV 4%: **CAD 100.9M**
+
+Applying the largest-DF value/volume profile to that no-retention baseline gives
+the following residual overlay (still not a re-optimized residual search):
+
+| Scenario | Retained fraction | Residual gross | Gross change | Residual volume | Net after all cost | Net NPV 4% |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| low-44-dfret | 4.39% | CAD 483.2M | −32.6% | 2.28M m³ | CAD 230.9M | CAD 57.7M |
+| base-44-dfret | 8.79% | CAD 410.6M | −42.7% | 1.94M m³ | CAD 176.9M | CAD 44.2M |
+| high-44-dfret | 15.72% | CAD 321.6M | −55.1% | 1.52M m³ | CAD 110.7M | CAD 27.7M |
 
 The current NPV screens should not be read as if retention were a largest-DF
 stem prescription until the retention operator is made species/DBH-aware and
 the target search is re-run.
+
+Implementation detail and the full overlay table are in
+`MKRF_DFRET_SCENARIOS.md`.
 
 **Decision requested:** endorse this as the draft structure for MKRF, and
 support the same staged modelling and review path proposed for AFRF. The current

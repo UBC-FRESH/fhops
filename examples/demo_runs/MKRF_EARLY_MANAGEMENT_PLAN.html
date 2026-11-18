@@ -281,58 +281,76 @@ stems. The current numbers therefore carry an average area slice, not
 the high-graded residual cohort described in the field.</p>
 <p>A retention-value audit is in <code>MKRF_RETENTION_AUDIT.md</code>.
 The audit uses the pinned MKRF 684 tree list to show that the largest 5%
-of stems contain about 33% of gross value. Treating the current
-retained-area fraction as a proxy for residual stems gives the following
-high-grading sensitivity (not a re-optimized WS4 run):</p>
+of stems contain about 33% of gross value.</p>
+<p>I also rebuilt the <strong>no-retention</strong> matrix and repaired
+its product curve table against the canonical matrix. The no-retention
+baseline is now:</p>
+<ul>
+<li>gross log value: <strong>CAD 716.7M</strong></li>
+<li>production: <strong>3.38M m³</strong></li>
+<li>net after all cost: <strong>CAD 403.7M</strong></li>
+<li>gross NPV 4%: <strong>CAD 182.6M</strong></li>
+<li>net NPV 4%: <strong>CAD 100.9M</strong></li>
+</ul>
+<p>Applying the largest-DF value/volume profile to that no-retention
+baseline gives the following residual overlay (still not a re-optimized
+residual search):</p>
 <table>
 <colgroup>
-<col style="width: 13%" />
-<col style="width: 17%" />
-<col style="width: 17%" />
-<col style="width: 17%" />
-<col style="width: 17%" />
-<col style="width: 17%" />
+<col style="width: 11%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th>Scenario</th>
-<th style="text-align: right;">Area-retention gross</th>
-<th style="text-align: right;">High-graded gross</th>
+<th style="text-align: right;">Retained fraction</th>
+<th style="text-align: right;">Residual gross</th>
 <th style="text-align: right;">Gross change</th>
-<th style="text-align: right;">Current net after all cost</th>
-<th style="text-align: right;">Corrected net after all cost</th>
+<th style="text-align: right;">Residual volume</th>
+<th style="text-align: right;">Net after all cost</th>
+<th style="text-align: right;">Net NPV 4%</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>low-44</td>
-<td style="text-align: right;">CAD 673.3M</td>
-<td style="text-align: right;">CAD 474.8M</td>
-<td style="text-align: right;">−29.5%</td>
-<td style="text-align: right;">CAD 380.2M</td>
-<td style="text-align: right;">CAD 233.3M</td>
+<td>low-44-dfret</td>
+<td style="text-align: right;">4.39%</td>
+<td style="text-align: right;">CAD 483.2M</td>
+<td style="text-align: right;">−32.6%</td>
+<td style="text-align: right;">2.28M m³</td>
+<td style="text-align: right;">CAD 230.9M</td>
+<td style="text-align: right;">CAD 57.7M</td>
 </tr>
 <tr class="even">
-<td>base-44</td>
-<td style="text-align: right;">CAD 668.2M</td>
-<td style="text-align: right;">CAD 419.7M</td>
-<td style="text-align: right;">−37.2%</td>
-<td style="text-align: right;">CAD 376.8M</td>
-<td style="text-align: right;">CAD 192.7M</td>
+<td>base-44-dfret</td>
+<td style="text-align: right;">8.79%</td>
+<td style="text-align: right;">CAD 410.6M</td>
+<td style="text-align: right;">−42.7%</td>
+<td style="text-align: right;">1.94M m³</td>
+<td style="text-align: right;">CAD 176.9M</td>
+<td style="text-align: right;">CAD 44.2M</td>
 </tr>
 <tr class="odd">
-<td>high-44</td>
-<td style="text-align: right;">CAD 592.6M</td>
-<td style="text-align: right;">CAD 315.6M</td>
-<td style="text-align: right;">−46.8%</td>
-<td style="text-align: right;">CAD 334.5M</td>
-<td style="text-align: right;">CAD 128.9M</td>
+<td>high-44-dfret</td>
+<td style="text-align: right;">15.72%</td>
+<td style="text-align: right;">CAD 321.6M</td>
+<td style="text-align: right;">−55.1%</td>
+<td style="text-align: right;">1.52M m³</td>
+<td style="text-align: right;">CAD 110.7M</td>
+<td style="text-align: right;">CAD 27.7M</td>
 </tr>
 </tbody>
 </table>
 <p>The current NPV screens should not be read as if retention were a
 largest-DF stem prescription until the retention operator is made
 species/DBH-aware and the target search is re-run.</p>
+<p>Implementation detail and the full overlay table are in
+<code>MKRF_DFRET_SCENARIOS.md</code>.</p>
 <p><strong>Decision requested:</strong> endorse this as the draft
 structure for MKRF, and support the same staged modelling and review
 path proposed for AFRF. The current numbers are strong enough for

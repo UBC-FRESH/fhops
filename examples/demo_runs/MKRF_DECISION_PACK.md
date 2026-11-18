@@ -24,10 +24,12 @@ an unmanaged state. The reported finance is therefore an average-area screen,
 not a high-graded residual prescription.
 
 The audit in `MKRF_RETENTION_AUDIT.md` uses the pinned MKRF 684 tree list to
-estimate the high-grading sensitivity. If the retained-area fraction is used
-as a proxy for residual stems, gross value falls by about 29.5% for low-44,
-37.2% for base-44, and 46.8% for high-44 versus the current area-retention
-numbers. These are sensitivity results, not re-optimized scenarios.
+estimate the high-grading sensitivity. The no-retention baseline is CAD 716.7M
+gross, 3.38M m³, and CAD 403.7M net after all cost. Applying the largest-DF
+profile gives residual gross values of CAD 483.2M for `low-44-dfret`,
+CAD 410.6M for `base-44-dfret`, and CAD 321.6M for `high-44-dfret`. These are
+sensitivity results, not re-optimized scenarios. Full detail is in
+`MKRF_DFRET_SCENARIOS.md`.
 
 ## Operational evidence
 
