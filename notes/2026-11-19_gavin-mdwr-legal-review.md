@@ -165,3 +165,22 @@ BA-gated screen from 10/39/12 to **13/37/11** targets:
 This is still a screening test, not an optimized schedule and not a legal
 compliance result. The 0.4/0.7 ha group-size caps, cohort structure, preparatory
 thinning, adjusted Appendix 9 boundaries, and GAR/UWR review remain open.
+
+## Group-size capacity check
+
+A terrain capacity screen was run on the staggered temporal schedule. Warm
+aspects were classified as slope > 10% and aspect 135–270° (LMH 59); the group
+caps are 0.4 ha warm and 0.7 ha other.
+
+- 2,897 accepted entries on 1,045 blocks;
+- 1,494.0 ha scheduled cut area;
+- 1,121.8 ha warm terrain and 1,432.0 ha other terrain;
+- mean minimum group count 2.39, maximum 18;
+- 276 blocks have no warm-aspect area;
+- 131 blocks have less than 50% valid terrain coverage because of DEM/block
+  edges.
+
+This is a **capacity check only**. It does not draw the 0.4/0.7 ha group
+polygons, enforce a minimum group size, or model cohort growth. A spatial group
+layout is still required before the group-size constraint can be claimed as
+implemented.

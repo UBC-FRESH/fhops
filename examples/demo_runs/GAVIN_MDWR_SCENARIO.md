@@ -142,6 +142,18 @@ fine-map volume screen, not a legal compliance determination.
 Full review:
 `notes/2026-11-19_gavin-mdwr-legal-review.md`.
 
+## Group-size capacity check
+
+A terrain screen on the staggered temporal schedule classifies warm aspects as
+slope > 10% and aspect 135–270° (LMH 59), with caps of 0.4 ha warm and 0.7 ha
+other. The 2,897 accepted entries cover 1,045 blocks and 1,494.0 ha of cut
+area, with a mean minimum group count of 2.39 and a maximum of 18. Terrain
+coverage is incomplete for 131 blocks at DEM/block edges, and 276 blocks have no
+warm-aspect area.
+
+This is a capacity check only. It does not draw group polygons, enforce a
+minimum group size, or model cohort growth.
+
 ## Files
 
 - `AFRF_DECISION_PACK.md` — AFRF decision context.

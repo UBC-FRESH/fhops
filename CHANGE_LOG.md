@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR group-size capacity check
+
+- Derived slope/aspect from the Gavin 5 m DEM and classified warm aspects as slope >10% and aspect 135–270° (LMH 59).
+- Checked the staggered temporal schedule: 2,897 entries on 1,045 blocks, 1,494.0 ha cut area, mean minimum group count 2.39, maximum 18, 1,121.8 ha warm terrain.
+- 276 blocks have no warm-aspect area; 131 blocks have less than 50% valid terrain coverage at DEM/block edges.
+- This is a capacity check only; group polygons, minimum group size, and cohort growth are not implemented.
+
 # 2026-11-19 — Gavin MDWR temporal BA entry stagger
 
 - Added a deterministic 0–9 year entry stagger by block id to the temporal BA-gated schedule.
