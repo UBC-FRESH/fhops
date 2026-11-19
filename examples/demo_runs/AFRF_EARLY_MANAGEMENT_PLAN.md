@@ -42,7 +42,7 @@ The early numbers are useful for structure and direction:
 | Screen | Production | Annual net after cost | NPV 4% | Status |
 | --- | ---: | ---: | ---: | --- |
 | Gavin policy | 5,385,149 m³ / 300 yr | ~CAD 1.95M/yr | ~CAD 48.3M | timber-only upper bound |
-| Gavin MDWR group selection | 3,735,231 m³ / 300 yr | not fabricated | — | no-clearcut MDWR screen; BEC habitat-class proxy; 10/43/8 targets |
+| Gavin MDWR group selection | 5,625,582 m³ / 300 yr | not fabricated | — | no-clearcut MDWR screen; official fine-map classes; corrected 40-year re-entry; 15/33/13 targets |
 | Knife legal-HMZ GWM | 2,433,385 m³ / 300 yr | ~CAD 882k/yr | ~CAD 39.3M | structural policy screen |
 | Knife LiDAR-gated GWM | 2,343,814 m³ / 300 yr | ~CAD 850k/yr | ~CAD 38.0M | structural policy screen with a real LiDAR block gate |
 | Knife LiDAR spatial-clump FVS | 2,564,179 m³ / 300 yr | ~CAD 930k/yr | ~CAD 55.6M | structural LiDAR pilot, not decision-grade |
@@ -183,19 +183,22 @@ shows the scale of the gap:
 
 So the current Gavin result is useful as a **timber-only upper bound**. A second
 screen, `gavin-mdwr`, now carries the no-clearcut MDWR constraint and a Table 30
-group-selection approximation. It schedules **0 MDWR clearcuts**, **3.735M m³
-over 300 years**, and meets **10/43/8** of the existing policy targets. That is
+group-selection approximation. It schedules **0 MDWR clearcuts**, **5.626M m³
+over 300 years**, and meets **15/33/13** of the existing policy targets. That is
 a trade-off screen, not a decision-grade result.
 
-The habitat-class assignment in `gavin-mdwr` is a **BEC proxy** because the
-official Appendix 9 layer is not in the legacy spatial package. The screen also
-uses a full-area partial-cut volume approximation rather than spatial groups.
+The habitat-class assignment in `gavin-mdwr` now uses the official BC
+long-term habitat objective fine-map polygons. The adjusted Appendix 9
+compartment map and legal order still need review. The screen also uses a
+full-area partial-cut volume approximation rather than spatial groups, and the
+corrected 40-year re-entry preserves stand age instead of resetting it.
 
 ### Opportunities to strengthen the Gavin scenarios
 
-1. **Verify and replace the habitat-class proxy.** The `gavin-mdwr` screen uses
-   ICHmk3 → High, ICHmk3/SBSdw → Moderate, SBSdw1 → Low. That is a screening
-   assumption, not the legal Appendix 9 delineation.
+1. **Reconcile the legal habitat map.** The `gavin-mdwr` screen now uses the
+   official BC long-term objective fine-map classes. The adjusted Appendix 9
+   compartment map, 2007 legal order and current UWR boundary still need
+   review before this is a compliance claim.
 2. **Add the spatial group layout.** Enforce the 0.4 ha warm-aspect and 0.7 ha
    other-aspect group-size caps, and represent the 3–5 cohort structure.
 3. **Add the preparatory thinning pass.** The 2007 plan expects thinning at
@@ -328,7 +331,7 @@ changes.
 | Scenario | Purpose | Current status |
 | --- | --- | --- |
 | `gavin-policy` | Timber-only Gavin upper bound | 61/61 targets meet, but no MDWR constraint; not decision-grade |
-| `gavin-mdwr` | MDWR no-clearcut / Table 30 group-selection screen | 10/43/8 targets; 3.735M m³ / 300 yr; BEC habitat-class proxy |
+| `gavin-mdwr` | MDWR no-clearcut / Table 30 group-selection screen | 15/33/13 targets; 5.626M m³ / 300 yr; official fine-map classes; corrected 40-year re-entry |
 | `knife-gwm-policy` | Legal-HMZ sustained GWM screen | structural; main Knife policy candidate |
 | `knife-gwm-lidar-policy` | Adds a real LiDAR block-level harvest gate | structural; tests LiDAR eligibility |
 | `knife-lidar-clump-policy` | Replaces the proxy with spatial LiDAR clumps in FVS | structural pilot; strongest LiDAR test |
