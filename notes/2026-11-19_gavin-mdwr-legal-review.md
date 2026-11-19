@@ -244,17 +244,19 @@ an initial track and a plantation successor track, with:
 - `feature.yield.managed.total`;
 - `feature.ba.managed.total`.
 
-The BA curve is derived from the VRI block BA and the volume curve, capped at
-the initial BA. The group WS4 run produces:
+The BA curve is fitted to VRI 2025 by BEC as
+`BA = b*volume + c*(1-exp(-age/tau))` (R² 0.745/0.888/0.863 for
+ICHmk3/SBSdw1/SBSmh), then scaled to each block's initial VRI BA. The group WS4
+run produces:
 
 - 9,674 groups / 1,045 blocks;
 - 18,527 group cuts;
 - **1.011M m³** volume;
-- initial BA **54,174 m²**;
-- final BA **26,448 m²**;
+- initial BA **57,337 m²**;
+- final BA **54,404 m²**;
 - final standing yield **190,348 m³**.
 
-BA is now carried as a WS4 account rather than only a separate ledger, but it
-remains a proportional screening curve, not a calibrated basal-area growth
-model. A calibrated plantation curve and group-specific BA dynamics are still
+BA is now carried as a WS4 account and uses the VRI-fitted BA-volume-age
+relationship. It is still a screening calibration, not a plantation BA model.
+A calibrated plantation volume curve and group-specific BA dynamics are still
 required.

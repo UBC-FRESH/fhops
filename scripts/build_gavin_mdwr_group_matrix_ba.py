@@ -48,6 +48,7 @@ def main() -> None:
     parser.add_argument("--schedule", type=Path, default=INSTANCE / "ws4" / "runtime" / "gavin-mdwr-40-schedule-official-ba-temporal-s10.csv")
     parser.add_argument("--habitat", type=Path, default=INSTANCE / "planning" / "2026-11-18_gavin_mdwr_official_habitat.csv")
     parser.add_argument("--ba-table", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_basal_area.csv")
+    parser.add_argument("--ba-fit", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_ba_fit.json")
     args = parser.parse_args()
 
     base_tracks = pd.read_parquet(BASE / "tracks.parquet")
@@ -61,6 +62,7 @@ def main() -> None:
     clone_name = dict(zip(clone_tracks["track_id"], clone_tracks["name"]))
     habitat = pd.read_csv(args.habitat).set_index("block_id")
     ba = pd.read_csv(args.ba_table).set_index("block_id")
+    ba_fit = json.loads(args.ba_fit.read_text(encoding="utf-8"))["fits"]
     entries = pd.read_csv(args.schedule)
     entries = entries[entries["treatment"].astype(str).str.startswith("GS")]
     first_entry = entries.groupby("block_id")["offset"].min().to_dict()
@@ -123,7 +125,15 @@ def main() -> None:
         cycle = CYCLE[class_name]
         initial_age = int(round(float(clone_fragments.loc[block_id, "age"])))
         initial_ba = float(ba.loc[block_id, "ba_m2_ha"]) if block_id in ba.index else 0.0
+        bec = str(habitat.loc[block_id, "bec"])
+        fit_bec = "ICHmk3" if bec.startswith("ICHmk3") else ("SBSmh" if bec == "SBSmh" else "SBSdw1")
+        fit = ba_fit.get(fit_bec, {"b": 0.08, "c": 10.0, "tau": 10.0})
         source_v0 = value_at(source_curve["x"].to_numpy(), source_curve["y"].to_numpy(), initial_age)
+        model_initial = (
+            float(fit["b"]) * source_v0
+            + float(fit["c"]) * (1.0 - np.exp(-initial_age / float(fit["tau"])))
+        )
+        ba_scale = initial_ba / model_initial if model_initial > 0 else 0.0
         first = int(first_entry[block_id])
         target = float(block_groups["area_ha"].sum()) / n_cohorts
         cohort = 0
@@ -151,9 +161,17 @@ def main() -> None:
             ba_plant_curve = next_curve
             next_curve += 1
             for x, y in zip(source_curve["x"], source_curve["y"]):
-                curve_rows.append({"curve_id": ba_initial_curve, "x": float(x), "y": float(initial_ba * min(1.0, y / source_v0)) if source_v0 else 0.0})
+                ba_value = ba_scale * (
+                    float(fit["b"]) * float(y)
+                    + float(fit["c"]) * (1.0 - np.exp(-float(x) / float(fit["tau"])))
+                )
+                curve_rows.append({"curve_id": ba_initial_curve, "x": float(x), "y": max(0.0, float(ba_value))})
             for x, y in zip(successor_curve["x"], successor_curve["y"]):
-                curve_rows.append({"curve_id": ba_plant_curve, "x": float(x), "y": float(initial_ba * min(1.0, y / source_v0)) if source_v0 else 0.0})
+                ba_value = ba_scale * (
+                    float(fit["b"]) * float(y)
+                    + float(fit["c"]) * (1.0 - np.exp(-float(x) / float(fit["tau"])))
+                )
+                curve_rows.append({"curve_id": ba_plant_curve, "x": float(x), "y": max(0.0, float(ba_value))})
             track_rows.extend(
                 [
                     {"track_id": initial_track, "name": f"group-{group_id}-initial"},
@@ -232,7 +250,8 @@ def main() -> None:
         "cohorts": COHORTS,
         "cycle_years": CYCLE,
         "ba_account": "feature.ba.managed.total",
-        "caveat": "Group-specific BA is a proportional volume-ratio curve; not a calibrated BA growth model.",
+        "ba_fit": str(args.ba_fit),
+        "caveat": "Group-specific BA uses a VRI 2025 per-BEC BA-volume-age fit; screening calibration, not a plantation BA model.",
     }
     args.manifest.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(manifest, indent=2))

@@ -164,9 +164,9 @@ generated groups remain unassigned.
 
 A group-level WS4 run carries these groups as separate blocks with
 `feature.yield.managed.total` and `feature.ba.managed.total`. It produces
-1.011M m³ / 300 years, 18,527 group cuts, initial BA 54,174 m² and final BA
-26,448 m². The BA curve is a proportional VRI/volume screening curve, not a
-calibrated plantation/BA model.
+1.011M m³ / 300 years, 18,527 group cuts, initial BA 57,337 m² and final BA
+54,404 m². The BA curve is a VRI 2025 per-BEC BA-volume-age fit, not a
+plantation BA model.
 
 This is a schematic capacity/verification layer, not an operational layout. It
 does not enforce a minimum group size, model cohort growth, represent windthrow,

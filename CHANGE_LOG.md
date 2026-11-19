@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR VRI-fitted group BA
+
+- Fitted BA = b*volume + c*(1-exp(-age/tau)) to VRI 2025 by BEC: R² 0.745 ICHmk3, 0.888 SBSdw1, 0.863 SBSmh.
+- Rebuilt the group WS4 BA matrix using the fitted curves, scaled to each block's initial VRI BA.
+- Group run remains 1.011M m³ / 300 years, 18,527 cuts, 1,430.3 ha; initial BA 57,337 m², final BA 54,404 m², final standing yield 190,348 m³.
+- The fitted BA is an empirical screening calibration, not a plantation BA model. Group volume and BA are still prototype outputs, not a public scenario replacement.
+
 # 2026-11-19 — Gavin MDWR group fallback and BA run
 
 - Added fallback rectangular groups for blocks outside the 10 m DEM grid; the layout now covers all 1,045 scheduled blocks: 9,674 groups and 1,430.3 ha.
