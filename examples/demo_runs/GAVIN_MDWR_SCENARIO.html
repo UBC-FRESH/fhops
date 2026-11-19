@@ -312,14 +312,14 @@ stock floor, ±4% even-flow).</li>
 <td><strong>14/35/12</strong></td>
 </tr>
 <tr class="even">
-<td>Official fine-map, temporal BA ≥ 40 m²/ha</td>
+<td>Official fine-map, temporal BA ≥ 40 m²/ha + 0–9 year stagger</td>
 <td style="text-align: right;"><strong>0</strong></td>
-<td style="text-align: right;"><strong>4.149M m³</strong></td>
-<td style="text-align: right;"><strong>138,297 m³</strong></td>
-<td style="text-align: right;"><strong>91,965 m³</strong></td>
-<td style="text-align: right;"><strong>224,726 m³</strong></td>
+<td style="text-align: right;"><strong>4.154M m³</strong></td>
+<td style="text-align: right;"><strong>138,466 m³</strong></td>
+<td style="text-align: right;"><strong>92,765 m³</strong></td>
+<td style="text-align: right;"><strong>219,971 m³</strong></td>
 <td style="text-align: right;">1,493,175 m³</td>
-<td><strong>10/39/12</strong></td>
+<td><strong>13/37/11</strong></td>
 </tr>
 <tr class="odd">
 <td>Prior BEC first-entry screen</td>
@@ -394,11 +394,13 @@ held and 29 blocks / 72.6 ha are unknown. That sensitivity produces
 growth and post-pass BA recovery are not modelled.</p>
 <p>A temporal ledger then grows each block from its VRI BA using the WS4
 volume curve, checks every candidate entry, deducts the pass fraction
-after an accepted cut, and defers entries below 40 m²/ha. It accepts
-1,046 blocks / 2,242.9 ha and holds 397 blocks / 556.4 ha. The temporal
-screen produces 4.149M m³ and 10/39/12 targets. The BA growth proxy is
-still a screening assumption, not a validated basal-area model. The
-0.4/0.7 ha caps and 3–5 cohort structure are still not modelled.</p>
+after an accepted cut, and defers entries below 40 m²/ha. The accepted
+schedule is staggered by a deterministic 0–9 years by block id, which
+improves target performance from 10/39/12 to <strong>13/37/11</strong>.
+It accepts 1,045 blocks / 2,238.5 ha and holds 398 blocks / 560.8 ha.
+The BA growth proxy is still a screening assumption, not a validated
+basal-area model. The 0.4/0.7 ha caps and 3–5 cohort structure are still
+not modelled.</p>
 <p>Appendix 9 is a compartment-level adjusted map, not a block-level
 attribute in the legacy layer. The fine BC long-term objective polygons
 used here are not the adjusted Appendix 9 boundaries. The screen is

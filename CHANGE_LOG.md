@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR temporal BA entry stagger
+
+- Added a deterministic 0–9 year entry stagger by block id to the temporal BA-gated schedule.
+- The staggered screen produces 4.154M m³ / 300 years; mean 138,466 m³; min 92,765 m³; max 219,971 m³; targets improve from 10/39/12 to 13/37/11.
+- Accepted 1,045 blocks / 2,238.5 ha; held 398 blocks / 560.8 ha.
+- Replaced the public temporal scenario with the staggered run and updated the brief/card.
+
 # 2026-11-19 — Gavin MDWR temporal basal-area ledger
 
 - Added an annual temporal BA ledger from VRI 2025 BA, using the WS4 total-volume curve as a growth proxy. Entries below 40 m²/ha are deferred; accepted passes deduct the Table 30 pass fraction; the 40-year cycle is preserved.

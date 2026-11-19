@@ -125,8 +125,8 @@ periods:
   end_date: '2325-12-31'
   duration_years: 10
 source: "Gavin MDWR clone matrix; Table 30 group selection; official BC long-term\
-  \ fine-map classes; temporal VRI BA >= 40 m\xB2/ha gate"
+  \ fine-map classes; temporal VRI BA >= 40 m\xB2/ha gate; 0\u20139 year entry stagger"
 notes: "No clearcut in MDWR. Group selection uses 33/25/20% per pass by official BC\
-  \ long-term fine-map classes; temporal VRI BA >= 40 m\xB2/ha gate, 40-year re-entry,\
-  \ and a full-area partial-cut volume approximation. Not a spatial group-layout or\
-  \ approved plan."
+  \ long-term fine-map classes; temporal VRI BA >= 40 m\xB2/ha gate; 0\u20139 year\
+  \ entry stagger, 40-year re-entry, and a full-area partial-cut volume approximation.\
+  \ Not a spatial group-layout or approved plan."

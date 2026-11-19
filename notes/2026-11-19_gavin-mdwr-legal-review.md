@@ -151,3 +151,17 @@ m³, max 224,726 m³, and target status **10 met / 39 below / 12 above**.
 The BA growth is a volume-ratio proxy, not a validated basal-area model. The
 group-size cap, cohort structure, preparatory thinning, adjusted Appendix 9
 boundaries, and GAR/UWR review remain outstanding.
+
+## Temporal stagger test
+
+A deterministic 0–9 year first-entry stagger by block id improves the temporal
+BA-gated screen from 10/39/12 to **13/37/11** targets:
+
+- accepted: 1,045 blocks / 2,238.5 ha;
+- held: 398 blocks / 560.8 ha;
+- production: 4.154M m³ / 300 years;
+- period mean 138,466 m³, min 92,765 m³, max 219,971 m³.
+
+This is still a screening test, not an optimized schedule and not a legal
+compliance result. The 0.4/0.7 ha group-size caps, cohort structure, preparatory
+thinning, adjusted Appendix 9 boundaries, and GAR/UWR review remain open.
