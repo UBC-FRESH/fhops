@@ -44,7 +44,7 @@ def main() -> None:
     parser.add_argument("--schedule-out", type=Path, default=INSTANCE / "ws4" / "runtime" / "gavin-mdwr-group-schedule-ba.csv")
     parser.add_argument("--mapping-out", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_group_matrix_ba_map.csv")
     parser.add_argument("--manifest", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_group_matrix_ba.json")
-    parser.add_argument("--groups", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_group_layout.csv")
+    parser.add_argument("--groups", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_groups_all.csv")
     parser.add_argument("--schedule", type=Path, default=INSTANCE / "ws4" / "runtime" / "gavin-mdwr-40-schedule-official-ba-temporal-s10.csv")
     parser.add_argument("--habitat", type=Path, default=INSTANCE / "planning" / "2026-11-18_gavin_mdwr_official_habitat.csv")
     parser.add_argument("--ba-table", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_basal_area.csv")
@@ -67,9 +67,9 @@ def main() -> None:
     entries = entries[entries["treatment"].astype(str).str.startswith("GS")]
     first_entry = entries.groupby("block_id")["offset"].min().to_dict()
     groups = pd.read_csv(args.groups)
-    groups = groups.loc[groups["entry_offset"].notna()].copy()
     groups["block_id"] = groups["block_id"].astype(int)
     groups["area_ha"] = groups["area_ha"].astype(float)
+    groups["assigned"] = groups["assigned"].fillna(False).astype(bool)
     groups = groups.sort_values(["block_id", "group_index"])
 
     if args.out.exists():
@@ -89,7 +89,7 @@ def main() -> None:
     mapping_rows: list[dict[str, object]] = []
     group_id = 0
     for block_id, block_groups in groups.groupby("block_id", sort=False):
-        if block_id not in first_entry or block_id not in clone_fragments.index or block_id not in habitat.index:
+        if block_id not in clone_fragments.index or block_id not in habitat.index:
             continue
         clone_track_id = int(clone_fragments.loc[block_id, "track_id"])
         clone_track_name = str(clone_name.get(clone_track_id, ""))
@@ -134,12 +134,13 @@ def main() -> None:
             + float(fit["c"]) * (1.0 - np.exp(-initial_age / float(fit["tau"])))
         )
         ba_scale = initial_ba / model_initial if model_initial > 0 else 0.0
-        first = int(first_entry[block_id])
-        target = float(block_groups["area_ha"].sum()) / n_cohorts
+        first = int(first_entry.get(block_id, 0))
+        assigned_groups = block_groups.loc[block_groups["assigned"]]
+        target = float(assigned_groups["area_ha"].sum()) / n_cohorts if not assigned_groups.empty else 0.0
         cohort = 0
         accumulated = 0.0
-        assignments: dict[int, int] = {}
-        for index, row in block_groups.iterrows():
+        assignments: dict[int, int] = {index: -1 for index in block_groups.index}
+        for index, row in assigned_groups.iterrows():
             assignments[index] = min(cohort, n_cohorts - 1)
             accumulated += float(row["area_ha"])
             if accumulated >= target and cohort < n_cohorts - 1:
@@ -147,11 +148,10 @@ def main() -> None:
                 accumulated = 0.0
         for index, row in block_groups.iterrows():
             group_id += 1
+            assigned = bool(row["assigned"])
             cohort_index = assignments[index]
-            start = first + cohort_index * 40
-            cuts = list(range(start, HORIZON, cycle))
-            if not cuts:
-                continue
+            start = first + max(cohort_index, 0) * 40
+            cuts = list(range(start, HORIZON, cycle)) if assigned else []
             area = float(row["area_ha"])
             initial_track = next_track
             plant_track = next_track + 1
@@ -213,11 +213,12 @@ def main() -> None:
                     "group_block_id": group_id,
                     "source_block_id": block_id,
                     "group_index": int(row["group_index"]),
-                    "cohort": cohort_index,
+                    "cohort": int(cohort_index),
+                    "assigned": assigned,
                     "habitat_class": class_name,
                     "area_ha": area,
                     "initial_ba_m2_ha": round(initial_ba, 6),
-                    "first_cut": int(cuts[0]),
+                    "first_cut": int(cuts[0]) if cuts else None,
                     "cycle_years": cycle,
                 }
             )
@@ -245,13 +246,15 @@ def main() -> None:
         "groups": int(len(mapping)),
         "blocks": int(len(blocks)),
         "source_blocks": int(mapping["source_block_id"].nunique()) if not mapping.empty else 0,
-        "scheduled_area_ha": round(float(mapping["area_ha"].sum()), 3),
+        "assigned_groups": int(mapping["assigned"].sum()) if not mapping.empty else 0,
+        "scheduled_area_ha": round(float(mapping.loc[mapping["assigned"], "area_ha"].sum()), 3),
+        "total_group_area_ha": round(float(mapping["area_ha"].sum()), 3),
         "cuts": int(len(schedule)),
         "cohorts": COHORTS,
         "cycle_years": CYCLE,
         "ba_account": "feature.ba.managed.total",
         "ba_fit": str(args.ba_fit),
-        "caveat": "Group-specific BA uses a VRI 2025 per-BEC BA-volume-age fit; screening calibration, not a plantation BA model.",
+        "caveat": "Group-specific BA uses a VRI 2025 per-BEC BA-volume-age fit; all groups are included in state, only assigned groups are cut.",
     }
     args.manifest.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(manifest, indent=2))

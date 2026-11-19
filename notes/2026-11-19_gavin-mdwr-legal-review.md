@@ -260,3 +260,23 @@ BA is now carried as a WS4 account and uses the VRI-fitted BA-volume-age
 relationship. It is still a screening calibration, not a plantation BA model.
 A calibrated plantation volume curve and group-specific BA dynamics are still
 required.
+
+## Complete group state
+
+The group matrix now includes every generated group, including standing groups
+that are not assigned to a cut:
+
+- **20,139 groups** on **1,443 source blocks**;
+- **2,586.8 ha** total group area;
+- **9,674 assigned groups / 1,430.3 ha**;
+- **10,465 standing groups**;
+- **18,684 cuts**.
+
+The full-state WS4 run produces **1.013M m³** harvested volume, final standing
+yield **634,362 m³**, initial BA **96,637 m²**, and final BA **116,446 m²**.
+The harvested volume is now embedded in a complete group state rather than a
+cut-only subset.
+
+This remains a schematic group model: the 2,586.8 ha group state is less than
+the 2,799 ha MDWR because of cell/edge coverage, and the BA curve is a VRI
+empirical fit rather than a plantation model.

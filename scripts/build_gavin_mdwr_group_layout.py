@@ -168,6 +168,8 @@ def main() -> None:
     parser.add_argument("--out-csv", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_group_layout.csv")
     parser.add_argument("--out-geojson", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_group_layout.geojson")
     parser.add_argument("--out-json", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_group_layout.json")
+    parser.add_argument("--out-all-csv", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_groups_all.csv")
+    parser.add_argument("--out-all-geojson", type=Path, default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_groups_all.geojson")
     args = parser.parse_args()
 
     slope, aspect, transform = terrain(args.dem)
@@ -183,14 +185,53 @@ def main() -> None:
 
     rows: list[dict[str, object]] = []
     features: list[dict[str, object]] = []
+    all_rows: list[dict[str, object]] = []
+    all_features: list[dict[str, object]] = []
     for block in mdwr.itertuples(index=False):
         block_id = int(block.RES_KEY)
         entries = schedule.loc[schedule["block_id"] == block_id].sort_values("offset")
-        if entries.empty:
-            continue
         groups = build_groups(block.geometry, slope, aspect, transform)
         if not groups:
             groups = fallback_groups(block.geometry)
+        for local_index, group in enumerate(groups):
+            group["group_id"] = block_id * 100000 + local_index
+            group["group_index"] = local_index
+            group["assigned"] = False
+            group["entry_offset"] = None
+            all_rows.append(
+                {
+                    "group_id": group["group_id"],
+                    "block_id": block_id,
+                    "group_index": local_index,
+                    "class": group["class"],
+                    "area_ha": group["area_ha"],
+                    "assigned": False,
+                    "entry_offset": None,
+                }
+            )
+            all_features.append(
+                {
+                    "group_id": group["group_id"],
+                    "block_id": block_id,
+                    "group_index": local_index,
+                    "class": group["class"],
+                    "area_ha": group["area_ha"],
+                    "assigned": False,
+                    "entry_offset": None,
+                    "geometry": group["geometry"],
+                }
+            )
+        if entries.empty:
+            rows.append(
+                {
+                    "block_id": block_id,
+                    "entries": 0,
+                    "groups": len(groups),
+                    "unassigned_groups": len(groups),
+                    "note": "",
+                }
+            )
+            continue
         block_area = block.geometry.area / 10000.0
         remaining = list(groups)
         for entry in entries.itertuples(index=False):
@@ -199,15 +240,16 @@ def main() -> None:
             total = 0.0
             while remaining and total < target:
                 group = remaining.pop(0)
+                group["assigned"] = True
+                group["entry_offset"] = int(entry.offset)
                 chosen.append(group)
                 total += float(group["area_ha"])
-            for index, group in enumerate(chosen):
-                geom = group["geometry"]
+            for group in chosen:
                 rows.append(
                     {
                         "block_id": block_id,
                         "entry_offset": int(entry.offset),
-                        "group_index": index,
+                        "group_index": group["group_index"],
                         "class": group["class"],
                         "area_ha": group["area_ha"],
                         "cut_target_ha": round(target, 6),
@@ -216,12 +258,13 @@ def main() -> None:
                 )
                 features.append(
                     {
+                        "group_id": group["group_id"],
                         "block_id": block_id,
                         "entry_offset": int(entry.offset),
-                        "group_index": index,
+                        "group_index": group["group_index"],
                         "class": group["class"],
                         "area_ha": group["area_ha"],
-                        "geometry": geom,
+                        "geometry": group["geometry"],
                     }
                 )
         rows.append(
@@ -236,6 +279,18 @@ def main() -> None:
 
     frame = pd.DataFrame(rows)
     frame.to_csv(args.out_csv, index=False)
+    all_frame = pd.DataFrame(all_rows)
+    assigned_map = {int(feature["group_id"]): feature["entry_offset"] for feature in features}
+    all_frame["assigned"] = all_frame["group_id"].isin(assigned_map)
+    all_frame["entry_offset"] = all_frame["group_id"].map(assigned_map)
+    all_frame.to_csv(args.out_all_csv, index=False)
+    if all_features:
+        for feature in all_features:
+            gid = int(feature["group_id"])
+            feature["assigned"] = gid in assigned_map
+            feature["entry_offset"] = assigned_map.get(gid)
+        all_grouped = gpd.GeoDataFrame(all_features, geometry="geometry", crs="EPSG:6653").to_crs("EPSG:3005")
+        all_grouped.to_file(args.out_all_geojson, driver="GeoJSON")
     if features:
         grouped = gpd.GeoDataFrame(features, geometry="geometry", crs="EPSG:6653").to_crs("EPSG:3005")
         grouped.to_file(args.out_geojson, driver="GeoJSON")
@@ -255,6 +310,9 @@ def main() -> None:
         "max_group_area_ha": round(float(entry_rows["area_ha"].max()), 6) if not entry_rows.empty else 0.0,
         "assigned_area_ha": round(float(entry_rows["area_ha"].sum()), 3) if not entry_rows.empty else 0.0,
         "unassigned_groups": int(frame["unassigned_groups"].sum()) if "unassigned_groups" in frame else 0,
+        "all_groups": int(len(all_frame)),
+        "all_area_ha": round(float(all_frame["area_ha"].sum()), 3),
+        "all_blocks": int(all_frame["block_id"].nunique()),
         "caveat": "Schematic 10 m cell layout; no cohort growth, minimum group size, windthrow or matrix response.",
     }
     args.out_json.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")

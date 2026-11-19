@@ -418,17 +418,18 @@ DEM/block edges, and 276 blocks have no warm-aspect area.</p>
 <p>This is a capacity check only. It does not draw group polygons,
 enforce a minimum group size, or model cohort growth.</p>
 <h2 id="schematic-group-layout">Schematic group layout</h2>
-<p>A 10 m cell prototype was built for the staggered temporal schedule:
-9,674 assigned groups on 1,045 blocks, 1,430.3 ha of assigned group
-area, and a maximum group area of 0.7 ha. Warm groups are capped at 0.4
-ha. Fallback groups cover the blocks that could not be represented by
-the 10 m DEM grid; 6,409 generated groups remain unassigned.</p>
-<p>A group-level WS4 run carries these groups as separate blocks with
+<p>A 10 m cell prototype was built for the staggered temporal schedule.
+The full group state now covers all 1,443 MDWR blocks: <strong>20,139
+groups</strong>, <strong>2,586.8 ha</strong> and a maximum group area of
+0.7 ha. Warm groups are capped at 0.4 ha. Of these, <strong>9,674 groups
+/ 1,430.3 ha</strong> are assigned to cuts; 10,465 groups remain
+standing.</p>
+<p>A group-level WS4 run carries every group as a separate block with
 <code>feature.yield.managed.total</code> and
-<code>feature.ba.managed.total</code>. It produces 1.011M m³ / 300
-years, 18,527 group cuts, initial BA 57,337 m² and final BA 54,404 m².
-The BA curve is a VRI 2025 per-BEC BA-volume-age fit, not a plantation
-BA model.</p>
+<code>feature.ba.managed.total</code>. It produces 1.013M m³ / 300
+years, 18,684 group cuts, final standing yield 634,362 m³, initial BA
+96,637 m² and final BA 116,446 m². The BA curve is a VRI 2025 per-BEC
+BA-volume-age fit, not a plantation BA model.</p>
 <p>This is a schematic capacity/verification layer, not an operational
 layout. It does not enforce a minimum group size, model cohort growth,
 represent windthrow, or feed group-specific volume back into WS4. The

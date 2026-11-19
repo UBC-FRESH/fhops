@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR complete group state
+
+- Exported all generated groups, including standing groups not assigned to cuts: 20,139 groups on 1,443 source blocks, 2,586.8 ha.
+- Rebuilt the group WS4 BA matrix with all groups: 9,674 assigned groups / 1,430.3 ha, 18,684 cuts.
+- Harvested volume 1.013M m³; final standing yield 634,362 m³; initial BA 96,637 m²; final BA 116,446 m².
+- The group state still covers 2,586.8 ha rather than the full 2,799 ha MDWR; the VRI BA fit remains a screening calibration.
+
 # 2026-11-19 — Gavin MDWR VRI-fitted group BA
 
 - Fitted BA = b*volume + c*(1-exp(-age/tau)) to VRI 2025 by BEC: R² 0.745 ICHmk3, 0.888 SBSdw1, 0.863 SBSmh.
