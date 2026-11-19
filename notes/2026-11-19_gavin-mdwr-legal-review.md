@@ -112,3 +112,23 @@ group-size, cohort, or basal-area requirements.
 4. Review the 2007 GAR order and current UWR boundary independently.
 5. Re-run the 300-year screen after those constraints and publish only the
    compliance-grade result.
+
+## Current-BA 40 m²/ha gate
+
+A VRI 2025 basal-area screen was added as a separate sensitivity. Area-weighted
+`BASAL_AREA` was intersected with the 1,443 legacy MDWR blocks; blocks with less
+than 50% VRI coverage are `unknown` and are held.
+
+| Status | Blocks | Area |
+| --- | ---: | ---: |
+| Pass, current BA ≥ 40 m²/ha | 625 | 1,296.8 ha |
+| Hold, current BA < 40 m²/ha | 789 | 1,429.9 ha |
+| Unknown coverage | 29 | 72.6 ha |
+
+The BA-gated official schedule produces **4.592M m³ / 300 years**, mean 153,075
+m³ per period, min 79,713 m³, max 269,628 m³, and target status **14 met / 35
+below / 12 above**.
+
+This is a **current-snapshot** gate only. It does not model future growth or the
+post-pass basal-area recovery needed to clear 40 m²/ha before the next entry.
+It is a useful screening sensitivity, not a compliance test.

@@ -67,6 +67,7 @@ current UWR boundary also still need review.
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | `gavin-policy` | 4,352 events / 2,759 ha | 5.385M m³ | 179,505 m³ | 174,070 m³ | 187,575 m³ | 610,004 m³ | 61/0/0 |
 | `gavin-mdwr` official fine-map, 40-year re-entry | **0** | **5.626M m³** | **187,519 m³** | **81,358 m³** | **377,744 m³** | **1,493,175 m³** | **15/33/13** |
+| Official fine-map, current BA ≥ 40 m²/ha | **0** | **4.592M m³** | **153,075 m³** | **79,713 m³** | **269,628 m³** | 1,493,175 m³ | **14/35/12** |
 | Prior BEC first-entry screen | 0 | 3.735M m³ | 124,508 m³ | 80,704 m³ | 201,462 m³ | 395,682 m³ | 10/43/8 |
 | MDWR deferral floor (prior run) | 0 | 3.560M m³ | 118,678 m³ | 64,963 m³ | 151,070 m³ | 1,493,175 m³ | 8/47/6 |
 
@@ -117,8 +118,12 @@ not a direct FSP transcription.
 
 BC MDWR Information Note #3 quotes General Wildlife Measure 6 from the 2007
 transition/deep snowpack GAR order: group selection requires a pre-harvest
-basal area of at least **40 m²/ha**. The current full-area screen does not test
-that prerequisite, the 0.4/0.7 ha group-size caps, or the 3–5 cohort structure.
+basal area of at least **40 m²/ha**. A separate sensitivity now gates the
+official schedule on **current VRI 2025 BA**: 625 blocks / 1,296.8 ha pass,
+789 blocks / 1,429.9 ha are held and 29 blocks / 72.6 ha are unknown.
+That sensitivity produces 4.592M m³ and 14/35/12 targets. It is a current
+snapshot only; future growth and post-pass BA recovery are not modelled. The
+0.4/0.7 ha caps and 3–5 cohort structure are still not modelled.
 
 Appendix 9 is a compartment-level adjusted map, not a block-level attribute in
 the legacy layer. The fine BC long-term objective polygons used here are not

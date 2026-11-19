@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR current-BA 40 m²/ha sensitivity
+
+- Added a VRI 2025 area-weighted basal-area table for the 1,443 MDWR blocks: 625 blocks / 1,296.8 ha pass at ≥40 m²/ha, 789 blocks / 1,429.9 ha are held, and 29 blocks / 72.6 ha have insufficient VRI coverage.
+- Built `gavin-mdwr-ba40`: official fine-map classes, age-preserving 40-year re-entry, and current-BA gate. Production is 4.592M m³ / 300 years; mean 153,075 m³; min 79,713 m³; max 269,628 m³; targets 14/35/12.
+- Added a BA-gated card link and brief row. The gate is a 2025 snapshot only; future growth and post-pass BA recovery are not modelled.
+- Files: instance `planning/2026-11-19_gavin-mdwr_basal_area.csv` and `.json`; public `examples/demo_runs/gavin-mdwr-ba40/`.
+
 # 2026-11-19 — Gavin MDWR legal and Appendix 9 review
 
 - Reviewed the 2007 MWP #3, 2007 FSP, Appendix 9 compartment map, and BC MDWR Information Note #3.
