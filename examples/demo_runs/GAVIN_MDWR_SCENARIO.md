@@ -164,19 +164,18 @@ standing.
 
 A group-level WS4 run carries every group as a separate block with
 `feature.yield.managed.total` and `feature.ba.managed.total`. It produces
-1.013M m³ / 300 years, 18,684 group cuts, final standing yield 634,362 m³,
-initial BA 96,637 m² and final BA 116,446 m². The BA curve is a VRI 2025
+0.533M m³ / 300 years, 9,674 group cuts, final standing yield 1,185,395 m³,
+initial BA 96,637 m² and final BA 205,095 m². The BA curve is a VRI 2025
 per-BEC BA-volume-age fit, not a plantation BA model.
 
 Public group-state prototype: `http://10.232.253.210:8780/fhops/?run=gavin-mdwr-group`.
 
 The group state covers 2,586.8 ha of the 2,799.3 ha MDWR; the 212.5 ha gap is
-spread across 1,286 blocks and comes from 10 m cell/edge geometry. A
-Block-only MDWR comparison produces 0.594M m³, versus 1.013M m³ for the group
-state. The group value is 1.71× the block value, but the two are not directly
-comparable: group openings harvest full group volumes, while the block screen
-applies Table 30 pass fractions to full blocks. The group result remains a
-prototype and does not replace the block policy screen.
+spread across 1,286 blocks and comes from 10 m cell/edge geometry. The aligned
+group state produces 0.533M m³, versus 0.594M m³ for the MDWR-only block screen:
+a ratio of 0.90, or 206 versus 212 m³/ha. The remaining difference is area
+coverage and full-group versus block-fraction accounting. The group result
+remains a prototype and does not replace the block policy screen.
 
 This is a schematic capacity/verification layer, not an operational layout. It
 does not enforce a minimum group size, model cohort growth, represent windthrow,

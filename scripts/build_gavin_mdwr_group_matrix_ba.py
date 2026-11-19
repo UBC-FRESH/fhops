@@ -8,7 +8,7 @@ This extends the group matrix prototype:
   curve derived from VRI BA and the volume curve;
 - the plantation track carries the base CC successor volume curve and the
   proportional BA curve;
-- CC groups are cut on the cohort schedule.
+- each assigned group is cut at its accepted temporal entry.
 
 BA is a screening proportional curve, not a calibrated basal-area growth model.
 """
@@ -63,9 +63,6 @@ def main() -> None:
     habitat = pd.read_csv(args.habitat).set_index("block_id")
     ba = pd.read_csv(args.ba_table).set_index("block_id")
     ba_fit = json.loads(args.ba_fit.read_text(encoding="utf-8"))["fits"]
-    entries = pd.read_csv(args.schedule)
-    entries = entries[entries["treatment"].astype(str).str.startswith("GS")]
-    first_entry = entries.groupby("block_id")["offset"].min().to_dict()
     groups = pd.read_csv(args.groups)
     groups["block_id"] = groups["block_id"].astype(int)
     groups["area_ha"] = groups["area_ha"].astype(float)
@@ -121,7 +118,6 @@ def main() -> None:
         source_curve = base_curves.loc[base_curves["curve_id"] == source_curve_id].sort_values("x")
         successor_curve = base_curves.loc[base_curves["curve_id"] == successor_curve_id].sort_values("x")
         class_name = str(habitat.loc[block_id, "model_class"])
-        n_cohorts = COHORTS[class_name]
         cycle = CYCLE[class_name]
         initial_age = int(round(float(clone_fragments.loc[block_id, "age"])))
         initial_ba = float(ba.loc[block_id, "ba_m2_ha"]) if block_id in ba.index else 0.0
@@ -134,24 +130,16 @@ def main() -> None:
             + float(fit["c"]) * (1.0 - np.exp(-initial_age / float(fit["tau"])))
         )
         ba_scale = initial_ba / model_initial if model_initial > 0 else 0.0
-        first = int(first_entry.get(block_id, 0))
-        assigned_groups = block_groups.loc[block_groups["assigned"]]
-        target = float(assigned_groups["area_ha"].sum()) / n_cohorts if not assigned_groups.empty else 0.0
-        cohort = 0
-        accumulated = 0.0
-        assignments: dict[int, int] = {index: -1 for index in block_groups.index}
-        for index, row in assigned_groups.iterrows():
-            assignments[index] = min(cohort, n_cohorts - 1)
-            accumulated += float(row["area_ha"])
-            if accumulated >= target and cohort < n_cohorts - 1:
-                cohort += 1
-                accumulated = 0.0
+        # Each group belongs to one accepted block entry. Do not add extra
+        # cohort cycles: the temporal block schedule already represents the
+        # accepted re-entry years.
         for index, row in block_groups.iterrows():
             group_id += 1
             assigned = bool(row["assigned"])
-            cohort_index = assignments[index]
-            start = first + max(cohort_index, 0) * 40
-            cuts = list(range(start, HORIZON, cycle)) if assigned else []
+            cohort_index = -1
+            entry_offset = row.get("entry_offset")
+            start = int(entry_offset) if assigned and pd.notna(entry_offset) else 0
+            cuts = [start] if assigned and start < HORIZON else []
             area = float(row["area_ha"])
             initial_track = next_track
             plant_track = next_track + 1
@@ -250,6 +238,7 @@ def main() -> None:
         "scheduled_area_ha": round(float(mapping.loc[mapping["assigned"], "area_ha"].sum()), 3),
         "total_group_area_ha": round(float(mapping["area_ha"].sum()), 3),
         "cuts": int(len(schedule)),
+        "cut_mode": "one accepted group entry per assigned group",
         "cohorts": COHORTS,
         "cycle_years": CYCLE,
         "ba_account": "feature.ba.managed.total",

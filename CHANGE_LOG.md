@@ -1,3 +1,9 @@
+# 2026-11-19 — Align Gavin group schedule with block entries
+
+- Removed extra cohort-cycle cuts from the group matrix. Each assigned group is now cut once at its accepted temporal block entry, matching the block schedule.
+- Group state now produces 0.533M m³ versus 0.594M m³ for the MDWR-only block run: ratio 0.90, or 206 versus 212 m³/ha.
+- Updated the public group scenario, brief and comparison note. The group state remains a 2,586.8 ha prototype and does not replace the block policy screen.
+
 # 2026-11-19 — Gavin MDWR group vs block comparison
 
 - Restricted the block matrix to the 1,443 MDWR blocks and ran the same temporal schedule: 0.594M m³ / 300 years.

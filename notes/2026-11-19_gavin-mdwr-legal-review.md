@@ -270,10 +270,10 @@ that are not assigned to a cut:
 - **2,586.8 ha** total group area;
 - **9,674 assigned groups / 1,430.3 ha**;
 - **10,465 standing groups**;
-- **18,684 cuts**.
+- **9,674 cuts** (one accepted entry per assigned group).
 
-The full-state WS4 run produces **1.013M m³** harvested volume, final standing
-yield **634,362 m³**, initial BA **96,637 m²**, and final BA **116,446 m²**.
+The full-state WS4 run produces **0.533M m³** harvested volume, final standing
+yield **1,185,395 m³**, initial BA **96,637 m²**, and final BA **205,095 m²**.
 The harvested volume is now embedded in a complete group state rather than a
 cut-only subset.
 
@@ -284,15 +284,16 @@ empirical fit rather than a plantation model.
 ## MDWR-only comparison and area gap
 
 The block matrix was restricted to the 1,443 MDWR blocks and run with the same
-temporal schedule. It produces **0.594M m³ / 300 years**, versus **1.013M m³**
-for the group-state prototype. The group result is 1.71× the block result, but
-the two are not directly comparable: group openings harvest full group volumes,
-while the block screen applies Table 30 pass fractions to full blocks.
+temporal schedule. It produces **0.594M m³ / 300 years**, versus **0.533M m³**
+for the aligned group state. The group/block ratio is **0.90**; per hectare,
+206 m³/ha for the group state versus 212 m³/ha for the block screen. The
+remaining difference is the 2,586.8 ha group-area coverage and full-group versus
+block-fraction accounting.
 
 The group state covers **2,586.8 ha** of the **2,799.3 ha** MDWR. The **212.5 ha**
 gap is spread across 1,286 blocks (maximum 13.4 ha in one block) and comes from
 10 m cell/edge geometry and fallback grouping. It is not a missing treatment
 decision.
 
-The group result therefore remains a spatial prototype; it does not replace the
-block-level policy screen.
+The aligned group result is close enough to the block screen to compare, but it
+remains a spatial prototype; it does not replace the block-level policy screen.
