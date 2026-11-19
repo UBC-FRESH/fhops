@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR group vs block comparison
+
+- Restricted the block matrix to the 1,443 MDWR blocks and ran the same temporal schedule: 0.594M m³ / 300 years.
+- Complete group-state prototype: 1.013M m³, 2,586.8 ha, 20,139 groups; the 1.71× difference is not directly comparable because group openings harvest full group volumes while the block screen applies Table 30 pass fractions.
+- Quantified the 212.5 ha group-area gap: spread across 1,286 blocks, maximum 13.4 ha in one block, from 10 m cell/edge geometry.
+- Kept the group result as a prototype; the block-level 4.154M m³ full-estate screen remains the public policy result.
+
 # 2026-11-19 — Gavin MDWR complete group public prototype
 
 - Published `gavin-mdwr-group` as a separate complete group-state prototype, not a replacement for the block policy screen.

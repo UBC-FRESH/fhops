@@ -280,3 +280,19 @@ cut-only subset.
 This remains a schematic group model: the 2,586.8 ha group state is less than
 the 2,799 ha MDWR because of cell/edge coverage, and the BA curve is a VRI
 empirical fit rather than a plantation model.
+
+## MDWR-only comparison and area gap
+
+The block matrix was restricted to the 1,443 MDWR blocks and run with the same
+temporal schedule. It produces **0.594M m³ / 300 years**, versus **1.013M m³**
+for the group-state prototype. The group result is 1.71× the block result, but
+the two are not directly comparable: group openings harvest full group volumes,
+while the block screen applies Table 30 pass fractions to full blocks.
+
+The group state covers **2,586.8 ha** of the **2,799.3 ha** MDWR. The **212.5 ha**
+gap is spread across 1,286 blocks (maximum 13.4 ha in one block) and comes from
+10 m cell/edge geometry and fallback grouping. It is not a missing treatment
+decision.
+
+The group result therefore remains a spatial prototype; it does not replace the
+block-level policy screen.
