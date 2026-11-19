@@ -4,7 +4,7 @@
 - Rebuilt the official-class MDWR matrix and 300-year screen. Production is 5.6256M m³, mean 187,519 m³, min 81,358 m³, max 377,744 m³, period-30 stock 1,493,175 m³, targets 15/33/13.
 - Replaced the public `gavin-mdwr` handoff with the corrected official fine-map run. The prior 3.735M m³ first-entry screen is retained only as a superseded comparison.
 - Updated the MDWR brief and card to remove the invalid 40-year claim and to keep the adjusted Appendix 9 compartment map and legal-order review as unresolved caveats.
-- Limitation: `ws4/sim/engine.py` also contains unrelated uncommitted work, so the core keep-age patch is left in the working tree rather than swept into this public commit.
+- Core keep-age patch committed in the `ws4` repository as `a34339b2` on `feature/p62-merged-status`; it is local and not pushed. The `ws4` working tree still contains unrelated uncommitted work.
 
 # 2026-11-18 — Gavin MDWR official habitat map acquisition
 
