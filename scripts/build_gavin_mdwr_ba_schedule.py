@@ -95,6 +95,12 @@ def main() -> None:
         default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_ba_ledger.csv",
     )
     parser.add_argument(
+        "--stagger",
+        type=int,
+        default=0,
+        help="Spread first entries by up to this many years using the block id.",
+    )
+    parser.add_argument(
         "--out-manifest",
         type=Path,
         default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_ba_ledger.json",
@@ -162,6 +168,8 @@ def main() -> None:
         current_ba = initial_ba
         current_age = initial_age
         candidate = int(first_entry[block_id])
+        if args.stagger > 0:
+            candidate += (block_id * 17) % args.stagger
         while candidate < HORIZON:
             age = initial_age + candidate
             curve_at_entry = value_at(curve, age)
@@ -228,6 +236,7 @@ def main() -> None:
         "gate_m2_ha": MIN_BA,
         "pass_fraction": PASS_FRACTION,
         "horizon_years": HORIZON,
+        "stagger_years": args.stagger,
         "mdwr_blocks": int(len(mdwr_blocks)),
         "mdwr_blocks_with_accepted_entry": int(ledger_frame.loc[ledger_frame["accepted_entries"] > 0, "block_id"].nunique()),
         "mdwr_blocks_held": int((ledger_frame["accepted_entries"] == 0).sum()),

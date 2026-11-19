@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "gavin-mdwr-group",
+  "domain": "tactical_operational",
+  "run_type": "tactical_operational",
+  "status": "prototype",
+  "files": {
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "harvest_decisions": "harvest_decisions.csv",
+    "production": "production.csv",
+    "tactical_summary": "tactical_summary.json"
+  },
+  "warnings": [
+    "Group-state prototype, not a policy decision.",
+    "BA uses a VRI cross-sectional fit, not a plantation BA model.",
+    "Group area is 2,586.8 ha, less than the 2,799.3 ha MDWR."
+  ],
+  "command": "WS4 Gavin MDWR group-state prototype",
+  "scenario": "scenario.yaml",
+  "solver": "ws4-simulate"
+}

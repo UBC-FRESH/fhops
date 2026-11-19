@@ -168,6 +168,8 @@ A group-level WS4 run carries every group as a separate block with
 initial BA 96,637 m² and final BA 116,446 m². The BA curve is a VRI 2025
 per-BEC BA-volume-age fit, not a plantation BA model.
 
+Public group-state prototype: `http://10.232.253.210:8780/fhops/?run=gavin-mdwr-group`.
+
 This is a schematic capacity/verification layer, not an operational layout. It
 does not enforce a minimum group size, model cohort growth, represent windthrow,
 or feed group-specific volume back into WS4. The next step is a spatially

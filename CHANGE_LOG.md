@@ -1,3 +1,9 @@
+# 2026-11-19 — Gavin MDWR complete group public prototype
+
+- Published `gavin-mdwr-group` as a separate complete group-state prototype, not a replacement for the block policy screen.
+- 20,139 groups on 1,443 source blocks; 9,674 assigned groups; 10,465 standing groups; 1,013M m³ harvested; 634,362 m³ final standing yield; BA 96,637 → 116,446 m².
+- Added a portal button and brief link. Group BA uses the VRI per-BEC fit; group state covers 2,586.8 ha and is not comparable to the 4.154M m³ full-estate block screen.
+
 # 2026-11-19 — Gavin MDWR complete group state
 
 - Exported all generated groups, including standing groups not assigned to cuts: 20,139 groups on 1,443 source blocks, 2,586.8 ha.
