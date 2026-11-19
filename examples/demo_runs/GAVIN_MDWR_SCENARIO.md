@@ -68,6 +68,7 @@ current UWR boundary also still need review.
 | `gavin-policy` | 4,352 events / 2,759 ha | 5.385M m³ | 179,505 m³ | 174,070 m³ | 187,575 m³ | 610,004 m³ | 61/0/0 |
 | `gavin-mdwr` official fine-map, 40-year re-entry | **0** | **5.626M m³** | **187,519 m³** | **81,358 m³** | **377,744 m³** | **1,493,175 m³** | **15/33/13** |
 | Official fine-map, current BA ≥ 40 m²/ha | **0** | **4.592M m³** | **153,075 m³** | **79,713 m³** | **269,628 m³** | 1,493,175 m³ | **14/35/12** |
+| Official fine-map, temporal BA ≥ 40 m²/ha | **0** | **4.149M m³** | **138,297 m³** | **91,965 m³** | **224,726 m³** | 1,493,175 m³ | **10/39/12** |
 | Prior BEC first-entry screen | 0 | 3.735M m³ | 124,508 m³ | 80,704 m³ | 201,462 m³ | 395,682 m³ | 10/43/8 |
 | MDWR deferral floor (prior run) | 0 | 3.560M m³ | 118,678 m³ | 64,963 m³ | 151,070 m³ | 1,493,175 m³ | 8/47/6 |
 
@@ -122,8 +123,15 @@ basal area of at least **40 m²/ha**. A separate sensitivity now gates the
 official schedule on **current VRI 2025 BA**: 625 blocks / 1,296.8 ha pass,
 789 blocks / 1,429.9 ha are held and 29 blocks / 72.6 ha are unknown.
 That sensitivity produces 4.592M m³ and 14/35/12 targets. It is a current
-snapshot only; future growth and post-pass BA recovery are not modelled. The
-0.4/0.7 ha caps and 3–5 cohort structure are still not modelled.
+snapshot only; future growth and post-pass BA recovery are not modelled.
+
+A temporal ledger then grows each block from its VRI BA using the WS4 volume
+curve, checks every candidate entry, deducts the pass fraction after an
+accepted cut, and defers entries below 40 m²/ha. It accepts 1,046 blocks /
+2,242.9 ha and holds 397 blocks / 556.4 ha. The temporal screen produces
+4.149M m³ and 10/39/12 targets. The BA growth proxy is still a screening
+assumption, not a validated basal-area model. The 0.4/0.7 ha caps and 3–5
+cohort structure are still not modelled.
 
 Appendix 9 is a compartment-level adjusted map, not a block-level attribute in
 the legacy layer. The fine BC long-term objective polygons used here are not

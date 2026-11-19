@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR temporal basal-area ledger
+
+- Added an annual temporal BA ledger from VRI 2025 BA, using the WS4 total-volume curve as a growth proxy. Entries below 40 m²/ha are deferred; accepted passes deduct the Table 30 pass fraction; the 40-year cycle is preserved.
+- The temporal gate accepts 1,046 blocks / 2,242.9 ha and holds 397 blocks / 556.4 ha. Production is 4.149M m³ / 300 years; mean 138,297 m³; min 91,965 m³; max 224,726 m³; targets 10/39/12.
+- Published `gavin-mdwr-ba-temporal` and added a temporal-BA card link. The current-BA snapshot remains available separately.
+- The BA growth proxy is a screening assumption, not a validated BA model; group-size caps, cohorts, preparatory thinning, Appendix 9 boundaries, and GAR/UWR review remain open.
+
 # 2026-11-19 — Gavin MDWR current-BA 40 m²/ha sensitivity
 
 - Added a VRI 2025 area-weighted basal-area table for the 1,443 MDWR blocks: 625 blocks / 1,296.8 ha pass at ≥40 m²/ha, 789 blocks / 1,429.9 ha are held, and 29 blocks / 72.6 ha have insufficient VRI coverage.

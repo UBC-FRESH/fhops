@@ -1,0 +1,14 @@
+{
+  "instance": "femic-afrf-gavinlake-instance",
+  "matrix": "ws4/runtime/mdwr_group_selection_official_reentry",
+  "source_run": "ws4/runtime/gavin-mdwr-40-simcheck-official-ba-temporal",
+  "schedule": "ws4/runtime/gavin-mdwr-40-schedule-official-ba-temporal.csv",
+  "spatial": "data/legacy_gavinlake/spatial/fragments.shp",
+  "table30": "2007 AFRF MP #3 Table 30; 33/25/20% per pass; 40-year cycle",
+  "caveats": [
+    "BA growth is a WS4 volume-ratio proxy, not a validated basal-area model. The adjusted Appendix 9 compartment map and legal order still need review.",
+    "Full-area partial-cut screen; no spatial group layout or group-size cap.",
+    "No preparative thinning and no private finance.",
+    "Target status is reported against the existing 174k policy target; the MDWR screen does not meet it."
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "gavin-mdwr",
+  "domain": "tactical_operational",
+  "run_type": "tactical_operational",
+  "status": "policy-screen",
+  "files": {
+    "summary": "summary.json",
+    "kpis": "kpis.json",
+    "harvest_decisions": "harvest_decisions.csv",
+    "production": "production.csv",
+    "tactical_summary": "tactical_summary.json"
+  },
+  "warnings": [
+    "BA growth is a WS4 volume-ratio proxy, not a validated basal-area model. The adjusted Appendix 9 compartment map and legal order still need review.",
+    "Full-area partial-cut volume screen; no spatial group layout or 0.4/0.7 ha size cap.",
+    "No preparative thinning; no private finance."
+  ],
+  "generated_at": "2026-11-19T02:35:19.785056+00:00",
+  "command": "WS4 Gavin MDWR no-clearcut / group-selection simulation",
+  "scenario": "scenario.yaml",
+  "solver": "ws4-simulate"
+}

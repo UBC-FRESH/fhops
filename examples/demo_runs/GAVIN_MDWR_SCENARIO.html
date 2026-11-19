@@ -312,6 +312,16 @@ stock floor, ±4% even-flow).</li>
 <td><strong>14/35/12</strong></td>
 </tr>
 <tr class="even">
+<td>Official fine-map, temporal BA ≥ 40 m²/ha</td>
+<td style="text-align: right;"><strong>0</strong></td>
+<td style="text-align: right;"><strong>4.149M m³</strong></td>
+<td style="text-align: right;"><strong>138,297 m³</strong></td>
+<td style="text-align: right;"><strong>91,965 m³</strong></td>
+<td style="text-align: right;"><strong>224,726 m³</strong></td>
+<td style="text-align: right;">1,493,175 m³</td>
+<td><strong>10/39/12</strong></td>
+</tr>
+<tr class="odd">
 <td>Prior BEC first-entry screen</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">3.735M m³</td>
@@ -321,7 +331,7 @@ stock floor, ±4% even-flow).</li>
 <td style="text-align: right;">395,682 m³</td>
 <td>10/43/8</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>MDWR deferral floor (prior run)</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">3.560M m³</td>
@@ -381,8 +391,14 @@ sensitivity now gates the official schedule on <strong>current VRI 2025
 BA</strong>: 625 blocks / 1,296.8 ha pass, 789 blocks / 1,429.9 ha are
 held and 29 blocks / 72.6 ha are unknown. That sensitivity produces
 4.592M m³ and 14/35/12 targets. It is a current snapshot only; future
-growth and post-pass BA recovery are not modelled. The 0.4/0.7 ha caps
-and 3–5 cohort structure are still not modelled.</p>
+growth and post-pass BA recovery are not modelled.</p>
+<p>A temporal ledger then grows each block from its VRI BA using the WS4
+volume curve, checks every candidate entry, deducts the pass fraction
+after an accepted cut, and defers entries below 40 m²/ha. It accepts
+1,046 blocks / 2,242.9 ha and holds 397 blocks / 556.4 ha. The temporal
+screen produces 4.149M m³ and 10/39/12 targets. The BA growth proxy is
+still a screening assumption, not a validated basal-area model. The
+0.4/0.7 ha caps and 3–5 cohort structure are still not modelled.</p>
 <p>Appendix 9 is a compartment-level adjusted map, not a block-level
 attribute in the legacy layer. The fine BC long-term objective polygons
 used here are not the adjusted Appendix 9 boundaries. The screen is

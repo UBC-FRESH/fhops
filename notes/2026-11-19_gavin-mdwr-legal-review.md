@@ -132,3 +132,22 @@ below / 12 above**.
 This is a **current-snapshot** gate only. It does not model future growth or the
 post-pass basal-area recovery needed to clear 40 m²/ha before the next entry.
 It is a useful screening sensitivity, not a compliance test.
+
+## Temporal BA ledger
+
+A temporal ledger was added on top of the current-BA snapshot:
+
+- initialize BA from the VRI 2025 block value;
+- grow it between entries with the block's WS4 total-volume curve;
+- test BA at each candidate entry;
+- defer below-threshold entries one year at a time;
+- after an accepted pass, deduct the Table 30 pass fraction;
+- continue at 40-year intervals.
+
+The temporal gate accepts **1,046 blocks / 2,242.9 ha** and holds **397 blocks /
+556.4 ha**. It produces **4.149M m³ / 300 years**, mean 138,297 m³, min 91,965
+m³, max 224,726 m³, and target status **10 met / 39 below / 12 above**.
+
+The BA growth is a volume-ratio proxy, not a validated basal-area model. The
+group-size cap, cohort structure, preparatory thinning, adjusted Appendix 9
+boundaries, and GAR/UWR review remain outstanding.
