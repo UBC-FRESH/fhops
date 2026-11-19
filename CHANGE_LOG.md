@@ -1,3 +1,11 @@
+# 2026-11-19 — Gavin MDWR legal and Appendix 9 review
+
+- Reviewed the 2007 MWP #3, 2007 FSP, Appendix 9 compartment map, and BC MDWR Information Note #3.
+- Found that FSP Table 7 allows clearcut on fresh/wetter BV MDWR sites; the public no-clearcut rule is a stricter policy choice, not a direct FSP transcription.
+- Found that GWM 6 (2007 transition/deep snowpack GAR order) requires a 40 m²/ha pre-harvest basal area before group selection; the current full-area screen does not enforce it.
+- Confirmed that Appendix 9 is a compartment-level adjusted map, not a block-level GIS layer. The official fine-map classes are a screening approximation, not the adjusted Appendix 9 boundaries.
+- Added `notes/2026-11-19_gavin-mdwr-legal-review.md` and the legal-review section to the public MDWR brief.
+
 # 2026-11-19 — Gavin MDWR corrected 40-year re-entry
 
 - Fixed the MDWR partial-cut age reset: WS4 now treats a negative treatment offset as a keep-age sentinel; initial and cycle group-selection passes preserve fragment age instead of resetting to zero.

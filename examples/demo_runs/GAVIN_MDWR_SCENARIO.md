@@ -108,6 +108,26 @@ Details:
 - The official fine-map georeference is a printed-grid fit, not a survey
   control.
 
+## Legal review
+
+The 2007 FSP Table 7 allows even-aged systems, including clearcutting, on
+fresh and wetter sites within the Beaver Valley MDWR. The no-clearcut rule in
+this screen is therefore a **stricter policy choice** across the whole MDWR,
+not a direct FSP transcription.
+
+BC MDWR Information Note #3 quotes General Wildlife Measure 6 from the 2007
+transition/deep snowpack GAR order: group selection requires a pre-harvest
+basal area of at least **40 m²/ha**. The current full-area screen does not test
+that prerequisite, the 0.4/0.7 ha group-size caps, or the 3–5 cohort structure.
+
+Appendix 9 is a compartment-level adjusted map, not a block-level attribute in
+the legacy layer. The fine BC long-term objective polygons used here are not
+the adjusted Appendix 9 boundaries. The screen is therefore an official
+fine-map volume screen, not a legal compliance determination.
+
+Full review:
+`notes/2026-11-19_gavin-mdwr-legal-review.md`.
+
 ## Files
 
 - `AFRF_DECISION_PACK.md` — AFRF decision context.
