@@ -189,12 +189,11 @@ implemented.
 
 A 10 m grid-cell prototype was built for the staggered temporal schedule:
 
-- **9,491 assigned groups** on **977 blocks**;
-- **1,382.7 ha** of assigned group area;
+- **9,674 assigned groups** on **1,045 blocks**;
+- **1,430.3 ha** of assigned group area;
 - maximum group area **0.7 ha**; warm groups are capped at 0.4 ha;
-- 68 scheduled blocks produced no cell groups because the block is smaller
-  than the 10 m cell/edge geometry;
-- 6,245 generated groups remain unassigned.
+- fallback groups now cover the previously missing scheduled blocks;
+- 6,409 generated groups remain unassigned.
 
 The layout uses cell-center aspect/slope and splits cells into contiguous groups.
 It is a **schematic capacity/verification layer**, not an operational group
@@ -209,13 +208,13 @@ with 40-year cohort starts and a 120/160/200-year return cycle. Each group uses
 the block's WS4 total-volume curve at its initial age and after regeneration;
 group BA is allocated proportionally.
 
-The prototype covers 9,491 groups on 977 blocks and produces **0.979M m³** over
-300 years, with 18,165 cut events and a mean 32,636 m³ per 10-year period. All
-977 blocks use a base CC successor curve after regeneration where available. It
+The prototype covers 9,674 groups on 1,045 blocks and produces **1.011M m³** over
+300 years, with 18,527 cut events and a mean 33,698 m³ per 10-year period. All
+1,045 blocks use a base CC successor curve after regeneration where available. It
 is not comparable to the 4.154M m³ block-level temporal screen: the group layout
-covers only 1,382.7 ha, 68 scheduled blocks have no cell groups, and the
-regeneration curve is still a base-matrix approximation rather than a calibrated
-group-level plantation model.
+covers 1,430.3 ha rather than the full MDWR, and the regeneration curve is still
+a base-matrix approximation rather than a calibrated group-level plantation
+model.
 
 This is a cohort-layout prototype, not an operational or legal growth model.
 Windthrow, minimum group size, group-specific species/age, and a separate
@@ -223,12 +222,12 @@ regeneration curve are still missing.
 
 ## Group-level WS4 matrix run
 
-The 9,491 groups were written into a WS4 group matrix: one block/fragment per
+The 9,674 groups were written into a WS4 group matrix: one block/fragment per
 group, base AU track, source ages, and a schedule of group cuts. High groups are
 cut on a 120-year cycle, Moderate on 160, Low on 200.
 
-The group-level WS4 run produces **0.979M m³ over 300 years**, with **18,165 cut
-events**, and **1,382.7 ha** of scheduled group area. This matches the standalone
+The group-level WS4 run produces **1.011M m³ over 300 years**, with **18,527 cut
+events**, and **1,430.3 ha** of scheduled group area. This matches the standalone
 cohort prototype and confirms that group volume is now flowing through a WS4
 matrix state rather than only a spreadsheet.
 
@@ -248,12 +247,12 @@ an initial track and a plantation successor track, with:
 The BA curve is derived from the VRI block BA and the volume curve, capped at
 the initial BA. The group WS4 run produces:
 
-- 9,491 groups / 977 blocks;
-- 18,165 group cuts;
-- **0.979M m³** volume;
-- initial BA **52,524 m²**;
-- final BA **25,427 m²**;
-- final standing yield **182,871 m³**.
+- 9,674 groups / 1,045 blocks;
+- 18,527 group cuts;
+- **1.011M m³** volume;
+- initial BA **54,174 m²**;
+- final BA **26,448 m²**;
+- final standing yield **190,348 m³**.
 
 BA is now carried as a WS4 account rather than only a separate ledger, but it
 remains a proportional screening curve, not a calibrated basal-area growth

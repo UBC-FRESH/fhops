@@ -156,11 +156,17 @@ minimum group size, or model cohort growth.
 
 ## Schematic group layout
 
-A 10 m cell prototype was built for the staggered temporal schedule: 9,491
-assigned groups on 977 blocks, 1,382.7 ha of assigned group area, and a maximum
-group area of 0.7 ha. Warm groups are capped at 0.4 ha. 68 scheduled blocks
-produced no cell groups because they are smaller than the 10 m cell/edge
-geometry; 6,245 generated groups remain unassigned.
+A 10 m cell prototype was built for the staggered temporal schedule: 9,674
+assigned groups on 1,045 blocks, 1,430.3 ha of assigned group area, and a
+maximum group area of 0.7 ha. Warm groups are capped at 0.4 ha. Fallback groups
+cover the blocks that could not be represented by the 10 m DEM grid; 6,409
+generated groups remain unassigned.
+
+A group-level WS4 run carries these groups as separate blocks with
+`feature.yield.managed.total` and `feature.ba.managed.total`. It produces
+1.011M m³ / 300 years, 18,527 group cuts, initial BA 54,174 m² and final BA
+26,448 m². The BA curve is a proportional VRI/volume screening curve, not a
+calibrated plantation/BA model.
 
 This is a schematic capacity/verification layer, not an operational layout. It
 does not enforce a minimum group size, model cohort growth, represent windthrow,

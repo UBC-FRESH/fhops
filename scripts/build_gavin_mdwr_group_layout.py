@@ -64,6 +64,43 @@ def sample(slope: np.ndarray, aspect: np.ndarray, transform: rasterio.Affine, x:
     return float(s), float(a)
 
 
+def fallback_groups(geom) -> list[dict[str, object]]:
+    """Create coarse other-aspect groups for blocks outside the DEM grid."""
+    side = (OTHER_CAP_HA * 10000.0) ** 0.5
+    minx, miny, maxx, maxy = geom.bounds
+    groups: list[dict[str, object]] = []
+    i = 0
+    x = minx
+    while x < maxx:
+        y = miny
+        j = 0
+        while y < maxy:
+            cell = box(x, y, min(x + side, maxx), min(y + side, maxy)).intersection(geom)
+            if not cell.is_empty and cell.area > 1.0:
+                groups.append(
+                    {
+                        "class": "other",
+                        "area_ha": round(cell.area / 10000.0, 6),
+                        "cells": 0,
+                        "geometry": cell,
+                    }
+                )
+            y += side
+            j += 1
+        x += side
+        i += 1
+    if not groups:
+        groups.append(
+            {
+                "class": "other",
+                "area_ha": round(geom.area / 10000.0, 6),
+                "cells": 0,
+                "geometry": geom,
+            }
+        )
+    return groups
+
+
 def build_groups(geom, slope: np.ndarray, aspect: np.ndarray, transform: rasterio.Affine) -> list[dict[str, object]]:
     """Build disjoint cell groups inside one block."""
     minx, miny, maxx, maxy = geom.bounds
@@ -153,8 +190,7 @@ def main() -> None:
             continue
         groups = build_groups(block.geometry, slope, aspect, transform)
         if not groups:
-            rows.append({"block_id": block_id, "entries": len(entries), "groups": 0, "unassigned_groups": 0, "note": "no cell groups"})
-            continue
+            groups = fallback_groups(block.geometry)
         block_area = block.geometry.area / 10000.0
         remaining = list(groups)
         for entry in entries.itertuples(index=False):

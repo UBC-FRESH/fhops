@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR group fallback and BA run
+
+- Added fallback rectangular groups for blocks outside the 10 m DEM grid; the layout now covers all 1,045 scheduled blocks: 9,674 groups and 1,430.3 ha.
+- Rebuilt the cohort and group WS4 matrices: 18,527 cuts, 1.011M m³, initial BA 54,174 m², final BA 26,448 m², final standing yield 190,348 m³.
+- Group BA is now a `feature.ba.managed.total` account in the WS4 group matrix, still a proportional VRI/volume screening curve.
+- Updated the public brief with the fallback coverage, group volume and BA result.
+
 # 2026-11-19 — Gavin MDWR group BA account
 
 - Extended the WS4 group matrix with per-group initial and plantation tracks carrying `feature.yield.managed.total` and `feature.ba.managed.total`.
