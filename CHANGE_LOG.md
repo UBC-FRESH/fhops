@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR group cohort prototype
+
+- Built a group-level cohort prototype from the 10 m group layout: High 3 / Moderate 4 / Low 5 cohorts, 40-year starts, 120/160/200-year return cycles.
+- 9,491 groups on 977 blocks produce 1.093M m³ over 300 years; 18,165 cut events; mean 36,443 m³ per 10-year period.
+- The prototype is not comparable to the 4.154M m³ block-level temporal screen: it covers 1,382.7 ha and uses the same volume curve after regeneration.
+- Added the limitation to the MDWR legal-review note; no public scenario replacement.
+
 # 2026-11-19 — Gavin MDWR schematic group layout
 
 - Built a 10 m cell prototype from the Gavin DEM: 9,491 assigned groups on 977 blocks, 1,382.7 ha of assigned group area, maximum group area 0.7 ha; warm groups capped at 0.4 ha.

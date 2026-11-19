@@ -201,3 +201,20 @@ It is a **schematic capacity/verification layer**, not an operational group
 layout. It does not enforce a minimum group size, model cohort growth, represent
 windthrow, or feed group-specific volume back into WS4. The next step is to
 replace this cell prototype with a spatially explicit cohort model.
+
+## Cohort prototype
+
+The assigned groups were partitioned into High 3 / Moderate 4 / Low 5 cohorts,
+with 40-year cohort starts and a 120/160/200-year return cycle. Each group uses
+the block's WS4 total-volume curve at its initial age and after regeneration;
+group BA is allocated proportionally.
+
+The prototype covers 9,491 groups on 977 blocks and produces **1.093M m³** over
+300 years, with 18,165 cut events and a mean 36,443 m³ per 10-year period. It is
+not comparable to the 4.154M m³ block-level temporal screen: the group layout
+covers only 1,382.7 ha, 68 scheduled blocks have no cell groups, and the model
+uses the same volume curve for regeneration instead of a plantation curve.
+
+This is a cohort-layout prototype, not an operational or legal growth model.
+Windthrow, minimum group size, group-specific species/age, and a separate
+regeneration curve are still missing.
