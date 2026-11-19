@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR group-level WS4 matrix
+
+- Wrote the 9,491 group layout into a WS4 group matrix: one block/fragment per group, base AU tracks, source ages, and group cuts on 120/160/200-year cohort cycles.
+- The group WS4 run produces 0.979M m³ / 300 years across 18,165 cut events and 1,382.7 ha, matching the standalone cohort prototype.
+- Group volume now flows through WS4 matrix state. BA remains a separate screening ledger; no group-specific BA, calibrated plantation curve, windthrow, or minimum group size.
+- The public matrix screen remains the 4.154M m³ temporal-BA result; the group run is documented as a prototype, not a replacement scenario.
+
 # 2026-11-19 — Gavin MDWR group cohort prototype
 
 - Built a group-level cohort prototype from the 10 m group layout: High 3 / Moderate 4 / Low 5 cohorts, 40-year starts, 120/160/200-year return cycles.

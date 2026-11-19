@@ -220,3 +220,19 @@ group-level plantation model.
 This is a cohort-layout prototype, not an operational or legal growth model.
 Windthrow, minimum group size, group-specific species/age, and a separate
 regeneration curve are still missing.
+
+## Group-level WS4 matrix run
+
+The 9,491 groups were written into a WS4 group matrix: one block/fragment per
+group, base AU track, source ages, and a schedule of group cuts. High groups are
+cut on a 120-year cycle, Moderate on 160, Low on 200.
+
+The group-level WS4 run produces **0.979M m³ over 300 years**, with **18,165 cut
+events**, and **1,382.7 ha** of scheduled group area. This matches the standalone
+cohort prototype and confirms that group volume is now flowing through a WS4
+matrix state rather than only a spreadsheet.
+
+The group matrix still has no BA account. BA remains a separate screening ledger
+derived from the VRI block BA and the group volume ratio. A calibrated
+plantation curve, group-specific BA, windthrow, and minimum group size remain
+outstanding.
