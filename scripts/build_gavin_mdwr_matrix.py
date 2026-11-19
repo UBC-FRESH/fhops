@@ -46,6 +46,8 @@ CLASSES = {
 }
 FIRST_ENTRY_AGE = 80
 REENTRY_YEARS = 40
+# WS4 negative-offset sentinel: retain the fragment age across a partial cut.
+KEEP_AGE_OFFSET = -1
 
 
 def spatial_attributes(habitat_table: Path | None = None) -> pd.DataFrame:
@@ -222,7 +224,7 @@ def main() -> None:
                     "end": 998,
                     "treatment": treatment,
                     "new_track": int(ids["cycle"]),
-                    "offset": 0,
+                    "offset": KEEP_AGE_OFFSET,
                     "retain": 0,
                 },
                 {
@@ -231,7 +233,7 @@ def main() -> None:
                     "end": 998,
                     "treatment": treatment,
                     "new_track": int(ids["cycle"]),
-                    "offset": 0,
+                    "offset": KEEP_AGE_OFFSET,
                     "retain": 0,
                 },
             ]
@@ -265,6 +267,7 @@ def main() -> None:
         "no_clearcut_in_mdwr": True,
         "first_entry_age": FIRST_ENTRY_AGE,
         "reentry_years": REENTRY_YEARS,
+        "partial_cut_age_semantics": "negative offset preserves fragment age",
         "table30": {
             "High": {"fraction": 0.33, "treatment": "GS33", "cohorts": 3, "max_age": 120},
             "Moderate": {"fraction": 0.25, "treatment": "GS25", "cohorts": 4, "max_age": 160},

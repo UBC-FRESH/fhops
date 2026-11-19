@@ -1,3 +1,11 @@
+# 2026-11-19 — Gavin MDWR corrected 40-year re-entry
+
+- Fixed the MDWR partial-cut age reset: WS4 now treats a negative treatment offset as a keep-age sentinel; initial and cycle group-selection passes preserve fragment age instead of resetting to zero.
+- Rebuilt the official-class MDWR matrix and 300-year screen. Production is 5.6256M m³, mean 187,519 m³, min 81,358 m³, max 377,744 m³, period-30 stock 1,493,175 m³, targets 15/33/13.
+- Replaced the public `gavin-mdwr` handoff with the corrected official fine-map run. The prior 3.735M m³ first-entry screen is retained only as a superseded comparison.
+- Updated the MDWR brief and card to remove the invalid 40-year claim and to keep the adjusted Appendix 9 compartment map and legal-order review as unresolved caveats.
+- Limitation: `ws4/sim/engine.py` also contains unrelated uncommitted work, so the core keep-age patch is left in the working tree rather than swept into this public commit.
+
 # 2026-11-18 — Gavin MDWR official habitat map acquisition
 
 - Acquired the public BC long-term habitat objective map for Beaver Valley North (Prouton Lakes), dated 6 December 2001, and digitized its High/Moderate/Low polygons.

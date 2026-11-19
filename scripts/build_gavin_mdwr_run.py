@@ -8,6 +8,7 @@ policy and it does not carry private finance.
 
 from __future__ import annotations
 
+import argparse
 import json
 import shutil
 from pathlib import Path
@@ -35,42 +36,60 @@ def periods() -> list[dict[str, object]]:
 
 
 def main() -> None:
-    if OUT.exists():
-        shutil.rmtree(OUT)
-    OUT.mkdir(parents=True)
-    shutil.copyfile(SOURCE / "blocks.geojson", OUT / "blocks.geojson")
-    shutil.copyfile(SOURCE / "policy_targets.yaml", OUT / "policy_targets.yaml")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--run", type=Path, default=RUN)
+    parser.add_argument("--out", type=Path, default=OUT)
+    parser.add_argument("--matrix", type=Path, default=INSTANCE / "ws4" / "runtime" / "mdwr_group_selection")
+    parser.add_argument(
+        "--schedule",
+        type=Path,
+        default=INSTANCE / "ws4" / "runtime" / "gavin-mdwr-40-schedule.csv",
+    )
+    parser.add_argument("--classes-csv", type=Path)
+    parser.add_argument("--label", default="Gavin Lake — MDWR no-clearcut / group-selection screen (draft)")
+    parser.add_argument(
+        "--habitat-source",
+        default="BEC habitat-class proxy",
+    )
+    parser.add_argument(
+        "--habitat-caveat",
+        default="Habitat classes use a BEC proxy; the adjusted Appendix 9 map is still pending review.",
+    )
+    args = parser.parse_args()
+    run_dir = args.run
+    out = args.out
+    if out.exists():
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
+    shutil.copyfile(SOURCE / "blocks.geojson", out / "blocks.geojson")
+    shutil.copyfile(SOURCE / "policy_targets.yaml", out / "policy_targets.yaml")
 
     scenario = yaml.safe_load((SOURCE / "scenario.yaml").read_text(encoding="utf-8"))
     scenario["name"] = "Gavin Lake MDWR no-clearcut / group-selection screen"
     scenario["periods"] = periods()
-    scenario["source"] = (
-        "Gavin MDWR clone matrix; Table 30 group selection; BEC habitat-class proxy"
-    )
+    scenario["source"] = f"Gavin MDWR clone matrix; Table 30 group selection; {args.habitat_source}"
     scenario["notes"] = (
-        "No clearcut in MDWR. Group selection uses 33/25/20% per pass by BEC "
-        "proxy class, 40-year re-entry, and a full-area partial-cut volume "
-        "approximation. Not a spatial group-layout or approved plan."
+        "No clearcut in MDWR. Group selection uses 33/25/20% per pass by "
+        f"{args.habitat_source}, 40-year re-entry, and a full-area partial-cut "
+        "volume approximation. Not a spatial group-layout or approved plan."
     )
-    (OUT / "scenario.yaml").write_text(
+    (out / "scenario.yaml").write_text(
         yaml.safe_dump(scenario, sort_keys=False), encoding="utf-8"
     )
 
-    schedule = pd.read_csv(INSTANCE / "ws4" / "runtime" / "gavin-mdwr-40-schedule.csv")
+    schedule = pd.read_csv(args.schedule)
     schedule["period_id"] = schedule["offset"].astype(int).map(
         lambda offset: f"P{int(offset) // 10:02d}"
     )
-    area = pd.read_parquet(
-        INSTANCE / "ws4" / "runtime" / "mdwr_group_selection" / "fragments.parquet"
-    ).set_index("block_id")["area_ha"]
+    area = pd.read_parquet(args.matrix / "fragments.parquet").set_index("block_id")["area_ha"]
     schedule["area_ha"] = schedule["block_id"].map(area).fillna(0.0)
     schedule = schedule[["block_id", "treatment", "offset", "period_id", "area_ha"]]
-    schedule.to_csv(OUT / "schedule.csv", index=False)
+    schedule.to_csv(out / "schedule.csv", index=False)
     schedule.rename(columns={"treatment": "system_id"})[
         ["period_id", "block_id", "system_id", "area_ha"]
-    ].to_csv(OUT / "harvest_decisions.csv", index=False)
+    ].to_csv(out / "harvest_decisions.csv", index=False)
 
-    values = pd.read_csv(RUN / "account_values.csv")
+    values = pd.read_csv(run_dir / "account_values.csv")
     values = values.loc[values["account"] == "product.yield.managed.total"]
     values["period"] = (values["offset"].astype(int) // 10).astype(int)
     production = values.groupby("period", as_index=False)["value"].sum()
@@ -78,25 +97,39 @@ def main() -> None:
     production["product_id"] = "all_products"
     production["volume_m3"] = production["value"]
     production[["period_id", "product_id", "volume_m3"]].to_csv(
-        OUT / "production.csv", index=False
+        out / "production.csv", index=False
     )
-    production.to_csv(OUT / "harvest_by_period.csv", index=False)
+    production.to_csv(out / "harvest_by_period.csv", index=False)
 
-    shutil.copyfile(RUN / "report_targets.csv", OUT / "report_targets.csv")
-    shutil.copyfile(RUN / "ending_inventory.csv", OUT / "ending_inventory.csv")
+    shutil.copyfile(run_dir / "report_targets.csv", out / "report_targets.csv")
+    shutil.copyfile(run_dir / "ending_inventory.csv", out / "ending_inventory.csv")
 
-    report = pd.read_csv(RUN / "report_accounts.csv")
+    report = pd.read_csv(run_dir / "report_accounts.csv")
     feature = report.loc[report["account"] == "feature.yield.managed.total"].iloc[0]
-    targets = pd.read_csv(RUN / "report_targets.csv")["status"].value_counts().to_dict()
+    targets = pd.read_csv(run_dir / "report_targets.csv")["status"].value_counts().to_dict()
     volumes = production["volume_m3"].tolist()
+    if args.classes_csv is not None:
+        classes = pd.read_csv(args.classes_csv)
+        class_rows = {
+            name: {
+                "area_ha": round(float(group["area_ha"].sum()), 3),
+                "blocks": int(len(group)),
+                "pass_fraction": fraction,
+            }
+            for name, fraction in (("High", 0.33), ("Moderate", 0.25), ("Low", 0.20))
+            for group in [classes.loc[classes["model_class"] == name]]
+        }
+    else:
+        class_rows = {
+            "High": {"area_ha": 14.269, "blocks": 19, "pass_fraction": 0.33},
+            "Moderate": {"area_ha": 213.063, "blocks": 136, "pass_fraction": 0.25},
+            "Low": {"area_ha": 2571.978, "blocks": 1288, "pass_fraction": 0.20},
+        }
     summary = {
         "run_id": "gavin-mdwr",
-        "label": "Gavin Lake — MDWR no-clearcut / group-selection screen (draft)",
+        "label": args.label,
         "planning_level": "tactical_operational",
-        "source": (
-            "Gavin MDWR clone matrix; Table 30 group selection; BEC class proxy; "
-            "40-year re-entry"
-        ),
+        "source": f"Gavin MDWR clone matrix; Table 30 group selection; {args.habitat_source}; 40-year re-entry",
         "horizon_years": 300,
         "periods": 30,
         "period_width_years": 10,
@@ -123,17 +156,13 @@ def main() -> None:
         "finance_note": "No public AFRF net-revenue ledger is used or fabricated for this screen.",
         "mdwr_area_ha": 2799.31,
         "mdwr_blocks": 1443,
-        "group_selection_classes": {
-            "High": {"area_ha": 14.269, "blocks": 19, "pass_fraction": 0.33},
-            "Moderate": {"area_ha": 213.063, "blocks": 136, "pass_fraction": 0.25},
-            "Low": {"area_ha": 2571.978, "blocks": 1288, "pass_fraction": 0.20},
-        },
+        "group_selection_classes": class_rows,
         "mdwr_clearcuts": 0,
     }
     for name in ("summary.json", "kpis.json", "tactical_summary.json"):
-        (OUT / name).write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+        (out / name).write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 
-    run = {
+    run_meta = {
         "schema_version": "1.0.0",
         "run_id": "gavin-mdwr",
         "domain": "tactical_operational",
@@ -147,34 +176,40 @@ def main() -> None:
             "tactical_summary": "tactical_summary.json",
         },
         "warnings": [
-            "BEC proxy for Table 30 habitat classes; official Appendix 9 map is not available.",
+            args.habitat_caveat,
             "Full-area partial-cut volume screen; no spatial group layout or 0.4/0.7 ha size cap.",
             "No preparative thinning; no private finance.",
         ],
-        "generated_at": "2026-11-18T07:00:00+00:00",
+        "generated_at": __import__("datetime").datetime.now(__import__("datetime").UTC).isoformat(),
         "command": "WS4 Gavin MDWR no-clearcut / group-selection simulation",
         "scenario": "scenario.yaml",
         "solver": "ws4-simulate",
     }
-    (OUT / "run.json").write_text(json.dumps(run, indent=2) + "\n", encoding="utf-8")
+    (out / "run.json").write_text(json.dumps(run_meta, indent=2) + "\n", encoding="utf-8")
+    def relative_to_instance(path: Path) -> str:
+        try:
+            return str(path.resolve().relative_to(INSTANCE.resolve()))
+        except ValueError:
+            return path.name
+
     provenance = {
-        "instance": str(INSTANCE),
-        "matrix": "ws4/runtime/mdwr_group_selection",
-        "source_run": "ws4/runtime/gavin-mdwr-40-simcheck",
-        "schedule": "ws4/runtime/gavin-mdwr-40-schedule.csv",
+        "instance": "femic-afrf-gavinlake-instance",
+        "matrix": relative_to_instance(args.matrix),
+        "source_run": relative_to_instance(run_dir),
+        "schedule": relative_to_instance(args.schedule),
         "spatial": "data/legacy_gavinlake/spatial/fragments.shp",
         "table30": "2007 AFRF MP #3 Table 30; 33/25/20% per pass; 40-year cycle",
         "caveats": [
-            "Habitat classes use a BEC proxy, not the official Appendix 9 map.",
+            args.habitat_caveat,
             "Full-area partial-cut screen; no spatial group layout or group-size cap.",
             "No preparative thinning and no private finance.",
             "Target status is reported against the existing 174k policy target; the MDWR screen does not meet it.",
         ],
     }
-    (OUT / "provenance.json").write_text(
+    (out / "provenance.json").write_text(
         json.dumps(provenance, indent=2) + "\n", encoding="utf-8"
     )
-    (OUT / "README.md").write_text(
+    (out / "README.md").write_text(
         "\n".join(
             [
                 "# Gavin Lake MDWR no-clearcut / group-selection screen",
@@ -186,8 +221,8 @@ def main() -> None:
                 "fractions (High 33%, Moderate 25%, Low 20%), a 40-year re-entry",
                 "and a full-area partial-cut volume approximation.",
                 "",
-                "Habitat classes are a **BEC proxy**, not the official Appendix 9",
-                "map: ICHmk3 → High, ICHmk3/SBSdw → Moderate, SBSdw1 → Low.",
+                f"Habitat classes: {args.habitat_source}.",
+                args.habitat_caveat,
                 "",
                 f"Production: {summary['total_production_m3']:,.0f} m³ / 300 years.",
                 f"Targets: {summary['targets_met']} met, {summary['targets_below']} below,",
@@ -195,7 +230,7 @@ def main() -> None:
                 "",
                 "Limits: full-area partial-cut screen; no spatial group layout, no",
                 "0.4/0.7 ha group-size cap, no preparatory thinning, no private",
-                "finance. The official habitat-class map and legal-order check are",
+                "finance. The legal habitat-class map and legal-order check are",
                 "still required before a compliance claim.",
             ]
         )

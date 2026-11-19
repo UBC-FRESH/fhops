@@ -80,8 +80,8 @@ class.
 This is a material change from the BEC proxy: the proxy calls 92% of the MDWR
 low habitat, while the official fine map puts 24% high, 40% moderate and 32%
 low before the fallback. After fallback the model classes are 21% high, 39%
-moderate and 40% low. The public MDWR numbers must not be treated as final
-until the matrix is rebuilt with these classes.
+moderate and 40% low. The official-class matrix and corrected 40-year re-entry
+screen are now built; see the resolution below.
 
 ## Files
 
@@ -99,8 +99,9 @@ until the matrix is rebuilt with these classes.
   these fine polygons.
 - The 2007 legal order and current ungulate winter range boundary still need a
   separate review.
-- The model still uses the BEC proxy. Rebuilding `mdwr_group_selection`, the
-  40-year schedule, the 300-year screen and the public PDF is the next step.
+- The public screen now uses the official fine-map classes with corrected
+  age-preserving 40-year re-entry; the adjusted Appendix 9 compartment map and
+  legal order still need review.
 - The fine-map georeference is a screening fit from the printed grid; retained
   boundary uncertainty should be carried into any compliance discussion.
 
@@ -130,3 +131,22 @@ Consequence: the current public `gavin-mdwr` total must be treated as a
 **first-entry / full-area partial-cut screen**, not as a validated 40-year
 re-entry result, until the age-reset semantics are fixed. The official-class
 replacement is deliberately not published.
+
+
+## Resolution
+
+The simulator now treats a negative treatment offset as a **keep-age sentinel**:
+the fragment keeps its current age across a partial cut instead of resetting to
+zero. The MDWR matrix builder uses that sentinel for both initial and cycle
+group-selection treatments.
+
+The corrected official-class run (`gavin-mdwr-40-simcheck-official-reentry`)
+produces **5.626M m³ over 300 years**, mean 187,519 m³ per period, min 81,358
+m³, max 377,744 m³, period-30 stock 1,493,175 m³, and target status
+**15 met / 33 below / 13 above**. The prior first-entry BEC screen was 3.735M m³
+and 10/43/8.
+
+The public `gavin-mdwr` folder and brief have been rebuilt from the corrected
+official-class run. The adjusted Appendix 9 compartment map, 2007 legal order
+and current UWR boundary remain unresolved, so this is still a screening
+product, not a compliance determination.

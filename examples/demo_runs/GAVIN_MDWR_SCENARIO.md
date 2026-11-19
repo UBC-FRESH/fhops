@@ -20,26 +20,40 @@ constraint: it schedules 2,759 ha of MDWR and all 8,980 events are clearcut.
 This screen replaces clearcut with group selection on MDWR tracks and reports
 the production consequence.
 
-## Habitat-class assumption
+## Habitat classes
 
-The available legacy spatial layer has `WORKING_CI = MDWR`, but it does not
-carry the official Appendix 9 High/Moderate/Low habitat-class map. This screen
-uses a documented **BEC proxy**:
+The public BC long-term habitat objective map for Beaver Valley North (Prouton
+Lakes), dated 6 December 2001, has been digitized. It gives a fine-scale
+High/Moderate/Low split for the MDWR that is very different from the legacy BEC
+proxy:
 
-| Proxy class | BEC | Area | Blocks | Pass intensity |
-| --- | --- | ---: | ---: | ---: |
-| High | ICHmk3 | 14.27 ha | 19 | 33% |
-| Moderate | ICHmk3/SBSdw | 213.06 ha | 136 | 25% |
-| Low | SBSdw1 | 2,571.98 ha | 1,288 | 20% |
+| Class | BEC proxy | Official fine map | Model class area |
+| --- | ---: | ---: | ---: |
+| High | 14.27 ha | 682.3 ha | 600.0 ha |
+| Moderate | 213.06 ha | 1,115.4 ha | 1,082.1 ha |
+| Low | 2,571.98 ha | 898.4 ha | 1,117.2 ha |
+| Unclassified | — | 103.3 ha | — |
 
-The proxy is a screening assumption, not a legal habitat-class delineation.
+The official polygons cover 84.6% of the MDWR block area. The model-class
+column applies the 50% block-coverage floor and the BEC fallback for
+unclassified edge blocks.
+
+The 2007 MWP #3 says the Appendix 9 class distribution was adjusted to coincide
+with the total-chance harvest blocks. That **adjusted compartment map is still
+a separate legal review step**; this screen uses the finer BC long-term
+objective polygons, not a legal compartment map. The 2007 legal order and
+current UWR boundary also still need review.
 
 ## Method
 
 - Clone the legacy tracks used by MDWR fragments.
 - Remove clearcut from the MDWR clones.
-- Add Table 30 group-selection treatments at the BEC-proxy pass intensity.
+- Add Table 30 group-selection treatments at the official fine-map class
+  intensity.
 - First entry at age 80; **40-year re-entry** after that.
+- Preserve the fragment age across partial cuts. The matrix uses a
+  negative-offset sentinel so a group-selection pass does not reset a stand to
+  age zero.
 - Scale product yield, treated area and carbon removal by the pass fraction.
   The block remains a full-area partial-cut volume screen rather than a
   spatial group layout.
@@ -52,50 +66,38 @@ The proxy is a screening assumption, not a legal habitat-class delineation.
 | Scenario | MDWR clearcuts | Total production | Mean period | Min period | Max period | Period-30 stock | Targets |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | `gavin-policy` | 4,352 events / 2,759 ha | 5.385M m³ | 179,505 m³ | 174,070 m³ | 187,575 m³ | 610,004 m³ | 61/0/0 |
-| `gavin-mdwr` group selection | **0** | **3.735M m³** | **124,508 m³** | **80,704 m³** | **201,462 m³** | **395,682 m³** | **10/43/8** |
-| MDWR deferral floor | 0 | 3.560M m³ | 118,678 m³ | 64,963 m³ | 151,070 m³ | 1,493,175 m³ | 8/47/6 |
+| `gavin-mdwr` official fine-map, 40-year re-entry | **0** | **5.626M m³** | **187,519 m³** | **81,358 m³** | **377,744 m³** | **1,493,175 m³** | **15/33/13** |
+| Prior BEC first-entry screen | 0 | 3.735M m³ | 124,508 m³ | 80,704 m³ | 201,462 m³ | 395,682 m³ | 10/43/8 |
+| MDWR deferral floor (prior run) | 0 | 3.560M m³ | 118,678 m³ | 64,963 m³ | 151,070 m³ | 1,493,175 m³ | 8/47/6 |
 
-The MDWR-constrained group-selection screen reduces total production by about
-**31%** against the timber-only upper bound and does not meet the existing
-policy floor. The deferral floor is lower again in timber but leaves much more
-standing stock.
+The corrected 40-year re-entry screen produces **more cumulative volume** than
+the prior first-entry screen. It is still not a like-for-like comparison with
+the timber-only clearcut policy: the partial-cut curves repeatedly harvest a
+fraction of a full-area stand curve, so the 5.626M m³ total is a screening
+upper bound, not a final yield forecast.
 
 The target status is reported against the existing 174k policy target set. It
 is a **trade-off result**, not a failure hidden by a redefined target.
 
-## Official habitat-map acquisition
+## Re-entry audit
 
-The public BC long-term habitat objective map for Beaver Valley North (Prouton
-Lakes) has now been acquired and digitized. It gives a fine-scale
-High/Moderate/Low split for the MDWR that is very different from the BEC proxy:
+The earlier MDWR clone reset the fragment age to zero on every pass, while the
+pass product curves start at age 79. In a block test, the first pass produced
+volume and every later 40-year pass produced zero. The corrected matrix
+preserves fragment age across each pass; block 266 now yields on every
+40-year entry.
 
-| Class | BEC proxy | Official fine map |
-| --- | ---: | ---: |
-| High | 14.27 ha | 682.3 ha |
-| Moderate | 213.06 ha | 1,115.4 ha |
-| Low | 2,571.98 ha | 898.4 ha |
-
-The official polygons cover 84.6% of the MDWR block area. The adjusted
-Appendix 9 compartment map still has to be reconciled with these fine polygons,
-and the 2007 legal order and current UWR boundary still need review. The
-results in this brief therefore still use the BEC proxy; the model has not been
-rebuilt with the official classes.
-
-A re-entry audit also found that the current MDWR clone resets the fragment age
-on every pass, while the pass product curves start at age 79. In a block test,
-the first pass produced volume and every later 40-year pass produced zero. The
-public **3.735M m³** result is therefore a **first-entry / full-area partial-cut
-screen**, not a validated 40-year re-entry result. The official-class matrix is
-built but not published.
+The prior **3.735M m³ / 10/43/8** line is retained above only as the superseded
+first-entry result. It must not be cited as a validated 40-year re-entry
+result.
 
 Details:
 `notes/2026-11-18_gavin-mdwr-official-habitat.md`.
 
 ## Limits
 
-- The official Appendix 9 compartment map has not been reconciled with the
-  fine-scale BC long-term objective polygons; the BEC proxy must be replaced
-  before a compliance claim.
+- The adjusted Appendix 9 compartment map has not been reconciled with the
+  fine-scale BC long-term objective polygons.
 - The block-level partial-cut curve is a volume screen. It does not lay out
   spatial groups, enforce the 0.4/0.7 ha group-size cap, or simulate
   within-block cohort structure.
@@ -103,6 +105,8 @@ Details:
   modelled.
 - No public AFRF private finance ledger is used or fabricated.
 - The 2007 legal order and current UWR boundary still need review.
+- The official fine-map georeference is a printed-grid fit, not a survey
+  control.
 
 ## Files
 
@@ -114,8 +118,9 @@ Details:
 
 ## Decision boundary
 
-This screen demonstrates the size and direction of the MDWR trade-off. It does
-not approve an AAC, a group-selection layout, or a legal habitat-class
-assignment. The next technical step is to obtain the official Appendix 9
-habitat-class map and replace the BEC proxy before using the result in a
-management decision.
+This screen demonstrates the size and direction of the MDWR trade-off under the
+official fine-map classes and a corrected 40-year re-entry. It does not approve
+an AAC, a group-selection layout, or a legal habitat-class assignment. The next
+steps are to reconcile the adjusted Appendix 9 compartment map, review the 2007
+legal order and current UWR boundary, and then decide whether the public screen
+can become a compliance-grade plan.
