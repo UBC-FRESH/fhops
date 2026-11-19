@@ -23,6 +23,7 @@ import numpy as np
 import pandas as pd
 
 INSTANCE = Path("/srv/shared-data/gep/ws4/femic/external/femic-afrf-gavinlake-instance")
+BASE = INSTANCE / "ws4" / "runtime" / "legacy_matrix"
 HORIZON = 300
 COHORTS = {"High": 3, "Moderate": 4, "Low": 5}
 CYCLE_YEARS = {"High": 120, "Moderate": 160, "Low": 200}
@@ -79,11 +80,46 @@ def main() -> None:
     fragments = fragments.drop_duplicates("block_id").set_index("block_id")
     features = pd.read_parquet(args.matrix / "features.parquet")
     curves = pd.read_parquet(args.matrix / "curves.parquet")
+    clone_tracks = pd.read_parquet(args.matrix / "tracks.parquet")
+    base_tracks = pd.read_parquet(BASE / "tracks.parquet")
+    base_treatments = pd.read_parquet(BASE / "treatments.parquet")
+    base_features = pd.read_parquet(BASE / "features.parquet")
+    base_curves = pd.read_parquet(BASE / "curves.parquet")
+    base_name_to_id = dict(zip(base_tracks["name"], base_tracks["track_id"]))
+    base_volume = base_features.loc[base_features["label"] == "feature.yield.managed.total"]
+    base_volume_id = dict(zip(base_volume["track_id"], base_volume["curve_id"]))
+    base_curves_by_id = {
+        int(curve_id): group.sort_values("x")[["x", "y"]].to_numpy(dtype=float)
+        for curve_id, group in base_curves.groupby("curve_id", sort=False)
+    }
     total_volume = features.loc[features["label"] == "feature.yield.managed.total"]
     volume_lookup = {
         int(row.track_id): int(row.curve_id)
         for row in total_volume.itertuples(index=False)
     }
+    clone_name = dict(zip(clone_tracks["track_id"], clone_tracks["name"]))
+
+    def plantation_curve(track_id: int) -> tuple[np.ndarray, np.ndarray] | None:
+        """Return the base CC successor curve for a cloned MDWR track."""
+        name = str(clone_name.get(track_id, ""))
+        if ":" not in name:
+            return None
+        source_name = name.split(":", 1)[1]
+        source_id = base_name_to_id.get(source_name)
+        if source_id is None:
+            return None
+        transition = base_treatments.loc[
+            (base_treatments["track_id"] == source_id)
+            & (base_treatments["treatment"] == "CC")
+        ]
+        if transition.empty:
+            return None
+        successor = int(transition["new_track"].iloc[0])
+        curve_id = base_volume_id.get(successor)
+        if curve_id is None:
+            return None
+        return base_curves_by_id.get(int(curve_id))
+
     curve_lookup = {
         int(curve_id): group.sort_values("x")[["x", "y"]].to_numpy(dtype=float)
         for curve_id, group in curves.groupby("curve_id", sort=False)
@@ -93,6 +129,7 @@ def main() -> None:
     groups["block_id"] = groups["block_id"].astype(int)
     groups["area_ha"] = groups["area_ha"].astype(float)
     groups = groups.sort_values(["block_id", "group_index"])
+    group_count = len(groups)
     schedule = pd.read_csv(args.schedule)
     schedule = schedule[schedule["treatment"].astype(str).str.startswith("GS")]
     first_entry = schedule.groupby("block_id")["offset"].min().to_dict()
@@ -100,6 +137,7 @@ def main() -> None:
     habitat = pd.read_csv(args.habitat).set_index("block_id")
 
     rows: list[dict[str, object]] = []
+    blocks_with_plantation: set[int] = set()
     for block_id, block_groups in groups.groupby("block_id", sort=False):
         if block_id not in first_entry or block_id not in fragments.index:
             continue
@@ -114,6 +152,9 @@ def main() -> None:
         if curve_id is None:
             continue
         curve = curve_lookup[curve_id]
+        planting = plantation_curve(track_id)
+        if planting is not None:
+            blocks_with_plantation.add(block_id)
         block_ba = float(ba.loc[block_id, "ba_m2_ha"]) if block_id in ba.index else 0.0
         block_area = float(block_groups["area_ha"].sum())
         if block_area <= 0:
@@ -143,11 +184,19 @@ def main() -> None:
             cut_year = start
             first_cut = True
             while cut_year < HORIZON:
-                if first_cut:
-                    cut_volume = volume
-                    cut_ba = group_ba
+                if first_cut or planting is None:
+                    cut_volume = (
+                        volume if first_cut
+                        else value_at(curve[:, 0], curve[:, 1], group_age) * float(row["area_ha"])
+                    )
+                    cut_ba = (
+                        group_ba if first_cut
+                        else block_ba * float(row["area_ha"]) / block_area
+                        * min(1.0, cut_volume / max(volume, 1e-9))
+                    )
                 else:
-                    cut_volume = value_at(curve[:, 0], curve[:, 1], group_age) * float(row["area_ha"])
+                    plantation_volume = value_at(planting[:, 0], planting[:, 1], group_age) * float(row["area_ha"])
+                    cut_volume = plantation_volume
                     cut_ba = (
                         block_ba * float(row["area_ha"]) / block_area
                         * min(1.0, cut_volume / max(volume, 1e-9))
@@ -176,8 +225,9 @@ def main() -> None:
     period = (frame["cut_year"] // 10).astype(int) if not frame.empty else pd.Series(dtype=int)
     period_values = frame.groupby(period)["volume_m3"].sum() if not frame.empty else pd.Series(dtype=float)
     summary = {
-        "groups": int(args.groups and len(frame)),
+        "groups": int(group_count),
         "blocks": int(frame["block_id"].nunique()) if not frame.empty else 0,
+        "blocks_with_plantation_curve": len(blocks_with_plantation),
         "cut_events": int(len(frame)),
         "total_volume_m3": round(float(frame["volume_m3"].sum()), 3) if not frame.empty else 0.0,
         "mean_10y_volume_m3": round(float(period_values.mean()), 3) if not period_values.empty else 0.0,
@@ -185,7 +235,7 @@ def main() -> None:
         "max_10y_volume_m3": round(float(period_values.max()), 3) if not period_values.empty else 0.0,
         "cohorts": COHORTS,
         "cycle_years": CYCLE_YEARS,
-        "caveat": "Schematic group-level cohort screen; same volume curve after regeneration, proportional BA, no windthrow or minimum group size.",
+        "caveat": "Schematic group-level cohort screen; base CC successor curve used after regeneration where available, proportional BA, no windthrow or minimum group size.",
     }
     args.out_json.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2))

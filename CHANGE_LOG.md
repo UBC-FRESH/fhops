@@ -1,8 +1,8 @@
 # 2026-11-19 — Gavin MDWR group cohort prototype
 
 - Built a group-level cohort prototype from the 10 m group layout: High 3 / Moderate 4 / Low 5 cohorts, 40-year starts, 120/160/200-year return cycles.
-- 9,491 groups on 977 blocks produce 1.093M m³ over 300 years; 18,165 cut events; mean 36,443 m³ per 10-year period.
-- The prototype is not comparable to the 4.154M m³ block-level temporal screen: it covers 1,382.7 ha and uses the same volume curve after regeneration.
+- 9,491 groups on 977 blocks produce 0.979M m³ over 300 years; 18,165 cut events; mean 32,636 m³ per 10-year period; all 977 blocks use a base CC successor curve after regeneration where available.
+- The prototype is not comparable to the 4.154M m³ block-level temporal screen: it covers 1,382.7 ha and the regeneration curve is still a base-matrix approximation, not a calibrated plantation model.
 - Added the limitation to the MDWR legal-review note; no public scenario replacement.
 
 # 2026-11-19 — Gavin MDWR schematic group layout

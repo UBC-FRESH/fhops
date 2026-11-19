@@ -209,11 +209,13 @@ with 40-year cohort starts and a 120/160/200-year return cycle. Each group uses
 the block's WS4 total-volume curve at its initial age and after regeneration;
 group BA is allocated proportionally.
 
-The prototype covers 9,491 groups on 977 blocks and produces **1.093M m³** over
-300 years, with 18,165 cut events and a mean 36,443 m³ per 10-year period. It is
-not comparable to the 4.154M m³ block-level temporal screen: the group layout
-covers only 1,382.7 ha, 68 scheduled blocks have no cell groups, and the model
-uses the same volume curve for regeneration instead of a plantation curve.
+The prototype covers 9,491 groups on 977 blocks and produces **0.979M m³** over
+300 years, with 18,165 cut events and a mean 32,636 m³ per 10-year period. All
+977 blocks use a base CC successor curve after regeneration where available. It
+is not comparable to the 4.154M m³ block-level temporal screen: the group layout
+covers only 1,382.7 ha, 68 scheduled blocks have no cell groups, and the
+regeneration curve is still a base-matrix approximation rather than a calibrated
+group-level plantation model.
 
 This is a cohort-layout prototype, not an operational or legal growth model.
 Windthrow, minimum group size, group-specific species/age, and a separate
