@@ -154,6 +154,19 @@ warm-aspect area.
 This is a capacity check only. It does not draw group polygons, enforce a
 minimum group size, or model cohort growth.
 
+## Schematic group layout
+
+A 10 m cell prototype was built for the staggered temporal schedule: 9,491
+assigned groups on 977 blocks, 1,382.7 ha of assigned group area, and a maximum
+group area of 0.7 ha. Warm groups are capped at 0.4 ha. 68 scheduled blocks
+produced no cell groups because they are smaller than the 10 m cell/edge
+geometry; 6,245 generated groups remain unassigned.
+
+This is a schematic capacity/verification layer, not an operational layout. It
+does not enforce a minimum group size, model cohort growth, represent windthrow,
+or feed group-specific volume back into WS4. The next step is a spatially
+explicit cohort model.
+
 ## Files
 
 - `AFRF_DECISION_PACK.md` — AFRF decision context.

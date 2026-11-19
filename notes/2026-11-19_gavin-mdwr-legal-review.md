@@ -184,3 +184,20 @@ This is a **capacity check only**. It does not draw the 0.4/0.7 ha group
 polygons, enforce a minimum group size, or model cohort growth. A spatial group
 layout is still required before the group-size constraint can be claimed as
 implemented.
+
+## Schematic group layout
+
+A 10 m grid-cell prototype was built for the staggered temporal schedule:
+
+- **9,491 assigned groups** on **977 blocks**;
+- **1,382.7 ha** of assigned group area;
+- maximum group area **0.7 ha**; warm groups are capped at 0.4 ha;
+- 68 scheduled blocks produced no cell groups because the block is smaller
+  than the 10 m cell/edge geometry;
+- 6,245 generated groups remain unassigned.
+
+The layout uses cell-center aspect/slope and splits cells into contiguous groups.
+It is a **schematic capacity/verification layer**, not an operational group
+layout. It does not enforce a minimum group size, model cohort growth, represent
+windthrow, or feed group-specific volume back into WS4. The next step is to
+replace this cell prototype with a spatially explicit cohort model.

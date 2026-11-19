@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR schematic group layout
+
+- Built a 10 m cell prototype from the Gavin DEM: 9,491 assigned groups on 977 blocks, 1,382.7 ha of assigned group area, maximum group area 0.7 ha; warm groups capped at 0.4 ha.
+- 68 scheduled blocks produced no groups because of block/cell edge geometry; 6,245 generated groups remain unassigned.
+- Output is a schematic capacity/verification layer. It does not enforce a minimum group size, model cohorts, represent windthrow, or feed group volume into WS4.
+- Added the layout caveat to the public MDWR brief.
+
 # 2026-11-19 — Gavin MDWR group-size capacity check
 
 - Derived slope/aspect from the Gavin 5 m DEM and classified warm aspects as slope >10% and aspect 135–270° (LMH 59).
