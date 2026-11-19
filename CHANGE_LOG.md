@@ -1,3 +1,10 @@
+# 2026-11-19 — Gavin MDWR group BA account
+
+- Extended the WS4 group matrix with per-group initial and plantation tracks carrying `feature.yield.managed.total` and `feature.ba.managed.total`.
+- The group WS4 run produces 0.979M m³, 18,165 cuts, initial BA 52,524 m² and final BA 25,427 m²; final standing yield 182,871 m³.
+- BA is now a WS4 account, but the curve is still a proportional volume-ratio screening curve capped at initial BA, not a calibrated basal-area model.
+- Added the group matrix BA script and summary note; no public scenario replacement.
+
 # 2026-11-19 — Gavin MDWR group-level WS4 matrix
 
 - Wrote the 9,491 group layout into a WS4 group matrix: one block/fragment per group, base AU tracks, source ages, and group cuts on 120/160/200-year cohort cycles.

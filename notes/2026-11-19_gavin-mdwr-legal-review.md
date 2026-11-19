@@ -236,3 +236,26 @@ The group matrix still has no BA account. BA remains a separate screening ledger
 derived from the VRI block BA and the group volume ratio. A calibrated
 plantation curve, group-specific BA, windthrow, and minimum group size remain
 outstanding.
+
+## Group BA account
+
+A group-specific BA account was added to the WS4 group matrix. Each group gets
+an initial track and a plantation successor track, with:
+
+- `feature.yield.managed.total`;
+- `feature.ba.managed.total`.
+
+The BA curve is derived from the VRI block BA and the volume curve, capped at
+the initial BA. The group WS4 run produces:
+
+- 9,491 groups / 977 blocks;
+- 18,165 group cuts;
+- **0.979M m³** volume;
+- initial BA **52,524 m²**;
+- final BA **25,427 m²**;
+- final standing yield **182,871 m³**.
+
+BA is now carried as a WS4 account rather than only a separate ledger, but it
+remains a proportional screening curve, not a calibrated basal-area growth
+model. A calibrated plantation curve and group-specific BA dynamics are still
+required.
