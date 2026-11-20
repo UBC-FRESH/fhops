@@ -1,3 +1,10 @@
+# 2026-11-20 — Gavin MDWR per-block phase screen
+
+- Shifted each block's group cohort cut years by 0–39 years without changing event volumes.
+- Improved period range from 4,180–62,626 m³ to 7,433–35,002 m³; 11/30 periods inside the interim band.
+- Still fails the 10,317–30,951 m³ band; this is a scheduling diagnostic, not a regrown cohort result.
+- Public 40-year cohort remains unchanged.
+
 # 2026-11-20 — Gavin MDWR 60-year stagger trial
 
 - Tested a 60-year first-entry stagger: 0.664M m³, mean 22,129 m³, min 3,213 m³, max 84,460 m³.

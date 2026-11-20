@@ -395,3 +395,11 @@ The 60-year stagger produced **0.664M m³**, mean 22,129 m³, min 3,213 m³,
 max 84,460 m³. It is worse than the 40-year public stagger on both tails and
 does not justify replacing it. Global stagger search has reached diminishing
 returns; the next even-flow work needs per-block phase optimisation.
+
+## Per-block phase screen
+
+A per-block cut-year shift (0–39 years, event volumes fixed) improved the
+40-year group schedule from 4,180–62,626 m³ to **7,433–35,002 m³**, with
+**11 of 30** periods inside the interim 10,317–30,951 m³ band. The objective
+fell from the unsmoothed schedule but the band is still not met. This is a
+scheduling diagnostic, not a regrown cohort result.

@@ -50,8 +50,13 @@ block MDWR mean period (20,634 m³) gives an interim even-flow band of 10,317 to
 final-BA floor.
 
 The group cohort final stock (1,141,775 m³) and final BA (184,534 m²) pass, but
-the period range (4,180–62,626 m³) fails the interim even-flow band. The group
-schedule is not target-ready.
+the 40-year schedule period range (4,180–62,626 m³) fails the interim even-flow
+band.
+
+A per-block phase screen, shifting each block's cut years by 0–39 years without
+changing event volumes, improves the range to **7,433–35,002 m³** and puts
+**11 of 30** periods inside the band. It is a scheduling diagnostic, not a
+regrown cohort result, and still does not meet the band.
 
 ## Why the block screen stays public
 
