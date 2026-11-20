@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -36,6 +35,8 @@ def main() -> None:
     parser.add_argument("--groups", type=Path, default=INSTANCE / "planning" / "2026-11-20_gavin-mdwr_groups_all_legal_s40.csv")
     parser.add_argument("--out-phases", type=Path, default=INSTANCE / "planning" / "2026-11-20_gavin-mdwr_group_phase_regrown_opt.csv")
     parser.add_argument("--out-summary", type=Path, default=INSTANCE / "planning" / "2026-11-20_gavin-mdwr_group_phase_regrown_opt.json")
+    parser.add_argument("--restarts", type=int, default=8)
+    parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
     cuts = pd.read_csv(args.cuts)
@@ -44,12 +45,10 @@ def main() -> None:
     key = {(int(r.source_block_id), int(r.group_index)): int(r.group_block_id) for r in mapping.itertuples(index=False)}
     groups = pd.read_csv(args.groups).set_index("group_id")
     fragments = pd.read_parquet(args.matrix / "fragments.parquet").set_index("block_id")
-    treatments = pd.read_parquet(args.matrix / "treatments.parquet")
     features = pd.read_parquet(args.matrix / "features.parquet")
     curves = pd.read_parquet(args.matrix / "curves.parquet")
     curve_by_id = {int(cid): frame.sort_values("x") for cid, frame in curves.groupby("curve_id")}
     feature_by_track = {(int(r.track_id), str(r.label)): int(r.curve_id) for r in features.itertuples(index=False)}
-    plant_by_track = {int(r.track_id): int(r.new_track) for r in treatments.itertuples(index=False) if str(r.treatment) == "CC"}
     first_cut = cuts.sort_values(["group_id", "entry_year"]).drop_duplicates("group_id").set_index("group_id")["entry_year"].to_dict()
 
     blocks = sorted(cuts.block_id.unique())
@@ -81,30 +80,46 @@ def main() -> None:
                 arr[period] += volume
             block_vectors[phase] = arr
         vectors[block] = block_vectors
-    phases = pd.read_csv(args.phases).set_index("block_id")["phase_years"].to_dict()
-    phases = {int(b): int(phases.get(int(b), 0)) for b in blocks}
-    total = sum((vectors[b][min(phases[b], max(vectors[b]))] for b in blocks), np.zeros(PERIODS))
-    best = score(total)
-    for _ in range(4):
-        changed = False
-        for block in blocks:
-            old = min(phases[block], max(vectors[block]))
-            base = total - vectors[block][old]
-            local = best
-            local_phase = old
-            for phase, vec in vectors[block].items():
-                cand = base + vec
-                val = score(cand)
-                if val < local - 1e-9:
-                    local = val
-                    local_phase = phase
-            if local_phase != old:
-                phases[block] = local_phase
-                total = base + vectors[block][local_phase]
-                best = local
-                changed = True
-        if not changed:
-            break
+    import random
+    rng = random.Random(args.seed)
+    initial = pd.read_csv(args.phases).set_index("block_id")["phase_years"].to_dict()
+    initial = {int(b): int(initial.get(int(b), 0)) for b in blocks}
+    starts = [initial]
+    for _ in range(args.restarts - 1):
+        starts.append({b: rng.choice(list(vectors[b].keys())) for b in blocks})
+    best_phases = None
+    best_total = None
+    best = float("inf")
+    for phases in starts:
+        phases = {b: min(phases[b], max(vectors[b])) for b in blocks}
+        total = sum((vectors[b][phases[b]] for b in blocks), np.zeros(PERIODS))
+        current = score(total)
+        for _ in range(4):
+            changed = False
+            for block in blocks:
+                old = phases[block]
+                base = total - vectors[block][old]
+                local = current
+                local_phase = old
+                for phase, vec in vectors[block].items():
+                    cand = base + vec
+                    val = score(cand)
+                    if val < local - 1e-9:
+                        local = val
+                        local_phase = phase
+                if local_phase != old:
+                    phases[block] = local_phase
+                    total = base + vectors[block][local_phase]
+                    current = local
+                    changed = True
+            if not changed:
+                break
+        if current < best:
+            best = current
+            best_total = total.copy()
+            best_phases = dict(phases)
+    phases = best_phases
+    total = best_total
     frame = pd.DataFrame({"block_id": blocks, "phase_years": [phases[b] for b in blocks]})
     frame.to_csv(args.out_phases, index=False)
     summary = {

@@ -1,3 +1,9 @@
+# 2026-11-20 — Regrown phase restart check
+
+- Eight regrown phase restarts best result: 0.683M m³, 10,203–30,874 m³, 26/30 periods in band.
+- Four late periods remain slightly below the 10,317 m³ floor.
+- Public group remains the 0.679M m³ / 26-of-30 result.
+
 # 2026-11-20 — Regrown optimized group phase
 
 - Re-optimised per-block phases with first-cut volumes regrown at shifted ages.
