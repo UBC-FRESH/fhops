@@ -264,16 +264,19 @@ fresh/wetter sites</td>
 </tr>
 <tr class="even">
 <td>Table 30 pass intensity</td>
-<td>implemented in the block and group schedules</td>
+<td><strong>not the legal mapping</strong> — current model uses MWP
+Table 30 High 33 / Moderate 25 / Low 20; the 2007 GAR order Table 2 uses
+Low 33 / Moderate 25 / High 20</td>
 </tr>
 <tr class="odd">
-<td>40 m²/ha stand-level BA</td>
-<td>inherited from accepted block entries; group BA is reported, not a
-per-group gate</td>
+<td>Stand-level BA</td>
+<td>current gate uses 40 m²/ha for all BEC; legal order requires
+<strong>45 m²/ha in ICH</strong> and 40 m²/ha elsewhere</td>
 </tr>
 <tr class="even">
-<td>0.4 ha warm / 0.7 ha other maximum group size</td>
-<td>enforced in the consolidated group geometry</td>
+<td>Opening size</td>
+<td>maximum 0.4/0.7 implemented; <strong>minimum 0.1 ha and frost-prone
+0.1–0.3 ha are not implemented</strong></td>
 </tr>
 <tr class="odd">
 <td>3–5 cohorts</td>
@@ -309,6 +312,24 @@ per-group gate</td>
 </tr>
 </tbody>
 </table>
+<h2 id="legal-order-conflict">Legal order conflict</h2>
+<p>The exact 2007 Transition and Deep Snowpack GAR order (Amendment
+TransDeep_Feb07_ord.pdf) was reviewed on 20 November 2026. It
+establishes parameters that differ from the MWP #3 Table 30 assumptions
+used by the current public screen:</p>
+<ul>
+<li><strong>GWM 6:</strong> group selection requires ≥45 m²/ha in ICH
+and ≥40 m²/ha elsewhere;</li>
+<li><strong>Table 2:</strong> Low 33% / 120-year rotation / 3 patches;
+Moderate 25% / 160 / 4; High 20% / 200 / 5;</li>
+<li><strong>GWM 10 / Table 3:</strong> openings 0.1–0.4 ha warm aspect,
+0.1–0.7 ha other, and 0.1–0.3 ha on frost-prone sites.</li>
+</ul>
+<p>The current screen uses the MWP #3 Table 30 mapping (High 33,
+Moderate 25, Low 20) and a 40 m²/ha gate everywhere. It is therefore
+<strong>not compliant with the 2007 GAR order</strong> and must not be
+presented as such. A legal-order rebuild is required before any
+replacement decision.</p>
 <h2 id="replacement-gate">Replacement gate</h2>
 <p>The group state can replace the block-level public result only after
 all of the following are true:</p>

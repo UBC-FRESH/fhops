@@ -49,9 +49,9 @@ group-cohort state.
 | Requirement | Current state |
 | --- | --- |
 | No clearcut in MDWR | retained as a stricter policy choice; FSP Table 7 allows clearcut on fresh/wetter sites |
-| Table 30 pass intensity | implemented in the block and group schedules |
-| 40 m²/ha stand-level BA | inherited from accepted block entries; group BA is reported, not a per-group gate |
-| 0.4 ha warm / 0.7 ha other maximum group size | enforced in the consolidated group geometry |
+| Table 30 pass intensity | **not the legal mapping** — current model uses MWP Table 30 High 33 / Moderate 25 / Low 20; the 2007 GAR order Table 2 uses Low 33 / Moderate 25 / High 20 |
+| Stand-level BA | current gate uses 40 m²/ha for all BEC; legal order requires **45 m²/ha in ICH** and 40 m²/ha elsewhere |
+| Opening size | maximum 0.4/0.7 implemented; **minimum 0.1 ha and frost-prone 0.1–0.3 ha are not implemented** |
 | 3–5 cohorts | represented in the cohort state |
 | Minimum group size | not implemented |
 | Preparatory thinning | not implemented |
@@ -60,6 +60,24 @@ group-cohort state.
 | Group target framework | not implemented |
 | Full group area | 2,797.5 ha of 2,799.3 ha |
 | Public group scenario | full 34,512-group cohort state, diagnostic only |
+
+## Legal order conflict
+
+The exact 2007 Transition and Deep Snowpack GAR order (Amendment
+TransDeep_Feb07_ord.pdf) was reviewed on 20 November 2026. It establishes
+parameters that differ from the MWP #3 Table 30 assumptions used by the current
+public screen:
+
+- **GWM 6:** group selection requires ≥45 m²/ha in ICH and ≥40 m²/ha elsewhere;
+- **Table 2:** Low 33% / 120-year rotation / 3 patches; Moderate 25% / 160 / 4;
+  High 20% / 200 / 5;
+- **GWM 10 / Table 3:** openings 0.1–0.4 ha warm aspect, 0.1–0.7 ha other, and
+  0.1–0.3 ha on frost-prone sites.
+
+The current screen uses the MWP #3 Table 30 mapping (High 33, Moderate 25, Low
+20) and a 40 m²/ha gate everywhere. It is therefore **not compliant with the
+2007 GAR order** and must not be presented as such. A legal-order rebuild is
+required before any replacement decision.
 
 ## Replacement gate
 

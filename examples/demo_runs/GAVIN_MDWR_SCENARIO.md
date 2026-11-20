@@ -96,6 +96,15 @@ result.
 Details:
 `notes/2026-11-18_gavin-mdwr-official-habitat.md`.
 
+## Legal-order caveat
+
+The current screen uses the 2007 MWP #3 Table 30 mapping (High 33 / Moderate 25
+/ Low 20) and a 40 m²/ha BA gate. The reviewed 2007 Transition/Deep GAR order
+instead sets **Low 33 / Moderate 25 / High 20**, **45 m²/ha in ICH and 40
+elsewhere**, and a **0.1 ha minimum opening** (0.1–0.3 ha on frost-prone
+sites). The current public screen is therefore a scenario screen, not a
+legal-order implementation. A legal-order rebuild is the next model change.
+
 ## Limits
 
 - The adjusted Appendix 9 compartment map has not been reconciled with the

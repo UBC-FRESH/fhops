@@ -1,3 +1,10 @@
+# 2026-11-20 — Gavin MDWR GAR order conflict found
+
+- Reviewed Amendment TransDeep_Feb07_ord.pdf (2007 Transition/Deep Snowpack GAR order).
+- Legal order GWM 6 requires 45 m²/ha in ICH and 40 m²/ha elsewhere; Table 2 sets Low 33/Moderate 25/High 20 with 120/160/200-year rotations; GWM 10 sets a 0.1 ha minimum opening and 0.1–0.3 ha frost-prone openings.
+- The current public screen uses MWP Table 30 High 33/Moderate 25/Low 20 and a 40 m²/ha gate everywhere. It is not a GAR-compliant screen; a legal-order rebuild is required.
+- Updated the public decision brief and MDWR brief to mark the current model as scenario-only, not legal implementation.
+
 # 2026-11-20 — Gavin MDWR compliance status matrix
 
 - Added the compliance status matrix to the decision brief: no-clearcut, Table 30, stand-level BA gate, max group size, cohorts, full area, and unresolved minimum size, thinning, Appendix 9, GAR/UWR and target framework.

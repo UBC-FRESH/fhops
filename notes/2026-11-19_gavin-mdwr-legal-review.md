@@ -313,3 +313,18 @@ and uses group BA only as a reported account.
 
 This is the cohort-state comparison. It remains a prototype; it does not replace
 the block policy screen, and it does not prove the group model is correct.
+
+## GAR order conflict
+
+The exact 2007 Transition and Deep Snowpack GAR order was reviewed on
+2026-11-20 (`Amendment_TransDeep_Feb07_ord.pdf`). It establishes:
+
+- GWM 6: ≥45 m²/ha in ICH and ≥40 m²/ha elsewhere for group-selection initiation;
+- Table 2: Low 33% / 120-year rotation / 3 patches; Moderate 25% / 160 / 4;
+  High 20% / 200 / 5;
+- GWM 10 / Table 3: 0.1–0.4 ha warm-aspect openings, 0.1–0.7 ha other, and
+  0.1–0.3 ha on frost-prone sites.
+
+The current screen uses the MWP #3 Table 30 mapping (High 33 / Moderate 25 /
+Low 20) and a 40 m²/ha gate everywhere. It is **not a legal-order
+implementation** and must be rebuilt before a compliance claim.
