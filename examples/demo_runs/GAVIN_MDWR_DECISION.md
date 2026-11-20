@@ -13,9 +13,9 @@ is a diagnostic and does not replace it.
 |---|---:|---|---|
 | Full-estate legal-order block screen | **4.179M m³ / 300 yr** | 5,663.7 ha estate | public policy screen |
 | MDWR-only legal-order block screen | **0.619M m³ / 300 yr** | 2,799.3 ha MDWR | comparison baseline |
-| Legal-order group cohort prototype | **0.658M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
+| Legal-order group cohort, regrown phase | **0.680M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
 
-The group/block MDWR ratio is **1.06**. That is a material gap, not a geometry
+The group/block MDWR ratio is **1.10**. That is a material gap, not a geometry
 error: the 0.1 ha minimum opening removes assigned area that the block screen
 continues to cut.
 
@@ -53,10 +53,10 @@ The group cohort final stock (1,141,775 m³) and final BA (184,534 m²) pass, bu
 the 40-year schedule period range (4,180–62,626 m³) fails the interim even-flow
 band.
 
-A horizon-aware per-block phase schedule, shifting cut years without exceeding
-year 300 or changing event volumes, reaches **10,319–30,940 m³** and puts
-**30 of 30** periods inside the interim band. It is a cut-year scheduling
-diagnostic with fixed event volumes, not a regrown cohort result.
+A horizon-aware per-block phase schedule was regrown at the shifted ages. It
+produces **10,075–34,661 m³** and puts **22 of 30** periods inside the interim
+band. The fixed-volume 30/30 result was a scheduling artefact, not a valid
+regrown cohort result.
 
 ## Why the block screen stays public
 
@@ -66,7 +66,7 @@ diagnostic with fixed event volumes, not a regrown cohort result.
 4. The 2007 GAR/UWR spatial boundary has not been independently reviewed.
 5. The group run has no policy target framework comparable to the block
    screen’s 9/37/15 status.
-6. The group result is 1.06× the MDWR block result on harvested volume.
+6. The group result is 1.10× the MDWR block result on harvested volume.
 
 ## Replacement gate
 

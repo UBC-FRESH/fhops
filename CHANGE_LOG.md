@@ -1,3 +1,10 @@
+# 2026-11-20 — Regrown group phase result
+
+- Re-grew the horizon-aware phase cuts at their shifted ages.
+- Regrown result: 0.680M m³, mean 22,660 m³, min 10,075 m³, max 34,661 m³, final standing 1,141,775 m³, final BA 184,534 m².
+- 22/30 periods inside the interim 10,317–30,951 m³ band; the fixed-volume 30/30 result was invalid.
+- Public group scenario updated; block legal screen remains public.
+
 # 2026-11-20 — Horizon-aware group phase meets interim band
 
 - Restricted per-block cut-year shifts so no event passes year 300.
