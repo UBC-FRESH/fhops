@@ -1,3 +1,9 @@
+# 2026-11-20 — Gavin MDWR phase annealing check
+
+- Ran a 60,000-iteration simulated-annealing phase search on fixed group event volumes.
+- Best annealed range: 7,324–34,099 m³, 10/30 periods in band; the greedy phase screen remains better (7,433–35,002, 11/30).
+- The phase-only model cannot close the interim even-flow band; public 40-year cohort remains unchanged.
+
 # 2026-11-20 — Gavin MDWR per-block phase screen
 
 - Shifted each block's group cohort cut years by 0–39 years without changing event volumes.
