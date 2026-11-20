@@ -42,6 +42,17 @@ ordering and 40 m²/ha screens are superseded.
 - final standing volume **1,172,437 m³**;
 - initial BA **102,863 m²**; final BA **190,573 m²**.
 
+## Interim group target diagnostic
+
+There is no approved group target framework. As a diagnostic, the legal-order
+block MDWR mean period (20,634 m³) gives an interim even-flow band of 10,317 to
+30,951 m³ per period, with a 1,000,000 m³ final-stock floor and 150,000 m²
+final-BA floor.
+
+The group cohort final stock (1,172,437 m³) and final BA (190,573 m²) pass, but
+the period range (2,435–154,683 m³) fails the interim even-flow band. The group
+schedule is not target-ready.
+
 ## Why the block screen stays public
 
 1. The group model is a legal-order cohort prototype, but frost-prone classification and target framework are missing.

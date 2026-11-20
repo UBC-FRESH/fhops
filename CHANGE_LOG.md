@@ -1,3 +1,9 @@
+# 2026-11-20 — Gavin MDWR interim group target diagnostic
+
+- Used the legal-order block MDWR mean period (20,634 m³) as an interim even-flow reference: 10,317–30,951 m³ band, 1,000,000 m³ final-stock and 150,000 m² final-BA floors.
+- Group cohort passes final stock (1,172,437 m³) and final BA (190,573 m²) but fails the period band (2,435–154,683 m³).
+- No approved group target framework exists; this is a diagnostic, not a policy target.
+
 # 2026-11-20 — Legal-order group cohort and public swap
 
 - Built the legal-order group cohort state: 25,777 groups, 3,954 assigned openings all ≥0.1 ha, 12,223 accepted cohort entries.
