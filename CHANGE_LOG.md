@@ -1,3 +1,10 @@
+# 2026-11-20 — Horizon-aware group phase meets interim band
+
+- Restricted per-block cut-year shifts so no event passes year 300.
+- Horizon-aware phase schedule: 0.658M m³, mean 21,940 m³, min 10,319 m³, max 30,940 m³, **30/30 periods inside the interim 10,317–30,951 m³ band**.
+- This is a fixed-volume cut-year scheduling screen, not a regrown cohort result.
+- Public group scenario updated; legal group diagnostics still not a replacement for the block policy screen.
+
 # 2026-11-20 — Long phase target result rejected
 
 - A 0–119-year per-block phase screen appeared to meet the 30/30 band, but the optimiser clipped shifted events beyond year 300 into period 30.

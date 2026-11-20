@@ -53,10 +53,10 @@ The group cohort final stock (1,141,775 m³) and final BA (184,534 m²) pass, bu
 the 40-year schedule period range (4,180–62,626 m³) fails the interim even-flow
 band.
 
-A per-block phase screen, shifting each block's cut years by 0–39 years without
-changing event volumes, improves the range to **7,433–35,002 m³** and puts
-**11 of 30** periods inside the band. It is a scheduling diagnostic, not a
-regrown cohort result, and still does not meet the band.
+A horizon-aware per-block phase schedule, shifting cut years without exceeding
+year 300 or changing event volumes, reaches **10,319–30,940 m³** and puts
+**30 of 30** periods inside the interim band. It is a cut-year scheduling
+diagnostic with fixed event volumes, not a regrown cohort result.
 
 ## Why the block screen stays public
 

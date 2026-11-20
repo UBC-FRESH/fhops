@@ -403,3 +403,11 @@ A per-block cut-year shift (0–39 years, event volumes fixed) improved the
 **11 of 30** periods inside the interim 10,317–30,951 m³ band. The objective
 fell from the unsmoothed schedule but the band is still not met. This is a
 scheduling diagnostic, not a regrown cohort result.
+
+## Horizon-aware phase schedule
+
+The per-block phase search was repeated with a hard 300-year horizon. It reaches
+**0.658M m³**, mean 21,940 m³, min **10,319 m³**, max **30,940 m³**, with
+**30/30 periods inside the interim 10,317–30,951 m³ band**. Event volumes are
+held fixed; this is a cut-year scheduling screen, not a regrown cohort result.
+The public group scenario now uses this schedule.

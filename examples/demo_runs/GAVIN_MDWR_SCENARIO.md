@@ -59,8 +59,8 @@ The legal-order group layout:
 |---|---:|
 | Harvested volume | **0.658M m³** |
 | Mean period | 21,004 m³ |
-| Min period | 4,180 m³ |
-| Max period | 62,626 m³ |
+| Min period | 10,319 m³ |
+| Max period | 30,940 m³ |
 | Final standing volume | **1,141,775 m³** |
 | Initial BA | 102,863 m² |
 | Final BA | 184,534 m² |
