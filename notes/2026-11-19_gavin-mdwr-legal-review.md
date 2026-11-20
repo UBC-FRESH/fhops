@@ -359,3 +359,19 @@ minimum.
 The group layout now meets the 0.1 ha opening minimum for assigned openings.
 Frost-prone 0.1–0.3 ha classification and a full 40-year cohort target
 framework remain unresolved; the group result is still a prototype.
+
+## Legal group 40-year entry stagger
+
+The legal grouped cohort was rerun with a 0–40-year first-entry stagger. It
+produces:
+
+- **0.658M m³** harvested;
+- mean 21,940 m³ per period;
+- min 4,180 m³;
+- max 62,626 m³;
+- final standing 1,141,775 m³;
+- final BA 184,534 m².
+
+The stagger reduces the maximum period from 154,683 to 62,626 m³, but still
+does not meet the interim 10,317–30,951 m³ even-flow band. The group/block MDWR
+ratio is 1.06.

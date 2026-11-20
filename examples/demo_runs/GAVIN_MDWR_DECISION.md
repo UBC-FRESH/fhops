@@ -13,9 +13,9 @@ is a diagnostic and does not replace it.
 |---|---:|---|---|
 | Full-estate legal-order block screen | **4.179M m³ / 300 yr** | 5,663.7 ha estate | public policy screen |
 | MDWR-only legal-order block screen | **0.619M m³ / 300 yr** | 2,799.3 ha MDWR | comparison baseline |
-| Legal-order group cohort prototype | **0.630M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
+| Legal-order group cohort prototype | **0.658M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
 
-The group/block MDWR ratio is **1.02**. That is a material gap, not a geometry
+The group/block MDWR ratio is **1.06**. That is a material gap, not a geometry
 error: the 0.1 ha minimum opening removes assigned area that the block screen
 continues to cut.
 
@@ -38,9 +38,9 @@ ordering and 40 m²/ha screens are superseded.
 - 3,954 assigned openings, all **≥0.1 ha**;
 - 1,431.9 ha scheduled;
 - maximum opening 0.7 ha;
-- 12,223 accepted cohort entries;
-- final standing volume **1,172,437 m³**;
-- initial BA **102,863 m²**; final BA **190,573 m²**.
+- 11,910 accepted cohort entries;
+- final standing volume **1,141,775 m³**;
+- initial BA **102,863 m²**; final BA **184,534 m²**.
 
 ## Interim group target diagnostic
 
@@ -49,8 +49,8 @@ block MDWR mean period (20,634 m³) gives an interim even-flow band of 10,317 to
 30,951 m³ per period, with a 1,000,000 m³ final-stock floor and 150,000 m²
 final-BA floor.
 
-The group cohort final stock (1,172,437 m³) and final BA (190,573 m²) pass, but
-the period range (2,435–154,683 m³) fails the interim even-flow band. The group
+The group cohort final stock (1,141,775 m³) and final BA (184,534 m²) pass, but
+the period range (4,180–62,626 m³) fails the interim even-flow band. The group
 schedule is not target-ready.
 
 ## Why the block screen stays public
@@ -61,7 +61,7 @@ schedule is not target-ready.
 4. The 2007 GAR/UWR spatial boundary has not been independently reviewed.
 5. The group run has no policy target framework comparable to the block
    screen’s 9/37/15 status.
-6. The group result is 1.02× the MDWR block result on harvested volume.
+6. The group result is 1.06× the MDWR block result on harvested volume.
 
 ## Replacement gate
 

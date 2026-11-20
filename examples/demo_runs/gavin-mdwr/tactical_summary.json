@@ -1,27 +1,27 @@
 {
   "run_id": "gavin-mdwr",
-  "label": "Gavin Lake \u2014 MDWR official fine-map group-selection screen",
+  "label": "Gavin Lake \u2014 MDWR legal-order block screen",
   "planning_level": "tactical_operational",
-  "source": "Gavin MDWR clone matrix; Table 30 group selection; official BC long-term fine-map classes; 40-year re-entry",
+  "source": "Gavin MDWR clone matrix; Table 30 group selection; legal-order Low33/Moderate25/High20; 45/40 m\u00b2/ha BA gate; 40-year re-entry",
   "horizon_years": 300,
   "periods": 30,
   "period_width_years": 10,
   "blocks_total": 2907,
-  "blocks_scheduled": 2857,
-  "schedule_events": 15701,
+  "blocks_scheduled": 2449,
+  "schedule_events": 7289,
   "area_total_ha": 5663.666,
-  "scheduled_area_ha": 5640.394,
-  "total_production_m3": 5625582.14,
-  "mean_period_production_m3": 187519.405,
-  "min_period_production_m3": 81358.437,
-  "max_period_production_m3": 377743.807,
+  "scheduled_area_ha": 5063.734,
+  "total_production_m3": 4179354.202,
+  "mean_period_production_m3": 139311.807,
+  "min_period_production_m3": 93479.041,
+  "max_period_production_m3": 221223.164,
   "growing_stock_initial_m3": 1741157.966,
   "growing_stock_final_m3": 1493174.624,
   "incumbent_objective": null,
   "iterations": 0,
-  "targets_met": 15,
-  "targets_below": 33,
-  "targets_above": 13,
+  "targets_met": 9,
+  "targets_below": 37,
+  "targets_above": 15,
   "status_note": "MDWR no-clearcut/group-selection screen; the 174k, 600k-stock and \u00b14% even-flow policy targets are not met. Not a decision-grade plan.",
   "finance_note": "No public AFRF net-revenue ledger is used or fabricated for this screen.",
   "mdwr_area_ha": 2799.31,
@@ -30,7 +30,7 @@
     "High": {
       "area_ha": 599.991,
       "blocks": 239,
-      "pass_fraction": 0.33
+      "pass_fraction": 0.2
     },
     "Moderate": {
       "area_ha": 1082.138,
@@ -40,7 +40,7 @@
     "Low": {
       "area_ha": 1117.182,
       "blocks": 622,
-      "pass_fraction": 0.2
+      "pass_fraction": 0.33
     }
   },
   "mdwr_clearcuts": 0

@@ -124,8 +124,8 @@ periods:
   start_date: '2316-01-01'
   end_date: '2325-12-31'
   duration_years: 10
-source: Gavin MDWR clone matrix; Table 30 group selection; official BC long-term fine-map
-  classes
-notes: No clearcut in MDWR. Group selection uses 33/25/20% per pass by official BC
-  long-term fine-map classes, 40-year re-entry, and a full-area partial-cut volume
-  approximation. Not a spatial group-layout or approved plan.
+source: "Gavin MDWR clone matrix; Table 30 group selection; legal-order Low33/Moderate25/High20;\
+  \ 45/40 m\xB2/ha BA gate"
+notes: "No clearcut in MDWR. Group selection uses 33/25/20% per pass by legal-order\
+  \ Low33/Moderate25/High20; 45/40 m\xB2/ha BA gate, 40-year re-entry, and a full-area\
+  \ partial-cut volume approximation. Not a spatial group-layout or approved plan."

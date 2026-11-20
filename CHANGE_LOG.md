@@ -1,3 +1,10 @@
+# 2026-11-20 — Legal-order group 40-year entry stagger
+
+- Staggered legal-order first entries by 0–40 years and rebuilt the group layout/matrix/cohort.
+- Legal group cohort: 0.658M m³, mean 21,940 m³, min 4,180 m³, max 62,626 m³, final standing 1,141,775 m³, final BA 184,534 m².
+- The 40-year stagger cuts the maximum period from 154,683 to 62,626 m³, but the interim 10,317–30,951 m³ even-flow band is still not met.
+- Public group scenario updated; block legal screen remains public.
+
 # 2026-11-20 — Gavin MDWR interim group target diagnostic
 
 - Used the legal-order block MDWR mean period (20,634 m³) as an interim even-flow reference: 10,317–30,951 m³ band, 1,000,000 m³ final-stock and 150,000 m² final-BA floors.

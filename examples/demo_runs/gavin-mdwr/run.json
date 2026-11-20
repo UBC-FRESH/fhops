@@ -12,11 +12,11 @@
     "tactical_summary": "tactical_summary.json"
   },
   "warnings": [
-    "Fine-map classes are digitized from the BC long-term objectives PDF; the adjusted Appendix 9 compartment map and legal order still need review.",
+    "Legal-order parameter screen; not a spatial group-layout or compliance determination.",
     "Full-area partial-cut volume screen; no spatial group layout or 0.4/0.7 ha size cap.",
     "No preparative thinning; no private finance."
   ],
-  "generated_at": "2026-11-19T01:34:44.378495+00:00",
+  "generated_at": "2026-11-20T05:43:27.672445+00:00",
   "command": "WS4 Gavin MDWR no-clearcut / group-selection simulation",
   "scenario": "scenario.yaml",
   "solver": "ws4-simulate"

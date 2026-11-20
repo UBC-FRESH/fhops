@@ -9,7 +9,7 @@ determinations**
 |---|---:|---:|
 | Full-estate block screen | **4.179M m³ / 300 years** | **9/37/15** |
 | MDWR-only block screen | **0.619M m³** | not comparable |
-| Legal-order group cohort prototype | **0.630M m³** | no target framework |
+| Legal-order group cohort prototype | **0.658M m³** | no target framework |
 
 The block screen is the public policy result. The group screen is a spatial
 diagnostic and does not replace it.
@@ -53,21 +53,21 @@ The legal-order group layout:
 - 3,954 assigned openings, all **≥0.1 ha**;
 - 1,431.9 ha scheduled;
 - maximum opening 0.7 ha;
-- 12,223 accepted cohort entries.
+- 11,910 accepted cohort entries.
 
 | Metric | Value |
 |---|---:|
-| Harvested volume | **0.630M m³** |
+| Harvested volume | **0.658M m³** |
 | Mean period | 21,004 m³ |
-| Min period | 2,435 m³ |
-| Max period | 154,683 m³ |
-| Final standing volume | **1,172,437 m³** |
+| Min period | 4,180 m³ |
+| Max period | 62,626 m³ |
+| Final standing volume | **1,141,775 m³** |
 | Initial BA | 102,863 m² |
-| Final BA | 190,573 m² |
+| Final BA | 184,534 m² |
 
 Frost-prone 0.1–0.3 ha classification and a group target framework are not
 implemented. The group result remains a prototype; the group/block MDWR ratio
-is about 1.02.
+is about 1.06.
 
 ## Limits
 

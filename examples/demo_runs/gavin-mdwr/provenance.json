@@ -1,12 +1,12 @@
 {
   "instance": "femic-afrf-gavinlake-instance",
-  "matrix": "ws4/runtime/mdwr_group_selection_official_reentry",
-  "source_run": "ws4/runtime/gavin-mdwr-40-simcheck-official-reentry",
-  "schedule": "ws4/runtime/gavin-mdwr-40-schedule-official.csv",
+  "matrix": "ws4/runtime/mdwr_group_selection_legal",
+  "source_run": "ws4/runtime/gavin-mdwr-40-simcheck-legal",
+  "schedule": "ws4/runtime/gavin-mdwr-40-schedule-official-ba-temporal-s10-legal.csv",
   "spatial": "data/legacy_gavinlake/spatial/fragments.shp",
-  "table30": "2007 AFRF MP #3 Table 30; 33/25/20% per pass; 40-year cycle",
+  "table30": "2007 GAR Table 2; Low33/Moderate25/High20; 40-year cycle",
   "caveats": [
-    "Fine-map classes are digitized from the BC long-term objectives PDF; the adjusted Appendix 9 compartment map and legal order still need review.",
+    "Legal-order parameter screen; not a spatial group-layout or compliance determination.",
     "Full-area partial-cut screen; no spatial group layout or group-size cap.",
     "No preparative thinning and no private finance.",
     "Target status is reported against the existing 174k policy target; the MDWR screen does not meet it."
