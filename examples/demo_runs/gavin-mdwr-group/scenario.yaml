@@ -1,4 +1,4 @@
-name: Gavin Lake MDWR full-area group cohort prototype
+name: Gavin Lake MDWR legal-order group one-cut prototype
 planning_level: tactical_operational
 schema_version: 0.1.0
 geo_block_path: blocks.geojson
@@ -124,8 +124,6 @@ periods:
   start_date: '2316-01-01'
   end_date: '2325-12-31'
   duration_years: 10
-source: Gavin MDWR 10 m groups; accepted block entries; VRI BA fit; base CC successor
-  curves
-notes: Group-level WS4 cohort prototype with cut and standing groups. It inherits
-  the accepted block-level BA gate; group BA is reported, not a per-group gate. Not
-  a replacement for the block policy screen.
+source: Legal-order Low33/Moderate25/High20; 45/40 BA gate; 0.1 ha minimum openings
+notes: "Group-level one-cut prototype. All assigned openings \u22650.1 ha. Not a policy\
+  \ replacement."

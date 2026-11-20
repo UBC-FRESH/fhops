@@ -167,319 +167,178 @@ vertical-align: middle;
 <header id="title-block-header">
 <h1 class="title">Gavin Lake — Beaver Valley MDWR screen</h1>
 </header>
-<h1 id="gavin-lake-beaver-valley-mdwr-no-clearcut-group-selection-screen">Gavin
-Lake — Beaver Valley MDWR no-clearcut / group-selection screen</h1>
-<p>Status: <strong>constraint-translation screen, not an approved plan
-or compliance determination.</strong></p>
-<h2 id="constraint">Constraint</h2>
-<p>The 2007 AFRF Management and Working Plan #3 makes mule-deer winter
-range the primary objective in the Beaver Valley working circle:</p>
-<ul>
-<li>Beaver Valley MDWR: <strong>2,799.31 ha</strong>, <strong>1,443
-blocks</strong>;</li>
-<li><strong>no clearcut</strong> in the MDWR;</li>
-<li>group selection with a <strong>40-year re-entry</strong>;</li>
-<li>Table 30 pass intensity by habitat class: <strong>High 33%</strong>,
-<strong>Moderate 25%</strong>, <strong>Low 20%</strong>;</li>
-<li>maximum group size <strong>0.4 ha on warm aspects</strong> and
-<strong>0.7 ha on other aspects</strong>.</li>
-</ul>
-<p>The current public Gavin policy screen (<code>gavin-policy</code>)
-does not carry the constraint: it schedules 2,759 ha of MDWR and all
-8,980 events are clearcut. This screen replaces clearcut with group
-selection on MDWR tracks and reports the production consequence.</p>
-<h2 id="habitat-classes">Habitat classes</h2>
-<p>The public BC long-term habitat objective map for Beaver Valley North
-(Prouton Lakes), dated 6 December 2001, has been digitized. It gives a
-fine-scale High/Moderate/Low split for the MDWR that is very different
-from the legacy BEC proxy:</p>
+<h1 id="gavin-lake-beaver-valley-mdwr-legal-order-screens">Gavin Lake —
+Beaver Valley MDWR legal-order screens</h1>
+<p>Status: <strong>legal-order parameter screens, not approved plans or
+compliance determinations</strong></p>
+<h2 id="current-public-results">Current public results</h2>
 <table>
-<thead>
-<tr class="header">
-<th>Class</th>
-<th style="text-align: right;">BEC proxy</th>
-<th style="text-align: right;">Official fine map</th>
-<th style="text-align: right;">Model class area</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>High</td>
-<td style="text-align: right;">14.27 ha</td>
-<td style="text-align: right;">682.3 ha</td>
-<td style="text-align: right;">600.0 ha</td>
-</tr>
-<tr class="even">
-<td>Moderate</td>
-<td style="text-align: right;">213.06 ha</td>
-<td style="text-align: right;">1,115.4 ha</td>
-<td style="text-align: right;">1,082.1 ha</td>
-</tr>
-<tr class="odd">
-<td>Low</td>
-<td style="text-align: right;">2,571.98 ha</td>
-<td style="text-align: right;">898.4 ha</td>
-<td style="text-align: right;">1,117.2 ha</td>
-</tr>
-<tr class="even">
-<td>Unclassified</td>
-<td style="text-align: right;">—</td>
-<td style="text-align: right;">103.3 ha</td>
-<td style="text-align: right;">—</td>
-</tr>
-</tbody>
-</table>
-<p>The official polygons cover 84.6% of the MDWR block area. The
-model-class column applies the 50% block-coverage floor and the BEC
-fallback for unclassified edge blocks.</p>
-<p>The 2007 MWP #3 says the Appendix 9 class distribution was adjusted
-to coincide with the total-chance harvest blocks. That <strong>adjusted
-compartment map is still a separate legal review step</strong>; this
-screen uses the finer BC long-term objective polygons, not a legal
-compartment map. The 2007 legal order and current UWR boundary also
-still need review.</p>
-<h2 id="method">Method</h2>
-<ul>
-<li>Clone the legacy tracks used by MDWR fragments.</li>
-<li>Remove clearcut from the MDWR clones.</li>
-<li>Add Table 30 group-selection treatments at the official fine-map
-class intensity.</li>
-<li>First entry at age 80; <strong>40-year re-entry</strong> after
-that.</li>
-<li>Preserve the fragment age across partial cuts. The matrix uses a
-negative-offset sentinel so a group-selection pass does not reset a
-stand to age zero.</li>
-<li>Scale product yield, treated area and carbon removal by the pass
-fraction. The block remains a full-area partial-cut volume screen rather
-than a spatial group layout.</li>
-<li>Run the translated 300-year schedule against the existing public
-Gavin policy target set (174,000 m³ per period, 600,000 m³ period-30
-stock floor, ±4% even-flow).</li>
-</ul>
-<h2 id="results">Results</h2>
-<table style="width:100%;">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 13%" />
-<col style="width: 13%" />
-<col style="width: 13%" />
-<col style="width: 13%" />
-<col style="width: 13%" />
-<col style="width: 13%" />
-<col style="width: 10%" />
+<col style="width: 27%" />
+<col style="width: 36%" />
+<col style="width: 36%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th>Scenario</th>
-<th style="text-align: right;">MDWR clearcuts</th>
-<th style="text-align: right;">Total production</th>
-<th style="text-align: right;">Mean period</th>
-<th style="text-align: right;">Min period</th>
-<th style="text-align: right;">Max period</th>
-<th style="text-align: right;">Period-30 stock</th>
-<th>Targets</th>
+<th>Result</th>
+<th style="text-align: right;">Volume</th>
+<th style="text-align: right;">Targets</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>gavin-policy</code></td>
-<td style="text-align: right;">4,352 events / 2,759 ha</td>
-<td style="text-align: right;">5.385M m³</td>
-<td style="text-align: right;">179,505 m³</td>
-<td style="text-align: right;">174,070 m³</td>
-<td style="text-align: right;">187,575 m³</td>
-<td style="text-align: right;">610,004 m³</td>
-<td>61/0/0</td>
+<td>Full-estate block screen</td>
+<td style="text-align: right;"><strong>4.179M m³ / 300
+years</strong></td>
+<td style="text-align: right;"><strong>9/37/15</strong></td>
 </tr>
 <tr class="even">
-<td><code>gavin-mdwr</code> official fine-map, 40-year re-entry</td>
-<td style="text-align: right;"><strong>0</strong></td>
-<td style="text-align: right;"><strong>5.626M m³</strong></td>
-<td style="text-align: right;"><strong>187,519 m³</strong></td>
-<td style="text-align: right;"><strong>81,358 m³</strong></td>
-<td style="text-align: right;"><strong>377,744 m³</strong></td>
-<td style="text-align: right;"><strong>1,493,175 m³</strong></td>
-<td><strong>15/33/13</strong></td>
+<td>MDWR-only block screen</td>
+<td style="text-align: right;"><strong>0.619M m³</strong></td>
+<td style="text-align: right;">not comparable</td>
 </tr>
 <tr class="odd">
-<td>Official fine-map, current BA ≥ 40 m²/ha</td>
-<td style="text-align: right;"><strong>0</strong></td>
-<td style="text-align: right;"><strong>4.592M m³</strong></td>
-<td style="text-align: right;"><strong>153,075 m³</strong></td>
-<td style="text-align: right;"><strong>79,713 m³</strong></td>
-<td style="text-align: right;"><strong>269,628 m³</strong></td>
-<td style="text-align: right;">1,493,175 m³</td>
-<td><strong>14/35/12</strong></td>
-</tr>
-<tr class="even">
-<td>Official fine-map, temporal BA ≥ 40 m²/ha + 0–9 year stagger</td>
-<td style="text-align: right;"><strong>0</strong></td>
-<td style="text-align: right;"><strong>4.154M m³</strong></td>
-<td style="text-align: right;"><strong>138,466 m³</strong></td>
-<td style="text-align: right;"><strong>92,765 m³</strong></td>
-<td style="text-align: right;"><strong>219,971 m³</strong></td>
-<td style="text-align: right;">1,493,175 m³</td>
-<td><strong>13/37/11</strong></td>
-</tr>
-<tr class="odd">
-<td>Prior BEC first-entry screen</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3.735M m³</td>
-<td style="text-align: right;">124,508 m³</td>
-<td style="text-align: right;">80,704 m³</td>
-<td style="text-align: right;">201,462 m³</td>
-<td style="text-align: right;">395,682 m³</td>
-<td>10/43/8</td>
-</tr>
-<tr class="even">
-<td>MDWR deferral floor (prior run)</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3.560M m³</td>
-<td style="text-align: right;">118,678 m³</td>
-<td style="text-align: right;">64,963 m³</td>
-<td style="text-align: right;">151,070 m³</td>
-<td style="text-align: right;">1,493,175 m³</td>
-<td>8/47/6</td>
+<td>Legal-order group one-cut prototype</td>
+<td style="text-align: right;"><strong>0.522M m³</strong></td>
+<td style="text-align: right;">no target framework</td>
 </tr>
 </tbody>
 </table>
-<p>The corrected 40-year re-entry screen produces <strong>more
-cumulative volume</strong> than the prior first-entry screen. It is
-still not a like-for-like comparison with the timber-only clearcut
-policy: the partial-cut curves repeatedly harvest a fraction of a
-full-area stand curve, so the 5.626M m³ total is a screening upper
-bound, not a final yield forecast.</p>
-<p>The target status is reported against the existing 174k policy target
-set. It is a <strong>trade-off result</strong>, not a failure hidden by
-a redefined target.</p>
-<h2 id="re-entry-audit">Re-entry audit</h2>
-<p>The earlier MDWR clone reset the fragment age to zero on every pass,
-while the pass product curves start at age 79. In a block test, the
-first pass produced volume and every later 40-year pass produced zero.
-The corrected matrix preserves fragment age across each pass; block 266
-now yields on every 40-year entry.</p>
-<p>The prior <strong>3.735M m³ / 10/43/8</strong> line is retained above
-only as the superseded first-entry result. It must not be cited as a
-validated 40-year re-entry result.</p>
-<p>Details:
-<code>notes/2026-11-18_gavin-mdwr-official-habitat.md</code>.</p>
-<h2 id="legal-order-caveat">Legal-order caveat</h2>
-<p>The current screen uses the 2007 MWP #3 Table 30 mapping (High 33 /
-Moderate 25 / Low 20) and a 40 m²/ha BA gate. The reviewed 2007
-Transition/Deep GAR order instead sets <strong>Low 33 / Moderate 25 /
-High 20</strong>, <strong>45 m²/ha in ICH and 40 elsewhere</strong>, and
-a <strong>0.1 ha minimum opening</strong> (0.1–0.3 ha on frost-prone
-sites). The current public screen is therefore a scenario screen, not a
-legal-order implementation. A legal-order block sensitivity gives 4.179M
-m³ and 9/37/15 targets (MDWR-only 0.619M m³). A legal-order group
-rebuild gives 0.522M m³; all 3,954 assigned openings are ≥0.1 ha, with
-1,431.9 ha scheduled. Frost-prone 0.1–0.3 ha classification and a full
-cohort target framework remain unresolved.</p>
+<p>The block screen is the public policy result. The group screen is a
+spatial diagnostic and does not replace it.</p>
+<h2 id="legal-order">Legal order</h2>
+<p>The 2007 Transition and Deep Snowpack GAR order sets:</p>
+<ul>
+<li>group-selection basal area: <strong>45 m²/ha in ICH</strong>, 40
+m²/ha elsewhere;</li>
+<li>Low: <strong>33% per pass</strong>, 120-year rotation, 3
+patches;</li>
+<li>Moderate: 25%, 160-year rotation, 4 patches;</li>
+<li>High: <strong>20% per pass</strong>, 200-year rotation, 5
+patches;</li>
+<li>openings: <strong>0.1–0.4 ha</strong> warm aspect, <strong>0.1–0.7
+ha</strong> other, and 0.1–0.3 ha on frost-prone sites.</li>
+</ul>
+<p>These differ from the MWP #3 Table 30 ordering used by earlier
+versions of this screen. The current public block and legal group
+screens use the GAR order.</p>
+<h2 id="block-result">Block result</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Production</td>
+<td style="text-align: right;"><strong>4.179M m³</strong></td>
+</tr>
+<tr class="even">
+<td>Mean period</td>
+<td style="text-align: right;">139,312 m³</td>
+</tr>
+<tr class="odd">
+<td>Min period</td>
+<td style="text-align: right;">93,479 m³</td>
+</tr>
+<tr class="even">
+<td>Max period</td>
+<td style="text-align: right;">221,223 m³</td>
+</tr>
+<tr class="odd">
+<td>Period-30 stock</td>
+<td style="text-align: right;">1,493,175 m³</td>
+</tr>
+<tr class="even">
+<td>Targets</td>
+<td style="text-align: right;"><strong>9/37/15</strong></td>
+</tr>
+<tr class="odd">
+<td>MDWR clearcuts</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>The block screen remains a full-area partial-cut volume screen. It
+carries the legal class fractions and 45/40 BA gate, but it is not a
+spatial group layout or a compliance determination.</p>
+<h2 id="group-result">Group result</h2>
+<p>The legal-order group layout:</p>
+<ul>
+<li>25,777 groups on the MDWR;</li>
+<li>2,797.5 ha represented;</li>
+<li>3,954 assigned openings, all <strong>≥0.1 ha</strong>;</li>
+<li>1,431.9 ha scheduled;</li>
+<li>maximum opening 0.7 ha;</li>
+<li>one cut per assigned group.</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th style="text-align: right;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Harvested volume</td>
+<td style="text-align: right;"><strong>0.522M m³</strong></td>
+</tr>
+<tr class="even">
+<td>Mean period</td>
+<td style="text-align: right;">24,877 m³</td>
+</tr>
+<tr class="odd">
+<td>Min period</td>
+<td style="text-align: right;">114 m³</td>
+</tr>
+<tr class="even">
+<td>Max period</td>
+<td style="text-align: right;">155,890 m³</td>
+</tr>
+<tr class="odd">
+<td>Final standing volume</td>
+<td style="text-align: right;"><strong>1,288,483 m³</strong></td>
+</tr>
+<tr class="even">
+<td>Initial BA</td>
+<td style="text-align: right;">102,863 m²</td>
+</tr>
+<tr class="odd">
+<td>Final BA</td>
+<td style="text-align: right;">256,352 m²</td>
+</tr>
+</tbody>
+</table>
+<p>Frost-prone 0.1–0.3 ha classification, full 40-year cohort re-entry,
+and a group target framework are not implemented. The group result
+remains a prototype.</p>
 <h2 id="limits">Limits</h2>
 <ul>
 <li>The adjusted Appendix 9 compartment map has not been reconciled with
-the fine-scale BC long-term objective polygons.</li>
-<li>The block-level partial-cut curve is a volume screen. It does not
-lay out spatial groups, enforce the 0.4/0.7 ha group-size cap, or
-simulate within-block cohort structure.</li>
-<li>Preparatory thinning at least ten years before group selection is
-not modelled.</li>
+the fine BC long-term objective polygons.</li>
+<li>The 2007 GAR order and current UWR boundary still need a spatial
+boundary review.</li>
+<li>The block screen does not lay out spatial groups.</li>
+<li>The group screen does not model cohort regeneration, windthrow, or a
+plantation-specific BA model.</li>
 <li>No public AFRF private finance ledger is used or fabricated.</li>
-<li>The 2007 legal order and current UWR boundary still need
-review.</li>
-<li>The official fine-map georeference is a printed-grid fit, not a
-survey control.</li>
 </ul>
-<h2 id="legal-review">Legal review</h2>
-<p>The 2007 FSP Table 7 allows even-aged systems, including
-clearcutting, on fresh and wetter sites within the Beaver Valley MDWR.
-The no-clearcut rule in this screen is therefore a <strong>stricter
-policy choice</strong> across the whole MDWR, not a direct FSP
-transcription.</p>
-<p>BC MDWR Information Note #3 quotes General Wildlife Measure 6 from
-the 2007 transition/deep snowpack GAR order: group selection requires a
-pre-harvest basal area of at least <strong>40 m²/ha</strong>. A separate
-sensitivity now gates the official schedule on <strong>current VRI 2025
-BA</strong>: 625 blocks / 1,296.8 ha pass, 789 blocks / 1,429.9 ha are
-held and 29 blocks / 72.6 ha are unknown. That sensitivity produces
-4.592M m³ and 14/35/12 targets. It is a current snapshot only; future
-growth and post-pass BA recovery are not modelled.</p>
-<p>A temporal ledger then grows each block from its VRI BA using the WS4
-volume curve, checks every candidate entry, deducts the pass fraction
-after an accepted cut, and defers entries below 40 m²/ha. The accepted
-schedule is staggered by a deterministic 0–9 years by block id, which
-improves target performance from 10/39/12 to <strong>13/37/11</strong>.
-It accepts 1,045 blocks / 2,238.5 ha and holds 398 blocks / 560.8 ha.
-The BA growth proxy is still a screening assumption, not a validated
-basal-area model. The 0.4/0.7 ha caps and 3–5 cohort structure are still
-not modelled.</p>
-<p>Appendix 9 is a compartment-level adjusted map, not a block-level
-attribute in the legacy layer. The fine BC long-term objective polygons
-used here are not the adjusted Appendix 9 boundaries. The screen is
-therefore an official fine-map volume screen, not a legal compliance
-determination.</p>
-<p>Full review:
-<code>notes/2026-11-19_gavin-mdwr-legal-review.md</code>.</p>
-<h2 id="group-size-capacity-check">Group-size capacity check</h2>
-<p>A terrain screen on the staggered temporal schedule classifies warm
-aspects as slope &gt; 10% and aspect 135–270° (LMH 59), with caps of 0.4
-ha warm and 0.7 ha other. The 2,897 accepted entries cover 1,045 blocks
-and 1,494.0 ha of cut area, with a mean minimum group count of 2.39 and
-a maximum of 18. Terrain coverage is incomplete for 131 blocks at
-DEM/block edges, and 276 blocks have no warm-aspect area.</p>
-<p>This is a capacity check only. It does not draw group polygons,
-enforce a minimum group size, or model cohort growth.</p>
-<h2 id="schematic-group-layout">Schematic group layout</h2>
-<p>A 10 m cell prototype was built for the staggered temporal schedule.
-The full full group state now covers all 1,443 MDWR blocks:
-<strong>34,512 groups</strong>, <strong>2,797.5 ha</strong> and a
-maximum group area of 0.7 ha. Warm groups are capped at 0.4 ha. Of
-these, <strong>9,674 groups / 1,430.3 ha</strong> are assigned to cuts;
-24,838 groups remain standing.</p>
-<p>A group-level WS4 run carries every group as a separate block with
-<code>feature.yield.managed.total</code> and
-<code>feature.ba.managed.total</code>. It produces 0.533M m³ / 300
-years, 9,674 group cuts, final standing yield 1,274,641 m³, initial BA
-102,863 m² and final BA 255,737 m². The BA curve is a VRI 2025 per-BEC
-BA-volume-age fit, not a plantation BA model.</p>
-<p>Public group-state prototype:
-<code>http://10.232.253.210:8780/fhops/?run=gavin-mdwr-group</code>.</p>
-<p>The consolidated group state covers 2,797.5 ha of the 2,799.3 ha
-MDWR; the remaining 1.8 ha gap is spread across 22 blocks and is
-polygon-edge residue. The aligned group state produces 0.533M m³, versus
-0.594M m³ for the MDWR-only block screen: a ratio of 0.90, or 190 versus
-212 m³/ha. The remaining difference is full-group versus block-fraction
-accounting. The public group scenario now exposes the full 2,797.5 ha
-group-cohort state.</p>
-<p>The corrected cohort state inherits the accepted block-level BA gate;
-GWM 6 is a stand-level prerequisite, not a per-group test. It records
-19,587 accepted cohort entries, <strong>0.651M m³</strong> harvested,
-final standing volume <strong>1.168M m³</strong>, final BA
-<strong>190,708 m²</strong>, and a group/block ratio of
-<strong>1.10</strong> (233 versus 212 m³/ha). That is a
-model-reconciliation result, not a replacement for the block screen. The
-group result remains a prototype and does not replace the block policy
-screen.</p>
-<p>This is a schematic capacity/verification layer, not an operational
-layout. It does not enforce a minimum group size, model cohort growth,
-represent windthrow, or feed group-specific volume back into WS4. The
-next step is a spatially explicit cohort model.</p>
-<h2 id="files">Files</h2>
+<h2 id="public-files">Public files</h2>
 <ul>
-<li><code>AFRF_DECISION_PACK.md</code> — AFRF decision context.</li>
-<li><code>gavin-mdwr/</code> — public tactical-operational handoff,
-schedule, target report and KPI files.</li>
-<li><code>GAVIN_MDWR_SCENARIO.pdf</code> — this brief.</li>
-<li><code>AFRF_EARLY_MANAGEMENT_PLAN.md</code> — the Gavin + Knife
-planning brief.</li>
+<li><code>gavin-mdwr/</code> — legal-order block handoff.</li>
+<li><code>gavin-mdwr-group/</code> — legal-order group one-cut
+prototype.</li>
+<li><code>GAVIN_MDWR_DECISION.pdf</code> — block vs group decision
+brief.</li>
+<li>This brief: <code>GAVIN_MDWR_SCENARIO.pdf</code>.</li>
 </ul>
 <h2 id="decision-boundary">Decision boundary</h2>
-<p>This screen demonstrates the size and direction of the MDWR trade-off
-under the official fine-map classes and a corrected 40-year re-entry. It
-does not approve an AAC, a group-selection layout, or a legal
-habitat-class assignment. The next steps are to reconcile the adjusted
-Appendix 9 compartment map, review the 2007 legal order and current UWR
-boundary, and then decide whether the public screen can become a
-compliance-grade plan.</p>
+<p>The block screen remains public. The group screen is a diagnostic.
+Replacing the block screen requires a reviewed Appendix 9 map, a
+reviewed UWR boundary, frost-prone classification, full cohort dynamics,
+and a comparable target framework.</p>
 </body>
 </html>

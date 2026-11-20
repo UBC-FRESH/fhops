@@ -1,3 +1,10 @@
+# 2026-11-20 — Legal-order public result swap
+
+- Replaced public `gavin-mdwr` with the legal-order block screen: 4.179M m³ / 300 years, 9/37/15 targets, Low33/Moderate25/High20 and 45/40 m²/ha.
+- Replaced public `gavin-mdwr-group` with the legal-order group one-cut prototype: 0.522M m³, 3,954 assigned openings all ≥0.1 ha, final standing 1,288,483 m³, final BA 256,352 m².
+- Updated the decision brief and MDWR brief to the legal-order results; group remains diagnostic, block remains public.
+- Superseded the 4.154M/0.651M non-legal public numbers.
+
 # 2026-11-20 — Legal minimum-opening group layout
 
 - Merged assigned groups below 0.1 ha where possible, then converted isolated sub-0.1 groups to standing/excluded area.
