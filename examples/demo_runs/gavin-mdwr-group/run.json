@@ -12,10 +12,11 @@
     "tactical_summary": "tactical_summary.json"
   },
   "warnings": [
-    "Legal-order group one-cut prototype, not a policy decision.",
-    "No cohort re-entry or target framework."
+    "Group-cohort prototype, not a policy decision.",
+    "Block-level BA gate inherited; group BA is reported, not a per-group gate.",
+    "Full group area 2,797.5 ha of 2,799.3 ha MDWR."
   ],
-  "command": "WS4 Gavin MDWR legal-order group prototype",
+  "command": "WS4 Gavin MDWR group-cohort prototype",
   "scenario": "scenario.yaml",
   "solver": "ws4-simulate"
 }

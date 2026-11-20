@@ -13,9 +13,9 @@ is a diagnostic and does not replace it.
 |---|---:|---|---|
 | Full-estate legal-order block screen | **4.179M m³ / 300 yr** | 5,663.7 ha estate | public policy screen |
 | MDWR-only legal-order block screen | **0.619M m³ / 300 yr** | 2,799.3 ha MDWR | comparison baseline |
-| Legal-order group one-cut prototype | **0.522M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
+| Legal-order group cohort prototype | **0.630M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
 
-The group/block MDWR ratio is **0.84**. That is a material gap, not a geometry
+The group/block MDWR ratio is **1.02**. That is a material gap, not a geometry
 error: the 0.1 ha minimum opening removes assigned area that the block screen
 continues to cut.
 
@@ -38,18 +38,19 @@ ordering and 40 m²/ha screens are superseded.
 - 3,954 assigned openings, all **≥0.1 ha**;
 - 1,431.9 ha scheduled;
 - maximum opening 0.7 ha;
-- final standing volume **1,288,483 m³**;
-- initial BA **102,863 m²**; final BA **256,352 m²**.
+- 12,223 accepted cohort entries;
+- final standing volume **1,172,437 m³**;
+- initial BA **102,863 m²**; final BA **190,573 m²**.
 
 ## Why the block screen stays public
 
-1. The group model is a one-cut spatial prototype, not a 40-year cohort state.
+1. The group model is a legal-order cohort prototype, but frost-prone classification and target framework are missing.
 2. Frost-prone 0.1–0.3 ha classification is not implemented.
 3. The adjusted Appendix 9 compartment map has not been reconciled.
 4. The 2007 GAR/UWR spatial boundary has not been independently reviewed.
 5. The group run has no policy target framework comparable to the block
    screen’s 9/37/15 status.
-6. The group result is 0.84 of the MDWR block result on harvested volume.
+6. The group result is 1.02× the MDWR block result on harvested volume.
 
 ## Replacement gate
 

@@ -1,9 +1,14 @@
-# Gavin Lake MDWR legal-order group one-cut prototype
+# Gavin Lake MDWR legal-order group cohort prototype
 
-All assigned openings ≥0.1 ha; Low33/Moderate25/High20; 45/40 BA gate.
+This is a group-level diagnostic, not a policy scenario.
 
-Harvested: 522,409 m³.
-Final standing: 1,288,483 m³.
-Final BA: 256,352 m².
+34,512 groups on 1,443 blocks; 2,797.5 ha represented.
+9,674 assigned groups, 24,838 standing groups.
 
-Not a policy replacement; no cohort re-entry or target framework.
+Harvested volume: 630,124 m³ / 300 years.
+Final standing volume: 1,172,437 m³.
+Final BA: 190,573 m².
+
+Limits: schematic 10 m groups, no minimum group size, no
+windthrow, and a VRI cross-sectional BA fit. Not a replacement
+for the block-level policy screen.

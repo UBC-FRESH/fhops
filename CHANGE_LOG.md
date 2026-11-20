@@ -1,3 +1,10 @@
+# 2026-11-20 — Legal-order group cohort and public swap
+
+- Built the legal-order group cohort state: 25,777 groups, 3,954 assigned openings all ≥0.1 ha, 12,223 accepted cohort entries.
+- Legal group cohort: 0.630M m³ harvested, final standing 1,172,437 m³, final BA 190,573 m²; group/block MDWR ratio 1.02.
+- Replaced the public group scenario with the legal cohort state; block legal screen remains public.
+- Frost-prone classification and group target framework remain unresolved.
+
 # 2026-11-20 — Legal-order public result swap
 
 - Replaced public `gavin-mdwr` with the legal-order block screen: 4.179M m³ / 300 years, 9/37/15 targets, Low33/Moderate25/High20 and 45/40 m²/ha.

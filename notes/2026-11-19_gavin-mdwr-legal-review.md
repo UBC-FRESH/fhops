@@ -350,9 +350,10 @@ minimum.
 
 - 25,777 groups / 2,797.5 ha;
 - 3,954 assigned groups / 1,431.9 ha;
-- legal group one-cut result **0.522M m³**;
-- final standing yield **1,288,483 m³**;
-- final BA **256,352 m²**;
+- legal group one-cut result 0.522M m³;
+- legal group cohort result **0.630M m³**;
+- final standing yield **1,172,437 m³**;
+- final BA **190,573 m²**;
 - **all assigned openings are ≥0.1 ha**.
 
 The group layout now meets the 0.1 ha opening minimum for assigned openings.

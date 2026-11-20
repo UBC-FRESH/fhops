@@ -1,9 +1,11 @@
 {
-  "groups": "planning/2026-11-20_gavin-mdwr_groups_all_legal.geojson",
-  "schedule": "ws4/runtime/gavin-mdwr-group-schedule-legal.csv",
-  "run": "ws4/runtime/gavin-mdwr-group-sim-legal",
+  "groups": "planning/2026-11-19_gavin-mdwr_groups_all.geojson",
+  "cohort_cuts": "planning/2026-11-20_gavin-mdwr_group_cohort_cuts.csv",
+  "cohort_state": "planning/2026-11-20_gavin-mdwr_group_cohort_state.json",
+  "ba_fit": "planning/2026-11-19_gavin-mdwr_ba_fit.json",
   "caveats": [
-    "One cut per assigned group; no 40-year cohort state.",
-    "Minimum opening enforced; frost-prone class not applied."
+    "Schematic 10 m groups; no minimum group size.",
+    "VRI cross-sectional BA fit; no plantation BA model.",
+    "Accepted block entries inherit the stand-level BA gate."
   ]
 }
