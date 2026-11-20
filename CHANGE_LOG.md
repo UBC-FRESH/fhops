@@ -1,3 +1,8 @@
+# 2026-11-20 — Gavin MDWR compliance status matrix
+
+- Added the compliance status matrix to the decision brief: no-clearcut, Table 30, stand-level BA gate, max group size, cohorts, full area, and unresolved minimum size, thinning, Appendix 9, GAR/UWR and target framework.
+- Kept the block policy screen public and the full group cohort as a diagnostic.
+
 # 2026-11-20 — Publish full group cohort scenario
 
 - Replaced the public `gavin-mdwr-group` scenario with the full 34,512-group cohort state.

@@ -44,6 +44,23 @@ group-cohort state.
 6. The group state is 1.8 ha short of the MDWR and uses a VRI cross-sectional
    BA fit, not a plantation BA model.
 
+## Compliance status matrix
+
+| Requirement | Current state |
+| --- | --- |
+| No clearcut in MDWR | retained as a stricter policy choice; FSP Table 7 allows clearcut on fresh/wetter sites |
+| Table 30 pass intensity | implemented in the block and group schedules |
+| 40 m²/ha stand-level BA | inherited from accepted block entries; group BA is reported, not a per-group gate |
+| 0.4 ha warm / 0.7 ha other maximum group size | enforced in the consolidated group geometry |
+| 3–5 cohorts | represented in the cohort state |
+| Minimum group size | not implemented |
+| Preparatory thinning | not implemented |
+| Adjusted Appendix 9 compartment map | not reconciled |
+| 2007 GAR order / current UWR boundary | not independently reviewed |
+| Group target framework | not implemented |
+| Full group area | 2,797.5 ha of 2,799.3 ha |
+| Public group scenario | full 34,512-group cohort state, diagnostic only |
+
 ## Replacement gate
 
 The group state can replace the block-level public result only after all of the
