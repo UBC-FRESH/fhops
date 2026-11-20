@@ -411,3 +411,19 @@ The per-block phase search was repeated with a hard 300-year horizon. It reaches
 **30/30 periods inside the interim 10,317–30,951 m³ band**. Event volumes are
 held fixed; this is a cut-year scheduling screen, not a regrown cohort result.
 The public group scenario now uses this schedule.
+
+## Regrown horizon phase
+
+Regrowing the horizon-aware phase cuts at their shifted ages gives **0.680M m³**,
+mean 22,660 m³, min **10,075 m³**, max **34,661 m³**, with **22/30** periods
+inside the interim band. The fixed-volume 30/30 result was invalid. The public
+group scenario now uses the regrown phase result; the legal block screen remains
+the policy result.
+
+## Regrown horizon phase
+
+Regrowing the horizon-aware phase cuts at their shifted ages gives **0.680M m³**,
+mean 22,660 m³, min **10,075 m³**, max **34,661 m³**, with **22/30** periods
+inside the interim band. The fixed-volume 30/30 result was invalid. The public
+group scenario now uses the regrown phase result; the legal block screen remains
+the policy result.
