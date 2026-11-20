@@ -64,6 +64,74 @@ def sample(slope: np.ndarray, aspect: np.ndarray, transform: rasterio.Affine, x:
     return float(s), float(a)
 
 
+def _split_to_cap(poly, cap_ha: float) -> list[object]:
+    """Split a polygon into pieces no larger than the cap."""
+    if poly.is_empty:
+        return []
+    if poly.area / 10000.0 <= cap_ha + 1e-9:
+        return [poly]
+    minx, miny, maxx, maxy = poly.bounds
+    if maxx - minx >= maxy - miny:
+        cut = (minx + maxx) / 2.0
+        pieces = [
+            poly.intersection(box(minx, miny, cut, maxy)),
+            poly.intersection(box(cut, miny, maxx, maxy)),
+        ]
+    else:
+        cut = (miny + maxy) / 2.0
+        pieces = [
+            poly.intersection(box(minx, miny, maxx, cut)),
+            poly.intersection(box(minx, cut, maxx, maxy)),
+        ]
+    output: list[object] = []
+    for piece in pieces:
+        if piece.is_empty or piece.area <= 1.0:
+            continue
+        if piece.geom_type == "Polygon":
+            output.extend(_split_to_cap(piece, cap_ha))
+        elif piece.geom_type == "MultiPolygon":
+            for part in piece.geoms:
+                output.extend(_split_to_cap(part, cap_ha))
+    return output
+
+
+def fill_gaps(
+    geom,
+    groups: list[dict[str, object]],
+    slope: np.ndarray,
+    aspect: np.ndarray,
+    transform: rasterio.Affine,
+) -> list[dict[str, object]]:
+    """Add capped edge groups for area not covered by the 10 m grid."""
+    covered = unary_union([group["geometry"] for group in groups])
+    remaining = geom.difference(covered)
+    if remaining.is_empty:
+        return groups
+    polygons = list(remaining.geoms) if remaining.geom_type == "MultiPolygon" else [remaining]
+    for polygon in polygons:
+        if polygon.is_empty or polygon.area <= 1.0:
+            continue
+        center = polygon.centroid
+        values = sample(slope, aspect, transform, center.x, center.y)
+        warm = bool(
+            values
+            and values[0] > WARM_SLOPE
+            and WARM_ASPECT[0] <= values[1] <= WARM_ASPECT[1]
+        )
+        cap = WARM_CAP_HA if warm else OTHER_CAP_HA
+        for piece in _split_to_cap(polygon, cap):
+            groups.append(
+                {
+                    "class": "warm" if warm else "other",
+                    "area_ha": round(piece.area / 10000.0, 6),
+                    "cells": 0,
+                    "geometry": piece,
+                    "edge": True,
+                }
+            )
+    return groups
+
+
 def fallback_groups(geom) -> list[dict[str, object]]:
     """Create coarse other-aspect groups for blocks outside the DEM grid."""
     side = (OTHER_CAP_HA * 10000.0) ** 0.5
@@ -193,6 +261,7 @@ def main() -> None:
         groups = build_groups(block.geometry, slope, aspect, transform)
         if not groups:
             groups = fallback_groups(block.geometry)
+        groups = fill_gaps(block.geometry, groups, slope, aspect, transform)
         for local_index, group in enumerate(groups):
             group["group_id"] = block_id * 100000 + local_index
             group["group_index"] = local_index
@@ -233,7 +302,7 @@ def main() -> None:
             )
             continue
         block_area = block.geometry.area / 10000.0
-        remaining = list(groups)
+        remaining = [group for group in groups if not group.get("edge", False)]
         for entry in entries.itertuples(index=False):
             target = block_area * float(entry.pass_fraction)
             chosen: list[dict[str, object]] = []

@@ -1,3 +1,11 @@
+# 2026-11-20 — Gavin MDWR full-area group state
+
+- Filled block-edge gaps with capped edge groups: the group state now covers 2,797.0 ha of 2,799.3 ha MDWR.
+- Full state: 49,550 groups, 9,674 assigned groups, 39,876 standing groups, 9,674 cuts.
+- Harvested volume remains 0.533M m³; final standing yield 1,274,600 m³; initial BA 102,859 m²; final BA 255,732 m².
+- Group/block ratio remains 0.90; per-ha 190 versus 212 m³/ha.
+- Public group scenario still exposes the 2,586.8 ha cut/standing subset; full state is in the instance matrix.
+
 # 2026-11-19 — Align Gavin group schedule with block entries
 
 - Removed extra cohort-cycle cuts from the group matrix. Each assigned group is now cut once at its accepted temporal block entry, matching the block schedule.
