@@ -53,7 +53,7 @@ group-cohort state.
 | Stand-level BA | current gate uses 40 m²/ha for all BEC; legal order requires **45 m²/ha in ICH** and 40 m²/ha elsewhere |
 | Opening size | maximum 0.4/0.7 implemented; **minimum 0.1 ha and frost-prone 0.1–0.3 ha are not implemented** |
 | 3–5 cohorts | represented in the cohort state |
-| Minimum group size | not implemented |
+| Minimum group size | assigned openings now ≥0.1 ha; frost-prone 0.1–0.3 ha not classified |
 | Preparatory thinning | not implemented |
 | Adjusted Appendix 9 compartment map | not reconciled |
 | 2007 GAR order / current UWR boundary | not independently reviewed |
@@ -83,11 +83,13 @@ A legal-order block sensitivity was run:
 - full estate: **4.179M m³ / 300 years**, targets **9/37/15**;
 - MDWR-only: **0.619M m³**.
 
-A first legal-order group rebuild was run with Low33/Moderate25/High20 and the
-45/40 BA gate. It gives **0.530M m³**, final standing yield **1,290,057 m³**,
-and final BA **256,412 m²** on 2,797.5 ha. However, **436 assigned groups / 19.9
-ha remain below the 0.1 ha minimum opening**, so the group result is not yet a
-legal-order implementation.
+A legal-order group rebuild was run with Low33/Moderate25/High20 and the 45/40
+BA gate. After merging and excluding isolated fragments that could not reach
+0.1 ha within the caps, the group result is **0.522M m³**, final standing yield
+**1,288,483 m³**, and final BA **256,352 m²** on 2,797.5 ha. All **3,954
+assigned openings are ≥0.1 ha**, with 1,431.9 ha scheduled. Frost-prone
+0.1–0.3 ha classification and a full 40-year cohort target framework remain
+unresolved.
 
 ## Replacement gate
 

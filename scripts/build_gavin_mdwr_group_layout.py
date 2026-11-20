@@ -273,6 +273,12 @@ def merge_small_assigned(groups: list[dict[str, object]], block_geometry) -> lis
                 )
             groups.remove(donor)
             changed = True
+    # No legal opening can remain below 0.1 ha. If a small assigned group cannot
+    # be merged within the cap, convert it to standing/excluded area.
+    for group in groups:
+        if group.get("assigned") and float(group["area_ha"]) < 0.1 - 1e-9:
+            group["assigned"] = False
+            group["entry_offset"] = None
     return groups
 
 

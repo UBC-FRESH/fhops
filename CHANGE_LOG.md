@@ -1,3 +1,11 @@
+# 2026-11-20 — Legal minimum-opening group layout
+
+- Merged assigned groups below 0.1 ha where possible, then converted isolated sub-0.1 groups to standing/excluded area.
+- Legal group layout: 25,777 groups, 3,954 assigned openings all ≥0.1 ha, 1,431.9 ha scheduled, 2,797.5 ha total.
+- Legal group one-cut result: 0.522M m³, final standing 1,288,483 m³, final BA 256,352 m².
+- Frost-prone 0.1–0.3 ha classification and a cohort target framework remain unresolved.
+- Block policy screen remains public; group remains a prototype.
+
 # 2026-11-20 — Legal-order group rebuild and minimum-opening residue
 
 - Rebuilt the group layout with Low33/Moderate25/High20, the legal 45/40 BA gate, and a small-group merge toward the 0.1 ha minimum.

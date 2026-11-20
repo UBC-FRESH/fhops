@@ -104,10 +104,10 @@ instead sets **Low 33 / Moderate 25 / High 20**, **45 m²/ha in ICH and 40
 elsewhere**, and a **0.1 ha minimum opening** (0.1–0.3 ha on frost-prone
 sites). The current public screen is therefore a scenario screen, not a
 legal-order implementation. A legal-order block sensitivity gives 4.179M m³
-and 9/37/15 targets (MDWR-only 0.619M m³). A first legal-order group rebuild
-gives 0.530M m³, but 436 assigned groups / 19.9 ha remain below the 0.1 ha
-minimum opening. The group layout is not yet legal; minimum-size rebuilding is
-still required.
+and 9/37/15 targets (MDWR-only 0.619M m³). A legal-order group rebuild
+gives 0.522M m³; all 3,954 assigned openings are ≥0.1 ha, with 1,431.9 ha
+scheduled. Frost-prone 0.1–0.3 ha classification and a full cohort target
+framework remain unresolved.
 
 ## Limits
 

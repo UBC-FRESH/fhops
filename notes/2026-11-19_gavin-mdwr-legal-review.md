@@ -348,13 +348,13 @@ A legal-order group layout was built with Low 33 / Moderate 25 / High 20 and
 the 45/40 BA gate. A small-group merge pulled assigned groups toward the 0.1 ha
 minimum.
 
-- 25,222 groups / 2,797.5 ha;
-- 4,390 assigned groups / 1,451.8 ha;
-- legal group one-cut result **0.530M m³**;
-- final standing yield **1,290,057 m³**;
-- final BA **256,412 m²**;
-- **436 assigned groups / 19.9 ha remain below 0.1 ha**.
+- 25,777 groups / 2,797.5 ha;
+- 3,954 assigned groups / 1,431.9 ha;
+- legal group one-cut result **0.522M m³**;
+- final standing yield **1,288,483 m³**;
+- final BA **256,352 m²**;
+- **all assigned openings are ≥0.1 ha**.
 
-The group layout is therefore still not a legal-order implementation. The
-remaining sub-0.1 ha groups are isolated edge/fragment cases that cannot be
-merged without exceeding the 0.4/0.7 ha caps.
+The group layout now meets the 0.1 ha opening minimum for assigned openings.
+Frost-prone 0.1–0.3 ha classification and a full 40-year cohort target
+framework remain unresolved; the group result is still a prototype.
