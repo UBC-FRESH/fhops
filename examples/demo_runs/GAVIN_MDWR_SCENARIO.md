@@ -9,7 +9,7 @@ determinations**
 |---|---:|---:|
 | Full-estate block screen | **4.179M m³ / 300 years** | **9/37/15** |
 | MDWR-only block screen | **0.619M m³** | not comparable |
-| Legal-order group cohort, regrown phase | **0.680M m³** | no target framework |
+| Legal-order group cohort, regrown phase | **0.679M m³** | no target framework |
 
 The block screen is the public policy result. The group screen is a spatial
 diagnostic and does not replace it.
@@ -57,17 +57,17 @@ The legal-order group layout:
 
 | Metric | Value |
 |---|---:|
-| Harvested volume | **0.680M m³** |
+| Harvested volume | **0.679M m³** |
 | Mean period | 21,004 m³ |
-| Min period | 10,075 m³ |
-| Max period | 34,661 m³ |
+| Min period | 10,204 m³ |
+| Max period | 30,937 m³ |
 | Final standing volume | **1,141,775 m³** |
 | Initial BA | 102,863 m² |
 | Final BA | 184,534 m² |
 
 Frost-prone 0.1–0.3 ha classification and a group target framework are not
 implemented. The group result remains a prototype; the group/block MDWR ratio
-is about 1.10; 22/30 periods are inside the interim band.
+is about 1.10; 26/30 periods are inside the interim band.
 
 ## Limits
 

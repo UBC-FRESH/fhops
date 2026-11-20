@@ -13,7 +13,7 @@ is a diagnostic and does not replace it.
 |---|---:|---|---|
 | Full-estate legal-order block screen | **4.179M m³ / 300 yr** | 5,663.7 ha estate | public policy screen |
 | MDWR-only legal-order block screen | **0.619M m³ / 300 yr** | 2,799.3 ha MDWR | comparison baseline |
-| Legal-order group cohort, regrown phase | **0.680M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
+| Legal-order group cohort, regrown phase | **0.679M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
 
 The group/block MDWR ratio is **1.10**. That is a material gap, not a geometry
 error: the 0.1 ha minimum opening removes assigned area that the block screen
@@ -54,7 +54,7 @@ the 40-year schedule period range (4,180–62,626 m³) fails the interim even-fl
 band.
 
 A horizon-aware per-block phase schedule was regrown at the shifted ages. It
-produces **10,075–34,661 m³** and puts **22 of 30** periods inside the interim
+produces **10,204–30,937 m³** and puts **26 of 30** periods inside the interim
 band. The fixed-volume 30/30 result was a scheduling artefact, not a valid
 regrown cohort result.
 

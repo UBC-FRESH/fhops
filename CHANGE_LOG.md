@@ -1,3 +1,10 @@
+# 2026-11-20 — Regrown optimized group phase
+
+- Re-optimised per-block phases with first-cut volumes regrown at shifted ages.
+- 0.679M m³, mean 22,639 m³, min 10,204 m³, max 30,937 m³, final standing 1,141,775 m³, final BA 184,534 m².
+- 26/30 periods inside the interim band; min is 113 m³ below the floor, max is inside the ceiling.
+- Public group scenario updated; block legal screen remains public.
+
 # 2026-11-20 — Regrown group phase result
 
 - Re-grew the horizon-aware phase cuts at their shifted ages.

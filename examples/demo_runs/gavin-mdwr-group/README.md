@@ -5,7 +5,7 @@ This is a group-level diagnostic, not a policy scenario.
 34,512 groups on 1,443 blocks; 2,797.5 ha represented.
 9,674 assigned groups, 24,838 standing groups.
 
-Harvested volume: 679,806 m³ / 300 years.
+Harvested volume: 679,174 m³ / 300 years.
 Final standing volume: 1,141,775 m³.
 Final BA: 184,534 m².
 
