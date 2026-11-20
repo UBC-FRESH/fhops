@@ -1,3 +1,10 @@
+# 2026-11-20 — Gavin MDWR block vs group decision brief
+
+- Added `GAVIN_MDWR_DECISION.pdf`: block-level screen remains public; complete group state remains a diagnostic prototype.
+- Recorded the 0.90 group/block MDWR ratio, 1.8 ha group-area residue, legal/constraint gaps, and the replacement gate.
+- Added the decision brief to the public briefs strip and Gavin card.
+- No model or scenario replacement.
+
 # 2026-11-20 — Consolidated full-area group state
 
 - Consolidated unassigned groups by aspect class and split them back to the 0.4/0.7 ha caps: 49,550 → 34,512 groups.
