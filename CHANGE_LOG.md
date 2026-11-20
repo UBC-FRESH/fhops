@@ -1,3 +1,10 @@
+# 2026-11-20 — Gavin MDWR stagger comparison
+
+- Tested an 80-year first-entry stagger against the public 40-year stagger.
+- 80-year: 0.668M m³, mean 22,257 m³, min 4,800 m³, max 62,932 m³.
+- 40-year: 0.658M m³, mean 21,940 m³, min 4,180 m³, max 62,626 m³.
+- Neither meets the interim even-flow band; the 40-year public scenario remains.
+
 # 2026-11-20 — Legal-order group 40-year entry stagger
 
 - Staggered legal-order first entries by 0–40 years and rebuilt the group layout/matrix/cohort.

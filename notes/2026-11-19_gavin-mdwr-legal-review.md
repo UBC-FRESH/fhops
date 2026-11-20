@@ -375,3 +375,16 @@ produces:
 The stagger reduces the maximum period from 154,683 to 62,626 m³, but still
 does not meet the interim 10,317–30,951 m³ even-flow band. The group/block MDWR
 ratio is 1.06.
+
+## 80-year stagger trial
+
+An 80-year first-entry stagger was tested against the 40-year stagger.
+
+| Stagger | Harvest | Mean period | Min period | Max period |
+| --- | ---: | ---: | ---: | ---: |
+| 40 years | 0.658M m³ | 21,940 m³ | 4,180 m³ | 62,626 m³ |
+| 80 years | 0.668M m³ | 22,257 m³ | 4,800 m³ | 62,932 m³ |
+
+The 80-year stagger slightly improves the minimum but not the maximum and is not
+a material even-flow gain. The public group scenario remains the 40-year stagger.
+Neither variant meets the interim 10,317–30,951 m³ band.
