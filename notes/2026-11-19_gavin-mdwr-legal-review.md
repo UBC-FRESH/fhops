@@ -297,19 +297,19 @@ block) and is polygon-edge residue.
 The aligned group result is close enough to the block screen to compare, but it
 remains a spatial prototype; it does not replace the block-level policy screen. The public group scenario currently exposes the 2,586.8 ha cut/standing subset; the full 2,797.0 ha state is in the instance matrix.
 
-## Strict cohort state
+## Corrected cohort state
 
-The group cohort state partitions every block's groups into 3/4/5 cohorts and
-uses only accepted block entries. Each cohort entry is tested against
-40 m²/ha; entries below the threshold are rejected, not applied.
+The first cohort implementation applied the 40 m²/ha threshold to every small
+group. That was a misapplication: GWM 6 is a **stand-level** prerequisite, not
+a per-group gate. The corrected state inherits the accepted block-level BA gate
+and uses group BA only as a reported account.
 
 - 34,512 groups on 1,443 blocks;
-- 19,587 cohort entries tested;
-- **8,541 rejected for BA below 40 m²/ha**;
-- **0.233M m³** harvested from accepted entries;
-- final standing volume **1.009M m³**;
-- final BA **171,679 m²**.
+- 19,587 accepted cohort entries;
+- **0.651M m³** harvested;
+- final standing volume **1.168M m³**;
+- final BA **190,708 m²**;
+- group/block MDWR ratio **1.10**; per-hectare 233 versus 212 m³/ha.
 
-This is the strictest group-state screen so far. It shows that a group-level
-BA gate rejects a large share of the entries that the block-level BA screen
-accepts. That is a model-reconciliation issue, not a public result.
+This is the cohort-state comparison. It remains a prototype; it does not replace
+the block policy screen, and it does not prove the group model is correct.

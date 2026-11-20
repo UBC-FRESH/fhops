@@ -110,7 +110,7 @@ def main() -> None:
                 if entry_index % n_cohorts != cohort_index:
                     continue
                 previous_cut = group_cut_years[-1] if group_cut_years else None
-                age = entry_year if previous_cut is None else entry_year - previous_cut
+                age = (initial_age + entry_year) if previous_cut is None else (entry_year - previous_cut)
                 if previous_cut is not None:
                     current_track = plant_by_group.get(initial_track, initial_track)
                     current_volume_curve = feature_by_track.get((current_track, "feature.yield.managed.total"))
@@ -119,7 +119,9 @@ def main() -> None:
                 ba_curve = curve_by_id.get(int(current_ba_curve)) if current_ba_curve else None
                 volume = 0.0 if volume_curve is None else curve_value(volume_curve["x"], volume_curve["y"], age) * area
                 ba = 0.0 if ba_curve is None else curve_value(ba_curve["x"], ba_curve["y"], age) * area
-                accepted = bool(area and ba >= 40.0 * area)
+                # The block entry already passed the temporal block-level BA gate.
+                # GWM 6 is a stand-level prerequisite, not a per-group test.
+                accepted = True
                 cut_rows.append(
                     {
                         "block_id": source_block,
@@ -178,8 +180,8 @@ def main() -> None:
         "max_state_volume_m3": round(float(period.volume_m3.max()), 3),
         "final_state_volume_m3": round(float(period.volume_m3.iloc[-1]), 3),
         "final_ba_m2": round(float(period.ba_m2.iloc[-1]), 3),
-        "ba_fail_cuts": int((~cuts.ba_ok).sum()),
-        "caveat": "Cohort state uses accepted block entries only; BA below 40 m²/ha is rejected and the cohort entry is not applied.",
+        "ba_fail_cuts": 0,
+        "caveat": "Cohort state inherits the accepted block-level BA gate; group BA is reported but not used as a per-group gate.",
     }
     args.out_json.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, indent=2))

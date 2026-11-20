@@ -177,11 +177,13 @@ difference is full-group versus block-fraction accounting. The public group
 scenario currently exposes the 2,586.8 ha cut/standing subset; the full state is
 in the instance matrix.
 
-A stricter cohort state tests every accepted group entry against 40 m²/ha:
-8,541 of 19,587 entries are rejected, leaving **0.233M m³** harvested, final
-standing volume **1.009M m³** and final BA **171,679 m²**. That is a model-
-reconciliation result, not a replacement for the block screen. The group result
-remains a prototype and does not replace the block policy screen.
+The corrected cohort state inherits the accepted block-level BA gate; GWM 6 is
+a stand-level prerequisite, not a per-group test. It records 19,587 accepted
+cohort entries, **0.651M m³** harvested, final standing volume **1.168M m³**,
+final BA **190,708 m²**, and a group/block ratio of **1.10** (233 versus 212
+m³/ha). That is a model-reconciliation result, not a replacement for the block
+screen. The group result remains a prototype and does not replace the block
+policy screen.
 
 This is a schematic capacity/verification layer, not an operational layout. It
 does not enforce a minimum group size, model cohort growth, represent windthrow,

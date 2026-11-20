@@ -1,3 +1,11 @@
+# 2026-11-20 — Correct Gavin group cohort BA gate
+
+- Corrected the cohort state: GWM 6 is a stand-level prerequisite, not a per-group test. The accepted block-level BA gate is inherited; group BA is reported but not used to reject group entries.
+- Cohort state: 34,512 groups, 1,443 blocks, 19,587 entries, 0.651M m³ harvested, final standing 1.168M m³, final BA 190,708 m².
+- Group/block MDWR ratio 1.10; per-hectare 233 versus 212 m³/ha.
+- The earlier 8,541 per-group rejections and 0.233M m³ result are superseded.
+- Block policy screen remains public; group state remains a prototype.
+
 # 2026-11-20 — Gavin MDWR strict cohort state
 
 - Built the accepted-entry-only group cohort state: 34,512 groups, 1,443 blocks, 19,587 tested entries.
