@@ -83,10 +83,11 @@ A legal-order block sensitivity was run:
 - full estate: **4.179M m³ / 300 years**, targets **9/37/15**;
 - MDWR-only: **0.619M m³**.
 
-The group model cannot yet be a legal-order implementation: **6,257 of 9,674
-assigned groups are smaller than the 0.1 ha minimum opening**, covering 133.1
-ha. The group layout and cohort schedule need a minimum-size rebuild before a
-legal group result exists.
+A first legal-order group rebuild was run with Low33/Moderate25/High20 and the
+45/40 BA gate. It gives **0.530M m³**, final standing yield **1,290,057 m³**,
+and final BA **256,412 m²** on 2,797.5 ha. However, **436 assigned groups / 19.9
+ha remain below the 0.1 ha minimum opening**, so the group result is not yet a
+legal-order implementation.
 
 ## Replacement gate
 

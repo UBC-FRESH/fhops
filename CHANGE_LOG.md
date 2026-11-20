@@ -1,3 +1,10 @@
+# 2026-11-20 — Legal-order group rebuild and minimum-opening residue
+
+- Rebuilt the group layout with Low33/Moderate25/High20, the legal 45/40 BA gate, and a small-group merge toward the 0.1 ha minimum.
+- Legal group one-cut result: 0.530M m³, final standing 1,290,057 m³, final BA 256,412 m², 2,797.5 ha.
+- 436 assigned groups / 19.9 ha remain below 0.1 ha after the merge; the group layout is not yet legal.
+- Updated the decision and MDWR briefs; no public scenario replacement.
+
 # 2026-11-20 — Legal-order block sensitivity and minimum-opening gap
 
 - Ran a legal-order block sensitivity with 45/40 m²/ha and Low33/Moderate25/High20: 4.179M m³ / 300 years, 9/37/15 targets; MDWR-only 0.619M m³.

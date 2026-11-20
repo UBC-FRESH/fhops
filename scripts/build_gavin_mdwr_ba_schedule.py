@@ -29,6 +29,7 @@ import pandas as pd
 
 INSTANCE = Path("/srv/shared-data/gep/ws4/femic/external/femic-afrf-gavinlake-instance")
 PASS_FRACTION = {"High": 0.33, "Moderate": 0.25, "Low": 0.20}
+PASS_FRACTION_LEGAL = {"High": 0.20, "Moderate": 0.25, "Low": 0.33}
 MIN_BA = 40.0
 FIRST_YEAR = 2026
 HORIZON = 300
@@ -101,6 +102,11 @@ def main() -> None:
         help="Spread first entries by up to this many years using the block id.",
     )
     parser.add_argument(
+        "--legal",
+        action="store_true",
+        help="Use the 2007 GAR 45/40 BA thresholds and Low33/Mod25/High20 fractions.",
+    )
+    parser.add_argument(
         "--out-manifest",
         type=Path,
         default=INSTANCE / "planning" / "2026-11-19_gavin-mdwr_ba_ledger.json",
@@ -132,8 +138,15 @@ def main() -> None:
         if block_id not in first_entry:
             continue
         block_ba = ba.loc[block_id]
-        status = str(block_ba["ba_status"])
         initial_ba = float(block_ba["ba_m2_ha"]) if pd.notna(block_ba["ba_m2_ha"]) else None
+        bec = str(habitat.loc[block_id, "bec"]) if block_id in habitat.index else "SBSdw1"
+        threshold = 45.0 if (args.legal and bec.startswith("ICH")) else 40.0
+        if block_ba["coverage"] < 0.5 or initial_ba is None:
+            status = "unknown"
+        elif initial_ba >= threshold:
+            status = "pass"
+        else:
+            status = "hold"
         initial_age = float(row.age)
         track_id = int(row.track_id)
         if track_id not in curve_cache:
@@ -141,7 +154,7 @@ def main() -> None:
         curve = curve_cache[track_id]
         habitat_row = habitat.loc[block_id] if block_id in habitat.index else None
         model_class = str(habitat_row["model_class"]) if habitat_row is not None else "Low"
-        fraction = PASS_FRACTION.get(model_class, 0.20)
+        fraction = (PASS_FRACTION_LEGAL if args.legal else PASS_FRACTION).get(model_class, 0.20)
 
         ledger = {
             "block_id": block_id,
@@ -179,7 +192,7 @@ def main() -> None:
                 candidate += 1
                 continue
             ba_pre = current_ba * (curve_at_entry / curve_at_current)
-            if ba_pre + 1e-9 < MIN_BA:
+            if ba_pre + 1e-9 < threshold:
                 ledger["deferred_attempts"] += 1
                 candidate += 1
                 continue
@@ -233,8 +246,10 @@ def main() -> None:
         "schedule": str(args.schedule),
         "ba_table": str(args.ba_table),
         "habitat_table": str(args.habitat_table),
-        "gate_m2_ha": MIN_BA,
-        "pass_fraction": PASS_FRACTION,
+        "gate_m2_ha": 45.0 if args.legal else MIN_BA,
+        "ich_gate_m2_ha": 45.0 if args.legal else MIN_BA,
+        "pass_fraction": PASS_FRACTION_LEGAL if args.legal else PASS_FRACTION,
+        "legal_order": bool(args.legal),
         "horizon_years": HORIZON,
         "stagger_years": args.stagger,
         "mdwr_blocks": int(len(mdwr_blocks)),

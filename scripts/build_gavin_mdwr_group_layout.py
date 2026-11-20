@@ -33,7 +33,7 @@ WARM_ASPECT = (135.0, 270.0)
 WARM_SLOPE = 10.0
 CELL_M = 10.0
 CELL_HA = CELL_M * CELL_M / 10000.0
-PASS_FRACTION = {"High": 0.33, "Moderate": 0.25, "Low": 0.20}
+PASS_FRACTION = {"High": 0.20, "Moderate": 0.25, "Low": 0.33}
 
 
 def terrain(dem_path: Path) -> tuple[np.ndarray, np.ndarray, rasterio.Affine]:
@@ -238,6 +238,44 @@ def build_groups(geom, slope: np.ndarray, aspect: np.ndarray, transform: rasteri
     return groups
 
 
+def merge_small_assigned(groups: list[dict[str, object]], block_geometry) -> list[dict[str, object]]:
+    """Merge assigned groups below 0.1 ha into same-class neighbours within cap."""
+    changed = True
+    while changed:
+        changed = False
+        small = [
+            group for group in groups
+            if group.get("assigned") and float(group["area_ha"]) < 0.1 - 1e-9
+        ]
+        for target in small:
+            if target not in groups:
+                continue
+            cap = WARM_CAP_HA if target["class"] == "warm" else OTHER_CAP_HA
+            candidates = [
+                group for group in groups
+                if group is not target
+                and group["class"] == target["class"]
+                and float(group["area_ha"]) + float(target["area_ha"]) <= cap + 1e-9
+            ]
+            if not candidates:
+                continue
+            donor = min(candidates, key=lambda group: target["geometry"].distance(group["geometry"]))
+            merged = unary_union([target["geometry"], donor["geometry"]]).intersection(block_geometry)
+            if merged.is_empty or merged.area / 10000.0 > cap + 1e-9:
+                continue
+            target["geometry"] = merged
+            target["area_ha"] = round(merged.area / 10000.0, 6)
+            target["assigned"] = True
+            if donor.get("assigned") and donor.get("entry_offset") is not None:
+                target["entry_offset"] = min(
+                    int(target["entry_offset"]) if target.get("entry_offset") is not None else 10**9,
+                    int(donor["entry_offset"]),
+                )
+            groups.remove(donor)
+            changed = True
+    return groups
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dem", type=Path, default=INSTANCE / "data" / "lidar" / "gavin_2024" / "dem_5m.tif")
@@ -286,6 +324,7 @@ def main() -> None:
                     group["assigned"] = True
                     group["entry_offset"] = int(entry.offset)
                     total += float(group["area_ha"])
+        groups = merge_small_assigned(groups, block.geometry)
         assigned = [group for group in groups if group.get("assigned", False)]
         unassigned = [group for group in groups if not group.get("assigned", False)]
         consolidated: list[dict[str, object]] = []
