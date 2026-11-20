@@ -1,12 +1,11 @@
 {
-  "matrix": "ws4/runtime/gavin-mdwr-group-matrix-ba",
-  "source_run": "ws4/runtime/gavin-mdwr-group-sim-ba",
-  "schedule": "ws4/runtime/gavin-mdwr-group-schedule-ba.csv",
   "groups": "planning/2026-11-19_gavin-mdwr_groups_all.geojson",
+  "cohort_cuts": "planning/2026-11-20_gavin-mdwr_group_cohort_cuts.csv",
+  "cohort_state": "planning/2026-11-20_gavin-mdwr_group_cohort_state.json",
   "ba_fit": "planning/2026-11-19_gavin-mdwr_ba_fit.json",
   "caveats": [
-    "Schematic group state; no minimum group size.",
+    "Schematic 10 m groups; no minimum group size.",
     "VRI cross-sectional BA fit; no plantation BA model.",
-    "Not comparable to the full-estate block-level 4.154M m3 screen."
+    "Accepted block entries inherit the stand-level BA gate."
   ]
 }

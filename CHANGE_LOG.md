@@ -1,3 +1,10 @@
+# 2026-11-20 — Publish full group cohort scenario
+
+- Replaced the public `gavin-mdwr-group` scenario with the full 34,512-group cohort state.
+- Public group result: 0.651M m³ harvested, final standing 1.168M m³, final BA 190,708 m², 2,797.5 ha represented.
+- Group cohort inherits the accepted block-level BA gate; group BA is reported, not a per-group gate.
+- The block-level 4.154M m³ screen remains the public policy result.
+
 # 2026-11-20 — Correct Gavin group cohort BA gate
 
 - Corrected the cohort state: GWM 6 is a stand-level prerequisite, not a per-group test. The accepted block-level BA gate is inherited; group BA is reported but not used to reject group entries.

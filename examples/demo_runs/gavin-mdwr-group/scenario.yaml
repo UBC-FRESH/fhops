@@ -1,4 +1,4 @@
-name: Gavin Lake MDWR complete group-state prototype
+name: Gavin Lake MDWR full-area group cohort prototype
 planning_level: tactical_operational
 schema_version: 0.1.0
 geo_block_path: blocks.geojson
@@ -124,6 +124,8 @@ periods:
   start_date: '2316-01-01'
   end_date: '2325-12-31'
   duration_years: 10
-source: Gavin MDWR 10 m group state; VRI BA fit; base CC successor curves
-notes: Group-level WS4 prototype with cut and standing groups. BA uses a VRI per-BEC
-  volume-age fit. Not a replacement for the block-level policy screen.
+source: Gavin MDWR 10 m groups; accepted block entries; VRI BA fit; base CC successor
+  curves
+notes: Group-level WS4 cohort prototype with cut and standing groups. It inherits
+  the accepted block-level BA gate; group BA is reported, not a per-group gate. Not
+  a replacement for the block policy screen.

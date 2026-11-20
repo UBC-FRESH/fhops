@@ -174,8 +174,7 @@ The consolidated group state covers 2,797.5 ha of the 2,799.3 ha MDWR; the
 remaining 1.8 ha gap is spread across 22 blocks and is polygon-edge residue. The aligned group state produces 0.533M m³, versus 0.594M m³ for the
 MDWR-only block screen: a ratio of 0.90, or 190 versus 212 m³/ha. The remaining
 difference is full-group versus block-fraction accounting. The public group
-scenario currently exposes the 2,586.8 ha cut/standing subset; the full state is
-in the instance matrix.
+scenario now exposes the full 2,797.5 ha group-cohort state.
 
 The corrected cohort state inherits the accepted block-level BA gate; GWM 6 is
 a stand-level prerequisite, not a per-group test. It records 19,587 accepted

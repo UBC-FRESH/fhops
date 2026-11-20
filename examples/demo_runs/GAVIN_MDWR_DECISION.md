@@ -29,8 +29,8 @@ The group/block MDWR ratio is **0.90**: **190 m³/ha** for the group state versu
 - final standing yield **1,274,641 m³**
 - initial BA **102,863 m²**; final BA **255,737 m²**
 
-The public `gavin-mdwr-group` scenario currently exposes the **2,586.8 ha**
-cut/standing subset. The full 34,512-group state is in the instance matrix.
+The public `gavin-mdwr-group` scenario now exposes the full **2,797.5 ha**
+group-cohort state.
 
 ## Why the block screen stays public
 
