@@ -1,3 +1,10 @@
+# 2026-11-20 — Consolidated full-area group state
+
+- Consolidated unassigned groups by aspect class and split them back to the 0.4/0.7 ha caps: 49,550 → 34,512 groups.
+- Full area coverage improved to 2,797.5 ha of 2,799.3 ha; remaining 1.8 ha is spread across 22 blocks with maximum 0.02 ha.
+- Harvested volume remains 0.533M m³; final standing yield 1,274,641 m³; initial BA 102,863 m²; final BA 255,737 m².
+- Public group scenario still exposes the 2,586.8 ha cut/standing subset; full consolidated state is in the instance matrix.
+
 # 2026-11-20 — Gavin MDWR full-area group state
 
 - Filled block-edge gaps with capped edge groups: the group state now covers 2,797.0 ha of 2,799.3 ha MDWR.

@@ -157,22 +157,21 @@ minimum group size, or model cohort growth.
 ## Schematic group layout
 
 A 10 m cell prototype was built for the staggered temporal schedule. The full
-full group state now covers all 1,443 MDWR blocks: **49,550 groups**, **2,797.0 ha**
+full group state now covers all 1,443 MDWR blocks: **34,512 groups**, **2,797.5 ha**
 and a maximum group area of 0.7 ha. Warm groups are capped at 0.4 ha. Of these,
-**9,674 groups / 1,430.3 ha** are assigned to cuts; 39,876 groups remain
+**9,674 groups / 1,430.3 ha** are assigned to cuts; 24,838 groups remain
 standing.
 
 A group-level WS4 run carries every group as a separate block with
 `feature.yield.managed.total` and `feature.ba.managed.total`. It produces
-0.533M m³ / 300 years, 9,674 group cuts, final standing yield 1,274,600 m³,
-initial BA 102,859 m² and final BA 255,732 m². The BA curve is a VRI 2025
+0.533M m³ / 300 years, 9,674 group cuts, final standing yield 1,274,641 m³,
+initial BA 102,863 m² and final BA 255,737 m². The BA curve is a VRI 2025
 per-BEC BA-volume-age fit, not a plantation BA model.
 
 Public group-state prototype: `http://10.232.253.210:8780/fhops/?run=gavin-mdwr-group`.
 
-The full group state covers 2,797.0 ha of the 2,799.3 ha MDWR; the remaining
-2.3 ha gap is spread across 23 blocks and comes from polygon slivers at cell
-edges. The aligned group state produces 0.533M m³, versus 0.594M m³ for the
+The consolidated group state covers 2,797.5 ha of the 2,799.3 ha MDWR; the
+remaining 1.8 ha gap is spread across 22 blocks and is polygon-edge residue. The aligned group state produces 0.533M m³, versus 0.594M m³ for the
 MDWR-only block screen: a ratio of 0.90, or 190 versus 212 m³/ha. The remaining
 difference is full-group versus block-fraction accounting. The public group
 scenario currently exposes the 2,586.8 ha cut/standing subset; the full state is

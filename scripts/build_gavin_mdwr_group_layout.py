@@ -92,6 +92,10 @@ def _split_to_cap(poly, cap_ha: float) -> list[object]:
         elif piece.geom_type == "MultiPolygon":
             for part in piece.geoms:
                 output.extend(_split_to_cap(part, cap_ha))
+        elif piece.geom_type == "GeometryCollection":
+            for part in piece.geoms:
+                if part.geom_type in {"Polygon", "MultiPolygon", "GeometryCollection"}:
+                    output.extend(_split_to_cap(part, cap_ha))
     return output
 
 
@@ -107,7 +111,12 @@ def fill_gaps(
     remaining = geom.difference(covered)
     if remaining.is_empty:
         return groups
-    polygons = list(remaining.geoms) if remaining.geom_type == "MultiPolygon" else [remaining]
+    if remaining.geom_type == "MultiPolygon":
+        polygons = list(remaining.geoms)
+    elif remaining.geom_type == "GeometryCollection":
+        polygons = [part for part in remaining.geoms if part.geom_type in {"Polygon", "MultiPolygon"}]
+    else:
+        polygons = [remaining]
     for polygon in polygons:
         if polygon.is_empty or polygon.area <= 1.0:
             continue
@@ -127,6 +136,8 @@ def fill_gaps(
                     "cells": 0,
                     "geometry": piece,
                     "edge": True,
+                    "assigned": False,
+                    "entry_offset": None,
                 }
             )
     return groups
@@ -262,11 +273,48 @@ def main() -> None:
         if not groups:
             groups = fallback_groups(block.geometry)
         groups = fill_gaps(block.geometry, groups, slope, aspect, transform)
+        if entries.empty:
+            assigned: list[dict[str, object]] = []
+        else:
+            block_area = block.geometry.area / 10000.0
+            remaining = [group for group in groups if not group.get("edge", False)]
+            for entry in entries.itertuples(index=False):
+                target = block_area * float(entry.pass_fraction)
+                total = 0.0
+                while remaining and total < target:
+                    group = remaining.pop(0)
+                    group["assigned"] = True
+                    group["entry_offset"] = int(entry.offset)
+                    total += float(group["area_ha"])
+        assigned = [group for group in groups if group.get("assigned", False)]
+        unassigned = [group for group in groups if not group.get("assigned", False)]
+        consolidated: list[dict[str, object]] = []
+        for kind in ("warm", "other"):
+            parts = [group["geometry"] for group in unassigned if group["class"] == kind]
+            if not parts:
+                continue
+            cap = WARM_CAP_HA if kind == "warm" else OTHER_CAP_HA
+            merged = unary_union(parts)
+            polygons = list(merged.geoms) if merged.geom_type == "MultiPolygon" else [merged]
+            for polygon in polygons:
+                for piece in _split_to_cap(polygon, cap):
+                    consolidated.append(
+                        {
+                            "class": kind,
+                            "area_ha": round(piece.area / 10000.0, 6),
+                            "cells": 0,
+                            "geometry": piece,
+                            "assigned": False,
+                            "entry_offset": None,
+                            "edge": False,
+                        }
+                    )
+        groups = assigned + consolidated
+        for _ in range(3):
+            groups = fill_gaps(block.geometry, groups, slope, aspect, transform)
         for local_index, group in enumerate(groups):
             group["group_id"] = block_id * 100000 + local_index
             group["group_index"] = local_index
-            group["assigned"] = False
-            group["entry_offset"] = None
             all_rows.append(
                 {
                     "group_id": group["group_id"],
@@ -274,8 +322,8 @@ def main() -> None:
                     "group_index": local_index,
                     "class": group["class"],
                     "area_ha": group["area_ha"],
-                    "assigned": False,
-                    "entry_offset": None,
+                    "assigned": bool(group["assigned"]),
+                    "entry_offset": group["entry_offset"],
                 }
             )
             all_features.append(
@@ -285,52 +333,29 @@ def main() -> None:
                     "group_index": local_index,
                     "class": group["class"],
                     "area_ha": group["area_ha"],
-                    "assigned": False,
-                    "entry_offset": None,
+                    "assigned": bool(group["assigned"]),
+                    "entry_offset": group["entry_offset"],
                     "geometry": group["geometry"],
                 }
             )
-        if entries.empty:
-            rows.append(
-                {
-                    "block_id": block_id,
-                    "entries": 0,
-                    "groups": len(groups),
-                    "unassigned_groups": len(groups),
-                    "note": "",
-                }
-            )
-            continue
-        block_area = block.geometry.area / 10000.0
-        remaining = [group for group in groups if not group.get("edge", False)]
-        for entry in entries.itertuples(index=False):
-            target = block_area * float(entry.pass_fraction)
-            chosen: list[dict[str, object]] = []
-            total = 0.0
-            while remaining and total < target:
-                group = remaining.pop(0)
-                group["assigned"] = True
-                group["entry_offset"] = int(entry.offset)
-                chosen.append(group)
-                total += float(group["area_ha"])
-            for group in chosen:
+            if group["assigned"]:
                 rows.append(
                     {
                         "block_id": block_id,
-                        "entry_offset": int(entry.offset),
-                        "group_index": group["group_index"],
+                        "entry_offset": int(group["entry_offset"]),
+                        "group_index": local_index,
                         "class": group["class"],
                         "area_ha": group["area_ha"],
-                        "cut_target_ha": round(target, 6),
-                        "assigned_ha": round(total, 6),
+                        "cut_target_ha": None,
+                        "assigned_ha": group["area_ha"],
                     }
                 )
                 features.append(
                     {
                         "group_id": group["group_id"],
                         "block_id": block_id,
-                        "entry_offset": int(entry.offset),
-                        "group_index": group["group_index"],
+                        "entry_offset": int(group["entry_offset"]),
+                        "group_index": local_index,
                         "class": group["class"],
                         "area_ha": group["area_ha"],
                         "geometry": group["geometry"],
@@ -341,7 +366,7 @@ def main() -> None:
                 "block_id": block_id,
                 "entries": len(entries),
                 "groups": len(groups),
-                "unassigned_groups": len(remaining),
+                "unassigned_groups": len(consolidated),
                 "note": "",
             }
         )
@@ -349,15 +374,8 @@ def main() -> None:
     frame = pd.DataFrame(rows)
     frame.to_csv(args.out_csv, index=False)
     all_frame = pd.DataFrame(all_rows)
-    assigned_map = {int(feature["group_id"]): feature["entry_offset"] for feature in features}
-    all_frame["assigned"] = all_frame["group_id"].isin(assigned_map)
-    all_frame["entry_offset"] = all_frame["group_id"].map(assigned_map)
     all_frame.to_csv(args.out_all_csv, index=False)
     if all_features:
-        for feature in all_features:
-            gid = int(feature["group_id"])
-            feature["assigned"] = gid in assigned_map
-            feature["entry_offset"] = assigned_map.get(gid)
         all_grouped = gpd.GeoDataFrame(all_features, geometry="geometry", crs="EPSG:6653").to_crs("EPSG:3005")
         all_grouped.to_file(args.out_all_geojson, driver="GeoJSON")
     if features:

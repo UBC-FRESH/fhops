@@ -266,14 +266,14 @@ required.
 The group matrix now includes every generated group, including standing groups
 that are not assigned to a cut:
 
-- **20,139 groups** on **1,443 source blocks**;
-- **2,586.8 ha** total group area;
+- **34,512 groups** on **1,443 source blocks**;
+- **2,797.5 ha** total group area;
 - **9,674 assigned groups / 1,430.3 ha**;
-- **10,465 standing groups**;
+- **24,838 standing groups**;
 - **9,674 cuts** (one accepted entry per assigned group).
 
 The full-state WS4 run produces **0.533M m³** harvested volume, final standing
-yield **1,185,395 m³**, initial BA **96,637 m²**, and final BA **205,095 m²**.
+yield **1,274,641 m³**, initial BA **102,863 m²**, and final BA **255,737 m²**.
 The harvested volume is now embedded in a complete group state rather than a
 cut-only subset.
 
@@ -290,10 +290,9 @@ for the aligned group state. The group/block ratio is **0.90**; per hectare,
 remaining difference is the 2,586.8 ha group-area coverage and full-group versus
 block-fraction accounting.
 
-The group state covers **2,586.8 ha** of the **2,799.3 ha** MDWR. The **212.5 ha**
-gap is spread across 1,286 blocks (maximum 13.4 ha in one block) and comes from
-10 m cell/edge geometry and fallback grouping. It is not a missing treatment
-decision.
+The consolidated group state covers **2,797.5 ha** of the **2,799.3 ha** MDWR.
+The remaining **1.8 ha** gap is spread across 22 blocks (maximum 0.02 ha in one
+block) and is polygon-edge residue.
 
 The aligned group result is close enough to the block screen to compare, but it
-remains a spatial prototype; it does not replace the block-level policy screen.
+remains a spatial prototype; it does not replace the block-level policy screen. The public group scenario currently exposes the 2,586.8 ha cut/standing subset; the full 2,797.0 ha state is in the instance matrix.
