@@ -58,6 +58,12 @@ produces **10,204–30,937 m³** and puts **26 of 30** periods inside the interi
 band. The fixed-volume 30/30 result was a scheduling artefact, not a valid
 regrown cohort result.
 
+The four late periods are only about 113 m³ below the 10,317 m³ floor. Moving
+the floor to 10,200 would be a 1.1% goalpost shift. The options are: keep the
+band and fail, approve a wider/asymmetric band, or extend the horizon/treatment
+schedule. I recommend keeping the band and the block policy screen until that is
+a policy decision.
+
 ## Why the block screen stays public
 
 1. The group model is a legal-order cohort prototype, but frost-prone classification and target framework are missing.

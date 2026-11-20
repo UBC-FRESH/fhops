@@ -1,3 +1,10 @@
+# 2026-11-20 — Group target feasibility decision
+
+- Regrown phase result is 0.679M m³, 10,204–30,937 m³, 26/30 periods in band.
+- Four late periods are about 113 m³ below the 10,317 m³ floor.
+- Recommended keeping the band and block public; lowering the floor would be a 1.1% goalpost shift.
+- No public group result change.
+
 # 2026-11-20 — Regrown phase restart check
 
 - Eight regrown phase restarts best result: 0.683M m³, 10,203–30,874 m³, 26/30 periods in band.
