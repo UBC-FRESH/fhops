@@ -103,7 +103,10 @@ The current screen uses the 2007 MWP #3 Table 30 mapping (High 33 / Moderate 25
 instead sets **Low 33 / Moderate 25 / High 20**, **45 m²/ha in ICH and 40
 elsewhere**, and a **0.1 ha minimum opening** (0.1–0.3 ha on frost-prone
 sites). The current public screen is therefore a scenario screen, not a
-legal-order implementation. A legal-order rebuild is the next model change.
+legal-order implementation. A legal-order block sensitivity gives 4.179M m³
+and 9/37/15 targets (MDWR-only 0.619M m³). A legal group result is blocked by
+the minimum opening size: 6,257 of 9,674 assigned groups are below 0.1 ha,
+covering 133.1 ha. The next model change is a minimum-size group rebuild.
 
 ## Limits
 

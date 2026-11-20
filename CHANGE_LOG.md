@@ -1,3 +1,9 @@
+# 2026-11-20 — Legal-order block sensitivity and minimum-opening gap
+
+- Ran a legal-order block sensitivity with 45/40 m²/ha and Low33/Moderate25/High20: 4.179M m³ / 300 years, 9/37/15 targets; MDWR-only 0.619M m³.
+- Found that 6,257 of 9,674 assigned groups are below the 0.1 ha minimum opening, covering 133.1 ha.
+- Added both findings to the public decision and MDWR briefs. The group model needs a minimum-opening rebuild before a legal-order comparison.
+
 # 2026-11-20 — Gavin MDWR GAR order conflict found
 
 - Reviewed Amendment TransDeep_Feb07_ord.pdf (2007 Transition/Deep Snowpack GAR order).

@@ -76,8 +76,17 @@ public screen:
 
 The current screen uses the MWP #3 Table 30 mapping (High 33, Moderate 25, Low
 20) and a 40 m²/ha gate everywhere. It is therefore **not compliant with the
-2007 GAR order** and must not be presented as such. A legal-order rebuild is
-required before any replacement decision.
+2007 GAR order** and must not be presented as such.
+
+A legal-order block sensitivity was run:
+
+- full estate: **4.179M m³ / 300 years**, targets **9/37/15**;
+- MDWR-only: **0.619M m³**.
+
+The group model cannot yet be a legal-order implementation: **6,257 of 9,674
+assigned groups are smaller than the 0.1 ha minimum opening**, covering 133.1
+ha. The group layout and cohort schedule need a minimum-size rebuild before a
+legal group result exists.
 
 ## Replacement gate
 

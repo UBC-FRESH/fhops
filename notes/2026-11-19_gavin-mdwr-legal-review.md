@@ -328,3 +328,16 @@ The exact 2007 Transition and Deep Snowpack GAR order was reviewed on
 The current screen uses the MWP #3 Table 30 mapping (High 33 / Moderate 25 /
 Low 20) and a 40 m²/ha gate everywhere. It is **not a legal-order
 implementation** and must be rebuilt before a compliance claim.
+
+## Legal-order sensitivity and minimum opening
+
+A legal-order block sensitivity was run with 45/40 m²/ha and Low 33 /
+Moderate 25 / High 20:
+
+- full estate: 4.179M m³, targets 9/37/15;
+- MDWR-only: 0.619M m³.
+
+The group model cannot yet be called legal: 6,257 of 9,674 assigned groups are
+smaller than the 0.1 ha minimum opening, covering 133.1 ha. A minimum-opening
+group rebuild is required before the group cohort can be compared on the legal
+order.
