@@ -296,3 +296,20 @@ block) and is polygon-edge residue.
 
 The aligned group result is close enough to the block screen to compare, but it
 remains a spatial prototype; it does not replace the block-level policy screen. The public group scenario currently exposes the 2,586.8 ha cut/standing subset; the full 2,797.0 ha state is in the instance matrix.
+
+## Strict cohort state
+
+The group cohort state partitions every block's groups into 3/4/5 cohorts and
+uses only accepted block entries. Each cohort entry is tested against
+40 m²/ha; entries below the threshold are rejected, not applied.
+
+- 34,512 groups on 1,443 blocks;
+- 19,587 cohort entries tested;
+- **8,541 rejected for BA below 40 m²/ha**;
+- **0.233M m³** harvested from accepted entries;
+- final standing volume **1.009M m³**;
+- final BA **171,679 m²**.
+
+This is the strictest group-state screen so far. It shows that a group-level
+BA gate rejects a large share of the entries that the block-level BA screen
+accepts. That is a model-reconciliation issue, not a public result.

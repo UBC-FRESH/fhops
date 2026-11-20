@@ -1,3 +1,10 @@
+# 2026-11-20 — Gavin MDWR strict cohort state
+
+- Built the accepted-entry-only group cohort state: 34,512 groups, 1,443 blocks, 19,587 tested entries.
+- Applied a 40 m²/ha gate at every group entry: 8,541 entries rejected, 0.233M m³ harvested, final standing volume 1.009M m³, final BA 171,679 m².
+- The strict cohort result is not comparable to the block screen; it exposes a large block-vs-group BA-gate reconciliation gap.
+- Kept the block policy screen public; no scenario replacement.
+
 # 2026-11-20 — Gavin MDWR block vs group decision brief
 
 - Added `GAVIN_MDWR_DECISION.pdf`: block-level screen remains public; complete group state remains a diagnostic prototype.
