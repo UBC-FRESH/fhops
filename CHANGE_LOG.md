@@ -1,3 +1,9 @@
+# 2026-11-20 — Gavin MDWR 60-year stagger trial
+
+- Tested a 60-year first-entry stagger: 0.664M m³, mean 22,129 m³, min 3,213 m³, max 84,460 m³.
+- Worse than the 40-year public stagger on both tails (4,180–62,626 m³). The 40-year scenario remains public.
+- Global stagger search has reached diminishing returns; per-block phase optimisation is the next even-flow step.
+
 # 2026-11-20 — Gavin MDWR stagger comparison
 
 - Tested an 80-year first-entry stagger against the public 40-year stagger.

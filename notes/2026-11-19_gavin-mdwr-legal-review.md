@@ -388,3 +388,10 @@ An 80-year first-entry stagger was tested against the 40-year stagger.
 The 80-year stagger slightly improves the minimum but not the maximum and is not
 a material even-flow gain. The public group scenario remains the 40-year stagger.
 Neither variant meets the interim 10,317–30,951 m³ band.
+
+## 60-year stagger trial
+
+The 60-year stagger produced **0.664M m³**, mean 22,129 m³, min 3,213 m³,
+max 84,460 m³. It is worse than the 40-year public stagger on both tails and
+does not justify replacing it. Global stagger search has reached diminishing
+returns; the next even-flow work needs per-block phase optimisation.
