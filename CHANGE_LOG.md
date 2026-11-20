@@ -1,3 +1,9 @@
+# 2026-11-20 — Long phase target result rejected
+
+- A 0–119-year per-block phase screen appeared to meet the 30/30 band, but the optimiser clipped shifted events beyond year 300 into period 30.
+- Rechecked the public group scenario: s40 remains 0.658M m³, 4,180–62,626 m³, 0/30 periods in band.
+- Rejected the long-phase result and restored the s40 public group scenario. Future phase work must enforce the 300-year horizon explicitly.
+
 # 2026-11-20 — Gavin MDWR phase annealing check
 
 - Ran a 60,000-iteration simulated-annealing phase search on fixed group event volumes.
