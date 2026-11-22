@@ -17,6 +17,7 @@ is a diagnostic and does not replace it.
 | Repaired-layout cohort, not phase | **0.630M m³ / 300 yr** | 27,083 groups / 2,721.8 ha | diagnostic, not a phase result |
 | Assigned-openings-only cohort | **0.500M m³ / 300 yr** | 4,671 openings / 1,386.4 ha | diagnostic; 928 openings uncut |
 | Entry-offset assigned ledger | **0.505M m³ / 300 yr** | 4,671 openings / 1,386.4 ha | one cut per opening; not phase |
+| Entry-offset phase, one cut | **0.580M m³ / 300 yr** | 4,671 openings / 1,386.4 ha | 26/30; tail minimum 3,474 m³ |
 
 The group/block MDWR ratio is **1.10**. That is a material gap, not a geometry
 error: the 0.1 ha minimum opening removes assigned area that the block screen
@@ -136,6 +137,21 @@ An **entry-offset ledger** now closes that gap:
 
 This is a one-cut ledger, not a phase or final-stock result.
 
+### Entry-offset phase
+
+The regrown phase optimizer was run on the 4,671 entry-offset cuts:
+
+- total volume **579,763 m³**;
+- mean period 19,325 m³;
+- maximum 30,950 m³;
+- **26/30 periods** in the interim band;
+- late periods 260–290: **6,603 / 3,944 / 3,841 / 3,474 m³**.
+
+There are no ceiling violations. The phase shift is capped at 119 years, and
+the assigned entries are concentrated early, so the eligible late-entry pool
+cannot fill the four tail periods. This is a structural limit of the one-cut
+300-year ledger, not a local optimizer failure.
+
 ## Interim group target diagnostic
 
 There is no approved group target framework. As a diagnostic, the legal-order
@@ -163,14 +179,13 @@ a policy decision.
 
 ## Why the block screen stays public
 
-1. The group model is a legal-order cohort prototype. A repaired layout and a
-   cohort state now exist, but the regrown phase and target framework are
-   missing.
+1. The group model is a legal-order prototype. A repaired layout, an
+   assigned-only cohort, and an entry-offset phase now exist, but the phase
+   fails four periods and there is no target framework.
 2. The repair removes the 327 assigned opening-size violations and the
    181 outside-UWR openings, but it loses 46.4 ha of assigned area and has not
-   been rebalanced to pass targets. The all-group cohort cuts 1,684.1 ha; the
-   assigned-only cohort leaves 928 openings / 279.6 ha uncut; the entry-offset
-   ledger cuts all 4,671 openings but has no phase result.
+   been rebalanced to pass targets. The entry-offset phase is 26/30 with a
+   3,474 m³ tail minimum; the block screen remains the result.
 3. The adjusted Appendix 9 compartment map is a scanned plan map, not a GIS
    layer, and has not been reconciled.
 4. The UWR boundary and stand-structure classes have been downloaded from BCGW
@@ -178,7 +193,9 @@ a policy decision.
    the repaired layout uses that clip and has no residual outside-UWR groups.
 5. The group run has no policy target framework comparable to the block
    screen’s 9/37/15 status.
-6. The group result is 1.10× the MDWR block result on harvested volume.
+6. The old all-group result is 1.10× the MDWR block result; the entry-offset
+   phase is 0.94× but does not meet the even-flow band. Neither replaces the
+   block screen.
 
 ## Replacement gate
 
@@ -187,7 +204,7 @@ The group state can replace the block-level public result only after:
 - full UWR-consistent group coverage;
 - a modelled frost-compliant layout using the Steen et al. 1990 process;
 - a cohort/ledger that cuts every assigned opening at its layout entry offset;
-- a regrown phase result on the repaired layout;
+- an entry-offset phase that meets the interim even-flow band;
 - reconciled adjusted Appendix 9 compartments and independent UWR review;
 - group target framework;
 - a group-state public scenario small enough to use.

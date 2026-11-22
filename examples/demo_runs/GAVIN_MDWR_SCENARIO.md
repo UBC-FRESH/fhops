@@ -134,10 +134,24 @@ An **entry-offset ledger** cuts all 4,671 assigned openings exactly once:
 | First-decade volume | 148,505 m³ |
 | Mean cut BA | 82.2 m²/ha |
 
-This is a one-cut ledger, not a phase or final-stock result. The first-decade
-spike means the phase optimizer is still required. The 0.679M m³ / 26-of-30
-result in the table above still refers to the old layout; the group/block MDWR
-ratio is about 1.10.
+This is a one-cut ledger, not a phase or final-stock result. The phase optimizer
+was run on it:
+
+| Metric | Entry-offset phase |
+|---|---:|
+| Total volume | **579,763 m³** |
+| Mean period | 19,325 m³ |
+| Maximum period | 30,950 m³ |
+| Minimum period | **3,474 m³** |
+| Periods in band | **26/30** |
+
+The four late periods are **6,603 / 3,944 / 3,841 / 3,474 m³**. There are no
+ceiling violations. The 119-year phase cap and the early concentration of
+assigned entries leave too small a late-entry pool to fill the tail. This is a
+structural limit of the one-cut 300-year ledger, not a local optimizer failure.
+
+The 0.679M m³ / 26-of-30 result in the table above still refers to the old
+layout; the group/block MDWR ratio is about 1.10.
 
 ## Limits
 
@@ -155,8 +169,9 @@ ratio is about 1.10.
   assigned-only cohort have been run, but no regrown phase result exists.
 - The assigned-only cohort leaves 928 openings (279.64 ha) uncut because it
   ignores layout entry offsets and some cohorts have no block entry.
-- The entry-offset ledger cuts all assigned openings once but has no re-entry,
-  final stock, or phase result; its first decade is heavily front-loaded.
+- The entry-offset ledger cuts all assigned openings once but has no re-entry
+  or final stock. Its phase result is 26/30 with a 3,474 m³ tail minimum; the
+  phase cap cannot fill the last four periods.
 - The block screen does not lay out spatial groups.
 - The group screen does not model cohort regeneration, windthrow, or a
   plantation-specific BA model.
@@ -173,5 +188,5 @@ ratio is about 1.10.
 
 The block screen remains public. The group screen is a diagnostic. Replacing the
 block screen requires a reconciled Appendix 9 compartment map, an independent
-UWR review, a frost-compliant entry-offset ledger, a regrown phase result on
-that ledger, and a comparable target framework.
+UWR review, a frost-compliant entry-offset ledger, an entry-offset phase that
+meets the band, and a comparable target framework.

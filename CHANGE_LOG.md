@@ -1,3 +1,13 @@
+# 2026-11-22 — Entry-offset phase result
+
+- Ran the regrown phase optimizer on the 4,671-opening entry ledger.
+- 579,763 m³ total; 19,325 m³ mean; 30,950 m³ max; 26/30 periods in band.
+- Late periods 260–290: 6,603 / 3,944 / 3,841 / 3,474 m³.
+- No ceiling violations. The 119-year phase cap and early entry concentration
+  leave too small a late-entry pool to fill the tail.
+- Structural one-cut 300-year ledger limit, not a local optimizer failure.
+- Public group remains the old-layout 0.679M m³ / 26-of-30 diagnostic.
+
 # 2026-11-22 — Assigned entry-offset ledger
 
 - Cut all 4,671 assigned openings exactly once at their layout entry offsets.
