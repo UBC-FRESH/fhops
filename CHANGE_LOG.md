@@ -1,3 +1,18 @@
+# 2026-11-22 — Correct MDWR data-source status
+
+- Downloaded and clipped the approved UWR boundary and stand-structure habitat
+  classes from the BC Geographic Warehouse.
+- Gavin UWR clip: U-5-002 / dwl_9 Beaver Valley North, 2,726.4 ha.
+- Class clip: High 697.9 ha, Moderate 1,013.2 ha, Low 1,015.3 ha.
+- Confirmed the 2007 GAR order defines frost-prone as medium, high or very high
+  summer frost hazard; FRDA Report 157 and a 5 m DEM make a screening
+  classification possible.
+- Corrected the briefs and notes: UWR/class data are not missing; frost is an
+  implementation task; adjusted Appendix 9 compartments remain the only
+  unresolved spatial layer.
+- No public model result changed. Current group estate is 2,797.5 ha versus the
+  2,726.4 ha UWR clip; the ~71 ha difference is unresolved.
+
 # 2026-11-20 — Group target feasibility decision
 
 - Regrown phase result is 0.679M m³, 10,204–30,937 m³, 26/30 periods in band.

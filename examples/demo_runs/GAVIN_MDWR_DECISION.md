@@ -12,7 +12,7 @@ is a diagnostic and does not replace it.
 | Result | Harvested volume | Area basis | Status |
 |---|---:|---|---|
 | Full-estate legal-order block screen | **4.179M m³ / 300 yr** | 5,663.7 ha estate | public policy screen |
-| MDWR-only legal-order block screen | **0.619M m³ / 300 yr** | 2,799.3 ha MDWR | comparison baseline |
+| MDWR-only legal-order block screen | **0.619M m³ / 300 yr** | 2,799.3 ha model estate | comparison baseline |
 | Legal-order group cohort, regrown phase | **0.679M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
 
 The group/block MDWR ratio is **1.10**. That is a material gap, not a geometry
@@ -42,6 +42,22 @@ ordering and 40 m²/ha screens are superseded.
 - final standing volume **1,141,775 m³**;
 - initial BA **102,863 m²**; final BA **184,534 m²**.
 
+## Data-source check
+
+The approved UWR boundary and stand-structure classes were downloaded from the
+BC Geographic Warehouse and clipped to Gavin:
+
+- **UWR U-5-002 / dwl_9 Beaver Valley North:** 2,726.4 ha;
+- **High 697.9 ha, Moderate 1,013.2 ha, Low 1,015.3 ha.**
+
+The model estate is 2,799.3 ha, so about 71 ha needs reconciliation. The
+official class layer is the GWM 7 stand-structure layer, not the adjusted
+Appendix 9 compartments.
+
+Frost-prone is defined by the legal order as medium, high or very high summer
+frost hazard. The Steen et al. 1990 table and a 5 m DEM are available, so the
+classification can be implemented; it has not yet been applied.
+
 ## Interim group target diagnostic
 
 There is no approved group target framework. As a diagnostic, the legal-order
@@ -66,10 +82,16 @@ a policy decision.
 
 ## Why the block screen stays public
 
-1. The group model is a legal-order cohort prototype, but frost-prone classification and target framework are missing.
-2. Frost-prone 0.1–0.3 ha classification is not implemented.
-3. The adjusted Appendix 9 compartment map has not been reconciled.
-4. The 2007 GAR/UWR spatial boundary has not been independently reviewed.
+1. The group model is a legal-order cohort prototype; frost-prone
+   classification and a target framework are not implemented.
+2. The frost-prone 0.1–0.3 ha rule is not applied. The Steen et al. 1990
+   table and a 5 m DEM are available, so this is an implementation task.
+3. The adjusted Appendix 9 compartment map is a scanned plan map, not a GIS
+   layer, and has not been reconciled.
+4. The UWR boundary and stand-structure classes have now been downloaded from
+   BCGW and clipped to Gavin (2,726.4 ha). Independent legal review is still
+   needed, and the current group estate is 2,797.5 ha, so the ~71 ha difference
+   must be reconciled.
 5. The group run has no policy target framework comparable to the block
    screen’s 9/37/15 status.
 6. The group result is 1.10× the MDWR block result on harvested volume.
@@ -78,10 +100,10 @@ a policy decision.
 
 The group state can replace the block-level public result only after:
 
-- full 2,799.3 ha group coverage;
-- frost-prone classification;
+- full UWR-consistent group coverage;
+- frost-prone classification from the Steen et al. 1990 process;
 - full 40-year cohort state;
-- reviewed Appendix 9 and UWR boundaries;
+- reconciled adjusted Appendix 9 compartments and independent UWR review;
 - group target framework;
 - a group-state public scenario small enough to use.
 

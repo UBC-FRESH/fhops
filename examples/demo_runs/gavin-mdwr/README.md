@@ -16,5 +16,7 @@ Targets: 9 met, 37 below,
 
 Limits: legal-order parameter screen; full-area partial cut, no spatial
 group layout, no minimum opening check, no preparatory thinning, no private
-finance. The adjusted Appendix 9 compartment map and UWR boundary still need
-review before a compliance claim.
+finance. The UWR boundary and stand-structure classes have been downloaded and
+clipped, but the adjusted Appendix 9 compartment map, the ~71 ha area
+difference from the authoritative UWR clip, and frost-prone classification
+still need review before a compliance claim.

@@ -66,15 +66,20 @@ The legal-order group layout:
 | Final BA | 184,534 m² |
 
 Frost-prone 0.1–0.3 ha classification and a group target framework are not
-implemented. The group result remains a prototype; the group/block MDWR ratio
-is about 1.10; 26/30 periods are inside the interim band.
+implemented. The legal order defines frost-prone as medium, high or very high
+summer frost hazard (Steen et al. 1990); FRDA Report 157 and a 5 m DEM are
+available, so this is an implementation task. The group result remains a
+prototype; the group/block MDWR ratio is about 1.10; 26/30 periods are inside
+the interim band.
 
 ## Limits
 
 - The adjusted Appendix 9 compartment map has not been reconciled with the
   fine BC long-term objective polygons.
-- The 2007 GAR order and current UWR boundary still need a spatial boundary
-  review.
+- The UWR boundary and stand-structure classes were downloaded from BCGW and
+  clipped to Gavin (2,726.4 ha), but independent legal review is still needed.
+  The current group estate is 2,797.5 ha, so the ~71 ha difference must be
+  reconciled.
 - The block screen does not lay out spatial groups.
 - The group screen does not model cohort regeneration, windthrow, or a
   plantation-specific BA model.
@@ -90,6 +95,6 @@ is about 1.10; 26/30 periods are inside the interim band.
 ## Decision boundary
 
 The block screen remains public. The group screen is a diagnostic. Replacing the
-block screen requires a reviewed Appendix 9 map, a reviewed UWR boundary,
-frost-prone classification, full cohort dynamics, and a comparable target
-framework.
+block screen requires a reconciled Appendix 9 compartment map, an independent
+UWR review, frost-prone classification, full cohort dynamics, and a comparable
+target framework.

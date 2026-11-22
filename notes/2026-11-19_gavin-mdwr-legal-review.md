@@ -68,10 +68,9 @@ discussion.
 BC MDWR Information Note #3 quotes General Wildlife Measure 6 from the 2007
 Transition and Deep Snowpack Mule Deer Winter Range GAR Order: group selection
 in the transition/deep snowpack zones requires a **pre-harvest stand basal area
-of at least 40 m²/ha** (higher is better) before initiation. The current
-full-area screen does not test that prerequisite. The exact GAR order text was
-not independently retrieved; the requirement is taken from the BC information
-note.
+of at least 45 m²/ha in ICH and 40 m²/ha elsewhere** before initiation. The
+current full-area screen does not test that prerequisite. The exact GAR order
+text was reviewed on 2026-11-20; see the GAR order conflict section below.
 
 ## Model status against the review
 
@@ -85,7 +84,7 @@ note.
 | 3–5 cohort structure | not modelled |
 | Preparatory thinning | not modelled |
 | 40 m²/ha pre-harvest BA | not enforced |
-| Legal order/UWR boundary | not independently reviewed |
+| Legal order/UWR boundary | BCGW UWR layer downloaded and clipped; independent legal review pending |
 
 The current screen remains a **full-area partial-cut volume screen**. It is not
 a spatial group-selection layout and cannot demonstrate compliance with the
@@ -448,3 +447,24 @@ Eight coordinate-descent restarts with regrown first cuts found a best total of
 0.683M m³, min 10,203 m³, max 30,874 m³, still **26/30** periods in band. The
 last four periods remain slightly below the 10,317 m³ floor. The public group
 scenario remains the 0.679M m³ / 26-of-30 result.
+
+## Data-source correction (2026-11-22)
+
+Earlier notes overstated the missing-data blockers. The public sources have now
+been checked:
+
+- **UWR:** BCGW `WHSE_WILDLIFE_MANAGEMENT.WCP_UNGULATE_WINTER_RANGE_SP`
+  clipped to Gavin gives **U-5-002 / dwl_9 Beaver Valley North, 2,726.4 ha**.
+  The current group estate is 2,797.5 ha, so about 71 ha needs reconciliation.
+- **Stand-structure classes:** BCGW
+  `REG_LAND_AND_NATURAL_RESOURCE.WLD_MULE_DEER_STND_STRC_CAR_SP` clipped to
+  Gavin/UWR gives High 697.9 ha, Moderate 1,013.2 ha, Low 1,015.3 ha. These are
+  the GWM 7 class polygons, not the adjusted Appendix 9 compartments.
+- **Frost:** GWM 10 defines frost-prone as medium, high or very high summer
+  frost hazard. FRDA Report 157 Table 3 derives a preliminary class from BEC,
+  mesoslope position and slope gradient. BEC and a 5 m DEM are available, so
+  this is an implementation task. It is not yet a field-verified legal map.
+- **Appendix 9:** the adjusted BV01–BV09 compartment boundaries are still only
+  available as scanned plan pages; the official class polygons are digital.
+
+See `planning/2026-11-22_gavin-mdwr-data-source-check.md`.
