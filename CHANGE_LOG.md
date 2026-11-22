@@ -1,3 +1,15 @@
+# 2026-11-22 — Preliminary MDWR frost screen
+
+- Applied FRDA Report 157 Table 3 with a 5 m DEM and 500 m topographic position
+  index to the existing legal group layout.
+- 540 assigned openings (186.4 ha) are frost-prone; 291 assigned openings
+  (142.2 ha) exceed the frost opening cap.
+- 36 assigned openings (19.1 ha) exceed the warm-aspect cap.
+- 181 assigned openings have 42.6 ha outside the approved UWR boundary.
+- 499 assigned openings (221.6 ha) fail at least one opening-size or UWR test.
+- Sensitivity runs leave at least 93.5 ha of frost-cap exceedances.
+- No public model result changed; the group layout must be rebuilt.
+
 # 2026-11-22 — Correct MDWR data-source status
 
 - Downloaded and clipped the approved UWR boundary and stand-structure habitat

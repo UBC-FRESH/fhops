@@ -54,6 +54,8 @@ The legal-order group layout:
 - 3,954 assigned openings, all **≥0.1 ha**;
 - 1,431.9 ha scheduled;
 - maximum opening 0.7 ha;
+- **291 frost-cap exceedances / 142.2 ha** in the preliminary screen;
+- **181 assigned openings not fully inside the UWR** (42.6 ha outside);
 - 11,910 accepted cohort entries.
 
 | Metric | Value |
@@ -66,12 +68,18 @@ The legal-order group layout:
 | Initial BA | 102,863 m² |
 | Final BA | 184,534 m² |
 
-Frost-prone 0.1–0.3 ha classification and a group target framework are not
-implemented. The legal order defines frost-prone as medium, high or very high
-summer frost hazard (Steen et al. 1990); FRDA Report 157 and a 5 m DEM are
-available, so this is an implementation task. The group result remains a
-prototype; the group/block MDWR ratio is about 1.10; 26/30 periods are inside
-the interim band.
+A preliminary frost screen now applies the FRDA Report 157 Table 3 process
+using a 5 m DEM and a 500 m topographic position index. It is a screening
+diagnostic, not a field-verified legal map.
+
+- 540 assigned openings (186.4 ha) are frost-prone;
+- **291 assigned openings (142.2 ha)** exceed the frost opening cap;
+- 36 assigned openings (19.1 ha) exceed the 0.4 ha warm-aspect cap;
+- 499 assigned openings (221.6 ha) fail a frost/opening-size or UWR test.
+
+The threshold sensitivity run still leaves at least 93.5 ha of frost-cap
+exceedances. The group result remains a prototype; the group/block MDWR ratio
+is about 1.10; 26/30 periods are inside the interim band.
 
 ## Limits
 
@@ -79,8 +87,11 @@ the interim band.
   fine BC long-term objective polygons.
 - The UWR boundary and stand-structure classes were downloaded from BCGW and
   clipped to Gavin (2,726.4 ha), but independent legal review is still needed.
-  The current group estate is 2,797.5 ha, so the ~71 ha difference must be
-  reconciled.
+  The current group estate is 2,797.5 ha, and 181 assigned openings have
+  42.6 ha outside the authoritative clip, so the boundary/layout difference
+  must be reconciled.
+- The frost screen is preliminary: it uses a TPI proxy, not the field
+  air-photo procedure, and no field verification or legal determination.
 - The block screen does not lay out spatial groups.
 - The group screen does not model cohort regeneration, windthrow, or a
   plantation-specific BA model.
@@ -97,5 +108,5 @@ the interim band.
 
 The block screen remains public. The group screen is a diagnostic. Replacing the
 block screen requires a reconciled Appendix 9 compartment map, an independent
-UWR review, frost-prone classification, full cohort dynamics, and a comparable
-target framework.
+UWR review, a frost-compliant rebuilt group layout, full cohort dynamics, and a
+comparable target framework.

@@ -41,6 +41,8 @@ superseded.
 - 3,954 assigned openings, all **≥0.1 ha**;
 - 1,431.9 ha scheduled;
 - maximum opening 0.7 ha;
+- **291 frost-cap exceedances / 142.2 ha** in the preliminary screen;
+- **181 assigned openings not fully inside the UWR** (42.6 ha outside);
 - 11,910 accepted cohort entries;
 - final standing volume **1,141,775 m³**;
 - initial BA **102,863 m²**; final BA **184,534 m²**.
@@ -58,8 +60,26 @@ official class layer is the GWM 7 stand-structure layer, not the adjusted
 Appendix 9 compartments.
 
 Frost-prone is defined by the legal order as medium, high or very high summer
-frost hazard. The Steen et al. 1990 table and a 5 m DEM are available, so the
-classification can be implemented; it has not yet been applied.
+frost hazard. The Steen et al. 1990 table and a 5 m DEM are available; a
+preliminary screen is reported below.
+
+## Preliminary frost screen
+
+A preliminary screen now applies the FRDA Report 157 Table 3 process to the
+existing group layout, using a 5 m DEM and a 500 m topographic position index.
+It is a screening diagnostic, not a field-verified legal map.
+
+- 540 assigned openings (186.4 ha) are frost-prone;
+- **291 assigned openings (142.2 ha)** exceed the frost opening cap;
+- 36 assigned openings (19.1 ha) are warm-aspect cases that exceed the 0.4 ha
+  cap;
+- 181 assigned openings (42.6 ha outside) are not fully inside the approved
+  UWR;
+- 499 assigned openings (221.6 ha) fail at least one of the frost/opening-size
+  or UWR tests.
+
+The threshold sensitivity run still leaves at least 93.5 ha of assigned
+frost-cap exceedances, so this is not a threshold artefact.
 
 ## Interim group target diagnostic
 
@@ -85,16 +105,16 @@ a policy decision.
 
 ## Why the block screen stays public
 
-1. The group model is a legal-order cohort prototype; frost-prone
-   classification and a target framework are not implemented.
-2. The frost-prone 0.1–0.3 ha rule is not applied. The Steen et al. 1990
-   table and a 5 m DEM are available, so this is an implementation task.
+1. The group model is a legal-order cohort prototype. A preliminary frost
+   screen now exists, but a target framework and a rebuilt layout are missing.
+2. The preliminary screen flags 291 assigned frost-cap exceedances (142.2 ha).
+   This is evidence, not a legal determination; the layout has not been rebuilt.
 3. The adjusted Appendix 9 compartment map is a scanned plan map, not a GIS
    layer, and has not been reconciled.
-4. The UWR boundary and stand-structure classes have now been downloaded from
-   BCGW and clipped to Gavin (2,726.4 ha). Independent legal review is still
-   needed, and the current group estate is 2,797.5 ha, so the ~71 ha difference
-   must be reconciled.
+4. The UWR boundary and stand-structure classes have been downloaded from BCGW
+   and clipped to Gavin (2,726.4 ha). Independent legal review is still needed;
+   181 assigned openings have 42.6 ha outside the authoritative clip, so the
+   boundary/layout discrepancy must be reconciled.
 5. The group run has no policy target framework comparable to the block
    screen’s 9/37/15 status.
 6. The group result is 1.10× the MDWR block result on harvested volume.
@@ -104,7 +124,7 @@ a policy decision.
 The group state can replace the block-level public result only after:
 
 - full UWR-consistent group coverage;
-- frost-prone classification from the Steen et al. 1990 process;
+- frost-compliant rebuilt group layout using the Steen et al. 1990 process;
 - full 40-year cohort state;
 - reconciled adjusted Appendix 9 compartments and independent UWR review;
 - group target framework;
