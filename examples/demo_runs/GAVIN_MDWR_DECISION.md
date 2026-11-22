@@ -16,6 +16,7 @@ is a diagnostic and does not replace it.
 | Legal-order group cohort, regrown phase | **0.679M m³ / 300 yr** | 2,797.5 ha old layout | diagnostic prototype |
 | Repaired-layout cohort, not phase | **0.630M m³ / 300 yr** | 27,083 groups / 2,721.8 ha | diagnostic, not a phase result |
 | Assigned-openings-only cohort | **0.500M m³ / 300 yr** | 4,671 openings / 1,386.4 ha | diagnostic; 928 openings uncut |
+| Entry-offset assigned ledger | **0.505M m³ / 300 yr** | 4,671 openings / 1,386.4 ha | one cut per opening; not phase |
 
 The group/block MDWR ratio is **1.10**. That is a material gap, not a geometry
 error: the 0.1 ha minimum opening removes assigned area that the block screen
@@ -125,6 +126,16 @@ this is not yet a complete legal-opening ledger. The 554,774 m³ final state
 covers only the 1,386.4 ha assigned area, not the full 2,722.4 ha estate, and
 is not comparable to the whole-estate 1,000,000 m³ floor.
 
+An **entry-offset ledger** now closes that gap:
+
+- all 4,671 assigned openings cut exactly once at their layout entry;
+- cut area **1,386.43 ha**;
+- harvested volume **504,601 m³**;
+- no uncut assigned openings;
+- first-decade volume **148,505 m³**, so the phase problem remains.
+
+This is a one-cut ledger, not a phase or final-stock result.
+
 ## Interim group target diagnostic
 
 There is no approved group target framework. As a diagnostic, the legal-order
@@ -135,8 +146,9 @@ final-BA floor.
 The old group cohort final stock (1,141,775 m³) and final BA (184,534 m²) pass,
 but the 40-year schedule period range (4,180–62,626 m³) fails the interim
 even-flow band. The repaired-layout cohort is 0.630M m³, but it has no regrown phase result yet.
-The assigned-only cohort is 0.500M m³ but leaves 279.6 ha uncut. The 0.679M m³ /
-26-of-30 diagnostic below remains the old layout.
+The assigned-only cohort is 0.500M m³ but leaves 279.6 ha uncut. The entry-offset
+ledger cuts every assigned opening for 0.505M m³, but has no phase result. The
+0.679M m³ / 26-of-30 diagnostic below remains the old layout.
 
 A horizon-aware per-block phase schedule was regrown at the shifted ages. It
 produces **10,204–30,937 m³** and puts **26 of 30** periods inside the interim
@@ -156,9 +168,9 @@ a policy decision.
    missing.
 2. The repair removes the 327 assigned opening-size violations and the
    181 outside-UWR openings, but it loses 46.4 ha of assigned area and has not
-   been rebalanced to pass targets. The all-group cohort cuts 1,684.1 ha, and
-   the assigned-only cohort leaves 928 openings / 279.6 ha uncut because it
-   ignores layout entry offsets.
+   been rebalanced to pass targets. The all-group cohort cuts 1,684.1 ha; the
+   assigned-only cohort leaves 928 openings / 279.6 ha uncut; the entry-offset
+   ledger cuts all 4,671 openings but has no phase result.
 3. The adjusted Appendix 9 compartment map is a scanned plan map, not a GIS
    layer, and has not been reconciled.
 4. The UWR boundary and stand-structure classes have been downloaded from BCGW

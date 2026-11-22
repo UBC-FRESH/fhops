@@ -120,9 +120,24 @@ An **assigned-openings-only** cohort was also run:
 The 928 uncut groups are cohorts with no matching block entry in the 300-year
 schedule; the cohort script ignores layout `entry_offset`. The final state is
 for the 1,386.4 ha assigned area, not the full estate, so it is not comparable
-to the whole-estate 1,000,000 m³ floor. The 0.679M m³ / 26-of-30 result in the
-table above still refers to the old layout; the group/block MDWR ratio is about
-1.10.
+to the whole-estate 1,000,000 m³ floor.
+
+An **entry-offset ledger** cuts all 4,671 assigned openings exactly once:
+
+| Metric | Entry-offset ledger |
+|---|---:|
+| Assigned openings | 4,671 |
+| Blocks | 875 |
+| Cut area | **1,386.43 ha** |
+| Harvested volume | **504,601 m³** |
+| Uncut assigned openings | **0** |
+| First-decade volume | 148,505 m³ |
+| Mean cut BA | 82.2 m²/ha |
+
+This is a one-cut ledger, not a phase or final-stock result. The first-decade
+spike means the phase optimizer is still required. The 0.679M m³ / 26-of-30
+result in the table above still refers to the old layout; the group/block MDWR
+ratio is about 1.10.
 
 ## Limits
 
@@ -140,6 +155,8 @@ table above still refers to the old layout; the group/block MDWR ratio is about
   assigned-only cohort have been run, but no regrown phase result exists.
 - The assigned-only cohort leaves 928 openings (279.64 ha) uncut because it
   ignores layout entry offsets and some cohorts have no block entry.
+- The entry-offset ledger cuts all assigned openings once but has no re-entry,
+  final stock, or phase result; its first decade is heavily front-loaded.
 - The block screen does not lay out spatial groups.
 - The group screen does not model cohort regeneration, windthrow, or a
   plantation-specific BA model.
@@ -156,5 +173,5 @@ table above still refers to the old layout; the group/block MDWR ratio is about
 
 The block screen remains public. The group screen is a diagnostic. Replacing the
 block screen requires a reconciled Appendix 9 compartment map, an independent
-UWR review, a frost-compliant ledger that cuts every assigned opening at its
-entry offset, a regrown phase result, and a comparable target framework.
+UWR review, a frost-compliant entry-offset ledger, a regrown phase result on
+that ledger, and a comparable target framework.
