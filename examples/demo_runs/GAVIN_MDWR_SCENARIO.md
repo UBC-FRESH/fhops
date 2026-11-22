@@ -186,7 +186,8 @@ layout; the group/block MDWR ratio is about 1.10.
 
 ## Decision boundary
 
-The block screen remains public. The group screen is a diagnostic. Replacing the
-block screen requires a reconciled Appendix 9 compartment map, an independent
-UWR review, a frost-compliant entry-offset ledger, an entry-offset phase that
-meets the band, and a comparable target framework.
+**Decision recorded 2026-11-22: option 1 adopted.** The 26/30 tail limit is
+accepted, the block screen remains public, and the group screen is a diagnostic.
+No further phase restart will be run on the current ledger. Reopening the
+replacement question requires a wider target band, a longer horizon, or a legal
+later-entry/re-entry model.

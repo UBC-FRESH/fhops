@@ -1,3 +1,11 @@
+# 2026-11-22 — MDWR tail-limit decision
+
+- Adopted option 1: accept the 26/30 tail limit and keep the block public.
+- Entry-offset phase recorded at 0.580M m³ / 26-of-30; tail 3,474 m³ minimum.
+- No further phase restarts on the current one-cut ledger.
+- Group remains a diagnostic; block remains the public policy screen.
+- Revisit only for a wider band, longer horizon, or legal later-entry model.
+
 # 2026-11-22 — Entry-offset phase result
 
 - Ran the regrown phase optimizer on the 4,671-opening entry ledger.

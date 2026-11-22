@@ -1,8 +1,8 @@
 # Gavin Lake MDWR — block vs group decision brief
 
-Status: **decision gate, not a new model result**
+Status: **decision recorded — option 1 adopted**
 
-Date: 2026-11-20
+Date: 2026-11-22
 
 ## Bottom line
 
@@ -211,10 +211,19 @@ The group state can replace the block-level public result only after:
 
 ## Decision
 
+**Option 1 accepted on 2026-11-22: accept the 26/30 tail limit and keep the
+block public.**
+
 - Keep `gavin-mdwr` as the public legal-order block screen.
 - Keep `gavin-mdwr-group` as a diagnostic prototype.
-- Do not present the 0.522M m³ group result as a replacement or compliance
-  determination.
+- Record the entry-offset phase as **0.580M m³ / 26-of-30**, with late-period
+  volumes of 6,603 / 3,944 / 3,841 / 3,474 m³.
+- Do not run another phase restart against the current ledger.
+- Do not present any group result as a replacement or compliance determination.
+- Revisit only if a wider target band, a longer horizon, or a legal
+  later-entry/re-entry model is approved.
+
+The old 0.679M m³ / 26-of-30 group result remains a diagnostic only.
 
 ## Evidence
 
