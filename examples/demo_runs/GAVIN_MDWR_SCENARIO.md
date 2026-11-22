@@ -50,7 +50,7 @@ a compliance determination.
 The legal-order group layout:
 
 - 25,777 groups on the MDWR;
-- 2,797.5 ha represented;
+- 2,797.5 ha represented (old layout);
 - 3,954 assigned openings, all **≥0.1 ha**;
 - 1,431.9 ha scheduled;
 - maximum opening 0.7 ha;
@@ -78,8 +78,19 @@ diagnostic, not a field-verified legal map.
 - 499 assigned openings (221.6 ha) fail a frost/opening-size or UWR test.
 
 The threshold sensitivity run still leaves at least 93.5 ha of frost-cap
-exceedances. The group result remains a prototype; the group/block MDWR ratio
-is about 1.10; 26/30 periods are inside the interim band.
+exceedances.
+
+A clipped-and-capped **layout repair** is now saved as a diagnostic:
+
+- 27,110 groups; 2,722.4 ha;
+- 4,671 assigned openings; 1,386.4 ha;
+- zero cap violations and zero groups outside the UWR;
+- assigned area falls by 46.4 ha, mostly because 42.6 ha was outside the UWR.
+
+This is a layout repair only. The cohort and regrown phase model have not been
+rerun on it. The group result in the table below still refers to the old
+layout; the group/block MDWR ratio is about 1.10 and 26/30 periods are inside
+the interim band.
 
 ## Limits
 
@@ -87,11 +98,14 @@ is about 1.10; 26/30 periods are inside the interim band.
   fine BC long-term objective polygons.
 - The UWR boundary and stand-structure classes were downloaded from BCGW and
   clipped to Gavin (2,726.4 ha), but independent legal review is still needed.
-  The current group estate is 2,797.5 ha, and 181 assigned openings have
+  The old group estate is 2,797.5 ha, and 181 assigned openings have
   42.6 ha outside the authoritative clip, so the boundary/layout difference
   must be reconciled.
 - The frost screen is preliminary: it uses a TPI proxy, not the field
   air-photo procedure, and no field verification or legal determination.
+- The clipped/capped layout is a repair of the old schematic layout, not a
+  fresh design. Its pass fractions were not rebalanced, and no cohort or phase
+  run has been made on it.
 - The block screen does not lay out spatial groups.
 - The group screen does not model cohort regeneration, windthrow, or a
   plantation-specific BA model.
@@ -108,5 +122,5 @@ is about 1.10; 26/30 periods are inside the interim band.
 
 The block screen remains public. The group screen is a diagnostic. Replacing the
 block screen requires a reconciled Appendix 9 compartment map, an independent
-UWR review, a frost-compliant rebuilt group layout, full cohort dynamics, and a
+UWR review, a modelled frost-compliant group layout, full cohort dynamics, and a
 comparable target framework.

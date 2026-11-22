@@ -1,3 +1,14 @@
+# 2026-11-22 — Clipped and capped MDWR layout repair
+
+- Clipped the existing legal group layout to the approved UWR and split
+  oversized groups on a 10 m grid.
+- 27,110 groups / 2,722.4 ha; 4,671 assigned openings / 1,386.4 ha.
+- Zero opening-cap violations and zero groups outside the UWR.
+- Assigned area falls by 46.4 ha: 42.6 ha outside the UWR plus 3.8 ha of
+  dropped small pieces.
+- Layout repair only; cohort and regrown phase model have not been rerun.
+- Public group result remains the old-layout 0.679M m³ / 26-of-30 diagnostic.
+
 # 2026-11-22 — Preliminary MDWR frost screen
 
 - Applied FRDA Report 157 Table 3 with a 5 m DEM and 500 m topographic position

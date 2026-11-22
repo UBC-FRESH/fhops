@@ -13,7 +13,7 @@ is a diagnostic and does not replace it.
 |---|---:|---|---|
 | Full-estate legal-order block screen | **4.179M m³ / 300 yr** | 5,663.7 ha estate | public policy screen |
 | MDWR-only legal-order block screen | **0.619M m³ / 300 yr** | 2,799.3 ha model estate | comparison baseline |
-| Legal-order group cohort, regrown phase | **0.679M m³ / 300 yr** | 2,797.5 ha groups | diagnostic prototype |
+| Legal-order group cohort, regrown phase | **0.679M m³ / 300 yr** | 2,797.5 ha old layout | diagnostic prototype |
 
 The group/block MDWR ratio is **1.10**. That is a material gap, not a geometry
 error: the 0.1 ha minimum opening removes assigned area that the block screen
@@ -37,7 +37,7 @@ superseded.
 ## Group-state facts
 
 - 25,777 groups on 1,443 blocks;
-- 2,797.5 ha represented;
+- 2,797.5 ha represented (old layout);
 - 3,954 assigned openings, all **≥0.1 ha**;
 - 1,431.9 ha scheduled;
 - maximum opening 0.7 ha;
@@ -81,6 +81,20 @@ It is a screening diagnostic, not a field-verified legal map.
 The threshold sensitivity run still leaves at least 93.5 ha of assigned
 frost-cap exceedances, so this is not a threshold artefact.
 
+### Repaired layout
+
+A clipped-and-capped repair of the existing layout is saved as a diagnostic.
+It clips every group to the UWR and splits oversized groups on a 10 m grid:
+
+- 27,110 groups; 2,722.4 ha;
+- 4,671 assigned openings; 1,386.4 ha;
+- zero cap violations and zero groups outside the UWR;
+- assigned area falls by 46.4 ha, mostly because 42.6 ha was outside the UWR.
+
+This is a **layout repair only**. The cohort and regrown phase model have not
+been rerun on it, and the public group result below still refers to the old
+layout.
+
 ## Interim group target diagnostic
 
 There is no approved group target framework. As a diagnostic, the legal-order
@@ -106,15 +120,16 @@ a policy decision.
 ## Why the block screen stays public
 
 1. The group model is a legal-order cohort prototype. A preliminary frost
-   screen now exists, but a target framework and a rebuilt layout are missing.
-2. The preliminary screen flags 291 assigned frost-cap exceedances (142.2 ha).
-   This is evidence, not a legal determination; the layout has not been rebuilt.
+   screen and a clipped/capped layout repair now exist, but the repaired layout
+   has no cohort/phase run and no target framework.
+2. The repair removes the 327 assigned opening-size violations and the
+   181 outside-UWR openings, but it loses 46.4 ha of assigned area and has not
+   been rebalanced to pass targets. It is a layout diagnostic, not a result.
 3. The adjusted Appendix 9 compartment map is a scanned plan map, not a GIS
    layer, and has not been reconciled.
 4. The UWR boundary and stand-structure classes have been downloaded from BCGW
    and clipped to Gavin (2,726.4 ha). Independent legal review is still needed;
-   181 assigned openings have 42.6 ha outside the authoritative clip, so the
-   boundary/layout discrepancy must be reconciled.
+   the repaired layout uses that clip and has no residual outside-UWR groups.
 5. The group run has no policy target framework comparable to the block
    screen’s 9/37/15 status.
 6. The group result is 1.10× the MDWR block result on harvested volume.
@@ -124,7 +139,7 @@ a policy decision.
 The group state can replace the block-level public result only after:
 
 - full UWR-consistent group coverage;
-- frost-compliant rebuilt group layout using the Steen et al. 1990 process;
+- a modelled frost-compliant layout using the Steen et al. 1990 process;
 - full 40-year cohort state;
 - reconciled adjusted Appendix 9 compartments and independent UWR review;
 - group target framework;
