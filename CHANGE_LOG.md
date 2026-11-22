@@ -1,3 +1,14 @@
+# 2026-11-22 — Sync Gavin portal card
+
+- Updated the Gavin card from the old 2,846 ha / 0.679M / 3,954-opening text to
+  the final decision state.
+- Card now shows the 2,726 ha UWR, 4,671 assigned openings / 1,386.4 ha,
+  entry-offset phase 0.580M m³ / 26-of-30, and 3,474 m³ tail minimum.
+- Relabelled the group run as an old-layout diagnostic and the block link as the
+  MDWR no-clearcut block screen.
+- Corrected `gavin-mdwr-group/README.md` to the actual old-layout run counts.
+- No model result changed.
+
 # 2026-11-22 — MDWR tail-limit decision
 
 - Adopted option 1: accept the 26/30 tail limit and keep the block public.
