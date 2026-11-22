@@ -1,3 +1,13 @@
+# 2026-11-22 — Fix duplicate Gavin run IDs
+
+- `gavin-mdwr-ba40` and `gavin-mdwr-ba-temporal` both declared
+  `run_id: gavin-mdwr`; their portal links fell back to `gavin-full-estate`.
+- Set distinct run IDs and distinct scenario names for the base, current-BA,
+  temporal-BA and old group layouts.
+- Added a public-demo contract test that every `run.json` ID matches its
+  directory.
+- Verified all four Gavin MDWR portal links now open the intended run.
+
 # 2026-11-22 — Gavin legal/map closeout
 
 - Reviewed the U-5-002 UWR layer against the Gavin estate and Appendix 9.

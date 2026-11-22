@@ -8,6 +8,7 @@ benchmark-only or partial run should fail here before it reaches the gateway.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -53,6 +54,16 @@ MODEL_INSTANCES = {
         "map_query": "period=P00",
     },
     "gavin-mdwr": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
+    "gavin-mdwr-ba40": {
+        "domain": "tactical_operational",
+        "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
+        "map_query": "period=P00",
+    },
+    "gavin-mdwr-ba-temporal": {
         "domain": "tactical_operational",
         "artifacts": {"harvest_decisions", "tactical_summary", "kpis", "summary"},
         "map_query": "period=P00",
@@ -239,6 +250,18 @@ def test_console_run_has_a_complete_model_instance(client: TestClient) -> None:
         "the console selects runs[0] and must not open on a benchmark-only run"
     )
     _assert_complete_model_instance(_model_instance(client, DEFAULT_MODEL_INSTANCE_ID))
+
+
+def test_every_public_run_manifest_id_matches_its_directory() -> None:
+    runs_root = ROOT / "examples" / "demo_runs"
+    mismatches: list[str] = []
+    for manifest_path in sorted(runs_root.glob("*/run.json")):
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest.get("run_id") != manifest_path.parent.name:
+            mismatches.append(
+                f"{manifest_path.parent.name}: run_id={manifest.get('run_id')!r}"
+            )
+    assert not mismatches, "duplicate or mismatched run IDs:\n" + "\n".join(mismatches)
 
 
 @pytest.mark.parametrize("run_id", tuple(MODEL_INSTANCES))
