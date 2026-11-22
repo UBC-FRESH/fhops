@@ -157,6 +157,9 @@ layout; the group/block MDWR ratio is about 1.10.
 
 - The adjusted Appendix 9 compartment map has not been reconciled with the
   fine BC long-term objective polygons.
+- The area bases differ: approved UWR 2,726.42 ha, Appendix 9 gross 2,846.3 ha,
+  Appendix 9 net 2,484.0 ha, and model MDWR estate 2,799.3 ha. The MDWR-only
+  block baseline is a model estate, not a UWR-exact baseline.
 - The UWR boundary and stand-structure classes were downloaded from BCGW and
   clipped to Gavin (2,726.4 ha), but independent legal review is still needed.
   The old group estate is 2,797.5 ha, and 181 assigned openings have

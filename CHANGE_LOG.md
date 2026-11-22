@@ -1,3 +1,14 @@
+# 2026-11-22 — Gavin legal/map closeout
+
+- Reviewed the U-5-002 UWR layer against the Gavin estate and Appendix 9.
+- Area bases: UWR 2,726.42 ha; Appendix 9 gross 2,846.3 ha; Appendix 9 net
+  2,484.0 ha; model MDWR estate 2,799.3 ha; repaired layout 2,722.37 ha.
+- The MDWR-only block baseline uses the 2,799.3 ha model estate, not the UWR;
+  about 72.9 ha is outside the approved boundary.
+- Appendix 9 BV01–BV09 is a scanned plan with no coordinate grid; adjusted
+  compartments remain unreconciled. The official class layer is digital.
+- No model rerun or compliance claim. Block remains public.
+
 # 2026-11-22 — Sync Gavin portal card
 
 - Updated the Gavin card from the old 2,846 ha / 0.679M / 3,954-opening text to

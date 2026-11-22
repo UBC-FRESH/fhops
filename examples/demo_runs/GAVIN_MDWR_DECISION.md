@@ -70,9 +70,24 @@ BC Geographic Warehouse and clipped to Gavin:
 - **UWR U-5-002 / dwl_9 Beaver Valley North:** 2,726.4 ha;
 - **High 697.9 ha, Moderate 1,013.2 ha, Low 1,015.3 ha.**
 
-The model estate is 2,799.3 ha, so about 71 ha needs reconciliation. The
-official class layer is the GWM 7 stand-structure layer, not the adjusted
-Appendix 9 compartments.
+These are different area bases:
+
+| Basis | Area |
+| --- | ---: |
+| Approved UWR U-5-002 / dwl_9 | **2,726.42 ha** |
+| Appendix 9 MDWR compartments, gross | **2,846.3 ha** |
+| Appendix 9 MDWR compartments, net | **2,484.0 ha** |
+| Model MDWR estate used by the block screen | **2,799.3 ha** |
+| Repaired group layout | **2,722.37 ha** |
+
+The MDWR-only block baseline uses the **2,799.3 ha model estate**, not the
+approved UWR; about 72.9 ha is outside the UWR. That is conservative but not an
+exact UWR implementation. The official class layer is the GWM 7
+stand-structure layer, not the adjusted Appendix 9 compartments.
+
+The Appendix 9 compartments are a legible scanned plan map with a scale bar
+but no coordinate grid. The adjusted compartment boundaries remain
+unreconciled; the official class layer is digital. No compliance claim is made.
 
 Frost-prone is defined by the legal order as medium, high or very high summer
 frost hazard. The Steen et al. 1990 table and a 5 m DEM are available; a
