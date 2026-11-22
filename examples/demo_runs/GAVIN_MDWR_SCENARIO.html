@@ -341,10 +341,54 @@ diagnostic:</p>
 <li>assigned area falls by 46.4 ha, mostly because 42.6 ha was outside
 the UWR.</li>
 </ul>
-<p>This is a layout repair only. The cohort and regrown phase model have
-not been rerun on it. The group result in the table below still refers
-to the old layout; the group/block MDWR ratio is about 1.10 and 26/30
-periods are inside the interim band.</p>
+<p>A cohort state has now been run on the repair:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th style="text-align: right;">Repaired cohort</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Groups in state</td>
+<td style="text-align: right;">27,083</td>
+</tr>
+<tr class="even">
+<td>Blocks</td>
+<td style="text-align: right;">1,427</td>
+</tr>
+<tr class="odd">
+<td>Cut events</td>
+<td style="text-align: right;">12,534</td>
+</tr>
+<tr class="even">
+<td>Cut area</td>
+<td style="text-align: right;">1,684.1 ha</td>
+</tr>
+<tr class="odd">
+<td>Harvested volume</td>
+<td style="text-align: right;"><strong>0.630M m³</strong></td>
+</tr>
+<tr class="even">
+<td>Final standing volume</td>
+<td style="text-align: right;"><strong>1,111,922 m³</strong></td>
+</tr>
+<tr class="odd">
+<td>Final BA</td>
+<td style="text-align: right;">180,249 m²</td>
+</tr>
+<tr class="even">
+<td>BA-gate failures</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>This is a cohort state, not the regrown phase result. The cohort
+script cuts all groups, not only the 4,671 assigned openings (1,386.4
+ha); that is an inherited model limitation. The 0.679M m³ / 26-of-30
+result in the table above still refers to the old layout; the
+group/block MDWR ratio is about 1.10.</p>
 <h2 id="limits">Limits</h2>
 <ul>
 <li>The adjusted Appendix 9 compartment map has not been reconciled with
@@ -358,8 +402,8 @@ boundary/layout difference must be reconciled.</li>
 air-photo procedure, and no field verification or legal
 determination.</li>
 <li>The clipped/capped layout is a repair of the old schematic layout,
-not a fresh design. Its pass fractions were not rebalanced, and no
-cohort or phase run has been made on it.</li>
+not a fresh design. Its pass fractions were not rebalanced; a cohort
+state has been run, but no regrown phase result exists for it.</li>
 <li>The block screen does not lay out spatial groups.</li>
 <li>The group screen does not model cohort regeneration, windthrow, or a
 plantation-specific BA model.</li>
@@ -377,7 +421,8 @@ brief.</li>
 <h2 id="decision-boundary">Decision boundary</h2>
 <p>The block screen remains public. The group screen is a diagnostic.
 Replacing the block screen requires a reconciled Appendix 9 compartment
-map, an independent UWR review, a modelled frost-compliant group layout,
-full cohort dynamics, and a comparable target framework.</p>
+map, an independent UWR review, a frost-compliant cohort that cuts only
+assigned openings, a regrown phase result, and a comparable target
+framework.</p>
 </body>
 </html>

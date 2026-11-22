@@ -14,6 +14,7 @@ is a diagnostic and does not replace it.
 | Full-estate legal-order block screen | **4.179M m³ / 300 yr** | 5,663.7 ha estate | public policy screen |
 | MDWR-only legal-order block screen | **0.619M m³ / 300 yr** | 2,799.3 ha model estate | comparison baseline |
 | Legal-order group cohort, regrown phase | **0.679M m³ / 300 yr** | 2,797.5 ha old layout | diagnostic prototype |
+| Repaired-layout cohort, not phase | **0.630M m³ / 300 yr** | 27,083 groups / 2,721.8 ha | diagnostic, not a phase result |
 
 The group/block MDWR ratio is **1.10**. That is a material gap, not a geometry
 error: the 0.1 ha minimum opening removes assigned area that the block screen
@@ -46,6 +47,17 @@ superseded.
 - 11,910 accepted cohort entries;
 - final standing volume **1,141,775 m³**;
 - initial BA **102,863 m²**; final BA **184,534 m²**.
+
+The repaired-layout cohort state has its own diagnostic:
+
+- 27,083 groups in 1,427 blocks;
+- 12,534 cut events, 1,684.1 ha cut;
+- **629,809 m³** harvested;
+- final stock **1,111,922 m³**, final BA **180,249 m²**;
+- no regrown phase schedule yet.
+
+This cohort cuts all groups, not only the 4,671 assigned openings. That is an
+inherited cohort-model limitation, not a repair result.
 
 ## Data-source check
 
@@ -91,9 +103,11 @@ It clips every group to the UWR and splits oversized groups on a 10 m grid:
 - zero cap violations and zero groups outside the UWR;
 - assigned area falls by 46.4 ha, mostly because 42.6 ha was outside the UWR.
 
-This is a **layout repair only**. The cohort and regrown phase model have not
-been rerun on it, and the public group result below still refers to the old
-layout.
+A cohort state has now been run on the repair: **629,809 m³** harvested,
+final stock **1,111,922 m³**, final BA **180,249 m²**. It is not a phase result,
+and the public group result below still refers to the old layout. The cohort
+script cuts all groups (1,684.1 ha), not only the 4,671 assigned openings
+(1,386.4 ha).
 
 ## Interim group target diagnostic
 
@@ -102,9 +116,11 @@ block MDWR mean period (20,634 m³) gives an interim even-flow band of 10,317 to
 30,951 m³ per period, with a 1,000,000 m³ final-stock floor and 150,000 m²
 final-BA floor.
 
-The group cohort final stock (1,141,775 m³) and final BA (184,534 m²) pass, but
-the 40-year schedule period range (4,180–62,626 m³) fails the interim even-flow
-band.
+The old group cohort final stock (1,141,775 m³) and final BA (184,534 m²) pass,
+but the 40-year schedule period range (4,180–62,626 m³) fails the interim
+even-flow band. The repaired-layout cohort is 0.630M m³, but it has no regrown
+phase result yet; the 0.679M m³ / 26-of-30 diagnostic below remains the old
+layout.
 
 A horizon-aware per-block phase schedule was regrown at the shifted ages. It
 produces **10,204–30,937 m³** and puts **26 of 30** periods inside the interim
@@ -119,12 +135,13 @@ a policy decision.
 
 ## Why the block screen stays public
 
-1. The group model is a legal-order cohort prototype. A preliminary frost
-   screen and a clipped/capped layout repair now exist, but the repaired layout
-   has no cohort/phase run and no target framework.
+1. The group model is a legal-order cohort prototype. A repaired layout and a
+   cohort state now exist, but the regrown phase and target framework are
+   missing.
 2. The repair removes the 327 assigned opening-size violations and the
    181 outside-UWR openings, but it loses 46.4 ha of assigned area and has not
-   been rebalanced to pass targets. It is a layout diagnostic, not a result.
+   been rebalanced to pass targets. The cohort cuts 1,684.1 ha because it
+   includes unassigned groups, not only the 1,386.4 ha of assigned openings.
 3. The adjusted Appendix 9 compartment map is a scanned plan map, not a GIS
    layer, and has not been reconciled.
 4. The UWR boundary and stand-structure classes have been downloaded from BCGW
@@ -140,7 +157,8 @@ The group state can replace the block-level public result only after:
 
 - full UWR-consistent group coverage;
 - a modelled frost-compliant layout using the Steen et al. 1990 process;
-- full 40-year cohort state;
+- a 40-year cohort model that cuts only assigned openings;
+- a regrown phase result on the repaired layout;
 - reconciled adjusted Appendix 9 compartments and independent UWR review;
 - group target framework;
 - a group-state public scenario small enough to use.

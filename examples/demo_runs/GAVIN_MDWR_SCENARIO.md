@@ -87,10 +87,23 @@ A clipped-and-capped **layout repair** is now saved as a diagnostic:
 - zero cap violations and zero groups outside the UWR;
 - assigned area falls by 46.4 ha, mostly because 42.6 ha was outside the UWR.
 
-This is a layout repair only. The cohort and regrown phase model have not been
-rerun on it. The group result in the table below still refers to the old
-layout; the group/block MDWR ratio is about 1.10 and 26/30 periods are inside
-the interim band.
+A cohort state has now been run on the repair:
+
+| Metric | Repaired cohort |
+|---|---:|
+| Groups in state | 27,083 |
+| Blocks | 1,427 |
+| Cut events | 12,534 |
+| Cut area | 1,684.1 ha |
+| Harvested volume | **0.630M m³** |
+| Final standing volume | **1,111,922 m³** |
+| Final BA | 180,249 m² |
+| BA-gate failures | 0 |
+
+This is a cohort state, not the regrown phase result. The cohort script cuts all
+groups, not only the 4,671 assigned openings (1,386.4 ha); that is an inherited
+model limitation. The 0.679M m³ / 26-of-30 result in the table above still
+refers to the old layout; the group/block MDWR ratio is about 1.10.
 
 ## Limits
 
@@ -104,8 +117,8 @@ the interim band.
 - The frost screen is preliminary: it uses a TPI proxy, not the field
   air-photo procedure, and no field verification or legal determination.
 - The clipped/capped layout is a repair of the old schematic layout, not a
-  fresh design. Its pass fractions were not rebalanced, and no cohort or phase
-  run has been made on it.
+  fresh design. Its pass fractions were not rebalanced; a cohort state has been
+  run, but no regrown phase result exists for it.
 - The block screen does not lay out spatial groups.
 - The group screen does not model cohort regeneration, windthrow, or a
   plantation-specific BA model.
@@ -122,5 +135,5 @@ the interim band.
 
 The block screen remains public. The group screen is a diagnostic. Replacing the
 block screen requires a reconciled Appendix 9 compartment map, an independent
-UWR review, a modelled frost-compliant group layout, full cohort dynamics, and a
-comparable target framework.
+UWR review, a frost-compliant cohort that cuts only assigned openings, a
+regrown phase result, and a comparable target framework.

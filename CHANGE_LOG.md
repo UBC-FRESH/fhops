@@ -1,3 +1,15 @@
+# 2026-11-22 — Repaired-layout cohort state
+
+- Ran the legal s40 cohort state on the clipped/capped layout.
+- 27,083 groups / 1,427 blocks; 12,534 cuts; 1,684.1 ha cut.
+- Harvested 629,809 m³; final stock 1,111,922 m³; final BA 180,249 m².
+- Result is 4.3% below the old legal s40 cohort (658,199 m³), mainly an area
+  effect.
+- The cohort script cuts all groups, not only the 4,671 assigned openings
+  (1,386.4 ha); this is an inherited model limitation.
+- No regrown phase result; public group remains the old-layout 0.679M m³ /
+  26-of-30 diagnostic.
+
 # 2026-11-22 — Clipped and capped MDWR layout repair
 
 - Clipped the existing legal group layout to the approved UWR and split
