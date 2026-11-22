@@ -22,8 +22,9 @@ The 2007 Transition and Deep Snowpack GAR order sets:
 - Low: **33% per pass**, 120-year rotation, 3 patches;
 - Moderate: 25%, 160-year rotation, 4 patches;
 - High: **20% per pass**, 200-year rotation, 5 patches;
-- openings: **0.1–0.4 ha** warm aspect, **0.1–0.7 ha** other, and 0.1–0.3 ha
-  on frost-prone sites.
+- openings: **0.1–0.4 ha** warm aspect; **0.1–0.7 ha** other in transition and
+  **0.1–1.0 ha** in deep; **0.1–0.3 ha** frost-prone in transition and
+  **0.1–0.4 ha** in deep.
 
 These differ from the MWP #3 Table 30 ordering used by earlier versions of this
 screen. The current public block and legal group screens use the GAR order.

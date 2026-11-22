@@ -10,6 +10,8 @@
 - Corrected the briefs and notes: UWR/class data are not missing; frost is an
   implementation task; adjusted Appendix 9 compartments remain the only
   unresolved spatial layer.
+- Corrected the opening-size table to show transition (0.7 ha other, 0.3 ha
+  frost) and deep (1.0 ha other, 0.4 ha frost) limits.
 - No public model result changed. Current group estate is 2,797.5 ha versus the
   2,726.4 ha UWR clip; the ~71 ha difference is unresolved.
 

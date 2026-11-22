@@ -26,10 +26,13 @@ The 2007 Transition/Deep Snowpack GAR order sets:
 - **45 m²/ha in ICH** and 40 m²/ha elsewhere;
 - Low 33%, Moderate 25%, High 20% per pass;
 - 120/160/200-year rotations with 3/4/5 patches;
-- 0.1–0.4 ha warm openings, 0.1–0.7 ha other, 0.1–0.3 ha frost-prone.
+- 0.1–0.4 ha warm openings; other 0.1–0.7 ha in transition and 0.1–1.0 ha
+  in deep; frost-prone 0.1–0.3 ha in transition and 0.1–0.4 ha in deep.
 
-The block and group screens now use these parameters. Earlier MWP Table 30
-ordering and 40 m²/ha screens are superseded.
+The block screen uses these parameters. The group layout uses a 0.7 ha maximum
+everywhere and does not yet apply the frost cap; in ICH/deep this is
+conservative on size. Earlier MWP Table 30 ordering and 40 m²/ha screens are
+superseded.
 
 ## Group-state facts
 
