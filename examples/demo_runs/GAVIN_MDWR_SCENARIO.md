@@ -102,8 +102,27 @@ A cohort state has now been run on the repair:
 
 This is a cohort state, not the regrown phase result. The cohort script cuts all
 groups, not only the 4,671 assigned openings (1,386.4 ha); that is an inherited
-model limitation. The 0.679M m³ / 26-of-30 result in the table above still
-refers to the old layout; the group/block MDWR ratio is about 1.10.
+model limitation.
+
+An **assigned-openings-only** cohort was also run:
+
+| Metric | Assigned-only cohort |
+|---|---:|
+| Assigned groups | 4,671 |
+| Cut groups | 3,743 |
+| Uncut assigned groups | **928 (279.64 ha)** |
+| Cut events | 4,530 |
+| Event area | 1,350.13 ha |
+| Harvested volume | **0.500M m³** |
+| Final state | 554,774 m³ |
+| Final BA | 96,950 m² |
+
+The 928 uncut groups are cohorts with no matching block entry in the 300-year
+schedule; the cohort script ignores layout `entry_offset`. The final state is
+for the 1,386.4 ha assigned area, not the full estate, so it is not comparable
+to the whole-estate 1,000,000 m³ floor. The 0.679M m³ / 26-of-30 result in the
+table above still refers to the old layout; the group/block MDWR ratio is about
+1.10.
 
 ## Limits
 
@@ -117,8 +136,10 @@ refers to the old layout; the group/block MDWR ratio is about 1.10.
 - The frost screen is preliminary: it uses a TPI proxy, not the field
   air-photo procedure, and no field verification or legal determination.
 - The clipped/capped layout is a repair of the old schematic layout, not a
-  fresh design. Its pass fractions were not rebalanced; a cohort state has been
-  run, but no regrown phase result exists for it.
+  fresh design. Its pass fractions were not rebalanced; an all-group and an
+  assigned-only cohort have been run, but no regrown phase result exists.
+- The assigned-only cohort leaves 928 openings (279.64 ha) uncut because it
+  ignores layout entry offsets and some cohorts have no block entry.
 - The block screen does not lay out spatial groups.
 - The group screen does not model cohort regeneration, windthrow, or a
   plantation-specific BA model.
@@ -135,5 +156,5 @@ refers to the old layout; the group/block MDWR ratio is about 1.10.
 
 The block screen remains public. The group screen is a diagnostic. Replacing the
 block screen requires a reconciled Appendix 9 compartment map, an independent
-UWR review, a frost-compliant cohort that cuts only assigned openings, a
-regrown phase result, and a comparable target framework.
+UWR review, a frost-compliant ledger that cuts every assigned opening at its
+entry offset, a regrown phase result, and a comparable target framework.

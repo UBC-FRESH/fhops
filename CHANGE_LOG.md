@@ -1,3 +1,13 @@
+# 2026-11-22 — Assigned-openings-only cohort
+
+- Ran the legal s40 cohort on the 4,671 assigned openings only.
+- 3,743 groups cut at least once, 1,106.79 ha unique cut area.
+- **928 assigned groups (279.64 ha) remain uncut** because the cohort script
+  ignores layout entry offsets and some cohorts have no block entry.
+- Harvested 499,597 m³; final state 554,774 m³; final BA 96,950 m².
+- Final state covers only the 1,386.4 ha assigned area, not the full estate.
+- No phase result; public group remains the old-layout 0.679M m³ / 26-of-30.
+
 # 2026-11-22 — Repaired-layout cohort state
 
 - Ran the legal s40 cohort state on the clipped/capped layout.

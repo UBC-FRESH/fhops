@@ -386,9 +386,57 @@ the UWR.</li>
 </table>
 <p>This is a cohort state, not the regrown phase result. The cohort
 script cuts all groups, not only the 4,671 assigned openings (1,386.4
-ha); that is an inherited model limitation. The 0.679M m³ / 26-of-30
-result in the table above still refers to the old layout; the
-group/block MDWR ratio is about 1.10.</p>
+ha); that is an inherited model limitation.</p>
+<p>An <strong>assigned-openings-only</strong> cohort was also run:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th style="text-align: right;">Assigned-only cohort</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Assigned groups</td>
+<td style="text-align: right;">4,671</td>
+</tr>
+<tr class="even">
+<td>Cut groups</td>
+<td style="text-align: right;">3,743</td>
+</tr>
+<tr class="odd">
+<td>Uncut assigned groups</td>
+<td style="text-align: right;"><strong>928 (279.64 ha)</strong></td>
+</tr>
+<tr class="even">
+<td>Cut events</td>
+<td style="text-align: right;">4,530</td>
+</tr>
+<tr class="odd">
+<td>Event area</td>
+<td style="text-align: right;">1,350.13 ha</td>
+</tr>
+<tr class="even">
+<td>Harvested volume</td>
+<td style="text-align: right;"><strong>0.500M m³</strong></td>
+</tr>
+<tr class="odd">
+<td>Final state</td>
+<td style="text-align: right;">554,774 m³</td>
+</tr>
+<tr class="even">
+<td>Final BA</td>
+<td style="text-align: right;">96,950 m²</td>
+</tr>
+</tbody>
+</table>
+<p>The 928 uncut groups are cohorts with no matching block entry in the
+300-year schedule; the cohort script ignores layout
+<code>entry_offset</code>. The final state is for the 1,386.4 ha
+assigned area, not the full estate, so it is not comparable to the
+whole-estate 1,000,000 m³ floor. The 0.679M m³ / 26-of-30 result in the
+table above still refers to the old layout; the group/block MDWR ratio
+is about 1.10.</p>
 <h2 id="limits">Limits</h2>
 <ul>
 <li>The adjusted Appendix 9 compartment map has not been reconciled with
@@ -402,8 +450,12 @@ boundary/layout difference must be reconciled.</li>
 air-photo procedure, and no field verification or legal
 determination.</li>
 <li>The clipped/capped layout is a repair of the old schematic layout,
-not a fresh design. Its pass fractions were not rebalanced; a cohort
-state has been run, but no regrown phase result exists for it.</li>
+not a fresh design. Its pass fractions were not rebalanced; an all-group
+and an assigned-only cohort have been run, but no regrown phase result
+exists.</li>
+<li>The assigned-only cohort leaves 928 openings (279.64 ha) uncut
+because it ignores layout entry offsets and some cohorts have no block
+entry.</li>
 <li>The block screen does not lay out spatial groups.</li>
 <li>The group screen does not model cohort regeneration, windthrow, or a
 plantation-specific BA model.</li>
@@ -421,8 +473,8 @@ brief.</li>
 <h2 id="decision-boundary">Decision boundary</h2>
 <p>The block screen remains public. The group screen is a diagnostic.
 Replacing the block screen requires a reconciled Appendix 9 compartment
-map, an independent UWR review, a frost-compliant cohort that cuts only
-assigned openings, a regrown phase result, and a comparable target
-framework.</p>
+map, an independent UWR review, a frost-compliant ledger that cuts every
+assigned opening at its entry offset, a regrown phase result, and a
+comparable target framework.</p>
 </body>
 </html>
